@@ -4,11 +4,11 @@ import {
 	useEffect,
 	useRef,
 	useState,
+	useId,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PeopleTabs } from './PeopleTabs';
 import { request, exportCsv } from './api.mjs';
-
 const config = window.ohmylmsSchools;
 const t = ( text ) => __( text, 'ohmylms' );
 const api = ( path, data, method = 'POST' ) =>
@@ -19,9 +19,11 @@ const api = ( path, data, method = 'POST' ) =>
 
 // Skill reports live outside the school API; empty when practice and skills are switched off.
 const skillsConfig = config?.skillsApi
-	? { ...config, api: config.skillsApi }
+	? {
+			...config,
+			api: config.skillsApi,
+		}
 	: null;
-
 function useRemote( path, revision, source = config ) {
 	const [ state, setState ] = useState( {
 		path,
@@ -31,7 +33,12 @@ function useRemote( path, revision, source = config ) {
 	} );
 	useEffect( () => {
 		if ( ! path ) {
-			setState( { path, data: [], error: '', loading: false } );
+			setState( {
+				path,
+				data: [],
+				error: '',
+				loading: false,
+			} );
 			return;
 		}
 		const controller = new AbortController();
@@ -41,10 +48,17 @@ function useRemote( path, revision, source = config ) {
 			error: '',
 			loading: true,
 		} ) );
-		request( source, path, { signal: controller.signal } ).then(
+		request( source, path, {
+			signal: controller.signal,
+		} ).then(
 			( data ) => {
 				if ( ! controller.signal.aborted ) {
-					setState( { path, data, error: '', loading: false } );
+					setState( {
+						path,
+						data,
+						error: '',
+						loading: false,
+					} );
 				}
 			},
 			( error ) => {
@@ -62,9 +76,12 @@ function useRemote( path, revision, source = config ) {
 	}, [ path, revision ] );
 	return state.path === path
 		? state
-		: { data: null, error: '', loading: true };
+		: {
+				data: null,
+				error: '',
+				loading: true,
+			};
 }
-
 function Remote( { state, children } ) {
 	if ( state.loading && state.data === null ) {
 		return <p role="status">{ t( 'Loading…' ) }</p>;
@@ -78,7 +95,6 @@ function Remote( { state, children } ) {
 	}
 	return children( state.data );
 }
-
 function Form( {
 	title,
 	fields,
@@ -86,6 +102,7 @@ function Form( {
 	onSubmit,
 	disabled = false,
 } ) {
+	const _controlId = useId();
 	const form = useRef( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
@@ -124,50 +141,79 @@ function Form( {
 					<label
 						key={ field.name }
 						className={ field.hidden ? 'ohmylms-honeypot' : '' }
+						htmlFor={ _controlId + '-field-1' + '-' + field.name }
 					>
 						<span>
 							{ t( field.label ) }
 							{ field.required ? ' *' : '' }
 						</span>
-						{ field.options ? (
-							<select
-								key={ field.version || field.name }
-								onChange={ field.onChange }
-								name={ field.name }
-								required={ field.required }
-								defaultValue={ field.value ?? '' }
-							>
-								<option value="">{ t( 'Choose…' ) }</option>
-								{ field.options.map( ( option ) => (
-									<option
-										key={ option.value }
-										value={ option.value }
+						{ ( () => {
+							if ( field.options ) {
+								return (
+									<select
+										key={ field.version || field.name }
+										onChange={ field.onChange }
+										name={ field.name }
+										required={ field.required }
+										defaultValue={ field.value ?? '' }
+										id={
+											_controlId +
+											'-field-1' +
+											'-' +
+											field.name
+										}
 									>
-										{ option.label }
-									</option>
-								) ) }
-							</select>
-						) : field.type === 'textarea' ? (
-							<textarea
-								name={ field.name }
-								required={ field.required }
-								rows="5"
-								defaultValue={ field.value }
-								maxLength={ field.maxLength || 2000 }
-							/>
-						) : (
-							<input
-								name={ field.name }
-								type={ field.type || 'text' }
-								required={ field.required }
-								defaultValue={ field.value }
-								defaultChecked={ field.checked }
-								minLength={ field.minLength }
-								maxLength={ field.maxLength || 190 }
-								autoComplete={ field.autoComplete }
-								tabIndex={ field.hidden ? -1 : undefined }
-							/>
-						) }
+										<option value="">
+											{ t( 'Choose…' ) }
+										</option>
+										{ field.options.map( ( option ) => (
+											<option
+												key={ option.value }
+												value={ option.value }
+											>
+												{ option.label }
+											</option>
+										) ) }
+									</select>
+								);
+							}
+							if ( field.type === 'textarea' ) {
+								return (
+									<textarea
+										name={ field.name }
+										required={ field.required }
+										rows="5"
+										defaultValue={ field.value }
+										maxLength={ field.maxLength || 2000 }
+										id={
+											_controlId +
+											'-field-1' +
+											'-' +
+											field.name
+										}
+									/>
+								);
+							}
+							return (
+								<input
+									name={ field.name }
+									type={ field.type || 'text' }
+									required={ field.required }
+									defaultValue={ field.value }
+									defaultChecked={ field.checked }
+									minLength={ field.minLength }
+									maxLength={ field.maxLength || 190 }
+									autoComplete={ field.autoComplete }
+									tabIndex={ field.hidden ? -1 : undefined }
+									id={
+										_controlId +
+										'-field-1' +
+										'-' +
+										field.name
+									}
+								/>
+							);
+						} )() }
 						{ field.help && <small>{ t( field.help ) }</small> }
 					</label>
 				) ) }
@@ -183,7 +229,6 @@ function Form( {
 		</form>
 	);
 }
-
 const field = ( name, label, type = 'text', required = true ) => ( {
 	name,
 	label,
@@ -196,7 +241,10 @@ const choice = ( name, label, options ) => ( {
 	required: true,
 	options,
 } );
-const option = ( value, label ) => ( { value, label } );
+const option = ( value, label ) => ( {
+	value,
+	label,
+} );
 const roleLabel = ( role ) =>
 	( {
 		school_admin: t( 'School administrator' ),
@@ -205,7 +253,6 @@ const roleLabel = ( role ) =>
 		guardian: t( 'Parent / guardian' ),
 		activation: t( 'Student password setup / recovery' ),
 	} )[ role ] || role;
-
 function Table( { rows, columns, actions } ) {
 	if ( ! rows?.length ) {
 		return <p className="ohmylms-empty">{ t( 'No records yet.' ) }</p>;
@@ -253,7 +300,6 @@ function Table( { rows, columns, actions } ) {
 		</div>
 	);
 }
-
 function Pager( { page, setPage, count } ) {
 	return (
 		<div className="ohmylms-pager">
@@ -275,8 +321,8 @@ function Pager( { page, setPage, count } ) {
 		</div>
 	);
 }
-
 function ClassView( { classroom, isAdmin, revision, run } ) {
+	const _controlId2 = useId();
 	const [ course, setCourse ] = useState( '' );
 	const activities = useRemote(
 		course
@@ -365,13 +411,14 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 				) }
 			</Remote>
 			{ active && isAdmin && (
-				<label>
+				<label htmlFor={ _controlId2 + '-field-2' }>
 					{ t( 'Find a school roster member' ) }
 					<input
 						value={ candidateSearch }
 						onChange={ ( event ) =>
 							setCandidateSearch( event.target.value )
 						}
+						id={ _controlId2 + '-field-2' }
 					/>
 				</label>
 			) }
@@ -414,13 +461,14 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 							'Recipients must already have course access. This does not enroll them or create a purchase. New class members do not receive earlier assignments automatically.'
 						) }
 					</p>
-					<label>
+					<label htmlFor={ _controlId2 + '-field-3' }>
 						{ t( 'Find a course' ) }
 						<input
 							value={ search }
 							onChange={ ( event ) =>
 								setSearch( event.target.value )
 							}
+							id={ _controlId2 + '-field-3' }
 						/>
 					</label>
 					<Remote state={ courses }>
@@ -543,7 +591,6 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 		</section>
 	);
 }
-
 const levelBadge = ( level, label, reviewDue ) => (
 	<>
 		<span className={ `ohmylms-skill-level ohmylms-skill-${ level }` }>
@@ -634,7 +681,6 @@ function ClassSkills( { classroom, revision } ) {
 		</section>
 	);
 }
-
 function Grading( { classroom, revision, run } ) {
 	const submissions = useRemote(
 		`classes/${ classroom.id }/submissions`,
@@ -681,7 +727,11 @@ function Grading( { classroom, revision, run } ) {
 										{ current.student_name } ·{ ' ' }
 										{ current.title }
 									</h4>
-									<p style={ { whiteSpace: 'pre-wrap' } }>
+									<p
+										style={ {
+											whiteSpace: 'pre-wrap',
+										} }
+									>
 										{ current.content }
 									</p>
 									{ current.file_url && (
@@ -735,8 +785,8 @@ function Grading( { classroom, revision, run } ) {
 		</section>
 	);
 }
-
 function ImportRoster( { school, run } ) {
+	const _controlId3 = useId();
 	const [ csv, setCsv ] = useState( 'name,external_student_id\n' );
 	const [ preview, setPreview ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
@@ -747,7 +797,10 @@ function ImportRoster( { school, run } ) {
 		try {
 			const rows = await run(
 				`schools/${ school }/import`,
-				{ csv, commit },
+				{
+					csv,
+					commit,
+				},
 				'POST',
 				true
 			);
@@ -766,7 +819,7 @@ function ImportRoster( { school, run } ) {
 					'Paste up to 200 students using name and external_student_id columns. Existing school IDs are skipped; names never merge accounts. Password setup links can be issued after import.'
 				) }
 			</p>
-			<label>
+			<label htmlFor={ _controlId3 + '-field-4' }>
 				{ t( 'CSV content' ) }
 				<textarea
 					rows="7"
@@ -775,6 +828,7 @@ function ImportRoster( { school, run } ) {
 						setCsv( event.target.value );
 						setPreview( null );
 					} }
+					id={ _controlId3 + '-field-4' }
 				/>
 			</label>
 			<button disabled={ busy } onClick={ () => check( false ) }>
@@ -807,7 +861,6 @@ function ImportRoster( { school, run } ) {
 		</section>
 	);
 }
-
 function SchoolView( {
 	school,
 	me,
@@ -816,6 +869,7 @@ function SchoolView( {
 	section = 'classes',
 	management = false,
 } ) {
+	const _controlId4 = useId();
 	const [ inviteRole, setInviteRole ] = useState( '' );
 	const isAdmin =
 		me.platform_admin ||
@@ -900,12 +954,18 @@ function SchoolView( {
 						} }
 					>
 						{ t(
-							management && name === 'classes'
-								? 'Class list'
-								: management && name === 'roster'
-									? 'Student roster'
-									: name.charAt( 0 ).toUpperCase() +
-										name.slice( 1 )
+							( () => {
+								if ( management && name === 'classes' ) {
+									return 'Class list';
+								}
+								if ( management && name === 'roster' ) {
+									return 'Student roster';
+								}
+								return (
+									name.charAt( 0 ).toUpperCase() +
+									name.slice( 1 )
+								);
+							} )()
 						) }
 					</button>
 				) ) }
@@ -1010,7 +1070,7 @@ function SchoolView( {
 			) }
 			{ tab === 'roster' && (
 				<>
-					<label>
+					<label htmlFor={ _controlId4 + '-field-5' }>
 						{ t( 'Search students and staff' ) }
 						<input
 							value={ search }
@@ -1018,6 +1078,7 @@ function SchoolView( {
 								setSearch( event.target.value );
 								setPage( 1 );
 							} }
+							id={ _controlId4 + '-field-5' }
 						/>
 					</label>
 					<Remote state={ roster }>
@@ -1085,7 +1146,7 @@ function SchoolView( {
 			) }
 			{ tab === 'invitations' && (
 				<>
-					<label>
+					<label htmlFor={ _controlId4 + '-field-6' }>
 						{ t( 'Find a student for this invitation' ) }
 						<input
 							value={ search }
@@ -1093,6 +1154,7 @@ function SchoolView( {
 								setSearch( event.target.value );
 								setPage( 1 );
 							} }
+							id={ _controlId4 + '-field-6' }
 						/>
 					</label>
 					<Form
@@ -1397,8 +1459,8 @@ function SchoolView( {
 		</section>
 	);
 }
-
 function Users( { revision, role = '' } ) {
+	const _controlId5 = useId();
 	const [ search, setSearch ] = useState( '' );
 	const [ page, setPage ] = useState( 1 );
 	const users = useRemote(
@@ -1409,11 +1471,15 @@ function Users( { revision, role = '' } ) {
 		<section>
 			<h2>
 				{ t(
-					role === 'teacher'
-						? 'Teachers'
-						: role === 'parent'
-							? 'Parents'
-							: 'All accounts'
+					( () => {
+						if ( role === 'teacher' ) {
+							return 'Teachers';
+						}
+						if ( role === 'parent' ) {
+							return 'Parents';
+						}
+						return 'All accounts';
+					} )()
 				) }
 			</h2>
 			{ config.usersUrl && (
@@ -1421,7 +1487,7 @@ function Users( { revision, role = '' } ) {
 					<a href={ config.usersUrl }>{ t( 'Add user' ) }</a>
 				</p>
 			) }
-			<label>
+			<label htmlFor={ _controlId5 + '-field-7' }>
 				{ t( 'Search users' ) }
 				<input
 					value={ search }
@@ -1429,6 +1495,7 @@ function Users( { revision, role = '' } ) {
 						setSearch( event.target.value );
 						setPage( 1 );
 					} }
+					id={ _controlId5 + '-field-7' }
 				/>
 			</label>
 			<Remote state={ users }>
@@ -1461,7 +1528,6 @@ function Users( { revision, role = '' } ) {
 		</section>
 	);
 }
-
 function IndependentClasses( { revision, run } ) {
 	const [ page, setPage ] = useState( 1 );
 	const [ selected, setSelected ] = useState(
@@ -1793,7 +1859,6 @@ function AdminManagement() {
 		</div>
 	);
 }
-
 document
 	.querySelectorAll( '[data-ohmylms-school-view="admin-management"]' )
 	.forEach( ( node ) => {

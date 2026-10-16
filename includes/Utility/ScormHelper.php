@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class ScormHelper.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Utility;
 
@@ -33,7 +38,7 @@ class ScormHelper {
 	public static function validate_course_for_export( $course_id ) {
 		$course = get_post( $course_id );
 
-		// Check if course exists
+		// Check if course exists.
 		if ( ! $course || $course->post_type !== OHMYLMS_COURSE_CPT ) {
 			return array(
 				'valid'   => false,
@@ -41,7 +46,7 @@ class ScormHelper {
 			);
 		}
 
-		// Check if course is published or draft
+		// Check if course is published or draft.
 		if ( ! in_array( $course->post_status, array( 'publish', 'draft', 'pending' ) ) ) {
 			return array(
 				'valid'   => false,
@@ -49,7 +54,7 @@ class ScormHelper {
 			);
 		}
 
-		// Check if course has content
+		// Check if course has content.
 		global $wpdb;
 		$chapter_count = $wpdb->get_var(
 			$wpdb->prepare(
@@ -58,7 +63,7 @@ class ScormHelper {
 			)
 		);
 
-		if ( $chapter_count == 0 ) {
+		if ( 0 == $chapter_count ) {
 			return array(
 				'valid'   => false,
 				'message' => sprintf( __( 'Course "%s" has no chapters. Please add content before exporting.', 'ohmylms-pro' ), $course->post_title ),
@@ -77,7 +82,7 @@ class ScormHelper {
 			'checks'     => array(),
 		);
 
-		// Check ZIP extension (CRITICAL - always required)
+		// Check ZIP extension (CRITICAL - always required).
 		$results['checks']['zip'] = array(
 			'name'     => __( 'PHP ZIP Extension', 'ohmylms-pro' ),
 			'passed'   => class_exists( 'ZipArchive' ),
@@ -87,7 +92,7 @@ class ScormHelper {
 			'critical' => true,
 		);
 
-		// Check DOM extension (CRITICAL - always required)
+		// Check DOM extension (CRITICAL - always required).
 		$results['checks']['dom'] = array(
 			'name'     => __( 'PHP DOM Extension', 'ohmylms-pro' ),
 			'passed'   => class_exists( 'DOMDocument' ),
@@ -97,10 +102,10 @@ class ScormHelper {
 			'critical' => true,
 		);
 
-		// Check memory limit (WARNING - can be increased at runtime)
+		// Check memory limit (WARNING - can be increased at runtime).
 		$memory_limit       = ini_get( 'memory_limit' );
 		$memory_limit_bytes = self::convert_to_bytes( $memory_limit );
-		$memory_ok          = $memory_limit_bytes >= 256 * 1024 * 1024 || $memory_limit == '-1';
+		$memory_ok          = $memory_limit_bytes >= 256 * 1024 * 1024 || '-1' == $memory_limit;
 
 		$results['checks']['memory'] = array(
 			'name'     => __( 'PHP Memory Limit', 'ohmylms-pro' ),
@@ -108,23 +113,23 @@ class ScormHelper {
 			'message'  => $memory_ok
 				? sprintf( __( 'Sufficient: %s', 'ohmylms-pro' ), $memory_limit )
 				: sprintf( __( 'Low: %s (recommended: 256M or higher)', 'ohmylms-pro' ), $memory_limit ),
-			'critical' => false, // Can be increased at runtime
+			'critical' => false, // Can be increased at runtime.
 		);
 
-		// Check max execution time (WARNING - can be increased at runtime)
+		// Check max execution time (WARNING - can be increased at runtime).
 		$max_execution = ini_get( 'max_execution_time' );
-		$time_ok       = $max_execution >= 300 || $max_execution == 0;
+		$time_ok       = $max_execution >= 300 || 0 == $max_execution;
 
 		$results['checks']['execution_time'] = array(
 			'name'     => __( 'Max Execution Time', 'ohmylms-pro' ),
 			'passed'   => $time_ok,
 			'message'  => $time_ok
-				? sprintf( __( 'Sufficient: %s seconds', 'ohmylms-pro' ), $max_execution == 0 ? 'unlimited' : $max_execution )
+				? sprintf( __( 'Sufficient: %s seconds', 'ohmylms-pro' ), 0 == $max_execution ? 'unlimited' : $max_execution )
 				: sprintf( __( 'Low: %s seconds (recommended: 300 or higher)', 'ohmylms-pro' ), $max_execution ),
-			'critical' => false, // Can be increased at runtime
+			'critical' => false, // Can be increased at runtime.
 		);
 
-		// Check upload directory writable (CRITICAL - always required)
+		// Check upload directory writable (CRITICAL - always required).
 		$upload_dir = wp_upload_dir();
 		$writable   = wp_is_writable( $upload_dir['basedir'] );
 
@@ -137,14 +142,14 @@ class ScormHelper {
 			'critical' => true,
 		);
 
-		// Check disk space (WARNING - should have some space but not critical)
+		// Check disk space (WARNING - should have some space but not critical).
 		$free_space = @\disk_free_space( $upload_dir['basedir'] );
 
-		// Handle case where disk_free_space() returns false
-		if ( $free_space === false ) {
+		// Handle case where disk_free_space() returns false.
+		if ( false === $free_space ) {
 			$results['checks']['disk_space'] = array(
 				'name'     => __( 'Available Disk Space', 'ohmylms-pro' ),
-				'passed'   => true, // Don't block if we can't determine
+				'passed'   => true, // Don't block if we can't determine.
 				'message'  => __( 'Unable to determine disk space (this is common on some hosting environments)', 'ohmylms-pro' ),
 				'critical' => false,
 			);
@@ -156,13 +161,13 @@ class ScormHelper {
 				'passed'   => $space_ok,
 				'message'  => sprintf( __( 'Available: %s', 'ohmylms-pro' ), size_format( $free_space ) ) .
 					( $space_ok ? '' : ' ' . __( '(low - recommended: 100MB or higher)', 'ohmylms-pro' ) ),
-				'critical' => false, // Warning only
+				'critical' => false, // Warning only.
 			);
 		}
 
-		// Update overall status based on strict mode
+		// Update overall status based on strict mode.
 		if ( $strict_mode ) {
-			// In strict mode, only critical checks must pass
+			// In strict mode, only critical checks must pass.
 			foreach ( $results['checks'] as $check ) {
 				if ( $check['critical'] && ! $check['passed'] ) {
 					$results['all_passed'] = false;
@@ -170,7 +175,7 @@ class ScormHelper {
 				}
 			}
 		} else {
-			// In normal mode, all checks must pass
+			// In normal mode, all checks must pass.
 			foreach ( $results['checks'] as $check ) {
 				if ( ! $check['passed'] ) {
 					$results['all_passed'] = false;
@@ -200,16 +205,16 @@ class ScormHelper {
 	}
 
 	public static function sanitize_scorm_filename( $filename ) {
-		// Remove special characters
+		// Remove special characters.
 		$filename = preg_replace( '/[^A-Za-z0-9\-_]/', '-', $filename );
 
-		// Remove multiple consecutive dashes
+		// Remove multiple consecutive dashes.
 		$filename = preg_replace( '/-+/', '-', $filename );
 
-		// Trim dashes from ends
+		// Trim dashes from ends.
 		$filename = trim( $filename, '-' );
 
-		// Ensure not empty
+		// Ensure not empty.
 		if ( empty( $filename ) ) {
 			$filename = 'course';
 		}
@@ -223,7 +228,7 @@ class ScormHelper {
 		$total_size = 0;
 		$file_count = 0;
 
-		// Get course thumbnail
+		// Get course thumbnail.
 		$thumbnail_id = get_post_thumbnail_id( $course_id );
 		if ( $thumbnail_id ) {
 			$file_path = get_attached_file( $thumbnail_id );
@@ -233,7 +238,7 @@ class ScormHelper {
 			}
 		}
 
-		// Get chapters and contents
+		// Get chapters and contents.
 		$chapters = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id = %d",
@@ -243,7 +248,7 @@ class ScormHelper {
 		);
 
 		foreach ( $chapters as $chapter ) {
-			// Chapter thumbnail
+			// Chapter thumbnail.
 			$chapter_thumb = get_post_thumbnail_id( $chapter['chapter_id'] );
 			if ( $chapter_thumb ) {
 				$file_path = get_attached_file( $chapter_thumb );
@@ -253,7 +258,7 @@ class ScormHelper {
 				}
 			}
 
-			// Get contents
+			// Get contents.
 			$contents = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT content_id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d",
@@ -263,7 +268,7 @@ class ScormHelper {
 			);
 
 			foreach ( $contents as $content ) {
-				// Content media
+				// Content media.
 				$content_thumb = get_post_thumbnail_id( $content['content_id'] );
 				if ( $content_thumb ) {
 					$file_path = get_attached_file( $content_thumb );
@@ -273,7 +278,7 @@ class ScormHelper {
 					}
 				}
 
-				// Video files
+				// Video files.
 				$video_id = get_post_meta( $content['content_id'], '_video_id', true );
 				if ( $video_id ) {
 					$file_path = get_attached_file( $video_id );
@@ -299,7 +304,7 @@ class ScormHelper {
 		$deleted     = 0;
 		$cutoff_time = time() - ( $days * DAY_IN_SECONDS );
 
-		// Clean temp directories
+		// Clean temp directories.
 		$pattern   = $base_dir . '/scorm-temp-*';
 		$temp_dirs = glob( $pattern );
 
@@ -310,7 +315,7 @@ class ScormHelper {
 			}
 		}
 
-		// Clean ZIP files
+		// Clean ZIP files.
 		$pattern   = $base_dir . '/scorm-package-*.zip';
 		$zip_files = glob( $pattern );
 

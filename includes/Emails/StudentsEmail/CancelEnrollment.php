@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Emails\StudentsEmail;
 
@@ -67,10 +67,10 @@ class CancelEnrollment {
 
 		$email_settings = Emails::get_email_settings();
 		if ( $order && is_array( $email_settings ) && is_array( $enroll_data ) && is_array( $settings ) && $course ) {
-			// Use ohmylms_get_template to get the email body
+			// Use ohmylms_get_template to get the email body.
 			ob_start();
 			ohmylms_get_template(
-				'emails/cancel-enrollment', // Template file name (without .php)
+				'emails/cancel-enrollment', // Template file name (without .php).
 				array(
 					'order'          => $order,
 					'student_name'   => $name,

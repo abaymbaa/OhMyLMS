@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Handles hooks related to lessons in the OhMyLMS plugin.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Hooks;
 
@@ -58,7 +63,7 @@ class QuizHookHandler extends HookHandler {
 		global $wpdb;
 		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
-		// Check if the relationship already exists
+		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT ID FROM $table_name WHERE chapter_id = %d AND content_id = %d LIMIT 1",
@@ -67,7 +72,7 @@ class QuizHookHandler extends HookHandler {
 			)
 		);
 
-		// If exists, update the relationship, otherwise insert a new one
+		// If exists, update the relationship, otherwise insert a new one.
 		if ( $exists ) {
 			$wpdb->update(
 				$table_name,
@@ -146,7 +151,7 @@ class QuizHookHandler extends HookHandler {
 			)
 		);
 
-		// Step 3: Get all question IDs linked to the quiz
+		// Step 3: Get all question IDs linked to the quiz.
 		$relationship_table = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$question_ids       = $wpdb->get_col(
 			$wpdb->prepare(
@@ -156,7 +161,7 @@ class QuizHookHandler extends HookHandler {
 		);
 
 		if ( ! empty( $question_ids ) ) {
-			// Step 4: Get all answer IDs for the above question IDs
+			// Step 4: Get all answer IDs for the above question IDs.
 			$answers_table = $wpdb->prefix . 'ohmylms_question_answers';
 			$placeholders  = implode( ',', array_fill( 0, count( $question_ids ), '%d' ) );
 			$answer_ids    = $wpdb->get_col(
@@ -166,7 +171,7 @@ class QuizHookHandler extends HookHandler {
 				)
 			);
 
-			// Step 5: Delete answer meta
+			// Step 5: Delete answer meta.
 			if ( ! empty( $answer_ids ) ) {
 				$ans_meta_table    = $wpdb->prefix . 'ohmylms_question_answermeta';
 				$meta_placeholders = implode( ',', array_fill( 0, count( $answer_ids ), '%d' ) );
@@ -178,7 +183,7 @@ class QuizHookHandler extends HookHandler {
 				);
 			}
 
-			// Step 6: Delete answers (options)
+			// Step 6: Delete answers (options).
 			$wpdb->query(
 				$wpdb->prepare(
 					"DELETE FROM {$answers_table} WHERE question_id IN ($placeholders)",
@@ -187,7 +192,7 @@ class QuizHookHandler extends HookHandler {
 			);
 		}
 
-		// Step 7: Delete quiz-question relationship
+		// Step 7: Delete quiz-question relationship.
 		$wpdb->delete(
 			$relationship_table,
 			array( 'quiz_id' => $quiz_id ),

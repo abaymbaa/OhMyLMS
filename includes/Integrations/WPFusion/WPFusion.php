@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WP Fusion Integration
  *
@@ -48,7 +48,7 @@ class WPFusion {
 	 * @since 1.0.0
 	 */
 	public function init_classes() {
-		// Register REST API routes
+		// Register REST API routes.
 		add_action(
 			'rest_api_init',
 			array( \OhMyLMS\Integrations\WPFusion\Includes\Rest\WPFusionAuthController::instance(), 'register_routes' )
@@ -59,11 +59,11 @@ class WPFusion {
 			array( \OhMyLMS\Integrations\WPFusion\Includes\Rest\WPFusionTriggersController::instance(), 'register_routes' )
 		);
 
-		// Initialize hooks and migration
+		// Initialize hooks and migration.
 		new Hooks();
 		WPFusionMigration::init();
 
-		// Initialize trigger handler if integration is enabled
+		// Initialize trigger handler if integration is enabled.
 		if ( $this->is_enabled() ) {
 			new TriggerHandler();
 		}
@@ -78,6 +78,6 @@ class WPFusion {
 	public function is_enabled() {
 		$integrations = get_option( 'ohmylms_integrations', array() );
 		return isset( $integrations[ $this->integration_key ]['is_enable'] ) &&
-				$integrations[ $this->integration_key ]['is_enable'] == 1;
+				1 == $integrations[ $this->integration_key ]['is_enable'];
 	}
 }

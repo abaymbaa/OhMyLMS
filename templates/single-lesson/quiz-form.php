@@ -9,14 +9,14 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 if ( empty( $ohmylms_player_preview ) && \OhMyLMS\Extensions\Layouts::render( 'quiz', get_the_ID(), ohmylms_get_course_by_content_id( get_the_ID() ) ) ) {
 	return;
 }
 
-$quiz_start = isset( $_GET['quiz'] ) && $_GET['quiz'] == 'start' ? true : false;
+$quiz_start = isset( $_GET['quiz'] ) && 'start' == $_GET['quiz'] ? true : false;
 $quiz       = ohmylms_get_quiz( get_the_ID() );
 $questions  = array_values(
 	array_filter(
@@ -41,7 +41,7 @@ if ( $attempt_context ) {
 	$settings          = array_merge( is_array( $settings ) ? $settings : array(), $revision ? $revision['settings'] : array() );
 	$remaining_seconds = \OhMyLMS\Assessment\Deadlines::remaining( $attempt_context );
 	\OhMyLMS\Assessment\Delivery::require_script();
-	$is_timer = $remaining_seconds !== null;
+	$is_timer = null !== $remaining_seconds;
 	$timer    = $is_timer ? $remaining_seconds / 60 : 0;
 } else {
 	$timer = $quiz->get_timer();
@@ -90,7 +90,7 @@ if ( 'all_questions_in_one_page' === $quiz_layout ) {
 
 } elseif ( 'number_of_questions_per_page' === $quiz_layout ) {
 	$layout_class        = 'ohmylms-grouped-questions';
-	$questions_per_group = max( 1, (int) ( $settings['question_in_one_page'] ?? 1 ) ); // Get the number of questions per group
+	$questions_per_group = max( 1, (int) ( $settings['question_in_one_page'] ?? 1 ) ); // Get the number of questions per group.
 	$ordinal             = 0;
 	$group_start         = 0;
 	$previous_page       = null;
@@ -98,14 +98,14 @@ if ( 'all_questions_in_one_page' === $quiz_layout ) {
 		if ( ! in_array( $question['settings']['type'], apply_filters( 'ohmylms_supported_question_types', array_keys( \OhMyLMS\Extensions\Registry::all( 'question' ) ) ), true ) ) {
 			continue; }
 		$page = (int) ( $question['page'] ?? 0 );
-		if ( $ordinal === 0 || $ordinal - $group_start >= $questions_per_group || ( $previous_page !== null && $page !== $previous_page ) ) {
+		if ( 0 === $ordinal || $ordinal - $group_start >= $questions_per_group || ( null !== $previous_page && $page !== $previous_page ) ) {
 			$page_starts[ $ordinal ] = count( $page_starts ) + 1;
 			$group_start             = $ordinal;
 		}
 		$previous_page = $page;
 		++$ordinal;
 	}
-	$totalGroups = count( $page_starts ); // Calculate the total number of groups
+	$totalGroups = count( $page_starts ); // Calculate the total number of groups.
 
 } else {
 	$layout_class = 'ohmylms-one-question-per-page';
@@ -125,7 +125,7 @@ $questions                = array_values(
 	)
 );
 $supported_question_count = count( $questions );
-if ( $quiz_layout === 'number_of_questions_per_page' ) {
+if ( 'number_of_questions_per_page' === $quiz_layout ) {
 	$totalGroups = count( $page_starts );
 }
 ob_start();
@@ -163,17 +163,17 @@ if ( $attempt_context ) {
 
 					<div class="title-area">
 						<h4>
-							<?php echo __( 'Sure to exit the quiz?', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Sure to exit the quiz?', 'ohmylms' ); ?>
 						</h4>
 						<p>
-							<?php echo __( 'Your progress will be lost if you leave the quiz.', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Your progress will be lost if you leave the quiz.', 'ohmylms' ); ?>
 						</p>
 					</div>
 				</div>
 
 				<div class="quiz-alert-footer">
 					<button class="ohmylms-button quiz-alert-cancel" tabindex="0">
-						<?php echo __( 'Cancel', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Cancel', 'ohmylms' ); ?>
 					</button>
 
 					<form action="" method="post">
@@ -188,7 +188,7 @@ if ( $attempt_context ) {
 													<?php } ?>
 
 						<button type="submit" class="ohmylms-button quiz-alert-ok" tabindex="0">
-							<?php echo __( 'Exit', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Exit', 'ohmylms' ); ?>
 						</button>
 					</form>
 				</div>
@@ -272,7 +272,7 @@ if ( $attempt_context ) {
 			<div class="ohmylms-quiz-result">
 				use "failed" class with the "success-title" class if quiz is failed then remove this comment
 				<p class="success-title">
-					<?php // echo __('You passed the quiz', 'ohmylms'); ?>
+					<?php // echo __('You passed the quiz', 'ohmylms');. ?>
 				</p>
 
 				<div class="score-box">
@@ -290,7 +290,7 @@ if ( $attempt_context ) {
 
 		<?php
 		$player_total_pages = max( 1, 'all_questions_in_one_page' === $quiz_layout ? 1 : ( 'number_of_questions_per_page' === $quiz_layout ? $totalGroups : $supported_question_count ) );
-		\OhMyLMS\Quiz\PlayerTemplates::part( 'progress', $player_template, array( 'total_pages' => $player_total_pages ) );
+		\OhMyLMS\Quiz\PlayerTemplates::part( 'progress', $player_template, array( 'total_pages' => $player_total_pages, 'layout' => $quiz_layout ) );
 		?>
 	<form action="" method="post">
 		<?php
@@ -327,15 +327,15 @@ if ( $attempt_context ) {
 
 						++$count;
 
-						// Check if layout grouped question and we're at the start of a new group
+						// Check if layout grouped question and we're at the start of a new group.
 						if ( 'number_of_questions_per_page' === $quiz_layout && isset( $page_starts[ $count - 1 ] ) ) {
-							// Close the previous group div if it's not the first group
+							// Close the previous group div if it's not the first group.
 							if ( $count > 1 ) {
 								echo '</div>';
 							}
-							// Start a new group div
+							// Start a new group div.
 							$groupNumber = $page_starts[ $count - 1 ];
-							echo "<div class='ohmylms-question-group question-group-{$groupNumber} " . ( $groupNumber == 1 ? 'active' : '' ) . "'>";
+							echo "<div class='ohmylms-question-group question-group-{$groupNumber} " . ( 1 == $groupNumber ? 'active' : '' ) . "'>";
 						}
 						?>
 
@@ -345,7 +345,7 @@ if ( $attempt_context ) {
 							?>
 							<h2 class="ohmylms-quiz-section-title"><?php echo esc_html( $question['section'] ); ?></h2>
 						<?php } ?>
-						<div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ( 'one_question_per_page' === $quiz_layout && $count == 1 ) ? 'active' : ''; ?>">
+						<div class="ohmylms-quiz-box question-<?php echo $count; ?> <?php echo ( 'one_question_per_page' === $quiz_layout && 1 == $count ) ? 'active' : ''; ?>">
 							<?php
 							\OhMyLMS\Quiz\PlayerTemplates::part(
 								'question-meta',
@@ -400,7 +400,7 @@ if ( $attempt_context ) {
 						</div>
 
 						<?php
-						// Checked if layout grouped question and close the last group div after the last question
+						// Checked if layout grouped question and close the last group div after the last question.
 						if ( 'number_of_questions_per_page' === $quiz_layout && $count === $supported_question_count ) {
 							echo '</div>';
 						}
@@ -417,7 +417,7 @@ if ( $attempt_context ) {
 					<div class="ohmylms-quiz-footer-left">
 						<?php if ( empty( $ohmylms_player_preview ) && ! empty( ohmylms_get_next_content_permalink( get_the_ID() ) ) ) { ?>
 							<a href="<?php echo ohmylms_get_next_content_permalink( get_the_ID() ); ?>" class="skiptop-next">
-								<?php echo __( 'Skip to Next Lesson', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Skip to Next Lesson', 'ohmylms' ); ?>
 							</a>
 						<?php } ?>
 					</div>
@@ -436,7 +436,7 @@ if ( $attempt_context ) {
 						if ( 'all_questions_in_one_page' === $quiz_layout ) {
 							?>
 								<button type="submit" class="ohmylms-button quiz-submit">
-								<?php echo __( 'Submit ', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Submit ', 'ohmylms' ); ?>
 								</button>
 								<?php
 
@@ -447,7 +447,7 @@ if ( $attempt_context ) {
 							if ( $totalGroups > 1 ) {
 								?>
 									<button type="button" class="ohmylms-button ohmylms-previous-quiz-group outline" current-group="1" previous-group="" total-group="<?php echo $totalGroups; ?>" disabled >
-									<?php echo __( 'Previous', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Previous', 'ohmylms' ); ?>
 									</button>
 									<?php
 							}
@@ -455,17 +455,17 @@ if ( $attempt_context ) {
 							if ( $totalGroups > 1 ) {
 								?>
 									<button type="button" class="ohmylms-button ohmylms-next-quiz-group" current-group="1" next-group="2" total-group="<?php echo $totalGroups; ?>">
-									<?php echo __( 'Next', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Next', 'ohmylms' ); ?>
 									</button>
 
 									<button type="submit" class="ohmylms-button quiz-submit" style="display: none">
-									<?php echo __( 'Submit ', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Submit ', 'ohmylms' ); ?>
 									</button>
 									<?php
 							} else {
 								?>
 									<button type="submit" class="ohmylms-button quiz-submit">
-									<?php echo __( 'Submit ', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Submit ', 'ohmylms' ); ?>
 									</button>
 									<?php
 							}
@@ -474,14 +474,14 @@ if ( $attempt_context ) {
 						} else {
 							?>
 								<button type="button" class="ohmylms-button ohmylms-previous-quiz outline" current-question="1" previous-question="" total-questions="<?php echo $count; ?>" disabled>
-								<?php echo __( 'Previous', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Previous', 'ohmylms' ); ?>
 								</button>
 
 								<?php
 								if ( $count > 1 ) {
 									?>
 									<button type="button" class="ohmylms-button ohmylms-next-quiz" current-question="1" next-question="2" total-questions="<?php echo $count; ?>">
-										<?php echo __( 'Next', 'ohmylms' ); ?>
+										<span class="ohmylms-next-quiz-label"><?php echo esc_html__( 'Skip', 'ohmylms' ); ?></span>
 									</button>
 									<?php
 								}
@@ -489,13 +489,13 @@ if ( $attempt_context ) {
 								if ( $count > 1 ) {
 									?>
 									<button type="submit" class="ohmylms-button quiz-submit" style="display: none">
-										<?php echo __( 'Submit ', 'ohmylms' ); ?>
+										<?php echo esc_html__( 'Submit ', 'ohmylms' ); ?>
 									</button>
 									<?php
 								} else {
 									?>
 									<button type="submit" class="ohmylms-button quiz-submit">
-										<?php echo __( 'Submit ', 'ohmylms' ); ?>
+										<?php echo esc_html__( 'Submit ', 'ohmylms' ); ?>
 									</button>
 									<?php
 								}
@@ -528,8 +528,12 @@ echo \OhMyLMS\Extensions\Interactivity::quiz(
 		'layout'          => $quiz_layout,
 		'page'            => 1,
 		'perPage'         => max( 1, (int) $questions_per_group ),
-		'totalPages'      => max( 1, $quiz_layout === 'all_questions_in_one_page' ? 1 : ( $quiz_layout === 'number_of_questions_per_page' ? $totalGroups : $supported_question_count ) ),
+		'totalPages'      => max( 1, 'all_questions_in_one_page' === $quiz_layout ? 1 : ( 'number_of_questions_per_page' === $quiz_layout ? $totalGroups : $supported_question_count ) ),
 		'errors'          => (object) array(),
+		'answered'        => (object) array(),
+		'questionOfLabel' => __( 'Question %1$d of %2$d', 'ohmylms' ),
+		'skipText'        => __( 'Skip', 'ohmylms' ),
+		'nextText'        => __( 'Next', 'ohmylms' ),
 		'submitting'      => false,
 		'exitOpen'        => false,
 		'error'           => '',

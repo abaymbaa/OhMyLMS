@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Email Verification Service
  *
@@ -70,7 +70,7 @@ class EmailVerificationService {
 	 */
 	public static function verify_token( string $token ) {
 		$result = self::verify_token_detailed( $token );
-		return $result['status'] === 'verified' ? $result['user_id'] : false;
+		return 'verified' === $result['status'] ? $result['user_id'] : false;
 	}
 
 	/**

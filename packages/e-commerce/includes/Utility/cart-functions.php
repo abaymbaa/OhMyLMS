@@ -23,7 +23,7 @@ function ohmylmse_cart_totals_subtotal_html() {
  * Outputs or returns the label for a given coupon.
  *
  * @param \OhMyLMS\Commerce\Data\Coupon|string $coupon Coupon object or coupon code.
- * @param bool                                  $echo Whether to echo the label or return it. Default true.
+ * @param bool                                 $echo Whether to echo the label or return it. Default true.
  * @return string|null The coupon label if $echo is false, otherwise null.
  *
  * @since 1.0.0

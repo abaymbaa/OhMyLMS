@@ -12,11 +12,19 @@ import {
 } from '@wordpress/components';
 import { createContent, searchTargets } from './api.mjs';
 import { DEFAULT_PASS_PERCENT } from './catalogModel.mjs';
-
 const typeOptions = () => [
-	{ label: __( 'Lesson', 'ohmylms' ), value: 'lesson' },
-	{ label: __( 'Quiz', 'ohmylms' ), value: 'quiz' },
-	{ label: __( 'Assignment', 'ohmylms' ), value: 'assignment' },
+	{
+		label: __( 'Lesson', 'ohmylms' ),
+		value: 'lesson',
+	},
+	{
+		label: __( 'Quiz', 'ohmylms' ),
+		value: 'quiz',
+	},
+	{
+		label: __( 'Assignment', 'ohmylms' ),
+		value: 'assignment',
+	},
 ];
 
 /**
@@ -53,12 +61,15 @@ export function AttachDialog( {
 	const [ busy, setBusy ] = useState( false );
 	const latest = useRef( 0 );
 	const chapter = chapters.find( ( row ) => row.id === scope.chapterId );
-
 	useEffect( () => {
 		const id = ++latest.current;
 		setResults( null );
 		const timer = setTimeout( () => {
-			searchTargets( { type, search, course: courseId } )
+			searchTargets( {
+				type,
+				search,
+				course: courseId,
+			} )
 				.then( ( data ) => {
 					if ( id === latest.current ) {
 						setResults( data.items || [] );
@@ -76,7 +87,6 @@ export function AttachDialog( {
 		}, 250 );
 		return () => clearTimeout( timer );
 	}, [ type, search, courseId ] );
-
 	const key = ( row ) => `${ row.type }:${ row.id }`;
 	const choose = ( row, checked ) =>
 		setPicked( ( current ) => {
@@ -88,7 +98,6 @@ export function AttachDialog( {
 			}
 			return next;
 		} );
-
 	async function create() {
 		if ( ! name.trim() || busy ) {
 			return;
@@ -114,21 +123,28 @@ export function AttachDialog( {
 			setBusy( false );
 		}
 	}
-
 	const rows = [ ...picked.values() ].filter( ( row ) => row.type === type );
 	const shown = new Set( ( results || [] ).map( ( row ) => row.id ) );
 	const list = [
 		...rows.filter( ( row ) => ! shown.has( row.id ) ),
-		...( results || [] ).map( ( row ) => ( { ...row, type } ) ),
+		...( results || [] ).map( ( row ) => ( {
+			...row,
+			type,
+		} ) ),
 	];
 	const chosen = [ ...picked.values() ];
 	const valid =
 		chosen.length > 0 && ( target === 'chapter' || skillIds.length > 0 );
 	const scopeLabel = chapter
-		? sprintf( __( 'The whole chapter “%s”', 'ohmylms' ), chapter.name )
+		? sprintf(
+				/* translators: %s: lesson or chapter title. */ __(
+					'The whole chapter “%s”',
+					'ohmylms'
+				),
+				chapter.name
+			)
 		: __( 'The whole course (no chapter)', 'ohmylms' );
 	const hasQuiz = chosen.some( ( row ) => row.type === 'quiz' );
-
 	return (
 		<Modal
 			title={ __( 'Attach content', 'ohmylms' ) }
@@ -196,7 +212,10 @@ export function AttachDialog( {
 				label={ __( 'Attach to', 'ohmylms' ) }
 				selected={ target }
 				options={ [
-					{ label: scopeLabel, value: 'chapter' },
+					{
+						label: scopeLabel,
+						value: 'chapter',
+					},
 					{
 						label: __( 'Selected skills', 'ohmylms' ),
 						value: 'skills',
@@ -275,11 +294,20 @@ export function AttachDialog( {
 								chapterId: scope.chapterId,
 								skillIds: target === 'skills' ? skillIds : [],
 							},
-							options: { required, passPercent },
+							options: {
+								required,
+								passPercent,
+							},
 						} )
 					}
 				>
-					{ sprintf( __( 'Attach %d', 'ohmylms' ), chosen.length ) }
+					{ sprintf(
+						/* translators: %d: number of attached learning activities. */ __(
+							'Attach %d',
+							'ohmylms'
+						),
+						chosen.length
+					) }
 				</Button>
 			</div>
 		</Modal>

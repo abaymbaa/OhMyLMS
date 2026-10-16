@@ -9,10 +9,10 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-// Randomize the questions array
+// Randomize the questions array.
 $options = $question['questions'];
 // Frozen (versioned) deliveries keep the order stored at attempt start.
 $frozen = ! empty( $question['frozen'] );
@@ -62,7 +62,7 @@ ohmylms_enqueue_interactivity_module( 'ohmylms/questions' );
 
 				<div class="option-drop-box" role="button" tabindex="0" aria-label="<?php esc_attr_e( 'Place selected answer here; Delete clears it', 'ohmylms' ); ?>" data-wp-on--click="actions.place" data-wp-on--keydown="actions.key" data-definition-id="<?php echo esc_attr( $option['id'] ); ?>">
 					<span class="placeholder-text">
-						<?php echo __( 'Drag answer here', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Drag answer here', 'ohmylms' ); ?>
 					</span>
 				</div>
 

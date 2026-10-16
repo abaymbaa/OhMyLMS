@@ -1,4 +1,10 @@
-import { createElement, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	useEffect,
+	useRef,
+	useState,
+	useId,
+} from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Dashicon, DropdownMenu } from '@wordpress/components';
 
@@ -61,7 +67,6 @@ export function SaveField( {
 		const timer = setTimeout( () => setState( 'idle' ), 2000 );
 		return () => clearTimeout( timer );
 	}, [ state ] );
-
 	async function commit() {
 		editing.current = false;
 		if ( cancelled.current ) {
@@ -174,13 +179,16 @@ export function QuickAdd( {
 	onCancel,
 	help,
 } ) {
-	const [ draft, setDraft ] = useState( { name: '', code: '' } );
+	const _controlId = useId();
+	const [ draft, setDraft ] = useState( {
+		name: '',
+		code: '',
+	} );
 	const [ problem, setProblem ] = useState( '' );
 	const first = useRef( null );
 	useEffect( () => {
 		first.current?.focus();
 	}, [] );
-
 	async function submit( event ) {
 		event.preventDefault();
 		const name = draft.name.trim();
@@ -197,33 +205,53 @@ export function QuickAdd( {
 		if ( pending ) {
 			return;
 		}
-		const ok = await onAdd( { name, code } );
+		const ok = await onAdd( {
+			name,
+			code,
+		} );
 		if ( ok ) {
-			setDraft( { name: '', code: '' } );
+			setDraft( {
+				name: '',
+				code: '',
+			} );
 			first.current?.focus();
 		}
 	}
 	return (
 		<form className="ohmylms-ws-quickadd" onSubmit={ submit } noValidate>
 			<div className="ohmylms-ws-quickadd-fields">
-				<label className="ohmylms-ws-quickadd-code">
+				<label
+					className="ohmylms-ws-quickadd-code"
+					htmlFor={ _controlId + '-field-1' }
+				>
 					<span className="ohmylms-ws-label">{ codeLabel }</span>
 					<input
 						ref={ first }
 						value={ draft.code }
 						onChange={ ( event ) =>
-							setDraft( { ...draft, code: event.target.value } )
+							setDraft( {
+								...draft,
+								code: event.target.value,
+							} )
 						}
+						id={ _controlId + '-field-1' }
 					/>
 				</label>
-				<label className="ohmylms-ws-quickadd-name">
+				<label
+					className="ohmylms-ws-quickadd-name"
+					htmlFor={ _controlId + '-field-2' }
+				>
 					<span className="ohmylms-ws-label">{ nameLabel }</span>
 					<input
 						value={ draft.name }
 						aria-invalid={ Boolean( problem ) }
 						onChange={ ( event ) =>
-							setDraft( { ...draft, name: event.target.value } )
+							setDraft( {
+								...draft,
+								name: event.target.value,
+							} )
 						}
+						id={ _controlId + '-field-2' }
 					/>
 				</label>
 				<div className="ohmylms-ws-quickadd-actions">
@@ -249,7 +277,6 @@ export function QuickAdd( {
 		</form>
 	);
 }
-
 const ICONS = {
 	topic: 'category',
 	chapter: 'category',
@@ -259,7 +286,6 @@ const ICONS = {
 	assignment: 'clipboard',
 	syllabus: 'welcome-learn-more',
 };
-
 export function KindIcon( { kind, icon, color } ) {
 	if ( kind === 'topic' || kind === 'chapter' ) {
 		return (
@@ -284,7 +310,13 @@ export function KindIcon( { kind, icon, color } ) {
 		<Dashicon
 			icon={ icon || ICONS[ kind ] || 'marker' }
 			className={ `ohmylms-ws-kind is-${ kind }` }
-			style={ color ? { color } : undefined }
+			style={
+				color
+					? {
+							color,
+						}
+					: undefined
+			}
 			aria-hidden="true"
 		/>
 	);
@@ -320,7 +352,9 @@ export function RowMenu( { label, controls, disabled, icon = 'ellipsis' } ) {
 			label={ label }
 			controls={ controls }
 			disabled={ disabled }
-			popoverProps={ { placement: 'bottom-end' } }
+			popoverProps={ {
+				placement: 'bottom-end',
+			} }
 		/>
 	);
 }
@@ -376,7 +410,15 @@ export function Row( {
 	);
 	return (
 		<li
-			className={ `ohmylms-ws-row${ reorder?.target ? ( reorder.after ? ' is-drop-after' : ' is-drop-before' ) : '' }` }
+			className={ `ohmylms-ws-row${ ( () => {
+				if ( reorder?.target ) {
+					if ( reorder.after ) {
+						return ' is-drop-after';
+					}
+					return ' is-drop-before';
+				}
+				return '';
+			} )() }` }
 			onDragOver={ reorder?.onDragOver }
 			onDrop={ reorder?.onDrop }
 		>
@@ -388,7 +430,7 @@ export function Row( {
 						draggable={ ! reorder.disabled }
 						disabled={ reorder.disabled }
 						aria-label={ sprintf(
-							__(
+							/* translators: %s: curriculum item name. */ __(
 								'Reorder %s. Use Alt and arrow keys to move.',
 								'ohmylms'
 							),

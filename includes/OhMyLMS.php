@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 use OhMyLMS\OhMyLmsEndpoint;
 use OhMyLMS\Hooks\AssignmentHookHandler;
@@ -39,7 +39,7 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function init_blocks() {
-		// Include the Blocks Manager file
+		// Include the Blocks Manager file.
 		if ( file_exists( OHMYLMS_PATH . '/includes/Blocks/BlocksManager.php' ) ) {
 			require_once OHMYLMS_PATH . '/includes/Blocks/BlocksManager.php';
 			BlocksManager::instance();
@@ -282,7 +282,7 @@ final class OhMyLMS {
 	public function __get( $key ) {
 		if ( in_array( $key, array( 'payment_gateways' ), true ) ) {
 			return \OhMyLMS\Commerce\ecommerce()->$key();
-			// return $this->$key();
+			// return $this->$key();.
 		}
 	}
 
@@ -382,10 +382,10 @@ final class OhMyLMS {
 
 		add_action( 'init', array( $this, 'add_image_sizes' ) );
 
-		// Localize our plugin
+		// Localize our plugin.
 		add_action( 'init', array( $this, 'localization_setup' ) );
 
-		// Add the plugin page links
+		// Add the plugin page links.
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'plugin_action_links' ) );
 
 		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
@@ -393,16 +393,16 @@ final class OhMyLMS {
 
 		add_action( 'init', array( '\OhMyLMS\Shortcodes\Shortcodes', 'init' ) );
 
-		// Initialize Elementor widgets
+		// Initialize Elementor widgets.
 		add_action( 'plugins_loaded', array( $this, 'init_elementor' ) );
 
-		// Initialize Bricks elements
+		// Initialize Bricks elements.
 		add_action( 'plugins_loaded', array( $this, 'init_bricks' ) );
 
-		// Initialize WPBakery Page Builder elements
+		// Initialize WPBakery Page Builder elements.
 		add_action( 'plugins_loaded', array( $this, 'init_wpbakery' ) );
 
-		// Initialize Gutenberg blocks
+		// Initialize Gutenberg blocks.
 		add_action( 'plugins_loaded', array( $this, 'init_blocks' ) );
 
 		// === register post types ===//
@@ -414,10 +414,10 @@ final class OhMyLMS {
 		$assignment  = new OhMyLMS\PostTypes\AssignmentPostType();
 		$certificate = new OhMyLMS\PostTypes\CertificatePostType();
 
-		// load the helper packages
+		// load the helper packages.
 		\OhMyLMS\Packages::init();
 
-		// load form handler
+		// load form handler.
 		\OhMyLMS\FormHandler::init();
 
 		/**
@@ -508,7 +508,7 @@ final class OhMyLMS {
 		$this->emails              = new \OhMyLMS\Emails\Emails();
 		$this->drip_content        = new \OhMyLMS\DripContent();
 
-		// Initialize webhook manager only if webhooks integration is enabled
+		// Initialize webhook manager only if webhooks integration is enabled.
 		if ( apply_filters( 'ohmylms_should_enable_webhooks', false ) ) {
 			$this->webhook_manager = new \OhMyLMS\WebhookManager();
 		}
@@ -666,7 +666,7 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function init_elementor() {
-		// Include the Elementor Manager file
+		// Include the Elementor Manager file.
 		if ( file_exists( OHMYLMS_PATH . '/includes/Elementor/ElementorManager.php' ) ) {
 			require_once OHMYLMS_PATH . '/includes/Elementor/ElementorManager.php';
 			ElementorManager::instance();
@@ -680,7 +680,7 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function init_bricks() {
-		// Include the Bricks Manager file
+		// Include the Bricks Manager file.
 		if ( file_exists( OHMYLMS_PATH . '/includes/Bricks/BricksManager.php' ) ) {
 			require_once OHMYLMS_PATH . '/includes/Bricks/BricksManager.php';
 			\OhMyLMS\Bricks\BricksManager::instance();
@@ -694,7 +694,7 @@ final class OhMyLMS {
 	 * @return void
 	 */
 	public function init_wpbakery() {
-		// Include the WPBakery Manager file
+		// Include the WPBakery Manager file.
 		if ( defined( 'WPB_VC_VERSION' ) && file_exists( OHMYLMS_PATH . '/includes/WPBakery/WPBakeryManager.php' ) ) {
 			require_once OHMYLMS_PATH . '/includes/WPBakery/WPBakeryManager.php';
 			\OhMyLMS\WPBakery\WPBakeryManager::instance();

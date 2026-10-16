@@ -1,4 +1,4 @@
-import { createElement, Fragment, useState } from '@wordpress/element';
+import { createElement, Fragment, useState, useId } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { buildMindmapTree } from './tree.mjs';
 
@@ -30,6 +30,7 @@ export function Mindmap( {
 	renderNodeDetails,
 	hideNode,
 } ) {
+	const _controlId = useId();
 	const [ collapsed, setCollapsed ] = useState( new Set() );
 	const selectedIds = new Set( selected.map( String ) );
 	const roots = buildMindmapTree( items );
@@ -61,37 +62,62 @@ export function Mindmap( {
 					className={ `ohmylms-mindmap-node${ included ? ' is-included' : '' }${ hasChildren && expanded ? ' has-children' : '' }` }
 				>
 					<div className="ohmylms-mindmap-node-heading">
-						<label>
-							{ onSelectionChange && (
-								<input
-									type="checkbox"
-									checked={ included }
-									disabled={ inherited && ! explicit }
-									onChange={ () =>
-										onSelectionChange(
-											explicit
-												? selected.filter(
-														( id ) =>
-															String( id ) !==
-															String( node.id )
-													)
-												: [ ...selected, node.id ]
-										)
-									}
-								/>
-							) }
+						{ onSelectionChange ? (
+							<label
+								htmlFor={
+									_controlId + '-field-1' + '-' + node.id
+								}
+							>
+								{ onSelectionChange && (
+									<input
+										type="checkbox"
+										checked={ included }
+										disabled={ inherited && ! explicit }
+										onChange={ () =>
+											onSelectionChange(
+												explicit
+													? selected.filter(
+															( id ) =>
+																String( id ) !==
+																String(
+																	node.id
+																)
+														)
+													: [ ...selected, node.id ]
+											)
+										}
+										id={
+											_controlId +
+											'-field-1' +
+											'-' +
+											node.id
+										}
+									/>
+								) }
+								<span>{ node.label }</span>
+							</label>
+						) : (
 							<span>{ node.label }</span>
-						</label>
+						) }
 						{ hasChildren && (
 							<button
 								type="button"
 								aria-expanded={ expanded }
-								aria-label={ sprintf(
+								aria-label={
 									expanded
-										? __( 'Collapse %s', 'ohmylms' )
-										: __( 'Expand %s', 'ohmylms' ),
-									node.label
-								) }
+										? sprintf(
+												/* translators: %s: curriculum node label. */
+												/* translators: %s: curriculum node label. */
+												__( 'Collapse %s', 'ohmylms' ),
+												node.label
+											)
+										: sprintf(
+												/* translators: %s: curriculum node label. */
+												/* translators: %s: curriculum node label. */
+												__( 'Expand %s', 'ohmylms' ),
+												node.label
+											)
+								}
 								onClick={ () => toggleBranch( node.id ) }
 							>
 								{ expanded ? '−' : '+' }

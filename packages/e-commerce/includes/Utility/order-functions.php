@@ -160,8 +160,8 @@ function ohmylms_ecommerce_create_refund( $args = array() ) {
  * Process a refund payment.
  *
  * @param \OhMyLMS\Commerce\Data\Order $order The order object.
- * @param float                         $amount The amount to refund.
- * @param string                        $reason The reason for the refund.
+ * @param float                        $amount The amount to refund.
+ * @param string                       $reason The reason for the refund.
  * @return bool|\WP_Error True on success, WP_Error on failure.
  *
  * @since 1.0.0
@@ -178,14 +178,14 @@ function ohmylms_ecommerce_refund_payment( $order, $amount, $reason = '' ) {
 
 		if ( 'offline' !== $gateway->id ) {
 			$result = $gateway->process_refund( $order->get_id(), $amount, $reason );
-			if ( is_array( $result ) && isset( $result['result'] ) && $result['result'] === 'failure' ) {
+			if ( is_array( $result ) && isset( $result['result'] ) && 'failure' === $result['result'] ) {
 				throw new \Exception( $result['message'] ?: __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
 			}
-			if ( $result === false ) {
+			if ( false === $result ) {
 				throw new \Exception( __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
 			}
 		} else {
-			// Add order note about the refund
+			// Add order note about the refund.
 			$order->add_order_note(
 				sprintf(
 					__( 'Refund processed.Reason: %s', 'ohmylms' ),
@@ -313,7 +313,7 @@ function ohmylms_ecommerce_get_order_note( $data ) {
 		return null;
 	}
 
-	// Ensure this is actually an order note
+	// Ensure this is actually an order note.
 	if ( 'order_note' !== $data->comment_type ) {
 		return null;
 	}

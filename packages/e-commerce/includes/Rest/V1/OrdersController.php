@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Rest\V1;
 
@@ -166,20 +166,20 @@ class OrdersController extends RestController {
 		// 'day'   => date('d', strtotime(sanitize_text_field($request['start_date']))),
 		// );
 		// $args['paged']  = 1;
-		// $args['offset'] = 0;
+		// $args['offset'] = 0;.
 
 		// }
 		// if (isset($request['after'])) {
 		// $args['date_query'][0]['after'] = sanitize_text_field($request['after']);
 		// }
 
-		// Check if 's' is provided, and if so, add the meta_query
+		// Check if 's' is provided, and if so, add the meta_query.
 		if ( ! empty( $request['search'] ) ) {
 			$search_value = sanitize_text_field( $request['search'] );
 			if ( is_numeric( $search_value ) ) {
 				$args['post__in'] = array( intval( $search_value ) );
 			} else {
-				// Otherwise, add it to the meta_query for searching by first name, last name, or email
+				// Otherwise, add it to the meta_query for searching by first name, last name, or email.
 				$args['meta_query'][] = array(
 					'relation' => 'OR',
 					array(
@@ -267,7 +267,7 @@ class OrdersController extends RestController {
 
 		if ( ! empty( $request['payment_method'] ) ) {
 			$args['meta_query'][] = array(
-				'key'     => '_payment_method', // Adjust key if different
+				'key'     => '_payment_method', // Adjust key if different.
 				'value'   => sanitize_text_field( $request['payment_method'] ),
 				'compare' => '=',
 			);
@@ -299,7 +299,7 @@ class OrdersController extends RestController {
 
 		if ( isset( $request['orderby'] ) && in_array( $request['orderby'], array( 'id', 'total', 'student_name' ) ) ) {
 			$orderby = $request['orderby'];
-			$order   = strtoupper( $request['order'] ?? 'ASC' ); // default to ASC if not provided
+			$order   = strtoupper( $request['order'] ?? 'ASC' ); // default to ASC if not provided.
 
 			usort(
 				$posts,
@@ -307,14 +307,14 @@ class OrdersController extends RestController {
 					$a_val = $a[ $orderby ];
 					$b_val = $b[ $orderby ];
 
-					// For strings like student_name, use strcasecmp to sort case-insensitively
+					// For strings like student_name, use strcasecmp to sort case-insensitively.
 					if ( is_string( $a_val ) ) {
 						$result = strcasecmp( $a_val, $b_val );
 					} else {
 						$result = $a_val <=> $b_val;
 					}
 
-					return $order === 'DESC' ? -$result : $result;
+					return 'DESC' === $order ? -$result : $result;
 				}
 			);
 		}
@@ -363,7 +363,7 @@ class OrdersController extends RestController {
 		$response_data = $this->prepare_item_for_response( $post, $request );
 		$data          = $response_data->get_data();
 		$order         = ohmylms_ecommerce_get_order( $post );
-		// get the line items
+		// get the line items.
 		foreach ( $order->get_items() as $item_id => $item ) {
 			$item_meta            = array(
 				'key'      => 'course_id',
@@ -374,7 +374,7 @@ class OrdersController extends RestController {
 			$data['line_items'][] = $item_meta;
 		}
 
-		// get the coupon line items
+		// get the coupon line items.
 		foreach ( $order->get_items( 'coupon' ) as $item_id => $item ) {
 			$coupon_line          = array(
 				'title'    => $item->get_name(),
@@ -569,7 +569,7 @@ class OrdersController extends RestController {
 		$query_params = array_merge( array( $post_type ), $prefixed_statuses );
 		$results      = $wpdb->get_results( $wpdb->prepare( $query, ...$query_params ) );
 
-		// Format the response
+		// Format the response.
 		$response = array();
 		foreach ( $results as $result ) {
 			$status     = ucfirst( str_replace( $prefix, '', $result->post_status ) );
@@ -835,7 +835,7 @@ class OrdersController extends RestController {
 	 * This method generates the self and collection links for the order item.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object.
-	 * @param \WP_REST_Request              $request The REST request object.
+	 * @param \WP_REST_Request             $request The REST request object.
 	 * @return array The array containing the links for the order item.
 	 *
 	 * @since 1.0.0

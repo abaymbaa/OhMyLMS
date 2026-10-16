@@ -16,23 +16,23 @@ export function createCertificatePreview( readRuntime ) {
 			r = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).selectCertificate();
 			}, [] ),
-			a = ( function ( e, t ) {
+			a = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal2, _tLocal2 ) {
+						var _nLocal =
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
+							var _rLocal,
+								_aLocal,
 								o,
 								i,
 								l = [],
@@ -40,63 +40,82 @@ export function createCertificatePreview( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( _nLocal =
+										_nLocal.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
 									c = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( _rLocal = o.call( _nLocal ) )
+											.done ) &&
+										( l.push( _rLocal.value ),
+										l.length !== _tLocal2 );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								u = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( i = _nLocal.return() ),
 										Object( i ) !== i )
 									) {
 										return;
 									}
 								} finally {
 									if ( u ) {
-										throw a;
+										throw _aLocal;
 									}
 								}
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return UL( e, t );
+					} )( e, _tLocal ) ||
+					( function ( _eLocal4, _tLocal3 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return UL( _eLocal4, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal4 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? UL( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal4.constructor &&
+									( _nLocal2 = _eLocal4.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return UL( _eLocal4, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -110,11 +129,17 @@ export function createCertificatePreview( readRuntime ) {
 			( 0, ReactHooks.useEffect )(
 				function () {
 					var e = function () {
-						var e = null == n ? void 0 : n.current,
-							t = null == e ? void 0 : e.parentElement;
-						if ( e && t ) {
-							var r = t.clientWidth / e.scrollWidth - 0.07;
-							i( Math.min( 1, r ) );
+						var _eLocal5 =
+								n === null || n === void 0 ? void 0 : n.current,
+							_tLocal4 =
+								_eLocal5 === null || _eLocal5 === void 0
+									? void 0
+									: _eLocal5.parentElement;
+						if ( _eLocal5 && _tLocal4 ) {
+							var _rLocal2 =
+								_tLocal4.clientWidth / _eLocal5.scrollWidth -
+								0.07;
+							i( Math.min( 1, _rLocal2 ) );
 						}
 					};
 					return (
@@ -137,15 +162,16 @@ export function createCertificatePreview( readRuntime ) {
 								transformOrigin: 'top',
 							} }
 						>
-							{ ( null == r ||
+							{ ( r === null ||
+							r === void 0 ||
 							null === ( t = r.contents ) ||
 							void 0 === t
 								? void 0
 								: t.elements
-							).map( function ( e, t ) {
+							).map( function ( e, _tLocal5 ) {
 								return (
-									<React.Fragment key={ t }>
-										{ GL( e, t.toString() ) }
+									<React.Fragment key={ _tLocal5 }>
+										{ GL( e, _tLocal5.toString() ) }
 									</React.Fragment>
 								);
 							} ) }

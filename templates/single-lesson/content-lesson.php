@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_course_by_content_id( get_the_ID() ) ) ) {
 	return;
@@ -36,18 +36,18 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 		$cover_image_alt   = get_post_meta( $lesson->get_cover_image_id(), '_wp_attachment_image_alt', true );
 
 		if ( $video ) {
-			// Get video settings with new aspect ratio approach
+			// Get video settings with new aspect ratio approach.
 			$aspect_ratio = ! empty( $video_settings['aspect_ratio'] ) ? $video_settings['aspect_ratio'] : '16/9';
 			$autoplay     = ! empty( $video_settings['autoplay'] ) ? true : false;
 			$loop         = ! empty( $video_settings['loop'] ) ? 1 : 0;
 			$controls     = ! empty( $video_settings['controls'] ) ? 1 : 0;
 
-			// Get global setting for custom video player
+			// Get global setting for custom video player.
 			$use_custom_player = get_option( 'ohmylms_use_custom_video_player', 'yes' ) === 'yes' ? 1 : 0;
 			$logo_bg_color     = get_option( 'ohmylms_video_player_logo_bg_color', '#6E42D3' );
 
 			if ( $use_custom_player ) {
-				// Use Custom Video Player for self-hosted videos
+				// Use Custom Video Player for self-hosted videos.
 				?>
 				<style>.ohmylms-page img.ohmylms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
 				<div
@@ -64,7 +64,7 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 				</div>
 				<?php
 			} else {
-				// Use standard HTML5 video player
+				// Use standard HTML5 video player.
 				?>
 				<div class="ohmylms-video-player ohmylms-responsive-video-wrapper" tabindex="1" style="max-width: 100%; margin: 0 auto; aspect-ratio: <?php echo esc_attr( $aspect_ratio ); ?>;">
 					<video 
@@ -72,7 +72,7 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 						tabindex="2"
 						style="aspect-ratio: <?php echo esc_attr( $aspect_ratio ); ?>;"
 						<?php
-						// need to add controls and loop here
+						// need to add controls and loop here.
 							$options = '';
 						if ( $autoplay ) {
 							$options .= 'autoplay playsinline muted';
@@ -180,7 +180,7 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 
 		$external_video = $external_url;
 		if ( $external_video && 'audio' !== $lesson_type ) {
-			// Get video settings with new aspect ratio approach
+			// Get video settings with new aspect ratio approach.
 			$aspect_ratio        = ! empty( $video_settings['aspect_ratio'] ) ? $video_settings['aspect_ratio'] : '16/9';
 			$platform            = ! empty( $video_settings['platform'] ) ? $video_settings['platform'] : 'self-hosted';
 			$autoplay            = ! empty( $video_settings['autoplay'] ) ? 1 : 0;
@@ -189,32 +189,32 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 			$remove_branding     = ! empty( $video_settings['remove_branding'] ) ? 1 : 0;
 			$hide_related_videos = ! empty( $video_settings['hide_related_videos'] ) ? 1 : 0;
 
-			// Get global setting for custom video player (from Advanced settings)
+			// Get global setting for custom video player (from Advanced settings).
 			$use_custom_player = get_option( 'ohmylms_use_custom_video_player', 'yes' ) === 'yes' ? 1 : 0;
 
-			// Check platform types
+			// Check platform types.
 			$is_youtube = strpos( $external_video, 'youtube.com' ) !== false || strpos( $external_video, 'youtu.be' ) !== false;
 			$is_vimeo   = strpos( $external_video, 'vimeo.com' ) !== false;
 
-			// Check if it's a direct video file (self-hosted)
+			// Check if it's a direct video file (self-hosted).
 			$is_direct_video = preg_match( '/\.(mp4|webm|ogg|mov|m4v|avi|flv|mkv)(\?.*)?$/i', $external_video );
 
-			// If not YouTube/Vimeo and has a video-like URL structure, assume it's self-hosted
+			// If not YouTube/Vimeo and has a video-like URL structure, assume it's self-hosted.
 			if ( ! $is_youtube && ! $is_vimeo ) {
-				// Accept URLs from media library, CDN, or any URL starting with http/https
+				// Accept URLs from media library, CDN, or any URL starting with http/https.
 				$is_direct_video = $is_direct_video || ( strpos( $external_video, 'http' ) === 0 );
 			}
 
-			// Debug output (remove in production)
+			// Debug output (remove in production).
 			error_log( 'OhMyLMS Video Debug - URL: ' . $external_video );
 			error_log( 'OhMyLMS Video Debug - use_custom_player: ' . ( $use_custom_player ? 'yes' : 'no' ) );
 			error_log( 'OhMyLMS Video Debug - is_youtube: ' . ( $is_youtube ? 'yes' : 'no' ) );
 			error_log( 'OhMyLMS Video Debug - is_vimeo: ' . ( $is_vimeo ? 'yes' : 'no' ) );
 			error_log( 'OhMyLMS Video Debug - is_direct_video: ' . ( $is_direct_video ? 'yes' : 'no' ) );
 
-			// Only use custom player when explicitly enabled
+			// Only use custom player when explicitly enabled.
 			if ( $use_custom_player && ( $is_youtube || $is_vimeo || $is_direct_video ) ) {
-				// Use Custom Video Player
+				// Use Custom Video Player.
 				$logo_bg_color = get_option( 'ohmylms_video_player_logo_bg_color', '#6E42D3' );
 				?>
 				<style>.ohmylms-page img.ohmylms-player-logo { background-color: <?php echo esc_attr( $logo_bg_color ); ?> !important; }</style>
@@ -233,87 +233,87 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 				<?php
 			} else {
 				// Use standard iframe embed (previous player)
-				// Modify URL based on platform and settings
+				// Modify URL based on platform and settings.
 				$modified_url = $external_video;
 
-				// Handle YouTube URLs
+				// Handle YouTube URLs.
 				if ( $is_youtube ) {
 					$params = array();
 
-					// Extract YouTube video ID
+					// Extract YouTube video ID.
 					preg_match( '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/', $external_video, $matches );
 					if ( ! empty( $matches[1] ) ) {
 						$youtube_id   = $matches[1];
 						$modified_url = 'https://www.youtube.com/embed/' . $youtube_id;
 
-						// Apply autoplay settings
+						// Apply autoplay settings.
 						if ( $autoplay ) {
 							$params[] = 'autoplay=1';
-							$params[] = 'mute=1'; // required for autoplay in modern browsers
+							$params[] = 'mute=1'; // required for autoplay in modern browsers.
 						}
 
 						if ( $loop ) {
 							$params[] = 'loop=1';
-							$params[] = 'playlist=' . $youtube_id; // Required for loop to work
+							$params[] = 'playlist=' . $youtube_id; // Required for loop to work.
 						}
 
-						// Apply branding removal settings
+						// Apply branding removal settings.
 
-						$params[] = 'modestbranding=1'; // Remove YouTube logo
-						$params[] = 'showinfo=0'; // Hide video title and uploader info
-						$params[] = 'rel=0'; // Hide related videos at the end
+						$params[] = 'modestbranding=1'; // Remove YouTube logo.
+						$params[] = 'showinfo=0'; // Hide video title and uploader info.
+						$params[] = 'rel=0'; // Hide related videos at the end.
 
-						// Additional YouTube embed parameters for better control
-						$params[] = 'enablejsapi=1'; // Enable JavaScript API
+						// Additional YouTube embed parameters for better control.
+						$params[] = 'enablejsapi=1'; // Enable JavaScript API.
 
-						// Apply controls settings if available
+						// Apply controls settings if available.
 						if ( $controls ) {
-							$params[] = 'controls=1'; // Hide all controls
+							$params[] = 'controls=1'; // Hide all controls.
 						} else {
-							$params[] = 'controls=0'; // Show controls (default)
+							$params[] = 'controls=0'; // Show controls (default).
 						}
 
-						// Build final URL with parameters
+						// Build final URL with parameters.
 						if ( ! empty( $params ) ) {
 							$modified_url .= '?' . implode( '&', $params );
 						}
 					}
 				}
 
-				// Handle Vimeo URLs
+				// Handle Vimeo URLs.
 				elseif ( $is_vimeo ) {
 					if ( preg_match( '/vimeo\.com\/(\d+)/', $external_video, $matches ) ) {
 						$vimeo_id = $matches[1];
 						$params   = array();
 
-						// Apply autoplay settings
+						// Apply autoplay settings.
 						if ( $autoplay ) {
 							$params['autoplay'] = '1';
-							$params['muted']    = '1'; // required for autoplay in modern browsers
+							$params['muted']    = '1'; // required for autoplay in modern browsers.
 						} else {
 							$params['autoplay'] = '0';
 							$params['muted']    = '0';
 						}
 
 						if ( $controls ) {
-							$params['controls'] = '1'; // Show controls
+							$params['controls'] = '1'; // Show controls.
 						} else {
-							$params['controls'] = '0'; // Hide all controls
+							$params['controls'] = '0'; // Hide all controls.
 						}
 
-						// Apply branding/title settings
+						// Apply branding/title settings.
 						if ( $remove_branding ) {
-							$params['title']    = '0'; // Hide video title
-							$params['byline']   = '0'; // Hide author byline
-							$params['portrait'] = '0'; // Hide author portrait
+							$params['title']    = '0'; // Hide video title.
+							$params['byline']   = '0'; // Hide author byline.
+							$params['portrait'] = '0'; // Hide author portrait.
 						}
 
-						// Apply loop setting
+						// Apply loop setting.
 						if ( ! empty( $video_settings['loop'] ) ) {
 							$params['loop'] = '1';
 						}
 
-						// Build Vimeo embed URL
+						// Build Vimeo embed URL.
 						$modified_url = "https://player.vimeo.com/video/{$vimeo_id}";
 						if ( ! empty( $params ) ) {
 							$modified_url .= '?' . http_build_query( $params );
@@ -321,7 +321,7 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 					}
 				}
 
-				// Use iframe for other embed sources
+				// Use iframe for other embed sources.
 				?>
 				<div class="ohmylms-lesson-external-video ohmylms-responsive-video-wrapper" style="aspect-ratio: <?php echo esc_attr( $aspect_ratio ); ?>;">
 					<iframe

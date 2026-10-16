@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Badge system Helper class.
  *
@@ -15,7 +15,7 @@ class Badge {
 
 
 	public static function get_badges( $include_streak = null ) {
-		$include_streak = $include_streak === null ? StreakSettings::enabled() : $include_streak;
+		$include_streak = null === $include_streak ? StreakSettings::enabled() : $include_streak;
 		return array_merge( (array) get_option( 'ohmylms_badges', array() ), $include_streak ? StreakSettings::badges() : array() );
 	}
 
@@ -69,7 +69,7 @@ class Badge {
 	 * @since 1.0.0
 	 */
 	public static function maybe_met_rules( $user_id = null ) {
-		$user_id = $user_id === null ? get_current_user_id() : (int) $user_id;
+		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
 		if ( ! self::maybe_enable() || ! $user_id ) {
 			return array(); }
 		$earned = array();
@@ -91,10 +91,10 @@ class Badge {
 	 * @since 1.0.0
 	 */
 	public static function add_badge( $user_id, $type, $badge_id, $reason = '', $course_id = null, $membership_id = null, $content_id = null, $streak = false ) {
-		if ( ! $user_id || ! get_userdata( $user_id ) || ! is_string( $badge_id ) || $badge_id === '' || strlen( $badge_id ) > 45 ) {
+		if ( ! $user_id || ! get_userdata( $user_id ) || ! is_string( $badge_id ) || '' === $badge_id || strlen( $badge_id ) > 45 ) {
 			return false; }
 		if ( ! self::maybe_enable() && ! ( $streak && StreakSettings::enabled() ) ) {
-			return false; // Point system is not enabled
+			return false; // Point system is not enabled.
 		}
 
 		$data = array(
@@ -125,7 +125,7 @@ class Badge {
 	 * @since 1.0.0
 	 */
 	public static function get_all_badges_of_a_user( $user_id ) {
-		// Validate user ID
+		// Validate user ID.
 		if ( ! is_numeric( $user_id ) || $user_id <= 0 ) {
 			return array();
 		}
@@ -134,7 +134,7 @@ class Badge {
 
 		$table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
-		// Query to get unique badge IDs for the user
+		// Query to get unique badge IDs for the user.
 		$query = $wpdb->prepare(
 			"
             SELECT DISTINCT badge_id 
@@ -152,18 +152,18 @@ class Badge {
 
 		$badge_ids = $wpdb->get_col( $query );
 
-		// Return empty array if no badges found
+		// Return empty array if no badges found.
 		if ( empty( $badge_ids ) || ! is_array( $badge_ids ) ) {
 			return array();
 		}
 
-		// Get all available badges once
+		// Get all available badges once.
 		$all_badges = self::get_badges( true );
 		if ( empty( $all_badges ) || ! is_array( $all_badges ) ) {
 			return array();
 		}
 
-		// Create a lookup map for O(1) access instead of O(n) nested loops
+		// Create a lookup map for O(1) access instead of O(n) nested loops.
 		$badge_lookup = array();
 		foreach ( $all_badges as $badge ) {
 			if ( isset( $badge['slug'] ) && ! empty( $badge['slug'] ) ) {
@@ -171,7 +171,7 @@ class Badge {
 			}
 		}
 
-		// Build result array using the lookup map
+		// Build result array using the lookup map.
 		$user_badges = array();
 		foreach ( $badge_ids as $badge_id ) {
 			if ( isset( $badge_lookup[ $badge_id ] ) ) {

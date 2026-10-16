@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additive sidecars; no imported or invented historical streaks.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 /** Additive sidecars; no imported or invented historical streaks. */
@@ -36,7 +41,7 @@ final class StreakSchema {
 					return false; }
 			}
 			$engine = $wpdb->get_var( $wpdb->prepare( 'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', self::table( $name ) ) );
-			if ( $engine !== 'InnoDB' ) {
+			if ( 'InnoDB' !== $engine ) {
 				return false; }
 		}
 		update_option( self::OPTION, self::VERSION, false );

@@ -45,7 +45,7 @@ export function createReorderEditor( readRuntime ) {
 			s = Jd( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
 			d = s[ 0 ],
 			m = s[ 1 ],
-			p = function ( n, r, a ) {
+			p = function ( n, r ) {
 				addContentToQuestion(
 					questionId,
 					r
@@ -85,49 +85,53 @@ export function createReorderEditor( readRuntime ) {
 			};
 		return (
 			<React.Fragment>
-				{ ( 0, xs.I )( options ).map( function ( a, l ) {
+				{ ( 0, xs.I )( options ).map( function ( _aLocal2, _lLocal ) {
 					return (
 						<Controls.CardWP
-							key={ null == a ? void 0 : a.id }
+							key={
+								_aLocal2 === null || _aLocal2 === void 0
+									? void 0
+									: _aLocal2.id
+							}
 							isBorderless={ ! 0 }
-							draggable={ d !== a.id }
+							draggable={ d !== _aLocal2.id }
 							onDragStart={ function ( e ) {
-								return ( function ( e, t ) {
-									( v( t ),
-										localStorage.setItem(
-											'draggedItemIndex',
-											t
-										),
-										e.currentTarget.classList.add(
-											'dragging'
-										) );
-								} )( e, l );
+								return ( function ( _eLocal, t ) {
+									v( t );
+									localStorage.setItem(
+										'draggedItemIndex',
+										t
+									);
+									_eLocal.currentTarget.classList.add(
+										'dragging'
+									);
+								} )( e, _lLocal );
 							} }
 							onDragOver={ h }
 							onDrop={ function ( n ) {
-								return ( function ( n, r ) {
-									n.preventDefault();
-									var a =
+								return ( function ( _nLocal, r ) {
+									_nLocal.preventDefault();
+									var _aLocal3 =
 										localStorage.getItem(
 											'draggedItemIndex'
 										);
-									if ( null !== a && a != r ) {
+									if ( null !== _aLocal3 && _aLocal3 != r ) {
 										var i = Qd( options ),
-											l = Jd( i.splice( a, 1 ), 1 )[ 0 ];
-										( i.splice( r, 0, l ),
-											i.forEach( function ( e, t ) {
-												e.order_number = t + 1;
-											} ),
-											addContentToQuestion(
-												questionId,
-												i
-											),
-											v( null ),
-											localStorage.removeItem(
-												'draggedItemIndex'
-											) );
+											_lLocal2 = Jd(
+												i.splice( _aLocal3, 1 ),
+												1
+											)[ 0 ];
+										i.splice( r, 0, _lLocal2 );
+										i.forEach( function ( e, t ) {
+											e.order_number = t + 1;
+										} );
+										addContentToQuestion( questionId, i );
+										v( null );
+										localStorage.removeItem(
+											'draggedItemIndex'
+										);
 									}
-								} )( n, l );
+								} )( n, _lLocal );
 							} }
 							onDragEnd={ _ }
 							padding={ '4px' }
@@ -139,19 +143,31 @@ export function createReorderEditor( readRuntime ) {
 								} ) }
 								<Controls.FlexBlockWP>
 									{ React.createElement( qd, {
-										id: null == a ? void 0 : a.id,
+										id:
+											_aLocal2 === null ||
+											_aLocal2 === void 0
+												? void 0
+												: _aLocal2.id,
 										showOrder: ! 0,
-										orderNumber: l + 1,
-										value: null == a ? void 0 : a.answer,
+										orderNumber: _lLocal + 1,
+										value:
+											_aLocal2 === null ||
+											_aLocal2 === void 0
+												? void 0
+												: _aLocal2.answer,
 										imgSrc:
-											null == a ? void 0 : a.image_url,
+											_aLocal2 === null ||
+											_aLocal2 === void 0
+												? void 0
+												: _aLocal2.image_url,
 										onChange( n ) {
-											return ( function ( n, r ) {
+											return ( function ( _nLocal2, r ) {
 												addContentToQuestion(
 													questionId,
 													options.map(
 														function ( e ) {
-															return e.id === n
+															return e.id ===
+																_nLocal2
 																? $d(
 																		$d(
 																			{},
@@ -166,18 +182,21 @@ export function createReorderEditor( readRuntime ) {
 														}
 													)
 												);
-											} )( a.id, n );
+											} )( _aLocal2.id, n );
 										},
 										onImageChange: p,
 										onFocus() {
 											return (
-												( e = a.id ),
+												( e = _aLocal2.id ),
 												void m( e )
 											 );
 											var e;
 										},
 										onBlur() {
-											return ( a.id, void m( null ) );
+											return (
+												_aLocal2.id,
+												void m( null )
+											 );
 										},
 										showError: hasValidationErrors,
 										placeholder: ( 0, I18n.__ )(
@@ -207,18 +226,15 @@ export function createReorderEditor( readRuntime ) {
 													)
 												 );
 											}
-											var a = options.filter(
+											var _aLocal4 = options.filter(
 													function ( e ) {
 														return e.id !== r;
 													}
 												),
 												o = $d( {}, question );
-											( ( o.questions = a ),
-												updateQuestionData(
-													questionId,
-													o
-												) );
-										} )( a.id );
+											o.questions = _aLocal4;
+											updateQuestionData( questionId, o );
+										} )( _aLocal2.id );
 									} }
 								/>
 							</Controls.FlexWP>
@@ -242,7 +258,7 @@ export function createReorderEditor( readRuntime ) {
 					}
 					onClick={ function () {
 						var r = $d( {}, question ),
-							a = {
+							_aLocal5 = {
 								id: Date.now(),
 								answer: '',
 								is_correct: ! 1,
@@ -256,14 +272,14 @@ export function createReorderEditor( readRuntime ) {
 									image_url: '',
 								},
 							};
-						( ( r.questions = [].concat( Qd( r.questions ), [
-							$d( {}, a ),
-						] ) ),
-							updateQuestionData( questionId, r ),
-							addContentToQuestion(
-								questionId,
-								[].concat( Qd( options ), [ $d( {}, a ) ] )
-							) );
+						r.questions = [].concat( Qd( r.questions ), [
+							$d( {}, _aLocal5 ),
+						] );
+						updateQuestionData( questionId, r );
+						addContentToQuestion(
+							questionId,
+							[].concat( Qd( options ), [ $d( {}, _aLocal5 ) ] )
+						);
 					} }
 					variant={ 'secondary' }
 					size={ 'small' }

@@ -1,14 +1,12 @@
-import { createElement, useEffect, useState } from '@wordpress/element';
+import { createElement, useEffect, useState, useId } from '@wordpress/element';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
 const accountFields = [
 	[ 'first_name', 'First name', 'text', true ],
 	[ 'last_name', 'Last name', 'text', false ],
 	[ 'email', 'Email', 'email', true ],
 	[ 'username', 'Username (optional)', 'text', false ],
 ];
-
 const kinds = {
 	students: {
 		title: 'Add student',
@@ -28,7 +26,11 @@ const kinds = {
 		role: 'parent',
 		account: true,
 	},
-	users: { title: 'Add user', path: 'users', account: true },
+	users: {
+		title: 'Add user',
+		path: 'users',
+		account: true,
+	},
 	classes: {
 		title: 'Create independent class',
 		path: 'classes',
@@ -47,12 +49,11 @@ const kinds = {
 		],
 	},
 };
-
 export function addLabel( kind ) {
 	return kinds[ kind ]?.title || 'Add';
 }
-
 export function AddModal( { kind, onClose, onSaved } ) {
+	const _controlId = useId();
 	const config = kinds[ kind ];
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ] = useState( '' );
@@ -95,18 +96,25 @@ export function AddModal( { kind, onClose, onSaved } ) {
 			>
 				<fieldset
 					disabled={ saving }
-					style={ { border: 0, padding: 0, margin: 0 } }
+					style={ {
+						border: 0,
+						padding: 0,
+						margin: 0,
+					} }
 				>
 					{ config.account && ! config.role && (
 						<p>
-							<label>
+							<label htmlFor={ _controlId + '-field-1' }>
 								{ __( 'Role', 'ohmylms' ) } *
 								<br />
 								<select
 									name="role"
 									required
 									defaultValue="student"
-									style={ { width: '100%' } }
+									style={ {
+										width: '100%',
+									} }
+									id={ _controlId + '-field-1' }
 								>
 									<option value="student">
 										{ __( 'Student', 'ohmylms' ) }
@@ -124,7 +132,11 @@ export function AddModal( { kind, onClose, onSaved } ) {
 					{ fields.map(
 						( [ name, label, type, required, value ] ) => (
 							<p key={ name }>
-								<label>
+								<label
+									htmlFor={
+										_controlId + '-field-2' + '-' + name
+									}
+								>
 									{ __( label, 'ohmylms' ) }
 									{ required ? ' *' : '' }
 									<br />
@@ -134,7 +146,12 @@ export function AddModal( { kind, onClose, onSaved } ) {
 										required={ required }
 										defaultValue={ value }
 										maxLength={ 190 }
-										style={ { width: '100%' } }
+										style={ {
+											width: '100%',
+										} }
+										id={
+											_controlId + '-field-2' + '-' + name
+										}
 									/>
 								</label>
 							</p>
@@ -142,11 +159,12 @@ export function AddModal( { kind, onClose, onSaved } ) {
 					) }
 					{ config.account && (
 						<p>
-							<label>
+							<label htmlFor={ _controlId + '-field-3' }>
 								<input
 									type="checkbox"
 									name="send_email"
 									defaultChecked
+									id={ _controlId + '-field-3' }
 								/>{ ' ' }
 								{ __(
 									'Email the user a link to set their password',
@@ -156,7 +174,12 @@ export function AddModal( { kind, onClose, onSaved } ) {
 						</p>
 					) }
 					{ error && (
-						<p role="alert" style={ { color: '#b32d2e' } }>
+						<p
+							role="alert"
+							style={ {
+								color: '#b32d2e',
+							} }
+						>
 							{ error }
 						</p>
 					) }
@@ -188,14 +211,16 @@ export function AddModal( { kind, onClose, onSaved } ) {
 		</Modal>
 	);
 }
-
 export function EditModal( { id, onClose, onSaved } ) {
+	const _controlId2 = useId();
 	const [ user, setUser ] = useState( null );
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	useEffect( () => {
 		window.wp
-			.apiFetch( { path: `/ohmylms/v1/school/users/${ id }` } )
+			.apiFetch( {
+				path: `/ohmylms/v1/school/users/${ id }`,
+			} )
 			.then( setUser, ( failure ) => setError( failure.message ) );
 	}, [ id ] );
 	const fields = [
@@ -241,7 +266,11 @@ export function EditModal( { id, onClose, onSaved } ) {
 				>
 					<fieldset
 						disabled={ saving }
-						style={ { border: 0, padding: 0, margin: 0 } }
+						style={ {
+							border: 0,
+							padding: 0,
+							margin: 0,
+						} }
 					>
 						<p>
 							{ __( 'Username', 'ohmylms' ) }:{ ' ' }
@@ -249,7 +278,11 @@ export function EditModal( { id, onClose, onSaved } ) {
 						</p>
 						{ fields.map( ( [ name, label, type, required ] ) => (
 							<p key={ name }>
-								<label>
+								<label
+									htmlFor={
+										_controlId2 + '-field-4' + '-' + name
+									}
+								>
 									{ __( label, 'ohmylms' ) }
 									{ required ? ' *' : '' }
 									<br />
@@ -259,14 +292,26 @@ export function EditModal( { id, onClose, onSaved } ) {
 										required={ required }
 										defaultValue={ user[ name ] }
 										maxLength={ 190 }
-										style={ { width: '100%' } }
+										style={ {
+											width: '100%',
+										} }
+										id={
+											_controlId2 +
+											'-field-4' +
+											'-' +
+											name
+										}
 									/>
 								</label>
 							</p>
 						) ) }
 						<p>
-							<label>
-								<input type="checkbox" name="send_reset" />{ ' ' }
+							<label htmlFor={ _controlId2 + '-field-5' }>
+								<input
+									type="checkbox"
+									name="send_reset"
+									id={ _controlId2 + '-field-5' }
+								/>{ ' ' }
 								{ __(
 									'Email the user a password reset link',
 									'ohmylms'
@@ -274,7 +319,12 @@ export function EditModal( { id, onClose, onSaved } ) {
 							</label>
 						</p>
 						{ error && (
-							<p role="alert" style={ { color: '#b32d2e' } }>
+							<p
+								role="alert"
+								style={ {
+									color: '#b32d2e',
+								} }
+							>
 								{ error }
 							</p>
 						) }

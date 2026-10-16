@@ -10,7 +10,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 $chapter_lessons    = $chapter->get_lessons( 'objects' );
 $chapter_id         = $chapter->get_id();

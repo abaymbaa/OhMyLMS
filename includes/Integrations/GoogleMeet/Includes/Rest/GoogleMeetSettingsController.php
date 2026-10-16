@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * GoogleMeetSettingsController class.
  *
@@ -25,7 +25,7 @@ class GoogleMeetSettingsController {
 	}
 
 	public function register_routes() {
-		// Save & Get credentials
+		// Save & Get credentials.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/credentials',
@@ -44,7 +44,7 @@ class GoogleMeetSettingsController {
 			)
 		);
 
-		// OAuth callback
+		// OAuth callback.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/oauth-callback',
@@ -64,7 +64,7 @@ class GoogleMeetSettingsController {
 			)
 		);
 
-		// Get Google OAuth2 Auth URL
+		// Get Google OAuth2 Auth URL.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/oauth-url',
@@ -77,7 +77,7 @@ class GoogleMeetSettingsController {
 			)
 		);
 
-		// Create meeting
+		// Create meeting.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/create-meeting',
@@ -108,7 +108,7 @@ class GoogleMeetSettingsController {
 			)
 		);
 
-		// Update meeting
+		// Update meeting.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/update-meeting',
@@ -203,7 +203,7 @@ class GoogleMeetSettingsController {
 			);
 		}
 
-		// Google OAuth parameters
+		// Google OAuth parameters.
 		$params = array(
 			'access_type'   => 'offline',
 			'scope'         => implode(
@@ -370,7 +370,7 @@ class GoogleMeetSettingsController {
 			);
 		}
 
-		// Basic event details
+		// Basic event details.
 		$title    = $request->get_param( 'title' );
 		$start    = $request->get_param( 'start' );
 		$end      = $request->get_param( 'end' );
@@ -499,7 +499,7 @@ class GoogleMeetSettingsController {
 			);
 		}
 
-		// Return meet link if available
+		// Return meet link if available.
 		$meet_link = $body['hangoutLink'] ?? '';
 		return new WP_REST_Response(
 			array(

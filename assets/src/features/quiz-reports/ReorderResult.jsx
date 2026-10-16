@@ -20,8 +20,12 @@ export function createReorderResult( readRuntime ) {
 				( 0, ReactHooks.useMemo )(
 					function () {
 						return R$(
-							null == data ? void 0 : data.given_answer,
-							null == data ? void 0 : data.questions
+							data === null || data === void 0
+								? void 0
+								: data.given_answer,
+							data === null || data === void 0
+								? void 0
+								: data.questions
 						);
 					},
 					[ data ]
@@ -50,48 +54,57 @@ export function createReorderResult( readRuntime ) {
 								background: '#E6F7E9',
 							} }
 						>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( r = data.questions ) ||
 							void 0 === r ||
 							null === ( r = r.slice() ) ||
 							void 0 === r ||
 							null ===
-								( r = r.sort( function ( e, t ) {
+								( r = r.sort( function ( e, _tLocal ) {
 									return (
 										Number( e.order_number ) -
-										Number( t.order_number )
+										Number( _tLocal.order_number )
 									);
 								} ) ) ||
 							void 0 === r
 								? void 0
-								: r.map( function ( e, t ) {
+								: r.map( function ( e, _tLocal2 ) {
 										return (
 											<Controls.CardWP
 												key={ e.id }
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == t ? '0' : '16px 0 0'
+													0 == _tLocal2
+														? '0'
+														: '16px 0 0'
 												}
 											>
 												<Controls.FlexWP>
 													<Controls.TextWP>
-														{ null == e
+														{ e === null ||
+														e === void 0
 															? void 0
 															: e.answer }
 													</Controls.TextWP>
-													{ ( null == e
+													{ ( e === null ||
+													e === void 0
 														? void 0
 														: e.image_url ) && (
 														<React.Fragment>
 															<img
 																src={
-																	null == e
+																	e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.image_url
 																}
 																alt={
-																	null == e
+																	e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.answer
 																}
@@ -120,50 +133,70 @@ export function createReorderResult( readRuntime ) {
 								background: '#FFEDEE',
 							} }
 						>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( t = data.given_answer ) ||
 							void 0 === t
 								? void 0
-								: t.map( function ( e, t ) {
-										var n,
-											r =
-												null == data ||
+								: t.map( function ( e, _tLocal3 ) {
+										var _nLocal,
+											_rLocal =
+												data === null ||
+												data === void 0 ||
 												null ===
-													( n = data.questions ) ||
-												void 0 === n
+													( _nLocal =
+														data.questions ) ||
+												void 0 === _nLocal
 													? void 0
-													: n.find( function ( t ) {
-															return t.id == e;
-														} );
+													: _nLocal.find(
+															function (
+																_tLocal4
+															) {
+																return (
+																	_tLocal4.id ==
+																	e
+																);
+															}
+														);
 										return (
 											<Controls.CardWP
 												key={ e }
 												isBorderless={ ! 0 }
 												padding={ '24px' }
 												margin={
-													0 == t ? '0' : '20px 0 0'
+													0 == _tLocal3
+														? '0'
+														: '20px 0 0'
 												}
 											>
 												<Controls.FlexWP>
 													<Controls.TextWP>
-														{ null == r
+														{ _rLocal === null ||
+														_rLocal === void 0
 															? void 0
-															: r.answer }
+															: _rLocal.answer }
 													</Controls.TextWP>
-													{ ( null == r
+													{ ( _rLocal === null ||
+													_rLocal === void 0
 														? void 0
-														: r.image_url ) && (
+														: _rLocal.image_url ) && (
 														<React.Fragment>
 															<img
 																src={
-																	null == r
+																	_rLocal ===
+																		null ||
+																	_rLocal ===
+																		void 0
 																		? void 0
-																		: r.image_url
+																		: _rLocal.image_url
 																}
 																alt={
-																	null == r
+																	_rLocal ===
+																		null ||
+																	_rLocal ===
+																		void 0
 																		? void 0
-																		: r.answer
+																		: _rLocal.answer
 																}
 																style={ {
 																	width: '53px',
@@ -199,48 +232,57 @@ export function createReorderResult( readRuntime ) {
 								background: '#E6F7E9',
 							} }
 						>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( n = data.questions ) ||
 							void 0 === n ||
 							null === ( n = n.slice() ) ||
 							void 0 === n ||
 							null ===
-								( n = n.sort( function ( e, t ) {
+								( n = n.sort( function ( e, _tLocal5 ) {
 									return (
 										Number( e.order_number ) -
-										Number( t.order_number )
+										Number( _tLocal5.order_number )
 									);
 								} ) ) ||
 							void 0 === n
 								? void 0
-								: n.map( function ( e, t ) {
+								: n.map( function ( e, _tLocal6 ) {
 										return (
 											<Controls.CardWP
 												key={ e.id }
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == t ? '0' : '16px 0 0'
+													0 == _tLocal6
+														? '0'
+														: '16px 0 0'
 												}
 											>
 												<Controls.FlexWP>
 													<Controls.TextWP>
-														{ null == e
+														{ e === null ||
+														e === void 0
 															? void 0
 															: e.answer }
 													</Controls.TextWP>
-													{ ( null == e
+													{ ( e === null ||
+													e === void 0
 														? void 0
 														: e.image_url ) && (
 														<React.Fragment>
 															<img
 																src={
-																	null == e
+																	e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.image_url
 																}
 																alt={
-																	null == e
+																	e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.answer
 																}

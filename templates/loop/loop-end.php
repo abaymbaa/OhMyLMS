@@ -20,7 +20,7 @@ if ( isset( $atts ) && is_array( $atts ) && ! empty( $atts ) ) {
 	$layout_style = get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
 }
 
-// Check if we're in a block context by looking for block attributes
+// Check if we're in a block context by looking for block attributes.
 $is_block_context = isset( $atts ) && is_array( $atts ) && (
 	isset( $atts['layoutStyle'] ) ||
 	isset( $atts['layout_style'] ) ||

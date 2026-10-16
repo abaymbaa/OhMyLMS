@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
@@ -27,11 +27,11 @@ final class CompletionPolicy {
 			),
 		);
 		foreach ( $program['items'] as $item ) {
-			if ( empty( $item['required'] ) || $item['type'] === 'practice' ) {
+			if ( empty( $item['required'] ) || 'practice' === $item['type'] ) {
 				continue; }
-			$kind = $item['type'] === 'quiz' ? 'assessments' : 'activities';
+			$kind = 'quiz' === $item['type'] ? 'assessments' : 'activities';
 			++$counts[ $kind ]['total'];
-			$met = $item['type'] === 'quiz' ? ! empty( $assessments[ $item['content_id'] ]['passed'] ) : ! empty( $activities[ $item['content_id'] ] );
+			$met = 'quiz' === $item['type'] ? ! empty( $assessments[ $item['content_id'] ]['passed'] ) : ! empty( $activities[ $item['content_id'] ] );
 			if ( $met ) {
 				++$counts[ $kind ]['met']; } else {
 				$missing[] = array(
@@ -47,7 +47,7 @@ final class CompletionPolicy {
 			$level  = $skills[ $outcome['term_id'] ]['level'] ?? 'not-assessed';
 			$rank   = array_search( $level, Mastery::LEVELS, true );
 			$target = array_search( $outcome['target'], Mastery::LEVELS, true );
-			if ( $rank !== false && $target !== false && $rank >= $target ) {
+			if ( false !== $rank && false !== $target && $rank >= $target ) {
 				++$counts['outcomes']['met']; } else {
 				$missing[] = array(
 					'kind'    => 'outcomes',
@@ -74,20 +74,20 @@ final class CompletionPolicy {
 			return CourseProgram::error( __( 'This enrollment uses the original course curriculum.', 'ohmylms' ), 404 ); }
 		$activities = array_fill_keys( array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT content_id FROM {$wpdb->prefix}ohmylms_user_progress WHERE enrollment_id=%d AND status='completed'", $enrollment['id'] ) ) ), true );
 		foreach ( $program['items'] as $item ) {
-			if ( $item['type'] !== 'practice' && get_post_status( $item['content_id'] ) !== 'publish' ) {
+			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
 				unset( $activities[ $item['content_id'] ] ); }
 		}
 		$assessments = array();
 		foreach ( $program['items'] as $item ) {
-			if ( $item['type'] !== 'quiz' ) {
+			if ( 'quiz' !== $item['type'] ) {
 				continue; }
 			$attempt                            = $wpdb->get_row( $wpdb->prepare( "SELECT a.*,r.total_marks,c.finalize_reason FROM {$wpdb->prefix}ohmylms_quiz_attempts a LEFT JOIN " . AssessmentSchema::table( 'attempt_context' ) . ' c ON c.attempt_id=a.id LEFT JOIN ' . AssessmentSchema::table( 'quiz_revisions' ) . " r ON r.id=c.revision_id WHERE a.student_id=%d AND a.quiz_id=%d AND a.status IN ('completed','passed','failed','in-review') ORDER BY a.id DESC LIMIT 1", $student_id, $item['content_id'] ), ARRAY_A );
-			$maximum                            = $attempt && $attempt['total_marks'] !== null ? (float) $attempt['total_marks'] : (float) ohmylms_get_quiz( $item['content_id'] )->get_total_marks();
+			$maximum                            = $attempt && null !== $attempt['total_marks'] ? (float) $attempt['total_marks'] : (float) ohmylms_get_quiz( $item['content_id'] )->get_total_marks();
 			$score                              = $attempt && $maximum > 0 ? min( 100, 100 * (float) $attempt['total'] / $maximum ) : null;
 			$assessments[ $item['content_id'] ] = array(
-				'score'        => $score === null ? null : round( $score, 2 ),
+				'score'        => null === $score ? null : round( $score, 2 ),
 				'pass_percent' => $item['pass_percent'],
-				'passed'       => get_post_status( $item['content_id'] ) === 'publish' && $attempt && in_array( $attempt['status'], array( 'completed', 'passed', 'failed' ), true ) && $attempt['finalize_reason'] !== 'exit' && $score !== null && $score + 0.0001 >= $item['pass_percent'],
+				'passed'       => get_post_status( $item['content_id'] ) === 'publish' && $attempt && in_array( $attempt['status'], array( 'completed', 'passed', 'failed' ), true ) && 'exit' !== $attempt['finalize_reason'] && null !== $score && $score + 0.0001 >= $item['pass_percent'],
 				'status'       => $attempt['status'] ?? 'not-started',
 				'attempt_id'   => (int) ( $attempt['id'] ?? 0 ),
 			);
@@ -116,7 +116,7 @@ final class CompletionPolicy {
 							array_filter(
 								$program['items'],
 								static function ( $item ) {
-									return $item['type'] === 'quiz';
+									return 'quiz' === $item['type'];
 								}
 							),
 							'content_id'
@@ -139,10 +139,10 @@ final class CompletionPolicy {
 		$result  = self::evaluate( $program, $activities, $skills, $assessments, $pending || $blocked );
 		$award   = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id,awarded_at FROM ' . Schema::table( 'awards' ) . ' WHERE enrollment_id=%d', $enrollment['id'] ), ARRAY_A );
 		foreach ( $program['items'] as &$item ) {
-			$item['name']      = $item['type'] === 'practice' ? ( get_term( $item['content_id'], Taxonomy::NAME )->name ?? __( 'Unavailable skill', 'ohmylms' ) ) : get_the_title( $item['content_id'] );
-			$item['complete']  = $item['type'] === 'practice' ? false : ( $item['type'] === 'quiz' ? ! empty( $assessments[ $item['content_id'] ]['passed'] ) : ! empty( $activities[ $item['content_id'] ] ) );
-			$item['available'] = $item['type'] === 'practice' ? ! $blocked : get_post_status( $item['content_id'] ) === 'publish';
-			$item['url']       = $item['type'] === 'quiz' || $item['type'] === 'assignment' ? ohmylms_get_pretty_content_permalink( $item['content_id'] ) : add_query_arg( 'learning_item', $item['id'], Frontend::url( $course_id ) );
+			$item['name']      = 'practice' === $item['type'] ? ( get_term( $item['content_id'], Taxonomy::NAME )->name ?? __( 'Unavailable skill', 'ohmylms' ) ) : get_the_title( $item['content_id'] );
+			$item['complete']  = 'practice' === $item['type'] ? false : ( 'quiz' === $item['type'] ? ! empty( $assessments[ $item['content_id'] ]['passed'] ) : ! empty( $activities[ $item['content_id'] ] ) );
+			$item['available'] = 'practice' === $item['type'] ? ! $blocked : get_post_status( $item['content_id'] ) === 'publish';
+			$item['url']       = 'quiz' === $item['type'] || 'assignment' === $item['type'] ? ohmylms_get_pretty_content_permalink( $item['content_id'] ) : add_query_arg( 'learning_item', $item['id'], Frontend::url( $course_id ) );
 		}
 		unset( $item );
 		foreach ( $program['outcomes'] as &$outcome ) {
@@ -169,7 +169,7 @@ final class CompletionPolicy {
 			'enrollment_id' => (int) $enrollment['id'],
 			'assessments'   => $assessments,
 			'award'         => $award,
-			'completed'     => (bool) $award || $enrollment['progress'] === 'completed',
+			'completed'     => (bool) $award || 'completed' === $enrollment['progress'],
 			'blocked'       => $blocked,
 		);
 	}
@@ -185,7 +185,7 @@ final class CompletionPolicy {
 			$won = Transaction::run(
 				static function () use ( $wpdb, $state ) {
 					$enrollment = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d FOR UPDATE", $state['enrollment_id'] ), ARRAY_A );
-					if ( ! $enrollment || $enrollment['status'] !== 'enrolled' || $enrollment['progress'] === 'completed' ) {
+					if ( ! $enrollment || 'enrolled' !== $enrollment['status'] || 'completed' === $enrollment['progress'] ) {
 						return null; }
 					$confirmed = self::status( $enrollment['user_id'], $enrollment['course_id'] );
 					if ( is_wp_error( $confirmed ) || ! $confirmed['eligible'] || $confirmed['program']['id'] !== $state['program']['id'] ) {

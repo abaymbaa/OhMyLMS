@@ -13,13 +13,17 @@ export function createCourseEngagement( readRuntime ) {
 			y: WordPressData,
 		} = readRuntime();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getCourse();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getCourse();
 			}, [] ),
-			n = function ( n ) {
+			n = function ( _nLocal ) {
 				return function ( r ) {
 					e.setCourse(
-						CH( CH( {}, t ), {}, PH( {}, n, r ? 'yes' : 'no' ) )
+						CH(
+							CH( {}, t ),
+							{},
+							PH( {}, _nLocal, r ? 'yes' : 'no' )
+						)
 					);
 				};
 			};
@@ -46,7 +50,7 @@ export function createCourseEngagement( readRuntime ) {
 										) }
 										isChecked={
 											'yes' ===
-											( null == t
+											( t === null || t === void 0
 												? void 0
 												: t.leaderboard_disabled )
 										}
@@ -83,7 +87,7 @@ export function createCourseEngagement( readRuntime ) {
 										) }
 										isChecked={
 											'yes' ===
-											( null == t
+											( t === null || t === void 0
 												? void 0
 												: t.point_disabled )
 										}
@@ -120,7 +124,7 @@ export function createCourseEngagement( readRuntime ) {
 										) }
 										isChecked={
 											'yes' ===
-											( null == t
+											( t === null || t === void 0
 												? void 0
 												: t.reward_disabled )
 										}

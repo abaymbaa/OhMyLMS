@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Integrations controller.
  *
@@ -175,7 +175,7 @@ class IntegrationsController extends RestController {
 			$required_plan = $validity['required_plan'];
 			$class         = isset( $value['class'] ) ? sanitize_text_field( $value['class'] ) : '';
 
-			// Check if gamification or zoom settings changed
+			// Check if gamification or zoom settings changed.
 			if ( 'gamification' === $sanitized_key || 'zoom' === $sanitized_key || 'community' === $sanitized_key || 'webhooks' === $sanitized_key || 'googlemeet' === $sanitized_key || 'question_bank' === $sanitized_key || 'mcp' === $sanitized_key ) {
 				$previous_enabled = isset( $previous_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $previous_integrations[ $sanitized_key ]['is_enable'] ) : 0;
 				if ( $previous_enabled !== $is_enable ) {
@@ -184,7 +184,7 @@ class IntegrationsController extends RestController {
 			}
 
 			$was_enabled      = isset( $current_integrations[ $sanitized_key ]['is_enable'] ) ? absint( $current_integrations[ $sanitized_key ]['is_enable'] ) : 0;
-			$is_being_enabled = ( $is_enable === 1 && $was_enabled === 0 );
+			$is_being_enabled = ( 1 === $is_enable && 0 === $was_enabled );
 
 			$current_integrations[ $sanitized_key ] = array(
 				'is_enable' => $is_enable,
@@ -201,7 +201,7 @@ class IntegrationsController extends RestController {
 			if ( $is_being_enabled ) {
 				do_action( 'ohmylms_integration_' . $sanitized_key . '_after_enable', $sanitized_key );
 
-				// Trigger addon activation tracking
+				// Trigger addon activation tracking.
 				do_action( 'ohmylms_addon_activated', $sanitized_key );
 			}
 			if ( 'content_protection' === $sanitized_key ) {

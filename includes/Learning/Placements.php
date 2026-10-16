@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Which courses place a lesson, quiz or assignment in their published learning program.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;

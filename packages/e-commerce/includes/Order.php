@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -94,7 +94,7 @@ class Order {
 	 */
 	public function get_order_amount(): float {
 
-		if ( $this->source === 'membership' ) {
+		if ( 'membership' === $this->source ) {
 			return number_format( $this->items['price'], 2 );
 		}
 

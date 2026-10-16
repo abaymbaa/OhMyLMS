@@ -15,7 +15,7 @@ $has_membership     = false;
 $by_point           = false;
 $is_recurring_daily = false;
 foreach ( $cart as $cart_item_key => $cart_item ) {
-	// Check if cart item data exists
+	// Check if cart item data exists.
 	if ( ! isset( $cart_item['data'] ) || ! is_object( $cart_item['data'] ) ) {
 		continue;
 	}
@@ -29,7 +29,7 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 			}
 		}
 	}
-	if ( isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point' ) {
+	if ( isset( $cart_item['purchase_by'] ) && 'point' === $cart_item['purchase_by'] ) {
 		$by_point = true;
 	}
 }
@@ -84,7 +84,7 @@ foreach ( $cart as $cart_item_key => $cart_item ) {
 				name="ohmylms_checkout_place_order"
 				aria-label="Complete Checkout"
 			>
-				<?php echo __( 'Complete Checkout', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Complete Checkout', 'ohmylms' ); ?>
 				<span class="ohmylms-loader"></span>
 			</button>
 

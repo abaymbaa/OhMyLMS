@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A syllabus is also a course. Every syllabus has one real course (an ordinary `ohmylms-course`), so it is
+ * listed in the Content Hub catalog, can be published, priced, enrolled in and put in a Course Bundle like
+ * any other course, and its lessons, quizzes and assignments are attached the way the catalog already does.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Learning\Catalog;
@@ -36,7 +43,7 @@ final class SyllabusCourse {
 	public static function chapter_title( array $group ) {
 		$name  = trim( (string) ( $group['name'] ?? '' ) );
 		$code  = trim( (string) ( $group['code'] ?? '' ) );
-		$title = ( $code === '' || $code === $name ) ? $name : $code . ' · ' . $name;
+		$title = ( '' === $code || $code === $name ) ? $name : $code . ' · ' . $name;
 		$title = trim( strip_tags( $title ) );
 		return function_exists( 'mb_substr' ) ? mb_substr( $title, 0, self::TITLE_LIMIT ) : substr( $title, 0, self::TITLE_LIMIT );
 	}
@@ -219,7 +226,7 @@ final class SyllabusCourse {
 		if ( $course_id ) {
 			foreach ( Catalog::chapters( $course_id ) as $chapter ) {
 				$uuid = (string) get_post_meta( $chapter['id'], self::GROUP_META, true );
-				if ( $uuid !== '' ) {
+				if ( '' !== $uuid ) {
 					$chapter_of[ $uuid ] = (int) $chapter['id']; }
 			}
 		}
@@ -330,7 +337,7 @@ final class SyllabusCourse {
 		$groups = self::groups_of( $outline );
 
 		$title = trim( wp_strip_all_tags( (string) $outline['syllabus']['name'] ) );
-		if ( $title !== '' && trim( wp_strip_all_tags( get_the_title( $course_id ) ) ) !== $title ) {
+		if ( '' !== $title && trim( wp_strip_all_tags( get_the_title( $course_id ) ) ) !== $title ) {
 			$updated = wp_update_post(
 				wp_slash(
 					array(

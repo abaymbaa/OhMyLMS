@@ -18,33 +18,36 @@ export function createDripSettings( readRuntime ) {
 			p = void 0 === padding ? 4 : padding;
 		return (
 			( function ( e, t ) {
-				if ( null == e ) {
+				if ( e === null || e === void 0 ) {
 					return {};
 				}
 				var n,
 					r,
-					a = ( function ( e, t ) {
-						if ( null == e ) {
+					a = ( function ( _eLocal, _tLocal ) {
+						if ( _eLocal === null || _eLocal === void 0 ) {
 							return {};
 						}
-						var n = {};
-						for ( var r in e ) {
-							if ( {}.hasOwnProperty.call( e, r ) ) {
-								if ( -1 !== t.indexOf( r ) ) {
+						var _nLocal = {};
+						for ( var _rLocal in _eLocal ) {
+							if ( {}.hasOwnProperty.call( _eLocal, _rLocal ) ) {
+								if ( -1 !== _tLocal.indexOf( _rLocal ) ) {
 									continue;
 								}
-								n[ r ] = e[ r ];
+								_nLocal[ _rLocal ] = _eLocal[ _rLocal ];
 							}
 						}
-						return n;
+						return _nLocal;
 					} )( e, t );
 				if ( Object.getOwnPropertySymbols ) {
 					var o = Object.getOwnPropertySymbols( e );
 					for ( r = 0; r < o.length; r++ ) {
-						( ( n = o[ r ] ),
+						n = o[ r ];
+						if (
 							-1 === t.indexOf( n ) &&
-								{}.propertyIsEnumerable.call( e, n ) &&
-								( a[ n ] = e[ n ] ) );
+							{}.propertyIsEnumerable.call( e, n )
+						) {
+							a[ n ] = e[ n ];
+						}
 					}
 				}
 			} )( props, xn ),

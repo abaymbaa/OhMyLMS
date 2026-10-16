@@ -49,10 +49,10 @@ if ( 'grid' === $layout ) {
 ?>
 
 <?php
-// Check if we're in Gutenberg editor context (admin area or REST API)
+// Check if we're in Gutenberg editor context (admin area or REST API).
 $is_editor_context = is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || wp_is_json_request();
 
-// Check if we're in a block context by looking for block attributes
+// Check if we're in a block context by looking for block attributes.
 $is_block_context = isset( $atts ) && is_array( $atts ) && (
 	isset( $atts['layoutStyle'] ) ||
 	isset( $atts['layout_style'] ) ||

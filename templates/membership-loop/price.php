@@ -9,10 +9,10 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 global $membership;
-if ( $membership == null ) {
+if ( null == $membership ) {
 	return;
 }
 $currency = ohmylms_get_currency_symbol();
@@ -40,7 +40,7 @@ $save_calculation        = $regular_price ? number_format( ( ( floatval( $regula
 
 		echo '<small>' . '/' . $period . '</small>';
 
-		// Append sign-up fee if greater than zero, with shorter wording and small font
+		// Append sign-up fee if greater than zero, with shorter wording and small font.
 	if ( floatval( $signup_fee ) > 0 ) {
 		$negative_signup      = $signup_fee < 0;
 		$formatted_signup_fee = ( $negative_signup ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $signup_fee );
@@ -53,7 +53,7 @@ $save_calculation        = $regular_price ? number_format( ( ( floatval( $regula
 <?php if ( $membership->is_on_sale() && $membership->validate_on_sale() ) { ?>
 	<p class="membership-regular-price">
 		<?php
-			echo __( 'Normally ', 'ohmylms' );
+			echo esc_html__( 'Normally ', 'ohmylms' );
 
 			$negative        = $regular_price < 0;
 			$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $regular_price );

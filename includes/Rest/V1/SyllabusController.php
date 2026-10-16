@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A syllabus's skill groups and skills, and importing them from a CSV the browser has already read
+ * and mapped. Administrators only, like the rest of curriculum administration. Every write answers
+ * with the syllabus's fresh outline and the item tree (for the counts shown on the rows).
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;

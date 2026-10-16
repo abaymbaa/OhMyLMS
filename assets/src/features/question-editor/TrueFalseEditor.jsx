@@ -36,22 +36,27 @@ export function createTrueFalseEditor( readRuntime ) {
 							'ohmylms-options-list ohmylms-options-list-true-false'
 						}
 					>
-						{ options.map( function ( r, o ) {
+						{ options.map( function ( _rLocal, o ) {
 							var i, l;
 							return (
 								<div
 									className={ 'ohmylms-option-item-wrapper ohmylms-quiz-option-item ohmylms-quiz-option-item-'.concat(
 										o
 									) }
-									key={ ( null == r ? void 0 : r.id ) || o }
+									key={
+										( _rLocal === null || _rLocal === void 0
+											? void 0
+											: _rLocal.id ) || o
+									}
 								>
 									<Controls.CardWP
 										isBorderless={ ! 0 }
 										className={ 'ohmylms-option-item '.concat(
 											1 ==
-												( null == r
+												( _rLocal === null ||
+												_rLocal === void 0
 													? void 0
-													: r.is_correct )
+													: _rLocal.is_correct )
 												? 'ohmylms-option-item--correct'
 												: ''
 										) }
@@ -67,9 +72,12 @@ export function createTrueFalseEditor( readRuntime ) {
 													onChange={ function () {
 														return (
 															( n =
-																null == r
+																_rLocal ===
+																	null ||
+																_rLocal ===
+																	void 0
 																	? void 0
-																	: r.id ),
+																	: _rLocal.id ),
 															void addContentToQuestion(
 																questionId,
 																options.map(
@@ -94,23 +102,37 @@ export function createTrueFalseEditor( readRuntime ) {
 														 );
 														var n;
 													} }
-													selected={
-														1 ==
-														( null == r
-															? void 0
-															: r.is_correct )
-															? null == r
+													selected={ ( () => {
+														if (
+															1 ==
+															( _rLocal ===
+																null ||
+															_rLocal === void 0
 																? void 0
-																: r.answer
-															: null
-													}
+																: _rLocal.is_correct )
+														) {
+															if (
+																_rLocal ===
+																	null ||
+																_rLocal ===
+																	void 0
+															) {
+																return void 0;
+															}
+															return _rLocal.answer;
+														}
+														return null;
+													} )() }
 													options={ [
 														{
 															level: '',
 															value:
-																null == r
+																_rLocal ===
+																	null ||
+																_rLocal ===
+																	void 0
 																	? void 0
-																	: r.answer,
+																	: _rLocal.answer,
 														},
 													] }
 												/>
@@ -125,9 +147,10 @@ export function createTrueFalseEditor( readRuntime ) {
 														'ohmylms'
 													) }
 													value={
-														null == r
+														_rLocal === null ||
+														_rLocal === void 0
 															? void 0
-															: r.answer
+															: _rLocal.answer
 													}
 													readOnly={ ! 0 }
 													style={ {
@@ -138,8 +161,9 @@ export function createTrueFalseEditor( readRuntime ) {
 										</Controls.FlexWP>
 									</Controls.CardWP>
 									{ ! hasValidationErrors ||
-									( null != r &&
-										null !== ( i = r.answer ) &&
+									( _rLocal !== null &&
+										_rLocal !== void 0 &&
+										null !== ( i = _rLocal.answer ) &&
 										void 0 !== i &&
 										i.trim() ) ? (
 										<React.Fragment />
@@ -159,10 +183,12 @@ export function createTrueFalseEditor( readRuntime ) {
 											) }
 										</div>
 									) }
-									{ 1 == r.is_correct &&
+									{ 1 == _rLocal.is_correct &&
 										Boolean(
-											null == r ||
-												null === ( l = r.answer ) ||
+											_rLocal === null ||
+												_rLocal === void 0 ||
+												null ===
+													( l = _rLocal.answer ) ||
 												void 0 === l
 												? void 0
 												: l.trim()

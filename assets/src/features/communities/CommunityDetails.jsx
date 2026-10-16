@@ -34,31 +34,45 @@ export function createCommunityDetails( readRuntime ) {
 					.replace( /[\s_-]+/g, '-' )
 					.replace( /^-+|-+$/g, '' );
 			},
-			i = function ( e, t, i ) {
+			i = function ( e, t, _iLocal ) {
 				var l = p9( p9( {}, r ), {}, f9( {}, e, t ) );
 				if ( ( 'name' === e || 'title' === e ) && t ) {
 					var c = o( t ),
 						u = r.slug || '';
-					( ! u || u === o( r.title || r.name ) ) && ( l.slug = c );
+					if ( ! u || u === o( r.title || r.name ) ) {
+						l.slug = c;
+					}
 				}
-				( 'thumbnail' === e
-					? ( l.space_photo = i )
-					: 'cover_image_url' === e && ( l.cover_image = i ),
-					setCommunity( l ),
-					n( l ) );
+				if ( 'thumbnail' === e ) {
+					l.space_photo = _iLocal;
+				} else if ( 'cover_image_url' === e ) {
+					l.cover_image = _iLocal;
+				}
+				setCommunity( l );
+				n( l );
 			};
 		return (
 			( 0, ReactHooks.useEffect )( function () {
-				( ! ( function ( e, t ) {
-					var n = p9( {}, e ),
-						r = ! 1;
-					for ( var o in t ) {
-						( e && e.hasOwnProperty( o ) && e[ o ] ) ||
-							( ( n[ o ] = t[ o ] ), ( r = ! 0 ) );
+				( function ( e, t ) {
+					var _nLocal = p9( {}, e ),
+						_rLocal = ! 1;
+					for ( var _oLocal in t ) {
+						if ( ! (
+							e &&
+							e.hasOwnProperty( _oLocal ) &&
+							e[ _oLocal ]
+						) ) {
+							{
+								_nLocal[ _oLocal ] = t[ _oLocal ];
+								_rLocal = ! 0;
+							}
+						}
 					}
-					r && setCommunity( n );
-				} )( r, v9 ),
-					n( r ) );
+					if ( _rLocal ) {
+						setCommunity( _nLocal );
+					}
+				} )( r, v9 );
+				n( r );
 			}, [] ),
 			(
 				<React.Fragment>
@@ -68,11 +82,17 @@ export function createCommunityDetails( readRuntime ) {
 							'What would you like to call this community?',
 							'ohmylms'
 						) }
-						value={ Ge( null == r ? void 0 : r.title ) }
+						value={ Ge(
+							r === null || r === void 0 ? void 0 : r.title
+						) }
 						onChange={ function ( e ) {
 							return i( 'title', e );
 						} }
-						error={ null == errors ? void 0 : errors.title }
+						error={
+							errors === null || errors === void 0
+								? void 0
+								: errors.title
+						}
 					/>
 					<Controls.DividerWP marginStart={ '2' } marginEnd={ '2' } />
 					<DetailField
@@ -81,7 +101,10 @@ export function createCommunityDetails( readRuntime ) {
 							'The URL-friendly version of the name. This will be used in the community URL.',
 							'ohmylms'
 						) }
-						value={ ( null == r ? void 0 : r.slug ) || '' }
+						value={
+							( r === null || r === void 0 ? void 0 : r.slug ) ||
+							''
+						}
 						onChange={ function ( e ) {
 							return i( 'slug', e );
 						} }
@@ -89,7 +112,11 @@ export function createCommunityDetails( readRuntime ) {
 							'community-slug',
 							'ohmylms'
 						) }
-						error={ null == errors ? void 0 : errors.slug }
+						error={
+							errors === null || errors === void 0
+								? void 0
+								: errors.slug
+						}
 					/>
 					<Controls.DividerWP marginStart={ '2' } marginEnd={ '2' } />
 					<DetailField
@@ -98,7 +125,9 @@ export function createCommunityDetails( readRuntime ) {
 							'Describe your space to help members understand its purpose.',
 							'ohmylms'
 						) }
-						value={ Ge( null == r ? void 0 : r.description ) }
+						value={ Ge(
+							r === null || r === void 0 ? void 0 : r.description
+						) }
 						onChange={ function ( e ) {
 							return i( 'description', e );
 						} }
@@ -118,7 +147,11 @@ export function createCommunityDetails( readRuntime ) {
 							handleRemove={ function () {
 								return i( 'thumbnail', null, null );
 							} }
-							brandingImg={ null == r ? void 0 : r.thumbnail }
+							brandingImg={
+								r === null || r === void 0
+									? void 0
+									: r.thumbnail
+							}
 							alertTitle={ ( 0, I18n.__ )(
 								'Remove Space Photo',
 								'ohmylms'
@@ -146,7 +179,9 @@ export function createCommunityDetails( readRuntime ) {
 								return i( 'cover_image_url', null, null );
 							} }
 							brandingImg={
-								null == r ? void 0 : r.cover_image_url
+								r === null || r === void 0
+									? void 0
+									: r.cover_image_url
 							}
 							alertTitle={ ( 0, I18n.__ )(
 								'Remove Cover Image',

@@ -19,9 +19,15 @@ export function createWebhookDataMapping( readRuntime ) {
 				return e( StoreModule.default ).selectWebhookFormData();
 			}, [] ),
 			r = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			a = function ( e, t, a ) {
-				var o = n.data_mapping.map( function ( n, r ) {
-					return r === e ? D5( D5( {}, n ), {}, W5( {}, t, a ) ) : n;
+			a = function ( e, _tLocal, _aLocal ) {
+				var o = n.data_mapping.map( function ( _nLocal, _rLocal ) {
+					return _rLocal === e
+						? D5(
+								D5( {}, _nLocal ),
+								{},
+								W5( {}, _tLocal, _aLocal )
+							)
+						: _nLocal;
 				} );
 				r.updateWebhookFormData( 'data_mapping', o );
 			},
@@ -80,7 +86,9 @@ export function createWebhookDataMapping( readRuntime ) {
 					>
 						{ ( 0, I18n.__ )( 'Configure Fields', 'ohmylms' ) }
 					</Controls.TextWP>
-					{ ( null == t ? void 0 : t.data_mapping ) && (
+					{ ( t === null || t === void 0
+						? void 0
+						: t.data_mapping ) && (
 						<div
 							style={ {
 								padding: '12px',
@@ -151,17 +159,19 @@ export function createWebhookDataMapping( readRuntime ) {
 							/>
 						</Controls.FlexWP>
 						{ (
-							( null == n ? void 0 : n.data_mapping ) || [
+							( n === null || n === void 0
+								? void 0
+								: n.data_mapping ) || [
 								{
 									key: '',
 									value: '',
 								},
 							]
-						).map( function ( e, t ) {
+						).map( function ( e, _tLocal2 ) {
 							var i, l, c;
 							return (
 								<Controls.FlexWP
-									key={ t }
+									key={ _tLocal2 }
 									gap={ 16 }
 									align={ 'center' }
 									style={ {
@@ -179,8 +189,12 @@ export function createWebhookDataMapping( readRuntime ) {
 												'ohmylms'
 											) }
 											value={ e.key || '' }
-											onChange={ function ( e ) {
-												return a( t, 'key', e );
+											onChange={ function ( _eLocal ) {
+												return a(
+													_tLocal2,
+													'key',
+													_eLocal
+												);
 											} }
 										/>
 									</div>
@@ -518,7 +532,8 @@ export function createWebhookDataMapping( readRuntime ) {
 													l,
 													I5(
 														c[
-															null == n
+															n === null ||
+															n === void 0
 																? void 0
 																: n.trigger_event
 														] || []
@@ -526,8 +541,12 @@ export function createWebhookDataMapping( readRuntime ) {
 												) )
 											}
 											value={ e.value || '' }
-											onChange={ function ( e ) {
-												return a( t, 'value', e );
+											onChange={ function ( _eLocal2 ) {
+												return a(
+													_tLocal2,
+													'value',
+													_eLocal2
+												);
 											} }
 										/>
 									</div>
@@ -540,29 +559,30 @@ export function createWebhookDataMapping( readRuntime ) {
 										<Controls.ButtonWP
 											icon={ <Ps /> }
 											onClick={ function () {
-												return ( function ( e ) {
+												return ( function ( _eLocal3 ) {
 													if (
 														n.data_mapping &&
 														n.data_mapping.length >
 															1
 													) {
-														var t =
+														var _tLocal3 =
 															n.data_mapping.filter(
 																function (
-																	t,
-																	n
+																	_tLocal4,
+																	_nLocal2
 																) {
 																	return (
-																		n !== e
+																		_nLocal2 !==
+																		_eLocal3
 																	);
 																}
 															);
 														r.updateWebhookFormData(
 															'data_mapping',
-															t
+															_tLocal3
 														);
 													}
-												} )( t );
+												} )( _tLocal2 );
 											} }
 											title={ ( 0, I18n.__ )(
 												'Remove Field',
@@ -573,7 +593,8 @@ export function createWebhookDataMapping( readRuntime ) {
 												padding: '2px',
 											} }
 											disabled={
-												( ( null == n ||
+												( ( n === null ||
+												n === void 0 ||
 												null ===
 													( i = n.data_mapping ) ||
 												void 0 === i

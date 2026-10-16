@@ -1,4 +1,4 @@
-import { createElement, Fragment, useRef, useState } from '@wordpress/element';
+import { createElement, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { questionCreator } from './questionCreation.mjs';
@@ -12,7 +12,6 @@ import { QuestionTypeChooser } from '../question-editor/QuestionTypeChooser';
 import { QuestionForm } from '../question-editor/QuestionForm';
 import { questionWorkspaceKey } from '../question-editor/choiceModel.mjs';
 import { QUESTION_BLOCK_TYPES } from '../question-editor/questionBlocks.mjs';
-
 const PROBLEMS = () => ( {
 	name: __( 'Enter the question.', 'ohmylms' ),
 	marks: __( 'Marks must be zero or more.', 'ohmylms' ),
@@ -47,8 +46,11 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 	const [ error, setError ] = useState( '' );
 	const [ tried, setTried ] = useState( false );
 	const problems = validateDraft( draft );
-	const set = ( fields ) => setDraft( { ...draft, ...fields } );
-
+	const set = ( fields ) =>
+		setDraft( {
+			...draft,
+			...fields,
+		} );
 	async function save() {
 		setTried( true );
 		if ( problems.length ) {
@@ -69,7 +71,6 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 			setSaving( false );
 		}
 	}
-
 	if ( choosingType ) {
 		return (
 			<QuestionTypeChooser
@@ -110,9 +111,15 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 					} }
 					onChange={ ( patch ) =>
 						set( {
-							...( 'name' in patch ? { name: patch.name } : {} ),
+							...( 'name' in patch
+								? {
+										name: patch.name,
+									}
+								: {} ),
 							...( 'description' in patch
-								? { description: patch.description }
+								? {
+										description: patch.description,
+									}
 								: {} ),
 							...( patch.questions
 								? {
@@ -157,7 +164,11 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 				/>
 				{ tried && problems.length > 0 && (
 					<Notice status="warning" isDismissible={ false }>
-						<ul style={ { margin: 0 } }>
+						<ul
+							style={ {
+								margin: 0,
+							} }
+						>
 							{ problems.map( ( problem ) => (
 								<li key={ problem }>
 									{ PROBLEMS()[ problem ] }
@@ -167,12 +178,15 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 					</Notice>
 				) }
 				<p>
-					{ __(
-						skillId
-							? 'The question is saved to the bank and linked to this skill.'
-							: 'The question is saved to the bank without a quiz. Next you can set its bank, skills and difficulty, and approve it.',
-						'ohmylms'
-					) }
+					{ skillId
+						? __(
+								'The question is saved to the bank and linked to this skill.',
+								'ohmylms'
+							)
+						: __(
+								'The question is saved to the bank without a quiz. Next you can set its bank, skills and difficulty, and approve it.',
+								'ohmylms'
+							) }
 				</p>
 				<Button
 					variant="primary"

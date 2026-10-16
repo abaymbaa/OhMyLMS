@@ -13,7 +13,12 @@ import {
 	removeCategory,
 } from './interactiveModel.mjs';
 
-/** A number field that stores a number, or nothing while empty. */
+/**
+ * A number field that stores a number, or nothing while empty.
+ * @param value
+ * @param onChange
+ * @param extra
+ */
 const number = ( value, onChange, extra = {} ) => ( {
 	type: 'number',
 	step: 'any',
@@ -35,11 +40,19 @@ function ScaleEditor( { value, onChange, jug } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Minimum', 'ohmylms' ) }
-					{ ...number( value.min, ( min ) => onChange( { min } ) ) }
+					{ ...number( value.min, ( min ) =>
+						onChange( {
+							min,
+						} )
+					) }
 				/>
 				<TextControl
 					label={ __( 'Maximum', 'ohmylms' ) }
-					{ ...number( value.max, ( max ) => onChange( { max } ) ) }
+					{ ...number( value.max, ( max ) =>
+						onChange( {
+							max,
+						} )
+					) }
 				/>
 				<TextControl
 					label={
@@ -47,16 +60,25 @@ function ScaleEditor( { value, onChange, jug } ) {
 							? __( 'Minor tick', 'ohmylms' )
 							: __( 'Tick step', 'ohmylms' )
 					}
-					{ ...number( value.step, ( step ) => onChange( { step } ), {
-						min: 0,
-					} ) }
+					{ ...number(
+						value.step,
+						( step ) =>
+							onChange( {
+								step,
+							} ),
+						{
+							min: 0,
+						}
+					) }
 				/>
 			</div>
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Correct value', 'ohmylms' ) }
 					{ ...number( value.target, ( target ) =>
-						onChange( { target } )
+						onChange( {
+							target,
+						} )
 					) }
 				/>
 				<TextControl
@@ -68,8 +90,13 @@ function ScaleEditor( { value, onChange, jug } ) {
 					}
 					{ ...number(
 						value.tolerance,
-						( tolerance ) => onChange( { tolerance } ),
-						{ min: 0 }
+						( tolerance ) =>
+							onChange( {
+								tolerance,
+							} ),
+						{
+							min: 0,
+						}
 					) }
 				/>
 				{ ! jug && (
@@ -78,8 +105,13 @@ function ScaleEditor( { value, onChange, jug } ) {
 						help={ __( 'Empty means the tick step.', 'ohmylms' ) }
 						{ ...number(
 							value.snap,
-							( snap ) => onChange( { snap } ),
-							{ min: 0 }
+							( snap ) =>
+								onChange( {
+									snap,
+								} ),
+							{
+								min: 0,
+							}
 						) }
 					/>
 				) }
@@ -87,14 +119,17 @@ function ScaleEditor( { value, onChange, jug } ) {
 					<TextControl
 						label={ __( 'Unit', 'ohmylms' ) }
 						value={ value.unit || '' }
-						onChange={ ( unit ) => onChange( { unit } ) }
+						onChange={ ( unit ) =>
+							onChange( {
+								unit,
+							} )
+						}
 					/>
 				) }
 			</div>
 		</div>
 	);
 }
-
 export const NumberLineEditor = ( props ) => <ScaleEditor { ...props } />;
 export const FillLevelEditor = ( props ) => <ScaleEditor { ...props } jug />;
 
@@ -111,25 +146,52 @@ export function ShadeModelEditor( { value, onChange } ) {
 				label={ __( 'Shape', 'ohmylms' ) }
 				value={ value.shape || 'bar' }
 				options={ [
-					{ value: 'bar', label: __( 'Bar', 'ohmylms' ) },
-					{ value: 'grid', label: __( 'Grid', 'ohmylms' ) },
-					{ value: 'circle', label: __( 'Circle', 'ohmylms' ) },
+					{
+						value: 'bar',
+						label: __( 'Bar', 'ohmylms' ),
+					},
+					{
+						value: 'grid',
+						label: __( 'Grid', 'ohmylms' ),
+					},
+					{
+						value: 'circle',
+						label: __( 'Circle', 'ohmylms' ),
+					},
 				] }
-				onChange={ ( shape ) => onChange( { shape } ) }
+				onChange={ ( shape ) =>
+					onChange( {
+						shape,
+					} )
+				}
 			/>
 			<TextControl
 				label={ __( 'Equal parts', 'ohmylms' ) }
-				{ ...number( value.parts, ( parts ) => onChange( { parts } ), {
-					min: 2,
-					max: 100,
-				} ) }
+				{ ...number(
+					value.parts,
+					( parts ) =>
+						onChange( {
+							parts,
+						} ),
+					{
+						min: 2,
+						max: 100,
+					}
+				) }
 			/>
 			{ value.shape === 'grid' && (
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number( value.cols, ( cols ) => onChange( { cols } ), {
-						min: 1,
-					} ) }
+					{ ...number(
+						value.cols,
+						( cols ) =>
+							onChange( {
+								cols,
+							} ),
+						{
+							min: 1,
+						}
+					) }
 				/>
 			) }
 			<TextControl
@@ -140,8 +202,13 @@ export function ShadeModelEditor( { value, onChange } ) {
 				) }
 				{ ...number(
 					value.answer,
-					( answer ) => onChange( { answer } ),
-					{ min: 0 }
+					( answer ) =>
+						onChange( {
+							answer,
+						} ),
+					{
+						min: 0,
+					}
 				) }
 			/>
 		</div>
@@ -181,16 +248,29 @@ export function CountBlocksEditor( { value, onChange } ) {
 					label={ __( 'Number to build', 'ohmylms' ) }
 					{ ...number(
 						value.target,
-						( target ) => onChange( { target } ),
-						{ min: 1, step: 1 }
+						( target ) =>
+							onChange( {
+								target,
+							} ),
+						{
+							min: 1,
+							step: 1,
+						}
 					) }
 				/>
 				<TextControl
 					label={ __( 'Most blocks of one kind', 'ohmylms' ) }
 					{ ...number(
 						value.max_per_place,
-						( max_per_place ) => onChange( { max_per_place } ),
-						{ min: 1, max: 50, step: 1 }
+						( _maxPerPlace ) =>
+							onChange( {
+								max_per_place: _maxPerPlace,
+							} ),
+						{
+							min: 1,
+							max: 50,
+							step: 1,
+						}
 					) }
 				/>
 			</div>
@@ -200,7 +280,11 @@ export function CountBlocksEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ !! value.canonical }
-				onChange={ ( canonical ) => onChange( { canonical } ) }
+				onChange={ ( canonical ) =>
+					onChange( {
+						canonical,
+					} )
+				}
 			/>
 		</div>
 	);
@@ -218,38 +302,69 @@ export function SetClockEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Hour (1–12)', 'ohmylms' ) }
-					{ ...number( value.hour, ( hour ) => onChange( { hour } ), {
-						min: 1,
-						max: 12,
-						step: 1,
-					} ) }
+					{ ...number(
+						value.hour,
+						( hour ) =>
+							onChange( {
+								hour,
+							} ),
+						{
+							min: 1,
+							max: 12,
+							step: 1,
+						}
+					) }
 				/>
 				<TextControl
 					label={ __( 'Minutes (0–59)', 'ohmylms' ) }
 					{ ...number(
 						value.minute,
-						( minute ) => onChange( { minute } ),
-						{ min: 0, max: 59, step: 1 }
+						( minute ) =>
+							onChange( {
+								minute,
+							} ),
+						{
+							min: 0,
+							max: 59,
+							step: 1,
+						}
 					) }
 				/>
 				<TextControl
 					label={ __( 'Accepted error (minutes)', 'ohmylms' ) }
 					{ ...number(
 						value.tolerance,
-						( tolerance ) => onChange( { tolerance } ),
-						{ min: 0, step: 1 }
+						( tolerance ) =>
+							onChange( {
+								tolerance,
+							} ),
+						{
+							min: 0,
+							step: 1,
+						}
 					) }
 				/>
 				<SelectControl
 					label={ __( 'Hand moves in steps of', 'ohmylms' ) }
 					value={ String( value.snap || 1 ) }
 					options={ [
-						{ value: '1', label: __( '1 minute', 'ohmylms' ) },
-						{ value: '5', label: __( '5 minutes', 'ohmylms' ) },
-						{ value: '15', label: __( '15 minutes', 'ohmylms' ) },
+						{
+							value: '1',
+							label: __( '1 minute', 'ohmylms' ),
+						},
+						{
+							value: '5',
+							label: __( '5 minutes', 'ohmylms' ),
+						},
+						{
+							value: '15',
+							label: __( '15 minutes', 'ohmylms' ),
+						},
 					] }
 					onChange={ ( snap ) =>
-						onChange( { snap: Number( snap ) } )
+						onChange( {
+							snap: Number( snap ),
+						} )
 					}
 				/>
 			</div>
@@ -259,7 +374,11 @@ export function SetClockEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ !! value.show_digital }
-				onChange={ ( show_digital ) => onChange( { show_digital } ) }
+				onChange={ ( _showDigital ) =>
+					onChange( {
+						show_digital: _showDigital,
+					} )
+				}
 			/>
 		</div>
 	);
@@ -281,20 +400,32 @@ export function MakeAmountEditor( { value, onChange } ) {
 				) }
 				value={ ( value.denominations || [] ).join( ', ' ) }
 				onChange={ ( text ) =>
-					onChange( { denominations: parseAmounts( text ) } )
+					onChange( {
+						denominations: parseAmounts( text ),
+					} )
 				}
 			/>
 			<TextControl
 				label={ __( 'Currency symbol', 'ohmylms' ) }
 				value={ value.symbol || '' }
-				onChange={ ( symbol ) => onChange( { symbol } ) }
+				onChange={ ( symbol ) =>
+					onChange( {
+						symbol,
+					} )
+				}
 			/>
 			<TextControl
 				label={ __( 'Amount to make', 'ohmylms' ) }
 				{ ...number(
 					value.target,
-					( target ) => onChange( { target } ),
-					{ min: 1, step: 1 }
+					( target ) =>
+						onChange( {
+							target,
+						} ),
+					{
+						min: 1,
+						step: 1,
+					}
 				) }
 			/>
 		</div>
@@ -312,7 +443,12 @@ export function BuildChartEditor( { value, onChange } ) {
 	const setCategory = ( id, patch ) =>
 		onChange( {
 			categories: categories.map( ( category ) =>
-				category.id === id ? { ...category, ...patch } : category
+				category.id === id
+					? {
+							...category,
+							...patch,
+						}
+					: category
 			),
 		} );
 	return (
@@ -320,32 +456,55 @@ export function BuildChartEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Chart maximum', 'ohmylms' ) }
-					{ ...number( value.max, ( max ) => onChange( { max } ), {
-						min: 1,
-					} ) }
+					{ ...number(
+						value.max,
+						( max ) =>
+							onChange( {
+								max,
+							} ),
+						{
+							min: 1,
+						}
+					) }
 				/>
 				<TextControl
 					label={ __( 'Step', 'ohmylms' ) }
-					{ ...number( value.step, ( step ) => onChange( { step } ), {
-						min: 0,
-					} ) }
+					{ ...number(
+						value.step,
+						( step ) =>
+							onChange( {
+								step,
+							} ),
+						{
+							min: 0,
+						}
+					) }
 				/>
 				<TextControl
 					label={ __( 'Unit (optional)', 'ohmylms' ) }
 					value={ value.unit || '' }
-					onChange={ ( unit ) => onChange( { unit } ) }
+					onChange={ ( unit ) =>
+						onChange( {
+							unit,
+						} )
+					}
 				/>
 			</div>
 			{ categories.map( ( category, index ) => (
 				<div key={ category.id } className="ohmylms-interactive-row">
 					<TextControl
 						label={ sprintf(
-							__( 'Bar %d label', 'ohmylms' ),
+							/* translators: %d: bar number. */ __(
+								'Bar %d label',
+								'ohmylms'
+							),
 							index + 1
 						) }
 						value={ category.label || '' }
 						onChange={ ( label ) =>
-							setCategory( category.id, { label } )
+							setCategory( category.id, {
+								label,
+							} )
 						}
 					/>
 					<TextControl
@@ -389,7 +548,11 @@ export function BuildChartEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ !! value.show_table }
-				onChange={ ( show_table ) => onChange( { show_table } ) }
+				onChange={ ( _showTable ) =>
+					onChange( {
+						show_table: _showTable,
+					} )
+				}
 			/>
 		</div>
 	);
@@ -406,9 +569,10 @@ export function GridBuildEditor( { value, onChange } ) {
 	const set = ( patch ) =>
 		onChange( {
 			constraints: Object.fromEntries(
-				Object.entries( { ...constraints, ...patch } ).filter(
-					( [ , v ] ) => v !== undefined && v !== false
-				)
+				Object.entries( {
+					...constraints,
+					...patch,
+				} ).filter( ( [ , v ] ) => v !== undefined && v !== false )
 			),
 		} );
 	return (
@@ -416,19 +580,33 @@ export function GridBuildEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Rows', 'ohmylms' ) }
-					{ ...number( value.rows, ( rows ) => onChange( { rows } ), {
-						min: 1,
-						max: 20,
-						step: 1,
-					} ) }
+					{ ...number(
+						value.rows,
+						( rows ) =>
+							onChange( {
+								rows,
+							} ),
+						{
+							min: 1,
+							max: 20,
+							step: 1,
+						}
+					) }
 				/>
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number( value.cols, ( cols ) => onChange( { cols } ), {
-						min: 1,
-						max: 20,
-						step: 1,
-					} ) }
+					{ ...number(
+						value.cols,
+						( cols ) =>
+							onChange( {
+								cols,
+							} ),
+						{
+							min: 1,
+							max: 20,
+							step: 1,
+						}
+					) }
 				/>
 			</div>
 			<p>
@@ -442,28 +620,48 @@ export function GridBuildEditor( { value, onChange } ) {
 					label={ __( 'Area (squares)', 'ohmylms' ) }
 					{ ...number(
 						constraints.area,
-						( area ) => set( { area } ),
-						{ min: 1, step: 1 }
+						( area ) =>
+							set( {
+								area,
+							} ),
+						{
+							min: 1,
+							step: 1,
+						}
 					) }
 				/>
 				<TextControl
 					label={ __( 'Perimeter', 'ohmylms' ) }
 					{ ...number(
 						constraints.perimeter,
-						( perimeter ) => set( { perimeter } ),
-						{ min: 1, step: 1 }
+						( perimeter ) =>
+							set( {
+								perimeter,
+							} ),
+						{
+							min: 1,
+							step: 1,
+						}
 					) }
 				/>
 			</div>
 			<CheckboxControl
 				label={ __( 'Must be a rectangle', 'ohmylms' ) }
 				checked={ !! constraints.rectangle }
-				onChange={ ( rectangle ) => set( { rectangle } ) }
+				onChange={ ( rectangle ) =>
+					set( {
+						rectangle,
+					} )
+				}
 			/>
 			<CheckboxControl
 				label={ __( 'Squares must be connected', 'ohmylms' ) }
 				checked={ !! constraints.connected }
-				onChange={ ( connected ) => set( { connected } ) }
+				onChange={ ( connected ) =>
+					set( {
+						connected,
+					} )
+				}
 			/>
 			<CheckboxControl
 				label={ __(
@@ -471,7 +669,11 @@ export function GridBuildEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ !! value.show_measures }
-				onChange={ ( show_measures ) => onChange( { show_measures } ) }
+				onChange={ ( _showMeasures ) =>
+					onChange( {
+						show_measures: _showMeasures,
+					} )
+				}
 			/>
 		</div>
 	);
@@ -494,7 +696,9 @@ export function VisualPreview( { type, settings = {} } ) {
 			return undefined;
 		}
 		node.textContent = '';
-		const config = { ...settings };
+		const config = {
+			...settings,
+		};
 		if ( type === 'build-chart' && settings.show_table ) {
 			config.table = ( settings.categories || [] ).map(
 				( category ) => ( {

@@ -4,14 +4,12 @@ import { createElement } from '@wordpress/element';
 export function createCouponModal( readRuntime ) {
 	return function CouponModal( props ) {
 		const {
-			Cre,
 			Ge: decodeEntities,
 			I: Controls,
 			Nm: SettingSelect,
 			Pf: SettingField,
 			Pre,
 			React,
-			Rre,
 			Sre,
 			b: I18n,
 			g: ReactHooks,
@@ -96,9 +94,9 @@ export function createCouponModal( readRuntime ) {
 					r,
 					a,
 					o,
-					i = ! 0;
+					_iLocal = ! 0;
 				return (
-					i &&
+					_iLocal &&
 						( ( e = '' !== title.trim() ),
 						( t = parseFloat( amount ) > 0 ),
 						( n = parseInt( usageLimit, 10 ) > 0 ),
@@ -109,7 +107,7 @@ export function createCouponModal( readRuntime ) {
 							selectedCourses.length > 0 ),
 						setValid( e && t && n && r && a && o ) ),
 					function () {
-						i = ! 1;
+						_iLocal = ! 1;
 					}
 				 );
 			},
@@ -125,7 +123,8 @@ export function createCouponModal( readRuntime ) {
 			]
 		);
 		var closeModal = function () {
-				( setIsOpen( ! 1 ), setSelectedData( null ) );
+				setIsOpen( ! 1 );
+				setSelectedData( null );
 			},
 			$ = function () {
 				var e = Math.random()
@@ -207,7 +206,7 @@ export function createCouponModal( readRuntime ) {
 					},
 				];
 			}, [] );
-		( ( 0, ReactHooks.useMemo )( function () {
+		( 0, ReactHooks.useMemo )( function () {
 			return [
 				{
 					label: 'All Courses',
@@ -218,69 +217,107 @@ export function createCouponModal( readRuntime ) {
 					value: 'selected_course',
 				},
 			];
-		}, [] ),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e, t;
-					data &&
-						( setTitle(
-							( null == data ? void 0 : data.title ) || 'Untitled'
-						),
-						setCode( ( null == data ? void 0 : data.code ) || '' ),
+		}, [] );
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e, t;
+				if ( data ) {
+					{
+						setTitle(
+							( data === null || data === void 0
+								? void 0
+								: data.title ) || 'Untitled'
+						);
+						setCode(
+							( data === null || data === void 0
+								? void 0
+								: data.code ) || ''
+						);
 						setDescription(
-							( null == data ? void 0 : data.description ) || ''
-						),
+							( data === null || data === void 0
+								? void 0
+								: data.description ) || ''
+						);
 						setDiscountType(
-							( null == data ? void 0 : data.discount_type ) ||
-								'percent'
-						),
+							( data === null || data === void 0
+								? void 0
+								: data.discount_type ) || 'percent'
+						);
 						setAmount(
-							( null == data ? void 0 : data.amount ) || ''
-						),
+							( data === null || data === void 0
+								? void 0
+								: data.amount ) || ''
+						);
 						setPerUserLimit(
-							( null == data
+							( data === null || data === void 0
 								? void 0
 								: data.usage_limit_per_user ) || 1
-						),
+						);
 						setUsageLimit(
-							( null == data ? void 0 : data.usage_limit ) || ''
-						),
-						null != data && data.course_id_type
-							? ( setCourseType(
-									null == data ? void 0 : data.course_id_type
-								),
+							( data === null || data === void 0
+								? void 0
+								: data.usage_limit ) || ''
+						);
+						if (
+							data !== null &&
+							data !== void 0 &&
+							data.course_id_type
+						) {
+							{
+								setCourseType(
+									data === null || data === void 0
+										? void 0
+										: data.course_id_type
+								);
 								setSelectedCourses(
-									( null == data
+									( data === null || data === void 0
 										? void 0
 										: data.course_ids ) || []
-								) )
-							: ( setCourseType( 'all' ),
-								setSelectedCourses( [] ) ),
-						null != data &&
-							data.date_expires &&
+								);
+							}
+						} else {
+							{
+								setCourseType( 'all' );
+								setSelectedCourses( [] );
+							}
+						}
+						if (
+							data !== null &&
+							data !== void 0 &&
+							data.date_expires
+						) {
 							setEndDate(
 								new Date(
-									null == data ||
+									data === null ||
+										data === void 0 ||
 										null === ( e = data.date_expires ) ||
 										void 0 === e
 										? void 0
 										: e.date
 								)
-							),
-						null != data &&
-							data.date_start &&
+							);
+						}
+						if (
+							data !== null &&
+							data !== void 0 &&
+							data.date_start
+						) {
 							setStartDate(
 								new Date(
-									null == data ||
+									data === null ||
+										data === void 0 ||
 										null === ( t = data.date_start ) ||
 										void 0 === t
 										? void 0
 										: t.date
 								)
-							) );
-				},
-				[ data ]
-			) );
+							);
+						}
+					}
+				}
+			},
+			[ data ]
+		);
 		const displayAmount = isNaN( amount )
 			? '0'
 			: Number( amount ).toFixed( 0 );
@@ -364,11 +401,14 @@ export function createCouponModal( readRuntime ) {
 																/[^a-zA-Z0-9-_]/g,
 																''
 															);
-															( '' === t ||
+															if (
+																'' === t ||
 																/[a-zA-Z]/.test(
 																	t
-																) ) &&
+																)
+															) {
 																setCode( t );
+															}
 														} }
 													/>
 													<Controls.ButtonWP
@@ -376,20 +416,17 @@ export function createCouponModal( readRuntime ) {
 															l && 'is-generating'
 														) }
 														onClick={ function () {
-															( c( ! 0 ),
-																setTimeout(
-																	function () {
-																		var e =
-																			$();
-																		( setCode(
-																			e
-																		),
-																			c(
-																				! 1
-																			) );
-																	},
-																	800
-																) );
+															c( ! 0 );
+															setTimeout(
+																function () {
+																	var e = $();
+																	setCode(
+																		e
+																	);
+																	c( ! 1 );
+																},
+																800
+															);
 														} }
 													>
 														<Sre />
@@ -474,11 +511,15 @@ export function createCouponModal( readRuntime ) {
 										'percent' === discountType ? 100 : null
 									}
 									onKeyDown={ function ( e ) {
-										( '.' !== e.key &&
+										if ( ! (
+											'.' !== e.key &&
 											',' !== e.key &&
-											'e' !== e.key ) ||
-											( 'percent' === discountType &&
-												e.preventDefault() );
+											'e' !== e.key
+										) ) {
+											if ( 'percent' === discountType ) {
+												e.preventDefault();
+											}
+										}
 									} }
 								/>
 								<SettingField
@@ -549,8 +590,8 @@ export function createCouponModal( readRuntime ) {
 											{ React.createElement( DatePicker, {
 												date: startDate,
 												onChange( e ) {
-													! ( function ( e ) {
-														setStartDate( e );
+													( function ( _eLocal ) {
+														setStartDate( _eLocal );
 													} )( e );
 												},
 												isInvalidDateCallback( e ) {
@@ -611,8 +652,8 @@ export function createCouponModal( readRuntime ) {
 											{ React.createElement( DatePicker, {
 												date: endDate,
 												onChange( e ) {
-													! ( function ( e ) {
-														setEndDate( e );
+													( function ( _eLocal2 ) {
+														setEndDate( _eLocal2 );
 													} )( e );
 												},
 												isInvalidDateCallback( e ) {
@@ -656,7 +697,9 @@ export function createCouponModal( readRuntime ) {
 									isBusy={ saving }
 									disabled={ ! code || ! valid || saving }
 								>
-									{ null != data && data.id
+									{ data !== null &&
+									data !== void 0 &&
+									data.id
 										? ( 0, I18n.__ )( 'Update', 'ohmylms' )
 										: ( 0, I18n.__ )(
 												'Create',

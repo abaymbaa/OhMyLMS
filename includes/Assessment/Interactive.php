@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Interactive "recognize and produce" question types.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\Assessment\Cas\Expression;
@@ -122,7 +127,7 @@ final class Interactive {
 			case 'multi-blank':
 				$layout         = ( $settings['layout'] ?? 'inline' ) === 'table' ? 'table' : 'inline';
 				$view['layout'] = $layout;
-				if ( $layout === 'table' ) {
+				if ( 'table' === $layout ) {
 					$view['columns'] = array_map( 'strval', array_values( (array) ( $settings['columns'] ?? array() ) ) );
 					$view['rows']    = array_map(
 						static function ( $row ) {
@@ -180,7 +185,7 @@ final class Interactive {
 				foreach ( self::blank_ids( $settings ) as $id ) {
 					$spec  = (array) ( $settings['blanks'][ $id ] ?? array() );
 					$kind  = $spec['kind'] ?? 'text';
-					$value = $kind === 'numerical' ? ( $spec['answers'][0] ?? $spec['answer'] ?? '' ) : ( $kind === 'expression' ? ( $spec['answer'] ?? '' ) : ( $spec['accepted'][0] ?? '' ) );
+					$value = 'numerical' === $kind ? ( $spec['answers'][0] ?? $spec['answer'] ?? '' ) : ( 'expression' === $kind ? ( $spec['answer'] ?? '' ) : ( $spec['accepted'][0] ?? '' ) );
 					$out[] = '{' . $id . '} = ' . $value;
 				}
 				return $out;
@@ -238,7 +243,7 @@ final class Interactive {
 	/** Form field name for a keyed answer, or for the ordered list when $key is null. */
 	public static function field_name( array $attempt, array $question, $key = null ) {
 		return 'attempt[' . (int) $attempt['id'] . '][quiz_question][' . (int) $question['id'] . ']'
-			. ( $key === null ? '[]' : '[' . preg_replace( '/[^a-z0-9_-]/i', '', (string) $key ) . ']' );
+			. ( null === $key ? '[]' : '[' . preg_replace( '/[^a-z0-9_-]/i', '', (string) $key ) . ']' );
 	}
 
 	/** Field-name prefix for widgets that add their own hidden inputs: attempt[a][quiz_question][q]. */
@@ -383,7 +388,7 @@ final class Interactive {
 			$check = Expression::check( $typed, $key, $form, $settings );
 			$ok    = $ok || $check['correct'];
 			// "form" is the most helpful reason when the value was right but the shape was not.
-			$why = $check['correct'] ? 'equivalent' : ( $why === 'equivalent' || $check['reason'] === 'different' ? $why : $check['reason'] );
+			$why = $check['correct'] ? 'equivalent' : ( 'equivalent' === $why || 'different' === $check['reason'] ? $why : $check['reason'] );
 		}
 		$result           = self::result( array( $ok ), false );
 		$result['reason'] = $ok ? 'equivalent' : $why;
@@ -416,7 +421,7 @@ final class Interactive {
 			$id    = (string) ( $slot['id'] ?? '' );
 			$input = $answer[ $id ] ?? '';
 			// The chosen text must be one of the slot's choices and the key.
-			$items[ $id ] = is_scalar( $input ) && (string) $input !== ''
+			$items[ $id ] = is_scalar( $input ) && '' !== (string) $input
 				&& in_array( (string) $input, array_map( 'strval', (array) ( $slot['choices'] ?? array() ) ), true )
 				&& self::same_text( $input, $slot['answer'] ?? null );
 		}

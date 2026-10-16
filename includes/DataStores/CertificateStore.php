@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class CertificateStore.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -276,16 +281,16 @@ class CertificateStore extends DataStore {
 	public function get_courses( $certificate ) {
 		global $wpdb;
 
-		// Get the certificate ID
+		// Get the certificate ID.
 		$certificate_id = $certificate->get_id();
 
-		// Query to get all course IDs associated with the certificate
+		// Query to get all course IDs associated with the certificate.
 		$query = $wpdb->prepare(
 			"SELECT course_id FROM {$wpdb->prefix}ohmylms_certificate_relationship WHERE certificate_id = %d",
 			$certificate_id
 		);
 
-		// Execute the query and get the results
+		// Execute the query and get the results.
 		$results = $wpdb->get_col( $query );
 
 		if ( ! empty( $results ) ) {
@@ -305,30 +310,30 @@ class CertificateStore extends DataStore {
 			return $courses;
 		}
 
-		// Return the list of course IDs
+		// Return the list of course IDs.
 		return array();
 	}
 
 	public function set_courses( $certificate, $courses ) {
 		global $wpdb;
 
-		// Get the certificate ID
+		// Get the certificate ID.
 		$certificate_id = $certificate->get_id();
 
-		// Prepare the table name
+		// Prepare the table name.
 		$table_name = $wpdb->prefix . 'ohmylms_certificate_relationship';
 
-		// Delete all existing relationships
+		// Delete all existing relationships.
 		$wpdb->delete(
 			$table_name,
 			array( 'certificate_id' => $certificate_id ),
 			array( '%d' )
 		);
 
-		// Insert new relationships
+		// Insert new relationships.
 		foreach ( $courses as $course ) {
 			if ( isset( $course['id'] ) ) {
-				// Delete all existing relationships
+				// Delete all existing relationships.
 				$wpdb->delete(
 					$table_name,
 					array( 'course_id' => $course['id'] ),

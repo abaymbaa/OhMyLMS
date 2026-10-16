@@ -26,11 +26,10 @@ import {
 	validateTopic,
 	visibleChildren,
 } from './workspace.mjs';
-
 const countsLine = ( counts ) =>
 	[
 		sprintf(
-			_n(
+			/* translators: %d: number of curriculum folders. */ _n(
 				'%d folder',
 				'%d folders',
 				counts.topics + counts.chapters,
@@ -39,7 +38,12 @@ const countsLine = ( counts ) =>
 			counts.topics + counts.chapters
 		),
 		sprintf(
-			_n( '%d skill', '%d skills', counts.skills, 'ohmylms' ),
+			/* translators: %d: number of skills. */ _n(
+				'%d skill',
+				'%d skills',
+				counts.skills,
+				'ohmylms'
+			),
 			counts.skills
 		),
 	].join( ' · ' );
@@ -93,7 +97,10 @@ export function TopicPane( { node } ) {
 			}
 			event.preventDefault();
 			event.dataTransfer.dropEffect = 'move';
-			setDropTarget( { key: child.key, after } );
+			setDropTarget( {
+				key: child.key,
+				after,
+			} );
 		},
 		onDrop( event ) {
 			event.preventDefault();
@@ -130,15 +137,19 @@ export function TopicPane( { node } ) {
 	} );
 	const own = siblingInfo( w.items, node.id );
 	const check = ( key ) => ( text ) => {
-		const code = validateTopic( { name: 'x', [ key ]: text } )[ key ];
+		const code = validateTopic( {
+			name: 'x',
+			[ key ]: text,
+		} )[ key ];
 		return code ? MESSAGES[ code ]() : '';
 	};
 	const save =
 		( key, trim = true ) =>
 		( text ) =>
-			w.actions.saveTopic( item, { [ key ]: trim ? text.trim() : text } );
+			w.actions.saveTopic( item, {
+				[ key ]: trim ? text.trim() : text,
+			} );
 	const noun = root ? __( 'syllabus', 'ohmylms' ) : __( 'folder', 'ohmylms' );
-
 	const topicControls = ( child ) => {
 		const info = siblingInfo( w.items, child.id );
 		const entry =
@@ -193,7 +204,6 @@ export function TopicPane( { node } ) {
 						} ),
 				},
 			];
-
 	return (
 		<div className="ohmylms-ws-pane">
 			<Breadcrumb
@@ -264,7 +274,10 @@ export function TopicPane( { node } ) {
 					multiline
 					value={ item.description }
 					placeholder={ sprintf(
-						__( 'Add %s description …', 'ohmylms' ),
+						/* translators: %s: curriculum item name. */ __(
+							'Add %s description …',
+							'ohmylms'
+						),
 						noun
 					) }
 					inputClassName="ohmylms-ws-description"
@@ -285,7 +298,10 @@ export function TopicPane( { node } ) {
 						<AddContentMenu
 							compact
 							label={ sprintf(
-								__( 'Add to this %s', 'ohmylms' ),
+								/* translators: %s: curriculum item name. */ __(
+									'Add to this %s',
+									'ohmylms'
+								),
 								noun
 							) }
 							disabled={ w.pending }
@@ -358,7 +374,7 @@ export function TopicPane( { node } ) {
 									}
 									tag={ __( 'Folder', 'ohmylms' ) }
 									meta={ sprintf(
-										_n(
+										/* translators: %d: number of skills. */ _n(
 											'%d skill',
 											'%d skills',
 											child.children.length,
@@ -383,7 +399,7 @@ export function TopicPane( { node } ) {
 										tag={ __( 'Folder', 'ohmylms' ) }
 										meta={ [
 											sprintf(
-												_n(
+												/* translators: %d: number of skills. */ _n(
 													'%d skill',
 													'%d skills',
 													counts.skills,
@@ -392,7 +408,7 @@ export function TopicPane( { node } ) {
 												counts.skills
 											),
 											sprintf(
-												_n(
+												/* translators: %d: number of curriculum folders. */ _n(
 													'%d folder',
 													'%d folders',
 													counts.topics +
@@ -406,7 +422,7 @@ export function TopicPane( { node } ) {
 										menu={
 											<RowMenu
 												label={ sprintf(
-													__(
+													/* translators: %s: curriculum item name. */ __(
 														'Actions for %s',
 														'ohmylms'
 													),

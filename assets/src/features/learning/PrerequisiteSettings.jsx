@@ -30,30 +30,31 @@ export function createPrerequisiteSettings( readRuntime ) {
 			u = void 0 === showDivider || showDivider,
 			s = ( function ( e, t ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
+					( function ( _eLocal2, _tLocal ) {
 						var n =
-							null == e
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( n !== null && n !== void 0 ) {
 							var r,
 								a,
-								o,
+								_oLocal,
 								i,
 								l = [],
 								c = ! 0,
-								u = ! 1;
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( _oLocal = ( n = n.call( _eLocal2 ) )
+										.next ),
+									0 === _tLocal )
 								) {
 									if ( Object( n ) !== n ) {
 										return;
@@ -62,25 +63,32 @@ export function createPrerequisiteSettings( readRuntime ) {
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( r = _oLocal.call( n ) )
+											.done ) &&
+										( l.push( r.value ),
+										l.length !== _tLocal );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								_uLocal = ! 0;
+								a = _eLocal3;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											n.return
+										) &&
 										( ( i = n.return() ),
 										Object( i ) !== i )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
+									if ( _uLocal ) {
 										throw a;
 									}
 								}
@@ -88,24 +96,30 @@ export function createPrerequisiteSettings( readRuntime ) {
 							return l;
 						}
 					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return on( e, t );
+					( function ( _eLocal4, _tLocal2 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return on( _eLocal4, _tLocal2 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var n = {}.toString.call( _eLocal4 ).slice( 8, -1 );
 							return (
 								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? on( e, t )
-										: void 0
+									_eLocal4.constructor &&
+									( n = _eLocal4.constructor.name ),
+								( () => {
+									if ( 'Map' === n || 'Set' === n ) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === n ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											n
+										)
+									) {
+										return on( _eLocal4, _tLocal2 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
 					} )( e, t ) ||
@@ -129,27 +143,35 @@ export function createPrerequisiteSettings( readRuntime ) {
 			p = ( function () {
 				var e,
 					t =
-						( ( e = nn().m( function e( t ) {
+						( ( e = nn().m( function _eLocal5( _tLocal3 ) {
 							var n, r, a, i;
-							return nn().w( function ( e ) {
+							return nn().w( function ( _eLocal6 ) {
 								for (;;) {
-									switch ( e.n ) {
+									switch ( _eLocal6.n ) {
 										case 0:
-											if ( ! ( t.length >= 3 ) ) {
-												e.n = 4;
+											if ( ! ( _tLocal3.length >= 3 ) ) {
+												_eLocal6.n = 4;
 												break;
 											}
-											return ( ( e.n = 1 ), o( t ) );
+											return (
+												( _eLocal6.n = 1 ),
+												o( _tLocal3 )
+											 );
 										case 1:
 											if (
 												0 !==
-												( null == ( r = e.v ) ||
+												( ( ( _nullableValue2 ) =>
+													_nullableValue2 === null ||
+													_nullableValue2 ===
+														void 0 )(
+													( r = _eLocal6.v )
+												) ||
 												null === ( n = r.data ) ||
 												void 0 === n
 													? void 0
 													: n.length )
 											) {
-												e.n = 2;
+												_eLocal6.n = 2;
 												break;
 											}
 											return (
@@ -159,7 +181,7 @@ export function createPrerequisiteSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												e.a( 2, [] )
+												_eLocal6.a( 2, [] )
 											 );
 										case 2:
 											return (
@@ -170,56 +192,79 @@ export function createPrerequisiteSettings( readRuntime ) {
 													)
 												),
 												( i =
-													null == r ||
+													r === null ||
+													r === void 0 ||
 													null === ( a = r.data ) ||
 													void 0 === a
 														? void 0
 														: a.map(
-																function ( e ) {
+																function (
+																	_eLocal7
+																) {
 																	return {
 																		label: Ge(
-																			null ==
-																				e
+																			_eLocal7 ===
+																				null ||
+																				_eLocal7 ===
+																					void 0
 																				? void 0
-																				: e.label
+																				: _eLocal7.label
 																		),
 																		value:
-																			null ==
-																			e
+																			_eLocal7 ===
+																				null ||
+																			_eLocal7 ===
+																				void 0
 																				? void 0
-																				: e.value,
+																				: _eLocal7.value,
 																	};
 																}
 															) ),
-												e.a( 2, i || [] )
+												_eLocal6.a( 2, i || [] )
 											 );
 										case 3:
-											e.n = 5;
+											_eLocal6.n = 5;
 											break;
 										case 4:
-											return e.a( 2, [] );
+											return _eLocal6.a( 2, [] );
 										case 5:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
-							}, e );
+							}, _eLocal5 );
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
+						function ( ..._args ) {
+							var _tLocal4 = this,
+								n = _args;
 							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									an( o, r, a, i, l, 'next', e );
+								var _oLocal2 = e.apply( _tLocal4, n );
+								function i( _eLocal8 ) {
+									an(
+										_oLocal2,
+										r,
+										a,
+										i,
+										l,
+										'next',
+										_eLocal8
+									);
 								}
-								function l( e ) {
-									an( o, r, a, i, l, 'throw', e );
+								function l( _eLocal9 ) {
+									an(
+										_oLocal2,
+										r,
+										a,
+										i,
+										l,
+										'throw',
+										_eLocal9
+									);
 								}
 								i( void 0 );
 							} );
 						} );
-				return function ( e ) {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return t.apply( this, _args2 );
 				};
 			} )();
 		return (

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling student REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -55,7 +60,7 @@ class StudentController extends RestController {
 			)
 		);
 
-		// Unban student endpoint
+		// Unban student endpoint.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/unban',
@@ -102,7 +107,7 @@ class StudentController extends RestController {
 			$wpdb->get_blog_prefix() . 'capabilities'
 		);
 
-		// Pagination parameters
+		// Pagination parameters.
 		$page     = $request->get_param( 'page' ) ? (int) $request->get_param( 'page' ) : 1;
 		$per_page = $request->get_param( 'per_page' ) ? (int) $request->get_param( 'per_page' ) : 10;
 
@@ -111,15 +116,15 @@ class StudentController extends RestController {
 		$end_date   = $request->get_param( 'end_date' );
 		$offset     = ( $page - 1 ) * $per_page;
 
-		// Search parameter
+		// Search parameter.
 		$search    = isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '';
 		$course_id = $request->get_param( 'course_id' ) ? (int) $request->get_param( 'course_id' ) : null;
 
-		// Order by parameter (default is 'name')
+		// Order by parameter (default is 'name').
 		$order_by = $request->get_param( 'order_by' ) ? sanitize_text_field( $request->get_param( 'order_by' ) ) : 'name';
 		$order    = $request->get_param( 'order' ) ? strtoupper( sanitize_text_field( $request->get_param( 'order' ) ) ) : 'ASC';
 
-		// Validate the order_by parameter
+		// Validate the order_by parameter.
 		$valid_order_by = array( 'name', 'email', 'registration_date', 'courses_enrolled', 'membership_enrolled' );
 		$valid_order    = array( 'ASC', 'DESC' );
 		if ( ! in_array( $order_by, $valid_order_by, true ) ) {
@@ -135,13 +140,13 @@ class StudentController extends RestController {
 				$order_column = 'u.user_email';
 				break;
 			case 'registration_date':
-				$order_column = 'registration_date'; // alias used in SELECT
+				$order_column = 'registration_date'; // alias used in SELECT.
 				break;
 			case 'courses_enrolled':
-				$order_column = 'courses_enrolled'; // alias used in SELECT
+				$order_column = 'courses_enrolled'; // alias used in SELECT.
 				break;
 			case 'membership_enrolled':
-				$order_column = 'membership_enrolled'; // alias used in SELECT
+				$order_column = 'membership_enrolled'; // alias used in SELECT.
 				break;
 			default:
 				$order_column = 'u.display_name'; // 'name' by default
@@ -156,7 +161,7 @@ class StudentController extends RestController {
 			COUNT(DISTINCT e.course_id) AS courses_enrolled,
 			COALESCE(MIN(e.start_date), u.user_registered) AS registration_date';
 
-		// Add membership count only if pro is active
+		// Add membership count only if pro is active.
 		if ( ohmylms_is_pro() ) {
 			$query .= ',
 				COUNT(DISTINCT m.membership_id) AS membership_enrolled';
@@ -172,7 +177,7 @@ class StudentController extends RestController {
                 {$wpdb->prefix}ohmylms_user_enrollment e
                 ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
-		// Add membership join only if pro is active
+		// Add membership join only if pro is active.
 		if ( ohmylms_is_pro() ) {
 			$query .= "
             LEFT JOIN
@@ -205,10 +210,10 @@ class StudentController extends RestController {
 		// ON u.ID = m.user_id AND m.status = 'enrolled'
 		// WHERE
 		// 1=1
-		// ";
+		// ";.
 
 		$course_name = '';
-		// Add course ID filter if provided
+		// Add course ID filter if provided.
 		if ( ! empty( $course_id ) ) {
 			$query .= $wpdb->prepare( ' AND e.course_id = %d ', $course_id );
 
@@ -218,7 +223,7 @@ class StudentController extends RestController {
 			}
 		}
 
-		// Add search filter if search parameter is provided
+		// Add search filter if search parameter is provided.
 		if ( ! empty( $search ) ) {
 			$query .= $wpdb->prepare(
 				' AND (u.display_name LIKE %s OR u.user_email LIKE %s) ',
@@ -227,20 +232,20 @@ class StudentController extends RestController {
 			);
 		}
 
-		// Apply date and time filters using the helper function
+		// Apply date and time filters using the helper function.
 		$query = $this->get_filter_query( $query, $filter, $start_date, $end_date );
 
-		// Grouping, ordering, and limiting
+		// Grouping, ordering, and limiting.
 		$query .= "
             GROUP BY u.ID
             ORDER BY {$order_column} {$order}
             LIMIT %d OFFSET %d
         ";
 
-		// Execute the query with pagination
+		// Execute the query with pagination.
 		$results = $wpdb->get_results( $wpdb->prepare( $query, $per_page, $offset ), ARRAY_A );
 
-		// Count total students with search filter if applicable
+		// Count total students with search filter if applicable.
 		$count_query = "
 			SELECT
 				COUNT(DISTINCT u.ID)
@@ -250,7 +255,7 @@ class StudentController extends RestController {
 				{$wpdb->prefix}ohmylms_user_enrollment e
 				ON u.ID = e.user_id AND e.status IN ('enrolled', 'banned')";
 
-		// Add membership join only if pro is active
+		// Add membership join only if pro is active.
 		if ( ohmylms_is_pro() ) {
 			$count_query .= "
 			LEFT JOIN
@@ -263,7 +268,7 @@ class StudentController extends RestController {
 				1=1';
 		$count_query .= $student_filter;
 
-		// Add course ID filter if provided
+		// Add course ID filter if provided.
 		if ( ! empty( $course_id ) ) {
 			$count_query .= $wpdb->prepare( ' AND e.course_id = %d ', $course_id );
 		}
@@ -280,13 +285,13 @@ class StudentController extends RestController {
 
 		$total_students = (int) $wpdb->get_var( $count_query );
 
-		// Calculate total pages
+		// Calculate total pages.
 		$max_pages = $total_students ? ceil( $total_students / $per_page ) : 0;
 
-		// Prepare response
+		// Prepare response.
 		$response_data = array();
 		foreach ( $results as $row ) {
-			$student_avatar_url = get_avatar_url( $row['user_id'], array( 'size' => 96 ) ); // You can adjust the size as needed
+			$student_avatar_url = get_avatar_url( $row['user_id'], array( 'size' => 96 ) ); // You can adjust the size as needed.
 			$last_login         = get_user_meta( $row['user_id'], '_ohmylms_last_login', true );
 			$is_banned          = get_user_meta( $row['user_id'], '_ohmylms_banned_student', true );
 			$response_data[]    = array(
@@ -298,14 +303,14 @@ class StudentController extends RestController {
 				'student_whatsapp'    => get_user_meta( $row['user_id'], 'whatsapp', true ),
 				'student_timezone'    => get_user_meta( $row['user_id'], 'timezone', true ),
 				'last_login'          => $last_login,
-				'is_banned'           => $is_banned === 'yes',
+				'is_banned'           => 'yes' === $is_banned,
 				'courses_enrolled'    => (int) $row['courses_enrolled'],
 				'membership_enrolled' => (int) $row['membership_enrolled'],
 				'registration_date'   => $row['registration_date'],
 			);
 		}
 
-		// Create response object
+		// Create response object.
 		$response = rest_ensure_response( $response_data );
 		if ( ! empty( $course_name ) ) {
 			$response->header( 'X-WP-Course-Name', $course_name );
@@ -341,7 +346,7 @@ class StudentController extends RestController {
 				$end_date   = ( new \DateTime() )->format( 'Y-m-d' );
 				break;
 			case 'custom':
-				// Ensure both dates are provided
+				// Ensure both dates are provided.
 				if ( ! $start_date || ! $end_date ) {
 					return new \WP_Error( 'invalid_date', 'Start and End date are required for custom filter' );
 				}
@@ -355,7 +360,7 @@ class StudentController extends RestController {
 		if ( ! $start_date || ! $end_date ) {
 			return $query;
 		}
-		$end_date = $end_date . ' 23:59:59'; // Append time to the end date
+		$end_date = $end_date . ' 23:59:59'; // Append time to the end date.
 		$query   .= $wpdb->prepare( ' AND COALESCE(e.start_date, u.user_registered) BETWEEN %s AND %s', $start_date, $end_date );
 
 		return $query;
@@ -391,7 +396,7 @@ class StudentController extends RestController {
 				return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
 
-			// Update enrollment status to 'banned' instead of deleting
+			// Update enrollment status to 'banned' instead of deleting.
 			$wpdb->update(
 				$enrollment_table,
 				array( 'status' => 'banned' ),
@@ -400,7 +405,7 @@ class StudentController extends RestController {
 				array( '%d' )
 			);
 
-			// Update membership status to 'banned' instead of deleting
+			// Update membership status to 'banned' instead of deleting.
 			if ( ohmylms_is_pro() ) {
 				$wpdb->update(
 					$membership_table,
@@ -411,7 +416,7 @@ class StudentController extends RestController {
 				);
 			}
 
-			// Update user meta by adding a new meta key
+			// Update user meta by adding a new meta key.
 			update_user_meta( $user_id, '_ohmylms_banned_student', 'yes' );
 		}
 
@@ -449,7 +454,7 @@ class StudentController extends RestController {
 				return new \WP_Error( 'ohmylms_rest_ohmylms-user_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 			}
 
-			// Restore enrollment status from 'banned' to 'enrolled'
+			// Restore enrollment status from 'banned' to 'enrolled'.
 			$wpdb->update(
 				$enrollment_table,
 				array( 'status' => 'enrolled' ),
@@ -461,7 +466,7 @@ class StudentController extends RestController {
 				array( '%d', '%s' )
 			);
 
-			// Restore membership status from 'banned' to 'enrolled'
+			// Restore membership status from 'banned' to 'enrolled'.
 			if ( ohmylms_is_pro() ) {
 				$wpdb->update(
 					$membership_table,
@@ -475,7 +480,7 @@ class StudentController extends RestController {
 				);
 			}
 
-			// Remove the banned meta key
+			// Remove the banned meta key.
 			delete_user_meta( $user_id, '_ohmylms_banned_student' );
 		}
 

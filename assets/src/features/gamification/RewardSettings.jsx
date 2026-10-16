@@ -5,7 +5,6 @@ export function createRewardSettings( readRuntime ) {
 	return function RewardSettings() {
 		const {
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			b: I18n,
@@ -20,152 +19,172 @@ export function createRewardSettings( readRuntime ) {
 			y5,
 			z: Notifications,
 		} = readRuntime();
-		var e = true,
-			t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = h5(
-				( 0, ReactHooks.useState )( {
-					enable: ! 1,
-					rules: [
-						{
-							label: ( 0, I18n.__ )(
-								'Allow course purchases using bonus points',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Enable learners to redeem their earned points for course access.',
-								'ohmylms'
-							),
-							slug: 'purchase_course',
-							value: ! 1,
-						},
-					],
-				} ),
-				2
-			),
-			r = n[ 0 ],
-			a = n[ 1 ],
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getGamificationSettings();
-			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
-			}, [] ),
-			c = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
-			}, [] ),
-			u = h5( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			s = u[ 0 ],
-			d = u[ 1 ],
-			m = h5( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			p = m[ 0 ],
-			f = m[ 1 ],
-			v = ( 0, Notifications.A )(),
-			openNotificationWithIcon = v.openNotificationWithIcon,
-			contextHolder = v.contextHolder;
+		var t = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var n = h5(
+			( 0, ReactHooks.useState )( {
+				enable: ! 1,
+				rules: [
+					{
+						label: ( 0, I18n.__ )(
+							'Allow course purchases using bonus points',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Enable learners to redeem their earned points for course access.',
+							'ohmylms'
+						),
+						slug: 'purchase_course',
+						value: ! 1,
+					},
+				],
+			} ),
+			2
+		);
+		var r = n[ 0 ];
+		var a = n[ 1 ];
+		var o = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).getGamificationSettings();
+		}, [] );
+		var i = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+			return _eLocal2( StoreModule.default ).getNotificationMessage();
+		}, [] );
+		var c = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+			return _eLocal3( StoreModule.default ).getNotificationStatus();
+		}, [] );
+		var u = h5( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var s = u[ 0 ];
+		var d = u[ 1 ];
+		var m = h5( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var p = m[ 0 ];
+		var f = m[ 1 ];
+		var v = ( 0, Notifications.A )();
+		var openNotificationWithIcon = v.openNotificationWithIcon;
+		var contextHolder = v.contextHolder;
 		( 0, ReactHooks.useEffect )( function () {
-			var t = ( function () {
-				var e = g5(
-					s5().m( function e() {
-						var t, n;
-						return s5().w( function ( e ) {
+			var _tLocal = ( function () {
+				var _eLocal4 = g5(
+					s5().m( function _eLocal5() {
+						var _tLocal2, _nLocal;
+						return s5().w( function ( _eLocal6 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal6.n ) {
 									case 0:
 										return (
 											d( ! 0 ),
-											( e.n = 1 ),
+											( _eLocal6.n = 1 ),
 											l()( {
 												path: 'ohmylms/v1/engagement/settings/reward',
 											} )
 										 );
 									case 1:
-										( ( t = e.v ),
-											a( t || r ),
-											d( ! 1 ),
-											t &&
-												( ( n = w( t.rules || [], S ) ),
+										_tLocal2 = _eLocal6.v;
+										a( _tLocal2 || r );
+										d( ! 1 );
+										if ( _tLocal2 ) {
+											{
+												_nLocal = w(
+													_tLocal2.rules || [],
+													S
+												);
 												a(
 													p5(
-														p5( {}, t ),
+														p5( {}, _tLocal2 ),
 														{},
 														{
-															rules: n,
+															rules: _nLocal,
 														}
 													)
-												) ) );
+												);
+											}
+										} // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal6.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal5 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal4.apply( this, _args );
 				};
 			} )();
-			t();
+			_tLocal();
 		}, [] );
-		var w = function ( e, t ) {
-			var n = ( function ( e ) {
+		var w = function ( _eLocal7, _tLocal3 ) {
+			var _nLocal2 = ( function ( _eLocal8 ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return b5( e );
+					( function ( _eLocal9 ) {
+						if ( Array.isArray( _eLocal9 ) ) {
+							return b5( _eLocal9 );
 						}
-					} )( e ) ||
-					( function ( e ) {
+					} )( _eLocal8 ) ||
+					( function ( _eLocal0 ) {
 						if (
 							( 'undefined' !== typeof Symbol &&
-								null != e[ Symbol.iterator ] ) ||
-							null != e[ '@@iterator' ]
+								( ( _nullableValue ) =>
+									_nullableValue !== null &&
+									_nullableValue !== void 0 )(
+									_eLocal0[ Symbol.iterator ]
+								) ) ||
+							( ( _nullableValue2 ) =>
+								_nullableValue2 !== null &&
+								_nullableValue2 !== void 0 )(
+								_eLocal0[ '@@iterator' ]
+							)
 						) {
-							return Array.from( e );
+							return Array.from( _eLocal0 );
 						}
-					} )( e ) ||
-					y5( e ) ||
+					} )( _eLocal8 ) ||
+					y5( _eLocal8 ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
 						);
 					} )()
 				);
-			} )( e );
+			} )( _eLocal7 );
 			return (
-				t.forEach( function ( t ) {
-					e.some( function ( e ) {
-						return e.slug === t.slug;
-					} ) || n.push( t );
+				_tLocal3.forEach( function ( _tLocal4 ) {
+					if (
+						! _eLocal7.some( function ( _eLocal1 ) {
+							return _eLocal1.slug === _tLocal4.slug;
+						} )
+					) {
+						_nLocal2.push( _tLocal4 );
+					}
 				} ),
-				n
+				_nLocal2
 			 );
 		};
 		( 0, ReactHooks.useEffect )(
 			function () {
-				! s && i && openNotificationWithIcon( c, i );
+				if ( ! s && i ) {
+					openNotificationWithIcon( c, i );
+				}
 			},
 			[ i ]
 		);
 		var E = ( function () {
-				var n = g5(
-					s5().m( function n() {
-						var a;
+				var _nLocal3 = g5(
+					s5().m( function _nLocal4() {
+						var _aLocal;
 						return s5().w(
-							function ( n ) {
+							function ( _nLocal5 ) {
 								for (;;) {
-									switch ( ( n.p = n.n ) ) {
+									switch ( ( _nLocal5.p = _nLocal5.n ) ) {
 										case 0:
 											{
-												n.n = 1;
+												_nLocal5.n = 1;
 												break;
 											}
-											return n.a( 2 );
+											return _nLocal5.a( 2 );
 										case 1:
 											return (
 												t.setLoadingSetting( ! 0 ),
 												f( ! 0 ),
-												( n.p = 2 ),
-												( n.n = 3 ),
+												( _nLocal5.p = 2 ),
+												( _nLocal5.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/settings/reward',
 													method: 'POST',
@@ -178,8 +197,13 @@ export function createRewardSettings( readRuntime ) {
 											 );
 										case 3:
 											return (
-												null != ( a = n.v ) &&
-													a.success &&
+												( ( _nullableValue3 ) =>
+													_nullableValue3 !== null &&
+													_nullableValue3 !==
+														void 0 )(
+													( _aLocal = _nLocal5.v )
+												) &&
+													_aLocal.success &&
 													t.setGlobalDataViaKey(
 														'engagement_settings',
 														p5(
@@ -198,39 +222,39 @@ export function createRewardSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												n.a( 2, a )
+												_nLocal5.a( 2, _aLocal )
 											 );
 										case 4:
-											( ( n.p = 4 ),
-												n.v,
-												f( ! 1 ),
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Something went wrong.',
-														'ohmylms'
-													)
-												) );
+											_nLocal5.p = 4;
+											f( ! 1 );
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Something went wrong.',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( n.p = 5 ),
+												( _nLocal5.p = 5 ),
 												t.setLoadingSetting( ! 1 ),
 												f( ! 1 ),
-												n.f( 5 )
+												_nLocal5.f( 5 )
 											 );
 										case 6:
-											return n.a( 2 );
+											return _nLocal5.a( 2 );
 									}
 								}
 							},
-							n,
+							_nLocal4,
 							null,
 							[ [ 2, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return n.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _nLocal3.apply( this, _args2 );
 				};
 			} )(),
 			S = [
@@ -283,236 +307,245 @@ export function createRewardSettings( readRuntime ) {
 						>
 							{
 								<React.Fragment>
-									{ r.rules.map( function ( e, t ) {
-										return (
-											<Controls.CardWP
-												key={ t }
-												isBorderless={ ! 0 }
-												padding={ '24px' }
-												fullWidth={ ! 0 }
-											>
-												<Controls.FlexWP
-													align={ 'flex-start' }
-													justify={ 'flex-start' }
-													direction={ 'column' }
-													gap={ 3 }
+									{ r.rules.map(
+										function ( _eLocal10, _tLocal5 ) {
+											return (
+												<Controls.CardWP
+													key={ _tLocal5 }
+													isBorderless={ ! 0 }
+													padding={ '24px' }
+													fullWidth={ ! 0 }
 												>
-													<React.Fragment
-														key={ e.value }
+													<Controls.FlexWP
+														align={ 'flex-start' }
+														justify={ 'flex-start' }
+														direction={ 'column' }
+														gap={ 3 }
 													>
-														<Controls.FlexWP
-															align={ 'center' }
-															justify={
-																'space-between'
+														<React.Fragment
+															key={
+																_eLocal10.value
 															}
-															style={ {
-																width: '100%',
-															} }
 														>
-															<Controls.FlexItemWP>
-																<Controls.HeadingWP
-																	level={
-																		'4'
-																	}
-																>
-																	{ ( 0,
-																	I18n.__ )(
-																		e.label,
-																		'ohmylms'
-																	) }
-																</Controls.HeadingWP>
-																<Controls.SpacerWP
-																	marginBottom={
-																		1
-																	}
-																/>
-																<Controls.TextWP>
-																	{ ( 0,
-																	I18n.__ )(
-																		e.tooltip,
-																		'ohmylms'
-																	) }
-																</Controls.TextWP>
-															</Controls.FlexItemWP>
-															<Controls.FlexItemWP>
-																<Controls.SwitchWP
-																	checked={
-																		e.value
-																	}
-																	onChange={ function (
-																		e
-																	) {
-																		return ( function (
-																			e,
-																			t
-																		) {
-																			a(
-																				function (
-																					n
-																				) {
-																					var r =
-																						n.rules.map(
-																							function (
-																								n,
-																								r
-																							) {
-																								return r ===
-																									e
-																									? p5(
-																											p5(
-																												{},
-																												n
-																											),
-																											{},
-																											{
-																												value: t,
-																											}
-																										)
-																									: n;
-																							}
-																						);
-																					return p5(
-																						p5(
-																							{},
-																							n
-																						),
-																						{},
-																						{
-																							rules: r,
-																						}
-																					);
-																				}
-																			);
-																		} )(
-																			t,
-																			e
-																		);
-																	} }
-																/>
-															</Controls.FlexItemWP>
-														</Controls.FlexWP>
-														{ void 0 !==
-															( null == e
-																? void 0
-																: e.threshold ) &&
-															e.value && (
-																<Controls.FlexItemWP
-																	fullWidth={
-																		! 0
-																	}
-																>
+															<Controls.FlexWP
+																align={
+																	'center'
+																}
+																justify={
+																	'space-between'
+																}
+																style={ {
+																	width: '100%',
+																} }
+															>
+																<Controls.FlexItemWP>
+																	<Controls.HeadingWP
+																		level={
+																			'4'
+																		}
+																	>
+																		{ ( 0,
+																		I18n.__ )(
+																			_eLocal10.label,
+																			'ohmylms'
+																		) }
+																	</Controls.HeadingWP>
 																	<Controls.SpacerWP
 																		marginBottom={
 																			1
 																		}
 																	/>
-																	<Controls.FlexWP
-																		align={
-																			'flex-start'
+																	<Controls.TextWP>
+																		{ ( 0,
+																		I18n.__ )(
+																			_eLocal10.tooltip,
+																			'ohmylms'
+																		) }
+																	</Controls.TextWP>
+																</Controls.FlexItemWP>
+																<Controls.FlexItemWP>
+																	<Controls.SwitchWP
+																		checked={
+																			_eLocal10.value
 																		}
-																		justify={
-																			'space-between'
-																		}
-																	>
-																		<Controls.FlexItemWP>
-																			<Controls.HeadingWP
-																				level={
-																					'5'
-																				}
-																			>
-																				{ ( 0,
-																				I18n.__ )(
-																					'Minimum Required Threshold',
-																					'ohmylms'
-																				) }
-																			</Controls.HeadingWP>
-																			<Controls.SpacerWP
-																				marginBottom={
-																					1
-																				}
-																			/>
-																			<Controls.TextWP>
-																				{ ( 0,
-																				I18n.__ )(
-																					'Set the minimum percentage a learner must achieve to earn bonus points for this activity.',
-																					'ohmylms'
-																				) }
-																			</Controls.TextWP>
-																		</Controls.FlexItemWP>
-																		<Controls.FlexItemWP>
-																			<Controls.InputNumberWP
-																				value={
-																					e.threshold
-																				}
-																				onChange={ function (
-																					e
-																				) {
-																					return ( function (
-																						e,
-																						t
+																		onChange={ function (
+																			_eLocal11
+																		) {
+																			return ( function (
+																				_eLocal12,
+																				_tLocal6
+																			) {
+																				a(
+																					function (
+																						_nLocal6
 																					) {
-																						a(
-																							function (
-																								n
-																							) {
-																								var r =
-																									n.rules.map(
-																										function (
-																											n,
-																											r
-																										) {
-																											return r ===
-																												e
-																												? p5(
-																														p5(
-																															{},
-																															n
-																														),
-																														{},
-																														{
-																															threshold:
-																																t,
-																														}
-																													)
-																												: n;
-																										}
-																									);
-																								return p5(
-																									p5(
-																										{},
-																										n
-																									),
-																									{},
-																									{
-																										rules: r,
-																									}
-																								);
+																						var _rLocal =
+																							_nLocal6.rules.map(
+																								function (
+																									_nLocal7,
+																									_rLocal2
+																								) {
+																									return _rLocal2 ===
+																										_eLocal12
+																										? p5(
+																												p5(
+																													{},
+																													_nLocal7
+																												),
+																												{},
+																												{
+																													value: _tLocal6,
+																												}
+																											)
+																										: _nLocal7;
+																								}
+																							);
+																						return p5(
+																							p5(
+																								{},
+																								_nLocal6
+																							),
+																							{},
+																							{
+																								rules: _rLocal,
 																							}
 																						);
-																					} )(
-																						t,
-																						e
-																					);
-																				} }
-																				min={
-																					0
-																				}
-																				max={
-																					100
-																				}
-																				suffix={
-																					'%'
-																				}
-																			/>
-																		</Controls.FlexItemWP>
-																	</Controls.FlexWP>
+																					}
+																				);
+																			} )(
+																				_tLocal5,
+																				_eLocal11
+																			);
+																		} }
+																	/>
 																</Controls.FlexItemWP>
-															) }
-													</React.Fragment>
-												</Controls.FlexWP>
-											</Controls.CardWP>
-										);
-									} ) }
+															</Controls.FlexWP>
+															{ void 0 !==
+																( _eLocal10 ===
+																	null ||
+																_eLocal10 ===
+																	void 0
+																	? void 0
+																	: _eLocal10.threshold ) &&
+																_eLocal10.value && (
+																	<Controls.FlexItemWP
+																		fullWidth={
+																			! 0
+																		}
+																	>
+																		<Controls.SpacerWP
+																			marginBottom={
+																				1
+																			}
+																		/>
+																		<Controls.FlexWP
+																			align={
+																				'flex-start'
+																			}
+																			justify={
+																				'space-between'
+																			}
+																		>
+																			<Controls.FlexItemWP>
+																				<Controls.HeadingWP
+																					level={
+																						'5'
+																					}
+																				>
+																					{ ( 0,
+																					I18n.__ )(
+																						'Minimum Required Threshold',
+																						'ohmylms'
+																					) }
+																				</Controls.HeadingWP>
+																				<Controls.SpacerWP
+																					marginBottom={
+																						1
+																					}
+																				/>
+																				<Controls.TextWP>
+																					{ ( 0,
+																					I18n.__ )(
+																						'Set the minimum percentage a learner must achieve to earn bonus points for this activity.',
+																						'ohmylms'
+																					) }
+																				</Controls.TextWP>
+																			</Controls.FlexItemWP>
+																			<Controls.FlexItemWP>
+																				<Controls.InputNumberWP
+																					value={
+																						_eLocal10.threshold
+																					}
+																					onChange={ function (
+																						_eLocal13
+																					) {
+																						return ( function (
+																							_eLocal14,
+																							_tLocal7
+																						) {
+																							a(
+																								function (
+																									_nLocal8
+																								) {
+																									var _rLocal3 =
+																										_nLocal8.rules.map(
+																											function (
+																												_nLocal9,
+																												_rLocal4
+																											) {
+																												return _rLocal4 ===
+																													_eLocal14
+																													? p5(
+																															p5(
+																																{},
+																																_nLocal9
+																															),
+																															{},
+																															{
+																																threshold:
+																																	_tLocal7,
+																															}
+																														)
+																													: _nLocal9;
+																											}
+																										);
+																									return p5(
+																										p5(
+																											{},
+																											_nLocal8
+																										),
+																										{},
+																										{
+																											rules: _rLocal3,
+																										}
+																									);
+																								}
+																							);
+																						} )(
+																							_tLocal5,
+																							_eLocal13
+																						);
+																					} }
+																					min={
+																						0
+																					}
+																					max={
+																						100
+																					}
+																					suffix={
+																						'%'
+																					}
+																				/>
+																			</Controls.FlexItemWP>
+																		</Controls.FlexWP>
+																	</Controls.FlexItemWP>
+																) }
+														</React.Fragment>
+													</Controls.FlexWP>
+												</Controls.CardWP>
+											);
+										}
+									) }
 								</React.Fragment>
 							}
 						</Controls.FlexWP>

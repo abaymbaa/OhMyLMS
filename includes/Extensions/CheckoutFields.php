@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additional checkout input; never changes prices or payment authorization.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Additional checkout input; never changes prices or payment authorization. */
@@ -50,10 +55,10 @@ final class CheckoutFields {
 	public static function validate( $data, $errors ) {
 		foreach ( self::$fields as $id => $field ) {
 			$value = $data[ 'ohmylms_extension_' . $id ] ?? '';
-			if ( $value === '' && empty( $field['required'] ) ) {
+			if ( '' === $value && empty( $field['required'] ) ) {
 				continue; }
 			$valid = rest_validate_value_from_schema( $value, $field['schema'], $id );
-			if ( ( $value === '' && ! empty( $field['required'] ) ) || is_wp_error( $valid ) ) {
+			if ( ( '' === $value && ! empty( $field['required'] ) ) || is_wp_error( $valid ) ) {
 				$errors->add( 'ohmylms_extension_' . $id, sprintf( __( 'Please check %s.', 'ohmylms' ), $field['label'] ) );
 			}
 		}

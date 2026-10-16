@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Checkout Block
  *
@@ -59,7 +59,7 @@ class CheckoutBlock {
 	 */
 	private function get_block_attributes() {
 		return array(
-			// Title styling
+			// Title styling.
 			'titleColor'                  => array(
 				'type'    => 'string',
 				'default' => '',
@@ -93,7 +93,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Input styling
+			// Input styling.
 			'inputLabelColor'             => array(
 				'type'    => 'string',
 				'default' => '',
@@ -147,7 +147,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Button styling
+			// Button styling.
 			'buttonBackgroundColor'       => array(
 				'type'    => 'string',
 				'default' => '',
@@ -237,7 +237,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Button hover states
+			// Button hover states.
 			'buttonHoverBackgroundColor'  => array(
 				'type'    => 'string',
 				'default' => '',
@@ -255,7 +255,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Privacy text styling
+			// Privacy text styling.
 			'privacyTextColor'            => array(
 				'type'    => 'string',
 				'default' => '',
@@ -289,7 +289,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Checkout box styling
+			// Checkout box styling.
 			'checkoutBoxBackgroundColor'  => array(
 				'type'    => 'string',
 				'default' => '',
@@ -343,7 +343,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Order summary styling
+			// Order summary styling.
 			'orderSummaryBackgroundColor' => array(
 				'type'    => 'string',
 				'default' => '',
@@ -397,7 +397,7 @@ class CheckoutBlock {
 				'default' => '',
 			),
 
-			// Empty cart settings
+			// Empty cart settings.
 			'showEmptyCartMessage'        => array(
 				'type'    => 'boolean',
 				'default' => true,
@@ -418,7 +418,7 @@ class CheckoutBlock {
 				'type'    => 'string',
 				'default' => 'wide',
 			),
-			// Layout Type
+			// Layout Type.
 			'layoutType'                  => array(
 				'type'    => 'string',
 				'default' => '',
@@ -435,7 +435,7 @@ class CheckoutBlock {
 	private function convert_attributes_to_shortcode_attrs( $attributes ) {
 		$shortcode_attrs = array();
 
-		// Define attribute mapping (camelCase to snake_case)
+		// Define attribute mapping (camelCase to snake_case).
 		$attribute_map = array(
 			'titleColor'                  => 'title_color',
 			'titleFontSize'               => 'title_font_size',
@@ -527,7 +527,7 @@ class CheckoutBlock {
 			'layoutType'                  => 'layout_type',
 		);
 
-		// Convert attributes
+		// Convert attributes.
 		foreach ( $attribute_map as $block_attr => $shortcode_attr ) {
 			if ( ! empty( $attributes[ $block_attr ] ) ) {
 				$shortcode_attrs[ $shortcode_attr ] = $attributes[ $block_attr ];
@@ -545,24 +545,24 @@ class CheckoutBlock {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content = '' ) {
-		// Validate and sanitize attributes
+		// Validate and sanitize attributes.
 		$attributes = $this->validate_attributes( $attributes );
 
-		// Convert block attributes to shortcode attributes
+		// Convert block attributes to shortcode attributes.
 		$shortcode_attrs = $this->convert_attributes_to_shortcode_attrs( $attributes );
 
-		// Check if we're in the editor context (ServerSideRender)
+		// Check if we're in the editor context (ServerSideRender).
 		$is_editor = defined( 'REST_REQUEST' ) && REST_REQUEST;
 
-		// Start output buffering
+		// Start output buffering.
 		ob_start();
 
-		// Enable preview mode for Gutenberg editor to show checkout form even with empty cart
+		// Enable preview mode for Gutenberg editor to show checkout form even with empty cart.
 		if ( $is_editor ) {
 			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
-		// Add editor-specific styling for proper checkout form rendering
+		// Add editor-specific styling for proper checkout form rendering.
 		if ( $is_editor ) {
 			?>
 			<style>
@@ -668,7 +668,7 @@ class CheckoutBlock {
 			<?php
 		}
 
-		// Add proper wrapper classes for consistency with frontend
+		// Add proper wrapper classes for consistency with frontend.
 		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
 			$wrapper_classes[] = 'ohmylms-page';
@@ -677,19 +677,19 @@ class CheckoutBlock {
 
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 
-		// Add preview notice in editor mode
+		// Add preview notice in editor mode.
 		if ( $is_editor ) {
 			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the checkout will appear to users with items in their cart.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
 
-		// Output the checkout form
+		// Output the checkout form.
 		ShortCodeCheckout::output( $shortcode_attrs );
 
 		echo '</div>';
 
-		// Remove preview mode filter if it was set
+		// Remove preview mode filter if it was set.
 		if ( $is_editor ) {
 			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
@@ -711,7 +711,7 @@ class CheckoutBlock {
 			if ( isset( $attributes[ $key ] ) ) {
 				$value = $attributes[ $key ];
 
-				// Validate based on type
+				// Validate based on type.
 				switch ( $config['type'] ) {
 					case 'boolean':
 						$validated[ $key ] = (bool) $value;

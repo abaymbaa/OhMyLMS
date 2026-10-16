@@ -70,7 +70,10 @@ export function AssessmentSettingsPanel( props ) {
 			.catch(
 				( cause ) =>
 					active &&
-					setMessage( { status: 'error', text: cause.message } )
+					setMessage( {
+						status: 'error',
+						text: cause.message,
+					} )
 			);
 		return () => {
 			active = false;
@@ -80,7 +83,10 @@ export function AssessmentSettingsPanel( props ) {
 		return null;
 	}
 	const set = ( key ) => ( value ) =>
-		setSettings( { ...settings, [ key ]: value } );
+		setSettings( {
+			...settings,
+			[ key ]: value,
+		} );
 	async function save( extra = {} ) {
 		setSaving( true );
 		setMessage( null );
@@ -113,7 +119,10 @@ export function AssessmentSettingsPanel( props ) {
 	return (
 		<div
 			className="ohmylms-assessment-settings"
-			style={ { margin: '16px 24px', background: '#fff' } }
+			style={ {
+				margin: '16px 24px',
+				background: '#fff',
+			} }
 		>
 			<PanelBody
 				title={ __(
@@ -166,7 +175,11 @@ export function AssessmentSettingsPanel( props ) {
 							/>
 							<Button
 								variant="secondary"
-								onClick={ () => save( { preset: 'exam' } ) }
+								onClick={ () =>
+									save( {
+										preset: 'exam',
+									} )
+								}
 								disabled={ saving }
 							>
 								{ __( 'Apply exam preset', 'ohmylms' ) }
@@ -283,7 +296,10 @@ export function AssessmentSettingsPanel( props ) {
 							>
 								<TextControl
 									label={ sprintf(
-										__( 'Section %d title', 'ohmylms' ),
+										/* translators: %d: section number. */ __(
+											'Section %d title',
+											'ohmylms'
+										),
 										index + 1
 									) }
 									value={ section.title }
@@ -292,7 +308,10 @@ export function AssessmentSettingsPanel( props ) {
 											settings.sections.map(
 												( item, position ) =>
 													position === index
-														? { ...item, title }
+														? {
+																...item,
+																title,
+															}
 														: item
 											)
 										)
@@ -357,7 +376,9 @@ export function AssessmentSettingsPanel( props ) {
 						</Button>
 						<table
 							className="widefat striped"
-							style={ { marginTop: 12 } }
+							style={ {
+								marginTop: 12,
+							} }
 						>
 							<thead>
 								<tr>
@@ -402,7 +423,7 @@ export function AssessmentSettingsPanel( props ) {
 																label:
 																	section.title ||
 																	sprintf(
-																		__(
+																		/* translators: %d: section number. */ __(
 																			'Section %d',
 																			'ohmylms'
 																		),
@@ -488,7 +509,10 @@ export function AssessmentSettingsPanel( props ) {
 											accommodations.map(
 												( item, position ) =>
 													position === index
-														? { ...item, userId }
+														? {
+																...item,
+																userId,
+															}
 														: item
 											)
 										)
@@ -503,7 +527,10 @@ export function AssessmentSettingsPanel( props ) {
 											accommodations.map(
 												( item, position ) =>
 													position === index
-														? { ...item, minutes }
+														? {
+																...item,
+																minutes,
+															}
 														: item
 											)
 										)
@@ -530,13 +557,20 @@ export function AssessmentSettingsPanel( props ) {
 							onClick={ () =>
 								setAccommodations( [
 									...accommodations,
-									{ userId: '', minutes: '' },
+									{
+										userId: '',
+										minutes: '',
+									},
 								] )
 							}
 						>
 							{ __( 'Add extra time', 'ohmylms' ) }
 						</Button>
-						<div style={ { marginTop: 16 } }>
+						<div
+							style={ {
+								marginTop: 16,
+							} }
+						>
 							<Button
 								variant="primary"
 								isBusy={ saving }

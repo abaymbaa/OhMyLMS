@@ -32,96 +32,121 @@ export function createEmailPersonalization( readRuntime ) {
 			},
 			d = ( function () {
 				var e,
-					t =
-						( ( e = _4().m( function e() {
-							var t;
+					_tLocal =
+						( ( e = _4().m( function _eLocal() {
+							var _tLocal2;
 							return _4().w(
-								function ( e ) {
+								function ( _eLocal2 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 											case 0:
 												return (
-													( e.p = 0 ),
-													( e.n = 1 ),
+													( _eLocal2.p = 0 ),
+													( _eLocal2.n = 1 ),
 													c( i )
 												 );
 											case 1:
-												( a(
+												a(
 													'success',
 													'Saved successfully.'
-												),
-													( e.n = 3 ) );
+												);
+												_eLocal2.n = 3;
 												break;
 											case 2:
-												( ( e.p = 2 ),
-													( t = e.v ),
-													console.error( t ),
-													a(
-														'error',
-														'Failed to update. Please try again.'
-													) );
+												_eLocal2.p = 2;
+												_tLocal2 = _eLocal2.v;
+												console.error( _tLocal2 );
+												a(
+													'error',
+													'Failed to update. Please try again.'
+												); // Falls through to the shared async state cleanup.
 											case 3:
-												return e.a( 2 );
+												return _eLocal2.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal,
 								null,
 								[ [ 0, 2 ] ]
 							);
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									E4( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal3 = this,
+								_nLocal = _args;
+							return new Promise( function ( _rLocal, _aLocal ) {
+								var _oLocal = e.apply( _tLocal3, _nLocal );
+								function _iLocal( _eLocal3 ) {
+									E4(
+										_oLocal,
+										_rLocal,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'next',
+										_eLocal3
+									);
 								}
-								function l( e ) {
-									E4( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal4 ) {
+									E4(
+										_oLocal,
+										_rLocal,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'throw',
+										_eLocal4
+									);
 								}
-								i( void 0 );
+								_iLocal( void 0 );
 							} );
 						} );
-				return function () {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _tLocal.apply( this, _args2 );
 				};
 			} )(),
-			m = function ( e, t, n ) {
+			m = function ( e, _tLocal4, _nLocal2 ) {
 				u(
 					e,
-					( function ( e, t, n ) {
+					( function ( _eLocal5, _tLocal5, _nLocal3 ) {
 						return (
-							( t = ( function ( e ) {
-								var t = ( function ( e ) {
-									if ( 'object' != b4( e ) || ! e ) {
-										return e;
+							( _tLocal5 = ( function ( _eLocal6 ) {
+								var _tLocal6 = ( function ( _eLocal7 ) {
+									if (
+										'object' != b4( _eLocal7 ) ||
+										! _eLocal7
+									) {
+										return _eLocal7;
 									}
-									var t = e[ Symbol.toPrimitive ];
-									if ( void 0 !== t ) {
-										var n = t.call( e, 'string' );
-										if ( 'object' != b4( n ) ) {
-											return n;
+									var _tLocal7 =
+										_eLocal7[ Symbol.toPrimitive ];
+									if ( void 0 !== _tLocal7 ) {
+										var _nLocal4 = _tLocal7.call(
+											_eLocal7,
+											'string'
+										);
+										if ( 'object' != b4( _nLocal4 ) ) {
+											return _nLocal4;
 										}
 										throw new TypeError(
 											'@@toPrimitive must return a primitive value.'
 										);
 									}
-									return String( e );
-								} )( e );
-								return 'symbol' == b4( t ) ? t : t + '';
-							} )( t ) ) in e
-								? Object.defineProperty( e, t, {
-										value: n,
+									return String( _eLocal7 );
+								} )( _eLocal6 );
+								return 'symbol' == b4( _tLocal6 )
+									? _tLocal6
+									: _tLocal6 + '';
+							} )( _tLocal5 ) ) in _eLocal5
+								? Object.defineProperty( _eLocal5, _tLocal5, {
+										value: _nLocal3,
 										enumerable: ! 0,
 										configurable: ! 0,
 										writable: ! 0,
 									} )
-								: ( e[ t ] = n ),
-							e
+								: ( _eLocal5[ _tLocal5 ] = _nLocal3 ),
+							_eLocal5
 						 );
-					} )( {}, t, n )
+					} )( {}, _tLocal4, _nLocal2 )
 				);
 			},
 			p = [

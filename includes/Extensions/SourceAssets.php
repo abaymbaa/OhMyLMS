@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Source asset overrides and the SDK used by the shipped admin application.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Source asset overrides and the SDK used by the shipped admin application. */

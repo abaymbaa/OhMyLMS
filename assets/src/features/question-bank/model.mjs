@@ -19,7 +19,6 @@ import {
 	isInteractiveType,
 } from '../question-editor/interactiveModel.mjs';
 import { hasTemplate } from '../question-editor/templateModel.mjs';
-
 export const DIFFICULTIES = [ 'easy', 'standard', 'challenge' ];
 export const STATUSES = [ 'draft', 'approved', 'archived' ];
 
@@ -66,7 +65,10 @@ export function skillTree( skills ) {
 	const byId = new Map(
 		( skills || [] ).map( ( skill ) => [
 			skill.id,
-			{ ...skill, children: [] },
+			{
+				...skill,
+				children: [],
+			},
 		] )
 	);
 	const roots = [];
@@ -93,7 +95,10 @@ export function skillTree( skills ) {
  */
 export function flattenTree( tree, depth = 0 ) {
 	return tree.flatMap( ( skill ) => [
-		{ ...skill, depth },
+		{
+			...skill,
+			depth,
+		},
 		...flattenTree( skill.children, depth + 1 ),
 	] );
 }
@@ -140,29 +145,42 @@ export function normalizeSkillMap( map ) {
 			...new Set( ( roles?.supporting || [] ).map( Number ) ),
 		].filter( ( id ) => id > 0 && id !== primary );
 		if ( primary || supporting.length ) {
-			result[ part ] = { primary, supporting };
+			result[ part ] = {
+				primary,
+				supporting,
+			};
 		}
 	}
 	return result;
 }
-
 export function setPrimarySkill( map, part, skillId ) {
-	const current = map?.[ part ] || { primary: 0, supporting: [] };
+	const current = map?.[ part ] || {
+		primary: 0,
+		supporting: [],
+	};
 	return normalizeSkillMap( {
 		...map,
-		[ part ]: { ...current, primary: Number( skillId ) || 0 },
+		[ part ]: {
+			...current,
+			primary: Number( skillId ) || 0,
+		},
 	} );
 }
-
 export function toggleSupportingSkill( map, part, skillId ) {
-	const current = map?.[ part ] || { primary: 0, supporting: [] };
+	const current = map?.[ part ] || {
+		primary: 0,
+		supporting: [],
+	};
 	const id = Number( skillId );
 	const supporting = current.supporting.includes( id )
 		? current.supporting.filter( ( value ) => value !== id )
 		: [ ...current.supporting, id ];
 	return normalizeSkillMap( {
 		...map,
-		[ part ]: { ...current, supporting },
+		[ part ]: {
+			...current,
+			supporting,
+		},
 	} );
 }
 
@@ -226,12 +244,23 @@ export function addPart( parts ) {
 	}
 	return [
 		...( parts || [] ),
-		{ id, label: `(${ id })`, kind: 'written', marks: 1, prompt: '' },
+		{
+			id,
+			label: `(${ id })`,
+			kind: 'written',
+			marks: 1,
+			prompt: '',
+		},
 	];
 }
 export function updatePart( parts, index, fields ) {
 	return ( parts || [] ).map( ( part, position ) =>
-		position === index ? { ...part, ...fields } : part
+		position === index
+			? {
+					...part,
+					...fields,
+				}
+			: part
 	);
 }
 export function removePart( parts, index ) {
@@ -263,7 +292,9 @@ const CHOICE_TYPES = [ 'single-choice', 'multiple-choice' ];
 export function emptyDraft( type = 'single-choice' ) {
 	let settings = interactiveDefaults( type );
 	if ( type === 'structured' ) {
-		settings = { parts: addPart( [] ) };
+		settings = {
+			parts: addPart( [] ),
+		};
 	} else if ( isExtendedType( type ) ) {
 		settings = extendedDefaults( type );
 	}
@@ -272,18 +303,33 @@ export function emptyDraft( type = 'single-choice' ) {
 		name: '',
 		description: '',
 		marks: isUngradedType( type ) ? 0 : 1,
-		options:
-			type === 'true-false'
-				? [
-						{ answer: 'True', correct: true },
-						{ answer: 'False', correct: false },
-					]
-				: [ ...CHOICE_TYPES, 'reorder', 'matching' ].includes( type )
-					? [
-							{ answer: '', correct: true },
-							{ answer: '', correct: false },
-						]
-					: [],
+		options: ( () => {
+			if ( type === 'true-false' ) {
+				return [
+					{
+						answer: 'True',
+						correct: true,
+					},
+					{
+						answer: 'False',
+						correct: false,
+					},
+				];
+			}
+			if ( [ ...CHOICE_TYPES, 'reorder', 'matching' ].includes( type ) ) {
+				return [
+					{
+						answer: '',
+						correct: true,
+					},
+					{
+						answer: '',
+						correct: false,
+					},
+				];
+			}
+			return [];
+		} )(),
 		settings,
 	};
 }
@@ -299,15 +345,19 @@ export function changeDraftType( draft, type ) {
 		CHOICE_TYPES.includes( type ) && CHOICE_TYPES.includes( draft.type );
 	return {
 		...blank,
-		name: draft.settings?.question_code
-			? type === 'fill-in-the-blank'
-				? promptText(
+		name: ( () => {
+			if ( draft.settings?.question_code ) {
+				if ( type === 'fill-in-the-blank' ) {
+					return promptText(
 						statementKey( draft )
 							? questionPrompt( draft )
 							: draft.description
-					)
-				: 'Question 1'
-			: draft.name,
+					);
+				}
+				return 'Question 1';
+			}
+			return draft.name;
+		} )(),
 		description: statementKey( draft )
 			? questionPrompt( draft )
 			: draft.description,
@@ -315,7 +365,9 @@ export function changeDraftType( draft, type ) {
 		settings: {
 			...blank.settings,
 			...( draft.settings?.question_code
-				? { question_code: draft.settings.question_code }
+				? {
+						question_code: draft.settings.question_code,
+					}
 				: {} ),
 		},
 		options: keepOptions ? draft.options : blank.options,
@@ -347,8 +399,15 @@ export function setOptionCorrect( draft, index, correct ) {
 		...draft,
 		options: draft.options.map( ( option, position ) => ( {
 			...option,
-			correct:
-				position === index ? correct : single ? false : option.correct,
+			correct: ( () => {
+				if ( position === index ) {
+					return correct;
+				}
+				if ( single ) {
+					return false;
+				}
+				return option.correct;
+			} )(),
 		} ) ),
 	};
 }
@@ -479,7 +538,9 @@ export function draftToPayload( draft ) {
 							}
 						: {} ),
 					...( option.matching_data
-						? { matching_data: option.matching_data }
+						? {
+								matching_data: option.matching_data,
+							}
 						: {} ),
 					answer: String( option.answer ).trim(),
 					is_correct: option.correct ? 1 : 0,

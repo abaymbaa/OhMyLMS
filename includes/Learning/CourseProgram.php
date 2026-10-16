@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Skills\Taxonomy;
@@ -45,7 +45,7 @@ final class CourseProgram {
 		);
 		$items = array();
 		foreach ( $rows as $row ) {
-			$type    = $row['content_type'] === 'quiz' ? 'quiz' : ( $row['content_type'] === 'assignment' ? 'assignment' : 'lesson' );
+			$type    = 'quiz' === $row['content_type'] ? 'quiz' : ( 'assignment' === $row['content_type'] ? 'assignment' : 'lesson' );
 			$items[] = array(
 				'id'         => wp_generate_uuid4(),
 				'type'       => $type,
@@ -101,10 +101,10 @@ final class CourseProgram {
 	}
 
 	public static function needs_skills( array $program ) {
-		return $program['mode'] !== 'traditional' || ! empty( $program['outcomes'] ) || (bool) array_filter(
+		return 'traditional' !== $program['mode'] || ! empty( $program['outcomes'] ) || (bool) array_filter(
 			$program['items'],
 			static function ( $item ) {
-				return $item['type'] === 'practice';
+				return 'practice' === $item['type'];
 			}
 		);
 	}
@@ -215,9 +215,9 @@ final class CourseProgram {
 			$scope = array_values( array_unique( array_map( 'intval', (array) ( $item['skill_ids'] ?? array() ) ) ) );
 			if ( $scope && array_diff( $scope, array_keys( $skills ) ) ) {
 				return self::error( __( 'Content can only be attached to skills selected for this course.', 'ohmylms' ) ); }
-			if ( $scope && $item['type'] !== 'practice' ) {
+			if ( $scope && 'practice' !== $item['type'] ) {
 				$entry['skill_ids'] = $scope; }
-			if ( $item['type'] === 'practice' ) {
+			if ( 'practice' === $item['type'] ) {
 				if ( ! isset( $skills[ $content ] ) ) {
 					return self::error( __( 'A practice item must reference a selected course outcome.', 'ohmylms' ) ); }
 				// Practice completion is measured by its outcome, never by session length.
@@ -233,7 +233,7 @@ final class CourseProgram {
 				if ( isset( $resources[ $content ] ) ) {
 					return self::error( __( 'Place each learning resource only once in a course.', 'ohmylms' ) ); }
 				$resources[ $content ] = true;
-				if ( $item['type'] === 'quiz' ) {
+				if ( 'quiz' === $item['type'] ) {
 					$pass = $item['pass_percent'] ?? 80;
 					if ( ! is_numeric( $pass ) || $pass < 0 || $pass > 100 ) {
 						return self::error( __( 'Checkpoint pass percentage must be between 0 and 100.', 'ohmylms' ) ); }
@@ -255,7 +255,7 @@ final class CourseProgram {
 						return false; }
 					if ( $program['bank_ids'] ) {
 						return in_array( (int) $row['bank_id'], $program['bank_ids'], true ); }
-					return (int) $row['bank_id'] === 0 ? (int) $row['author_id'] === $author : Banks::can( (int) $row['bank_id'], 'use', $author );
+					return 0 === (int) $row['bank_id'] ? (int) $row['author_id'] === $author : Banks::can( (int) $row['bank_id'], 'use', $author );
 				}
 			)
 		);
@@ -279,7 +279,7 @@ final class CourseProgram {
 			$errors[] = __( 'Add at least one skill before publishing the syllabus.', 'ohmylms' ); }
 		if ( ! $syllabus && ! $required && ! $required_outcomes ) {
 			$errors[] = __( 'Select at least one completion requirement.', 'ohmylms' ); }
-		if ( ! $syllabus && $program['mode'] !== 'traditional' && ! $required_outcomes ) {
+		if ( ! $syllabus && 'traditional' !== $program['mode'] && ! $required_outcomes ) {
 			$errors[] = __( 'Skill-based and blended courses need a required skill outcome.', 'ohmylms' ); }
 		return $errors;
 	}
@@ -295,7 +295,7 @@ final class CourseProgram {
 			}
 		);
 		foreach ( $program['items'] as $item ) {
-			if ( $item['type'] !== 'practice' && get_post_status( $item['content_id'] ) !== 'publish' ) {
+			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
 				$errors[] = sprintf( __( 'Publish the learning resource %s first.', 'ohmylms' ), get_the_title( $item['content_id'] ) ); }
 		}
 		foreach ( $required_outcomes as $outcome ) {

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -47,9 +47,9 @@ final class Controller {
 			return $response;
 		} catch ( \Throwable $error ) {
 			$status = in_array( $error->getCode(), array( 400, 403, 404, 409, 429 ), true ) ? $error->getCode() : 500;
-			if ( $status === 500 ) {
+			if ( 500 === $status ) {
 				error_log( '[OhMyLMS schools] ' . $error->getMessage() ); }
-			return new \WP_Error( 'ohmylms_school_error', $status === 500 ? 'Unable to complete the request. Please try again.' : $error->getMessage(), array( 'status' => $status ) );
+			return new \WP_Error( 'ohmylms_school_error', 500 === $status ? 'Unable to complete the request. Please try again.' : $error->getMessage(), array( 'status' => $status ) );
 		}
 	}
 	private static function rate_limit( $purpose ) {
@@ -88,7 +88,7 @@ final class Controller {
 		);
 		if ( is_wp_error( $id ) ) {
 			throw new \RuntimeException( $id->get_error_message(), 400 ); }
-		if ( \OhMyLMS\Services\EmailVerificationService::is_required() || $role === 'parent' ) {
+		if ( \OhMyLMS\Services\EmailVerificationService::is_required() || 'parent' === $role ) {
 			\OhMyLMS\Services\EmailVerificationService::generate_and_send( $id ); }
 		Service::audit( 0, 'account_created', $id );
 		return array(
@@ -105,7 +105,7 @@ final class Controller {
 		Service::need( is_email( $email ) && ! email_exists( $email ), 'Use a valid email that is not already registered.' );
 		$first = Service::text( $data['first_name'] ?? '' );
 		$last  = Service::text( $data['last_name'] ?? '' );
-		Service::need( $first !== '', 'A first name is required.' );
+		Service::need( '' !== $first, 'A first name is required.' );
 		$login = sanitize_user( $data['username'] ?? '', true ) ?: sanitize_user( strstr( $email, '@', true ), true );
 		$base  = $login ?: 'user';
 		$login = $base;
@@ -142,12 +142,12 @@ final class Controller {
 	private static function account( $id, $data = null ) {
 		$user = get_userdata( $id );
 		Access::require_access( $user && current_user_can( 'edit_user', $id ) );
-		if ( $data !== null ) {
+		if ( null !== $data ) {
 			$email = sanitize_email( $data['email'] ?? '' );
 			$other = email_exists( $email );
 			Service::need( is_email( $email ) && ( ! $other || (int) $other === $id ), 'Use a valid email that is not used by another account.' );
 			$first = Service::text( $data['first_name'] ?? '' );
-			Service::need( $first !== '', 'A first name is required.' );
+			Service::need( '' !== $first, 'A first name is required.' );
 			$last    = Service::text( $data['last_name'] ?? '' );
 			$updated = wp_update_user(
 				array(
@@ -186,13 +186,13 @@ final class Controller {
 		$id      = absint( $r['id'] );
 		$section = $r['section'];
 		$page    = max( 1, absint( $r['page'] ) );
-		if ( $route === '/ohmylms/v1/school/register' ) {
+		if ( '/ohmylms/v1/school/register' === $route ) {
 			return self::signup( $data ); }
 		if ( preg_match( '#^/ohmylms/v1/school/users/\d+$#', $route ) ) {
 			return self::account( $id, $write ? $data : null ); }
-		if ( $route === '/ohmylms/v1/school/users' && $write ) {
+		if ( '/ohmylms/v1/school/users' === $route && $write ) {
 			return self::create_account( $data ); }
-		if ( $route === '/ohmylms/v1/school/users' ) {
+		if ( '/ohmylms/v1/school/users' === $route ) {
 			Access::require_access( current_user_can( 'list_users' ) );
 			$search = Service::text( $r['search'] ?? '' );
 			$filter = sanitize_key( $r['role'] ?? '' );
@@ -206,7 +206,7 @@ final class Controller {
 						'number' => -1,
 					)
 				);
-				if ( $filter === 'teacher' ) {
+				if ( 'teacher' === $filter ) {
 					$m   = Schema::table( 'school_memberships' );
 					$ids = array_merge( $ids, $wpdb->get_col( "SELECT user_id FROM $m WHERE role='teacher' AND status='active'" ) );
 				} else {
@@ -223,7 +223,7 @@ final class Controller {
 						'paged'          => $page,
 						'orderby'        => 'display_name',
 						'order'          => 'ASC',
-						'search'         => $search !== '' ? '*' . $search . '*' : '',
+						'search'         => '' !== $search ? '*' . $search . '*' : '',
 						'search_columns' => array( 'user_login', 'user_email', 'display_name' ),
 					)
 				)
@@ -254,10 +254,10 @@ final class Controller {
 				$query->get_results()
 			);
 		}
-		if ( $route === '/ohmylms/v1/school/accept' ) {
+		if ( '/ohmylms/v1/school/accept' === $route ) {
 			self::rate_limit( 'school_invite' );
 			return Service::accept( $data['token'] ?? '', (string) ( $data['password'] ?? '' ) ); }
-		if ( $route === '/ohmylms/v1/school/me' ) {
+		if ( '/ohmylms/v1/school/me' === $route ) {
 			$m = Schema::table( 'school_memberships' );
 			return array(
 				'user_id'          => get_current_user_id(),
@@ -268,15 +268,15 @@ final class Controller {
 				'memberships'      => $wpdb->get_results( $wpdb->prepare( "SELECT school_id,role FROM $m WHERE user_id=%d AND status='active'", get_current_user_id() ), ARRAY_A ),
 			);
 		}
-		if ( $route === '/ohmylms/v1/school/classes' ) {
+		if ( '/ohmylms/v1/school/classes' === $route ) {
 			return $write ? Service::create_class( 0, $data ) : Service::classes( 0, $page ); }
-		if ( $route === '/ohmylms/v1/school/schools' ) {
+		if ( '/ohmylms/v1/school/schools' === $route ) {
 			return $write ? Service::create_school( $data ) : Service::schools( $page ); }
-		if ( $route === '/ohmylms/v1/school/children' ) {
+		if ( '/ohmylms/v1/school/children' === $route ) {
 			return Service::children(); }
-		if ( $route === '/ohmylms/v1/school/work' ) {
+		if ( '/ohmylms/v1/school/work' === $route ) {
 			return Service::assignments( 0, absint( $r['student'] ), absint( $r['school_id'] ), $page, absint( $r['class_id'] ) ); }
-		if ( $route === '/ohmylms/v1/school/courses' ) {
+		if ( '/ohmylms/v1/school/courses' === $route ) {
 			Access::require_access( $r['class_id'] && Access::classroom( absint( $r['class_id'] ), true ) );
 			$posts = get_posts(
 				array(
@@ -300,7 +300,7 @@ final class Controller {
 		if ( $r['course'] ) {
 			Access::require_access( $r['class_id'] && Access::classroom( absint( $r['class_id'] ), true ) );
 			$course = get_post( absint( $r['course'] ) );
-			Service::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && $course->post_status === 'publish', 'Course not available.' );
+			Service::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && 'publish' === $course->post_status, 'Course not available.' );
 			$rel      = Schema::table( 'content_relationship' );
 			$chapters = Schema::table( 'chapter_relationship' );
 			return $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT p.ID AS id,p.post_title AS title FROM $rel r JOIN $chapters c ON c.chapter_id=r.chapter_id JOIN {$wpdb->posts} p ON p.ID=r.content_id WHERE c.course_id=%d ORDER BY p.post_title LIMIT 200", $course->ID ), ARRAY_A );
@@ -308,26 +308,26 @@ final class Controller {
 		if ( $write && $r['learning'] && $r['attempt'] ) {
 			return Service::grade( absint( $r['learning'] ), absint( $r['attempt'] ), $data ); }
 		if ( $r->get_method() === 'DELETE' ) {
-			if ( $section === 'members' ) {
+			if ( 'members' === $section ) {
 				return Service::remove_member( $school, $id ); }
-			if ( $section === 'invitations' ) {
+			if ( 'invitations' === $section ) {
 				return Service::revoke_invite( $school, $id ); }
-			if ( $section === 'guardians' ) {
+			if ( 'guardians' === $section ) {
 				return Service::revoke_guardian( $school, $id ); }
 		}
 		if ( $class ) {
-			if ( $section === 'members' ) {
+			if ( 'members' === $section ) {
 				if ( $write ) {
 					return Service::class_member( $class, $data ); }
 				$record = Access::classroom( $class );
 				Access::require_access( $record );
 				return Service::roster( (int) $record['school_id'], $class, $page, Service::text( $r['search'] ?? '' ) );
 			}
-			if ( $section === 'assignments' ) {
+			if ( 'assignments' === $section ) {
 				return $write ? Service::create_assignment( $class, $data ) : Service::assignments( $class, 0, 0, $page ); }
-			if ( $section === 'submissions' && ! $write ) {
+			if ( 'submissions' === $section && ! $write ) {
 				return Service::submissions( $class ); }
-			if ( $section === 'archive' && $write ) {
+			if ( 'archive' === $section && $write ) {
 				return Service::archive_class( $class ); }
 		}
 		if ( $school ) {

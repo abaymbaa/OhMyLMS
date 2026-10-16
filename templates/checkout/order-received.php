@@ -14,5 +14,5 @@ defined( 'ABSPATH' ) || exit();
 
 <?php
 
-echo __( 'Thank you. Your order has been received.', 'ohmylms' );
+echo esc_html__( 'Thank you. Your order has been received.', 'ohmylms' );
 

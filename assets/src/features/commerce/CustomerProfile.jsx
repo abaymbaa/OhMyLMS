@@ -3,18 +3,15 @@
  * Displays student profile card, avatar, email, and link to report.
  */
 import { createElement } from '@wordpress/element';
-
 export function createCustomerProfile( readRuntime ) {
 	return function CustomerProfile( {
-		student_name,
-		student_email,
-		student_id,
-		student_image,
+		student_name: _studentName,
+		student_email: _studentEmail,
+		student_id: _studentId,
+		student_image: _studentImage,
 	} ) {
 		const { I: Controls, React, b: I18n, g: ReactHooks } = readRuntime();
-
 		const [ isOpen, setIsOpen ] = ReactHooks.useState( true );
-
 		return (
 			<React.Fragment>
 				<Controls.FlexWP
@@ -63,7 +60,9 @@ export function createCustomerProfile( readRuntime ) {
 							className="customer-profile-avater"
 						>
 							<Controls.FlexItemWP
-								style={ { width: 'calc(100% - 128px)' } }
+								style={ {
+									width: 'calc(100% - 128px)',
+								} }
 							>
 								<Controls.FlexWP
 									gap={ 5 }
@@ -71,24 +70,28 @@ export function createCustomerProfile( readRuntime ) {
 									justify="flex-start"
 								>
 									<Controls.AvatarWP
-										src={ student_image }
+										src={ _studentImage }
 										size={ 48 }
 										shape="circle"
 									/>
 									<Controls.FlexItemWP
-										style={ { width: 'calc(100% - 68px)' } }
+										style={ {
+											width: 'calc(100% - 68px)',
+										} }
 									>
 										<Controls.TextWP
 											as="p"
 											size={ 14 }
 											weight={ 600 }
 											color="#000D25"
-											style={ { wordWrap: 'break-word' } }
+											style={ {
+												wordWrap: 'break-word',
+											} }
 										>
-											{ student_name }
+											{ _studentName }
 										</Controls.TextWP>
 										<Controls.ButtonWP
-											href={ `mailto:${ student_email }` }
+											href={ `mailto:${ _studentEmail }` }
 											variant="link"
 											size={ 12 }
 											weight={ 500 }
@@ -97,18 +100,22 @@ export function createCustomerProfile( readRuntime ) {
 												textDecoration: 'underline',
 											} }
 										>
-											{ student_email }
+											{ _studentEmail }
 										</Controls.ButtonWP>
 									</Controls.FlexItemWP>
 								</Controls.FlexWP>
 							</Controls.FlexItemWP>
 							<Controls.FlexItemWP
-								style={ { textAlign: 'center' } }
+								style={ {
+									textAlign: 'center',
+								} }
 							>
 								<Controls.ButtonWP
 									variant="secondary"
-									style={ { backgroundColor: '#fff' } }
-									href={ `/wp-admin/admin.php?page=ohmylms#/students/${ student_id }/report` }
+									style={ {
+										backgroundColor: '#fff',
+									} }
+									href={ `/wp-admin/admin.php?page=ohmylms#/students/${ _studentId }/report` }
 									rel="noopener noreferrer"
 								>
 									{ I18n.__( 'View profile', 'ohmylms' ) }

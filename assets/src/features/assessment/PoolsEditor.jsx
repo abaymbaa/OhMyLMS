@@ -10,7 +10,6 @@ import {
 import { loadPools, savePools } from './api.mjs';
 import { listSkills } from '../question-bank/api.mjs';
 import { flattenTree, skillTree } from '../question-bank/model.mjs';
-
 const EMPTY = {
 	title: '',
 	term_id: 0,
@@ -44,7 +43,10 @@ export function PoolsEditor( { quizId } ) {
 			.catch(
 				( cause ) =>
 					active &&
-					setMessage( { status: 'error', text: cause.message } )
+					setMessage( {
+						status: 'error',
+						text: cause.message,
+					} )
 			);
 		return () => {
 			active = false;
@@ -56,7 +58,12 @@ export function PoolsEditor( { quizId } ) {
 	const update = ( index, fields ) =>
 		setPools(
 			pools.map( ( pool, position ) =>
-				position === index ? { ...pool, ...fields } : pool
+				position === index
+					? {
+							...pool,
+							...fields,
+						}
+					: pool
 			)
 		);
 	async function save() {
@@ -114,7 +121,11 @@ export function PoolsEditor( { quizId } ) {
 					<TextControl
 						label={ __( 'Section title', 'ohmylms' ) }
 						value={ pool.title }
-						onChange={ ( title ) => update( index, { title } ) }
+						onChange={ ( title ) =>
+							update( index, {
+								title,
+							} )
+						}
 					/>
 					<SelectControl
 						label={ __( 'Skill', 'ohmylms' ) }
@@ -130,20 +141,36 @@ export function PoolsEditor( { quizId } ) {
 							} ) ),
 						] }
 						onChange={ ( value ) =>
-							update( index, { term_id: Number( value ) } )
+							update( index, {
+								term_id: Number( value ),
+							} )
 						}
 					/>
 					<SelectControl
 						label={ __( 'Difficulty', 'ohmylms' ) }
 						value={ pool.difficulty || '' }
 						options={ [
-							{ value: '', label: __( 'Any', 'ohmylms' ) },
-							{ value: 'easy', label: 'easy' },
-							{ value: 'standard', label: 'standard' },
-							{ value: 'challenge', label: 'challenge' },
+							{
+								value: '',
+								label: __( 'Any', 'ohmylms' ),
+							},
+							{
+								value: 'easy',
+								label: 'easy',
+							},
+							{
+								value: 'standard',
+								label: 'standard',
+							},
+							{
+								value: 'challenge',
+								label: 'challenge',
+							},
 						] }
 						onChange={ ( difficulty ) =>
-							update( index, { difficulty } )
+							update( index, {
+								difficulty,
+							} )
 						}
 					/>
 					<TextControl
@@ -153,7 +180,9 @@ export function PoolsEditor( { quizId } ) {
 						label={ __( 'Questions', 'ohmylms' ) }
 						value={ String( pool.count ) }
 						onChange={ ( count ) =>
-							update( index, { count: Number( count ) } )
+							update( index, {
+								count: Number( count ),
+							} )
 						}
 					/>
 					<TextControl
@@ -163,14 +192,18 @@ export function PoolsEditor( { quizId } ) {
 						label={ __( 'Marks each', 'ohmylms' ) }
 						value={ String( pool.marks ) }
 						onChange={ ( marks ) =>
-							update( index, { marks: Number( marks ) } )
+							update( index, {
+								marks: Number( marks ),
+							} )
 						}
 					/>
 					<CheckboxControl
 						label={ __( 'Include exam-only questions', 'ohmylms' ) }
 						checked={ pool.include_secure !== false }
-						onChange={ ( include_secure ) =>
-							update( index, { include_secure } )
+						onChange={ ( _includeSecure ) =>
+							update( index, {
+								include_secure: _includeSecure,
+							} )
 						}
 					/>
 					<Button
@@ -185,7 +218,10 @@ export function PoolsEditor( { quizId } ) {
 						}
 					>
 						{ sprintf(
-							__( 'Remove pool %d', 'ohmylms' ),
+							/* translators: %d: pool number. */ __(
+								'Remove pool %d',
+								'ohmylms'
+							),
 							index + 1
 						) }
 					</Button>
@@ -193,7 +229,14 @@ export function PoolsEditor( { quizId } ) {
 			) ) }
 			<Button
 				variant="secondary"
-				onClick={ () => setPools( [ ...pools, { ...EMPTY } ] ) }
+				onClick={ () =>
+					setPools( [
+						...pools,
+						{
+							...EMPTY,
+						},
+					] )
+				}
 			>
 				{ __( 'Add pool', 'ohmylms' ) }
 			</Button>{ ' ' }

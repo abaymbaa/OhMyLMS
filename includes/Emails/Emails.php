@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Emails;
 
 class Emails {
@@ -65,12 +65,12 @@ class Emails {
 			'[email@example.com]'          => get_option( 'admin_email' ),
 		);
 
-		// Ensure the input is valid
+		// Ensure the input is valid.
 		if ( ! is_string( $email ) || ! is_array( $replacements ) ) {
-			return false; // Return false for invalid input
+			return false; // Return false for invalid input.
 		}
 
-		// Replace all occurrences in the HTML
+		// Replace all occurrences in the HTML.
 		$updated_email = strtr( $email, $replacements );
 
 		return $updated_email;

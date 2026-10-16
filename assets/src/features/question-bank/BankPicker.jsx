@@ -82,7 +82,10 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 		}
 	}
 	const set = ( key ) => ( value ) =>
-		setFilters( { ...filters, [ key ]: value } );
+		setFilters( {
+			...filters,
+			[ key ]: value,
+		} );
 	return (
 		<Modal
 			title={ __( 'Add questions from the bank', 'ohmylms' ) }
@@ -111,7 +114,10 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 					label={ __( 'Skill', 'ohmylms' ) }
 					value={ filters.skill }
 					options={ [
-						{ value: '', label: __( 'Any skill', 'ohmylms' ) },
+						{
+							value: '',
+							label: __( 'Any skill', 'ohmylms' ),
+						},
 						...flattenTree( skillTree( skills ) ).map(
 							( skill ) => ( {
 								value: String( skill.id ),
@@ -125,7 +131,10 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 					label={ __( 'Difficulty', 'ohmylms' ) }
 					value={ filters.difficulty }
 					options={ [
-						{ value: '', label: __( 'Any', 'ohmylms' ) },
+						{
+							value: '',
+							label: __( 'Any', 'ohmylms' ),
+						},
 						...DIFFICULTIES.map( ( value ) => ( {
 							value,
 							label: value,
@@ -141,40 +150,50 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 							value: 'approved',
 							label: __( 'Approved', 'ohmylms' ),
 						},
-						{ value: '', label: __( 'All I can use', 'ohmylms' ) },
+						{
+							value: '',
+							label: __( 'All I can use', 'ohmylms' ),
+						},
 					] }
 					onChange={ set( 'status' ) }
 				/>
 			</div>
-			{ ! items ? (
-				<Spinner />
-			) : items.length === 0 ? (
-				<p>{ __( 'No matching questions.', 'ohmylms' ) }</p>
-			) : (
-				<ul
-					className="ohmylms-bank-picker-list"
-					style={ { maxHeight: 360, overflow: 'auto' } }
-				>
-					{ items.map( ( item ) => (
-						<li key={ item.id }>
-							<CheckboxControl
-								label={ `${ item.name } — ${ item.type } · ${ versionLabel( item ) }${ item.can_edit ? '' : ` · ${ __( 'shared, read-only', 'ohmylms' ) }` }` }
-								checked={ chosen.includes( item.id ) }
-								disabled={ item.alreadyInQuiz }
-								onChange={ ( checked ) =>
-									setChosen(
-										checked
-											? [ ...chosen, item.id ]
-											: chosen.filter(
-													( id ) => id !== item.id
-												)
-									)
-								}
-							/>
-						</li>
-					) ) }
-				</ul>
-			) }
+			{ ( () => {
+				if ( ! items ) {
+					return <Spinner />;
+				}
+				if ( items.length === 0 ) {
+					return <p>{ __( 'No matching questions.', 'ohmylms' ) }</p>;
+				}
+				return (
+					<ul
+						className="ohmylms-bank-picker-list"
+						style={ {
+							maxHeight: 360,
+							overflow: 'auto',
+						} }
+					>
+						{ items.map( ( item ) => (
+							<li key={ item.id }>
+								<CheckboxControl
+									label={ `${ item.name } — ${ item.type } · ${ versionLabel( item ) }${ item.can_edit ? '' : ` · ${ __( 'shared, read-only', 'ohmylms' ) }` }` }
+									checked={ chosen.includes( item.id ) }
+									disabled={ item.alreadyInQuiz }
+									onChange={ ( checked ) =>
+										setChosen(
+											checked
+												? [ ...chosen, item.id ]
+												: chosen.filter(
+														( id ) => id !== item.id
+													)
+										)
+									}
+								/>
+							</li>
+						) ) }
+					</ul>
+				);
+			} )() }
 			<CheckboxControl
 				label={ __(
 					'Pin the current version (later edits will not change this quiz)',
@@ -190,7 +209,10 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 				onClick={ add }
 			>
 				{ sprintf(
-					__( 'Add %d question(s)', 'ohmylms' ),
+					/* translators: %d: number of selected questions. */ __(
+						'Add %d question(s)',
+						'ohmylms'
+					),
 					chosen.length
 				) }
 			</Button>

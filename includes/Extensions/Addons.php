@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Bundled modules share the existing Add-ons settings and stay opt-in. Skills (like the Question Bank)
+ * is part of the core product: it is always on, has no Add-ons card and cannot be switched off.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /**

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * Tax Service class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Commerce\Includes\Tax;
 
@@ -34,7 +39,7 @@ class TaxService {
 	 * Constructor
 	 */
 	private function __construct() {
-		// Private constructor for singleton
+		// Private constructor for singleton.
 	}
 
 	/**
@@ -167,7 +172,7 @@ class TaxService {
 	public function get_tax_rate_for_location( $country, $state = '' ) {
 		$tax_rates = $this->get_tax_rates();
 
-		// Look for exact match (country + state)
+		// Look for exact match (country + state).
 		if ( ! empty( $state ) ) {
 			foreach ( $tax_rates as $rate ) {
 				if ( isset( $rate['country'] ) && isset( $rate['state'] ) &&
@@ -177,15 +182,15 @@ class TaxService {
 			}
 		}
 
-		// Look for country match only
+		// Look for country match only.
 		foreach ( $tax_rates as $rate ) {
 			if ( isset( $rate['country'] ) && $rate['country'] === $country &&
-				( empty( $rate['state'] ) || $rate['state'] === '' ) ) {
+				( empty( $rate['state'] ) || '' === $rate['state'] ) ) {
 				return isset( $rate['rate'] ) ? floatval( $rate['rate'] ) : 0;
 			}
 		}
 
-		// Return fallback rate if no match found
+		// Return fallback rate if no match found.
 		return $this->get_fallback_tax_rate();
 	}
 
@@ -283,11 +288,11 @@ class TaxService {
 	 */
 	public function calculate_tax( $total, $tax_rate ) {
 		if ( $this->prices_include_tax() ) {
-			// If prices include tax, extract the tax amount
+			// If prices include tax, extract the tax amount.
 			$tax_amount = $total - ( $total / ( 1 + ( $tax_rate / 100 ) ) );
 			$subtotal   = $total - $tax_amount;
 		} else {
-			// If prices exclude tax, add the tax amount
+			// If prices exclude tax, add the tax amount.
 			$tax_amount = ( $total * $tax_rate ) / 100;
 			$subtotal   = $total;
 		}
@@ -313,12 +318,12 @@ class TaxService {
 	 */
 	public function get_country_tax_rate( $country, $state = '' ) {
 		$rate = self::get_fallback_tax_rate();
-		// get eu rate if found
+		// get eu rate if found.
 		if ( self::is_eu_vat_enabled() && in_array( $country, self::get_eu_countries(), true ) ) {
 			$eu_rates = self::get_eu_vat_rates();
 			$rate     = isset( $eu_rates[ $country ] ) ? $eu_rates[ $country ] : 0;
 		}
-		// get global country rate to override eu rate where possible
+		// get global country rate to override eu rate where possible.
 		$result = wp_list_filter(
 			self::get_tax_rates(),
 			array(
@@ -326,7 +331,7 @@ class TaxService {
 				'countryWide' => '1',
 			)
 		);
-		// if state is specified, find state specific rate and override global country rate where possible
+		// if state is specified, find state specific rate and override global country rate where possible.
 		if ( ! empty( $state ) ) {
 			$result2 = wp_list_filter(
 				self::get_tax_rates(),

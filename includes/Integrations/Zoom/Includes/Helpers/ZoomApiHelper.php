@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * ZoomApiHelper class.
  *
@@ -28,7 +28,7 @@ class ZoomApiHelper {
 		if ( is_array( $settings ) && isset( $settings['account_id'] ) ) {
 			return $settings['account_id'];
 		}
-		// Fallback for backward compatibility
+		// Fallback for backward compatibility.
 		return \get_user_meta( $user_id, 'clms_zoom_account_id', true );
 	}
 
@@ -45,7 +45,7 @@ class ZoomApiHelper {
 		if ( is_array( $settings ) && isset( $settings['client_id'] ) ) {
 			return $settings['client_id'];
 		}
-		// Fallback for backward compatibility
+		// Fallback for backward compatibility.
 		return \get_user_meta( $user_id, 'clms_zoom_client_id', true );
 	}
 
@@ -62,7 +62,7 @@ class ZoomApiHelper {
 		if ( is_array( $settings ) && isset( $settings['client_secret'] ) ) {
 			return $settings['client_secret'];
 		}
-		// Fallback for backward compatibility
+		// Fallback for backward compatibility.
 		return \get_user_meta( $user_id, 'clms_zoom_client_secret', true );
 	}
 

@@ -121,9 +121,9 @@ function ohmylms_get_next_content( $current_lesson_id ) {
 	if ( $course ) {
 		$lessons = $course->get_lessons();
 		foreach ( $lessons as $index => $l ) {
-			if ( $l['type'] === 'quiz' ) {
+			if ( 'quiz' === $l['type'] ) {
 				$lesson = new Quiz( $l['id'] );
-			} elseif ( $l['type'] === 'assignment' ) {
+			} elseif ( 'assignment' === $l['type'] ) {
 				$lesson = ohmylms_is_pro() ? new OhMyLMS\Data\Assignment( $l['id'] ) : null;
 			} else {
 				$lesson = new Lesson( $l['id'] );
@@ -144,9 +144,9 @@ function ohmylms_get_prev_content( $current_lesson_id ) {
 	if ( $course ) {
 		$lessons = $course->get_lessons();
 		foreach ( $lessons as $index => $l ) {
-			if ( $l['type'] === 'quiz' ) {
+			if ( 'quiz' === $l['type'] ) {
 				$lesson = new Quiz( $l['id'] );
-			} elseif ( $l['type'] === 'assignment' ) {
+			} elseif ( 'assignment' === $l['type'] ) {
 				$lesson = ohmylms_is_pro() ? new OhMyLMS\Data\Assignment( $l['id'] ) : null;
 			} else {
 				$lesson = new Lesson( $l['id'] );

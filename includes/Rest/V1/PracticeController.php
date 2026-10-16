@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learner practice: skill sessions, inline checks, guest credentials and claims, and the
+ * learner's own skill progress. Logged-in learners use cookie auth; guests send the
+ * X-OhMyLMS-Guest credential header. Nothing here exposes answers before grading.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -187,7 +194,7 @@ class PracticeController extends RestController {
 
 	private function session( WP_REST_Request $request ) {
 		$session = Sessions::get( (string) $request['uuid'] );
-		if ( ! $session || $session['mode'] !== 'skill' || ! Sessions::owns( $session, $this->owner( $request ) ) ) {
+		if ( ! $session || 'skill' !== $session['mode'] || ! Sessions::owns( $session, $this->owner( $request ) ) ) {
 			return new WP_Error( 'ohmylms_practice_missing', __( 'Practice session not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );
@@ -202,7 +209,7 @@ class PracticeController extends RestController {
 			(int) $request['term_id'],
 			array(
 				'item_limit' => (int) $request['item_limit'],
-					'style'      => (string) $request['style'],
+				'style'      => (string) $request['style'],
 				'course_id'  => (int) $request['course_id'],
 			)
 		);

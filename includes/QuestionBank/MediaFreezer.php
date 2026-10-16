@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Frozen copies of question media.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 defined( 'ABSPATH' ) || exit;
@@ -53,7 +58,7 @@ final class MediaFreezer {
 		if ( ! $path ) {
 			return; }
 		$sources[ $key ] = array(
-			'url'  => $url !== '' ? $url : (string) wp_get_attachment_url( $attachment_id ),
+			'url'  => '' !== $url ? $url : (string) wp_get_attachment_url( $attachment_id ),
 			'path' => $path,
 		);
 	}
@@ -61,7 +66,7 @@ final class MediaFreezer {
 	/** Uploads path for a URL under the uploads base URL, or null. */
 	public static function path_for_url( $url ) {
 		$url = strtok( (string) $url, '?#' );
-		if ( $url === '' || $url === false ) {
+		if ( '' === $url || false === $url ) {
 			return null; }
 		$uploads = wp_upload_dir( null, false );
 		$base    = set_url_scheme( $uploads['baseurl'], 'http' );
@@ -97,7 +102,7 @@ final class MediaFreezer {
 				continue; }
 			$sha       = hash_file( 'sha256', $source['path'] );
 			$extension = strtolower( preg_replace( '/[^a-z0-9]/i', '', (string) pathinfo( $source['path'], PATHINFO_EXTENSION ) ) );
-			$relative  = self::DIR . '/' . substr( $sha, 0, 2 ) . '/' . $sha . ( $extension !== '' ? '.' . $extension : '' );
+			$relative  = self::DIR . '/' . substr( $sha, 0, 2 ) . '/' . $sha . ( '' !== $extension ? '.' . $extension : '' );
 			$target    = trailingslashit( $uploads['basedir'] ) . $relative;
 			if ( ! is_file( $target ) ) {
 				if ( ! wp_mkdir_p( dirname( $target ) ) ) {

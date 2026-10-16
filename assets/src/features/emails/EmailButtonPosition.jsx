@@ -15,8 +15,8 @@ export function createEmailButtonPosition( readRuntime ) {
 			s4,
 			y: WordPressData,
 		} = readRuntime();
-		var e = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectSettingsMap();
+		var e = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).selectSettingsMap();
 			}, [] ),
 			t = ( 0, WordPressData.useDispatch )(
 				StoreModule.default
@@ -56,67 +56,84 @@ export function createEmailButtonPosition( readRuntime ) {
 						className={ 'ohmylms-email-button-position-options' }
 					>
 						<Controls.RadioGroupWP
-							onChange={ function ( e ) {
-								return ( function ( e, n, r ) {
+							onChange={ function ( _eLocal2 ) {
+								return ( function ( _eLocal3, n, r ) {
 									t(
 										'ohmylms_email_button_possition',
-										( function ( e, t, n ) {
+										( function (
+											_eLocal4,
+											_tLocal,
+											_nLocal
+										) {
 											return (
-												( t = ( function ( e ) {
-													var t = ( function ( e ) {
+												( _tLocal = ( function (
+													_eLocal5
+												) {
+													var _tLocal2 = ( function (
+														_eLocal6
+													) {
 														if (
 															'object' !=
-																p4( e ) ||
-															! e
+																p4(
+																	_eLocal6
+																) ||
+															! _eLocal6
 														) {
-															return e;
+															return _eLocal6;
 														}
-														var t =
-															e[
+														var _tLocal3 =
+															_eLocal6[
 																Symbol
 																	.toPrimitive
 															];
-														if ( void 0 !== t ) {
-															var n = t.call(
-																e,
-																'string'
-															);
+														if (
+															void 0 !== _tLocal3
+														) {
+															var _nLocal2 =
+																_tLocal3.call(
+																	_eLocal6,
+																	'string'
+																);
 															if (
 																'object' !=
-																p4( n )
+																p4( _nLocal2 )
 															) {
-																return n;
+																return _nLocal2;
 															}
 															throw new TypeError(
 																'@@toPrimitive must return a primitive value.'
 															);
 														}
-														return String( e );
-													} )( e );
-													return 'symbol' == p4( t )
-														? t
-														: t + '';
-												} )( t ) ) in e
+														return String(
+															_eLocal6
+														);
+													} )( _eLocal5 );
+													return 'symbol' ==
+														p4( _tLocal2 )
+														? _tLocal2
+														: _tLocal2 + '';
+												} )( _tLocal ) ) in _eLocal4
 													? Object.defineProperty(
-															e,
-															t,
+															_eLocal4,
+															_tLocal,
 															{
-																value: n,
+																value: _nLocal,
 																enumerable: ! 0,
 																configurable:
 																	! 0,
 																writable: ! 0,
 															}
 														)
-													: ( e[ t ] = n ),
-												e
+													: ( _eLocal4[ _tLocal ] =
+															_nLocal ),
+												_eLocal4
 											 );
 										} )( {}, 'value', r )
 									);
-								} )( 0, 0, e );
+								} )( 0, 0, _eLocal2 );
 							} }
 							value={
-								null == e
+								e === null || e === void 0
 									? void 0
 									: e.ohmylms_email_button_possition
 							}

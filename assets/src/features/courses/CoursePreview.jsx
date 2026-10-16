@@ -44,33 +44,59 @@ export function createCoursePreview( readRuntime ) {
 			l = ( function ( e ) {
 				return ( 0, ReactHooks.useMemo )(
 					function () {
-						var t = [ 'text', 'video', 'audio' ],
+						var _tLocal = [ 'text', 'video', 'audio' ],
 							n = 0,
-							r = 0,
-							a = 0,
-							o = 0;
+							_rLocal = 0,
+							_aLocal = 0,
+							_oLocal = 0;
 						return (
-							Object.values( e ).forEach( function ( e ) {
-								t.includes( null == e ? void 0 : e.type )
-									? n++
-									: 'quiz' === ( null == e ? void 0 : e.type )
-										? r++
-										: 'assignment' ===
-											  ( null == e ? void 0 : e.type )
-											? a++
-											: 'session' === e.type && o++;
+							Object.values( e ).forEach( function ( _eLocal ) {
+								if (
+									_tLocal.includes(
+										_eLocal === null || _eLocal === void 0
+											? void 0
+											: _eLocal.type
+									)
+								) {
+									n++;
+								} else {
+									( () => {
+										if (
+											'quiz' ===
+											( _eLocal === null ||
+											_eLocal === void 0
+												? void 0
+												: _eLocal.type )
+										) {
+											return _rLocal++;
+										}
+										if (
+											'assignment' ===
+											( _eLocal === null ||
+											_eLocal === void 0
+												? void 0
+												: _eLocal.type )
+										) {
+											return _aLocal++;
+										}
+										return (
+											'session' === _eLocal.type &&
+											_oLocal++
+										);
+									} )();
+								}
 							} ),
 							{
 								lessons: n,
-								quizzes: r,
-								assignments: a,
-								sessions: o,
+								quizzes: _rLocal,
+								assignments: _aLocal,
+								sessions: _oLocal,
 							}
 						 );
 					},
 					[ e ]
 				);
-			} )( null == i ? void 0 : i.byId ),
+			} )( i === null || i === void 0 ? void 0 : i.byId ),
 			lessons = l.lessons,
 			quizzes = l.quizzes,
 			assignments = l.assignments,
@@ -82,16 +108,16 @@ export function createCoursePreview( readRuntime ) {
 			if ( ! e || ( ! e.hour && ! e.min && ! e.sec ) ) {
 				return ( 0, I18n.__ )( 'Not Set', 'ohmylms' );
 			}
-			var t = [];
+			var _tLocal2 = [];
 			if ( e.hour ) {
 				var n = ( 0, I18n.sprintf )(
 					( 0, I18n._n )( '%d hour', '%d hours', parseInt( e.hour ) ),
 					parseInt( e.hour )
 				);
-				t.push( n );
+				_tLocal2.push( n );
 			}
 			if ( e.min ) {
-				var r = ( 0, I18n.sprintf )(
+				var _rLocal2 = ( 0, I18n.sprintf )(
 					( 0, I18n._n )(
 						'%d minute',
 						'%d minutes',
@@ -99,10 +125,10 @@ export function createCoursePreview( readRuntime ) {
 					),
 					parseInt( e.min )
 				);
-				t.push( r );
+				_tLocal2.push( _rLocal2 );
 			}
 			if ( e.sec ) {
-				var a = ( 0, I18n.sprintf )(
+				var _aLocal2 = ( 0, I18n.sprintf )(
 					( 0, I18n._n )(
 						'%d second',
 						'%d seconds',
@@ -110,21 +136,23 @@ export function createCoursePreview( readRuntime ) {
 					),
 					parseInt( e.sec )
 				);
-				t.push( a );
+				_tLocal2.push( _aLocal2 );
 			}
-			return t.join( ', ' );
+			return _tLocal2.join( ', ' );
 		}
-		( v[ 0 ], v[ 1 ] );
 		var _ = ( 0, ReactHooks.useMemo )(
 				function () {
-					var e, t;
+					var e, _tLocal3;
 					return [
 						{
 							id: 0,
 							label: ( 0, I18n.__ )( 'Course Title', 'ohmylms' ),
 							value: Ge(
-								null !== ( e = null == a ? void 0 : a.name ) &&
-									void 0 !== e
+								null !==
+									( e =
+										a === null || a === void 0
+											? void 0
+											: a.name ) && void 0 !== e
 									? e
 									: ( 0, I18n.__ )( 'Not set', 'ohmylms' )
 							),
@@ -132,28 +160,40 @@ export function createCoursePreview( readRuntime ) {
 						{
 							id: 1,
 							label: ( 0, I18n.__ )( 'Categories', 'ohmylms' ),
-							value:
-								0 ===
-								( null == a ? void 0 : a.categories.length )
-									? ( 0, I18n.__ )( 'Not set', 'ohmylms' )
-									: null == a
+							value: ( () => {
+								if (
+									0 ===
+									( a === null || a === void 0
 										? void 0
-										: a.categories
-												.map( function ( e, t ) {
-													return Ge( e.name );
-												} )
-												.join( ', ' ),
+										: a.categories.length )
+								) {
+									return ( 0, I18n.__ )(
+										'Not set',
+										'ohmylms'
+									);
+								}
+								if ( a === null || a === void 0 ) {
+									return void 0;
+								}
+								return a.categories
+									.map( function ( _eLocal2 ) {
+										return Ge( _eLocal2.name );
+									} )
+									.join( ', ' );
+							} )(),
 						},
 						{
 							id: 2,
 							label: ( 0, I18n.__ )( 'Chapters', 'ohmylms' ),
 							value:
 								null ===
-									( t = Object.values(
-										null == o ? void 0 : o.byId
-									) ) || void 0 === t
+									( _tLocal3 = Object.values(
+										o === null || o === void 0
+											? void 0
+											: o.byId
+									) ) || void 0 === _tLocal3
 									? void 0
-									: t.length,
+									: _tLocal3.length,
 						},
 						{
 							id: 3,
@@ -161,23 +201,31 @@ export function createCoursePreview( readRuntime ) {
 							value: lessons,
 						},
 					].concat(
-						( function ( e ) {
+						( function ( _eLocal3 ) {
 							return (
-								( function ( e ) {
-									if ( Array.isArray( e ) ) {
-										return $H( e );
+								( function ( _eLocal4 ) {
+									if ( Array.isArray( _eLocal4 ) ) {
+										return $H( _eLocal4 );
 									}
-								} )( e ) ||
-								( function ( e ) {
+								} )( _eLocal3 ) ||
+								( function ( _eLocal5 ) {
 									if (
 										( 'undefined' !== typeof Symbol &&
-											null != e[ Symbol.iterator ] ) ||
-										null != e[ '@@iterator' ]
+											( ( _nullableValue ) =>
+												_nullableValue !== null &&
+												_nullableValue !== void 0 )(
+												_eLocal5[ Symbol.iterator ]
+											) ) ||
+										( ( _nullableValue2 ) =>
+											_nullableValue2 !== null &&
+											_nullableValue2 !== void 0 )(
+											_eLocal5[ '@@iterator' ]
+										)
 									) {
-										return Array.from( e );
+										return Array.from( _eLocal5 );
 									}
-								} )( e ) ||
-								ZH( e ) ||
+								} )( _eLocal3 ) ||
+								ZH( _eLocal3 ) ||
 								( function () {
 									throw new TypeError(
 										'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -185,7 +233,7 @@ export function createCoursePreview( readRuntime ) {
 								} )()
 							);
 						} )(
-							null != a && a.is_cohort
+							a !== null && a !== void 0 && a.is_cohort
 								? [
 										{
 											id: 10,
@@ -215,73 +263,96 @@ export function createCoursePreview( readRuntime ) {
 							{
 								id: 6,
 								label: ( 0, I18n.__ )( 'Pricing', 'ohmylms' ),
-								value:
-									'free' ===
-									( null == a ? void 0 : a.price_type ) ? (
-										( 0, I18n.__ )( 'Free', 'ohmylms' )
-									) : null != a && a.sale_price ? (
-										<React.Fragment>
-											<YH
-												currency={
-													( null == a
-														? void 0
-														: a.currency ) || '$'
-												}
-												currency_pos={
-													( null == a
-														? void 0
-														: a.currency_pos ) ||
-													'left'
-												}
-												price={ Number(
-													null == a
-														? void 0
-														: a.sale_price
-												) }
-											/>
-											{ ' ' }
-											<del>
+								value: ( () => {
+									if (
+										'free' ===
+										( a === null || a === void 0
+											? void 0
+											: a.price_type )
+									) {
+										return ( 0, I18n.__ )(
+											'Free',
+											'ohmylms'
+										);
+									}
+									if (
+										a !== null &&
+										a !== void 0 &&
+										a.sale_price
+									) {
+										return (
+											<React.Fragment>
 												<YH
 													currency={
-														( null == a
+														( a === null ||
+														a === void 0
 															? void 0
 															: a.currency ) ||
 														'$'
 													}
 													currency_pos={
-														( null == a
+														( a === null ||
+														a === void 0
 															? void 0
 															: a.currency_pos ) ||
 														'left'
 													}
 													price={ Number(
-														null == a
+														a === null ||
+															a === void 0
 															? void 0
-															: a.regular_price
+															: a.sale_price
 													) }
-													del={ ! 0 }
 												/>
-											</del>
-										</React.Fragment>
-									) : (
+												{ ' ' }
+												<del>
+													<YH
+														currency={
+															( a === null ||
+															a === void 0
+																? void 0
+																: a.currency ) ||
+															'$'
+														}
+														currency_pos={
+															( a === null ||
+															a === void 0
+																? void 0
+																: a.currency_pos ) ||
+															'left'
+														}
+														price={ Number(
+															a === null ||
+																a === void 0
+																? void 0
+																: a.regular_price
+														) }
+														del={ ! 0 }
+													/>
+												</del>
+											</React.Fragment>
+										);
+									}
+									return (
 										<YH
 											currency={
-												( null == a
+												( a === null || a === void 0
 													? void 0
 													: a.currency ) || '$'
 											}
 											currency_pos={
-												( null == a
+												( a === null || a === void 0
 													? void 0
 													: a.currency_pos ) || 'left'
 											}
 											price={ Number(
-												null == a
+												a === null || a === void 0
 													? void 0
 													: a.regular_price
 											) }
 										/>
-									),
+									);
+								} )(),
 							},
 							{
 								id: 7,
@@ -289,7 +360,11 @@ export function createCoursePreview( readRuntime ) {
 									'Course Duration',
 									'ohmylms'
 								),
-								value: h( null == a ? void 0 : a.duration ),
+								value: h(
+									a === null || a === void 0
+										? void 0
+										: a.duration
+								),
 							},
 							{
 								id: 8,
@@ -299,27 +374,40 @@ export function createCoursePreview( readRuntime ) {
 										style={ {
 											textTransform:
 												'all' ===
-												( null == a ? void 0 : a.level )
+												( a === null || a === void 0
+													? void 0
+													: a.level )
 													? 'inherit'
 													: 'capitalize',
 										} }
 									>
-										{ 'all' ===
-										( null == a ? void 0 : a.level )
-											? ( 0, I18n.__ )(
+										{ ( () => {
+											if (
+												'all' ===
+												( a === null || a === void 0
+													? void 0
+													: a.level )
+											) {
+												return ( 0, I18n.__ )(
 													'All levels',
 													'ohmylms'
-												)
-											: null == a
-												? void 0
-												: a.level }
+												);
+											}
+											if ( a === null || a === void 0 ) {
+												return void 0;
+											}
+											return a.level;
+										} )() }
 									</span>
 								),
 							},
 							{
 								id: 9,
 								label: ( 0, I18n.__ )( 'Slug', 'ohmylms' ),
-								value: null == a ? void 0 : a.slug,
+								value:
+									a === null || a === void 0
+										? void 0
+										: a.slug,
 							},
 						]
 					);
@@ -330,19 +418,27 @@ export function createCoursePreview( readRuntime ) {
 				{
 					id: 0,
 					label: ( 0, I18n.__ )( 'Course title', 'ohmylms' ),
-					completed: Boolean( null == a ? void 0 : a.name ),
+					completed: Boolean(
+						a === null || a === void 0 ? void 0 : a.name
+					),
 				},
 				{
 					id: 1,
 					label: ( 0, I18n.__ )( 'Course description', 'ohmylms' ),
-					completed: Boolean( null == a ? void 0 : a.description ),
+					completed: Boolean(
+						a === null || a === void 0 ? void 0 : a.description
+					),
 				},
 				{
 					id: 2,
 					label: ( 0, I18n.__ )( 'Course Thumbnail', 'ohmylms' ),
 					completed:
-						Boolean( null == a ? void 0 : a.video_src ) ||
-						Boolean( null == a ? void 0 : a.image_src ),
+						Boolean(
+							a === null || a === void 0 ? void 0 : a.video_src
+						) ||
+						Boolean(
+							a === null || a === void 0 ? void 0 : a.image_src
+						),
 				},
 				{
 					id: 3,
@@ -354,7 +450,7 @@ export function createCoursePreview( readRuntime ) {
 					id: 4,
 					label: ( 0, I18n.__ )( 'Pricing', 'ohmylms' ),
 					completed:
-						null == completedSteps
+						completedSteps === null || completedSteps === void 0
 							? void 0
 							: completedSteps.includes( 1 ),
 				},
@@ -407,7 +503,8 @@ export function createCoursePreview( readRuntime ) {
 												</Controls.HeadingWP>
 												<Controls.ButtonWP
 													href={
-														null == a
+														a === null ||
+														a === void 0
 															? void 0
 															: a.course_url
 													}
@@ -435,11 +532,12 @@ export function createCoursePreview( readRuntime ) {
 													'ohmylms-review-summery-list'
 												}
 											>
-												{ _.map( function ( e, t ) {
+												{ _.map( function ( e ) {
 													return (
 														<div
 															key={
-																null == e
+																e === null ||
+																e === void 0
 																	? void 0
 																	: e.id
 															}
@@ -638,7 +736,7 @@ export function createCoursePreview( readRuntime ) {
 														direction={ 'column' }
 													>
 														{ w.map(
-															function ( e, t ) {
+															function ( e ) {
 																return (
 																	<Controls.FlexWP
 																		gap={
@@ -732,7 +830,7 @@ export function createCoursePreview( readRuntime ) {
 												</Controls.SpacerWP>
 											</Controls.CardWP>
 											{ 'future' ===
-												( null == a
+												( a === null || a === void 0
 													? void 0
 													: a.status ) && (
 												<div
@@ -747,7 +845,9 @@ export function createCoursePreview( readRuntime ) {
 														) }
 														<strong>
 															{ sn()(
-																null == a ||
+																a === null ||
+																	a ===
+																		void 0 ||
 																	null ===
 																		( t =
 																			a.post_date ) ||

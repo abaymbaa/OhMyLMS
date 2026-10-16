@@ -153,8 +153,8 @@
         height: auto;
 
         &:-webkit-autofill {
-            -webkit-box-shadow: 0 0 0 30px white inset !important;
-            box-shadow: 0 0 0 30px white inset !important;
+            -webkit-box-shadow: 0 0 0 30px #fff inset !important;
+            box-shadow: 0 0 0 30px #fff inset !important;
             -webkit-text-fill-color: var(--ohmylms-body-text-color);
         }
 
@@ -384,11 +384,18 @@
 
 }
 
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
+
 @import "checkout-error";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
 @import "login-signup";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
 @import "checkout-customer-details";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
 @import "checkout-order-review";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
 @import "checkout-payment";
 // @import "checkout-order-review-toggle";
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade.*/
 @import "no-cart-data";
 

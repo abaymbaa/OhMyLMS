@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * General settings class.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Admin\Settings;
 
 use OhMyLMS\Abstracts\Settings;
@@ -202,7 +207,7 @@ class Design extends Settings {
 				'default' => 'system',
 				'value'   => 'system',
 			),
-			// Checkout page layout type
+			// Checkout page layout type.
 			array(
 				'id'      => 'ohmylms_checkout_page_layout_type',
 				'type'    => 'text',
@@ -229,7 +234,12 @@ class Design extends Settings {
 		);
 
 		foreach ( \OhMyLMS\Design\Tokens::QUIZ_COLORS as $option => $default ) {
-			$settings[] = array( 'id' => $option, 'type' => 'color', 'default' => $default, 'value' => $default );
+			$settings[] = array(
+				'id'      => $option,
+				'type'    => 'color',
+				'default' => $default,
+				'value'   => $default,
+			);
 		}
 		return $settings;
 	}

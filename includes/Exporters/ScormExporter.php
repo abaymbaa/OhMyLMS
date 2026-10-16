@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class ScormExporter.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Exporters;
 
@@ -47,7 +52,7 @@ class ScormExporter {
 			throw new \Exception( __( 'Invalid course IDs. Provide an array of course IDs.', 'ohmylms-pro' ) );
 		}
 
-		// Validate courses before export
+		// Validate courses before export.
 		foreach ( $course_ids as $course_id ) {
 			$validation = ScormHelper::validate_course_for_export( $course_id );
 			if ( ! $validation['valid'] ) {
@@ -55,7 +60,7 @@ class ScormExporter {
 			}
 		}
 
-		// Check system requirements (strict mode - only critical requirements block export)
+		// Check system requirements (strict mode - only critical requirements block export).
 		$system_check = ScormHelper::check_system_requirements( true );
 		if ( ! $system_check['all_passed'] ) {
 			$errors = array();
@@ -71,7 +76,7 @@ class ScormExporter {
 			}
 		}
 
-		// Log warnings for non-critical checks
+		// Log warnings for non-critical checks.
 		$warnings = array();
 		foreach ( $system_check['checks'] as $check ) {
 			if ( ! $check['passed'] && isset( $check['critical'] ) && ! $check['critical'] ) {
@@ -85,7 +90,7 @@ class ScormExporter {
 		$this->course_ids    = $course_ids;
 		$this->scorm_version = in_array( $scorm_version, array( '1.2', '2004' ) ) ? $scorm_version : '1.2';
 
-		// Create temporary directory
+		// Create temporary directory.
 		$upload_dir     = wp_upload_dir();
 		$this->temp_dir = trailingslashit( $upload_dir['basedir'] ) . 'scorm-temp-' . time() . '-' . wp_rand();
 
@@ -109,7 +114,7 @@ class ScormExporter {
 	 * @return void
 	 */
 	private function increase_system_limits() {
-		// Increase time limit
+		// Increase time limit.
 		if ( ! ini_get( 'safe_mode' ) ) {
 			$current_limit = ini_get( 'max_execution_time' );
 			if ( $current_limit > 0 && $current_limit < 300 ) {
@@ -125,12 +130,12 @@ class ScormExporter {
 			}
 		}
 
-		// Increase memory limit if needed
+		// Increase memory limit if needed.
 		$current_memory        = ini_get( 'memory_limit' );
 		$current_memory_bytes  = $this->convert_to_bytes( $current_memory );
 		$required_memory_bytes = 256 * 1024 * 1024; // 256MB
 
-		if ( $current_memory != '-1' && $current_memory_bytes < $required_memory_bytes ) {
+		if ( '-1' != $current_memory && $current_memory_bytes < $required_memory_bytes ) {
 			@ini_set( 'memory_limit', '256M' );
 			ScormHelper::log(
 				'Attempted to increase memory limit to 256M',
@@ -179,33 +184,33 @@ class ScormExporter {
 		try {
 			ScormHelper::log( 'Starting SCORM export', 'info' );
 
-			// Attempt to increase system limits for export
+			// Attempt to increase system limits for export.
 			$this->increase_system_limits();
 
-			// Build SCORM package structure
+			// Build SCORM package structure.
 			$this->create_scorm_structure();
 
-			// Generate manifest file
+			// Generate manifest file.
 			$this->generate_manifest();
 
-			// Process each course
+			// Process each course.
 			foreach ( $this->course_ids as $course_id ) {
 				ScormHelper::log( 'Processing course', 'info', array( 'course_id' => $course_id ) );
 				$this->process_course( $course_id );
 			}
 
-			// Create ZIP archive
+			// Create ZIP archive.
 			$zip_path = $this->create_zip_package();
 
 			ScormHelper::log( 'SCORM export completed successfully', 'info', array( 'zip_path' => $zip_path ) );
 
-			// Send ZIP file for download
+			// Send ZIP file for download.
 			$this->send_download( $zip_path );
 
 		} catch ( \Exception $e ) {
 			ScormHelper::log( 'SCORM export failed', 'error', array( 'error' => $e->getMessage() ) );
 			$this->cleanup();
-			wp_die( __( 'SCORM Export Error: ', 'ohmylms-pro' ) . $e->getMessage() );
+			wp_die( esc_html__( 'SCORM Export Error: ', 'ohmylms-pro' ) . $e->getMessage() );
 		}
 	}
 
@@ -215,7 +220,7 @@ class ScormExporter {
 	 * @return void
 	 */
 	private function create_scorm_structure() {
-		// Create standard SCORM directories
+		// Create standard SCORM directories.
 		wp_mkdir_p( $this->temp_dir . '/content' );
 		wp_mkdir_p( $this->temp_dir . '/resources' );
 	}
@@ -230,7 +235,7 @@ class ScormExporter {
 		$xml               = new \DOMDocument( '1.0', 'UTF-8' );
 		$xml->formatOutput = true;
 
-		if ( $this->scorm_version === '1.2' ) {
+		if ( '1.2' === $this->scorm_version ) {
 			$manifest = $this->generate_scorm_12_manifest( $xml );
 		} else {
 			$manifest = $this->generate_scorm_2004_manifest( $xml );
@@ -259,7 +264,7 @@ class ScormExporter {
 		$manifest->setAttribute( 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
 		$manifest->setAttribute( 'xsi:schemaLocation', 'http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd http://www.imsglobal.org/xsd/imsmd_rootv1p2p1 imsmd_rootv1p2p1.xsd http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd' );
 
-		// Metadata
+		// Metadata.
 		$metadata      = $xml->createElement( 'metadata' );
 		$schema        = $xml->createElement( 'schema', 'ADL SCORM' );
 		$schemaversion = $xml->createElement( 'schemaversion', '1.2' );
@@ -267,7 +272,7 @@ class ScormExporter {
 		$metadata->appendChild( $schemaversion );
 		$manifest->appendChild( $metadata );
 
-		// Organizations
+		// Organizations.
 		$organizations = $xml->createElement( 'organizations' );
 		$organizations->setAttribute( 'default', 'ORG-' . time() );
 
@@ -283,9 +288,9 @@ class ScormExporter {
 			$title = $xml->createElement( 'title', htmlspecialchars( $course_post->post_title ) );
 			$org->appendChild( $title );
 
-			// Add course description as metadata if available
+			// Add course description as metadata if available.
 			if ( ! empty( $course_post->post_content ) ) {
-				// Strip HTML tags and limit to 500 characters for metadata
+				// Strip HTML tags and limit to 500 characters for metadata.
 				$course_description = wp_strip_all_tags( $course_post->post_content );
 				$course_description = mb_substr( $course_description, 0, 500 );
 
@@ -305,7 +310,7 @@ class ScormExporter {
 				}
 			}
 
-			// Get course chapters and contents
+			// Get course chapters and contents.
 			$chapters = $this->get_course_chapters( $course_id );
 
 			foreach ( $chapters as $chapter_index => $chapter ) {
@@ -318,7 +323,7 @@ class ScormExporter {
 
 		$manifest->appendChild( $organizations );
 
-		// Resources
+		// Resources.
 		$resources = $xml->createElement( 'resources' );
 
 		foreach ( $this->course_ids as $course_id ) {
@@ -351,7 +356,7 @@ class ScormExporter {
 		$manifest->setAttribute( 'xmlns:imsss', 'http://www.imsglobal.org/xsd/imsss' );
 		$manifest->setAttribute( 'xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance' );
 
-		// Metadata
+		// Metadata.
 		$metadata      = $xml->createElement( 'metadata' );
 		$schema        = $xml->createElement( 'schema', 'ADL SCORM' );
 		$schemaversion = $xml->createElement( 'schemaversion', '2004 4th Edition' );
@@ -359,7 +364,7 @@ class ScormExporter {
 		$metadata->appendChild( $schemaversion );
 		$manifest->appendChild( $metadata );
 
-		// Organizations (similar to SCORM 1.2 but with sequencing)
+		// Organizations (similar to SCORM 1.2 but with sequencing).
 		$organizations = $xml->createElement( 'organizations' );
 		$organizations->setAttribute( 'default', 'ORG-' . time() );
 
@@ -375,9 +380,9 @@ class ScormExporter {
 			$title = $xml->createElement( 'title', htmlspecialchars( $course_post->post_title ) );
 			$org->appendChild( $title );
 
-			// Add course description as metadata if available
+			// Add course description as metadata if available.
 			if ( ! empty( $course_post->post_content ) ) {
-				// Strip HTML tags and limit to 500 characters for metadata
+				// Strip HTML tags and limit to 500 characters for metadata.
 				$course_description = wp_strip_all_tags( $course_post->post_content );
 				$course_description = mb_substr( $course_description, 0, 500 );
 
@@ -397,7 +402,7 @@ class ScormExporter {
 				}
 			}
 
-			// Get course chapters
+			// Get course chapters.
 			$chapters = $this->get_course_chapters( $course_id );
 
 			foreach ( $chapters as $chapter_index => $chapter ) {
@@ -410,7 +415,7 @@ class ScormExporter {
 
 		$manifest->appendChild( $organizations );
 
-		// Resources
+		// Resources.
 		$resources = $xml->createElement( 'resources' );
 
 		foreach ( $this->course_ids as $course_id ) {
@@ -443,14 +448,14 @@ class ScormExporter {
 
 		// Chapters should NOT have identifierref - they are container items
 		// Only leaf items (lessons) should have identifierref pointing to resources
-		// This ensures chapters remain chapters on import, not converted to lessons
+		// This ensures chapters remain chapters on import, not converted to lessons.
 
 		$title = $xml->createElement( 'title', htmlspecialchars( $chapter_post->post_title ) );
 		$item->appendChild( $title );
 
-		// Add chapter description as metadata if available
+		// Add chapter description as metadata if available.
 		if ( ! empty( $chapter_post->post_content ) ) {
-			// Strip HTML tags and limit to 255 characters for metadata
+			// Strip HTML tags and limit to 255 characters for metadata.
 			$description_text = wp_strip_all_tags( $chapter_post->post_content );
 			$description_text = mb_substr( $description_text, 0, 255 );
 
@@ -470,7 +475,7 @@ class ScormExporter {
 			}
 		}
 
-		// Add contents as sub-items
+		// Add contents as sub-items.
 		if ( ! empty( $chapter['contents'] ) ) {
 			foreach ( $chapter['contents'] as $content_index => $content ) {
 				$content_post = get_post( $content['content_id'] );
@@ -482,12 +487,12 @@ class ScormExporter {
 				$subtitle = $xml->createElement( 'title', htmlspecialchars( $content_post->post_title ) );
 				$subitem->appendChild( $subtitle );
 
-				// Add content type metadata to preserve post_type during export/import
+				// Add content type metadata to preserve post_type during export/import.
 				$content_metadata = $xml->createElement( 'metadata' );
 				$content_lom      = $xml->createElement( 'lom' );
 				$content_general  = $xml->createElement( 'general' );
 
-				// Add content type as keyword metadata
+				// Add content type as keyword metadata.
 				$keyword            = $xml->createElement( 'keyword' );
 				$keyword_langstring = $xml->createElement( 'langstring', 'content-type:' . $content_post->post_type );
 				$keyword_langstring->setAttribute( 'xml:lang', 'en' );
@@ -517,9 +522,9 @@ class ScormExporter {
 	 */
 	private function add_manifest_resources( $xml, $resources, $chapter, $course_id, $chapter_index ) {
 		// Chapters are container items and should NOT have resources
-		// Only add resources for actual content (lessons, quizzes, etc.)
+		// Only add resources for actual content (lessons, quizzes, etc.).
 
-		// Add content resources
+		// Add content resources.
 		if ( ! empty( $chapter['contents'] ) ) {
 			foreach ( $chapter['contents'] as $content ) {
 				$content_resource = $xml->createElement( 'resource' );
@@ -551,11 +556,11 @@ class ScormExporter {
 			throw new \Exception( sprintf( __( 'Invalid course ID: %d', 'ohmylms-pro' ), $course_id ) );
 		}
 
-		// Create course directory
+		// Create course directory.
 		$course_dir = $this->temp_dir . '/content/course_' . $course_id;
 		wp_mkdir_p( $course_dir );
 
-		// Create course overview/introduction page with description
+		// Create course overview/introduction page with description.
 		if ( ! empty( $course_post->post_content ) ) {
 			$overview_html = $this->generate_html_content(
 				$course_post->post_title,
@@ -564,7 +569,7 @@ class ScormExporter {
 			file_put_contents( $course_dir . '/overview.html', $overview_html );
 		}
 
-		// Get course chapters
+		// Get course chapters.
 		$chapters = $this->get_course_chapters( $course_id );
 
 		foreach ( $chapters as $chapter ) {
@@ -582,9 +587,9 @@ class ScormExporter {
 	private function process_chapter( $chapter, $course_id ) {
 		// Chapters are organizational containers - no need to create HTML files
 		// Chapter title and description are stored in manifest metadata
-		// Only process actual content (lessons, quizzes, etc.)
+		// Only process actual content (lessons, quizzes, etc.).
 
-		// Process chapter contents
+		// Process chapter contents.
 		if ( ! empty( $chapter['contents'] ) ) {
 			foreach ( $chapter['contents'] as $content ) {
 				$this->process_content( $content, $course_id );
@@ -602,17 +607,17 @@ class ScormExporter {
 	private function process_content( $content, $course_id ) {
 		$content_post = get_post( $content['content_id'] );
 
-		// Create content directory
+		// Create content directory.
 		$content_dir = $this->temp_dir . '/content/course_' . $course_id . '/content_' . $content['content_id'];
 		wp_mkdir_p( $content_dir );
 
-		// Generate content based on type
+		// Generate content based on type.
 		$html_content = $this->generate_content_html( $content_post, $content );
 
-		// Create content index.html
+		// Create content index.html.
 		file_put_contents( $content_dir . '/index.html', $html_content );
 
-		// Download and save media files
+		// Download and save media files.
 		$this->process_media_files( $content_post, $content_dir );
 	}
 
@@ -627,18 +632,18 @@ class ScormExporter {
 		$title = $post->post_title;
 		$body  = $post->post_content;
 
-		// Handle video lessons
-		if ( $post->post_type === 'ohmylms-lesson' ) {
+		// Handle video lessons.
+		if ( 'ohmylms-lesson' === $post->post_type ) {
 			$lesson_type = get_post_meta( $post->ID, '_type', true );
 
-			if ( $lesson_type === 'video' ) {
+			if ( 'video' === $lesson_type ) {
 				$video_id     = get_post_meta( $post->ID, '_video_id', true );
 				$external_url = get_post_meta( $post->ID, '_external_url', true );
 
 				$video_html = '<div class="lesson-video-container" style="margin: 20px 0;">';
 
 				if ( $video_id ) {
-					// Internal video
+					// Internal video.
 					$video_url = wp_get_attachment_url( $video_id );
 					if ( $video_url ) {
 						$video_html .= '<video controls style="width: 100%; max-width: 800px; border-radius: 8px;">';
@@ -647,21 +652,21 @@ class ScormExporter {
 						$video_html .= '</video>';
 					}
 				} elseif ( $external_url ) {
-					// External video (YouTube, Vimeo, etc.)
+					// External video (YouTube, Vimeo, etc.).
 					if ( preg_match( '/youtube\.com|youtu\.be/i', $external_url ) ) {
-						// YouTube embed
+						// YouTube embed.
 						$video_id_match = array();
 						if ( preg_match( '/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/ ]{11})/i', $external_url, $video_id_match ) ) {
 							$video_html .= '<iframe width="100%" height="450" src="https://www.youtube.com/embed/' . $video_id_match[1] . '" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>';
 						}
 					} elseif ( preg_match( '/vimeo\.com/i', $external_url ) ) {
-						// Vimeo embed
+						// Vimeo embed.
 						$video_id_match = array();
 						if ( preg_match( '/vimeo\.com\/(\d+)/i', $external_url, $video_id_match ) ) {
 							$video_html .= '<iframe src="https://player.vimeo.com/video/' . $video_id_match[1] . '" width="100%" height="450" frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>';
 						}
 					} else {
-						// Generic video link
+						// Generic video link.
 						$video_html .= '<video controls style="width: 100%; max-width: 800px; border-radius: 8px;">';
 						$video_html .= '<source src="' . esc_url( $external_url ) . '">';
 						$video_html .= __( 'Your browser does not support the video tag.', 'ohmylms-pro' );
@@ -671,8 +676,8 @@ class ScormExporter {
 
 				$video_html .= '</div>';
 				$body        = $video_html . $body;
-			} elseif ( $lesson_type === 'audio' ) {
-				// Handle audio lessons
+			} elseif ( 'audio' === $lesson_type ) {
+				// Handle audio lessons.
 				$audio_id     = get_post_meta( $post->ID, '_audio_id', true );
 				$external_url = get_post_meta( $post->ID, '_external_url', true );
 
@@ -698,13 +703,13 @@ class ScormExporter {
 			}
 		}
 
-		// Handle quiz content
-		if ( $post->post_type === 'ohmylms-quiz' ) {
+		// Handle quiz content.
+		if ( 'ohmylms-quiz' === $post->post_type ) {
 			$body .= $this->generate_quiz_html( $post->ID );
 		}
 
-		// Handle assignment content
-		if ( $post->post_type === 'ohmylms-assignment' ) {
+		// Handle assignment content.
+		if ( 'ohmylms-assignment' === $post->post_type ) {
 			$assignment_settings = get_post_meta( $post->ID, '_assignment_settings', true );
 
 			if ( ! empty( $assignment_settings ) ) {
@@ -748,7 +753,7 @@ class ScormExporter {
 
 		$html = '<div class="scorm-quiz">';
 
-		// Fetch questions
+		// Fetch questions.
 		$questions_query = $wpdb->prepare(
 			"
             SELECT * 
@@ -767,7 +772,7 @@ class ScormExporter {
 				continue;
 			}
 
-			// Get question settings
+			// Get question settings.
 			$question_settings = get_post_meta( $question['question_id'], '_question_settings', true );
 			$question_type     = isset( $question_settings['type'] ) ? $question_settings['type'] : 'single-choice';
 
@@ -778,7 +783,7 @@ class ScormExporter {
 				$html .= '<div class="question-content">' . wpautop( $question_post->post_content ) . '</div>';
 			}
 
-			// Generate question type specific HTML
+			// Generate question type specific HTML.
 			$html .= $this->generate_question_type_html( $question['question_id'], $question_type );
 
 			$html .= '</div>';
@@ -799,7 +804,7 @@ class ScormExporter {
 	private function generate_question_type_html( $question_id, $question_type ) {
 		global $wpdb;
 
-		// Fetch answers
+		// Fetch answers.
 		$answers_query = $wpdb->prepare(
 			"
             SELECT * 
@@ -945,7 +950,7 @@ class ScormExporter {
 	private function generate_text_input_html( $question_id, $question_type ) {
 		$html = '<div class="text-input-answer">';
 
-		if ( $question_type === 'long-text' ) {
+		if ( 'long-text' === $question_type ) {
 			$html .= '<textarea name="question_' . $question_id . '" rows="6" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: inherit;" placeholder="' . esc_attr__( 'Type your answer here...', 'ohmylms-pro' ) . '"></textarea>';
 		} else {
 			$html .= '<input type="text" name="question_' . $question_id . '" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px;" placeholder="' . esc_attr__( 'Type your answer here...', 'ohmylms-pro' ) . '" />';
@@ -1057,7 +1062,7 @@ class ScormExporter {
 		$html  = '<div class="reorder-question">';
 		$html .= '<p style="font-style: italic; color: #666;">' . __( 'The correct order is shown below:', 'ohmylms-pro' ) . '</p>';
 
-		// Sort by order number to show correct sequence
+		// Sort by order number to show correct sequence.
 		usort(
 			$answers,
 			function ( $a, $b ) {
@@ -1141,7 +1146,7 @@ class ScormExporter {
 	 * @return string Complete HTML.
 	 */
 	private function generate_html_content( $title, $body ) {
-		$scorm_api = $this->scorm_version === '1.2' ? 'API' : 'API_1484_11';
+		$scorm_api = '1.2' === $this->scorm_version ? 'API' : 'API_1484_11';
 
 		return '<!DOCTYPE html>
 <html lang="en">
@@ -1230,23 +1235,23 @@ class ScormExporter {
 	 * @return void
 	 */
 	private function process_media_files( $post, $content_dir ) {
-		// Create media directory
+		// Create media directory.
 		$media_dir = $content_dir . '/media';
 		wp_mkdir_p( $media_dir );
 
-		// Get featured image
+		// Get featured image.
 		$thumbnail_id = get_post_thumbnail_id( $post->ID );
 		if ( $thumbnail_id ) {
 			$this->copy_attachment( $thumbnail_id, $media_dir );
 		}
 
-		// Get video attachment
+		// Get video attachment.
 		$video_id = get_post_meta( $post->ID, '_video_id', true );
 		if ( $video_id ) {
 			$this->copy_attachment( $video_id, $media_dir );
 		}
 
-		// Extract and download images from content
+		// Extract and download images from content.
 		preg_match_all( '/<img[^>]+src=[\'"]([^\'"]+)[\'"]/', $post->post_content, $matches );
 		if ( ! empty( $matches[1] ) ) {
 			foreach ( $matches[1] as $img_url ) {
@@ -1325,7 +1330,7 @@ class ScormExporter {
 
 		$chapters = array();
 
-		// Fetch chapters
+		// Fetch chapters.
 		$chapter_query = $wpdb->prepare(
 			"
             SELECT * 
@@ -1341,7 +1346,7 @@ class ScormExporter {
 		foreach ( $chapter_results as $chapter ) {
 			$chapter_id = $chapter['chapter_id'];
 
-			// Fetch contents for each chapter
+			// Fetch contents for each chapter.
 			$content_query = $wpdb->prepare(
 				"
                 SELECT * 
@@ -1376,7 +1381,7 @@ class ScormExporter {
 
 		$upload_dir = wp_upload_dir();
 
-		// Generate a clean filename
+		// Generate a clean filename.
 		$course_titles = array();
 		foreach ( $this->course_ids as $course_id ) {
 			$course = get_post( $course_id );
@@ -1397,7 +1402,7 @@ class ScormExporter {
 			throw new \Exception( __( 'Failed to create ZIP archive.', 'ohmylms-pro' ) );
 		}
 
-		// Add all files from temp directory to ZIP
+		// Add all files from temp directory to ZIP.
 		$this->add_directory_to_zip( $zip, $this->temp_dir, '' );
 
 		$zip->close();
@@ -1446,25 +1451,25 @@ class ScormExporter {
 	 */
 	private function send_download( $zip_path ) {
 		if ( ! file_exists( $zip_path ) ) {
-			wp_die( __( 'SCORM package file not found.', 'ohmylms-pro' ) );
+			wp_die( esc_html__( 'SCORM package file not found.', 'ohmylms-pro' ) );
 		}
 
-		// Clean output buffer
+		// Clean output buffer.
 		if ( ob_get_level() ) {
 			ob_end_clean();
 		}
 
-		// Set headers for download
+		// Set headers for download.
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . basename( $zip_path ) . '"' );
 		header( 'Content-Length: ' . filesize( $zip_path ) );
 		header( 'Cache-Control: no-cache, must-revalidate' );
 		header( 'Pragma: no-cache' );
 
-		// Output file
+		// Output file.
 		readfile( $zip_path );
 
-		// Cleanup
+		// Cleanup.
 		$this->cleanup();
 		@unlink( $zip_path );
 

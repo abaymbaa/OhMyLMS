@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * OhMyLMS Offer Button Block (PHP registration)
  *
@@ -87,7 +87,7 @@ class OfferButtonBlock {
 	}
 
 	public static function render( $atts ) {
-		// Use the pro shortcode handler for output
+		// Use the pro shortcode handler for output.
 		if ( class_exists( '\OhMyLMS\Shortcodes\ShortCodeOfferButton' ) ) {
 			ob_start();
 			\OhMyLMS\Shortcodes\ShortCodeOfferButton::output( $atts );
@@ -97,5 +97,5 @@ class OfferButtonBlock {
 	}
 }
 
-// Register on init
+// Register on init.
 add_action( 'init', array( '\OhMyLMS\Blocks\Blocks\OfferButtonBlock', 'register' ) );

@@ -11,7 +11,6 @@ export function createAssignmentSettings( readRuntime ) {
 			Gn: DeleteLearningItem,
 			I: Controls,
 			Kt,
-			L: Entitlements,
 			Ma,
 			Oa,
 			Pn: DripSettings,
@@ -27,193 +26,220 @@ export function createAssignmentSettings( readRuntime ) {
 			sn,
 			y: WordPressData,
 		} = readRuntime();
-		var t,
-			n,
-			r,
-			a,
-			o,
-			i,
-			c,
-			u,
-			s,
-			d,
-			m,
-			p,
-			f,
-			v = true,
-			assignment = props.assignment,
-			chapterId = props.chapterId,
-			setOpenModal = props.setOpenModal,
-			E =
-				'cohort-based' ===
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getCourseType();
-				}, [] ),
-			S = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			byId = ( 0, WordPressData.useSelect )( function ( e ) {
-				var t,
-					n = e( StoreModule.default ).getCourseChapters();
-				return (
-					null === ( t = e( StoreModule.default ).getCourse() ) ||
-						void 0 === t ||
-						t.settings,
-					{
-						byId: n.byId,
-					}
-				 );
-			}, [] ).byId,
-			x = byId && byId[ chapterId ],
-			C = ( function () {
-				var e,
-					t =
-						( ( e = Ta().m( function e( t ) {
-							var n, r, a, o;
-							return Ta().w( function ( e ) {
-								for (;;) {
-									switch ( e.n ) {
-										case 0:
-											return (
-												( e.n = 1 ),
-												l()( {
-													path: '/ohmylms/v1/chapters/'
-														.concat(
-															chapterId,
-															'/search-contents?term='
-														)
-														.concat( t ),
-													method: 'GET',
-													headers: {
-														'Content-Type':
-															'application/json',
-													},
-												} )
-											 );
-										case 1:
-											return (
-												( n = e.v ),
-												( r =
-													null == x
-														? void 0
-														: x.content.map(
-																String
-															) ),
-												( a = r.indexOf(
-													String( assignment.id )
-												) ),
-												( o = n.data.filter(
-													function ( e ) {
-														return (
-															( null == e
-																? void 0
-																: e.value ) !=
-																assignment.id &&
-															r.indexOf(
-																String(
-																	null == e
-																		? void 0
-																		: e.value
-																)
-															) < a
-														);
-													}
-												) ),
-												e.a( 2, {
-													data: o,
-												} )
-											 );
-									}
+		var t;
+		var n;
+		var r;
+		var a;
+		var o;
+		var i;
+		var c;
+		var u;
+		var s;
+		var d;
+		var m;
+		var p;
+		var f;
+		var assignment = props.assignment;
+		var chapterId = props.chapterId;
+		var setOpenModal = props.setOpenModal;
+		var E =
+			'cohort-based' ===
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getCourseType();
+			}, [] );
+		var S = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var byId = ( 0, WordPressData.useSelect )( function ( e ) {
+			var _tLocal,
+				_nLocal = e( StoreModule.default ).getCourseChapters();
+			return (
+				null === ( _tLocal = e( StoreModule.default ).getCourse() ) ||
+					void 0 === _tLocal ||
+					_tLocal.settings,
+				{
+					byId: _nLocal.byId,
+				}
+			 );
+		}, [] ).byId;
+		var x = byId && byId[ chapterId ];
+		var C = ( function () {
+			var e,
+				_tLocal2 =
+					( ( e = Ta().m( function _eLocal( _tLocal3 ) {
+						var _nLocal2, _rLocal, _aLocal, _oLocal;
+						return Ta().w( function ( _eLocal2 ) {
+							for (;;) {
+								switch ( _eLocal2.n ) {
+									case 0:
+										return (
+											( _eLocal2.n = 1 ),
+											l()( {
+												path: '/ohmylms/v1/chapters/'
+													.concat(
+														chapterId,
+														'/search-contents?term='
+													)
+													.concat( _tLocal3 ),
+												method: 'GET',
+												headers: {
+													'Content-Type':
+														'application/json',
+												},
+											} )
+										 );
+									case 1:
+										return (
+											( _nLocal2 = _eLocal2.v ),
+											( _rLocal =
+												x === null || x === void 0
+													? void 0
+													: x.content.map( String ) ),
+											( _aLocal = _rLocal.indexOf(
+												String( assignment.id )
+											) ),
+											( _oLocal = _nLocal2.data.filter(
+												function ( _eLocal3 ) {
+													return (
+														( _eLocal3 === null ||
+														_eLocal3 === void 0
+															? void 0
+															: _eLocal3.value ) !=
+															assignment.id &&
+														_rLocal.indexOf(
+															String(
+																_eLocal3 ===
+																	null ||
+																	_eLocal3 ===
+																		void 0
+																	? void 0
+																	: _eLocal3.value
+															)
+														) < _aLocal
+													);
+												}
+											) ),
+											_eLocal2.a( 2, {
+												data: _oLocal,
+											} )
+										 );
 								}
-							}, e );
-						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									Fa( o, r, a, i, l, 'next', e );
-								}
-								function l( e ) {
-									Fa( o, r, a, i, l, 'throw', e );
-								}
-								i( void 0 );
-							} );
+							}
+						}, _eLocal );
+					} ) ),
+					function ( ..._args ) {
+						var _tLocal4 = this,
+							_nLocal3 = _args;
+						return new Promise( function ( _rLocal2, _aLocal2 ) {
+							var _oLocal2 = e.apply( _tLocal4, _nLocal3 );
+							function _iLocal( _eLocal4 ) {
+								Fa(
+									_oLocal2,
+									_rLocal2,
+									_aLocal2,
+									_iLocal,
+									_lLocal,
+									'next',
+									_eLocal4
+								);
+							}
+							function _lLocal( _eLocal5 ) {
+								Fa(
+									_oLocal2,
+									_rLocal2,
+									_aLocal2,
+									_iLocal,
+									_lLocal,
+									'throw',
+									_eLocal5
+								);
+							}
+							_iLocal( void 0 );
 						} );
-				return function ( e ) {
-					return t.apply( this, arguments );
-				};
-			} )(),
-			P = function ( e, t, n ) {
-				S.setAssignment(
-					Aa(
-						Aa( {}, assignment ),
+					} );
+			return function ( ..._args2 ) {
+				return _tLocal2.apply( this, _args2 );
+			};
+		} )();
+		var P = function ( e, _tLocal5, _nLocal4 ) {
+			S.setAssignment(
+				Aa(
+					Aa( {}, assignment ),
+					{},
+					Ma(
 						{},
-						Ma(
-							{},
-							e,
-							n
-								? Aa(
-										Aa( {}, assignment[ e ] ),
-										{},
-										Ma( {}, n, t )
-									)
-								: t
-						)
+						e,
+						_nLocal4
+							? Aa(
+									Aa( {}, assignment[ e ] ),
+									{},
+									Ma( {}, _nLocal4, _tLocal5 )
+								)
+							: _tLocal5
 					)
-				);
-			},
-			O = [
-				{
-					value: 'day',
-					label: ( 0, I18n.__ )( 'Day', 'ohmylms' ),
-				},
-				{
-					value: 'week',
-					label: ( 0, I18n.__ )( 'Week', 'ohmylms' ),
-				},
-				{
-					value: 'Month',
-					label: ( 0, I18n.__ )( 'Month', 'ohmylms' ),
-				},
-			],
-			k = ( 0, ReactHooks.useCallback )(
-				function ( e ) {
-					Number( e ) < 1 ||
-						S.setAssignment(
-							Aa(
-								Aa( {}, assignment ),
-								{},
-								{
-									drip_settings: Aa(
-										Aa(
-											{},
-											null == assignment
-												? void 0
-												: assignment.drip_settings
-										),
-										{},
-										{
-											days: e,
-										}
-									),
-								}
-							)
-						);
-				},
-				[ S, assignment ]
-			),
-			j = ( 0, ReactHooks.useCallback )(
-				function () {
-					null != assignment &&
-						assignment.id &&
-						( S.deleteLessonFromChapter(
-							null == assignment ? void 0 : assignment.id,
-							chapterId
-						),
-						setOpenModal( ! 1 ) );
-				},
-				[ chapterId, assignment, S ]
+				)
 			);
+		};
+		var O = [
+			{
+				value: 'day',
+				label: ( 0, I18n.__ )( 'Day', 'ohmylms' ),
+			},
+			{
+				value: 'week',
+				label: ( 0, I18n.__ )( 'Week', 'ohmylms' ),
+			},
+			{
+				value: 'Month',
+				label: ( 0, I18n.__ )( 'Month', 'ohmylms' ),
+			},
+		];
+		var k = ( 0, ReactHooks.useCallback )(
+			function ( e ) {
+				if ( ! ( Number( e ) < 1 ) ) {
+					S.setAssignment(
+						Aa(
+							Aa( {}, assignment ),
+							{},
+							{
+								drip_settings: Aa(
+									Aa(
+										{},
+										assignment === null ||
+											assignment === void 0
+											? void 0
+											: assignment.drip_settings
+									),
+									{},
+									{
+										days: e,
+									}
+								),
+							}
+						)
+					);
+				}
+			},
+			[ S, assignment ]
+		);
+		var j = ( 0, ReactHooks.useCallback )(
+			function () {
+				if (
+					assignment !== null &&
+					assignment !== void 0 &&
+					assignment.id
+				) {
+					{
+						S.deleteLessonFromChapter(
+							assignment === null || assignment === void 0
+								? void 0
+								: assignment.id,
+							chapterId
+						);
+						setOpenModal( ! 1 );
+					}
+				}
+			},
+			[ chapterId, assignment, S ]
+		);
 		return (
 			<Controls.CardWP fullHeight={ ! 0 } isBorderless={ ! 0 }>
 				<Controls.SpacerWP
@@ -247,14 +273,16 @@ export function createAssignmentSettings( readRuntime ) {
 										prerequisites: Aa(
 											Aa(
 												{},
-												null == assignment
+												assignment === null ||
+													assignment === void 0
 													? void 0
 													: assignment.prerequisites
 											),
 											{},
 											{
 												enable: ! (
-													null != assignment &&
+													assignment !== null &&
+													assignment !== void 0 &&
 													null !==
 														( e =
 															assignment.prerequisites ) &&
@@ -270,7 +298,8 @@ export function createAssignmentSettings( readRuntime ) {
 						isChecked={
 							null !==
 								( t =
-									null == assignment ||
+									assignment === null ||
+									assignment === void 0 ||
 									null === ( n = assignment.prerequisites ) ||
 									void 0 === n
 										? void 0
@@ -293,10 +322,10 @@ export function createAssignmentSettings( readRuntime ) {
 						isMultiple={ ! 0 }
 						onSearch={ C }
 						onChildChange={ function ( e ) {
-							var t = e.map( function ( e ) {
+							var _tLocal6 = e.map( function ( _eLocal7 ) {
 								return {
-									label: e.label,
-									value: e.value,
+									label: _eLocal7.label,
+									value: _eLocal7.value,
 								};
 							} );
 							S.setAssignment(
@@ -307,13 +336,14 @@ export function createAssignmentSettings( readRuntime ) {
 										prerequisites: Aa(
 											Aa(
 												{},
-												null == assignment
+												assignment === null ||
+													assignment === void 0
 													? void 0
 													: assignment.prerequisites
 											),
 											{},
 											{
-												data: Oa( t ),
+												data: Oa( _tLocal6 ),
 											}
 										),
 									}
@@ -321,7 +351,8 @@ export function createAssignmentSettings( readRuntime ) {
 							);
 						} }
 						defaultValue={
-							null == assignment ||
+							assignment === null ||
+							assignment === void 0 ||
 							null === ( r = assignment.prerequisites ) ||
 							void 0 === r
 								? void 0
@@ -334,8 +365,9 @@ export function createAssignmentSettings( readRuntime ) {
 					onChange={ function () {
 						var e;
 						{
-							var t = ! (
-								null != assignment &&
+							var _tLocal7 = ! (
+								assignment !== null &&
+								assignment !== void 0 &&
 								null !== ( e = assignment.drip_settings ) &&
 								void 0 !== e &&
 								e.enable
@@ -348,15 +380,16 @@ export function createAssignmentSettings( readRuntime ) {
 										drip_settings: Aa(
 											Aa(
 												{},
-												null == assignment
+												assignment === null ||
+													assignment === void 0
 													? void 0
 													: assignment.drip_settings
 											),
 											{},
 											{
-												enable: t,
+												enable: _tLocal7,
 											},
-											t && {
+											_tLocal7 && {
 												type: E
 													? 'cohort-start'
 													: 'enrollment-from-x-days',
@@ -370,7 +403,8 @@ export function createAssignmentSettings( readRuntime ) {
 					isChecked={
 						null !==
 							( a =
-								null == assignment ||
+								assignment === null ||
+								assignment === void 0 ||
 								null === ( o = assignment.drip_settings ) ||
 								void 0 === o
 									? void 0
@@ -380,12 +414,13 @@ export function createAssignmentSettings( readRuntime ) {
 					}
 					onDripFeedTypeChange={ function ( e ) {
 						{
-							var t,
-								n,
-								r = Aa(
+							var _tLocal8,
+								_nLocal5,
+								_rLocal3 = Aa(
 									Aa(
 										{},
-										null == assignment
+										assignment === null ||
+											assignment === void 0
 											? void 0
 											: assignment.drip_settings
 									),
@@ -395,59 +430,66 @@ export function createAssignmentSettings( readRuntime ) {
 									}
 								);
 							if ( 'specific-date' === e ) {
-								( delete r.days,
-									( r.date =
-										( null == assignment ||
-										null ===
-											( t = assignment.drip_settings ) ||
-										void 0 === t
-											? void 0
-											: t.date ) ||
-										sn()( new Date() ).format(
-											'YYYY-MM-DDTHH:mm:ss.SSSD'
-										) ),
-									( r.time =
-										( null == assignment ||
-										null ===
-											( n = assignment.drip_settings ) ||
-										void 0 === n
-											? void 0
-											: n.time ) ||
-										sn()( new Date() ).format(
-											'YYYY-MM-DDTHH:mm:ss.SSSD'
-										) ) );
+								delete _rLocal3.days;
+								_rLocal3.date =
+									( assignment === null ||
+									assignment === void 0 ||
+									null ===
+										( _tLocal8 =
+											assignment.drip_settings ) ||
+									void 0 === _tLocal8
+										? void 0
+										: _tLocal8.date ) ||
+									sn()( new Date() ).format(
+										'YYYY-MM-DDTHH:mm:ss.SSSD'
+									);
+								_rLocal3.time =
+									( assignment === null ||
+									assignment === void 0 ||
+									null ===
+										( _nLocal5 =
+											assignment.drip_settings ) ||
+									void 0 === _nLocal5
+										? void 0
+										: _nLocal5.time ) ||
+									sn()( new Date() ).format(
+										'YYYY-MM-DDTHH:mm:ss.SSSD'
+									);
 							} else if (
 								'cohort-from-x-days' === e ||
 								'enrollment-from-x-days' === e
 							) {
-								var a;
-								( delete r.date,
-									delete r.time,
-									( r.days =
-										( null == assignment ||
-										null ===
-											( a = assignment.drip_settings ) ||
-										void 0 === a
-											? void 0
-											: a.days ) || 1 ) );
-							} else {
-								'cohort-start' === e &&
-									( delete r.days,
-									delete r.date,
-									delete r.time );
+								var _aLocal3;
+								delete _rLocal3.date;
+								delete _rLocal3.time;
+								_rLocal3.days =
+									( assignment === null ||
+									assignment === void 0 ||
+									null ===
+										( _aLocal3 =
+											assignment.drip_settings ) ||
+									void 0 === _aLocal3
+										? void 0
+										: _aLocal3.days ) || 1;
+							} else if ( 'cohort-start' === e ) {
+								{
+									delete _rLocal3.days;
+									delete _rLocal3.date;
+									delete _rLocal3.time;
+								}
 							}
 							S.setAssignment(
 								Aa(
 									Aa( {}, assignment ),
 									{},
 									{
-										drip_settings: r,
+										drip_settings: _rLocal3,
 									}
 								)
 							);
 						}
 					} }
-					handleDripDatePickerChange={ function ( e, t ) {
+					handleDripDatePickerChange={ function ( e ) {
 						S.setAssignment(
 							Aa(
 								Aa( {}, assignment ),
@@ -456,7 +498,8 @@ export function createAssignmentSettings( readRuntime ) {
 									drip_settings: Aa(
 										Aa(
 											{},
-											null == assignment
+											assignment === null ||
+												assignment === void 0
 												? void 0
 												: assignment.drip_settings
 										),
@@ -482,7 +525,8 @@ export function createAssignmentSettings( readRuntime ) {
 									drip_settings: Aa(
 										Aa(
 											{},
-											null == assignment
+											assignment === null ||
+												assignment === void 0
 												? void 0
 												: assignment.drip_settings
 										),
@@ -501,14 +545,16 @@ export function createAssignmentSettings( readRuntime ) {
 					} }
 					handleDayChange={ k }
 					dripFeedType={
-						null == assignment ||
+						assignment === null ||
+						assignment === void 0 ||
 						null === ( i = assignment.drip_settings ) ||
 						void 0 === i
 							? void 0
 							: i.type
 					}
 					dripDate={
-						( null == assignment ||
+						( assignment === null ||
+						assignment === void 0 ||
 						null === ( c = assignment.drip_settings ) ||
 						void 0 === c
 							? void 0
@@ -516,14 +562,16 @@ export function createAssignmentSettings( readRuntime ) {
 						sn()().startOf( 'day' ).format( 'YYYY-MM-DD' )
 					}
 					dripTime={
-						( null == assignment ||
+						( assignment === null ||
+						assignment === void 0 ||
 						null === ( u = assignment.drip_settings ) ||
 						void 0 === u
 							? void 0
 							: u.time ) || new Date()
 					}
 					enrollmentFromXDays={
-						null == assignment ||
+						assignment === null ||
+						assignment === void 0 ||
 						null === ( s = assignment.drip_settings ) ||
 						void 0 === s
 							? void 0
@@ -543,7 +591,7 @@ export function createAssignmentSettings( readRuntime ) {
 					isChecked={
 						null !==
 							( d =
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.enable_time_limit ) &&
 						void 0 !== d &&
@@ -562,7 +610,8 @@ export function createAssignmentSettings( readRuntime ) {
 						>
 							<Controls.InputWP
 								value={
-									( null == assignment
+									( assignment === null ||
+									assignment === void 0
 										? void 0
 										: assignment.time_limit ) || ''
 								}
@@ -576,22 +625,24 @@ export function createAssignmentSettings( readRuntime ) {
 									'ohmylms-assignment-settings-time-limit-input'
 								}
 								onChange={ function ( e ) {
-									/^\d*\.?\d*$/.test( e ) &&
+									if ( /^\d*\.?\d*$/.test( e ) ) {
 										P( 'time_limit', e );
+									}
 								} }
 								onKeyDown={ function ( e ) {
-									( [
-										'e',
-										'E',
-										'+',
-										'-',
-										'/',
-										'\\',
-										'.',
-										',',
-										'*',
-										' ',
-									].includes( e.key ) ||
+									if (
+										[
+											'e',
+											'E',
+											'+',
+											'-',
+											'/',
+											'\\',
+											'.',
+											',',
+											'*',
+											' ',
+										].includes( e.key ) ||
 										( /[a-zA-Z]/.test( e.key ) &&
 											! [
 												'Backspace',
@@ -600,14 +651,20 @@ export function createAssignmentSettings( readRuntime ) {
 												'ArrowRight',
 												'Delete',
 												'Enter',
-											].includes( e.key ) ) ) &&
+											].includes( e.key ) )
+									) {
 										e.preventDefault();
+									}
 								} }
 								onBlur={ function () {
-									( null == assignment
-										? void 0
-										: assignment.time_limit ) < 1 &&
+									if (
+										( assignment === null ||
+										assignment === void 0
+											? void 0
+											: assignment.time_limit ) < 1
+									) {
 										P( 'time_limit', 1 );
+									}
 								} }
 							/>
 							<Controls.SpacerWP />
@@ -621,7 +678,7 @@ export function createAssignmentSettings( readRuntime ) {
 								}
 								options={ O }
 								value={
-									null == assignment
+									assignment === null || assignment === void 0
 										? void 0
 										: assignment.time_limit_type
 								}
@@ -641,7 +698,7 @@ export function createAssignmentSettings( readRuntime ) {
 					</Controls.HeadingWP>
 					<Ca
 						value={
-							( null == assignment
+							( assignment === null || assignment === void 0
 								? void 0
 								: assignment.total_points ) || ''
 						}
@@ -651,7 +708,7 @@ export function createAssignmentSettings( readRuntime ) {
 						) }
 						error={
 							Number(
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.total_points
 							) < 1
@@ -664,21 +721,24 @@ export function createAssignmentSettings( readRuntime ) {
 							'ohmylms-assignment-settings-total-points-input'
 						}
 						handleChange={ function ( e ) {
-							var t = e;
-							/^\d*\.?\d*$/.test( t ) && P( 'total_points', t );
+							var _tLocal0 = e;
+							if ( /^\d*\.?\d*$/.test( _tLocal0 ) ) {
+								P( 'total_points', _tLocal0 );
+							}
 						} }
 						onKeyDown={ function ( e ) {
-							( [
-								'e',
-								'E',
-								'+',
-								'-',
-								'/',
-								'\\',
-								',',
-								'*',
-								' ',
-							].includes( e.key ) ||
+							if (
+								[
+									'e',
+									'E',
+									'+',
+									'-',
+									'/',
+									'\\',
+									',',
+									'*',
+									' ',
+								].includes( e.key ) ||
 								( /[a-zA-Z]/.test( e.key ) &&
 									! [
 										'Backspace',
@@ -687,14 +747,19 @@ export function createAssignmentSettings( readRuntime ) {
 										'ArrowRight',
 										'Delete',
 										'Enter',
-									].includes( e.key ) ) ) &&
+									].includes( e.key ) )
+							) {
 								e.preventDefault();
+							}
 						} }
 						onBlur={ function () {
-							( null == assignment
-								? void 0
-								: assignment.total_points ) < 1 &&
+							if (
+								( assignment === null || assignment === void 0
+									? void 0
+									: assignment.total_points ) < 1
+							) {
 								P( 'total_points', 1 );
+							}
 						} }
 						variant={ 'secondary' }
 					/>
@@ -705,7 +770,7 @@ export function createAssignmentSettings( readRuntime ) {
 					</Controls.HeadingWP>
 					<Ca
 						value={
-							( null == assignment
+							( assignment === null || assignment === void 0
 								? void 0
 								: assignment.maximum_pass_points ) || ''
 						}
@@ -715,17 +780,17 @@ export function createAssignmentSettings( readRuntime ) {
 						) }
 						error={
 							Number(
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.maximum_pass_points
 							) < 0 ||
 							Number(
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.maximum_pass_points
 							) >
 								Number(
-									null == assignment
+									assignment === null || assignment === void 0
 										? void 0
 										: assignment.total_points
 								)
@@ -738,22 +803,24 @@ export function createAssignmentSettings( readRuntime ) {
 							'ohmylms-assignment-settings-pass-points-input'
 						}
 						handleChange={ function ( e ) {
-							var t = e;
-							/^\d*\.?\d*$/.test( t ) &&
-								P( 'maximum_pass_points', t );
+							var _tLocal1 = e;
+							if ( /^\d*\.?\d*$/.test( _tLocal1 ) ) {
+								P( 'maximum_pass_points', _tLocal1 );
+							}
 						} }
 						onKeyDown={ function ( e ) {
-							( [
-								'e',
-								'E',
-								'+',
-								'-',
-								'/',
-								'\\',
-								',',
-								'*',
-								' ',
-							].includes( e.key ) ||
+							if (
+								[
+									'e',
+									'E',
+									'+',
+									'-',
+									'/',
+									'\\',
+									',',
+									'*',
+									' ',
+								].includes( e.key ) ||
 								( /[a-zA-Z]/.test( e.key ) &&
 									! [
 										'Backspace',
@@ -762,14 +829,19 @@ export function createAssignmentSettings( readRuntime ) {
 										'ArrowRight',
 										'Delete',
 										'Enter',
-									].includes( e.key ) ) ) &&
+									].includes( e.key ) )
+							) {
 								e.preventDefault();
+							}
 						} }
 						onBlur={ function () {
-							( null == assignment
-								? void 0
-								: assignment.maximum_pass_points ) < 1 &&
+							if (
+								( assignment === null || assignment === void 0
+									? void 0
+									: assignment.maximum_pass_points ) < 1
+							) {
 								P( 'maximum_pass_points', 1 );
+							}
 						} }
 						variant={ 'secondary' }
 					/>
@@ -785,7 +857,7 @@ export function createAssignmentSettings( readRuntime ) {
 					isChecked={
 						null !==
 							( m =
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.allow_upload_files ) &&
 						void 0 !== m &&
@@ -798,7 +870,7 @@ export function createAssignmentSettings( readRuntime ) {
 					conditionalChild={
 						<Ca
 							value={
-								( null == assignment
+								( assignment === null || assignment === void 0
 									? void 0
 									: assignment.number_of_files ) || ''
 							}
@@ -808,7 +880,7 @@ export function createAssignmentSettings( readRuntime ) {
 							) }
 							error={
 								Number(
-									null == assignment
+									assignment === null || assignment === void 0
 										? void 0
 										: assignment.number_of_files
 								) < 1
@@ -821,23 +893,25 @@ export function createAssignmentSettings( readRuntime ) {
 								'ohmylms-assignment-settings-number-of-files-input'
 							}
 							handleChange={ function ( e ) {
-								var t = e;
-								/^\d*\.?\d*$/.test( t ) &&
-									P( 'number_of_files', t );
+								var _tLocal10 = e;
+								if ( /^\d*\.?\d*$/.test( _tLocal10 ) ) {
+									P( 'number_of_files', _tLocal10 );
+								}
 							} }
 							onKeyDown={ function ( e ) {
-								( [
-									'e',
-									'E',
-									'+',
-									'-',
-									'/',
-									'\\',
-									'.',
-									',',
-									'*',
-									' ',
-								].includes( e.key ) ||
+								if (
+									[
+										'e',
+										'E',
+										'+',
+										'-',
+										'/',
+										'\\',
+										'.',
+										',',
+										'*',
+										' ',
+									].includes( e.key ) ||
 									( /[a-zA-Z]/.test( e.key ) &&
 										! [
 											'Backspace',
@@ -846,14 +920,20 @@ export function createAssignmentSettings( readRuntime ) {
 											'ArrowRight',
 											'Delete',
 											'Enter',
-										].includes( e.key ) ) ) &&
+										].includes( e.key ) )
+								) {
 									e.preventDefault();
+								}
 							} }
 							onBlur={ function () {
-								( null == assignment
-									? void 0
-									: assignment.number_of_files ) < 1 &&
+								if (
+									( assignment === null ||
+									assignment === void 0
+										? void 0
+										: assignment.number_of_files ) < 1
+								) {
 									P( 'number_of_files', 1 );
+								}
 							} }
 							variant={ 'secondary' }
 						/>
@@ -870,7 +950,7 @@ export function createAssignmentSettings( readRuntime ) {
 					isChecked={
 						null !==
 							( p =
-								null == assignment
+								assignment === null || assignment === void 0
 									? void 0
 									: assignment.enable_file_size_limit ) &&
 						void 0 !== p &&
@@ -883,7 +963,7 @@ export function createAssignmentSettings( readRuntime ) {
 					conditionalChild={
 						<Ca
 							value={
-								( null == assignment
+								( assignment === null || assignment === void 0
 									? void 0
 									: assignment.max_file_size_limit ) || ''
 							}
@@ -893,7 +973,7 @@ export function createAssignmentSettings( readRuntime ) {
 							) }
 							error={
 								Number(
-									null == assignment
+									assignment === null || assignment === void 0
 										? void 0
 										: assignment.max_file_size_limit
 								) < 1
@@ -906,22 +986,24 @@ export function createAssignmentSettings( readRuntime ) {
 								'ohmylms-assignment-settings-file-size-limit-input'
 							}
 							handleChange={ function ( e ) {
-								var t = e;
-								/^\d*\.?\d*$/.test( t ) &&
-									P( 'max_file_size_limit', t );
+								var _tLocal11 = e;
+								if ( /^\d*\.?\d*$/.test( _tLocal11 ) ) {
+									P( 'max_file_size_limit', _tLocal11 );
+								}
 							} }
 							onKeyDown={ function ( e ) {
-								( [
-									'e',
-									'E',
-									'+',
-									'-',
-									'/',
-									'\\',
-									',',
-									'*',
-									' ',
-								].includes( e.key ) ||
+								if (
+									[
+										'e',
+										'E',
+										'+',
+										'-',
+										'/',
+										'\\',
+										',',
+										'*',
+										' ',
+									].includes( e.key ) ||
 									( /[a-zA-Z]/.test( e.key ) &&
 										! [
 											'Backspace',
@@ -930,14 +1012,20 @@ export function createAssignmentSettings( readRuntime ) {
 											'ArrowRight',
 											'Delete',
 											'Enter',
-										].includes( e.key ) ) ) &&
+										].includes( e.key ) )
+								) {
 									e.preventDefault();
+								}
 							} }
 							onBlur={ function () {
-								( null == assignment
-									? void 0
-									: assignment.max_file_size_limit ) < 1 &&
+								if (
+									( assignment === null ||
+									assignment === void 0
+										? void 0
+										: assignment.max_file_size_limit ) < 1
+								) {
 									P( 'max_file_size_limit', 1 );
+								}
 							} }
 							variant={ 'secondary' }
 						/>
@@ -945,14 +1033,15 @@ export function createAssignmentSettings( readRuntime ) {
 				/>
 				<DownloadResources
 					resources={
-						( null == assignment ||
+						( assignment === null ||
+						assignment === void 0 ||
 						null === ( f = assignment.download_resource ) ||
 						void 0 === f
 							? void 0
 							: f.file ) || []
 					}
 					handleResources={ function ( e ) {
-						var t;
+						var _tLocal12;
 						S.setAssignment(
 							Aa(
 								Aa( {}, assignment ),
@@ -961,7 +1050,8 @@ export function createAssignmentSettings( readRuntime ) {
 									download_resource: Aa(
 										Aa(
 											{},
-											null == assignment
+											assignment === null ||
+												assignment === void 0
 												? void 0
 												: assignment.download_resource
 										),
@@ -969,13 +1059,14 @@ export function createAssignmentSettings( readRuntime ) {
 										{
 											file: [].concat(
 												Oa(
-													( null == assignment ||
+													( assignment === null ||
+													assignment === void 0 ||
 													null ===
-														( t =
+														( _tLocal12 =
 															assignment.download_resource ) ||
-													void 0 === t
+													void 0 === _tLocal12
 														? void 0
-														: t.file ) || []
+														: _tLocal12.file ) || []
 												),
 												Oa( e )
 											),
@@ -986,19 +1077,23 @@ export function createAssignmentSettings( readRuntime ) {
 						);
 					} }
 					handleDeleteResource={ function ( e ) {
-						var t,
-							n =
-								null == assignment ||
-								null === ( t = assignment.download_resource ) ||
-								void 0 === t ||
-								null === ( t = t.file ) ||
-								void 0 === t
+						var _tLocal13,
+							_nLocal6 =
+								assignment === null ||
+								assignment === void 0 ||
+								null ===
+									( _tLocal13 =
+										assignment.download_resource ) ||
+								void 0 === _tLocal13 ||
+								null === ( _tLocal13 = _tLocal13.file ) ||
+								void 0 === _tLocal13
 									? void 0
-									: t.filter( function ( t ) {
+									: _tLocal13.filter( function ( _tLocal14 ) {
 											return (
-												( null == t
+												( _tLocal14 === null ||
+												_tLocal14 === void 0
 													? void 0
-													: t.id ) !== e
+													: _tLocal14.id ) !== e
 											);
 										} );
 						S.setAssignment(
@@ -1009,13 +1104,14 @@ export function createAssignmentSettings( readRuntime ) {
 									download_resource: Aa(
 										Aa(
 											{},
-											null == assignment
+											assignment === null ||
+												assignment === void 0
 												? void 0
 												: assignment.download_resource
 										),
 										{},
 										{
-											file: n,
+											file: _nLocal6,
 										}
 									),
 								}

@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Teacher-facing attempt report built from what the learner actually saw:
+ * the frozen items, versions and marks of the attempt, never current content.
+ * The output keeps the legacy report shape used by the quiz report UI.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -97,7 +104,7 @@ final class AttemptReport {
 				'value'   => (float) $item['marks'],
 			);
 			$identity          = VersionPublisher::identity( $snapshot->get_id(), false );
-			$status            = $item['status'] === 'needs-review' && empty( $row['is_manually_reviewed'] ) ? 'in-review' : ( $row ? 'graded' : 'in-review' );
+			$status            = 'needs-review' === $item['status'] && empty( $row['is_manually_reviewed'] ) ? 'in-review' : ( $row ? 'graded' : 'in-review' );
 			$achieved          = $row ? (float) $row['achive_mark'] : 0.0;
 			$total            += $achieved;
 			$questions[]       = array(
@@ -118,15 +125,15 @@ final class AttemptReport {
 				'video'                    => $snapshot->get_video_url(),
 				'achive_mark'              => $achieved,
 				// Server verdict (null while awaiting review) so reports need not re-grade client-side.
-				'correct'                  => $item['correct'] === null ? null : (bool) (int) $item['correct'],
+				'correct'                  => null === $item['correct'] ? null : (bool) (int) $item['correct'],
 				// Structured questions: current mark and maximum for each part.
 				'parts'                    => in_array( $snapshot->get_type(), array( 'structured', 'passage' ), true ) ? self::parts( $attempt_id, $item, $snapshot ) : null,
 				'quiz_attempts_answers_id' => $row ? (int) $row['id'] : null,
 				'item_id'                  => (int) $item['id'],
 				'section'                  => (string) ( $item['display']['section'] ?? '' ),
 				// The numbers this learner was given, for a randomised template question.
-					'instance'                 => $snapshot->get_instance(),
-					'version'                  => array(
+					'instance'             => $snapshot->get_instance(),
+				'version'                  => array(
 					'id'                 => $snapshot->get_version_id(),
 					'number'             => $snapshot->get_version_no(),
 					'uuid'               => $snapshot->get_uuid(),

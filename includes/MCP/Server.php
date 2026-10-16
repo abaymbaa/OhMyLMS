@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Connection settings and authentication for the official WordPress MCP Adapter.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\MCP;
 
 defined( 'ABSPATH' ) || exit;
@@ -171,12 +176,12 @@ class Server {
 	public static function update_settings( $request ) {
 		$provider = $request['provider'];
 		$action   = $request['action'];
-		if ( $action === 'generate' && ! self::readiness()['ready'] ) {
+		if ( 'generate' === $action && ! self::readiness()['ready'] ) {
 			return new \WP_Error( 'mcp_unavailable', self::readiness()['message'], array( 'status' => 503 ) );
 		}
 		$records = (array) get_option( self::OPTION, array() );
 		$secret  = '';
-		if ( $action === 'generate' ) {
+		if ( 'generate' === $action ) {
 			$secret               = 'oml_mcp_' . bin2hex( random_bytes( 32 ) );
 			$records[ $provider ] = array(
 				'hash'    => hash( 'sha256', $secret ),
@@ -241,7 +246,7 @@ class Server {
 			'quiz'     => 'quiz',
 			'question' => 'question',
 		) as $singular => $route ) {
-			$plural                      = $singular === 'quiz' ? 'quizzes' : $singular . 's';
+			$plural                      = 'quiz' === $singular ? 'quizzes' : $singular . 's';
 			$tools[ 'list_' . $plural ]  = array(
 				'description' => 'List OhMyLMS ' . $singular . 's, including drafts. Use pagination and search.',
 				'route'       => '/' . $route,

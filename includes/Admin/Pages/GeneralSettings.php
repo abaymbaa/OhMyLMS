@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Admin\Pages;
 
@@ -27,7 +27,7 @@ class GeneralSettings extends SettingsPage {
 		}
 
 		$settings = array(
-			// page settings
+			// page settings.
 			array(
 				'title' => __( 'Page setup', 'ohmylms' ),
 				'type'  => 'title',
@@ -154,7 +154,7 @@ class GeneralSettings extends SettingsPage {
 				'id'   => 'general_page_settings',
 			),
 
-			// currency settings
+			// currency settings.
 			array(
 				'title' => __( 'Currency options', 'ohmylms' ),
 				'type'  => 'title',

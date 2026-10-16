@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Hook for Membership
  *
@@ -13,7 +13,7 @@ class MembershipHook {
 
 	public function register_hooks() {
 		\OhMyLMS\Membership\CourseSelection::init();
-		// add_action('ohmylms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );
+		// add_action('ohmylms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );.
 		add_action( 'ohmylms_after_order_details', array( __CLASS__, 'display_order_details' ), 10, 1 );
 		add_action( 'ohmylms_recurring_subscription_totals', array( __CLASS__, 'get_recurring_subscription_totals' ) );
 		add_action( 'ohmylms_after_thankyou_table', array( $this, 'show_subscription_info' ), 10, 2 );
@@ -256,7 +256,7 @@ class MembershipHook {
 		if ( ! is_object( $membership ) || ! ( $membership instanceof \OhMyLMS\Data\Membership ) ) {
 			return $price_html;
 		}
-		// Get the signup fee from the membership object
+		// Get the signup fee from the membership object.
 		$signup_fee = method_exists( $membership, 'get_sign_up_fee' ) ? floatval( $membership->get_sign_up_fee() ) : 0;
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		$price_html = ohmylms_price( $course_price );

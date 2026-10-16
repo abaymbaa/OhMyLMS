@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
 final class QuestionTypes {
@@ -24,7 +24,7 @@ final class QuestionTypes {
 					'snapshot'        => true,
 					// Answers reference options; versioned deliveries send opaque option tokens.
 					'answers'         => in_array( $type, array( 'multiple-choice', 'single-choice', 'true-false', 'reorder', 'matching' ), true ) ? 'options' : 'text',
-					'public_settings' => $type === 'fill-in-the-blank' ? array( 'blank_mode' ) : array(),
+					'public_settings' => 'fill-in-the-blank' === $type ? array( 'blank_mode' ) : array(),
 					'label'           => ucwords( str_replace( '-', ' ', $type ) ),
 					'editor'          => array(
 						'format'   => 'ohmylms-options',
@@ -185,7 +185,7 @@ final class QuestionTypes {
 		}
 	}
 	public static function grade_builtin( $type, array $answer, $question ) {
-		if ( $type === 'fill-in-the-blank' && method_exists( $question, 'get_name' ) ) {
+		if ( 'fill-in-the-blank' === $type && method_exists( $question, 'get_name' ) ) {
 			$parsed = \OhMyLMS\Assessment\InlineBlanks::parse( $question->get_name() );
 			if ( $parsed['answers'] ) {
 				$settings       = method_exists( $question, 'get_settings' ) ? $question->get_settings() : array();
@@ -221,12 +221,12 @@ final class QuestionTypes {
 		$options = $question->get_questions();
 		$answer  = array_map( 'strval', $answer );
 		$correct = false;
-		if ( $type === 'matching' ) {
+		if ( 'matching' === $type ) {
 			$correct = count( $options ) > 0 && count( $answer ) === count( $options );
 			foreach ( $options as $option ) {
 				$correct = $correct && isset( $answer[ $option['id'] ] ) && $answer[ $option['id'] ] === (string) $option['id'];
 			}
-		} elseif ( $type === 'reorder' ) {
+		} elseif ( 'reorder' === $type ) {
 			$correct = count( $options ) > 0 && array_values( $answer ) === array_map( 'strval', array_column( $options, 'id' ) );
 		} else {
 			// Correctness comes from the options of the object being graded (a frozen version
@@ -242,7 +242,7 @@ final class QuestionTypes {
 			$field    = in_array( $type, array( 'statement', 'fill-in-the-blank' ), true ) ? 'answer' : 'id';
 			$expected = array_map( 'strval', array_column( $expected, $field ) );
 			$answer   = array_values( $answer );
-			if ( $type === 'multiple-choice' ) {
+			if ( 'multiple-choice' === $type ) {
 				sort( $expected );
 				sort( $answer ); }
 			$correct = count( $expected ) > 0 && $answer === $expected;
@@ -275,7 +275,7 @@ final class QuestionTypes {
 					'manual'   => false,
 				);
 			}
-			if ( $type === 'fill-in-the-blank' && count( $expected ) > 0 && count( $answer ) === count( $expected ) ) {
+			if ( 'fill-in-the-blank' === $type && count( $expected ) > 0 && count( $answer ) === count( $expected ) ) {
 				$correct = true;
 				foreach ( $expected as $i => $value ) {
 					$correct = $correct && \OhMyLMS\Assessment\InlineBlanks::matches( $answer[ $i ], $value, $question );

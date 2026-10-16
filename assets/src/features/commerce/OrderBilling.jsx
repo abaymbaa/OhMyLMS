@@ -3,7 +3,6 @@
  * Displays customer billing info: name, address, email, phone.
  */
 import { createElement } from '@wordpress/element';
-
 export function createOrderBilling( readRuntime ) {
 	return function OrderBilling( { order, address, email } ) {
 		const {
@@ -12,7 +11,6 @@ export function createOrderBilling( readRuntime ) {
 			React,
 			b: I18n,
 		} = readRuntime();
-
 		return (
 			<React.Fragment>
 				<Controls.HeadingWP
@@ -31,8 +29,12 @@ export function createOrderBilling( readRuntime ) {
 					align="start"
 				>
 					<Controls.TextWP size="14px" color="#7A8B9A">
-						<strong style={ { color: '#000D21' } }>
-							{ I18n.__( 'Name: ', 'ohmylms' ) }
+						<strong
+							style={ {
+								color: '#000D21',
+							} }
+						>
+							{ I18n.__( 'Name:', 'ohmylms' ) + ' ' }
 						</strong>{ ' ' }
 						{ decodeEntities( order?.student_name ) }
 					</Controls.TextWP>
@@ -41,14 +43,22 @@ export function createOrderBilling( readRuntime ) {
 						size="14px"
 						color="#7A8B9A"
 					>
-						<strong style={ { color: '#000D21' } }>
-							{ I18n.__( 'Address: ', 'ohmylms' ) }
+						<strong
+							style={ {
+								color: '#000D21',
+							} }
+						>
+							{ I18n.__( 'Address:', 'ohmylms' ) + ' ' }
 						</strong>{ ' ' }
 						{ decodeEntities( address ) }
 					</Controls.TextWP>
 					<Controls.TextWP size="14px" color="#7A8B9A">
-						<strong style={ { color: '#000D21' } }>
-							{ I18n.__( 'Email address: ', 'ohmylms' ) }
+						<strong
+							style={ {
+								color: '#000D21',
+							} }
+						>
+							{ I18n.__( 'Email address:', 'ohmylms' ) + ' ' }
 						</strong>{ ' ' }
 						<Controls.ButtonWP
 							variant="link"
@@ -59,8 +69,12 @@ export function createOrderBilling( readRuntime ) {
 					</Controls.TextWP>
 					{ order?.student_phone && (
 						<Controls.TextWP size="14px" color="#7A8B9A">
-							<strong style={ { color: '#000D21' } }>
-								{ I18n.__( 'Phone: ', 'ohmylms' ) }
+							<strong
+								style={ {
+									color: '#000D21',
+								} }
+							>
+								{ I18n.__( 'Phone:', 'ohmylms' ) + ' ' }
 							</strong>{ ' ' }
 							{ order.student_phone }
 						</Controls.TextWP>

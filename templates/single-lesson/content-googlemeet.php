@@ -27,7 +27,7 @@ if ( empty( $event_data ) || ! is_array( $event_data ) ) {
 	return;
 }
 
-// Extract meeting details
+// Extract meeting details.
 $meet_link  = $event_data['hangoutLink'] ?? '';
 $meeting_id = $event_data['conferenceData']['conferenceId'] ?? '';
 $topic      = $event_data['summary'] ?? get_the_title();
@@ -72,18 +72,18 @@ if ( $current_user_id ) {
 	}
 }
 
-// Create DateTime objects
+// Create DateTime objects.
 $start_dt = new \DateTime( $start_str, new \DateTimeZone( $timezone ) );
 $end_dt   = new \DateTime( $end_str, new \DateTimeZone( $timezone ) );
 
 $current_dt = new \DateTime( 'now', new \DateTimeZone( $timezone ) );
 
-// Timestamps for comparison
+// Timestamps for comparison.
 $start_ts   = $start_dt->getTimestamp();
 $end_ts     = $end_dt->getTimestamp();
 $current_ts = $current_dt->getTimestamp();
 
-// Determine meeting state
+// Determine meeting state.
 $meeting_state = 'not_started';
 if ( $current_ts >= $start_ts && $current_ts <= $end_ts ) {
 	$meeting_state = 'ongoing';
@@ -91,13 +91,13 @@ if ( $current_ts >= $start_ts && $current_ts <= $end_ts ) {
 	$meeting_state = 'ended';
 }
 
-// Calculate time ago for ongoing meetings
+// Calculate time ago for ongoing meetings.
 $time_ago = '';
 if ( 'ongoing' === $meeting_state ) {
 	$time_ago = human_time_diff( $start_ts, $current_ts ) . ' ago';
 }
 
-// Duration
+// Duration.
 $duration_minutes   = round( ( $end_ts - $start_ts ) / 60 );
 $hours              = floor( $duration_minutes / 60 );
 $minutes            = $duration_minutes % 60;
@@ -112,7 +112,7 @@ if ( $minutes > 0 ) {
 }
 $duration_formatted = trim( $duration_formatted );
 
-// Format multiline description for the calendar link
+// Format multiline description for the calendar link.
 $details         = implode(
 	PHP_EOL,
 	array(

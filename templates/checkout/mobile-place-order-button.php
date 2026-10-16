@@ -17,7 +17,7 @@ defined( 'ABSPATH' ) || exit;
 	<div class="ohmylms-mobile-order-button-container">
 		<div class="mobile-order-button-price">
 			<p class="review-toggle-title">
-				<?php echo __( 'Total (01 course)' ); ?>
+				<?php echo esc_html__( 'Total (01 course)' ); ?>
 			</p>
 
 			<span class="total-price">
@@ -48,7 +48,7 @@ defined( 'ABSPATH' ) || exit;
 			name="ohmylms_checkout_place_order"
 			aria-label="Complete Checkout"
 		>
-			<?php echo __( 'Complete Checkout', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'Complete Checkout', 'ohmylms' ); ?>
 			<span class="ohmylms-loader"></span>
 		</button>
 	</div>

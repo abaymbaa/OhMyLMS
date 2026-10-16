@@ -11,6 +11,7 @@ import { loadMath, mathEnabled } from '../../src/features/math/loader.mjs';
  * @param root0.isAnswered
  * @param root0.emit
  * @param root0.expire
+ * @param root0.inlineSubmit
  */
 export function createQuizPlayer( {
 	getContext,
@@ -23,6 +24,17 @@ export function createQuizPlayer( {
 	inlineSubmit,
 } ) {
 	const roots = new WeakMap();
+	// Which questions hold an answer, so the step button can switch between Skip and Next.
+	const markAnswered = ( root, context ) => {
+		const answered = {};
+		root.querySelectorAll( '.ohmylms-quiz-box' ).forEach( ( box, index ) => {
+			const type = box
+				.querySelector( '.is-required' )
+				?.getAttribute( 'question-type' );
+			answered[ index + 1 ] = type ? isAnswered( box, type ) : false;
+		} );
+		context.answered = answered;
+	};
 	const rootOf = () =>
 		getElement().ref.closest( '[data-wp-interactive="ohmylms/quiz"]' );
 	return {
@@ -132,6 +144,7 @@ export function createQuizPlayer( {
 				if ( c.questionNumber ) {
 					c.errors = { ...c.errors, [ c.questionNumber ]: false };
 				}
+				markAnswered( rootOf(), c );
 				emit( rootOf(), 'quiz-answer-changed', {
 					quizId: c.quizId,
 					questionNumber: c.questionNumber,
@@ -241,6 +254,7 @@ export function createQuizPlayer( {
 						}
 					}, 250 );
 				}
+				markAnswered( root, c );
 				roots.set( root, true );
 				emit( root, 'quiz-mounted', { quizId: c.quizId } );
 				return () => {

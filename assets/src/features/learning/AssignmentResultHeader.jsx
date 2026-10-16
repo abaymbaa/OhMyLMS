@@ -64,7 +64,7 @@ export function createAssignmentResultHeader( readRuntime ) {
 									</v.Link>
 									<Controls.TextWP size={ 15 }>
 										{ Ge(
-											( null == data
+											( data === null || data === void 0
 												? void 0
 												: data.display_name ) ||
 												( 0, I18n.__ )(
@@ -102,34 +102,49 @@ export function createAssignmentResultHeader( readRuntime ) {
 										textTransform: 'capitalize',
 									} }
 									isBorderLess={ ! 0 }
-									variant={
-										'submitted' ===
-										( null === ( n = submissions[ 0 ] ) ||
-										void 0 === n
-											? void 0
-											: n.status )
-											? 'warning'
-											: 'passed' ===
-												  ( null ===
-														( r =
-															submissions[ 0 ] ) ||
-												  void 0 === r
-														? void 0
-														: r.status )
-												? 'success'
-												: 'danger'
-									}
+									variant={ ( () => {
+										if (
+											'submitted' ===
+											( null ===
+												( n = submissions[ 0 ] ) ||
+											void 0 === n
+												? void 0
+												: n.status )
+										) {
+											return 'warning';
+										}
+										if (
+											'passed' ===
+											( null ===
+												( r = submissions[ 0 ] ) ||
+											void 0 === r
+												? void 0
+												: r.status )
+										) {
+											return 'success';
+										}
+										return 'danger';
+									} )() }
 								>
-									{ 'submitted' ===
-									( null === ( a = submissions[ 0 ] ) ||
-									void 0 === a
-										? void 0
-										: a.status )
-										? 'Pending'
-										: null === ( o = submissions[ 0 ] ) ||
-											  void 0 === o
-											? void 0
-											: o.status }
+									{ ( () => {
+										if (
+											'submitted' ===
+											( null ===
+												( a = submissions[ 0 ] ) ||
+											void 0 === a
+												? void 0
+												: a.status )
+										) {
+											return 'Pending';
+										}
+										if (
+											null === ( o = submissions[ 0 ] ) ||
+											void 0 === o
+										) {
+											return void 0;
+										}
+										return o.status;
+									} )() }
 								</Controls.BadgeWP>
 							</Controls.FlexItemWP>
 						</Controls.FlexWP>

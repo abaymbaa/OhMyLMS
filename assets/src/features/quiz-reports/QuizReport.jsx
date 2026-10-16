@@ -45,20 +45,22 @@ export function createQuizReport( readRuntime ) {
 			quizId = ( 0, Router.g )().id;
 		( 0, ReactHooks.useEffect )(
 			function () {
-				var e = ( function () {
-					var e,
+				var _eLocal = ( function () {
+					var _eLocal2,
 						t =
-							( ( e = ZZ().m( function e() {
-								var t, n, r;
+							( ( _eLocal2 = ZZ().m( function _eLocal3() {
+								var _tLocal, n, _rLocal;
 								return ZZ().w(
-									function ( e ) {
+									function ( _eLocal4 ) {
 										for (;;) {
-											switch ( ( e.p = e.n ) ) {
+											switch (
+												( _eLocal4.p = _eLocal4.n )
+											) {
 												case 0:
 													return (
-														( e.p = 0 ),
+														( _eLocal4.p = 0 ),
 														setLoading( ! 0 ),
-														( e.n = 1 ),
+														( _eLocal4.n = 1 ),
 														ApiFetchModule()( {
 															path: '/ohmylms/v1/quiz/'.concat(
 																quizId,
@@ -72,81 +74,114 @@ export function createQuizReport( readRuntime ) {
 														} )
 													 );
 												case 1:
-													if ( ( n = e.v ) ) {
-														e.n = 2;
+													if ( ( n = _eLocal4.v ) ) {
+														_eLocal4.n = 2;
 														break;
 													}
 													n = [];
+												// Falls through to the shared async state cleanup.
 												case 2:
-													( setSubmissions(
-														( null == ( t = n )
+													setSubmissions(
+														( ( (
+															_nullableValue
+														) =>
+															_nullableValue ===
+																null ||
+															_nullableValue ===
+																void 0 )(
+															( _tLocal = n )
+														)
 															? void 0
-															: t.report ) || []
-													),
-														setPassingMark(
-															Number(
-																null == t
-																	? void 0
-																	: t.passing_mark
-															) || 0
-														),
-														setTotalMarks(
-															Number(
-																null == t
-																	? void 0
-																	: t.question_total_marks
-															) || 0
-														),
-														( e.n = 4 ) );
+															: _tLocal.report ) ||
+															[]
+													);
+													setPassingMark(
+														Number(
+															_tLocal === null ||
+																_tLocal ===
+																	void 0
+																? void 0
+																: _tLocal.passing_mark
+														) || 0
+													);
+													setTotalMarks(
+														Number(
+															_tLocal === null ||
+																_tLocal ===
+																	void 0
+																? void 0
+																: _tLocal.question_total_marks
+														) || 0
+													);
+													_eLocal4.n = 4;
 													break;
 												case 3:
-													( ( e.p = 3 ),
-														( r = e.v ),
-														console.error( r ) );
+													_eLocal4.p = 3;
+													_rLocal = _eLocal4.v;
+													console.error( _rLocal );
+												// Falls through to the shared async state cleanup.
 												case 4:
 													return (
-														( e.p = 4 ),
+														( _eLocal4.p = 4 ),
 														setLoading( ! 1 ),
-														e.f( 4 )
+														_eLocal4.f( 4 )
 													 );
 												case 5:
-													return e.a( 2 );
+													return _eLocal4.a( 2 );
 											}
 										}
 									},
-									e,
+									_eLocal3,
 									null,
 									[ [ 0, 3, 4, 5 ] ]
 								);
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										KZ( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal2 = this,
+									n = _args;
+								return new Promise( function ( _rLocal2, a ) {
+									var o = _eLocal2.apply( _tLocal2, n );
+									function _iLocal( _eLocal5 ) {
+										KZ(
+											o,
+											_rLocal2,
+											a,
+											_iLocal,
+											l,
+											'next',
+											_eLocal5
+										);
 									}
-									function l( e ) {
-										KZ( o, r, a, i, l, 'throw', e );
+									function l( _eLocal6 ) {
+										KZ(
+											o,
+											_rLocal2,
+											a,
+											_iLocal,
+											l,
+											'throw',
+											_eLocal6
+										);
 									}
-									i( void 0 );
+									_iLocal( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return t.apply( this, _args2 );
 					};
 				} )();
-				e();
+				_eLocal();
 			},
 			[ quizId ]
 		);
-		const onPageChange = ( 0, ReactHooks.useCallback )( function ( e ) {
-				setPage( e );
+		const onPageChange = ( 0, ReactHooks.useCallback )( function (
+				_eLocal7
+			) {
+				setPage( _eLocal7 );
 			}, [] ),
-			filteredSubmissions = submissions.filter( function ( e ) {
-				return Object.values( e ).some( function ( e ) {
-					return String( e ).toLowerCase().includes( search );
+			filteredSubmissions = submissions.filter( function ( _eLocal8 ) {
+				return Object.values( _eLocal8 ).some( function ( _eLocal9 ) {
+					return String( _eLocal9 ).toLowerCase().includes( search );
 				} );
 			} ),
 			columns = [
@@ -164,8 +199,8 @@ export function createQuizReport( readRuntime ) {
 					title: 'Date Submitted',
 					dataIndex: 'end_date',
 					key: 'end_date',
-					render( e ) {
-						return DateLibrary()( e ).format(
+					render( _eLocal0 ) {
+						return DateLibrary()( _eLocal0 ).format(
 							'MMM D, YYYY h:mm A'
 						);
 					},
@@ -174,7 +209,7 @@ export function createQuizReport( readRuntime ) {
 					title: 'Score',
 					dataIndex: 'score',
 					key: 'score',
-					render( e, t ) {
+					render( _eLocal1, t ) {
 						return (
 							<React.Fragment>{ t.total_marks }</React.Fragment>
 						);
@@ -184,27 +219,50 @@ export function createQuizReport( readRuntime ) {
 					title: 'Result',
 					dataIndex: 'result',
 					key: 'result',
-					render( e, t ) {
+					render( _eLocal10, t ) {
 						var n =
-							Number( null == t ? void 0 : t.total_marks ) >=
-							Number( passingMark );
+							Number(
+								t === null || t === void 0
+									? void 0
+									: t.total_marks
+							) >= Number( passingMark );
 						return (
 							<Controls.BadgeWP
-								variant={
-									'in-review' ===
-									( null == t ? void 0 : t.status )
-										? 'warning'
-										: n
-											? 'success'
-											: 'danger'
-								}
+								variant={ ( () => {
+									if (
+										'in-review' ===
+										( t === null || t === void 0
+											? void 0
+											: t.status )
+									) {
+										return 'warning';
+									}
+									if ( n ) {
+										return 'success';
+									}
+									return 'danger';
+								} )() }
 							>
-								{ 'in-review' ===
-								( null == t ? void 0 : t.status )
-									? ( 0, I18n.__ )( 'Pending', 'ohmylms' )
-									: n
-										? ( 0, I18n.__ )( 'Pass', 'ohmylms' )
-										: ( 0, I18n.__ )( 'Fail', 'ohmylms' ) }
+								{ ( () => {
+									if (
+										'in-review' ===
+										( t === null || t === void 0
+											? void 0
+											: t.status )
+									) {
+										return ( 0, I18n.__ )(
+											'Pending',
+											'ohmylms'
+										);
+									}
+									if ( n ) {
+										return ( 0, I18n.__ )(
+											'Pass',
+											'ohmylms'
+										);
+									}
+									return ( 0, I18n.__ )( 'Fail', 'ohmylms' );
+								} )() }
 							</Controls.BadgeWP>
 						);
 					},
@@ -212,21 +270,21 @@ export function createQuizReport( readRuntime ) {
 				{
 					title: '',
 					key: 'action',
-					render( e, t ) {
+					render( _eLocal11, t ) {
 						return (
 							<Controls.ButtonWP
 								variant={ 'primary' }
 								onClick={ function () {
 									return (
-										( e =
-											null == t
+										( _eLocal12 =
+											t === null || t === void 0
 												? void 0
 												: t.quiz_attempt_id ),
 										void navigate(
-											'grade-quiz/'.concat( e )
+											'grade-quiz/'.concat( _eLocal12 )
 										)
 									 );
-									var e;
+									var _eLocal12;
 								} }
 							>
 								{ ( 0, I18n.__ )( 'Grade Quiz', 'ohmylms' ) }
@@ -292,8 +350,10 @@ export function createQuizReport( readRuntime ) {
 											'Search Submission',
 											'ohmylms'
 										) }
-										onChange={ function ( e ) {
-											setSearch( e.toLowerCase() );
+										onChange={ function ( _eLocal13 ) {
+											setSearch(
+												_eLocal13.toLowerCase()
+											);
 											setPage( 1 );
 										} }
 									/>

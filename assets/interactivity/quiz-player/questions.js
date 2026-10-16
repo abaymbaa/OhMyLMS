@@ -5,13 +5,10 @@ import {
 	withSyncEvent,
 } from '@wordpress/interactivity';
 import {
-	emit,
 	registerAnswerValidator,
 	registerQuestionMount,
 } from 'ohmylms/interactivity';
-
 import { createQuestionControls } from './questionControls.js';
-
 const controllers = new WeakMap();
 store( 'ohmylms/questions', {
 	actions: Object.fromEntries(
@@ -53,7 +50,9 @@ function mountDynamic( container ) {
 	if ( ! root ) {
 		return () => {};
 	}
-	const controller = createQuestionControls( root, { selectedId: '' } );
+	const controller = createQuestionControls( root, {
+		selectedId: '',
+	} );
 	const listeners = {
 		dragstart: 'dragstart',
 		dragend: 'dragend',

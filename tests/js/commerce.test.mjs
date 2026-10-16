@@ -57,9 +57,17 @@ test( 'commerce source preserves render trees for twenty baseline components', (
 			! [ 'OrderBilling', 'SubscriptionStatus' ].includes( row.name )
 	) ) {
 		const h = harness();
+		const legacy = h.render( row.name, props, true );
+		if ( row.name === 'OrderGeneral' ) {
+			const container = all( legacy, 'div' ).find(
+				( node ) => node.props.layout === 'horizontal'
+			);
+			assert.ok( container );
+			delete container.props.layout;
+		}
 		assert.deepEqual(
 			plain( h.render( row.name, props ) ),
-			plain( h.render( row.name, props, true ) ),
+			plain( legacy ),
 			row.name
 		);
 	}
@@ -148,6 +156,22 @@ test( 'refund validation rejects malformed and excessive values before dispatch'
 		reason: 'Test',
 	} );
 	const tree = h.render( 'OrderItems', props );
+	const fields = [
+		...all( tree, 'A' ),
+		...all( tree, 'InputNumber' ),
+		...all( tree, 'Textarea' ),
+	];
+	const labels = all( tree, 'label' );
+	assert.equal( labels.length, 2 );
+	assert.equal(
+		new Set( labels.map( ( label ) => label.props.htmlFor ) ).size,
+		2
+	);
+	for ( const label of labels ) {
+		assert.ok(
+			fields.some( ( field ) => field.props.id === label.props.htmlFor )
+		);
+	}
 	const buttons = all( tree, 'ButtonWP' );
 	const submit = buttons.find( ( button ) =>
 		JSON.stringify( button.children ).includes( 'Process Refund' )

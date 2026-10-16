@@ -36,179 +36,182 @@ export function createWebhookEditorModal( readRuntime ) {
 			_ = v[ 1 ],
 			w = Q5( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
 			E = w[ 0 ];
-		( w[ 1 ],
-			( 0, ReactHooks.useEffect )(
-				function () {
-					if ( n ) {
-						if ( t ) {
-							var e = [
-								{
-									key: '',
-									value: '',
-								},
-							];
-							if ( t.data_mapping ) {
-								if ( 'string' === typeof t.data_mapping ) {
-									try {
-										e = JSON.parse( t.data_mapping );
-									} catch ( t ) {
-										( console.error(
-											'Failed to parse data_mapping:',
-											t
-										),
-											( e = [
-												{
-													key: '',
-													value: '',
-												},
-											] ) );
-									}
-								} else {
-									Array.isArray( t.data_mapping ) &&
-										( e = t.data_mapping );
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( n ) {
+					if ( t ) {
+						var e = [
+							{
+								key: '',
+								value: '',
+							},
+						];
+						if ( t.data_mapping ) {
+							if ( 'string' === typeof t.data_mapping ) {
+								try {
+									e = JSON.parse( t.data_mapping );
+								} catch ( _tLocal ) {
+									console.error(
+										'Failed to parse data_mapping:',
+										_tLocal
+									);
+									e = [
+										{
+											key: '',
+											value: '',
+										},
+									];
 								}
+							} else if ( Array.isArray( t.data_mapping ) ) {
+								e = t.data_mapping;
 							}
-							o.setWebhookFormData(
-								q5(
-									q5( {}, t ),
-									{},
-									{
-										data_mapping: e,
-									}
-								)
-							);
-						} else {
-							o.setWebhookFormData( {
-								name: '',
-								webhook_url: '',
-								trigger_event: 'course_purchase',
-								http_method: 'POST',
-								data_type: 'json',
-								status: 'active',
-								description: '',
-								headers: '',
-								retry_attempts: 3,
-								timeout: 30,
-								data_mapping: [
-									{
-										key: 'User ID',
-										value: 'user_id',
-									},
-								],
-							} );
 						}
+						o.setWebhookFormData(
+							q5(
+								q5( {}, t ),
+								{},
+								{
+									data_mapping: e,
+								}
+							)
+						);
+					} else {
+						o.setWebhookFormData( {
+							name: '',
+							webhook_url: '',
+							trigger_event: 'course_purchase',
+							http_method: 'POST',
+							data_type: 'json',
+							status: 'active',
+							description: '',
+							headers: '',
+							retry_attempts: 3,
+							timeout: 30,
+							data_mapping: [
+								{
+									key: 'User ID',
+									value: 'user_id',
+								},
+							],
+						} );
 					}
-				},
-				[ n, t, o ]
-			) );
+				}
+			},
+			[ n, t, o ]
+		);
 		var S = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).selectWebhookFormData();
 			}, [] ),
 			R = function ( e ) {
-				var t,
-					n,
-					r = {};
+				var _tLocal2,
+					_nLocal,
+					_rLocal = {};
 				return (
-					( null != e &&
-						null !== ( t = e.name ) &&
-						void 0 !== t &&
-						t.trim() ) ||
-						( r.name = ( 0, I18n.__ )(
+					( e !== null &&
+						e !== void 0 &&
+						null !== ( _tLocal2 = e.name ) &&
+						void 0 !== _tLocal2 &&
+						_tLocal2.trim() ) ||
+						( _rLocal.name = ( 0, I18n.__ )(
 							'Name is required.',
 							'ohmylms'
 						) ),
-					null != e &&
-					null !== ( n = e.webhook_url ) &&
-					void 0 !== n &&
-					n.trim()
+					e !== null &&
+					e !== void 0 &&
+					null !== ( _nLocal = e.webhook_url ) &&
+					void 0 !== _nLocal &&
+					_nLocal.trim()
 						? /^https?:\/\/.+/.test( e.webhook_url ) ||
-							( r.webhook_url = ( 0, I18n.__ )(
+							( _rLocal.webhook_url = ( 0, I18n.__ )(
 								'Please enter a valid URL.',
 								'ohmylms'
 							) )
-						: ( r.webhook_url = ( 0, I18n.__ )(
+						: ( _rLocal.webhook_url = ( 0, I18n.__ )(
 								'Webhook URL is required.',
 								'ohmylms'
 							) ),
-					( null != e && e.trigger_event ) ||
-						( r.trigger_event = ( 0, I18n.__ )(
+					( e !== null && e !== void 0 && e.trigger_event ) ||
+						( _rLocal.trigger_event = ( 0, I18n.__ )(
 							'Trigger event is required.',
 							'ohmylms'
 						) ),
-					r
+					_rLocal
 				 );
 			},
 			x = function ( e ) {
-				var t = {};
+				var _tLocal3 = {};
 				return (
-					null != e &&
+					e !== null &&
+						e !== void 0 &&
 						e.data_mapping &&
 						e.data_mapping.length > 0 &&
-						( e.data_mapping.filter( function ( e ) {
-							return e.key && e.value;
+						( e.data_mapping.filter( function ( _eLocal ) {
+							return _eLocal.key && _eLocal.value;
 						} ),
-						e.data_mapping.some( function ( e ) {
+						e.data_mapping.some( function ( _eLocal2 ) {
 							return ! (
-								( ! e.key && ! e.value ) ||
-								( e.key && e.value )
+								( ! _eLocal2.key && ! _eLocal2.value ) ||
+								( _eLocal2.key && _eLocal2.value )
 							);
 						} ) &&
-							( t.data_mapping = ( 0, I18n.__ )(
+							( _tLocal3.data_mapping = ( 0, I18n.__ )(
 								'Please fill in all field mapping keys and values',
 								'ohmylms'
 							) ) ),
-					t
+					_tLocal3
 				 );
 			},
 			C = function ( e ) {
-				var t = R( e ),
-					n = x( e ),
-					r = q5( q5( {}, t ), n );
-				return ( _( r ), 0 === Object.keys( r ).length );
+				var _tLocal4 = R( e ),
+					_nLocal2 = x( e ),
+					_rLocal2 = q5( q5( {}, _tLocal4 ), _nLocal2 );
+				return ( _( _rLocal2 ), 0 === Object.keys( _rLocal2 ).length );
 			},
 			P = function () {
-				( r && 'function' === typeof r && r(),
-					f( '1' ),
-					_( {} ),
-					o.clearWebhookFormData() );
+				if ( r && 'function' === typeof r ) {
+					r();
+				}
+				f( '1' );
+				_( {} );
+				o.clearWebhookFormData();
 			},
 			O = ( function () {
 				var e,
-					n =
-						( ( e = V5().m( function e() {
-							var n, r, i;
+					_nLocal3 =
+						( ( e = V5().m( function _eLocal3() {
+							var _nLocal4, _rLocal3, _iLocal;
 							return V5().w(
-								function ( e ) {
+								function ( _eLocal4 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 											case 0:
 												if ( '1' !== p ) {
-													e.n = 1;
+													_eLocal4.n = 1;
 													break;
 												}
 												return (
-													( n = R( S ) ),
-													_( n ),
+													( _nLocal4 = R( S ) ),
+													_( _nLocal4 ),
 													0 ===
-														Object.keys( n )
+														Object.keys( _nLocal4 )
 															.length && f( '2' ),
-													e.a( 2 )
+													_eLocal4.a( 2 )
 												 );
 											case 1:
 												if ( s ) {
-													e.n = 10;
+													_eLocal4.n = 10;
 													break;
 												}
 												if ( C( S ) ) {
-													e.n = 2;
+													_eLocal4.n = 2;
 													break;
 												}
-												return e.a( 2 );
+												return _eLocal4.a( 2 );
 											case 2:
 												if (
 													( d( ! 0 ),
-													( e.p = 3 ),
-													( r = q5(
+													( _eLocal4.p = 3 ),
+													( _rLocal3 = q5(
 														q5( {}, S ),
 														{},
 														{
@@ -220,30 +223,30 @@ export function createWebhookEditorModal( readRuntime ) {
 													) ),
 													! t || ! t.id )
 												) {
-													e.n = 5;
+													_eLocal4.n = 5;
 													break;
 												}
 												return (
-													( e.n = 4 ),
+													( _eLocal4.n = 4 ),
 													o.updateWebhookById(
 														t.id,
-														r
+														_rLocal3
 													)
 												 );
 											case 4:
-												( l(
+												l(
 													'success',
 													( 0, I18n.__ )(
 														'Webhook updated successfully!',
 														'ohmylms'
 													)
-												),
-													( e.n = 7 ) );
+												);
+												_eLocal4.n = 7;
 												break;
 											case 5:
 												return (
-													( e.n = 6 ),
-													o.createWebhook( r )
+													( _eLocal4.n = 6 ),
+													o.createWebhook( _rLocal3 )
 												 );
 											case 6:
 												l(
@@ -253,84 +256,105 @@ export function createWebhookEditorModal( readRuntime ) {
 														'ohmylms'
 													)
 												);
+											// Falls through to the shared async state cleanup.
 											case 7:
-												( a &&
-													'function' === typeof a &&
-													a( r ),
-													P(),
-													( e.n = 9 ) );
+												if (
+													a &&
+													'function' === typeof a
+												) {
+													a( _rLocal3 );
+												}
+												P();
+												_eLocal4.n = 9;
 												break;
 											case 8:
-												( ( e.p = 8 ),
-													( i = e.v ),
-													console.error(
-														'Error saving webhook:',
-														i
-													),
-													l(
-														'error',
-														( 0, I18n.__ )(
-															'Failed to save webhook. Please try again.',
-															'ohmylms'
-														)
-													) );
+												_eLocal4.p = 8;
+												_iLocal = _eLocal4.v;
+												console.error(
+													'Error saving webhook:',
+													_iLocal
+												);
+												l(
+													'error',
+													( 0, I18n.__ )(
+														'Failed to save webhook. Please try again.',
+														'ohmylms'
+													)
+												);
+											// Falls through to the shared async state cleanup.
 											case 9:
 												return (
-													( e.p = 9 ),
+													( _eLocal4.p = 9 ),
 													d( ! 1 ),
-													e.f( 9 )
+													_eLocal4.f( 9 )
 												 );
 											case 10:
-												return e.a( 2 );
+												return _eLocal4.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal3,
 								null,
 								[ [ 3, 8, 9, 10 ] ]
 							);
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									G5( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal5 = this,
+								_nLocal5 = _args;
+							return new Promise( function ( _rLocal4, _aLocal ) {
+								var _oLocal = e.apply( _tLocal5, _nLocal5 );
+								function _iLocal2( _eLocal5 ) {
+									G5(
+										_oLocal,
+										_rLocal4,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'next',
+										_eLocal5
+									);
 								}
-								function l( e ) {
-									G5( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal6 ) {
+									G5(
+										_oLocal,
+										_rLocal4,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'throw',
+										_eLocal6
+									);
 								}
-								i( void 0 );
+								_iLocal2( void 0 );
 							} );
 						} );
-				return function () {
-					return n.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _nLocal3.apply( this, _args2 );
 				};
 			} )();
-		( ( 0, ReactHooks.useEffect )( function () {
+		( 0, ReactHooks.useEffect )( function () {
 			return function () {
 				o.clearWebhookFormData();
 			};
-		}, [] ),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e = ! 0;
-					if ( e && S ) {
-						if ( '1' === p ) {
-							var t = R( S );
-							_( t );
-						} else {
-							var n = x( S );
-							_( n );
-						}
+		}, [] );
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e = ! 0;
+				if ( e && S ) {
+					if ( '1' === p ) {
+						var _tLocal6 = R( S );
+						_( _tLocal6 );
+					} else {
+						var _nLocal6 = x( S );
+						_( _nLocal6 );
 					}
-					return function () {
-						e = ! 1;
-					};
-				},
-				[ S, p ]
-			) );
+				}
+				return function () {
+					e = ! 1;
+				};
+			},
+			[ S, p ]
+		);
 		var k = [
 				{
 					label: (
@@ -405,7 +429,7 @@ export function createWebhookEditorModal( readRuntime ) {
 				{ n && (
 					<Controls.ModalWP
 						title={
-							null != t && t.id
+							t !== null && t !== void 0 && t.id
 								? ( 0, I18n.__ )( 'Edit Webhook', 'ohmylms' )
 								: ( 0, I18n.__ )( 'Add Webhook', 'ohmylms' )
 						}

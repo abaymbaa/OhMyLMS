@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class QuestionStore
+ * Handles CRUD operations for Question data.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -42,7 +48,7 @@ class QuestionStore extends DataStore {
 
 		$question_id = wp_insert_post(
 			apply_filters(
-				'ohmylms_new_question_data', // Custom filter hook name
+				'ohmylms_new_question_data', // Custom filter hook name.
 				array(
 					// wp_insert_post() unslashes its input; slash so backslashes (e.g. LaTeX) are kept.
 					'post_title'    => wp_slash( $question->get_name() ? $question->get_name() : __( 'Untitled', 'ohmylms' ) ),

@@ -103,83 +103,96 @@ export function createCourseChapter( readRuntime ) {
 			}, [] );
 		( 0, ReactHooks.useEffect )(
 			function () {
-				chapterIndex === ( null == ne ? void 0 : ne.lastIndex ) &&
+				if (
+					chapterIndex ===
+					( ne === null || ne === void 0 ? void 0 : ne.lastIndex )
+				) {
 					I( function ( e ) {
 						return e.includes( '1' ) ? [] : [ '1' ];
 					} );
+				}
 			},
 			[ ne ]
 		);
 		var re = ( 0, ReactHooks.useCallback )(
-			E()( function ( e, t ) {
-				R.updateChapterFields( e, t );
+			E()( function ( e, _tLocal ) {
+				R.updateChapterFields( e, _tLocal );
 			}, 300 ),
 			[ R ]
 		);
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
-				k !== ( chapter.description || '' ) &&
+				if ( k !== ( chapter.description || '' ) ) {
 					re( chapter.id, {
 						description: k,
 					} );
+				}
 			},
 			[ k, chapter.id, re ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e = ! 0;
-					return (
-						e &&
-							M.length > 0 &&
-							! S &&
-							R.getLessonByChapterId( chapterId ),
-						function () {
-							e = ! 1;
-						}
-					 );
-				},
-				[ chapterId, M, S ]
-			) );
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e = ! 0;
+				return (
+					e &&
+						M.length > 0 &&
+						! S &&
+						R.getLessonByChapterId( chapterId ),
+					function () {
+						e = ! 1;
+					}
+				 );
+			},
+			[ chapterId, M, S ]
+		);
 		var ae = function ( e ) {
-				var t,
+				var _tLocal2,
 					n =
-						null === ( t = Object.values( e ) ) || void 0 === t
+						null === ( _tLocal2 = Object.values( e ) ) ||
+						void 0 === _tLocal2
 							? void 0
-							: t.map( function ( e ) {
-									var t;
+							: _tLocal2.map( function ( _eLocal ) {
+									var _tLocal3;
 									return parseInt(
 										null !==
-											( t =
-												null == e
+											( _tLocal3 =
+												_eLocal === null ||
+												_eLocal === void 0
 													? void 0
-													: e.order_number ) &&
-											void 0 !== t
-											? t
+													: _eLocal.order_number ) &&
+											void 0 !== _tLocal3
+											? _tLocal3
 											: 0,
 										10
 									);
 								} );
 				return n.length
-					? Math.max.apply(
-							Math,
-							( function ( e ) {
+					? Math.max(
+							...( function ( _eLocal2 ) {
 								return (
-									( function ( e ) {
-										if ( Array.isArray( e ) ) {
-											return Jl( e );
+									( function ( _eLocal3 ) {
+										if ( Array.isArray( _eLocal3 ) ) {
+											return Jl( _eLocal3 );
 										}
-									} )( e ) ||
-									( function ( e ) {
+									} )( _eLocal2 ) ||
+									( function ( _eLocal4 ) {
 										if (
 											( 'undefined' !== typeof Symbol &&
-												null !=
-													e[ Symbol.iterator ] ) ||
-											null != e[ '@@iterator' ]
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													_eLocal4[ Symbol.iterator ]
+												) ) ||
+											( ( _nullableValue2 ) =>
+												_nullableValue2 !== null &&
+												_nullableValue2 !== void 0 )(
+												_eLocal4[ '@@iterator' ]
+											)
 										) {
-											return Array.from( e );
+											return Array.from( _eLocal4 );
 										}
-									} )( e ) ||
-									Kl( e ) ||
+									} )( _eLocal2 ) ||
+									Kl( _eLocal2 ) ||
 									( function () {
 										throw new TypeError(
 											'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -192,17 +205,18 @@ export function createCourseChapter( readRuntime ) {
 			},
 			oe = ( function () {
 				var e = Zl(
-					ql().m( function e( t ) {
+					ql().m( function _eLocal5( ..._args3 ) {
+						let [ _tLocal4 ] = _args3;
 						var n,
 							r,
 							a,
 							o,
 							i,
-							l = arguments;
+							l = _args3;
 						return ql().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											return (
 												( n =
@@ -210,14 +224,17 @@ export function createCourseChapter( readRuntime ) {
 													void 0 !== l[ 1 ]
 														? l[ 1 ]
 														: 'text' ),
-												( e.p = 1 ),
+												( _eLocal6.p = 1 ),
 												B( ! 0 ),
 												( r = ae( ee.byId ) ),
 												( a =
 													parseInt(
-														null != r ? r : 0
+														r !== null &&
+															r !== void 0
+															? r
+															: 0
 													) + 1 ),
-												( e.n = 2 ),
+												( _eLocal6.n = 2 ),
 												R.addLesson(
 													{
 														type: n,
@@ -225,69 +242,79 @@ export function createCourseChapter( readRuntime ) {
 														status: 'publish',
 														order_number: a,
 													},
-													t
+													_tLocal4
 												)
 											 );
 										case 2:
-											( ( o = e.v ) &&
-												( D( ! 1 ),
-												[
-													'text',
-													'audio',
-													'video',
-												].includes( n )
-													? window.location.assign(
+											if ( ( o = _eLocal6.v ) ) {
+												{
+													D( ! 1 );
+													if (
+														[
+															'text',
+															'audio',
+															'video',
+														].includes( n )
+													) {
+														window.location.assign(
 															nativeLessonHref(
 																o,
 																window.location.hash.slice(
 																	1
 																)
 															)
-														)
-													: ( H( ! 0 ),
-														R.setSelectedLessonId(
-															o
-														) ) ),
-												( e.n = 4 ) );
+														);
+													} else {
+														{
+															H( ! 0 );
+															R.setSelectedLessonId(
+																o
+															);
+														}
+													}
+												}
+											}
+											_eLocal6.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( i = e.v ),
-												console.error( i ) );
+											_eLocal6.p = 3;
+											i = _eLocal6.v;
+											console.error( i );
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal6.p = 4 ),
 												B( ! 1 ),
-												e.f( 4 )
+												_eLocal6.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args4 ) {
+					return e.apply( this, _args4 );
 				};
 			} )(),
 			le = ( function () {
 				var e = Zl(
-					ql().m( function e() {
-						var t, n, a;
-						return ql().w( function ( e ) {
+					ql().m( function _eLocal7() {
+						var _tLocal6, n, a;
+						return ql().w( function ( _eLocal8 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal8.n ) {
 									case 0:
 										return (
 											B( ! 0 ),
-											( t = ae( ee.byId ) ),
-											( n = t + 1 ),
-											( e.n = 1 ),
+											( _tLocal6 = ae( ee.byId ) ),
+											( n = _tLocal6 + 1 ),
+											( _eLocal8.n = 1 ),
 											R.addQuiz(
 												{
 													name: 'Untitled',
@@ -299,35 +326,37 @@ export function createCourseChapter( readRuntime ) {
 											)
 										 );
 									case 1:
-										( ( a = e.v ),
-											B( ! 1 ),
-											D( ! 1 ),
-											R.setIsOpenQuizBuilder( ! 0 ),
-											R.setSelectedQuizId( a ) );
+										a = _eLocal8.v;
+										B( ! 1 );
+										D( ! 1 );
+										R.setIsOpenQuizBuilder( ! 0 );
+										R.setSelectedQuizId( a );
+									// Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal8.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal7 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )(),
 			ce = ( function () {
 				var e = Zl(
-					ql().m( function e() {
-						var t, n, a;
-						return ql().w( function ( e ) {
+					ql().m( function _eLocal9() {
+						var _tLocal7, n, a;
+						return ql().w( function ( _eLocal0 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal0.n ) {
 									case 0:
 										return (
 											B( ! 0 ),
-											( t = ae( ee.byId ) ),
-											( n = parseInt( t ) + 1 ),
-											( e.n = 1 ),
+											( _tLocal7 = ae( ee.byId ) ),
+											( n = parseInt( _tLocal7 ) + 1 ),
+											( _eLocal0.n = 1 ),
 											R.addAssignment(
 												{
 													type: 'assignment',
@@ -339,32 +368,35 @@ export function createCourseChapter( readRuntime ) {
 											)
 										 );
 									case 1:
-										( ( a = e.v ),
-											B( ! 1 ),
-											D( ! 1 ),
-											q( ! 0 ),
-											R.setSelectedAssignmentId( a ) );
+										a = _eLocal0.v;
+										B( ! 1 );
+										D( ! 1 );
+										q( ! 0 );
+										R.setSelectedAssignmentId( a );
+									// Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal0.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal9 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			ue = ( 0, ReactHooks.useCallback )( function ( e ) {
 				if ( e.target.closest( '.ant-collapse-arrow' ) ) {
 					return (
-						I( function ( e ) {
-							return e.includes( '1' ) ? [] : [ '1' ];
+						I( function ( _eLocal1 ) {
+							return _eLocal1.includes( '1' ) ? [] : [ '1' ];
 						} ),
 						void onExpand( isActive ? null : chapterId )
 					 );
 				}
-				( I( [ '1' ] ), onExpand( chapterId ) );
+				I( [ '1' ] );
+				onExpand( chapterId );
 			}, [] );
 		return (
 			<React.Fragment>
@@ -374,10 +406,10 @@ export function createCourseChapter( readRuntime ) {
 							name: chapter.name || chapter.title,
 							description: k,
 							setName( e ) {
-								( P( e ),
-									R.updateChapterFields( chapterId, {
-										name: e,
-									} ) );
+								P( e );
+								R.updateChapterFields( chapterId, {
+									name: e,
+								} );
 							},
 							setDescription: j,
 							chapterId,
@@ -396,13 +428,13 @@ export function createCourseChapter( readRuntime ) {
 								chapter,
 								contents: ee,
 								handleCreateLesson() {
-									( ( te.current = document.activeElement ),
-										D( ! 0 ) );
+									te.current = document.activeElement;
+									D( ! 0 );
 								},
-								handleLessonEdit( e, t, n ) {
+								handleLessonEdit( e, _tLocal8, n ) {
 									if (
 										[ 'text', 'audio', 'video' ].includes(
-											t
+											_tLocal8
 										)
 									) {
 										window.location.assign(
@@ -413,23 +445,37 @@ export function createCourseChapter( readRuntime ) {
 										);
 										return;
 									}
-									'quiz' === t
-										? ( R.setSelectedQuizId( e ),
-											R.setIsOpenQuizBuilder( ! 0 ) )
-										: 'assignment' === t
-											? ( q( ! 0 ),
-												R.setSelectedAssignmentId( e ) )
-											: 'session' === t
-												? ( R.setSelectedLessonId( e ),
+									if ( 'quiz' === _tLocal8 ) {
+										{
+											R.setSelectedQuizId( e );
+											R.setIsOpenQuizBuilder( ! 0 );
+										}
+									} else {
+										( () => {
+											if ( 'assignment' === _tLocal8 ) {
+												return (
+													q( ! 0 ),
+													R.setSelectedAssignmentId(
+														e
+													)
+												 );
+											}
+											if ( 'session' === _tLocal8 ) {
+												return (
+													R.setSelectedLessonId( e ),
 													'zoom' === n
 														? ( J( ! 1 ), Z( ! 0 ) )
 														: 'googlemeet' === n &&
 															( Z( ! 1 ),
-															J( ! 0 ) ) )
-												: ( H( ! 0 ),
-													R.setSelectedLessonId(
-														e
-													) );
+															J( ! 0 ) )
+												 );
+											}
+											return (
+												H( ! 0 ),
+												R.setSelectedLessonId( e )
+											 );
+										} )();
+									}
 								},
 								courseId,
 								handleAutomation,
@@ -443,23 +489,33 @@ export function createCourseChapter( readRuntime ) {
 						openModal: N,
 						setOpenModal: D,
 						handleCreateLesson( e ) {
-							'assignment' === e
-								? ce()
-								: null != chapter &&
-									chapter.id &&
-									oe(
-										null == chapter ? void 0 : chapter.id,
-										e
-									);
+							if ( 'assignment' === e ) {
+								ce();
+							} else if (
+								chapter !== null &&
+								chapter !== void 0 &&
+								chapter.id
+							) {
+								oe(
+									chapter === null || chapter === void 0
+										? void 0
+										: chapter.id,
+									e
+								);
+							}
 						},
 						handleCreateQuiz: le,
 						loader: z,
 						lastFocusedElement: te,
 						handleOpenZoom() {
-							( D( ! 1 ), J( ! 1 ), Z( ! 0 ) );
+							D( ! 1 );
+							J( ! 1 );
+							Z( ! 0 );
 						},
 						handleOpenGoogleMeet() {
-							( D( ! 1 ), Z( ! 1 ), J( ! 0 ) );
+							D( ! 1 );
+							Z( ! 1 );
+							J( ! 0 );
 						},
 						chapterId,
 						courseId,
@@ -478,7 +534,8 @@ export function createCourseChapter( readRuntime ) {
 					<Ul
 						isOpen={ K }
 						onClose={ function () {
-							( J( ! 1 ), R.setSelectedLessonId( null ) );
+							J( ! 1 );
+							R.setSelectedLessonId( null );
 						} }
 						chapterId={ chapterId }
 						courseId={ courseId }

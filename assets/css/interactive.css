@@ -161,7 +161,7 @@
 }
 
 .ohmylms-vis-text {
-	fill: currentColor;
+	fill: currentcolor;
 	font-size: 12px;
 }
 
@@ -423,6 +423,7 @@ fieldset.ohmylms-interactive-row {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+
 	.ohmylms-tile {
 		transition: border-color 0.12s, transform 0.12s;
 	}

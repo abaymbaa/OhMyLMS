@@ -70,63 +70,63 @@ export function createCategoriesPage( readRuntime ) {
 			V = ( L[ 0 ], L[ 1 ] ),
 			H = ( 0, ReactHooks.useCallback )(
 				TY(
-					PY().m( function t() {
-						var r, a;
+					PY().m( function _tLocal() {
+						var _rLocal, _aLocal;
 						return PY().w(
-							function ( t ) {
+							function ( _tLocal2 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal2.p = _tLocal2.n ) ) {
 										case 0:
 											return (
 												s( ! 0 ),
-												( t.p = 1 ),
-												( t.n = 2 ),
+												( _tLocal2.p = 1 ),
+												( _tLocal2.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/categories',
 												} )
 											 );
 										case 2:
-											( ( r = t.v ),
-												i( r || [] ),
-												( a = ( r || [] ).map(
-													function ( e ) {
-														return jY(
-															jY( {}, e ),
-															{},
-															{
-																id: e.term_id,
-															}
-														);
-													}
-												) ),
-												e.setGlobalDataViaKey(
-													'categories',
-													a
-												),
-												( t.n = 4 ) );
+											_rLocal = _tLocal2.v;
+											i( _rLocal || [] );
+											_aLocal = ( _rLocal || [] ).map(
+												function ( _eLocal ) {
+													return jY(
+														jY( {}, _eLocal ),
+														{},
+														{
+															id: _eLocal.term_id,
+														}
+													);
+												}
+											);
+											e.setGlobalDataViaKey(
+												'categories',
+												_aLocal
+											);
+											_tLocal2.n = 4;
 											break;
 										case 3:
-											( ( t.p = 3 ),
-												t.v,
-												n(
-													'error',
-													( 0, I18n.__ )(
-														'Failed to load categories',
-														'ohmylms'
-													)
-												) );
+											_tLocal2.p = 3;
+											n(
+												'error',
+												( 0, I18n.__ )(
+													'Failed to load categories',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( t.p = 4 ),
+												( _tLocal2.p = 4 ),
 												s( ! 1 ),
-												t.f( 4 )
+												_tLocal2.f( 4 )
 											 );
 										case 5:
-											return t.a( 2 );
+											return _tLocal2.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
@@ -140,66 +140,74 @@ export function createCategoriesPage( readRuntime ) {
 			},
 			[ H ]
 		);
-		var G = ( 0, ReactHooks.useCallback )( function ( e ) {
-				p( e );
+		var G = ( 0, ReactHooks.useCallback )( function ( _eLocal2 ) {
+				p( _eLocal2 );
 			}, [] ),
 			U = ( 0, ReactHooks.useCallback )( function () {
-				( x( null ), h( ! 0 ) );
+				x( null );
+				h( ! 0 );
 			}, [] ),
-			Y = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( x( e ), h( ! 0 ) );
+			Y = ( 0, ReactHooks.useCallback )( function ( _eLocal3 ) {
+				x( _eLocal3 );
+				h( ! 0 );
 			}, [] ),
-			Q = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( O( e ), E( ! 0 ) );
+			Q = ( 0, ReactHooks.useCallback )( function ( _eLocal4 ) {
+				O( _eLocal4 );
+				E( ! 0 );
 			}, [] ),
 			Z = ( function () {
-				var e = TY(
-					PY().m( function e( t ) {
-						var r;
+				var _eLocal5 = TY(
+					PY().m( function _eLocal6( _tLocal3 ) {
+						var _rLocal2;
 						return PY().w(
-							function ( e ) {
+							function ( _eLocal7 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal7.p = _eLocal7.n ) ) {
 										case 0:
 											if (
-												( A( ! 0 ), ( e.p = 1 ), ! R )
+												( A( ! 0 ),
+												( _eLocal7.p = 1 ),
+												! R )
 											) {
-												e.n = 3;
+												_eLocal7.n = 3;
 												break;
 											}
 											return (
-												( e.n = 2 ),
+												( _eLocal7.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/categories/'.concat(
 														R.term_id
 													),
 													method: 'PUT',
 													data: {
-														name: t.name,
-														parent: t.parent || 0,
+														name: _tLocal3.name,
+														parent:
+															_tLocal3.parent ||
+															0,
 													},
 												} )
 											 );
 										case 2:
-											( e.v,
-												n(
-													'success',
-													( 0, I18n.__ )(
-														'Category updated successfully',
-														'ohmylms'
-													)
-												),
-												( e.n = 5 ) );
+											n(
+												'success',
+												( 0, I18n.__ )(
+													'Category updated successfully',
+													'ohmylms'
+												)
+											);
+											_eLocal7.n = 5;
 											break;
 										case 3:
 											return (
-												( e.n = 4 ),
+												( _eLocal7.n = 4 ),
 												l()( {
 													path: '/ohmylms/v1/categories',
 													method: 'POST',
 													data: {
-														name: t.name,
-														parent: t.parent || 0,
+														name: _tLocal3.name,
+														parent:
+															_tLocal3.parent ||
+															0,
 													},
 												} )
 											 );
@@ -211,73 +219,77 @@ export function createCategoriesPage( readRuntime ) {
 													'ohmylms'
 												)
 											);
+										// Falls through to the shared async state cleanup.
 										case 5:
-											( h( ! 1 ),
-												x( null ),
-												H(),
-												( e.n = 7 ) );
+											h( ! 1 );
+											x( null );
+											H();
+											_eLocal7.n = 7;
 											break;
 										case 6:
-											( ( e.p = 6 ),
-												( r = e.v ),
-												n(
-													'error',
-													r.message ||
-														( 0, I18n.__ )(
-															'Failed to save category',
-															'ohmylms'
-														)
-												) );
+											_eLocal7.p = 6;
+											_rLocal2 = _eLocal7.v;
+											n(
+												'error',
+												_rLocal2.message ||
+													( 0, I18n.__ )(
+														'Failed to save category',
+														'ohmylms'
+													)
+											);
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( e.p = 7 ),
+												( _eLocal7.p = 7 ),
 												A( ! 1 ),
-												e.f( 7 )
+												_eLocal7.f( 7 )
 											 );
 										case 8:
-											return e.a( 2 );
+											return _eLocal7.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal6,
 							null,
 							[ [ 1, 6, 7, 8 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal5.apply( this, _args2 );
 				};
 			} )(),
 			$ = ( function () {
-				var e = TY(
-					PY().m( function e() {
-						var t;
+				var _eLocal8 = TY(
+					PY().m( function _eLocal9() {
+						var _tLocal5;
 						return PY().w(
-							function ( e ) {
+							function ( _eLocal0 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal0.p = _eLocal0.n ) ) {
 										case 0:
 											if ( P || 0 !== W.length ) {
-												e.n = 1;
+												_eLocal0.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal0.a( 2 );
 										case 1:
 											if ( ! F ) {
-												e.n = 2;
+												_eLocal0.n = 2;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal0.a( 2 );
 										case 2:
 											if (
-												( N( ! 0 ), ( e.p = 3 ), ! P )
+												( N( ! 0 ),
+												( _eLocal0.p = 3 ),
+												! P )
 											) {
-												e.n = 5;
+												_eLocal0.n = 5;
 												break;
 											}
 											return (
-												( e.n = 4 ),
+												( _eLocal0.n = 4 ),
 												l()( {
 													path: '/ohmylms/v1/categories/'.concat(
 														P.term_id
@@ -286,18 +298,18 @@ export function createCategoriesPage( readRuntime ) {
 												} )
 											 );
 										case 4:
-											( n(
+											n(
 												'success',
 												( 0, I18n.__ )(
 													'Category deleted successfully',
 													'ohmylms'
 												)
-											),
-												( e.n = 7 ) );
+											);
+											_eLocal0.n = 7;
 											break;
 										case 5:
 											return (
-												( e.n = 6 ),
+												( _eLocal0.n = 6 ),
 												l()( {
 													path: '/ohmylms/v1/categories/bulk',
 													method: 'DELETE',
@@ -311,61 +323,66 @@ export function createCategoriesPage( readRuntime ) {
 												} )
 											 );
 										case 6:
-											( n(
+											n(
 												'success',
 												( 0, I18n.__ )(
 													'Categories deleted successfully',
 													'ohmylms'
 												)
-											),
-												B( [] ) );
+											);
+											B( [] );
+										// Falls through to the shared async state cleanup.
 										case 7:
-											( E( ! 1 ),
-												O( null ),
-												H(),
-												( e.n = 9 ) );
+											E( ! 1 );
+											O( null );
+											H();
+											_eLocal0.n = 9;
 											break;
 										case 8:
-											( ( e.p = 8 ),
-												( t = e.v ),
-												n(
-													'error',
-													t.message ||
-														( 0, I18n.__ )(
-															'Failed to delete category',
-															'ohmylms'
-														)
-												) );
+											_eLocal0.p = 8;
+											_tLocal5 = _eLocal0.v;
+											n(
+												'error',
+												_tLocal5.message ||
+													( 0, I18n.__ )(
+														'Failed to delete category',
+														'ohmylms'
+													)
+											);
+										// Falls through to the shared async state cleanup.
 										case 9:
 											return (
-												( e.p = 9 ),
+												( _eLocal0.p = 9 ),
 												N( ! 1 ),
-												e.f( 9 )
+												_eLocal0.f( 9 )
 											 );
 										case 10:
-											return e.a( 2 );
+											return _eLocal0.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal9,
 							null,
 							[ [ 3, 8, 9, 10 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal8.apply( this, _args );
 				};
 			} )(),
 			K = ( 0, ReactHooks.useMemo )(
 				function () {
-					return o.filter( function ( e ) {
-						var t;
-						return null == e ||
-							null === ( t = e.name ) ||
-							void 0 === t
+					return o.filter( function ( _eLocal1 ) {
+						var _tLocal6;
+						return _eLocal1 === null ||
+							_eLocal1 === void 0 ||
+							null === ( _tLocal6 = _eLocal1.name ) ||
+							void 0 === _tLocal6
 							? void 0
-							: t.toLowerCase().includes( m.toLowerCase() );
+							: _tLocal6
+									.toLowerCase()
+									.includes( m.toLowerCase() );
 					} );
 				},
 				[ o, m ]
@@ -405,13 +422,13 @@ export function createCategoriesPage( readRuntime ) {
 					dataIndex: 'term_id',
 					key: 'term_id',
 					width: '80px',
-					render( e ) {
+					render( _eLocal10 ) {
 						return (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
 							>
-								{ e }
+								{ _eLocal10 }
 							</Controls.BadgeWP>
 						);
 					},
@@ -420,8 +437,8 @@ export function createCategoriesPage( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Name', 'ohmylms' ),
 					dataIndex: 'name',
 					key: 'name',
-					render( e, t ) {
-						var n;
+					render( _eLocal11, _tLocal7 ) {
+						var _nLocal;
 						return (
 							<div>
 								<span
@@ -429,9 +446,9 @@ export function createCategoriesPage( readRuntime ) {
 										fontWeight: 500,
 									} }
 								>
-									{ e }
+									{ _eLocal11 }
 								</span>
-								{ t.parent > 0 && (
+								{ _tLocal7.parent > 0 && (
 									<div
 										style={ {
 											fontSize: '12px',
@@ -444,11 +461,16 @@ export function createCategoriesPage( readRuntime ) {
 											'ohmylms'
 										) }
 										{ ( null ===
-											( n = o.find( function ( e ) {
-												return e.term_id === t.parent;
-											} ) ) || void 0 === n
+											( _nLocal = o.find(
+												function ( _eLocal12 ) {
+													return (
+														_eLocal12.term_id ===
+														_tLocal7.parent
+													);
+												}
+											) ) || void 0 === _nLocal
 											? void 0
-											: n.name ) || '—' }
+											: _nLocal.name ) || '—' }
 									</div>
 								) }
 							</div>
@@ -460,9 +482,9 @@ export function createCategoriesPage( readRuntime ) {
 					dataIndex: 'count',
 					key: 'count',
 					width: '150px',
-					render( e, t ) {
-						var n;
-						return e && 0 !== e ? (
+					render( _eLocal13, _tLocal8 ) {
+						var _nLocal2;
+						return _eLocal13 && 0 !== _eLocal13 ? (
 							<Controls.TooltipWP
 								text={
 									<div
@@ -481,23 +503,30 @@ export function createCategoriesPage( readRuntime ) {
 												'ohmylms'
 											) }
 										</div>
-										{ null === ( n = t.courses ) ||
-										void 0 === n
+										{ null ===
+											( _nLocal2 = _tLocal8.courses ) ||
+										void 0 === _nLocal2
 											? void 0
-											: n.map( function ( e ) {
-													return (
-														<div
-															key={ e.id }
-															style={ {
-																padding:
-																	'4px 0',
-															} }
-														>
-															{ '• ' }
-															{ Ge( e.title ) }
-														</div>
-													);
-												} ) }
+											: _nLocal2.map(
+													function ( _eLocal14 ) {
+														return (
+															<div
+																key={
+																	_eLocal14.id
+																}
+																style={ {
+																	padding:
+																		'4px 0',
+																} }
+															>
+																{ '• ' }
+																{ Ge(
+																	_eLocal14.title
+																) }
+															</div>
+														);
+													}
+												) }
 									</div>
 								}
 								position={ 'top' }
@@ -506,7 +535,7 @@ export function createCategoriesPage( readRuntime ) {
 									variant={ 'secondary' }
 									isBorderLess={ ! 0 }
 								>
-									{ e }
+									{ _eLocal13 }
 								</Controls.BadgeWP>
 							</Controls.TooltipWP>
 						) : (
@@ -524,7 +553,7 @@ export function createCategoriesPage( readRuntime ) {
 					dataIndex: 'action',
 					key: 'action',
 					width: '100px',
-					render( e, t ) {
+					render( _eLocal15, _tLocal9 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -534,7 +563,7 @@ export function createCategoriesPage( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return Y( t );
+											return Y( _tLocal9 );
 										},
 										icon: (
 											<span>
@@ -548,7 +577,7 @@ export function createCategoriesPage( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return Q( t );
+											return Q( _tLocal9 );
 										},
 										icon: <We />,
 									},
@@ -600,8 +629,13 @@ export function createCategoriesPage( readRuntime ) {
 								scroll={ {
 									x: 'max-content',
 								} }
-								onRowMouseEnter={ function ( e ) {
-									return V( null == e ? void 0 : e.term_id );
+								onRowMouseEnter={ function ( _eLocal16 ) {
+									return V(
+										_eLocal16 === null ||
+											_eLocal16 === void 0
+											? void 0
+											: _eLocal16.term_id
+									);
 								} }
 								onRowMouseLeave={ function () {
 									return V( null );
@@ -632,7 +666,8 @@ export function createCategoriesPage( readRuntime ) {
 					<TaxonomyModal
 						isOpen={ v }
 						onClose={ function () {
-							( h( ! 1 ), x( null ) );
+							h( ! 1 );
+							x( null );
 						} }
 						onSubmit={ Z }
 						title={
@@ -650,26 +685,33 @@ export function createCategoriesPage( readRuntime ) {
 					<Ie
 						isOpen={ w }
 						onClose={ function () {
-							( E( ! 1 ), O( null ) );
+							E( ! 1 );
+							O( null );
 						} }
 						onDelete={ $ }
 						title={ ( 0, I18n.__ )( 'Delete Category', 'ohmylms' ) }
-						description={
-							( null == P ? void 0 : P.count ) > 0
-								? ( 0, I18n.__ )(
-										'This category is assigned to courses. Deleting it will remove the category from those courses. Are you sure you want to continue?',
-										'ohmylms'
-									)
-								: W.length > 0
-									? ( 0, I18n.__ )(
-											'Are you sure you want to delete the selected categories?',
-											'ohmylms'
-										)
-									: ( 0, I18n.__ )(
-											'Are you sure you want to delete this category?',
-											'ohmylms'
-										)
-						}
+						description={ ( () => {
+							if (
+								( P === null || P === void 0
+									? void 0
+									: P.count ) > 0
+							) {
+								return ( 0, I18n.__ )(
+									'This category is assigned to courses. Deleting it will remove the category from those courses. Are you sure you want to continue?',
+									'ohmylms'
+								);
+							}
+							if ( W.length > 0 ) {
+								return ( 0, I18n.__ )(
+									'Are you sure you want to delete the selected categories?',
+									'ohmylms'
+								);
+							}
+							return ( 0, I18n.__ )(
+								'Are you sure you want to delete this category?',
+								'ohmylms'
+							);
+						} )() }
 						actionBtnText={ ( 0, I18n.__ )( 'Delete', 'ohmylms' ) }
 						loading={ F }
 						isDelete={ ! 0 }

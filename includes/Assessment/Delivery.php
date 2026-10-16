@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Front-end assets for versioned quiz delivery (autosave and resume).
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;

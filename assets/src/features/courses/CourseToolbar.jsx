@@ -8,7 +8,6 @@ export function createCourseToolbar( readRuntime ) {
 			I: Controls,
 			IW,
 			JW,
-			L: Entitlements,
 			Nr,
 			React,
 			Sc,
@@ -24,82 +23,86 @@ export function createCourseToolbar( readRuntime ) {
 		} = readRuntime();
 		const [ gradebookOpen, setGradebookOpen ] =
 			ReactHooks.useState( false );
-		var t = true,
-			activeStep = props.activeStep,
-			r = ( props.setActiveStep, props.courseDescription ),
-			setLocalCourse = props.setLocalCourse,
-			loading = props.loading,
-			handleAutomation = props.handleAutomation,
-			handleIntegration = props.handleIntegration,
-			courseId = props.courseId,
-			courseName = props.courseName,
-			onSave = props.onSave,
-			d = ( 0, Router.Zp )(),
-			subStep = ( 0, Router.g )().subStep,
-			p = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			v = false,
-			_ = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getCourse();
-			}, [] ),
-			w = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			E = w[ 0 ],
-			S = w[ 1 ],
-			R = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			x = R[ 0 ],
-			C = R[ 1 ],
-			P = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			O = P[ 0 ],
-			k = P[ 1 ],
-			j = JW(),
-			steps = j.steps,
-			totalSteps = j.totalSteps,
-			F = function ( e ) {
-				var t = '/course-edit/'.concat( courseId, '/' ).concat( e );
-				if ( 'settings' === e ) {
-					var r =
-						'settings' === activeStep && subStep
-							? subStep
-							: 'basics';
-					d( ''.concat( t, '/' ).concat( r ) );
-				} else {
-					d( 'funnel' === e ? ''.concat( t ) : t );
-				}
-			},
-			N = function () {
-				var e = steps.findIndex( function ( e ) {
-						return activeStep === e.id;
-					} ),
-					t = steps[ e + 1 ],
-					r = null == t ? void 0 : t.id;
-				F( r );
-			},
-			Buttons = function () {
-				var e = steps.findIndex( function ( e ) {
-						return activeStep === e.id;
-					} ),
-					t = steps[ e - 1 ],
-					r = null == t ? void 0 : t.id;
-				F( r );
-			},
-			RichText = [
-				{
-					title:
-						'future' === ( null == _ ? void 0 : _.status )
-							? ( 0, I18n.__ )( 'Scheduled', 'ohmylms' )
-							: ( 0, I18n.__ )( 'Schedule', 'ohmylms' ),
-					key: '1',
-					onClick() {
-						C( ! 0 );
-					},
+		var activeStep = props.activeStep;
+		var r = ( props.setActiveStep, props.courseDescription );
+		var setLocalCourse = props.setLocalCourse;
+		var loading = props.loading;
+		var handleAutomation = props.handleAutomation;
+		var handleIntegration = props.handleIntegration;
+		var courseId = props.courseId;
+		var courseName = props.courseName;
+		var onSave = props.onSave;
+		var d = ( 0, Router.Zp )();
+		var subStep = ( 0, Router.g )().subStep;
+		var p = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var v = false;
+		var _ = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getCourse();
+		}, [] );
+		var w = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var E = w[ 0 ];
+		var S = w[ 1 ];
+		var R = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var x = R[ 0 ];
+		var C = R[ 1 ];
+		var P = rz( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var O = P[ 0 ];
+		var k = P[ 1 ];
+		var j = JW();
+		var steps = j.steps;
+		var totalSteps = j.totalSteps;
+		var F = function ( e ) {
+			var _tLocal = '/course-edit/'.concat( courseId, '/' ).concat( e );
+			if ( 'settings' === e ) {
+				var _rLocal =
+					'settings' === activeStep && subStep ? subStep : 'basics';
+				d( ''.concat( _tLocal, '/' ).concat( _rLocal ) );
+			} else {
+				d( 'funnel' === e ? ''.concat( _tLocal ) : _tLocal );
+			}
+		};
+		var N = function () {
+			var e = steps.findIndex( function ( _eLocal ) {
+					return activeStep === _eLocal.id;
+				} ),
+				_tLocal2 = steps[ e + 1 ],
+				_rLocal2 =
+					_tLocal2 === null || _tLocal2 === void 0
+						? void 0
+						: _tLocal2.id;
+			F( _rLocal2 );
+		};
+		var Buttons = function () {
+			var e = steps.findIndex( function ( _eLocal2 ) {
+					return activeStep === _eLocal2.id;
+				} ),
+				_tLocal3 = steps[ e - 1 ],
+				_rLocal3 =
+					_tLocal3 === null || _tLocal3 === void 0
+						? void 0
+						: _tLocal3.id;
+			F( _rLocal3 );
+		};
+		var RichText = [
+			{
+				title:
+					'future' ===
+					( _ === null || _ === void 0 ? void 0 : _.status )
+						? ( 0, I18n.__ )( 'Scheduled', 'ohmylms' )
+						: ( 0, I18n.__ )( 'Schedule', 'ohmylms' ),
+				key: '1',
+				onClick() {
+					C( ! 0 );
 				},
-			],
-			Notifications = async function ( e, t ) {
-				if ( await onSave( e, t ) ) {
-					if ( 'preview' === activeStep ) {
-						k( true );
-					}
+			},
+		];
+		var Notifications = async function ( e, _tLocal4 ) {
+			if ( await onSave( e, _tLocal4 ) ) {
+				if ( 'preview' === activeStep ) {
+					k( true );
 				}
-			};
+			}
+		};
 		return (
 			<React.Fragment>
 				{ gradebookOpen && (
@@ -153,7 +156,7 @@ export function createCourseToolbar( readRuntime ) {
 									'ohmylms-course-single-steps-container'
 								}
 							>
-								{ steps.map( function ( e, t ) {
+								{ steps.map( function ( e, _tLocal5 ) {
 									return (
 										<div
 											key={ e.id }
@@ -166,13 +169,13 @@ export function createCourseToolbar( readRuntime ) {
 												)
 												.concat(
 													steps.findIndex(
-														function ( e ) {
+														function ( _eLocal3 ) {
 															return (
-																e.id ===
+																_eLocal3.id ===
 																activeStep
 															);
 														}
-													) > t
+													) > _tLocal5
 														? 'completed'
 														: '',
 													' '
@@ -185,10 +188,11 @@ export function createCourseToolbar( readRuntime ) {
 												variant={ 'default' }
 												onClick={ function () {
 													return (
-														( t = e.id ),
+														( _tLocal6 = e.id ),
 														void (
 															v ||
-															( ( null == _
+															( ( _ === null ||
+															_ === void 0
 																? void 0
 																: _.description ) !==
 																r &&
@@ -208,10 +212,10 @@ export function createCourseToolbar( readRuntime ) {
 																setLocalCourse(
 																	r
 																) ),
-															F( t ) )
+															F( _tLocal6 ) )
 														)
 													 );
-													var t;
+													var _tLocal6;
 												} }
 												disabled={ v || loading }
 												className={ 'ohmylms-course-single-steps '
@@ -223,13 +227,15 @@ export function createCourseToolbar( readRuntime ) {
 													)
 													.concat(
 														steps.findIndex(
-															function ( e ) {
+															function (
+																_eLocal4
+															) {
 																return (
-																	e.id ===
+																	_eLocal4.id ===
 																	activeStep
 																);
 															}
-														) > t
+														) > _tLocal5
 															? 'completed'
 															: '',
 														' '
@@ -244,16 +250,16 @@ export function createCourseToolbar( readRuntime ) {
 													}
 												>
 													{ steps.findIndex(
-														function ( e ) {
+														function ( _eLocal5 ) {
 															return (
-																e.id ===
+																_eLocal5.id ===
 																activeStep
 															);
 														}
-													) > t || O ? (
+													) > _tLocal5 || O ? (
 														<q.Icon icon={ IW.A } />
 													) : (
-														t + 1
+														_tLocal5 + 1
 													) }
 												</div>
 												{ e.title }
@@ -391,11 +397,13 @@ export function createCourseToolbar( readRuntime ) {
 												buttonLabel={ ( 0, I18n.__ )(
 													''.concat(
 														'draft' ===
-															( null == _
+															( _ === null ||
+															_ === void 0
 																? void 0
 																: _.status ) ||
 															'future' ===
-																( null == _
+																( _ === null ||
+																_ === void 0
 																	? void 0
 																	: _.status )
 															? 'Publish'
@@ -428,13 +436,15 @@ export function createCourseToolbar( readRuntime ) {
 												'ohmylms'
 											),
 											onClick() {
-												v ||
-													( handleIntegration &&
+												if ( ! v ) {
+													if ( handleIntegration ) {
 														handleIntegration(
 															'course',
 															courseId,
 															courseName
-														) );
+														);
+													}
+												}
 											},
 										},
 										{

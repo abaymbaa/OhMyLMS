@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * One serialized verification/completion path for callbacks and browser status.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Commerce\Gateways\QPay;
 
 defined( 'ABSPATH' ) || exit;

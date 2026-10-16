@@ -5,7 +5,6 @@ export function createCertificateTextField( readRuntime ) {
 		const {
 			EL,
 			I: Controls,
-			L: Entitlements,
 			Mt,
 			PL,
 			React,
@@ -22,119 +21,142 @@ export function createCertificateTextField( readRuntime ) {
 			i = props.onColorChange,
 			l = props.placeholder,
 			c = ( props.presets, props.isItProFeature ),
-			u = ( function ( e, t ) {
-				if ( null == e ) {
+			u = ( function ( e, _tLocal ) {
+				if ( e === null || e === void 0 ) {
 					return {};
 				}
-				var n,
-					r,
-					a = ( function ( e, t ) {
-						if ( null == e ) {
+				var _nLocal,
+					_rLocal,
+					_aLocal = ( function ( _eLocal, _tLocal2 ) {
+						if ( _eLocal === null || _eLocal === void 0 ) {
 							return {};
 						}
-						var n = {};
-						for ( var r in e ) {
-							if ( {}.hasOwnProperty.call( e, r ) ) {
-								if ( -1 !== t.indexOf( r ) ) {
+						var _nLocal2 = {};
+						for ( var _rLocal2 in _eLocal ) {
+							if ( {}.hasOwnProperty.call( _eLocal, _rLocal2 ) ) {
+								if ( -1 !== _tLocal2.indexOf( _rLocal2 ) ) {
 									continue;
 								}
-								n[ r ] = e[ r ];
+								_nLocal2[ _rLocal2 ] = _eLocal[ _rLocal2 ];
 							}
 						}
-						return n;
-					} )( e, t );
+						return _nLocal2;
+					} )( e, _tLocal );
 				if ( Object.getOwnPropertySymbols ) {
-					var o = Object.getOwnPropertySymbols( e );
-					for ( r = 0; r < o.length; r++ ) {
-						( ( n = o[ r ] ),
-							-1 === t.indexOf( n ) &&
-								{}.propertyIsEnumerable.call( e, n ) &&
-								( a[ n ] = e[ n ] ) );
+					var _oLocal = Object.getOwnPropertySymbols( e );
+					for ( _rLocal = 0; _rLocal < _oLocal.length; _rLocal++ ) {
+						_nLocal = _oLocal[ _rLocal ];
+						if (
+							-1 === _tLocal.indexOf( _nLocal ) &&
+							{}.propertyIsEnumerable.call( e, _nLocal )
+						) {
+							_aLocal[ _nLocal ] = e[ _nLocal ];
+						}
 					}
 				}
-				return a;
+				return _aLocal;
 			} )( props, EL ),
-			s = ( function ( e, t ) {
+			s = ( function ( e, _tLocal3 ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal2 ) {
+						if ( Array.isArray( _eLocal2 ) ) {
+							return _eLocal2;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal3, _tLocal4 ) {
+						var _nLocal3 =
+							_eLocal3 === null || _eLocal3 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
-								o,
-								i,
-								l = [],
-								c = ! 0,
-								u = ! 1;
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+						if ( _nLocal3 !== null && _nLocal3 !== void 0 ) {
+							var _rLocal3,
+								_aLocal2,
+								_oLocal2,
+								_iLocal,
+								_lLocal = [],
+								_cLocal = ! 0,
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( _oLocal2 = ( _nLocal3 =
+										_nLocal3.call( _eLocal3 ) ).next ),
+									0 === _tLocal4 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal3 ) !== _nLocal3 ) {
 										return;
 									}
-									c = ! 1;
+									_cLocal = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
+										! ( _cLocal = ( _rLocal3 =
+											_oLocal2.call( _nLocal3 ) )
+											.done ) &&
+										( _lLocal.push( _rLocal3.value ),
+										_lLocal.length !== _tLocal4 );
+										_cLocal = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal4 ) {
+								_uLocal = ! 0;
+								_aLocal2 = _eLocal4;
 							} finally {
 								try {
 									if (
-										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
-										Object( i ) !== i )
+										! _cLocal &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal3.return
+										) &&
+										( ( _iLocal = _nLocal3.return() ),
+										Object( _iLocal ) !== _iLocal )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal2;
 									}
 								}
 							}
-							return l;
+							return _lLocal;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return PL( e, t );
+					} )( e, _tLocal3 ) ||
+					( function ( _eLocal5, _tLocal5 ) {
+						if ( _eLocal5 ) {
+							if ( 'string' === typeof _eLocal5 ) {
+								return PL( _eLocal5, _tLocal5 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal4 = {}.toString
+								.call( _eLocal5 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? PL( e, t )
-										: void 0
+								'Object' === _nLocal4 &&
+									_eLocal5.constructor &&
+									( _nLocal4 = _eLocal5.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal4 ||
+										'Set' === _nLocal4
+									) {
+										return Array.from( _eLocal5 );
+									}
+									if (
+										'Arguments' === _nLocal4 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal4
+										)
+									) {
+										return PL( _eLocal5, _tLocal5 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal3 ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -179,7 +201,9 @@ export function createCertificateTextField( readRuntime ) {
 											style: xL(
 												xL(
 													{},
-													null == u ? void 0 : u.style
+													u === null || u === void 0
+														? void 0
+														: u.style
 												),
 												{},
 												{
@@ -196,7 +220,11 @@ export function createCertificateTextField( readRuntime ) {
 								<Controls.ColorPickerWP
 									initialColor={ a }
 									onChange={ function ( e ) {
-										i( null == e ? void 0 : e.hex );
+										i(
+											e === null || e === void 0
+												? void 0
+												: e.hex
+										);
 									} }
 									disabled={ c && ! t }
 								/>

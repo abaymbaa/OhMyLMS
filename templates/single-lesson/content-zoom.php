@@ -9,14 +9,14 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-// Get post meta
+// Get post meta.
 $post_id           = get_the_ID();
 $zoom_meeting_data = get_post_meta( $post_id, '_zoom_meeting_data', true );
 
-// If no meeting data, show a fallback notice instead of rendering nothing
+// If no meeting data, show a fallback notice instead of rendering nothing.
 if ( empty( $zoom_meeting_data ) ) {
 	?>
 	<div class="creator-zoom-meeting-container">
@@ -28,9 +28,9 @@ if ( empty( $zoom_meeting_data ) ) {
 	return;
 }
 
-// Decode the meeting data
+// Decode the meeting data.
 $meeting_data = json_decode( $zoom_meeting_data, true );
-// Extract meeting details
+// Extract meeting details.
 $start_time_str = $meeting_data['start_time'];
 $timezone       = $meeting_data['timezone'];
 $duration       = $meeting_data['duration'];
@@ -40,11 +40,11 @@ $minutes = $duration % 60;
 
 $duration_formatted = '';
 if ( $hours > 0 ) {
-	$hr_unit             = $hours === 1 ? 'hour' : 'hours';
+	$hr_unit             = 1 === $hours ? 'hour' : 'hours';
 	$duration_formatted .= $hours . ' ' . $hr_unit . ' ';
 }
 if ( $minutes > 0 ) {
-	$min_unit            = $minutes === 1 ? 'minute' : 'minutes';
+	$min_unit            = 1 === $minutes ? 'minute' : 'minutes';
 	$duration_formatted .= $minutes . ' ' . $min_unit;
 }
 $duration_formatted = trim( $duration_formatted );
@@ -70,10 +70,10 @@ if ( ! $start_time_str ) {
 		</div>
 	</div>
 	<?php
-	return; // Invalid start time
+	return; // Invalid start time.
 }
 
-// Create DateTime objects
+// Create DateTime objects.
 $start_dt = new \DateTime( $start_time_str, new DateTimeZone( 'UTC' ) );
 $start_dt->setTimezone( new \DateTimeZone( $timezone ) );
 
@@ -82,12 +82,12 @@ $end_dt->modify( "+$duration minutes" );
 
 $current_dt = new \DateTime( 'now', new \DateTimeZone( $timezone ) );
 
-// Timestamps for comparison
+// Timestamps for comparison.
 $start_ts   = $start_dt->getTimestamp();
 $end_ts     = $end_dt->getTimestamp();
 $current_ts = $current_dt->getTimestamp();
 
-// Determine meeting state
+// Determine meeting state.
 $meeting_state = 'not_started';
 if ( $current_ts >= $start_ts && $current_ts <= $end_ts ) {
 	$meeting_state = 'ongoing';
@@ -95,14 +95,14 @@ if ( $current_ts >= $start_ts && $current_ts <= $end_ts ) {
 	$meeting_state = 'ended';
 }
 
-// Calculate time ago for ongoing meetings
+// Calculate time ago for ongoing meetings.
 $time_ago = '';
 if ( 'ongoing' === $meeting_state ) {
 	$time_diff = $current_ts - $start_ts;
 	$time_ago  = human_time_diff( $current_ts - $time_diff, $current_ts ) . ' ago';
 }
 
-// Format multiline description
+// Format multiline description.
 $details = implode(
 	PHP_EOL,
 	array(

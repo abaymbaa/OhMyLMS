@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Carries a WP_Error out of a transaction closure so the transaction rolls back.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;

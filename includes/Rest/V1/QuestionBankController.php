@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Question bank: search, approval, duplication, archive/restore, version history,
+ * bank sharing, and placing existing questions into quizzes by reference.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -160,15 +166,15 @@ class QuestionBankController extends RestController {
 	}
 	public function use_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
-		return $exists !== true ? $exists : AccessPolicy::check( AccessPolicy::can_use_question( (int) $request['id'] ) );
+		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_use_question( (int) $request['id'] ) );
 	}
 	public function edit_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
-		return $exists !== true ? $exists : AccessPolicy::check( AccessPolicy::can_edit_question( (int) $request['id'] ) );
+		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_edit_question( (int) $request['id'] ) );
 	}
 	public function approve_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
-		return $exists !== true ? $exists : AccessPolicy::check( AccessPolicy::can_approve_question( (int) $request['id'] ), __( 'You cannot approve versions of this question.', 'ohmylms' ) );
+		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_approve_question( (int) $request['id'] ), __( 'You cannot approve versions of this question.', 'ohmylms' ) );
 	}
 	public function version_permission( WP_REST_Request $request ) {
 		$version = VersionPublisher::version( (int) $request['version_id'] );
@@ -191,30 +197,30 @@ class QuestionBankController extends RestController {
 		$where  = array( 'p.post_type=%s', "p.post_status NOT IN ('auto-draft','trash')" );
 		$args   = array( OHMYLMS_QUESTION_CPT );
 		$status = (string) $request['status'];
-		if ( $status === 'archived' ) {
+		if ( 'archived' === $status ) {
 			$where[] = 'p.post_status=%s';
 			$args[]  = Usage::ARCHIVED; } else {
 			$where[] = 'p.post_status<>%s';
 			$args[]  = Usage::ARCHIVED;
 			if ( in_array( $status, array( 'draft', 'approved' ), true ) ) {
-				$where[] = $status === 'approved' ? 'q.approved_version_id>0' : '(q.approved_version_id IS NULL OR q.approved_version_id=0)'; }
+				$where[] = 'approved' === $status ? 'q.approved_version_id>0' : '(q.approved_version_id IS NULL OR q.approved_version_id=0)'; }
 			}
 			foreach ( array(
 				'type'       => 'q.type',
 				'difficulty' => 'q.difficulty',
 				'family'     => 'q.family_id',
 			) as $param => $column ) {
-				if ( (string) $request[ $param ] !== '' ) {
+				if ( '' !== (string) $request[ $param ] ) {
 					$where[] = "$column=%s";
 					$args[]  = sanitize_text_field( (string) $request[ $param ] ); }
 			}
-			if ( $request['bank'] !== null && $request['bank'] !== '' ) {
+			if ( null !== $request['bank'] && '' !== $request['bank'] ) {
 				$where[] = 'COALESCE(q.bank_id,0)=%d';
 				$args[]  = (int) $request['bank']; }
-			if ( $request['secure'] !== null && $request['secure'] !== '' ) {
+			if ( null !== $request['secure'] && '' !== $request['secure'] ) {
 				$where[] = 'COALESCE(q.secure,0)=%d';
 				$args[]  = rest_sanitize_boolean( $request['secure'] ) ? 1 : 0; }
-			if ( (string) $request['search'] !== '' ) {
+			if ( '' !== (string) $request['search'] ) {
 				$where[] = '(p.post_title LIKE %s OR p.post_content LIKE %s)';
 				$like    = '%' . $wpdb->esc_like( sanitize_text_field( (string) $request['search'] ) ) . '%';
 				$args[]  = $like;
@@ -418,7 +424,7 @@ class QuestionBankController extends RestController {
 		$order   = null;
 		if ( $quiz_id ) {
 			$order = $wpdb->get_var( $wpdb->prepare( "SELECT order_number FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship WHERE quiz_id=%d AND question_id=%d", $quiz_id, $source_id ) );
-			if ( $order !== null ) {
+			if ( null !== $order ) {
 				$payload['order_number'] = (int) $order; }
 		}
 		try {
@@ -427,7 +433,7 @@ class QuestionBankController extends RestController {
 					$saved = DraftWriter::save( $payload, $quiz_id );
 					if ( is_wp_error( $saved ) ) {
 						throw new \OhMyLMS\Assessment\ErrorException( $saved ); }
-					if ( $quiz_id && $order !== null ) {
+					if ( $quiz_id && null !== $order ) {
 						$removed = Usage::remove_from_quiz( $quiz_id, $source_id );
 						if ( is_wp_error( $removed ) ) {
 							throw new \OhMyLMS\Assessment\ErrorException( $removed ); }
@@ -501,7 +507,7 @@ class QuestionBankController extends RestController {
 		}
 		$pins       = (array) get_post_meta( $quiz_id, '_ohmylms_version_pins', true );
 		$version_id = (int) $request['version_id'];
-		if ( $version_id < 0 || $request['version_id'] === 'current' ) {
+		if ( $version_id < 0 || 'current' === $request['version_id'] ) {
 			// Pin whatever this quiz would use now: the current version, or the approved one for shared use.
 			$current = \OhMyLMS\Assessment\RevisionPublisher::slot_version( $quiz_id, $question_id );
 			if ( is_wp_error( $current ) ) {

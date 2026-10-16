@@ -6,6 +6,11 @@ export function createPlayerState( getContext ) {
 	return {
 		get pageLabel() {
 			const c = getContext();
+			if ( c.layout === 'one_question_per_page' && c.questionOfLabel ) {
+				return c.questionOfLabel
+					.replace( '%1$d', c.page )
+					.replace( '%2$d', c.totalPages );
+			}
 			return `${ c.page } / ${ c.totalPages }`;
 		},
 		get pageWidth() {
@@ -38,6 +43,19 @@ export function createPlayerState( getContext ) {
 		get requiredDisplay() {
 			const c = getContext();
 			return c.errors[ c.questionNumber ] ? 'block' : 'none';
+		},
+		// An unanswered question offers Skip; once answered the same button reads Next.
+		get isSkip() {
+			const c = getContext();
+			return (
+				c.layout === 'one_question_per_page' && ! c.answered?.[ c.page ]
+			);
+		},
+		get nextLabel() {
+			const c = getContext();
+			return c.layout === 'one_question_per_page' && ! c.answered?.[ c.page ]
+				? c.skipText
+				: c.nextText;
 		},
 		get exitDisplay() {
 			return getContext().exitOpen ? 'block' : 'none';

@@ -20,8 +20,8 @@ export function createEmailEditor( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		var e,
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getEmail();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getEmail();
 			}, [] ),
 			n = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			r = n.updateSingleEmail,
@@ -34,7 +34,9 @@ export function createEmailEditor( readRuntime ) {
 			s = c.contextHolder,
 			d = Hee(
 				( 0, ReactHooks.useState )(
-					( null == t ? void 0 : t.additional_content ) || ''
+					( t === null || t === void 0
+						? void 0
+						: t.additional_content ) || ''
 				),
 				2
 			),
@@ -42,7 +44,8 @@ export function createEmailEditor( readRuntime ) {
 			p = d[ 1 ],
 			f = Hee(
 				( 0, ReactHooks.useState )(
-					( null == t ? void 0 : t.footer_text ) || ''
+					( t === null || t === void 0 ? void 0 : t.footer_text ) ||
+						''
 				),
 				2
 			),
@@ -50,25 +53,27 @@ export function createEmailEditor( readRuntime ) {
 			h = f[ 1 ],
 			_ = Hee(
 				( 0, ReactHooks.useState )(
-					( null == t ? void 0 : t.course_suggestion_text ) || ''
+					( t === null || t === void 0
+						? void 0
+						: t.course_suggestion_text ) || ''
 				),
 				2
 			),
 			w = _[ 0 ],
 			E = _[ 1 ],
 			S = ( function () {
-				var e,
-					n =
-						( ( e = Dee().m( function e() {
-							var n, o, i;
+				var _eLocal2,
+					_nLocal =
+						( ( _eLocal2 = Dee().m( function _eLocal3() {
+							var _nLocal2, _oLocal, _iLocal;
 							return Dee().w(
-								function ( e ) {
+								function ( _eLocal4 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 											case 0:
 												return (
-													( e.p = 0 ),
-													( e.n = 1 ),
+													( _eLocal4.p = 0 ),
+													( _eLocal4.n = 1 ),
 													a( {
 														additional_content: m,
 														footer_text: v,
@@ -78,7 +83,7 @@ export function createEmailEditor( readRuntime ) {
 												 );
 											case 1:
 												return (
-													( o = Bee(
+													( _oLocal = Bee(
 														Bee( {}, t ),
 														{},
 														{
@@ -89,59 +94,80 @@ export function createEmailEditor( readRuntime ) {
 																w,
 														}
 													) ),
-													( e.n = 2 ),
+													( _eLocal4.n = 2 ),
 													r(
-														null == t ||
+														t === null ||
+															t === void 0 ||
 															null ===
-																( n =
+																( _nLocal2 =
 																	t.basic ) ||
-															void 0 === n
+															void 0 === _nLocal2
 															? void 0
-															: n.id,
-														o
+															: _nLocal2.id,
+														_oLocal
 													)
 												 );
 											case 2:
-												( u(
+												u(
 													'success',
 													'Saved successfully'
-												),
-													( e.n = 4 ) );
+												);
+												_eLocal4.n = 4;
 												break;
 											case 3:
-												( ( e.p = 3 ),
-													( i = e.v ),
-													console.error( i ),
-													u(
-														'error',
-														'Failed to save! Please try again.'
-													) );
+												_eLocal4.p = 3;
+												_iLocal = _eLocal4.v;
+												console.error( _iLocal );
+												u(
+													'error',
+													'Failed to save! Please try again.'
+												);
+											// Falls through to the shared async state cleanup.
 											case 4:
-												return e.a( 2 );
+												return _eLocal4.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal3,
 								null,
 								[ [ 0, 3 ] ]
 							);
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									Vee( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal = this,
+								_nLocal3 = _args;
+							return new Promise( function ( _rLocal, _aLocal ) {
+								var _oLocal2 = _eLocal2.apply(
+									_tLocal,
+									_nLocal3
+								);
+								function _iLocal2( _eLocal5 ) {
+									Vee(
+										_oLocal2,
+										_rLocal,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'next',
+										_eLocal5
+									);
 								}
-								function l( e ) {
-									Vee( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal6 ) {
+									Vee(
+										_oLocal2,
+										_rLocal,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'throw',
+										_eLocal6
+									);
 								}
-								i( void 0 );
+								_iLocal2( void 0 );
 							} );
 						} );
-				return function () {
-					return n.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _nLocal.apply( this, _args2 );
 				};
 			} )();
 		return (
@@ -149,13 +175,16 @@ export function createEmailEditor( readRuntime ) {
 				{ s }
 				<MemoEmailEditorHeader
 					title={
-						( null == t || null === ( e = t.basic ) || void 0 === e
+						( t === null ||
+						t === void 0 ||
+						null === ( e = t.basic ) ||
+						void 0 === e
 							? void 0
 							: e.title ) ||
 						( 0, I18n.__ )( 'Email Editor', 'ohmylms' )
 					}
-					handlePreview={ function ( e ) {
-						l( e );
+					handlePreview={ function ( _eLocal7 ) {
+						l( _eLocal7 );
 					} }
 					handleTestEmail={ function () {
 						console.warn( 'Test Email' );

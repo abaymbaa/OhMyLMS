@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * One AI provider's wire format. Adapters only build a request and read a response, so they
+ * can be tested without a network and replaced through the ohmylms_ai_providers filter.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI\Providers;
 
 defined( 'ABSPATH' ) || exit;

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WP Fusion Helpers
  *
@@ -89,7 +89,7 @@ class Helpers {
 			return null;
 		}
 
-		// Decode JSON field
+		// Decode JSON field.
 		if ( isset( $trigger['action_data'] ) ) {
 			$trigger['action_data'] = json_decode( $trigger['action_data'], true );
 		}
@@ -109,7 +109,7 @@ class Helpers {
 
 		$table_name = WPFusionMigration::get_table_name();
 
-		if ( $status === 'all' ) {
+		if ( 'all' === $status ) {
 			$triggers = $wpdb->get_results(
 				"SELECT * FROM {$table_name} ORDER BY created_at DESC",
 				ARRAY_A
@@ -124,7 +124,7 @@ class Helpers {
 			);
 		}
 
-		// Decode JSON fields
+		// Decode JSON fields.
 		foreach ( $triggers as &$trigger ) {
 			if ( isset( $trigger['action_data'] ) ) {
 				$trigger['action_data'] = json_decode( $trigger['action_data'], true );
@@ -147,7 +147,7 @@ class Helpers {
 
 		$table_name = WPFusionMigration::get_table_name();
 
-		if ( $status === 'all' ) {
+		if ( 'all' === $status ) {
 			$triggers = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT * FROM {$table_name} WHERE trigger_event = %s ORDER BY created_at DESC",
@@ -166,7 +166,7 @@ class Helpers {
 			);
 		}
 
-		// Decode JSON fields
+		// Decode JSON fields.
 		foreach ( $triggers as &$trigger ) {
 			if ( isset( $trigger['action_data'] ) ) {
 				$trigger['action_data'] = json_decode( $trigger['action_data'], true );
@@ -233,7 +233,7 @@ class Helpers {
 			$errors[] = __( 'Action data is required', 'ohmylms' );
 		}
 
-		// Validate action-specific data
+		// Validate action-specific data.
 		if ( ! empty( $data['action_type'] ) && ! empty( $data['action_data'] ) ) {
 			switch ( $data['action_type'] ) {
 				case 'add_tag':
@@ -270,12 +270,12 @@ class Helpers {
 
 		$formatted = $trigger;
 
-		// Add readable event name
+		// Add readable event name.
 		$formatted['event_label'] = isset( $available_events[ $trigger['trigger_event'] ] )
 			? $available_events[ $trigger['trigger_event'] ]
 			: $trigger['trigger_event'];
 
-		// Add readable action name
+		// Add readable action name.
 		$formatted['action_label'] = isset( $available_actions[ $trigger['action_type'] ] )
 			? $available_actions[ $trigger['action_type'] ]
 			: $trigger['action_type'];
@@ -301,7 +301,7 @@ class Helpers {
 			array( '%d' )
 		);
 
-		return $deleted !== false;
+		return false !== $deleted;
 	}
 
 	/**
@@ -325,6 +325,6 @@ class Helpers {
 			array( '%d' )
 		);
 
-		return $updated !== false;
+		return false !== $updated;
 	}
 }

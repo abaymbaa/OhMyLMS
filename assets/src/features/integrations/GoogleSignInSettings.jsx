@@ -43,64 +43,72 @@ export function createGoogleSignInSettings( readRuntime ) {
 			S = w[ 1 ];
 		( 0, ReactHooks.useEffect )( function () {
 			var e = ! 0;
-			function t() {
-				return ( t = E7(
-					g7().m( function t() {
-						var n;
+			function _tLocal( ..._args ) {
+				return ( _tLocal = E7(
+					g7().m( function _tLocal2() {
+						var _nLocal;
 						return g7().w(
-							function ( t ) {
+							function ( _tLocal3 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal3.p = _tLocal3.n ) ) {
 										case 0:
 											return (
-												( t.p = 0 ),
-												( t.n = 1 ),
+												( _tLocal3.p = 0 ),
+												( _tLocal3.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/auth/google/settings',
 												} )
 											 );
 										case 1:
-											( ( n = t.v ),
-												e &&
-													n &&
-													( o( function ( e ) {
+											_nLocal = _tLocal3.v;
+											if ( e && _nLocal ) {
+												{
+													o( function ( _eLocal ) {
 														return b7(
-															b7( {}, e ),
+															b7( {}, _eLocal ),
 															{},
 															{
 																client_id:
-																	n.client_id ||
+																	_nLocal.client_id ||
 																	'',
 															}
 														);
-													} ),
-													u( !! n.has_client_secret ),
-													m( n.redirect_uri || '' ) ),
-												( t.n = 3 ) );
+													} );
+													u(
+														!! _nLocal.has_client_secret
+													);
+													m(
+														_nLocal.redirect_uri ||
+															''
+													);
+												}
+											}
+											_tLocal3.n = 3;
 											break;
 										case 2:
-											( ( t.p = 2 ), t.v );
+											_tLocal3.p = 2;
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( t.p = 3 ),
+												( _tLocal3.p = 3 ),
 												e && S( ! 1 ),
-												t.f( 3 )
+												_tLocal3.f( 3 )
 											 );
 										case 4:
-											return t.a( 2 );
+											return _tLocal3.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal2,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
-				) ).apply( this, arguments );
+				) ).apply( this, _args );
 			}
 			return (
-				( function () {
-					t.apply( this, arguments );
+				( function ( ..._args2 ) {
+					_tLocal.apply( this, _args2 );
 				} )(),
 				function () {
 					e = ! 1;
@@ -124,39 +132,40 @@ export function createGoogleSignInSettings( readRuntime ) {
 					e
 				 );
 			},
-			x = function ( e, t ) {
-				( o( function ( n ) {
-					return b7( b7( {}, n ), {}, _7( {}, e, t ) );
-				} ),
-					_( function ( t ) {
-						return b7( b7( {}, t ), {}, _7( {}, e, void 0 ) );
-					} ) );
+			x = function ( e, _tLocal4 ) {
+				o( function ( _nLocal2 ) {
+					return b7( b7( {}, _nLocal2 ), {}, _7( {}, e, _tLocal4 ) );
+				} );
+				_( function ( _tLocal5 ) {
+					return b7( b7( {}, _tLocal5 ), {}, _7( {}, e, void 0 ) );
+				} );
 			},
 			C = ( function () {
 				var e = E7(
-					g7().m( function e() {
-						var n, r, i;
+					g7().m( function _eLocal2() {
+						var _nLocal3, _rLocal, _iLocal;
 						return g7().w(
-							function ( e ) {
+							function ( _eLocal3 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 										case 0:
 											if (
-												( ( n = R() ),
-												_( n ),
+												( ( _nLocal3 = R() ),
+												_( _nLocal3 ),
 												! (
-													Object.keys( n ).length > 0
+													Object.keys( _nLocal3 )
+														.length > 0
 												) )
 											) {
-												e.n = 1;
+												_eLocal3.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 										case 1:
 											return (
 												v( ! 0 ),
-												( e.p = 2 ),
-												( e.n = 3 ),
+												( _eLocal3.p = 2 ),
+												( _eLocal3.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/auth/google/settings',
 													method: 'POST',
@@ -168,70 +177,77 @@ export function createGoogleSignInSettings( readRuntime ) {
 												} )
 											 );
 										case 3:
-											( ( r = e.v ),
-												u(
-													! (
-														null == r ||
-														! r.has_client_secret
+											_rLocal = _eLocal3.v;
+											u(
+												! (
+													_rLocal === null ||
+													_rLocal === void 0 ||
+													! _rLocal.has_client_secret
+												)
+											);
+											m(
+												( _rLocal === null ||
+												_rLocal === void 0
+													? void 0
+													: _rLocal.redirect_uri ) ||
+													d
+											);
+											o( function ( _eLocal4 ) {
+												return b7(
+													b7( {}, _eLocal4 ),
+													{},
+													{
+														client_secret: '',
+													}
+												);
+											} );
+											if ( t ) {
+												t(
+													'success',
+													( 0, I18n.__ )(
+														'Google Sign-In settings saved.',
+														'ohmylms'
 													)
-												),
-												m(
-													( null == r
-														? void 0
-														: r.redirect_uri ) || d
-												),
-												o( function ( e ) {
-													return b7(
-														b7( {}, e ),
-														{},
-														{
-															client_secret: '',
-														}
-													);
-												} ),
-												t &&
-													t(
-														'success',
-														( 0, I18n.__ )(
-															'Google Sign-In settings saved.',
-															'ohmylms'
-														)
-													),
-												( e.n = 5 ) );
+												);
+											}
+											_eLocal3.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												( i = e.v ),
-												t &&
-													t(
-														'error',
-														( null == i
-															? void 0
-															: i.message ) ||
-															( 0, I18n.__ )(
-																'Failed to save Google Sign-In settings.',
-																'ohmylms'
-															)
-													) );
+											_eLocal3.p = 4;
+											_iLocal = _eLocal3.v;
+											if ( t ) {
+												t(
+													'error',
+													( _iLocal === null ||
+													_iLocal === void 0
+														? void 0
+														: _iLocal.message ) ||
+														( 0, I18n.__ )(
+															'Failed to save Google Sign-In settings.',
+															'ohmylms'
+														)
+												);
+											}
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal3.p = 5 ),
 												v( ! 1 ),
-												e.f( 5 )
+												_eLocal3.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal2,
 							null,
 							[ [ 2, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )();
 		return E ? (

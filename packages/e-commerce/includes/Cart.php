@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -8,7 +8,7 @@ use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
 defined( 'ABSPATH' ) || exit;
 
-// Include required tax calculation classes
+// Include required tax calculation classes.
 require_once __DIR__ . '/Tax/EuVatApi.php';
 require_once __DIR__ . '/Tax/EuVatApiResponse.php';
 require_once __DIR__ . '/Tax/TaxCalculator.php';
@@ -368,7 +368,7 @@ class Cart {
 		$total     = 0;
 		$sub_total = 0;
 		foreach ( $this->items as $item_key => $item ) {
-			// Set item total as full price (no discount per item)
+			// Set item total as full price (no discount per item).
 			$item->total                                    = $item->price;
 			$item->subtotal                                 = $item->subtotal;
 			$item->total                                    = apply_filters( 'ohmylms_cart_item_line_total', $item->total, $item, $item_key, $this );
@@ -377,7 +377,7 @@ class Cart {
 			$sub_total += $item->subtotal;
 		}
 
-		// Subtract total discount from cart total
+		// Subtract total discount from cart total.
 		$discount_total = isset( $this->totals['discounts_total'] ) ? $this->totals['discounts_total'] : 0;
 		$cart_total     = $total - $discount_total;
 		if ( $cart_total < 0 ) {
@@ -652,7 +652,7 @@ class Cart {
 	public function get_items_from_cart() {
 		$this->items = array();
 		foreach ( $this->get_cart() as $cart_item_key => $cart_item ) {
-			// Skip items with invalid data
+			// Skip items with invalid data.
 			if ( empty( $cart_item['data'] ) || ! is_object( $cart_item['data'] ) ) {
 				continue;
 			}
@@ -801,19 +801,19 @@ class Cart {
 
 		$date_expires = $coupon->get_date_expires();
 		if ( $date_expires ) {
-			// Get current time in the coupon's timezone
+			// Get current time in the coupon's timezone.
 			$current_time = new \DateTime( 'now', $date_expires->getTimezone() );
 			if ( $current_time > $date_expires ) {
-				// Coupon is expired
+				// Coupon is expired.
 				$response['validity'] = false;
 				$response['message']  = __( 'Coupon code is expired', 'ohmylms' );
 			}
 		}
 
-		// Check if coupon is valid yet
+		// Check if coupon is valid yet.
 		$date_start = $coupon->get_date_start();
 		if ( $date_start ) {
-			// Get current time in the coupon's timezone
+			// Get current time in the coupon's timezone.
 			$current_time = new \DateTime( 'now', $date_start->getTimezone() );
 			if ( $current_time < $date_start ) {
 				$response['validity'] = false;
@@ -825,7 +825,7 @@ class Cart {
 		$uses_limit          = $coupon->get_usage_limit();
 		$uses_limit_per_user = $coupon->get_usage_limit_per_user();
 
-		// Check uses limit
+		// Check uses limit.
 		if ( $uses_limit && $uses_limit <= $uses_count ) {
 			$response['validity'] = false;
 			$response['message']  = __( 'Coupon limit is over', 'ohmylms' );
@@ -840,7 +840,7 @@ class Cart {
 			}
 		}
 
-		// Check course ids are in checkout or not
+		// Check course ids are in checkout or not.
 		$course_id_type = $coupon->get_course_id_type();
 		if ( 'selected_course' === $course_id_type ) {
 			$course_ids = $coupon->get_course_ids();

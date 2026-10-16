@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Assessment-level settings kept separately from the legacy quiz settings blob, so the
+ * existing quiz editor cannot overwrite them: kind preset (quiz / exam / practice),
+ * feedback release, availability window, grace period, sections with slot marks and
+ * per-student accommodations (extra time). They are frozen into published revisions.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -10,8 +18,8 @@ defined( 'ABSPATH' ) || exit;
  * per-student accommodations (extra time). They are frozen into published revisions.
  */
 final class AssessmentSettings {
-	const META     = '_ohmylms_assessment_settings';
-	const KINDS    = array( 'quiz', 'exam', 'practice' );
+	const META  = '_ohmylms_assessment_settings';
+	const KINDS = array( 'quiz', 'exam', 'practice' );
 	// How the assessment is presented: a short quiz, a unit test, or a course challenge (mixed-skill checks).
 	const STYLES   = array( 'quiz', 'unit-test', 'course-challenge' );
 	const FEEDBACK = array( 'immediate', 'after_close', 'manual' );
@@ -48,7 +56,7 @@ final class AssessmentSettings {
 	/** Validate input against the quiz; returns the full normalized settings or WP_Error. */
 	public static function validate( $quiz_id, array $input ) {
 		$settings = array_merge( self::get( $quiz_id ), array_intersect_key( $input, self::defaults() ) );
-		if ( ! empty( $input['preset'] ) && $input['preset'] === 'exam' ) {
+		if ( ! empty( $input['preset'] ) && 'exam' === $input['preset'] ) {
 			$settings = array_merge( $settings, self::exam_preset() ); }
 		if ( ! in_array( $settings['kind'], self::KINDS, true ) ) {
 			return self::invalid( __( 'Unknown assessment kind.', 'ohmylms' ) ); }
@@ -59,7 +67,7 @@ final class AssessmentSettings {
 		$settings['released'] = rest_sanitize_boolean( $settings['released'] );
 		foreach ( array( 'available_from', 'available_until' ) as $key ) {
 			$value = trim( (string) $settings[ $key ] );
-			if ( $value !== '' ) {
+			if ( '' !== $value ) {
 				$time = strtotime( $value . ( preg_match( '/(Z|[+-]\d\d:?\d\d|UTC)$/i', $value ) ? '' : ' UTC' ) );
 				if ( ! $time ) {
 					return self::invalid( sprintf( __( '%s is not a valid date and time.', 'ohmylms' ), $key ) ); }
@@ -162,10 +170,10 @@ final class AssessmentSettings {
 			return true; }
 		$revision = RevisionPublisher::revision( (int) $context['revision_id'] );
 		$policy   = $revision['settings']['feedback_release'] ?? 'immediate';
-		if ( $policy === 'immediate' ) {
+		if ( 'immediate' === $policy ) {
 			return true; }
 		$current = self::get( (int) $revision['quiz_id'] );
-		if ( $policy === 'manual' ) {
+		if ( 'manual' === $policy ) {
 			return ! empty( $current['released'] ); }
 		// after_close: once the assessment closes (or a teacher releases early).
 		return ! empty( $current['released'] ) || ( $current['available_until'] && time() >= strtotime( $current['available_until'] . ' UTC' ) );

@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additive, independently versioned storage for curriculum structures, their links to
+ * content, shared-skill mappings and Course Bundles. Nothing here alters an existing
+ * table: courses, enrollments, learning modes and progress keep their own records, and
+ * these tables only reference them by ID. Installing is safe to repeat.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 defined( 'ABSPATH' ) || exit;

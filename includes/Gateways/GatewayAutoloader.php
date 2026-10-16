@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 /**
  * Gateway Autoloader for OhMyLMS
@@ -53,7 +53,7 @@ class GatewayAutoloader {
 		foreach ( $folders as $folder ) {
 			$folder_name = basename( $folder );
 
-			// Skip excluded gateways
+			// Skip excluded gateways.
 			if ( in_array( $folder_name, $excluded_gateways ) ) {
 				continue;
 			}

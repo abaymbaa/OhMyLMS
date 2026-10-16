@@ -27,14 +27,18 @@ export function createCourseCommunity( readRuntime ) {
 			s = c[ 1 ],
 			d = Wf(
 				( 0, ReactHooks.useState )(
-					( null == course ? void 0 : course.space_title ) || ''
+					( course === null || course === void 0
+						? void 0
+						: course.space_title ) || ''
 				),
 				2
 			),
 			m = ( d[ 0 ], d[ 1 ] ),
 			p = Wf(
 				( 0, ReactHooks.useState )(
-					( null == course ? void 0 : course.space_description ) || ''
+					( course === null || course === void 0
+						? void 0
+						: course.space_description ) || ''
 				),
 				2
 			),
@@ -46,18 +50,20 @@ export function createCourseCommunity( readRuntime ) {
 			( 0, ReactHooks.useEffect )(
 				function () {
 					var e = ( function () {
-						var e,
+						var _eLocal,
 							t =
-								( ( e = Mf().m( function e() {
-									var t, a;
+								( ( _eLocal = Mf().m( function _eLocal2() {
+									var _tLocal, a;
 									return Mf().w(
-										function ( e ) {
+										function ( _eLocal3 ) {
 											for (;;) {
-												switch ( ( e.p = e.n ) ) {
+												switch (
+													( _eLocal3.p = _eLocal3.n )
+												) {
 													case 0:
 														return (
-															( e.p = 0 ),
-															( e.n = 1 ),
+															( _eLocal3.p = 0 ),
+															( _eLocal3.n = 1 ),
 															l()( {
 																path: '/ohmylms/v1/communities/space/course/'.concat(
 																	courseId
@@ -66,28 +72,48 @@ export function createCourseCommunity( readRuntime ) {
 															} )
 														 );
 													case 1:
-														( ( t = e.v ) && t.url
-															? ( s( t.url ),
-																_( '' ) )
-															: _(
-																	( 0,
-																	I18n.__ )(
-																		'Community space not found for this course.',
-																		'ohmylms'
-																	)
-																),
-															! t ||
-																null == t ||
-																! t.title ||
-																( null !=
-																	course &&
-																	course.space_title ) ||
-																( m(
-																	null == t
+														if (
+															( _tLocal =
+																_eLocal3.v ) &&
+															_tLocal.url
+														) {
+															{
+																s(
+																	_tLocal.url
+																);
+																_( '' );
+															}
+														} else {
+															_(
+																( 0, I18n.__ )(
+																	'Community space not found for this course.',
+																	'ohmylms'
+																)
+															);
+														}
+														if ( ! (
+															! _tLocal ||
+															_tLocal === null ||
+															_tLocal ===
+																void 0 ||
+															! _tLocal.title ||
+															( course !== null &&
+																course !==
+																	void 0 &&
+																course.space_title )
+														) ) {
+															{
+																m(
+																	_tLocal ===
+																		null ||
+																		_tLocal ===
+																			void 0
 																		? void 0
-																		: t.title
-																),
-																onUpdateCourse &&
+																		: _tLocal.title
+																);
+																if (
+																	onUpdateCourse
+																) {
 																	onUpdateCourse(
 																		Nf(
 																			Nf(
@@ -97,25 +123,41 @@ export function createCourseCommunity( readRuntime ) {
 																			{},
 																			{
 																				space_title:
-																					null ==
-																					t
+																					_tLocal ===
+																						null ||
+																					_tLocal ===
+																						void 0
 																						? void 0
-																						: t.title,
+																						: _tLocal.title,
 																			}
 																		)
-																	) ),
-															! t ||
-																null == t ||
-																! t.description ||
-																( null !=
-																	course &&
-																	course.space_description ) ||
-																( f(
-																	null == t
+																	);
+																}
+															}
+														}
+														if ( ! (
+															! _tLocal ||
+															_tLocal === null ||
+															_tLocal ===
+																void 0 ||
+															! _tLocal.description ||
+															( course !== null &&
+																course !==
+																	void 0 &&
+																course.space_description )
+														) ) {
+															{
+																f(
+																	_tLocal ===
+																		null ||
+																		_tLocal ===
+																			void 0
 																		? void 0
-																		: t.description
-																),
-																onUpdateCourse &&
+																		: _tLocal.description
+																);
+																if (
+																	onUpdateCourse
+																) {
 																	onUpdateCourse(
 																		Nf(
 																			Nf(
@@ -125,75 +167,113 @@ export function createCourseCommunity( readRuntime ) {
 																			{},
 																			{
 																				space_description:
-																					null ==
-																					t
+																					_tLocal ===
+																						null ||
+																					_tLocal ===
+																						void 0
 																						? void 0
-																						: t.description,
+																						: _tLocal.description,
 																			}
 																		)
-																	) ),
-															( e.n = 3 ) );
+																	);
+																}
+															}
+														}
+														_eLocal3.n = 3;
 														break;
 													case 2:
-														( ( e.p = 2 ),
-															( a = e.v ),
-															console.error(
-																'Error fetching community data:',
-																a
-															),
-															_(
-																( 0, I18n.__ )(
-																	'Unable to fetch community space. It may have been deleted or there was a network error.',
-																	'ohmylms'
-																)
-															) );
+														_eLocal3.p = 2;
+														a = _eLocal3.v;
+														console.error(
+															'Error fetching community data:',
+															a
+														);
+														_(
+															( 0, I18n.__ )(
+																'Unable to fetch community space. It may have been deleted or there was a network error.',
+																'ohmylms'
+															)
+														);
+													// Falls through to the shared async state cleanup.
 													case 3:
-														return e.a( 2 );
+														return _eLocal3.a( 2 );
 												}
 											}
 										},
-										e,
+										_eLocal2,
 										null,
 										[ [ 0, 2 ] ]
 									);
 								} ) ),
-								function () {
-									var t = this,
-										n = arguments;
+								function ( ..._args ) {
+									var _tLocal2 = this,
+										n = _args;
 									return new Promise( function ( r, a ) {
-										var o = e.apply( t, n );
-										function i( e ) {
-											If( o, r, a, i, l, 'next', e );
+										var o = _eLocal.apply( _tLocal2, n );
+										function _iLocal( _eLocal4 ) {
+											If(
+												o,
+												r,
+												a,
+												_iLocal,
+												_lLocal,
+												'next',
+												_eLocal4
+											);
 										}
-										function l( e ) {
-											If( o, r, a, i, l, 'throw', e );
+										function _lLocal( _eLocal5 ) {
+											If(
+												o,
+												r,
+												a,
+												_iLocal,
+												_lLocal,
+												'throw',
+												_eLocal5
+											);
 										}
-										i( void 0 );
+										_iLocal( void 0 );
 									} );
 								} );
-						return function () {
-							return t.apply( this, arguments );
+						return function ( ..._args2 ) {
+							return t.apply( this, _args2 );
 						};
 					} )();
-					'yes' === isCommunityEnabled &&
-						( e(), ( i.current = ! 0 ) );
+					if ( 'yes' === isCommunityEnabled ) {
+						{
+							e();
+							i.current = ! 0;
+						}
+					}
 				},
 				[ isCommunityEnabled, courseId ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					( void 0 !==
-						( null == course ? void 0 : course.space_title ) &&
-						m( course.space_title ),
+					if (
 						void 0 !==
-							( null == course
-								? void 0
-								: course.space_description ) &&
-							f( course.space_description ) );
+						( course === null || course === void 0
+							? void 0
+							: course.space_title )
+					) {
+						m( course.space_title );
+					}
+					if (
+						void 0 !==
+						( course === null || course === void 0
+							? void 0
+							: course.space_description )
+					) {
+						f( course.space_description );
+					}
 				},
 				[
-					null == course ? void 0 : course.space_title,
-					null == course ? void 0 : course.space_description,
+					course === null || course === void 0
+						? void 0
+						: course.space_title,
+					course === null || course === void 0
+						? void 0
+						: course.space_description,
 				]
 			),
 			(
@@ -243,8 +323,9 @@ export function createCourseCommunity( readRuntime ) {
 													'yes' === isCommunityEnabled
 												}
 												onChange={ function ( e ) {
-													onToggleCommunity &&
+													if ( onToggleCommunity ) {
 														onToggleCommunity( e );
+													}
 												} }
 												conditionalChild={
 													<React.Fragment>

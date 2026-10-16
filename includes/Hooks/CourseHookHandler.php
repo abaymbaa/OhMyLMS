@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Handles hooks related to courses in the OhMyLMS plugin.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Hooks;
 
@@ -76,7 +81,7 @@ class CourseHookHandler extends HookHandler {
 		global $wpdb;
 		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
 
-		// Check if the relationship already exists
+		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT ID FROM $table_name WHERE course_id = %d AND chapter_id = %d LIMIT 1",
@@ -85,7 +90,7 @@ class CourseHookHandler extends HookHandler {
 			)
 		);
 
-		// If exists, update the relationship, otherwise insert a new one
+		// If exists, update the relationship, otherwise insert a new one.
 		if ( $exists ) {
 			$wpdb->update(
 				$table_name,
@@ -140,7 +145,7 @@ class CourseHookHandler extends HookHandler {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
-		// Fetch all chapter IDs before deleting
+		// Fetch all chapter IDs before deleting.
 		$chapter_ids = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT chapter_id FROM $table_name WHERE course_id = %d",
@@ -185,21 +190,21 @@ class CourseHookHandler extends HookHandler {
 			return;
 		}
 
-		// Get all membership post IDs
+		// Get all membership post IDs.
 		$membership_posts = get_posts(
 			array(
 				'post_type'      => sanitize_text_field( 'ohmylms-membership' ),
-				'posts_per_page' => -1, // Get all posts
-				'fields'         => 'ids', // Only get IDs
+				'posts_per_page' => -1, // Get all posts.
+				'fields'         => 'ids', // Only get IDs.
 			)
 		);
 
-		// Check if there are any memberships
+		// Check if there are any memberships.
 		if ( empty( $membership_posts ) ) {
 			return;
 		}
 
-		// Process each membership post ID
+		// Process each membership post ID.
 		foreach ( $membership_posts as $membership_id ) {
 			if ( ! ohmylms_is_pro() ) {
 				continue;
@@ -208,26 +213,26 @@ class CourseHookHandler extends HookHandler {
 			$membership = ohmylms_get_membership( $membership_id );
 
 			if ( ! $membership ) {
-				continue; // Skip if no membership found
+				continue; // Skip if no membership found.
 			}
 
 			$products = $membership->get_products( 'edit' );
 
 			if ( ! is_array( $products ) ) {
-				continue; // Ensure $products is an array before processing
+				continue; // Ensure $products is an array before processing.
 			}
 
 			foreach ( $products as $index => $product ) {
-				// Ensure 'id' key exists before accessing
+				// Ensure 'id' key exists before accessing.
 				if ( isset( $product['id'] ) && (int) $product['id'] === $course_id ) {
-					unset( $products[ $index ] ); // Remove the matching course
+					unset( $products[ $index ] ); // Remove the matching course.
 				}
 			}
 
-			// Reindex array to maintain proper structure
+			// Reindex array to maintain proper structure.
 			$products = array_values( $products );
 
-			// Update the membership with the modified product list
+			// Update the membership with the modified product list.
 			update_post_meta( $membership_id, '_products', $products );
 		}
 	}

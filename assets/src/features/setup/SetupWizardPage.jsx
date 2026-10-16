@@ -19,10 +19,10 @@ export function createSetupWizardPage( readRuntime ) {
 						'ohmylms-setup-wizard'
 					),
 					function () {
-						( document.documentElement.classList.remove(
+						document.documentElement.classList.remove(
 							'ohmylms-setup-wizard'
-						),
-							( document.title = 'OhMyLMS' ) );
+						);
+						document.title = 'OhMyLMS';
 					}
 				 );
 			}, [] ),

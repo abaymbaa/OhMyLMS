@@ -141,7 +141,7 @@ if ( ! empty( $redirect_to ) ) {
 
 	<?php if ( ! is_ohmylms_checkout() ) : ?>
 		<p class="ohmylms-form-row dont-have-account">
-			<?php echo __( 'Don\'t have an account?', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'Don\'t have an account?', 'ohmylms' ); ?>
 			<a href="#" class="ohmylms-show-signup-form">
 				<?php esc_html_e( 'Sign Up', 'ohmylms' ); ?>
 			</a>

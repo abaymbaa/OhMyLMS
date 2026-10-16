@@ -27,7 +27,7 @@ do_action( 'ohmylms_before_account_navigation' );
 					<?php require OHMYLMS_DIR . '/assets/images/icon/profile-active-icon.php'; ?>
 				</span>
 
-				<?php echo __( 'Profile', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Profile', 'ohmylms' ); ?>
 			</a>
 		</li>
 
@@ -41,7 +41,7 @@ do_action( 'ohmylms_before_account_navigation' );
 					<?php require OHMYLMS_DIR . '/assets/images/icon/notification-o-active-icon.php'; ?>
 				</span>
 
-				<?php echo __( 'Notifications', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Notifications', 'ohmylms' ); ?>
 			</a>
 		</li> -->
 
@@ -55,7 +55,7 @@ do_action( 'ohmylms_before_account_navigation' );
 					<?php require OHMYLMS_DIR . '/assets/images/icon/cart-active-icon.php'; ?>
 				</span>
 
-				<?php echo __( 'Transaction History', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Transaction History', 'ohmylms' ); ?>
 			</a>
 		</li>
 
@@ -70,22 +70,22 @@ do_action( 'ohmylms_before_account_navigation' );
 						<?php include OHMYLMS_DIR . '/assets/images/icon/membership-active-icon.php'; ?>
 					</span>
 
-					<?php echo __( 'Membership', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Membership', 'ohmylms' ); ?>
 				</a>
 			</li>
 		<?php endif; ?>
 
-		<!-- <li class="item-billing <?php // echo ohmylms_get_account_menu_item_classes('billing-information') ?>">
-			<a href="<?php // echo esc_url( ohmylms_get_account_endpoint_url( 'billing-information' ) ); ?>">
+		<!-- <li class="item-billing <?php // echo ohmylms_get_account_menu_item_classes('billing-information'). ?>">
+			<a href="<?php // echo esc_url( ohmylms_get_account_endpoint_url( 'billing-information' ) );. ?>">
 				<span class="icon icon-regular">
-					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-icon.php'); ?>
+					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-icon.php');. ?>
 				</span>
 
 				<span class="icon icon-active">
-					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-active-icon.php'); ?>
+					<?php // include(OHMYLMS_DIR . '/assets/images/icon/billing-active-icon.php');. ?>
 				</span>
 
-				<?php // echo __( 'Billing Information', 'ohmylms' ); ?>
+				<?php // echo __( 'Billing Information', 'ohmylms' );. ?>
 			</a>
 		</li> -->
 	</ul>

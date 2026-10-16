@@ -58,12 +58,13 @@ function flatten( node ) {
 			? node.flatMap( flatten )
 			: [ node, ...node.children.flatMap( flatten ) ];
 }
-function render( props, collapsed = new Set() ) {
+function render( props, collapsed = new Set(), instanceId = 'mindmap-test' ) {
 	let nextCollapsed;
 	const Component = new Function(
 		'createElement',
 		'Fragment',
 		'useState',
+		'useId',
 		'__',
 		'sprintf',
 		'buildMindmapTree',
@@ -78,6 +79,7 @@ function render( props, collapsed = new Set() ) {
 					typeof value === 'function' ? value( collapsed ) : value;
 			},
 		],
+		() => instanceId,
 		( text ) => text,
 		( text, name ) => text.replace( '%s', name ),
 		buildMindmapTree
@@ -94,6 +96,43 @@ function render( props, collapsed = new Set() ) {
 		getCollapsed: () => nextCollapsed,
 	};
 }
+test( 'selection labels target unique controls across multiple mindmap instances', () => {
+	const first = render(
+		{ onSelectionChange() {} },
+		new Set(),
+		'first-mindmap'
+	);
+	const second = render(
+		{ onSelectionChange() {} },
+		new Set(),
+		'second-mindmap'
+	);
+	const controls = [ ...first.nodes, ...second.nodes ].filter(
+		( node ) => node.type === 'input'
+	);
+	assert.equal(
+		new Set( controls.map( ( node ) => node.props.id ) ).size,
+		controls.length
+	);
+	for ( const instance of [ first, second ] ) {
+		for ( const label of instance.nodes.filter(
+			( node ) => node.type === 'label'
+		) ) {
+			assert.ok(
+				instance.nodes.some(
+					( node ) =>
+						node.type === 'input' &&
+						node.props.id === label.props.htmlFor
+				)
+			);
+		}
+	}
+	assert.equal(
+		render( {} ).nodes.some( ( node ) => node.type === 'label' ),
+		false
+	);
+} );
+
 test( 'membership inheritance highlights descendants while independent selection works for skills', () => {
 	let next;
 	const selected = Object.freeze( [ 'math' ] );

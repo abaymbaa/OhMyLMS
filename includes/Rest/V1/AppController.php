@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -48,7 +48,7 @@ class AppController extends RestController {
 		$type   = $request->get_param( 'type' );
 		$result = array();
 
-		if ( empty( $type ) || $type === 'all' ) {
+		if ( empty( $type ) || 'all' === $type ) {
 			$result['categories']          = $this->get_categories();
 			$result['integrations']        = $this->get_integrations();
 			$result['currency_settings']   = $this->get_currency_settings();

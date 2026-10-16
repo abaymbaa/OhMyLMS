@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Visual / manipulative question types. Each one answers with a few numbers that the
+ * learner sets by dragging or tapping; the key and tolerances never leave the server.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -117,9 +123,16 @@ final class Visual {
 					'show_digital' => ! empty( $s['show_digital'] ),
 				);
 			case 'make-amount':
-				$denominations = array_values( array_unique( array_filter( array_map( 'intval', (array) ( $s['denominations'] ?? array() ) ), static function ( $d ) {
-					return $d > 0;
-				} ) ) );
+				$denominations = array_values(
+					array_unique(
+						array_filter(
+							array_map( 'intval', (array) ( $s['denominations'] ?? array() ) ),
+							static function ( $d ) {
+								return $d > 0;
+							}
+						)
+					)
+				);
 				rsort( $denominations );
 				return array(
 					'denominations' => $denominations,
@@ -159,8 +172,8 @@ final class Visual {
 				return $view;
 			case 'grid-build':
 				return array(
-					'rows' => max( 1, min( 20, (int) ( $s['rows'] ?? 6 ) ) ),
-					'cols' => max( 1, min( 20, (int) ( $s['cols'] ?? 6 ) ) ),
+					'rows'          => max( 1, min( 20, (int) ( $s['rows'] ?? 6 ) ) ),
+					'cols'          => max( 1, min( 20, (int) ( $s['cols'] ?? 6 ) ) ),
 					'show_measures' => ! empty( $s['show_measures'] ),
 				);
 		}
@@ -176,7 +189,7 @@ final class Visual {
 			case 'number-line':
 			case 'fill-level':
 				$step      = max( 0.000001, self::num( $s['step'] ?? 1, 1 ) );
-				$tolerance = isset( $s['tolerance'] ) ? max( 0.0, self::num( $s['tolerance'] ) ) : ( $type === 'number-line' ? $step / 2 : $step );
+				$tolerance = isset( $s['tolerance'] ) ? max( 0.0, self::num( $s['tolerance'] ) ) : ( 'number-line' === $type ? $step / 2 : $step );
 				$items     = array( NumericAnswer::matches( self::value( $answer ), self::num( $s['target'] ?? null, NAN ), $tolerance ) );
 				break;
 			case 'shade-model':
@@ -222,7 +235,7 @@ final class Visual {
 			case 'build-chart':
 				$items = array();
 				foreach ( self::public_view( $type, $s )['categories'] as $category ) {
-					$given = NumericAnswer::parse( $answer[ $category['id'] ] ?? '' );
+					$given                    = NumericAnswer::parse( $answer[ $category['id'] ] ?? '' );
 					$items[ $category['id'] ] = NumericAnswer::matches( $given, self::num( $s['values'][ $category['id'] ] ?? null, NAN ), 0.0 );
 				}
 				$items = $items ?: array( false );
@@ -318,9 +331,14 @@ final class Visual {
 				$target = $s['target'] ?? null;
 				if ( ! is_numeric( $target ) || (int) $target < 1 || (int) $target > 99999 ) {
 					return __( 'Enter a whole number to build.', 'ohmylms' ); }
-				$smallest = min( array_map( static function ( $p ) {
-					return self::PLACES[ $p ];
-				}, $places ) );
+				$smallest = min(
+					array_map(
+						static function ( $p ) {
+							return self::PLACES[ $p ];
+						},
+						$places
+					)
+				);
 				if ( (int) $target % $smallest !== 0 ) {
 					return __( 'The number cannot be made from the chosen places.', 'ohmylms' ); }
 				return true;

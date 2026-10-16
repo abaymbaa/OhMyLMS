@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Explicit, non-recording preview for authors: shows the quiz as learners would get it
+ * (current revision, learner-safe views) and grades answers without creating attempts,
+ * grade events or evidence. Unlike "view as", it never acts as another account.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;

@@ -34,50 +34,50 @@ export function createAdvancedSettings( readRuntime ) {
 			h = f[ 1 ];
 		( 0, ReactHooks.useEffect )( function () {
 			var e = ( function () {
-				var e = dJ(
-					cJ().m( function e() {
-						var t, n;
+				var _eLocal = dJ(
+					cJ().m( function _eLocal2() {
+						var _tLocal, _nLocal;
 						return cJ().w(
-							function ( e ) {
+							function ( _eLocal3 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 										case 0:
 											return (
 												i.setLoadingSetting( ! 0 ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+												( _eLocal3.p = 1 ),
+												( _eLocal3.n = 2 ),
 												l()( {
 													path: 'ohmylms/v1/settings/advanced',
 												} )
 											 );
 										case 2:
-											( ( t = e.v ),
-												i.setAdvancedSettings( t ),
-												( e.n = 4 ) );
+											_tLocal = _eLocal3.v;
+											i.setAdvancedSettings( _tLocal );
+											_eLocal3.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( n = e.v ),
-												console.error( n ) );
+											_eLocal3.p = 3;
+											_nLocal = _eLocal3.v;
+											console.error( _nLocal ); // Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal3.p = 4 ),
 												i.setLoadingSetting( ! 1 ),
-												e.f( 4 )
+												_eLocal3.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal2,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal.apply( this, _args );
 				};
 			} )();
 			e();
@@ -85,38 +85,44 @@ export function createAdvancedSettings( readRuntime ) {
 		var _ = ( 0, ReactHooks.useCallback )(
 				dJ(
 					cJ().m( function e() {
-						var t, n, r, a, o, i, l;
+						var _tLocal2,
+							_nLocal2,
+							_rLocal,
+							_aLocal,
+							_oLocal,
+							_iLocal,
+							_lLocal;
 						return cJ().w(
-							function ( e ) {
+							function ( _eLocal4 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 										case 0:
 											return (
 												p( ! 0 ),
-												( e.p = 1 ),
-												( r =
+												( _eLocal4.p = 1 ),
+												( _rLocal =
 													new URLSearchParams() ).append(
 													'action',
 													'ohmylms_delete_transient_cache'
 												),
-												r.append(
+												_rLocal.append(
 													'nonce',
 													( null ===
-														( t =
+														( _tLocal2 =
 															window.ohmylms_params ) ||
-													void 0 === t
+													void 0 === _tLocal2
 														? void 0
-														: t.delete_cache_nonce ) ||
+														: _tLocal2.delete_cache_nonce ) ||
 														''
 												),
-												( e.n = 2 ),
+												( _eLocal4.n = 2 ),
 												fetch(
 													( null ===
-														( n =
+														( _nLocal2 =
 															window.ohmylms_params ) ||
-													void 0 === n
+													void 0 === _nLocal2
 														? void 0
-														: n.ajax_url ) ||
+														: _nLocal2.ajax_url ) ||
 														'/wp-admin/admin-ajax.php',
 													{
 														method: 'POST',
@@ -126,52 +132,60 @@ export function createAdvancedSettings( readRuntime ) {
 														},
 														credentials:
 															'same-origin',
-														body: r.toString(),
+														body: _rLocal.toString(),
 													}
 												)
 											 );
 										case 2:
 											return (
-												( a = e.v ),
-												( e.n = 3 ),
-												a.json()
+												( _aLocal = _eLocal4.v ),
+												( _eLocal4.n = 3 ),
+												_aLocal.json()
 											 );
 										case 3:
-											( ( o = e.v ).success
-												? u( 'success', o.data.message )
-												: u(
-														'error',
-														( null ===
-															( i = o.data ) ||
-														void 0 === i
-															? void 0
-															: i.message ) ||
-															( 0, I18n.__ )(
-																'Failed to delete cache.',
-																'ohmylms'
-															)
-													),
-												( e.n = 5 ) );
-											break;
-										case 4:
-											( ( e.p = 4 ),
-												( l = e.v ),
-												console.error( l ),
+											if (
+												( _oLocal = _eLocal4.v ).success
+											) {
+												u(
+													'success',
+													_oLocal.data.message
+												);
+											} else {
 												u(
 													'error',
-													( 0, I18n.__ )(
-														'An error occurred. Please try again.',
-														'ohmylms'
-													)
-												) );
+													( null ===
+														( _iLocal =
+															_oLocal.data ) ||
+													void 0 === _iLocal
+														? void 0
+														: _iLocal.message ) ||
+														( 0, I18n.__ )(
+															'Failed to delete cache.',
+															'ohmylms'
+														)
+												);
+											}
+											_eLocal4.n = 5;
+											break;
+										case 4:
+											_eLocal4.p = 4;
+											_lLocal = _eLocal4.v;
+											console.error( _lLocal );
+											u(
+												'error',
+												( 0, I18n.__ )(
+													'An error occurred. Please try again.',
+													'ohmylms'
+												)
+											); // Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal4.p = 5 ),
 												p( ! 1 ),
-												e.f( 5 )
+												_eLocal4.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal4.a( 2 );
 									}
 								}
 							},
@@ -186,45 +200,45 @@ export function createAdvancedSettings( readRuntime ) {
 			w = ( 0, ReactHooks.useCallback )(
 				dJ(
 					cJ().m( function e() {
-						var t, n;
+						var _tLocal3, _nLocal3;
 						return cJ().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											return (
 												h( ! 0 ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+												( _eLocal5.p = 1 ),
+												( _eLocal5.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/restore-default-pages',
 													method: 'POST',
 												} )
 											 );
 										case 2:
-											( ( t = e.v ),
-												u( 'success', t.message ),
-												( e.n = 4 ) );
+											_tLocal3 = _eLocal5.v;
+											u( 'success', _tLocal3.message );
+											_eLocal5.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( n = e.v ),
-												console.error( n ),
-												u(
-													'error',
-													( 0, I18n.__ )(
-														'Failed to restore pages. Please try again.',
-														'ohmylms'
-													)
-												) );
+											_eLocal5.p = 3;
+											_nLocal3 = _eLocal5.v;
+											console.error( _nLocal3 );
+											u(
+												'error',
+												( 0, I18n.__ )(
+													'Failed to restore pages. Please try again.',
+													'ohmylms'
+												)
+											); // Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal5.p = 4 ),
 												h( ! 1 ),
-												e.f( 4 )
+												_eLocal5.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},

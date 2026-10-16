@@ -19,23 +19,23 @@ export function createEmailFields( readRuntime ) {
 		var t = props.setAdditionalContent,
 			n = props.setFooterContent,
 			r = props.setCourseSuggestionText,
-			a = ( function ( e, t ) {
+			a = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal2, _tLocal2 ) {
+						var _nLocal =
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
+							var _rLocal,
+								_aLocal,
 								o,
 								i,
 								l = [],
@@ -43,43 +43,51 @@ export function createEmailFields( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( _nLocal =
+										_nLocal.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
 									c = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( _rLocal = o.call( _nLocal ) )
+											.done ) &&
+										( l.push( _rLocal.value ),
+										l.length !== _tLocal2 );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								u = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( i = _nLocal.return() ),
 										Object( i ) !== i )
 									) {
 										return;
 									}
 								} finally {
 									if ( u ) {
-										throw a;
+										throw _aLocal;
 									}
 								}
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					Mee( e, t ) ||
+					} )( e, _tLocal ) ||
+					Mee( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -94,25 +102,34 @@ export function createEmailFields( readRuntime ) {
 			l = ( 0, WordPressData.useDispatch )(
 				StoreModule.default
 			).updateEmail,
-			c = function ( e, t ) {
+			c = function ( e, _tLocal3 ) {
 				if ( 'recipient_email' === e ) {
-					var n = t
+					var _nLocal2 = _tLocal3
 							.split( ',' )
-							.map( function ( e ) {
-								return ( function ( e ) {
+							.map( function ( _eLocal4 ) {
+								return ( function ( _eLocal5 ) {
 									return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-										e
+										_eLocal5
 									);
-								} )( e.trim() )
-									? e.trim()
+								} )( _eLocal4.trim() )
+									? _eLocal4.trim()
 									: null;
 							} )
 							.filter( Boolean ),
-						r = ( null == i ? void 0 : i.recipient_email ) || [];
-					( l( jee( {}, e, [].concat( Aee( r ), Aee( n ) ) ) ),
-						o( '' ) );
+						_rLocal2 =
+							( i === null || i === void 0
+								? void 0
+								: i.recipient_email ) || [];
+					l(
+						jee(
+							{},
+							e,
+							[].concat( Aee( _rLocal2 ), Aee( _nLocal2 ) )
+						)
+					);
+					o( '' );
 				} else {
-					l( jee( {}, e, t ) );
+					l( jee( {}, e, _tLocal3 ) );
 				}
 			};
 		return (
@@ -142,7 +159,11 @@ export function createEmailFields( readRuntime ) {
 							</Controls.FlexWP>
 							<Controls.SpacerWP />
 							<RichText.A
-								value={ null == i ? void 0 : i.subject }
+								value={
+									i === null || i === void 0
+										? void 0
+										: i.subject
+								}
 								onChange={ function ( e ) {
 									return c( 'subject', e );
 								} }
@@ -172,7 +193,11 @@ export function createEmailFields( readRuntime ) {
 							</Controls.FlexWP>
 							<Controls.SpacerWP />
 							<Controls.InputWP
-								value={ null == i ? void 0 : i.heading }
+								value={
+									i === null || i === void 0
+										? void 0
+										: i.heading
+								}
 								onChange={ function ( e ) {
 									return c( 'heading', e );
 								} }
@@ -211,7 +236,7 @@ export function createEmailFields( readRuntime ) {
 											return t( e );
 										},
 										content:
-											null == i
+											i === null || i === void 0
 												? void 0
 												: i.additional_content,
 										commandsConfig: {
@@ -228,7 +253,9 @@ export function createEmailFields( readRuntime ) {
 								</Controls.SpacerWP>
 							</Controls.CardWP>
 						</Controls.FlexItemWP>
-						{ ( null == i ? void 0 : i.footer_text ) && (
+						{ ( i === null || i === void 0
+							? void 0
+							: i.footer_text ) && (
 							<Controls.FlexItemWP>
 								<Controls.FlexWP
 									justify={ 'start' }
@@ -262,7 +289,7 @@ export function createEmailFields( readRuntime ) {
 												return n( e );
 											},
 											content:
-												null == i
+												i === null || i === void 0
 													? void 0
 													: i.footer_text,
 											commandsConfig: {
@@ -280,7 +307,9 @@ export function createEmailFields( readRuntime ) {
 								</Controls.CardWP>
 							</Controls.FlexItemWP>
 						) }
-						{ ( null == i ? void 0 : i.course_suggestion_text ) && (
+						{ ( i === null || i === void 0
+							? void 0
+							: i.course_suggestion_text ) && (
 							<Controls.FlexItemWP>
 								<Controls.FlexWP
 									size={ 16 }
@@ -315,7 +344,7 @@ export function createEmailFields( readRuntime ) {
 												return r( e );
 											},
 											content:
-												null == i
+												i === null || i === void 0
 													? void 0
 													: i.course_suggestion_text,
 											commandsConfig: {
@@ -333,7 +362,7 @@ export function createEmailFields( readRuntime ) {
 								</Controls.CardWP>
 							</Controls.FlexItemWP>
 						) }
-						{ ( null == i
+						{ ( i === null || i === void 0
 							? void 0
 							: i.hasOwnProperty( 'button_text' ) ) && (
 							<Controls.FlexItemWP>
@@ -359,7 +388,11 @@ export function createEmailFields( readRuntime ) {
 								</Controls.FlexWP>
 								<Controls.SpacerWP />
 								<Controls.InputWP
-									value={ null == i ? void 0 : i.button_text }
+									value={
+										i === null || i === void 0
+											? void 0
+											: i.button_text
+									}
 									onChange={ function ( e ) {
 										return c( 'button_text', e );
 									} }

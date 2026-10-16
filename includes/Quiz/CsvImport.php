@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Create a draft quiz and its questions from CSV text.
  *
@@ -134,8 +134,8 @@ class CsvImport {
 			/* translators: %d: line number */
 			return self::fail( sprintf( __( 'Line %d: the question is empty.', 'ohmylms' ), $line ) );
 		}
-		$points = isset( $row['points'] ) && '' !== $row['points'] && is_numeric( $row['points'] ) ? max( 0, (float) $row['points'] ) : 1;
-		$item   = array(
+		$points  = isset( $row['points'] ) && '' !== $row['points'] && is_numeric( $row['points'] ) ? max( 0, (float) $row['points'] ) : 1;
+		$item    = array(
 			// The editor stores the prompt in the description; the name is an automatic "Question N".
 			'description' => '<p>' . wp_kses_post( $text ) . '</p>',
 			'status'      => 'publish',

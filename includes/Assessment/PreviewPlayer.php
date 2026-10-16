@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The shipped quiz player, with an author-only, non-recording session.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\QuestionBank\AccessPolicy;

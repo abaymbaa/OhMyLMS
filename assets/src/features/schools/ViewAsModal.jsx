@@ -1,9 +1,7 @@
-import { createElement, useEffect, useState } from '@wordpress/element';
+import { createElement, useEffect, useState, useId } from '@wordpress/element';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
 export const canViewAs = () => Boolean( window.ohmylmsViewAs?.enabled );
-
 export function ViewAsModal( {
 	role,
 	user,
@@ -11,6 +9,7 @@ export function ViewAsModal( {
 	courseId = 0,
 	onClose,
 } ) {
+	const _controlId = useId();
 	const [ rows, setRows ] = useState( [] );
 	const [ chosen, setChosen ] = useState( user?.id || '' );
 	const [ search, setSearch ] = useState( '' );
@@ -28,7 +27,15 @@ export function ViewAsModal( {
 		setError( '' );
 		window.wp
 			.apiFetch( {
-				path: `/ohmylms/v1/school/view-as/options?${ new URLSearchParams( { role, class_id: classId, course_id: courseId, search, page } ) }`,
+				path: `/ohmylms/v1/school/view-as/options?${ new URLSearchParams(
+					{
+						role,
+						class_id: classId,
+						course_id: courseId,
+						search,
+						page,
+					}
+				) }`,
 			} )
 			.then(
 				( data ) => {
@@ -74,7 +81,7 @@ export function ViewAsModal( {
 				</p>
 			) : (
 				<>
-					<label>
+					<label htmlFor={ _controlId + '-field-1' }>
 						{ __( 'Search people', 'ohmylms' ) }
 						<input
 							value={ search }
@@ -82,10 +89,11 @@ export function ViewAsModal( {
 								setSearch( event.target.value );
 								setPage( 1 );
 							} }
+							id={ _controlId + '-field-1' }
 						/>
 					</label>
 					<p>
-						<label>
+						<label htmlFor={ _controlId + '-field-2' }>
 							{ __( 'Choose person', 'ohmylms' ) }
 							<select
 								value={ chosen }
@@ -93,6 +101,7 @@ export function ViewAsModal( {
 								onChange={ ( event ) =>
 									setChosen( event.target.value )
 								}
+								id={ _controlId + '-field-2' }
 							>
 								<option value="">
 									{ loading

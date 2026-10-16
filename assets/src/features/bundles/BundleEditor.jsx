@@ -20,7 +20,6 @@ import {
 	sameMembers,
 	validateBundle,
 } from './model.mjs';
-
 const TITLE_MESSAGES = {
 	required: () => __( 'Enter a name for the bundle.', 'ohmylms' ),
 	'too-long': () => __( 'That is too long.', 'ohmylms' ),
@@ -60,8 +59,13 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 		: false;
 	const dirty = dirtyDetails || dirtyMembers;
 	const published = current.status === 'published';
-	const blocker = publishBlocker( { title: draft.title }, members, dirty );
-
+	const blocker = publishBlocker(
+		{
+			title: draft.title,
+		},
+		members,
+		dirty
+	);
 	useEffect( () => {
 		let live = true;
 		api.loadBundle( bundle.id )
@@ -88,13 +92,11 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			live = false;
 		};
 	}, [ bundle.id ] );
-
 	function adopt( response ) {
 		setDetail( response );
 		setMembers( response.members );
 		onChanged( response.bundle );
 	}
-
 	async function save() {
 		setTouched( true );
 		if ( Object.keys( errors ).length || pending ) {
@@ -128,7 +130,13 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			setSaved( true );
 			say(
 				'success',
-				sprintf( __( 'Saved “%s”.', 'ohmylms' ), draft.title.trim() )
+				sprintf(
+					/* translators: %s: course bundle or member title. */ __(
+						'Saved “%s”.',
+						'ohmylms'
+					),
+					draft.title.trim()
+				)
 			);
 		} catch ( error ) {
 			say(
@@ -140,7 +148,6 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			setPending( false );
 		}
 	}
-
 	async function togglePublish() {
 		setPending( true );
 		try {
@@ -154,14 +161,14 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 				'success',
 				response.bundle.status === 'published'
 					? sprintf(
-							__(
+							/* translators: %s: course bundle or member title. */ __(
 								'“%s” is published. Learners can now find and add it.',
 								'ohmylms'
 							),
 							response.bundle.title
 						)
 					: sprintf(
-							__(
+							/* translators: %s: course bundle or member title. */ __(
 								'“%s” is unpublished and hidden from learners.',
 								'ohmylms'
 							),
@@ -178,14 +185,19 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			setPending( false );
 		}
 	}
-
 	async function remove() {
 		setPending( true );
 		try {
 			await api.deleteBundle( bundle.id, current.follower_count > 0 );
 			say(
 				'success',
-				sprintf( __( 'Deleted “%s”.', 'ohmylms' ), current.title )
+				sprintf(
+					/* translators: %s: course bundle or member title. */ __(
+						'Deleted “%s”.',
+						'ohmylms'
+					),
+					current.title
+				)
 			);
 			onDeleted( bundle.id );
 		} catch ( error ) {
@@ -197,7 +209,6 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			setPending( false );
 		}
 	}
-
 	if ( loadError ) {
 		return (
 			<p role="alert" className="ohmylms-cur-panel">
@@ -217,7 +228,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 			id={ `ohmylms-bundle-panel-${ bundle.id }` }
 			className="ohmylms-cur-panel ohmylms-bundle-panel"
 			aria-label={ sprintf(
-				__( 'Editing %s', 'ohmylms' ),
+				/* translators: %s: course bundle or member title. */ __(
+					'Editing %s',
+					'ohmylms'
+				),
 				current.title
 			) }
 		>
@@ -227,7 +241,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 				value={ draft.title }
 				onChange={ ( value ) => {
 					setSaved( false );
-					setDraft( { ...draft, title: value } );
+					setDraft( {
+						...draft,
+						title: value,
+					} );
 				} }
 				help={
 					touched && errors.title
@@ -245,7 +262,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 				value={ draft.description }
 				onChange={ ( value ) => {
 					setSaved( false );
-					setDraft( { ...draft, description: value } );
+					setDraft( {
+						...draft,
+						description: value,
+					} );
 				} }
 				__nextHasNoMarginBottom
 			/>
@@ -267,7 +287,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 								<strong>
 									{ member.title ||
 										sprintf(
-											__( 'Item %d', 'ohmylms' ),
+											/* translators: %d: item number. */ __(
+												'Item %d',
+												'ohmylms'
+											),
 											member.id
 										) }
 								</strong>
@@ -307,7 +330,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 									size="small"
 									disabled={ index === 0 || pending }
 									aria-label={ sprintf(
-										__( 'Move %s up', 'ohmylms' ),
+										/* translators: %s: course bundle or member title. */ __(
+											'Move %s up',
+											'ohmylms'
+										),
 										member.title
 									) }
 									onClick={ () =>
@@ -325,7 +351,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 										index === members.length - 1 || pending
 									}
 									aria-label={ sprintf(
-										__( 'Move %s down', 'ohmylms' ),
+										/* translators: %s: course bundle or member title. */ __(
+											'Move %s down',
+											'ohmylms'
+										),
 										member.title
 									) }
 									onClick={ () =>
@@ -342,7 +371,7 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 									isDestructive
 									disabled={ pending }
 									aria-label={ sprintf(
-										__(
+										/* translators: %s: course bundle or member title. */ __(
 											'Remove %s from the bundle',
 											'ohmylms'
 										),
@@ -435,7 +464,7 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 				{ published && current.follower_count > 0 && (
 					<p className="ohmylms-ext-muted">
 						{ sprintf(
-							_n(
+							/* translators: %d: number of learners following the bundle. */ _n(
 								'%d learner follows this bundle. Unpublishing hides it from them; they keep it if you publish again.',
 								'%d learners follow this bundle. Unpublishing hides it from them; they keep it if you publish again.',
 								current.follower_count,
@@ -454,7 +483,10 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 						isDestructive
 						onClick={ () => setConfirming( true ) }
 						aria-label={ sprintf(
-							__( 'Delete %s…', 'ohmylms' ),
+							/* translators: %s: course bundle or member title. */ __(
+								'Delete %s…',
+								'ohmylms'
+							),
 							current.title
 						) }
 					>
@@ -465,14 +497,20 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 						className="is-confirming"
 						role="group"
 						aria-label={ sprintf(
-							__( 'Confirm deleting %s', 'ohmylms' ),
+							/* translators: %s: course bundle or member title. */ __(
+								'Confirm deleting %s',
+								'ohmylms'
+							),
 							current.title
 						) }
 					>
 						<p>
 							<strong>
 								{ sprintf(
-									__( 'Delete “%s”?', 'ohmylms' ),
+									/* translators: %s: course bundle or member title. */ __(
+										'Delete “%s”?',
+										'ohmylms'
+									),
 									current.title
 								) }
 							</strong>
@@ -480,7 +518,7 @@ export function BundleEditor( { bundle, say, onChanged, onDeleted } ) {
 						<p>
 							{ current.follower_count > 0
 								? sprintf(
-										_n(
+										/* translators: %d: number of learners following the bundle. */ _n(
 											'%d learner follows it and it will disappear from their dashboard.',
 											'%d learners follow it and it will disappear from their dashboards.',
 											current.follower_count,

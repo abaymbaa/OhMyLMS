@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, TextControl } from '@wordpress/components';
 import { useCurriculum } from './context';
 import { normalizeType, validateDraft } from './model.mjs';
-
 const MESSAGES = {
 	required: () => __( 'Enter a name.', 'ohmylms' ),
 	'too-long': () => __( 'That is too long.', 'ohmylms' ),
@@ -26,16 +25,21 @@ export function AddItemRow( { parentId, parentName } ) {
 	const [ name, setName ] = useState( '' );
 	const [ type, setType ] = useState( 'custom' );
 	const [ touched, setTouched ] = useState( false );
-	const errors = validateDraft( { name, item_type: type } );
+	const errors = validateDraft( {
+		name,
+		item_type: type,
+	} );
 	const nameId = `ohmylms-cur-add-name-${ parentId }`;
 	const listId = `ohmylms-cur-types-add-${ parentId }`;
 	const label = parentId
 		? sprintf(
-				__( 'Name of the new item under %s', 'ohmylms' ),
+				/* translators: %s: curriculum item name. */ __(
+					'Name of the new item under %s',
+					'ohmylms'
+				),
 				parentName
 			)
 		: __( 'Name of the new top-level item', 'ohmylms' );
-
 	async function submit( event ) {
 		event?.preventDefault();
 		setTouched( true );
@@ -52,7 +56,6 @@ export function AddItemRow( { parentId, parentName } ) {
 			document.getElementById( nameId )?.focus();
 		}
 	}
-
 	return (
 		<form className="ohmylms-cur-add" onSubmit={ submit } noValidate>
 			<TextControl

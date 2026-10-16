@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class AssignmentStore.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -289,10 +294,10 @@ class AssignmentStore extends DataStore {
 	}
 
 	public function get_submission( $assignment, $user_id ) {
-		// Query to get the submission
+		// Query to get the submission.
 		global $wpdb;
 
-		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts'; // Replace with your actual table name
+		$table_name = $wpdb->prefix . 'ohmylms_assignment_attempts'; // Replace with your actual table name.
 
 		$query = $wpdb->prepare(
 			"SELECT * FROM $table_name WHERE user_id = %d AND assignment_id = %d",

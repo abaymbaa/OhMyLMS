@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The 0-100 skill mastery score: forgiving early, strict near the top.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,10 +49,26 @@ final class ScoreModel {
 		return array(
 			// Starting values within the ranges of the math.mn spec; tune them with real data.
 			'bands'            => array(
-				array( 'from' => 0, 'gain' => 9.0, 'loss' => 1.5 ),
-				array( 'from' => 70, 'gain' => 5.0, 'loss' => 3.5 ),
-				array( 'from' => 80, 'gain' => 2.5, 'loss' => 5.0 ),
-				array( 'from' => 90, 'gain' => 1.5, 'loss' => 6.5 ),
+				array(
+					'from' => 0,
+					'gain' => 9.0,
+					'loss' => 1.5,
+				),
+				array(
+					'from' => 70,
+					'gain' => 5.0,
+					'loss' => 3.5,
+				),
+				array(
+					'from' => 80,
+					'gain' => 2.5,
+					'loss' => 5.0,
+				),
+				array(
+					'from' => 90,
+					'gain' => 1.5,
+					'loss' => 6.5,
+				),
 			),
 			'hint_gain'        => 0.5,
 			'partial_correct'  => 0.7,
@@ -144,9 +165,9 @@ final class ScoreModel {
 			} else {
 				$score = max( (float) $band['from'], $score - $band['loss'] );
 			}
-			$score   = round( $score, 2 );
-			$peak    = max( $peak, $score );
-			$scored += 1;
+			$score    = round( $score, 2 );
+			$peak     = max( $peak, $score );
+			$scored  += 1;
 			$correct += $right ? 1 : 0;
 			$recent[] = $right;
 			$recent   = array_slice( $recent, -2 );

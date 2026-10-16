@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Zoom;
 
@@ -22,7 +22,7 @@ class Zoom {
 	}
 
 	private function init_classes() {
-		// Register REST API routes for Zoom settings
+		// Register REST API routes for Zoom settings.
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		\add_action(
 			'rest_api_init',

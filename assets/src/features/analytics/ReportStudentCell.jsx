@@ -6,7 +6,6 @@ export function createReportStudentCell( readRuntime ) {
 			Ge,
 			I: Controls,
 			JU,
-			L: Entitlements,
 			PG,
 			React,
 			v,
@@ -28,11 +27,17 @@ export function createReportStudentCell( readRuntime ) {
 					} }
 				>
 					<PG>
-						{ null != n && n.profile_image ? (
+						{ n !== null && n !== void 0 && n.profile_image ? (
 							<Controls.AvatarWP
 								shape={ 'circle' }
-								alt={ null == n ? void 0 : n.name }
-								src={ null == n ? void 0 : n.profile_image }
+								alt={
+									n === null || n === void 0 ? void 0 : n.name
+								}
+								src={
+									n === null || n === void 0
+										? void 0
+										: n.profile_image
+								}
 								style={ {
 									width: '40px',
 									height: '40px',
@@ -52,7 +57,9 @@ export function createReportStudentCell( readRuntime ) {
 							level={ 4 }
 							className={ 'student-name' }
 						>
-							{ Ge( null == n ? void 0 : n.name ) }
+							{ Ge(
+								n === null || n === void 0 ? void 0 : n.name
+							) }
 						</Controls.HeadingWP>
 						<Controls.FlexWP
 							gap={ 2 }
@@ -63,7 +70,9 @@ export function createReportStudentCell( readRuntime ) {
 									<v.Link
 										disabled={ ! t }
 										to={ '/students/'.concat(
-											null == n ? void 0 : n.student_id,
+											n === null || n === void 0
+												? void 0
+												: n.student_id,
 											'/report'
 										) }
 										className={ 'student-analytics-link' }
@@ -76,7 +85,9 @@ export function createReportStudentCell( readRuntime ) {
 									<Controls.TagWP
 										className={ 'student-email' }
 									>
-										{ null == n ? void 0 : n.email }
+										{ n === null || n === void 0
+											? void 0
+											: n.email }
 									</Controls.TagWP>
 								</React.Fragment>
 							) }

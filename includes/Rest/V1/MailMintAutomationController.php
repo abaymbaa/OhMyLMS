@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * MailMintAutomationController class.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -170,10 +175,10 @@ class MailMintAutomationController extends RestController {
 		// Automation Search keyword.
 		$search = isset( $request['search'] ) ? sanitize_text_field( $request['search'] ) : '';
 
-		// Get all automation IDs stored in post meta
+		// Get all automation IDs stored in post meta.
 		$automation_ids = get_post_meta( $post_id, '_mm_automation_id', true );
 
-		// Ensure it's an array
+		// Ensure it's an array.
 		if ( ! is_array( $automation_ids ) ) {
 			return rest_ensure_response( array() );
 		}
@@ -267,21 +272,21 @@ class MailMintAutomationController extends RestController {
 	 * @return WP_Error|WP_REST_Response|WP_HTTP_Response
 	 */
 	public function update_status( $request ) {
-		// Get the automation ID and new status from the request
+		// Get the automation ID and new status from the request.
 		$automation_id = $request->get_param( 'id' );
 		$new_status    = $request->get_param( 'status' );
 
-		// Create a new MailMint instance for the post ID
+		// Create a new MailMint instance for the post ID.
 		$automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
 
 		if ( ! $automation_instance ) {
 			return new \WP_Error( 'mailmint_not_active', __( 'MailMint is not active.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Update the automation status
+		// Update the automation status.
 		$automation_instance->update_automation_status( $automation_id, $new_status );
 
-		// Return the updated status
+		// Return the updated status.
 		return rest_ensure_response( $new_status );
 	}
 
@@ -293,7 +298,7 @@ class MailMintAutomationController extends RestController {
 	 */
 	public function duplicate_automation( $request ) {
 
-		// Get the automation ID and new status from the request
+		// Get the automation ID and new status from the request.
 		$automation_id = $request->get_param( 'id' );
 		$post_id       = $request->get_param( 'post_id' );
 		if ( empty( $post_id ) ) {
@@ -304,7 +309,7 @@ class MailMintAutomationController extends RestController {
 			return new \WP_Error( 'invalid_automation_id', __( 'Invalid or missing automation ID.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Create a new MailMint instance for the post ID
+		// Create a new MailMint instance for the post ID.
 		$automation_instance = new \OhMyLMS\Integrations\MailMint( $request->get_param( 'post_id' ) );
 
 		if ( ! $automation_instance ) {

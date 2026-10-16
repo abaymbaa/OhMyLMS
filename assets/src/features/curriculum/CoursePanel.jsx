@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, Notice } from '@wordpress/components';
 import { PublishDialog } from '../content-hub/PublishDialog';
 import { Tag } from './WorkspaceParts';
-
 const MODES = () => ( {
 	'skill-based': __( 'Skill-based', 'ohmylms' ),
 	blended: __( 'Blended', 'ohmylms' ),
@@ -30,8 +29,14 @@ export function CoursePanel( { course, courseCatalog, pending, onUpdate } ) {
 		: 0;
 	const live = course.status === 'publish';
 	const stateTag = live
-		? { text: __( 'Course published', 'ohmylms' ), tone: 'ok' }
-		: { text: __( 'Course draft', 'ohmylms' ), tone: 'warn' };
+		? {
+				text: __( 'Course published', 'ohmylms' ),
+				tone: 'ok',
+			}
+		: {
+				text: __( 'Course draft', 'ohmylms' ),
+				tone: 'warn',
+			};
 	return (
 		<section
 			className="ohmylms-ws-course"
@@ -44,14 +49,17 @@ export function CoursePanel( { course, courseCatalog, pending, onUpdate } ) {
 					<Tag tone={ changed ? 'warn' : 'ok' }>
 						{ changed
 							? sprintf(
-									__(
+									/* translators: %d: published version number. */ __(
 										'Version %d, with unpublished changes',
 										'ohmylms'
 									),
 									catalog.published_version
 								)
 							: sprintf(
-									__( 'Version %d published', 'ohmylms' ),
+									/* translators: %d: published version number. */ __(
+										'Version %d published',
+										'ohmylms'
+									),
 									catalog.published_version
 								) }
 					</Tag>

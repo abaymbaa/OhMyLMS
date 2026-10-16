@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Funnel\Includes;
 
@@ -65,7 +65,7 @@ class Hooks {
 		$manager = new FunnelManager();
 		$result  = $manager->process_order_funnel( $order_id, array() );
 
-		// If we got a funnel result, redirect to the funnel
+		// If we got a funnel result, redirect to the funnel.
 		if ( $result && isset( $result['redirect'] ) ) {
 			wp_redirect( $result['redirect'] );
 			exit;

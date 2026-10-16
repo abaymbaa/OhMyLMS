@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling user REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -440,12 +445,12 @@ class SetupWizardController extends RestController {
 			}
 		}
 
-		// Save full wizard data
+		// Save full wizard data.
 		if ( isset( $request['wizard_data'] ) ) {
 			update_option( 'ohmylms_setup_wizard_data', $request['wizard_data'] );
 		}
 
-		// Save certificate ID if provided
+		// Save certificate ID if provided.
 		if ( isset( $request['certificate_id'] ) ) {
 			update_option( 'ohmylms_setup_wizard_certificate_id', $request['certificate_id'] );
 		}

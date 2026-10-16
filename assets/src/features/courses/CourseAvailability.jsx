@@ -1,7 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseAvailability( readRuntime ) {
-	return function CourseAvailability( props ) {
+	return function CourseAvailability() {
 		const {
 			I: Controls,
 			React,
@@ -18,7 +18,7 @@ export function createCourseAvailability( readRuntime ) {
 			o = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getCourse();
 			}, [] ),
-			i = function ( e, t ) {
+			i = function ( e, _tLocal ) {
 				a.setCourse(
 					Rz(
 						Rz( {}, o ),
@@ -27,7 +27,7 @@ export function createCourseAvailability( readRuntime ) {
 							duration: Rz(
 								Rz( {}, o.duration ),
 								{},
-								xz( {}, t, e )
+								xz( {}, _tLocal, e )
 							),
 						}
 					)
@@ -73,20 +73,22 @@ export function createCourseAvailability( readRuntime ) {
 											: t.hour
 									}
 									onChange={ function ( e ) {
-										/^\d*\.?\d*$/.test( e ) &&
+										if ( /^\d*\.?\d*$/.test( e ) ) {
 											i( e, 'hour' );
+										}
 									} }
 									onKeyDown={ function ( e ) {
-										( [
-											'e',
-											'E',
-											'+',
-											'-',
-											'/',
-											'\\',
-											'.',
-											',',
-										].includes( e.key ) ||
+										if (
+											[
+												'e',
+												'E',
+												'+',
+												'-',
+												'/',
+												'\\',
+												'.',
+												',',
+											].includes( e.key ) ||
 											( /[a-zA-Z]/.test( e.key ) &&
 												! [
 													'Backspace',
@@ -95,15 +97,21 @@ export function createCourseAvailability( readRuntime ) {
 													'ArrowRight',
 													'Delete',
 													'Enter',
-												].includes( e.key ) ) ) &&
+												].includes( e.key ) )
+										) {
 											e.preventDefault();
+										}
 									} }
 									onBlur={ function () {
 										var e;
-										( null === ( e = o.duration ) ||
-										void 0 === e
-											? void 0
-											: e.hour ) < 0 && i( 0, 'hour' );
+										if (
+											( null === ( e = o.duration ) ||
+											void 0 === e
+												? void 0
+												: e.hour ) < 0
+										) {
+											i( 0, 'hour' );
+										}
 									} }
 								/>
 							</Controls.FlexBlockWP>
@@ -119,20 +127,22 @@ export function createCourseAvailability( readRuntime ) {
 											: n.min
 									}
 									onChange={ function ( e ) {
-										/^\d*\.?\d*$/.test( e ) &&
+										if ( /^\d*\.?\d*$/.test( e ) ) {
 											i( e, 'min' );
+										}
 									} }
 									onKeyDown={ function ( e ) {
-										( [
-											'e',
-											'E',
-											'+',
-											'-',
-											'/',
-											'\\',
-											'.',
-											',',
-										].includes( e.key ) ||
+										if (
+											[
+												'e',
+												'E',
+												'+',
+												'-',
+												'/',
+												'\\',
+												'.',
+												',',
+											].includes( e.key ) ||
 											( /[a-zA-Z]/.test( e.key ) &&
 												! [
 													'Backspace',
@@ -141,15 +151,21 @@ export function createCourseAvailability( readRuntime ) {
 													'ArrowRight',
 													'Delete',
 													'Enter',
-												].includes( e.key ) ) ) &&
+												].includes( e.key ) )
+										) {
 											e.preventDefault();
+										}
 									} }
 									onBlur={ function () {
 										var e;
-										( null === ( e = o.duration ) ||
-										void 0 === e
-											? void 0
-											: e.min ) < 0 && i( 0, 'min' );
+										if (
+											( null === ( e = o.duration ) ||
+											void 0 === e
+												? void 0
+												: e.min ) < 0
+										) {
+											i( 0, 'min' );
+										}
 									} }
 								/>
 							</Controls.FlexBlockWP>
@@ -165,20 +181,22 @@ export function createCourseAvailability( readRuntime ) {
 											: r.sec
 									}
 									onChange={ function ( e ) {
-										/^\d*\.?\d*$/.test( e ) &&
+										if ( /^\d*\.?\d*$/.test( e ) ) {
 											i( e, 'sec' );
+										}
 									} }
 									onKeyDown={ function ( e ) {
-										( [
-											'e',
-											'E',
-											'+',
-											'-',
-											'/',
-											'\\',
-											'.',
-											',',
-										].includes( e.key ) ||
+										if (
+											[
+												'e',
+												'E',
+												'+',
+												'-',
+												'/',
+												'\\',
+												'.',
+												',',
+											].includes( e.key ) ||
 											( /[a-zA-Z]/.test( e.key ) &&
 												! [
 													'Backspace',
@@ -187,15 +205,21 @@ export function createCourseAvailability( readRuntime ) {
 													'ArrowRight',
 													'Delete',
 													'Enter',
-												].includes( e.key ) ) ) &&
+												].includes( e.key ) )
+										) {
 											e.preventDefault();
+										}
 									} }
 									onBlur={ function () {
 										var e;
-										( null === ( e = o.duration ) ||
-										void 0 === e
-											? void 0
-											: e.sec ) < 0 && i( 0, 'sec' );
+										if (
+											( null === ( e = o.duration ) ||
+											void 0 === e
+												? void 0
+												: e.sec ) < 0
+										) {
+											i( 0, 'sec' );
+										}
 									} }
 								/>
 							</Controls.FlexBlockWP>

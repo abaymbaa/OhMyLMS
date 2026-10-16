@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Elementor Manager
  *
@@ -49,13 +49,13 @@ class ElementorManager {
 	 * @return void
 	 */
 	private function init() {
-		// Check if Elementor is installed and activated
+		// Check if Elementor is installed and activated.
 		if ( ! did_action( 'elementor/loaded' ) ) {
-			// add_action( 'admin_notices', array( $this, 'admin_notice_missing_elementor' ) );
+			// add_action( 'admin_notices', array( $this, 'admin_notice_missing_elementor' ) );.
 			return;
 		}
 
-		// Check for required Elementor version
+		// Check for required Elementor version.
 		if ( ! version_compare( ELEMENTOR_VERSION, '3.0.0', '>=' ) ) {
 			add_action( 'admin_notices', array( $this, 'admin_notice_minimum_elementor_version' ) );
 			return;
@@ -68,7 +68,7 @@ class ElementorManager {
 		// Add ohmylms-page body class on Elementor pages so all scoped CSS rules apply.
 		add_filter( 'body_class', array( $this, 'add_ohmylms_body_class' ) );
 
-		// Initialize when Elementor is ready
+		// Initialize when Elementor is ready.
 		add_action( 'elementor/init', array( $this, 'elementor_init' ) );
 	}
 
@@ -132,17 +132,17 @@ class ElementorManager {
 	 * @return void
 	 */
 	public function elementor_init() {
-		// Add new category for OhMyLMS widgets
+		// Add new category for OhMyLMS widgets.
 		add_action( 'elementor/elements/categories_registered', array( $this, 'register_widget_categories' ) );
 
-		// Register widgets
+		// Register widgets.
 		add_action( 'elementor/widgets/register', array( $this, 'register_widgets' ) );
 
-		// Enqueue widget scripts and styles on the published frontend
+		// Enqueue widget scripts and styles on the published frontend.
 		add_action( 'elementor/frontend/after_enqueue_styles', array( $this, 'enqueue_frontend_styles' ) );
 		add_action( 'elementor/frontend/after_register_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 
-		// Enqueue ohmylms-frontend assets inside the Elementor editor preview iframe
+		// Enqueue ohmylms-frontend assets inside the Elementor editor preview iframe.
 		add_action( 'elementor/preview/enqueue_styles', array( $this, 'enqueue_preview_assets' ) );
 		add_action( 'elementor/preview/enqueue_scripts', array( $this, 'enqueue_preview_assets' ) );
 	}
@@ -170,10 +170,10 @@ class ElementorManager {
 	 * @return void
 	 */
 	public function register_widgets( $widgets_manager ) {
-		// Include widget files
+		// Include widget files.
 		$this->include_widgets();
 
-		// Register widgets
+		// Register widgets.
 		$widgets_manager->register( new Widgets\CheckoutWidget() );
 		$widgets_manager->register( new Widgets\CourseListWidget() );
 		$widgets_manager->register( new Widgets\MyCoursesWidget() );
@@ -183,7 +183,7 @@ class ElementorManager {
 			$widgets_manager->register( new Widgets\BuyNowWidget() );
 			$widgets_manager->register( new Widgets\OfferButtonWidget() );
 
-		// Also initialize Gutenberg blocks if not already done
+		// Also initialize Gutenberg blocks if not already done.
 		if ( ! did_action( 'ohmylms_blocks_initialized' ) ) {
 			$this->init_blocks();
 			do_action( 'ohmylms_blocks_initialized' );

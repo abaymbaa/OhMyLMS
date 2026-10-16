@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * XP settings (option "ohmylms_xp_settings"). XP rewards effort and is never spent; it is
+ * separate from points (spendable), from the skill mastery score and from grading.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 defined( 'ABSPATH' ) || exit;

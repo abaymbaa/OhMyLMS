@@ -1,8 +1,9 @@
 import { validateRefund } from './model.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import { createElement } from '@wordpress/element';
+import { createElement, useId } from '@wordpress/element';
 export function createOrderItems( readRuntime ) {
 	return function OrderItems( props ) {
+		const _controlId = useId();
 		const {
 			Ge: decodeEntities,
 			I: Controls,
@@ -15,9 +16,6 @@ export function createOrderItems( readRuntime ) {
 			b: I18n,
 			g: ReactHooks,
 			iQ,
-			nQ,
-			oQ,
-			rQ,
 			sN: TableModule,
 			tQ: Tag,
 			wn: NumberInput,
@@ -51,8 +49,8 @@ export function createOrderItems( readRuntime ) {
 			refund = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getRefundState();
 			}, [] ),
-			totalRefunded = order.refunds.reduce( function ( e, t ) {
-				return e + parseFloat( t.total );
+			totalRefunded = order.refunds.reduce( function ( e, _tLocal ) {
+				return e + parseFloat( _tLocal.total );
 			}, 0 ),
 			canRefund = parseFloat( order.total ) + totalRefunded > 0,
 			remainingTotal = parseFloat( order.total ) + totalRefunded,
@@ -106,25 +104,26 @@ export function createOrderItems( readRuntime ) {
 			},
 			currencyOptions = {
 				currencySymbol:
-					( null == order ||
+					( order === null ||
+					order === void 0 ||
 					null === ( t = order.currency ) ||
 					void 0 === t
 						? void 0
 						: t.currency ) || '$',
 				currencyPosition:
-					( null == order ||
+					( order === null ||
+					order === void 0 ||
 					null === ( n = order.currency ) ||
 					void 0 === n
 						? void 0
 						: n.currency_pos ) || 'left',
 			},
-			summaryRow = function ( e, t ) {
-				var n,
-					r,
-					a =
-						arguments.length > 2 &&
-						void 0 !== arguments[ 2 ] &&
-						arguments[ 2 ];
+			summaryRow = function ( ..._args ) {
+				let [ e, _tLocal2 ] = _args;
+				var _nLocal,
+					_rLocal,
+					_aLocal =
+						_args.length > 2 && void 0 !== _args[ 2 ] && _args[ 2 ];
 				return (
 					<Controls.FlexWP
 						justify={ 'space-between' }
@@ -158,31 +157,33 @@ export function createOrderItems( readRuntime ) {
 								align={ 'right' }
 								isBlock={ ! 0 }
 							>
-								{ a && '-' }
+								{ _aLocal && '-' }
 								<Price
 									currency={
-										null == order ||
-										null === ( n = order.currency ) ||
-										void 0 === n
+										order === null ||
+										order === void 0 ||
+										null === ( _nLocal = order.currency ) ||
+										void 0 === _nLocal
 											? void 0
-											: n.currency
+											: _nLocal.currency
 									}
 									currency_pos={
-										null == order ||
-										null === ( r = order.currency ) ||
-										void 0 === r
+										order === null ||
+										order === void 0 ||
+										null === ( _rLocal = order.currency ) ||
+										void 0 === _rLocal
 											? void 0
-											: r.currency_pos
+											: _rLocal.currency_pos
 									}
-									price={ Number( t ) }
+									price={ Number( _tLocal2 ) }
 								/>
 							</Controls.TextWP>
 						</Controls.FlexItemWP>
 					</Controls.FlexWP>
 				);
 			},
-			refundSummaryRow = function ( e, t ) {
-				var n, r;
+			refundSummaryRow = function ( e, _tLocal3 ) {
+				var _nLocal2, _rLocal2;
 				return (
 					<Controls.FlexWP
 						justify={ 'space-between' }
@@ -222,20 +223,24 @@ export function createOrderItems( readRuntime ) {
 							>
 								<Price
 									currency={
-										null == order ||
-										null === ( n = order.currency ) ||
-										void 0 === n
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _nLocal2 = order.currency ) ||
+										void 0 === _nLocal2
 											? void 0
-											: n.currency
+											: _nLocal2.currency
 									}
 									currency_pos={
-										null == order ||
-										null === ( r = order.currency ) ||
-										void 0 === r
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _rLocal2 = order.currency ) ||
+										void 0 === _rLocal2
 											? void 0
-											: r.currency_pos
+											: _rLocal2.currency_pos
 									}
-									price={ Number( t ) }
+									price={ Number( _tLocal3 ) }
 								/>
 							</Controls.TextWP>
 						</Controls.FlexItemWP>
@@ -265,7 +270,7 @@ export function createOrderItems( readRuntime ) {
 					dataIndex: 'price',
 					key: 'price',
 					render( e ) {
-						var t, n;
+						var _tLocal4, _nLocal3;
 						return (
 							<Controls.TextWP
 								as={ 'span' }
@@ -275,18 +280,22 @@ export function createOrderItems( readRuntime ) {
 							>
 								<Price
 									currency={
-										null == order ||
-										null === ( t = order.currency ) ||
-										void 0 === t
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _tLocal4 = order.currency ) ||
+										void 0 === _tLocal4
 											? void 0
-											: t.currency
+											: _tLocal4.currency
 									}
 									currency_pos={
-										null == order ||
-										null === ( n = order.currency ) ||
-										void 0 === n
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _nLocal3 = order.currency ) ||
+										void 0 === _nLocal3
 											? void 0
-											: n.currency_pos
+											: _nLocal3.currency_pos
 									}
 									price={ Number( e ) }
 								/>
@@ -331,8 +340,8 @@ export function createOrderItems( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Total', 'ohmylms' ),
 					dataIndex: 'total',
 					key: 'total',
-					render( e, t ) {
-						var n, r;
+					render( e, _tLocal5 ) {
+						var _nLocal4, _rLocal3;
 						return (
 							<Controls.TextWP
 								as={ 'span' }
@@ -343,23 +352,35 @@ export function createOrderItems( readRuntime ) {
 							>
 								<Price
 									currency={
-										null == order ||
-										null === ( n = order.currency ) ||
-										void 0 === n
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _nLocal4 = order.currency ) ||
+										void 0 === _nLocal4
 											? void 0
-											: n.currency
+											: _nLocal4.currency
 									}
 									currency_pos={
-										null == order ||
-										null === ( r = order.currency ) ||
-										void 0 === r
+										order === null ||
+										order === void 0 ||
+										null ===
+											( _rLocal3 = order.currency ) ||
+										void 0 === _rLocal3
 											? void 0
-											: r.currency_pos
+											: _rLocal3.currency_pos
 									}
 									price={
-										Number( null == t ? void 0 : t.price ) *
 										Number(
-											null == t ? void 0 : t.quantity
+											_tLocal5 === null ||
+												_tLocal5 === void 0
+												? void 0
+												: _tLocal5.price
+										) *
+										Number(
+											_tLocal5 === null ||
+												_tLocal5 === void 0
+												? void 0
+												: _tLocal5.quantity
 										)
 									}
 								/>
@@ -433,7 +454,9 @@ export function createOrderItems( readRuntime ) {
 								<Controls.SpacerWP marginBottom={ 3 } />
 								{ taxAmount &&
 									! (
-										null != order && order.is_included_tax
+										order !== null &&
+										order !== void 0 &&
+										order.is_included_tax
 									) &&
 									summaryRow(
 										taxRate > 0
@@ -485,7 +508,8 @@ export function createOrderItems( readRuntime ) {
 										>
 											<Price
 												currency={
-													null == order ||
+													order === null ||
+													order === void 0 ||
 													null ===
 														( r =
 															order.currency ) ||
@@ -494,7 +518,8 @@ export function createOrderItems( readRuntime ) {
 														: r.currency
 												}
 												currency_pos={
-													null == order ||
+													order === null ||
+													order === void 0 ||
 													null ===
 														( a =
 															order.currency ) ||
@@ -507,7 +532,7 @@ export function createOrderItems( readRuntime ) {
 										</Controls.TextWP>
 									</Controls.FlexItemWP>
 								</Controls.FlexWP>
-								{ ( null == order
+								{ ( order === null || order === void 0
 									? void 0
 									: order.is_included_tax ) && (
 									<React.Fragment>
@@ -527,7 +552,8 @@ export function createOrderItems( readRuntime ) {
 												) }
 												<Price
 													currency={
-														null == order ||
+														order === null ||
+														order === void 0 ||
 														null ===
 															( o =
 																order.currency ) ||
@@ -536,7 +562,8 @@ export function createOrderItems( readRuntime ) {
 															: o.currency
 													}
 													currency_pos={
-														null == order ||
+														order === null ||
+														order === void 0 ||
 														null ===
 															( i =
 																order.currency ) ||
@@ -574,7 +601,8 @@ export function createOrderItems( readRuntime ) {
 								{ summaryRow( 'Paid', ''.concat( total ) ) }
 								<Controls.SpacerWP marginBottom={ 3 } />
 								<Controls.SpacerWP marginTop={ 3 } />
-								{ ( null == order ||
+								{ ( order === null ||
+								order === void 0 ||
 								null === ( l = order.refunds ) ||
 								void 0 === l
 									? void 0
@@ -593,16 +621,18 @@ export function createOrderItems( readRuntime ) {
 												marginBottom={ 0 }
 											>
 												{ order.refunds.map(
-													function ( e, t ) {
+													function ( e, _tLocal6 ) {
 														return (
 															<React.Fragment
-																key={ t }
+																key={ _tLocal6 }
 															>
 																{ refundSummaryRow(
 																	'Refunded',
 																	''.concat(
-																		null ==
-																			e
+																		e ===
+																			null ||
+																			e ===
+																				void 0
 																			? void 0
 																			: e.total
 																	)
@@ -637,9 +667,11 @@ export function createOrderItems( readRuntime ) {
 								<Controls.SpacerWP marginBottom={ 3 } />
 								{ Array.isArray( order.payment_gateway_meta ) &&
 									order.payment_gateway_meta.map(
-										function ( e, t ) {
+										function ( e, _tLocal7 ) {
 											return (
-												<React.Fragment key={ t }>
+												<React.Fragment
+													key={ _tLocal7 }
+												>
 													{ summaryRow(
 														e.label,
 														e.value
@@ -733,6 +765,7 @@ export function createOrderItems( readRuntime ) {
 												fontWeight: 500,
 												color: '#000D25',
 											} }
+											htmlFor={ _controlId + '-field-1' }
 										>
 											{ ( 0, I18n.__ )(
 												'Refund Amount',
@@ -772,10 +805,14 @@ export function createOrderItems( readRuntime ) {
 												);
 											} }
 											onKeyDown={ function ( e ) {
-												( '-' !== e.key &&
-													'Minus' !== e.key ) ||
+												if ( ! (
+													'-' !== e.key &&
+													'Minus' !== e.key
+												) ) {
 													e.preventDefault();
+												}
 											} }
+											id={ _controlId + '-field-1' }
 										/>
 									</div>
 									<div>
@@ -786,6 +823,7 @@ export function createOrderItems( readRuntime ) {
 												fontWeight: 500,
 												color: '#000D25',
 											} }
+											htmlFor={ _controlId + '-field-2' }
 										>
 											{ ( 0, I18n.__ )(
 												'Refund Reason',
@@ -807,6 +845,7 @@ export function createOrderItems( readRuntime ) {
 													e
 												);
 											} }
+											id={ _controlId + '-field-2' }
 										/>
 									</div>
 									<div>

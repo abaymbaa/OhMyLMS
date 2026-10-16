@@ -36,11 +36,9 @@ export function createQuizEditor( readRuntime ) {
 	} ) {
 		const runtime = readRuntime();
 		const {
-			I: Controls,
 			D: { A: Button },
 			W: { A: RichText },
 			Wr: PageHeader,
-			Yc: QuestionList,
 			Nu: QuestionCanvas,
 			_s: QuestionSettings,
 			np: QuizSettings,
@@ -48,7 +46,6 @@ export function createQuizEditor( readRuntime ) {
 			Br: PreviewIcon,
 			za: ResultIcon,
 			Rt: SettingsIcon,
-			Ge: decodeTitle,
 		} = runtime;
 		const route = runtime.f.g();
 		const navigate = runtime.f.Zp();
@@ -236,138 +233,175 @@ export function createQuizEditor( readRuntime ) {
 					</Button>
 				</div>
 				{ editor.loading ? (
-					<Skeleton active paragraph={ { rows: 5 } } />
-				) : view === 'skills' ? (
-					<QuizSkillsTab editor={ editor } skills={ skills } />
-				) : view === 'quiz' ? (
-					<FormWorkspace
-						key={ 'quiz-' + editor.quiz?.id }
-						document={ editor.quiz || {} }
-						label={ __( 'Quiz', 'ohmylms' ) }
-						titleLabel={ __( 'Quiz title', 'ohmylms' ) }
-						titlePlaceholder={ __( 'Enter Quiz Title', 'ohmylms' ) }
-						workspaceLabel={ __( 'Quiz form editor', 'ohmylms' ) }
-						onTitleChange={ ( name ) =>
-							editor.updateField( 'name', name )
-						}
-						onContentChange={ ( description ) =>
-							editor.updateField( 'description', description )
-						}
-						toolbarActions={
-							<Button
-								variant="primary"
-								isBusy={ editor.saving }
-								onClick={ editor.save }
-							>
-								{ __( 'Save', 'ohmylms' ) }
-							</Button>
-						}
-						settings={
-							<Fragment>
-								<QuizSettings
-									embedded
-									setIsSettingsOpen={ () =>
-										setView( 'questions' )
-									}
-									chapterId={ chapterId }
-								/>
-								{ window.ohmylms.extensions.renderSlot(
-									'/quiz-edit/:id',
-									{
-										id: route.id,
-										route: '/quiz-edit/:id',
-										hash: window.location.hash,
-									},
-									'editor-panel'
-								) }
-							</Fragment>
-						}
+					<Skeleton
+						active
+						paragraph={ {
+							rows: 5,
+						} }
 					/>
 				) : (
-					<QuizQuestionCards
-						editor={ editor }
-						skills={ skills }
-						onBank={ () => setPickerOpen( true ) }
-					>
-						{ ! chapterId && (
-							<QuestionVersionBar
-								question={ editor.question }
-								quizId={ editor.quiz?.id }
-								onDuplicated={ handleDuplicated }
-								onPinned={ ( versionId ) =>
-									editor.patchQuestion( editor.question.id, {
-										pinned_version_id: versionId,
-									} )
-								}
-							/>
-						) }
-						<QuestionCanvas
-							chapterId={ chapterId }
-							formCard
-							extraSettings={
-								! chapterId && (
-									<QuestionSkills
-										question={ editor.question }
-										skills={ skills }
-										onChange={ editor.patchQuestion }
-									/>
-								)
-							}
-							setHovered={ setHovered }
-							toolbarLeading={
-								<span className="ohmylms-question-toolbar-label">
-									{ sprintf(
-										__( 'Question %d', 'ohmylms' ),
-										editor.questions.findIndex(
-											( question ) =>
-												question.id ===
-												editor.question?.id
-										) + 1
+					( () => {
+						if ( view === 'skills' ) {
+							return (
+								<QuizSkillsTab
+									editor={ editor }
+									skills={ skills }
+								/>
+							);
+						}
+						if ( view === 'quiz' ) {
+							return (
+								<FormWorkspace
+									key={ 'quiz-' + editor.quiz?.id }
+									document={ editor.quiz || {} }
+									label={ __( 'Quiz', 'ohmylms' ) }
+									titleLabel={ __( 'Quiz title', 'ohmylms' ) }
+									titlePlaceholder={ __(
+										'Enter Quiz Title',
+										'ohmylms'
 									) }
-								</span>
-							}
-							toolbarActions={
-								<span
-									className="ohmylms-question-autosave"
-									role="status"
-								>
-									{ editor.autosaveStatus }
-								</span>
-							}
-							settings={
-								<fieldset
-									disabled={ readonly }
-									className="ohmylms-question-fieldset"
-								>
-									{ editor.question?.settings?.type ? (
-										<QuestionSettings
-											chapterId={ chapterId }
-											setHovered={ setHovered }
-										/>
-									) : (
-										<p>
-											{ __(
-												'Use Add block to choose a question type.',
-												'ohmylms'
+									workspaceLabel={ __(
+										'Quiz form editor',
+										'ohmylms'
+									) }
+									onTitleChange={ ( name ) =>
+										editor.updateField( 'name', name )
+									}
+									onContentChange={ ( description ) =>
+										editor.updateField(
+											'description',
+											description
+										)
+									}
+									toolbarActions={
+										<Button
+											variant="primary"
+											isBusy={ editor.saving }
+											onClick={ editor.save }
+										>
+											{ __( 'Save', 'ohmylms' ) }
+										</Button>
+									}
+									settings={
+										<Fragment>
+											<QuizSettings
+												embedded
+												setIsSettingsOpen={ () =>
+													setView( 'questions' )
+												}
+												chapterId={ chapterId }
+											/>
+											{ window.ohmylms.extensions.renderSlot(
+												'/quiz-edit/:id',
+												{
+													id: route.id,
+													route: '/quiz-edit/:id',
+													hash: window.location.hash,
+												},
+												'editor-panel'
 											) }
-										</p>
-									) }
-									{ ! chapterId && (
-										<PracticeFeedbackFields
-											question={ editor.question }
-											onChange={ ( fields ) =>
-												! readonly &&
-												editor.patchQuestion(
-													editor.question.id,
-													fields
-												)
-											}
-										/>
-									) }
-								</fieldset>
-							}
-						/>
-					</QuizQuestionCards>
+										</Fragment>
+									}
+								/>
+							);
+						}
+						return (
+							<QuizQuestionCards
+								editor={ editor }
+								skills={ skills }
+								onBank={ () => setPickerOpen( true ) }
+							>
+								{ ! chapterId && (
+									<QuestionVersionBar
+										question={ editor.question }
+										quizId={ editor.quiz?.id }
+										onDuplicated={ handleDuplicated }
+										onPinned={ ( versionId ) =>
+											editor.patchQuestion(
+												editor.question.id,
+												{
+													pinned_version_id:
+														versionId,
+												}
+											)
+										}
+									/>
+								) }
+								<QuestionCanvas
+									chapterId={ chapterId }
+									formCard
+									extraSettings={
+										! chapterId && (
+											<QuestionSkills
+												question={ editor.question }
+												skills={ skills }
+												onChange={
+													editor.patchQuestion
+												}
+											/>
+										)
+									}
+									setHovered={ setHovered }
+									toolbarLeading={
+										<span className="ohmylms-question-toolbar-label">
+											{ sprintf(
+												/* translators: %d: question number. */ __(
+													'Question %d',
+													'ohmylms'
+												),
+												editor.questions.findIndex(
+													( question ) =>
+														question.id ===
+														editor.question?.id
+												) + 1
+											) }
+										</span>
+									}
+									toolbarActions={
+										<span
+											className="ohmylms-question-autosave"
+											role="status"
+										>
+											{ editor.autosaveStatus }
+										</span>
+									}
+									settings={
+										<fieldset
+											disabled={ readonly }
+											className="ohmylms-question-fieldset"
+										>
+											{ editor.question?.settings
+												?.type ? (
+												<QuestionSettings
+													chapterId={ chapterId }
+													setHovered={ setHovered }
+												/>
+											) : (
+												<p>
+													{ __(
+														'Use Add block to choose a question type.',
+														'ohmylms'
+													) }
+												</p>
+											) }
+											{ ! chapterId && (
+												<PracticeFeedbackFields
+													question={ editor.question }
+													onChange={ ( fields ) =>
+														! readonly &&
+														editor.patchQuestion(
+															editor.question.id,
+															fields
+														)
+													}
+												/>
+											) }
+										</fieldset>
+									}
+								/>
+							</QuizQuestionCards>
+						);
+					} )()
 				) }
 				{ pickerOpen && (
 					<BankPicker

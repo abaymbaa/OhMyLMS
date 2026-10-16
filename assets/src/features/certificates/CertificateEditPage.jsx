@@ -19,21 +19,21 @@ export function createCertificateEditPage( readRuntime ) {
 		HG( 'ohmylms', 'certificates' );
 		var e = ( 0, Router.g )().id,
 			t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = ( function ( e, t ) {
+			n = ( function ( _eLocal, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal2 ) {
+						if ( Array.isArray( _eLocal2 ) ) {
+							return _eLocal2;
 						}
-					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					} )( _eLocal ) ||
+					( function ( _eLocal3, _tLocal2 ) {
+						var _nLocal =
+							_eLocal3 === null || _eLocal3 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
 							var r,
 								a,
 								o,
@@ -43,29 +43,37 @@ export function createCertificateEditPage( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( _nLocal =
+										_nLocal.call( _eLocal3 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
 									c = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( r = o.call( _nLocal ) )
+											.done ) &&
+										( l.push( r.value ),
+										l.length !== _tLocal2 );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal4 ) {
+								u = ! 0;
+								a = _eLocal4;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( i = _nLocal.return() ),
 										Object( i ) !== i )
 									) {
 										return;
@@ -78,28 +86,39 @@ export function createCertificateEditPage( readRuntime ) {
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return Ete( e, t );
+					} )( _eLocal, _tLocal ) ||
+					( function ( _eLocal5, _tLocal3 ) {
+						if ( _eLocal5 ) {
+							if ( 'string' === typeof _eLocal5 ) {
+								return Ete( _eLocal5, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal5 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? Ete( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal5.constructor &&
+									( _nLocal2 = _eLocal5.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal5 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return Ete( _eLocal5, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( _eLocal, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -113,76 +132,104 @@ export function createCertificateEditPage( readRuntime ) {
 			i = ( 0, Notifications.A )(),
 			l = i.openNotificationWithIcon,
 			c = i.contextHolder,
-			u = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			u = ( 0, WordPressData.useSelect )( function ( _eLocal6 ) {
+				return _eLocal6( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			s = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			s = ( 0, WordPressData.useSelect )( function ( _eLocal7 ) {
+				return _eLocal7( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			d = ( function () {
-				var n,
-					r =
-						( ( n = bte().m( function n() {
-							var r, i;
+				var _nLocal3,
+					_rLocal =
+						( ( _nLocal3 = bte().m( function _nLocal4() {
+							var _rLocal2, _iLocal;
 							return bte().w(
-								function ( n ) {
+								function ( _nLocal5 ) {
 									for (;;) {
-										switch ( ( n.p = n.n ) ) {
+										switch ( ( _nLocal5.p = _nLocal5.n ) ) {
 											case 0:
 												return (
-													( n.p = 0 ),
+													( _nLocal5.p = 0 ),
 													a( ! 0 ),
-													( n.n = 1 ),
+													( _nLocal5.n = 1 ),
 													t.getCertificateById( e )
 												 );
 											case 1:
-												( ( r = n.v ),
-													a( ! 1 ),
-													r || o( '/certificates' ),
-													( n.n = 3 ) );
+												_rLocal2 = _nLocal5.v;
+												a( ! 1 );
+												if ( ! _rLocal2 ) {
+													o( '/certificates' );
+												}
+												_nLocal5.n = 3;
 												break;
 											case 2:
-												( ( n.p = 2 ),
-													( i = n.v ),
-													console.error( i ) );
+												_nLocal5.p = 2;
+												_iLocal = _nLocal5.v;
+												console.error( _iLocal );
+											// Falls through to the shared async state cleanup.
 											case 3:
-												return n.a( 2 );
+												return _nLocal5.a( 2 );
 										}
 									}
 								},
-								n,
+								_nLocal4,
 								null,
 								[ [ 0, 2 ] ]
 							);
 						} ) ),
-						function () {
-							var e = this,
-								t = arguments;
-							return new Promise( function ( r, a ) {
-								var o = n.apply( e, t );
-								function i( e ) {
-									wte( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _eLocal8 = this,
+								_tLocal4 = _args;
+							return new Promise( function ( _rLocal3, _aLocal ) {
+								var _oLocal = _nLocal3.apply(
+									_eLocal8,
+									_tLocal4
+								);
+								function _iLocal2( _eLocal9 ) {
+									wte(
+										_oLocal,
+										_rLocal3,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'next',
+										_eLocal9
+									);
 								}
-								function l( e ) {
-									wte( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal0 ) {
+									wte(
+										_oLocal,
+										_rLocal3,
+										_aLocal,
+										_iLocal2,
+										_lLocal,
+										'throw',
+										_eLocal0
+									);
 								}
-								i( void 0 );
+								_iLocal2( void 0 );
 							} );
 						} );
-				return function () {
-					return r.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _rLocal.apply( this, _args2 );
 				};
 			} )();
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					e ? d() : o( '/certificates' );
+					if ( e ) {
+						d();
+					} else {
+						o( '/certificates' );
+					}
 				},
 				[ e ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! r && u && l( s, u );
+					if ( ! r && u ) {
+						l( s, u );
+					}
 				},
 				[ u ]
 			),

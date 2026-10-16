@@ -217,9 +217,17 @@
 }
 
 
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
+
+
 @import 'course-single-description';
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
 @import 'course-single-chapters';
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
 @import 'course-single-assignment';
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
 @import 'course-single-resourse';
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
 @import 'course-single-review';
+/* stylelint-disable-next-line no-invalid-position-at-import-rule -- Sass expands this partial here; moving it changes the cascade. */
 @import 'course-single-sidebar';

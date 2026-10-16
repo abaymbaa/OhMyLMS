@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Gateways\Stripe;
 
@@ -110,7 +110,7 @@ class StripeApi {
 	public static function request( $request_body, $api = 'charges', $method = 'POST', $with_headers = false, $idempotency_key = null ) {
 		$headers = self::get_headers();
 
-		// Idempotency for POST requests to relevant endpoints
+		// Idempotency for POST requests to relevant endpoints.
 		if ( 'POST' === $method ) {
 			if ( null === $idempotency_key && isset( $request_body['metadata']['order_id'] ) ) {
 				// Generate a basic idempotency key if not provided and order_id is available
@@ -127,8 +127,8 @@ class StripeApi {
 			array(
 				'method'      => $method,
 				'headers'     => $headers,
-				'body'        => 'POST' === $method || 'PUT' === $method ? $request_body : null, // Only include body for relevant methods
-				'data_format' => 'body', // Ensures body is sent as form data for POST
+				'body'        => 'POST' === $method || 'PUT' === $method ? $request_body : null, // Only include body for relevant methods.
+				'data_format' => 'body', // Ensures body is sent as form data for POST.
 				'timeout'     => 70,
 			)
 		);
@@ -160,7 +160,7 @@ class StripeApi {
 			// You might want to include more details like error type or code if available.
 			// For example: $error_message .= " (Type: {$decoded_body->error->type}, Code: {$decoded_body->error->code})";
 			// throw new \Exception( 'Stripe API Error: ' . $error_message );
-			// For now, we will return the decoded body with the error, OhMyLMS_Gateway_Stripe_Intents will check for ->error
+			// For now, we will return the decoded body with the error, OhMyLMS_Gateway_Stripe_Intents will check for ->error.
 		}
 
 		if ( $with_headers ) {

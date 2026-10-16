@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class GatewayPaypal
+ * Handles PayPal payment gateway interactions with vaulting for one-time and recurring payments.
+ *
+ * @package OhMyLMS
+ */
 
 use OhMyLMS\Commerce\Abstracts\PaymentGateway;
 use OhMyLMS\Gateways\Paypal\PaypalAPI;
@@ -184,7 +190,7 @@ class GatewayPaypal extends PaymentGateway {
 		// 'default_value' => '',
 		// 'value' => $this->get_setting('webhook_id', ''),
 		// 'option_name' => 'webhook_id'
-		// )
+		// ).
 		);
 
 		$gateway_settings = array(
@@ -513,13 +519,13 @@ class GatewayPaypal extends PaymentGateway {
 		$cart_discount  = $order->get_cart_discount();
 		$filtered_items = array();
 
-		// Calculate the total of all items before discount and tax
+		// Calculate the total of all items before discount and tax.
 		$total_items_amount_before_discount = 0;
 		$items_data                         = array();
 
 		foreach ( $items as $item ) {
 			if ( $item->get_id() ) {
-				$item_total = $item->get_total(); // This should be the base amount before tax
+				$item_total = $item->get_total(); // This should be the base amount before tax.
 
 				$items_data[]                        = array(
 					'name'            => $item->get_name(),
@@ -529,7 +535,7 @@ class GatewayPaypal extends PaymentGateway {
 			}
 		}
 
-		// Apply discount proportionally to each item first
+		// Apply discount proportionally to each item first.
 		$total_after_discount = $total_items_amount_before_discount - $cart_discount;
 
 		if ( $cart_discount > 0 && $total_items_amount_before_discount > 0 ) {
@@ -538,7 +544,7 @@ class GatewayPaypal extends PaymentGateway {
 				$item_discount         = $item_data['original_amount'] * $discount_ratio;
 				$amount_after_discount = $item_data['original_amount'] - $item_discount;
 
-				// Now apply tax to the discounted amount
+				// Now apply tax to the discounted amount.
 				$tax_amount   = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $amount_after_discount ) );
 				$final_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $amount_after_discount;
 
@@ -552,7 +558,7 @@ class GatewayPaypal extends PaymentGateway {
 				);
 			}
 		} else {
-			// No discount, apply tax to original amounts
+			// No discount, apply tax to original amounts.
 			foreach ( $items_data as $item_data ) {
 				$tax_amount   = \OhMyLMS_Tax_Calculator::get_instance()->calculate_tax( $order->get_tax_rate(), array( 'total' => $item_data['original_amount'] ) );
 				$final_amount = is_array( $tax_amount ) && isset( $tax_amount['total_with_tax'] ) ? $tax_amount['total_with_tax'] : $item_data['original_amount'];
@@ -702,7 +708,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * @since 1.0.0
 	 */
 	public function get_amount_data( $order ) {
-		$order_total = $order->get_total(); // This should already include tax and discount
+		$order_total = $order->get_total(); // This should already include tax and discount.
 
 		$breakdown = array(
 			'item_total' => array(
@@ -790,7 +796,7 @@ class GatewayPaypal extends PaymentGateway {
 			}
 			$net_amount = get_post_meta( $order_id, '_net_amount', true );
 			update_post_meta( $order_id, '_net_amount', floatval( $net_amount ) - abs( $amount ) );
-			return $response['status'] === 'COMPLETED';
+			return 'COMPLETED' === $response['status'];
 		} catch ( \Exception $e ) {
 			return new \WP_Error( 'paypal_error', $e->getMessage() );
 		}
@@ -810,9 +816,9 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Issues a refund for a captured payment.
 	 *
-	 * @param string                        $capture_id
-	 * @param float|null                    $amount
-	 * @param string                        $reason
+	 * @param string                       $capture_id
+	 * @param float|null                   $amount
+	 * @param string                       $reason
 	 * @param \OhMyLMS\Commerce\Data\Order $order
 	 * @return array|WP_Error
 	 * @since 1.0.0
@@ -897,7 +903,7 @@ class GatewayPaypal extends PaymentGateway {
 		$state          = $order->get_state();
 		$country        = $order->get_country();
 		$post_code      = $order->get_postcode();
-		// Ensure required fields are not empty
+		// Ensure required fields are not empty.
 		if ( empty( $address_line_1 ) ) {
 			$address_line_1 = 'N/A';
 		}
@@ -917,8 +923,8 @@ class GatewayPaypal extends PaymentGateway {
 			'address' => array(
 				'address_line_1' => $address_line_1,
 				'address_line_2' => $address_line_2,
-				'admin_area_2'   => $city,      // City is admin_area_2
-				'admin_area_1'   => $state,     // State/Province is admin_area_1
+				'admin_area_2'   => $city,      // City is admin_area_2.
+				'admin_area_1'   => $state,     // State/Province is admin_area_1.
 				'postal_code'    => $post_code,
 				'country_code'   => $country ?: 'US',
 			),
@@ -984,7 +990,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * @since 1.0.0
 	 */
 	private function check_and_build_funnel_url( $order ) {
-		// Validate order object
+		// Validate order object.
 		if ( ! $order ) {
 			return null;
 		}
@@ -999,13 +1005,13 @@ class GatewayPaypal extends PaymentGateway {
 			if ( method_exists( $item, 'get_course_id' ) ) {
 				$course_id = $item->get_course_id();
 				if ( $course_id ) {
-					// Check if this course has funnel steps configured
+					// Check if this course has funnel steps configured.
 					$funnel_steps = get_post_meta( $course_id, '_funnel_steps', true );
 					if ( ! empty( $funnel_steps ) && is_array( $funnel_steps ) ) {
-						// Get the first funnel step
+						// Get the first funnel step.
 						$first_step = reset( $funnel_steps );
 						if ( $first_step && isset( $first_step['step_id'] ) ) {
-							// Build and return funnel URL using FunnelManager
+							// Build and return funnel URL using FunnelManager.
 							$funnel_manager = new FunnelManager();
 							return $funnel_manager->build_funnel_step_url( $order->get_id(), $first_step );
 						}
@@ -1032,20 +1038,20 @@ class GatewayPaypal extends PaymentGateway {
 			return;
 		}
 
-		// Look for courses with funnel steps
+		// Look for courses with funnel steps.
 		foreach ( $order_items as $item ) {
 			if ( method_exists( $item, 'get_course_id' ) ) {
 				$course_id = $item->get_course_id();
 				if ( $course_id ) {
-					// Check if this course has funnel steps configured
+					// Check if this course has funnel steps configured.
 					$funnel_steps = get_post_meta( $course_id, '_funnel_steps', true );
 					if ( ! empty( $funnel_steps ) && is_array( $funnel_steps ) ) {
-						// Get the first funnel step
+						// Get the first funnel step.
 						$first_step = reset( $funnel_steps );
 						if ( $first_step && isset( $first_step['step_id'] ) ) {
-							// Store funnel session data
+							// Store funnel session data.
 							$this->store_funnel_session_data( $order->get_id(), $course_id, $first_step );
-							return; // Found funnel, no need to check other items
+							return; // Found funnel, no need to check other items.
 						}
 					}
 				}
@@ -1070,12 +1076,12 @@ class GatewayPaypal extends PaymentGateway {
 			'step_data'    => $step_data,
 			'created_at'   => time(),
 		);
-		// Store in session
+		// Store in session.
 		if ( function_exists( '\OhMyLMS\Commerce\ecommerce' ) ) {
 				\OhMyLMS\Commerce\ecommerce()->session->set( 'funnel_data', $funnel_session_data );
 				\OhMyLMS\Commerce\ecommerce()->session->save_data();
 		}
-		// Also store as order meta as a backup in case session is lost
+		// Also store as order meta as a backup in case session is lost.
 		update_post_meta( $order_id, '_funnel_session_data', $funnel_session_data );
 	}
 
@@ -1122,7 +1128,7 @@ class GatewayPaypal extends PaymentGateway {
 			),
 		);
 
-		// Send request to PayPal API
+		// Send request to PayPal API.
 		$response = $this->paypal_api->create_order( $data );
 
 		if ( is_wp_error( $response ) || empty( $response['id'] ) ) {
@@ -1136,15 +1142,15 @@ class GatewayPaypal extends PaymentGateway {
 		update_post_meta( $original_order->get_id(), '_upsell_order_id', $response['id'] );
 		update_post_meta( $original_order->get_id(), '_upsell_transaction_id', $capture_data['id'] );
 
-		// Get existing values
+		// Get existing values.
 		$existing_fee = (float) get_post_meta( $original_order->get_id(), '_paypal_fee', true );
 		$existing_net = (float) get_post_meta( $original_order->get_id(), '_net_amount', true );
 
-		// Add and update
+		// Add and update.
 		update_post_meta( $original_order->get_id(), '_paypal_fee', $existing_fee + $paypal_fee );
 		update_post_meta( $original_order->get_id(), '_net_amount', $existing_net + $net_amount );
 
-		// Mark upsell as paid in your system
+		// Mark upsell as paid in your system.
 		do_action( 'ohmylms_upsell_payment_completed', $original_order->get_id(), $step_data );
 
 		$original_order->save();

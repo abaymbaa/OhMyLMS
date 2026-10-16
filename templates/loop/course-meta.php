@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 global $course;
@@ -44,15 +44,15 @@ $level        = $course->get_level();
 				<?php
 				if ( 'beginner' === $level ) {
 					include OHMYLMS_DIR . '/assets/images/icon/level-beginner-icon.php';
-					echo __( ' Beginner', 'ohmylms' );
+					echo esc_html__( ' Beginner', 'ohmylms' );
 
 				} elseif ( 'experience' === $level ) {
 					include OHMYLMS_DIR . '/assets/images/icon/level-experience-icon.php';
-					echo __( ' Experience', 'ohmylms' );
+					echo esc_html__( ' Experience', 'ohmylms' );
 
 				} elseif ( 'expert' === $level ) {
 					include OHMYLMS_DIR . '/assets/images/icon/level-expert-icon.php';
-					echo __( 'Expert', 'ohmylms' );
+					echo esc_html__( 'Expert', 'ohmylms' );
 				}
 				?>
 			</span>

@@ -33,7 +33,7 @@ export function createEarningsChart( readRuntime ) {
 				return e( StoreModule.default ).getDashboardLoader();
 			}, [] ),
 			w =
-				null != v
+				v !== null && v !== void 0
 					? v
 					: ( 0, WordPressData.useSelect )( function ( e ) {
 							return e(
@@ -48,11 +48,15 @@ export function createEarningsChart( readRuntime ) {
 		function P( e ) {
 			return /^\d{4}$/.test( e )
 				? 'YYYY'
-				: /^\d{4}-\d{2}$/.test( e )
-					? 'YYYY-MM'
-					: /^\d{4}-\d{2}-\d{2}$/.test( e )
-						? 'YYYY-MM-DD'
-						: 'Invalid format';
+				: ( () => {
+						if ( /^\d{4}-\d{2}$/.test( e ) ) {
+							return 'YYYY-MM';
+						}
+						if ( /^\d{4}-\d{2}-\d{2}$/.test( e ) ) {
+							return 'YYYY-MM-DD';
+						}
+						return 'Invalid format';
+					} )();
 		}
 		var O = [
 				'Jan',
@@ -68,59 +72,60 @@ export function createEarningsChart( readRuntime ) {
 				'Nov',
 				'Dec',
 			],
-			k = function ( e, t, n ) {
-				( n.labels.push( e ), n.values.push( t ) );
+			k = function ( e, _tLocal, _nLocal ) {
+				_nLocal.labels.push( e );
+				_nLocal.values.push( _tLocal );
 			},
-			j = function ( e, t, n, r, a ) {
-				( ( a[ e ] = a[ e ] || {
+			j = function ( e, _tLocal2, _nLocal2, _rLocal, _aLocal ) {
+				_aLocal[ e ] = _aLocal[ e ] || {
 					earning: 0,
 					refund: 0,
 					net: 0,
-				} ),
-					( a[ e ].earning += t ),
-					( a[ e ].refund += n ),
-					( a[ e ].net += r ) );
+				};
+				_aLocal[ e ].earning += _tLocal2;
+				_aLocal[ e ].refund += _nLocal2;
+				_aLocal[ e ].net += _rLocal;
 			},
-			A = function ( e, t, n ) {
-				if ( 'YYYY-MM' === t ) {
-					var r = DU( e.split( '-' ), 2 ),
-						a = r[ 0 ],
-						o = r[ 1 ];
-					return 'yearly' === n
-						? ''.concat( O[ parseInt( o, 10 ) - 1 ] )
+			A = function ( e, _tLocal3, _nLocal3 ) {
+				if ( 'YYYY-MM' === _tLocal3 ) {
+					var _rLocal2 = DU( e.split( '-' ), 2 ),
+						_aLocal2 = _rLocal2[ 0 ],
+						_oLocal = _rLocal2[ 1 ];
+					return 'yearly' === _nLocal3
+						? ''.concat( O[ parseInt( _oLocal, 10 ) - 1 ] )
 						: ''
-								.concat( O[ parseInt( o, 10 ) - 1 ], ' ' )
-								.concat( a );
+								.concat( O[ parseInt( _oLocal, 10 ) - 1 ], ' ' )
+								.concat( _aLocal2 );
 				}
-				if ( 'YYYY-MM-DD' === t ) {
-					if ( 'monthly' === n ) {
+				if ( 'YYYY-MM-DD' === _tLocal3 ) {
+					if ( 'monthly' === _nLocal3 ) {
 						return parseInt( e.split( '-' )[ 2 ], 10 );
 					}
-					if ( 'custom' === n ) {
-						var i = DU( e.split( '-' ), 3 ),
-							l = ( i[ 0 ], i[ 1 ] ),
-							c = i[ 2 ];
+					if ( 'custom' === _nLocal3 ) {
+						var _iLocal = DU( e.split( '-' ), 3 ),
+							_lLocal = ( _iLocal[ 0 ], _iLocal[ 1 ] ),
+							_cLocal = _iLocal[ 2 ];
 						return ''
-							.concat( O[ parseInt( l, 10 ) - 1 ], ' ' )
-							.concat( parseInt( c, 10 ) );
+							.concat( O[ parseInt( _lLocal, 10 ) - 1 ], ' ' )
+							.concat( parseInt( _cLocal, 10 ) );
 					}
 				}
-				return 'YYYY' === t ? e : null;
+				return 'YYYY' === _tLocal3 ? e : null;
 			};
 		( 0, ReactHooks.useEffect )(
 			function () {
-				m &&
+				if ( m ) {
 					R(
-						( function ( e, t ) {
-							var n = {
+						( function ( e, _tLocal4 ) {
+							var _nLocal4 = {
 									labels: [],
 									values: [],
 								},
-								r = {
+								_rLocal3 = {
 									labels: [],
 									values: [],
 								},
-								a = {
+								_aLocal3 = {
 									labels: [],
 									values: [],
 								};
@@ -134,245 +139,325 @@ export function createEarningsChart( readRuntime ) {
 										'Invalid input: Expected a non-empty object.'
 									),
 									{
-										revenue: n,
-										refund: r,
-										net_amount: a,
+										revenue: _nLocal4,
+										refund: _rLocal3,
+										net_amount: _aLocal3,
 									}
 								 );
 							}
-							switch ( t ) {
+							switch ( _tLocal4 ) {
 								case 'yearly':
-									( C( null ),
-										( function ( e, t, n, r ) {
-											for (
-												var a = 0,
-													o = Object.entries( e );
-												a < o.length;
-												a++
-											) {
-												var i = DU( o[ a ], 2 ),
-													l = i[ 0 ],
-													c = i[ 1 ],
-													u = P( l );
-												if ( 'Invalid format' !== u ) {
-													var s = A( l, u, 'yearly' );
-													if ( s ) {
-														var d = c.earning,
-															m =
-																void 0 === d
-																	? 0
-																	: d,
-															p = c.refund,
-															f =
-																void 0 === p
-																	? 0
-																	: p,
-															v = c.net,
-															g =
-																void 0 === v
-																	? 0
-																	: v;
-														( k( s, m, t ),
-															k( s, f, n ),
-															k( s, g, r ) );
-													} else {
-														console.warn(
-															'Invalid label for key '.concat(
-																l
-															)
-														);
-													}
-												} else {
-													console.warn(
-														'Invalid date format for key '.concat(
-															l
-														)
-													);
-												}
-											}
-										} )( e, n, r, a ) );
-									break;
-								case 'monthly':
-									! ( function ( e, t, n, r ) {
+									C( null );
+									( function (
+										_eLocal,
+										_tLocal5,
+										_nLocal5,
+										_rLocal4
+									) {
 										for (
-											var a = {},
-												o = 0,
-												i = Object.entries( e );
-											o < i.length;
-											o++
+											var _aLocal4 = 0,
+												_oLocal2 =
+													Object.entries( _eLocal );
+											_aLocal4 < _oLocal2.length;
+											_aLocal4++
 										) {
-											var l = DU( i[ o ], 2 ),
-												c = l[ 0 ],
-												u = l[ 1 ],
-												s = P( c );
-											if ( 'Invalid format' !== s ) {
-												var d = A( c, s, 'monthly' );
-												if ( d ) {
-													var m =
-														parseInt(
-															c.split( '-' )[ 1 ],
-															10
-														) - 1;
-													if (
-														( C( O[ m ] ),
-														'object' !== NU( u ) ||
-															Array.isArray(
-																u
-															) ||
-															null === u )
-													) {
-														console.warn(
-															'Invalid value for key '.concat(
-																c,
-																': Expected an object.'
-															)
-														);
-													} else {
-														var p = u.earning,
-															f =
-																void 0 === p
-																	? 0
-																	: p,
-															v = u.refund,
-															g =
-																void 0 === v
-																	? 0
-																	: v,
-															h = u.net;
-														j(
-															d,
-															f,
-															g,
-															void 0 === h
+											var _iLocal2 = DU(
+													_oLocal2[ _aLocal4 ],
+													2
+												),
+												_lLocal2 = _iLocal2[ 0 ],
+												_cLocal2 = _iLocal2[ 1 ],
+												_uLocal = P( _lLocal2 );
+											if (
+												'Invalid format' !== _uLocal
+											) {
+												var _sLocal = A(
+													_lLocal2,
+													_uLocal,
+													'yearly'
+												);
+												if ( _sLocal ) {
+													var _dLocal =
+															_cLocal2.earning,
+														_mLocal =
+															void 0 === _dLocal
 																? 0
-																: h,
-															a
-														);
-													}
+																: _dLocal,
+														_pLocal =
+															_cLocal2.refund,
+														_fLocal =
+															void 0 === _pLocal
+																? 0
+																: _pLocal,
+														_vLocal = _cLocal2.net,
+														g =
+															void 0 === _vLocal
+																? 0
+																: _vLocal;
+													k(
+														_sLocal,
+														_mLocal,
+														_tLocal5
+													);
+													k(
+														_sLocal,
+														_fLocal,
+														_nLocal5
+													);
+													k( _sLocal, g, _rLocal4 );
 												} else {
 													console.warn(
 														'Invalid label for key '.concat(
-															c
+															_lLocal2
 														)
 													);
 												}
 											} else {
 												console.warn(
 													'Invalid date format for key '.concat(
-														c
+														_lLocal2
+													)
+												);
+											}
+										}
+									} )( e, _nLocal4, _rLocal3, _aLocal3 );
+									break;
+								case 'monthly':
+									( function (
+										_eLocal2,
+										_tLocal6,
+										_nLocal6,
+										_rLocal5
+									) {
+										for (
+											var _aLocal5 = {},
+												_oLocal3 = 0,
+												_iLocal3 =
+													Object.entries( _eLocal2 );
+											_oLocal3 < _iLocal3.length;
+											_oLocal3++
+										) {
+											var _lLocal3 = DU(
+													_iLocal3[ _oLocal3 ],
+													2
+												),
+												_cLocal3 = _lLocal3[ 0 ],
+												_uLocal2 = _lLocal3[ 1 ],
+												_sLocal2 = P( _cLocal3 );
+											if (
+												'Invalid format' !== _sLocal2
+											) {
+												var _dLocal2 = A(
+													_cLocal3,
+													_sLocal2,
+													'monthly'
+												);
+												if ( _dLocal2 ) {
+													var _mLocal2 =
+														parseInt(
+															_cLocal3.split(
+																'-'
+															)[ 1 ],
+															10
+														) - 1;
+													if (
+														( C( O[ _mLocal2 ] ),
+														'object' !==
+															NU( _uLocal2 ) ||
+															Array.isArray(
+																_uLocal2
+															) ||
+															null === _uLocal2 )
+													) {
+														console.warn(
+															'Invalid value for key '.concat(
+																_cLocal3,
+																': Expected an object.'
+															)
+														);
+													} else {
+														var _pLocal2 =
+																_uLocal2.earning,
+															_fLocal2 =
+																void 0 ===
+																_pLocal2
+																	? 0
+																	: _pLocal2,
+															_vLocal2 =
+																_uLocal2.refund,
+															g =
+																void 0 ===
+																_vLocal2
+																	? 0
+																	: _vLocal2,
+															_hLocal =
+																_uLocal2.net;
+														j(
+															_dLocal2,
+															_fLocal2,
+															g,
+															void 0 === _hLocal
+																? 0
+																: _hLocal,
+															_aLocal5
+														);
+													}
+												} else {
+													console.warn(
+														'Invalid label for key '.concat(
+															_cLocal3
+														)
+													);
+												}
+											} else {
+												console.warn(
+													'Invalid date format for key '.concat(
+														_cLocal3
 													)
 												);
 											}
 										}
 										for (
-											var y = 0, b = Object.entries( a );
+											var y = 0,
+												b = Object.entries( _aLocal5 );
 											y < b.length;
 											y++
 										) {
-											var _ = DU( b[ y ], 2 ),
-												w = _[ 0 ],
-												E = _[ 1 ],
-												S = E.earning,
-												R = E.refund,
-												x = E.net;
-											( k( w, S, t ),
-												k( w, R, n ),
-												k( w, x, r ) );
+											var _Local = DU( b[ y ], 2 ),
+												_wLocal = _Local[ 0 ],
+												_ELocal = _Local[ 1 ],
+												_SLocal = _ELocal.earning,
+												_RLocal = _ELocal.refund,
+												_xLocal = _ELocal.net;
+											k( _wLocal, _SLocal, _tLocal6 );
+											k( _wLocal, _RLocal, _nLocal6 );
+											k( _wLocal, _xLocal, _rLocal5 );
 										}
-									} )( e, n, r, a );
+									} )( e, _nLocal4, _rLocal3, _aLocal3 );
 									break;
 								case 'custom':
-									( C( null ),
-										( function ( e, t, n, r ) {
-											for (
-												var a = {},
-													o = 0,
-													i = Object.entries( e );
-												o < i.length;
-												o++
+									C( null );
+									( function (
+										_eLocal3,
+										_tLocal7,
+										_nLocal7,
+										_rLocal6
+									) {
+										for (
+											var _aLocal6 = {},
+												_oLocal4 = 0,
+												_iLocal4 =
+													Object.entries( _eLocal3 );
+											_oLocal4 < _iLocal4.length;
+											_oLocal4++
+										) {
+											var _lLocal4 = DU(
+													_iLocal4[ _oLocal4 ],
+													2
+												),
+												_cLocal4 = _lLocal4[ 0 ],
+												_uLocal3 = _lLocal4[ 1 ],
+												_sLocal3 = P( _cLocal4 );
+											if (
+												'Invalid format' !== _sLocal3
 											) {
-												var l = DU( i[ o ], 2 ),
-													c = l[ 0 ],
-													u = l[ 1 ],
-													s = P( c );
-												if ( 'Invalid format' !== s ) {
-													var d = A( c, s, 'custom' );
-													if ( d ) {
-														if (
-															'object' !==
-																NU( u ) ||
-															Array.isArray(
-																u
-															) ||
-															null === u
-														) {
-															console.warn(
-																'Invalid value for key '.concat(
-																	c,
-																	': Expected an object.'
-																)
-															);
-														} else {
-															var m = u.earning,
-																p =
-																	void 0 === m
-																		? 0
-																		: m,
-																f = u.refund,
-																v =
-																	void 0 === f
-																		? 0
-																		: f,
-																g = u.net;
-															j(
-																d,
-																p,
-																v,
-																void 0 === g
-																	? 0
-																	: g,
-																a
-															);
-														}
-													} else {
+												var _dLocal3 = A(
+													_cLocal4,
+													_sLocal3,
+													'custom'
+												);
+												if ( _dLocal3 ) {
+													if (
+														'object' !==
+															NU( _uLocal3 ) ||
+														Array.isArray(
+															_uLocal3
+														) ||
+														null === _uLocal3
+													) {
 														console.warn(
-															'Invalid label for key '.concat(
-																c
+															'Invalid value for key '.concat(
+																_cLocal4,
+																': Expected an object.'
 															)
+														);
+													} else {
+														var _mLocal3 =
+																_uLocal3.earning,
+															_pLocal3 =
+																void 0 ===
+																_mLocal3
+																	? 0
+																	: _mLocal3,
+															_fLocal3 =
+																_uLocal3.refund,
+															_vLocal3 =
+																void 0 ===
+																_fLocal3
+																	? 0
+																	: _fLocal3,
+															g = _uLocal3.net;
+														j(
+															_dLocal3,
+															_pLocal3,
+															_vLocal3,
+															void 0 === g
+																? 0
+																: g,
+															_aLocal6
 														);
 													}
 												} else {
 													console.warn(
-														'Invalid date format for key '.concat(
-															c
+														'Invalid label for key '.concat(
+															_cLocal4
 														)
 													);
 												}
+											} else {
+												console.warn(
+													'Invalid date format for key '.concat(
+														_cLocal4
+													)
+												);
 											}
-											for (
-												var h = 0, y = Object.keys( a );
-												h < y.length;
-												h++
-											) {
-												var b = y[ h ];
-												( k( b, a[ b ].earning, t ),
-													k( b, a[ b ].refund, n ),
-													k( b, a[ b ].net, r ) );
-											}
-										} )( e, n, r, a ) );
+										}
+										for (
+											var _hLocal2 = 0,
+												y = Object.keys( _aLocal6 );
+											_hLocal2 < y.length;
+											_hLocal2++
+										) {
+											var b = y[ _hLocal2 ];
+											k(
+												b,
+												_aLocal6[ b ].earning,
+												_tLocal7
+											);
+											k(
+												b,
+												_aLocal6[ b ].refund,
+												_nLocal7
+											);
+											k( b, _aLocal6[ b ].net, _rLocal6 );
+										}
+									} )( e, _nLocal4, _rLocal3, _aLocal3 );
 									break;
 								default:
 									console.warn(
-										'Unsupported filter type: '.concat( t )
+										'Unsupported filter type: '.concat(
+											_tLocal4
+										)
 									);
 							}
 							return {
-								revenue: n,
-								refund: r,
-								net_amount: a,
+								revenue: _nLocal4,
+								refund: _rLocal3,
+								net_amount: _aLocal3,
 							};
-						} )( m, null == w ? void 0 : w.type )
+						} )( m, w === null || w === void 0 ? void 0 : w.type )
 					);
+				}
 			},
 			[ m ]
 		);
@@ -382,14 +467,15 @@ export function createEarningsChart( readRuntime ) {
 				third: ( 0, I18n.__ )( 'Net Income', 'ohmylms' ),
 			},
 			I =
-				null != S &&
+				S !== null &&
+				S !== void 0 &&
 				null !== ( t = S.revenue ) &&
 				void 0 !== t &&
 				t.values
-					? Math.max.apply(
-							Math,
-							FU(
-								null == S ||
+					? Math.max(
+							...FU(
+								S === null ||
+									S === void 0 ||
 									null === ( n = S.revenue ) ||
 									void 0 === n
 									? void 0
@@ -398,14 +484,15 @@ export function createEarningsChart( readRuntime ) {
 						)
 					: 0,
 			F =
-				null != S &&
+				S !== null &&
+				S !== void 0 &&
 				null !== ( r = S.refund ) &&
 				void 0 !== r &&
 				r.values
-					? Math.max.apply(
-							Math,
-							FU(
-								null == S ||
+					? Math.max(
+							...FU(
+								S === null ||
+									S === void 0 ||
 									null === ( a = S.refund ) ||
 									void 0 === a
 									? void 0
@@ -414,14 +501,15 @@ export function createEarningsChart( readRuntime ) {
 						)
 					: 0,
 			N =
-				null != S &&
+				S !== null &&
+				S !== void 0 &&
 				null !== ( o = S.net_amount ) &&
 				void 0 !== o &&
 				o.values
-					? Math.max.apply(
-							Math,
-							FU(
-								null == S ||
+					? Math.max(
+							...FU(
+								S === null ||
+									S === void 0 ||
 									null === ( i = S.net_amount ) ||
 									void 0 === i
 									? void 0
@@ -452,28 +540,32 @@ export function createEarningsChart( readRuntime ) {
 						>
 							<BU
 								labels={
-									( null == S ||
+									( S === null ||
+									S === void 0 ||
 									null === ( l = S.refund ) ||
 									void 0 === l
 										? void 0
 										: l.labels ) || []
 								}
 								revenueData={
-									( null == S ||
+									( S === null ||
+									S === void 0 ||
 									null === ( c = S.revenue ) ||
 									void 0 === c
 										? void 0
 										: c.values ) || []
 								}
 								refundData={
-									( null == S ||
+									( S === null ||
+									S === void 0 ||
 									null === ( u = S.refund ) ||
 									void 0 === u
 										? void 0
 										: u.values ) || []
 								}
 								netAmountData={
-									( null == S ||
+									( S === null ||
+									S === void 0 ||
 									null === ( s = S.net_amount ) ||
 									void 0 === s
 										? void 0

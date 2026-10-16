@@ -11,7 +11,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 if ( 'ohmylms-lesson' === get_post_type() ) {
 	$lesson = ohmylms_get_lesson( get_the_ID() );
@@ -54,11 +54,11 @@ if ( 'ohmylms-session' === get_post_type() ) {
 
 			if ( $end_str ) {
 				try {
-					// Parse the end datetime from Google Meet event (ISO 8601 format)
+					// Parse the end datetime from Google Meet event (ISO 8601 format).
 					$end_dt     = new DateTime( $end_str );
 					$current_dt = new DateTime( 'now', new DateTimeZone( $timezone ) );
 
-					// Show "Mark as Complete" button if current time is past the end time
+					// Show "Mark as Complete" button if current time is past the end time.
 					if ( $current_dt >= $end_dt ) {
 						$show_button_on_session = true;
 					}
@@ -94,30 +94,30 @@ if ( 'ohmylms-session' === get_post_type() ) {
 		<div class="assignment-quiz-navigation assignment-navigation">
 			<?php if ( $is_allow && ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 				<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="skip">
-					<?php echo __( 'Skip to Next', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Skip to Next', 'ohmylms' ); ?>
 				</a>
 			<?php } ?>
 
 			<?php if ( $is_allow ) : ?>
-				<?php if ( (int) $submission_count === 0 ) : ?>
+				<?php if ( 0 === (int) $submission_count ) : ?>
 					<?php if ( 0 !== $deadline ) : ?>
 						<button type="button" class="start-submit-assignment ohmylms-button" aria-label="Start Assignment">
-							<?php echo __( 'Start Assignment Submit', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Start Assignment Submit', 'ohmylms' ); ?>
 						</button>
 					<?php else : ?>
 						<button type="button" class="start-not-submit-assignment ohmylms-button" aria-label="Start Assignment" disabled>
-							<?php echo __( 'Start Assignment Submit', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Start Assignment Submit', 'ohmylms' ); ?>
 						</button>
 					<?php endif; ?>
 				<?php elseif ( (int) $submission_count > 0 && (int) $submission_count < (int) $allowed_submission ) : ?>
 
 					<?php if ( 0 !== $deadline ) : ?>
 						<button type="button" class="start-submit-assignment ohmylms-button" aria-label="Start Assignment">
-							<?php echo __( 'Try Again', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Try Again', 'ohmylms' ); ?>
 						</button>
 					<?php else : ?>
 						<button type="button" class="start-not-submit-assignment ohmylms-button" aria-label="Start Assignment" disabled>
-							<?php echo __( 'Try Again', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Try Again', 'ohmylms' ); ?>
 						</button>
 					<?php endif; ?>
 
@@ -133,14 +133,14 @@ if ( 'ohmylms-session' === get_post_type() ) {
 									<span class="checkedbox" aria-hidden="true" id="completed-lesson">
 										<svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
 									</span>
-									<?php echo $is_checked ? __( 'Completed', 'ohmylms' ) : __( 'Mark as Complete', 'ohmylms' ); ?>
+									<?php echo $is_checked ? esc_html__( 'Completed', 'ohmylms' ) : esc_html__( 'Mark as Complete', 'ohmylms' ); ?>
 								</span>
 							</label>
 						<?php endif; ?>
 
 						<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 							<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
-								<?php echo __( 'Next Lesson', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Next Lesson', 'ohmylms' ); ?>
 							</a>
 						<?php } ?>
 					</div>
@@ -156,14 +156,14 @@ if ( 'ohmylms-session' === get_post_type() ) {
 									<span class="checkedbox">
 										<svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
 									</span>
-									<?php echo $is_checked ? __( 'Completed', 'ohmylms' ) : __( 'Mark as Complete', 'ohmylms' ); ?>
+									<?php echo $is_checked ? esc_html__( 'Completed', 'ohmylms' ) : esc_html__( 'Mark as Complete', 'ohmylms' ); ?>
 								</span>
 							</label>
 						<?php endif; ?>
 
 						<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 							<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
-								<?php echo __( 'Next Lesson', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Next Lesson', 'ohmylms' ); ?>
 							</a>
 						<?php } ?>
 					</div>
@@ -174,7 +174,7 @@ if ( 'ohmylms-session' === get_post_type() ) {
 					<input type="hidden" id="ohmylms-student-id" value="<?php echo get_current_user_id(); ?>">
 					<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 						<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
-							<?php echo __( 'Next Lesson', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Next Lesson', 'ohmylms' ); ?>
 						</a>
 					<?php } ?>
 				</div>
@@ -189,7 +189,7 @@ if ( 'ohmylms-session' === get_post_type() ) {
 		<div class="assignment-quiz-navigation quiz-navigation">
 			<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 				<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="skip">
-					<?php echo __( 'Skip to Next', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Skip to Next', 'ohmylms' ); ?>
 				</a>
 			<?php } ?>
 
@@ -202,11 +202,11 @@ if ( 'ohmylms-session' === get_post_type() ) {
 
 				<?php if ( $lesson->get_take_attempts() > 0 && $lesson->get_take_attempts() > $lesson->count_total_attempt( $student->get_id(), $course_id ) ) { ?>
 					<button type="submit" class="start-submit-quiz ohmylms-button <?php echo $lesson->count_total_attempt( $student->get_id(), $course_id ) > 1 ? 'quiz-taken' : ''; ?>">
-						<?php echo __( 'Start Quiz', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Start Quiz', 'ohmylms' ); ?>
 					</button>
 				<?php } else { ?>
 					<button type="button" class="start-submit-quiz ohmylms-button" disabled >
-						<?php echo __( 'Start Quiz', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Start Quiz', 'ohmylms' ); ?>
 					</button>
 				<?php } ?>
 			</form>
@@ -222,14 +222,14 @@ if ( 'ohmylms-session' === get_post_type() ) {
 							<span class="checkedbox" aria-hidden="true" id="completed-lesson">
 								<svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
 							</span>
-							<?php echo $is_checked ? __( 'Completed', 'ohmylms' ) : __( 'Mark as Complete', 'ohmylms' ); ?>
+							<?php echo $is_checked ? esc_html__( 'Completed', 'ohmylms' ) : esc_html__( 'Mark as Complete', 'ohmylms' ); ?>
 						</span>
 					</label>
 				<?php endif; ?>
 
 				<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 					<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
-						<?php echo __( 'Next Lesson', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Next Lesson', 'ohmylms' ); ?>
 					</a>
 				<?php } ?>
 			</div>
@@ -269,7 +269,7 @@ if ( 'ohmylms-session' === get_post_type() ) {
 								<span class="checkedbox" aria-hidden="true" id="completed-lesson">
 									<svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
 								</span>
-								<?php echo $is_checked ? __( 'Completed', 'ohmylms' ) : __( 'Mark as Complete', 'ohmylms' ); ?>
+								<?php echo $is_checked ? esc_html__( 'Completed', 'ohmylms' ) : esc_html__( 'Mark as Complete', 'ohmylms' ); ?>
 							</span>
 						</label>
 					<?php endif ?>
@@ -281,7 +281,7 @@ if ( 'ohmylms-session' === get_post_type() ) {
 							<span class="checkedbox" aria-hidden="true" id="completed-lesson">
 								<svg width="10" height="8" fill="none" viewBox="0 0 10 8" xmlns="http://www.w3.org/2000/svg"><path fill="#fff" d="M8.373.818L3.745 5.446 1.623 3.325A.818.818 0 00.466 4.482l2.7 2.7a.818.818 0 001.157 0L9.53 1.975A.818.818 0 008.373.818z"/></svg>
 							</span>
-							<?php echo $is_checked ? __( 'Completed', 'ohmylms' ) : __( 'Mark as Complete', 'ohmylms' ); ?>
+							<?php echo $is_checked ? esc_html__( 'Completed', 'ohmylms' ) : esc_html__( 'Mark as Complete', 'ohmylms' ); ?>
 						</span>
 					</label>
 				<?php endif ?>
@@ -289,7 +289,7 @@ if ( 'ohmylms-session' === get_post_type() ) {
 
 			<?php if ( ! empty( ohmylms_get_next_content_permalink( $lesson_id ) ) ) { ?>
 				<a href="<?php echo ohmylms_get_next_content_permalink( $lesson_id ); ?>" class="next-lesson ohmylms-button" lesson-id="<?php echo $lesson_id; ?>">
-					<?php echo __( 'Next Lesson', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Next Lesson', 'ohmylms' ); ?>
 				</a>
 			<?php } ?>
 		</div>

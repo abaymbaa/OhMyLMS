@@ -1,6 +1,5 @@
 import {
 	createElement,
-	Fragment,
 	useContext,
 	useEffect,
 	useState,
@@ -28,7 +27,6 @@ import { createsCycle, flattenTree, skillTree } from './model.mjs';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
-
 const EMPTY = {
 	id: 0,
 	name: '',
@@ -63,7 +61,9 @@ export function SkillsPage() {
 			if ( ! hashQuery( window.location.hash ).get( 'add' ) ) {
 				return;
 			}
-			setEditing( { ...EMPTY } );
+			setEditing( {
+				...EMPTY,
+			} );
 			window.history.replaceState(
 				null,
 				'',
@@ -92,7 +92,11 @@ export function SkillsPage() {
 			actions={
 				<Button
 					variant="primary"
-					onClick={ () => setEditing( { ...EMPTY } ) }
+					onClick={ () =>
+						setEditing( {
+							...EMPTY,
+						} )
+					}
 				>
 					{ __( 'Add skill', 'ohmylms' ) }
 				</Button>
@@ -179,7 +183,6 @@ export function SkillsPage() {
 		</AdminPage>
 	);
 }
-
 function SkillForm( { skill, skills, onCancel, onSaved, onError } ) {
 	const [ draft, setDraft ] = useState( {
 		...skill,
@@ -187,7 +190,10 @@ function SkillForm( { skill, skills, onCancel, onSaved, onError } ) {
 	} );
 	const [ saving, setSaving ] = useState( false );
 	const set = ( key ) => ( value ) =>
-		setDraft( { ...draft, [ key ]: value } );
+		setDraft( {
+			...draft,
+			[ key ]: value,
+		} );
 	async function save() {
 		setSaving( true );
 		try {
@@ -227,7 +233,13 @@ function SkillForm( { skill, skills, onCancel, onSaved, onError } ) {
 		<div className="ohmylms-skill-form ohmylms-ext-card">
 			<h2>
 				{ draft.id
-					? sprintf( __( 'Edit %s', 'ohmylms' ), skill.name )
+					? sprintf(
+							/* translators: %s: skill or linked content name. */ __(
+								'Edit %s',
+								'ohmylms'
+							),
+							skill.name
+						)
 					: __( 'New skill', 'ohmylms' ) }
 			</h2>
 			<TextControl
@@ -257,7 +269,10 @@ function SkillForm( { skill, skills, onCancel, onSaved, onError } ) {
 				label={ __( 'Parent (strand or domain)', 'ohmylms' ) }
 				value={ String( draft.parent || 0 ) }
 				options={ [
-					{ value: '0', label: __( '— top level —', 'ohmylms' ) },
+					{
+						value: '0',
+						label: __( '— top level —', 'ohmylms' ),
+					},
 					...others.map( ( other ) => ( {
 						value: String( other.id ),
 						label: `${ '— '.repeat( other.depth ) }${ other.name }`,
@@ -393,7 +408,10 @@ function LinkedPosts( { type, legend, searchLabel, value, onChange } ) {
 								variant="link"
 								isDestructive
 								label={ sprintf(
-									__( 'Unlink %s', 'ohmylms' ),
+									/* translators: %s: skill or linked content name. */ __(
+										'Unlink %s',
+										'ohmylms'
+									),
 									titles[ id ] || `#${ id }`
 								) }
 								onClick={ () => toggle( id, false ) }

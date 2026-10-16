@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * What one learner sees for a followed bundle. Everything here only reads existing records and
+ * keeps three things apart:.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Bundles;
 
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
@@ -35,7 +41,7 @@ final class Progress {
 	public static function classify( $level, $struggling ) {
 		if ( in_array( $level, array( 'proficient', 'mastered' ), true ) ) {
 			return 'strength'; }
-		if ( $level === 'developing' ) {
+		if ( 'developing' === $level ) {
 			return $struggling ? 'gap' : 'developing'; }
 		return 'not-assessed';
 	}
@@ -60,7 +66,7 @@ final class Progress {
 	/** Students only ever see published courses; drafts and private courses stay hidden. */
 	private static function visible_course( $course_id ) {
 		$post = get_post( (int) $course_id );
-		return $post && $post->post_type === OHMYLMS_COURSE_CPT && $post->post_status === 'publish' ? $post : null;
+		return $post && $post->post_type === OHMYLMS_COURSE_CPT && 'publish' === $post->post_status ? $post : null;
 	}
 
 	private static function evidence_ready() {
@@ -104,7 +110,7 @@ final class Progress {
 				$summary['mode'] = $program['mode']; }
 			return $summary;
 		}
-		$summary['completed'] = $enrollment['progress'] === 'completed';
+		$summary['completed'] = 'completed' === $enrollment['progress'];
 		if ( $program && CourseProgram::managed( (int) $student, $course_id ) ) {
 			$state = CompletionPolicy::status( (int) $student, $course_id );
 			if ( ! is_wp_error( $state ) ) {
@@ -240,7 +246,7 @@ final class Progress {
 				continue; }
 			$state               = $states[ $term_id ] ?? null;
 			$level               = $state ? $state['level'] : 'not-assessed';
-			$struggling          = $level === 'developing' && Recommendations::struggling( (int) $student, $term_id );
+			$struggling          = 'developing' === $level && Recommendations::struggling( (int) $student, $term_id );
 			$class               = self::classify( $level, $struggling );
 			$entries[ $term_id ] = array(
 				'term_id'              => $term_id,
@@ -254,7 +260,7 @@ final class Progress {
 				'evidence_count'       => $state ? (int) $state['evidence_count'] : 0,
 				'independent_correct'  => $state ? (int) $state['independent_correct'] : 0,
 				'sources'              => array_values( array_unique( $sources[ $term_id ] ?? array() ) ),
-				'practice_url'         => $class === 'strength' && ! ( $state && $state['review_due'] ) ? null : self::practice_url( $student, $term_id, $enrolled_courses ),
+				'practice_url'         => 'strength' === $class && ! ( $state && $state['review_due'] ) ? null : self::practice_url( $student, $term_id, $enrolled_courses ),
 			);
 		}
 		return $entries;
@@ -262,11 +268,11 @@ final class Progress {
 
 	/** Sort order for practice suggestions: gaps, then reviews, then in progress, then not yet assessed. */
 	private static function practice_rank( array $entry ) {
-		if ( $entry['classification'] === 'gap' ) {
+		if ( 'gap' === $entry['classification'] ) {
 			return 0; }
 		if ( $entry['review_due'] ) {
 			return 1; }
-		return $entry['classification'] === 'developing' ? 2 : 3;
+		return 'developing' === $entry['classification'] ? 2 : 3;
 	}
 
 	/** @return array{total:int,strengths:int,gaps:int,developing:int,not_assessed:int} */
@@ -324,7 +330,7 @@ final class Progress {
 		foreach ( $groups as $shared => $mappings ) {
 			$pooled_terms[] = $shared;
 			foreach ( $mappings as $mapping ) {
-				if ( $mapping['relation'] === 'equivalent' ) {
+				if ( 'equivalent' === $mapping['relation'] ) {
 					$pooled_terms[] = (int) $mapping['specific_term_id']; }
 			}
 		}
@@ -345,7 +351,7 @@ final class Progress {
 				$term = (int) $mapping['specific_term_id'];
 				if ( ! isset( $labels[ $term ] ) ) {
 					continue; }
-				if ( $mapping['relation'] === 'equivalent' ) {
+				if ( 'equivalent' === $mapping['relation'] ) {
 					$rows = array_merge( $rows, $by_term[ $term ] ?? array() ); }
 				$level     = isset( $states[ $term ] ) ? $states[ $term ]['level'] : 'not-assessed';
 				$sources[] = array(
@@ -357,7 +363,7 @@ final class Progress {
 					'level'          => $level,
 					'level_label'    => Mastery::label( $level ),
 					'evidence_count' => isset( $states[ $term ] ) ? (int) $states[ $term ]['evidence_count'] : 0,
-					'in_bundle'       => in_array( $term, $bundle_terms, true ),
+					'in_bundle'      => in_array( $term, $bundle_terms, true ),
 					'context'        => array_map(
 						static function ( $membership ) {
 							return array(
@@ -385,7 +391,7 @@ final class Progress {
 					array_filter(
 						$sources,
 						static function ( $source ) {
-							return $source['relation'] === 'equivalent'; }
+							return 'equivalent' === $source['relation']; }
 					)
 				),
 				'sources'        => $sources,
@@ -427,7 +433,7 @@ final class Progress {
 				$sources[ $term_id ][] = $label; }
 		};
 		foreach ( Bundles::members( (int) $bundle['id'] ) as $member ) {
-			if ( $member['type'] === 'course' ) {
+			if ( 'course' === $member['type'] ) {
 				$course = self::course( $student, $member['id'] );
 				if ( ! $course ) {
 					continue; }
@@ -443,7 +449,7 @@ final class Progress {
 		}
 		$enrolled = array();
 		foreach ( $members as $member ) {
-			foreach ( $member['type'] === 'course' ? array( $member ) : $member['courses'] as $course ) {
+			foreach ( 'course' === $member['type'] ? array( $member ) : $member['courses'] as $course ) {
 				if ( $course['enrolled'] ) {
 					$enrolled[] = $course['id']; }
 			}
@@ -474,7 +480,7 @@ final class Progress {
 				$mine
 			);
 			unset( $member['skill_ids'] );
-			if ( $member['type'] === 'curriculum' ) {
+			if ( 'curriculum' === $member['type'] ) {
 				foreach ( $member['courses'] as &$course ) {
 					unset( $course['skill_ids'] );
 				} unset( $course ); }
@@ -484,7 +490,7 @@ final class Progress {
 			array_filter(
 				$entries,
 				static function ( $entry ) {
-					return $entry['practice_url'] !== null;
+					return null !== $entry['practice_url'];
 				}
 			)
 		);
@@ -495,7 +501,7 @@ final class Progress {
 			}
 		);
 		return array(
-			'bundle'            => array(
+			'bundle'           => array(
 				'id'          => (int) $bundle['id'],
 				'title'       => $bundle['title'],
 				'description' => (string) $bundle['description'],

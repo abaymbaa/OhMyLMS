@@ -40,18 +40,22 @@ export function CurriculumMindmap( {
 				)
 			}
 			nodeHint={ ( node, { explicit, inherited } ) =>
-				inherited
-					? __( 'Included through parent', 'ohmylms' )
-					: explicit
-						? __( 'Selected item', 'ohmylms' )
-						: __( 'Select this branch', 'ohmylms' )
+				( () => {
+					if ( inherited ) {
+						return __( 'Included through parent', 'ohmylms' );
+					}
+					if ( explicit ) {
+						return __( 'Selected item', 'ohmylms' );
+					}
+					return __( 'Select this branch', 'ohmylms' );
+				} )()
 			}
 			renderNodeDetails={ ( node ) =>
 				!! node.courses?.length && (
 					<details className="ohmylms-mindmap-node-details">
 						<summary>
 							{ sprintf(
-								_n(
+								/* translators: %d: number of courses. */ _n(
 									'%d course linked to this item',
 									'%d courses linked to this item',
 									node.courses.length,

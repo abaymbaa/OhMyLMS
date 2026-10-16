@@ -20,7 +20,10 @@ export function useSkillList() {
 	return skills;
 }
 
-/** Skill IDs a question's map points at, primary first. */
+/**
+ * Skill IDs a question's map points at, primary first.
+ * @param map
+ */
 const mapSkillIds = ( map ) =>
 	Object.values( map || {} ).flatMap( ( roles ) => [
 		roles.primary,
@@ -97,6 +100,8 @@ export function QuestionSkills( { question, skills, onChange } ) {
  * @param root0
  * @param root0.questions
  * @param root0.skills
+ * @param root0.selected
+ * @param root0.onSelect
  */
 export function QuizSkillsSummary( {
 	questions,

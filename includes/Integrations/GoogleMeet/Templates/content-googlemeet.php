@@ -44,9 +44,9 @@ if ( $now >= $start_time && $now <= $end_time ) {
 		<div class="googlemeet-info">
 			<h2 class="googlemeet-title"><?php echo esc_html( $meeting_topic ?: get_the_title() ); ?></h2>
 			<div class="googlemeet-status <?php echo esc_attr( $meeting_status ); ?>">
-				<?php if ( $meeting_status === 'live' ) : ?>
+				<?php if ( 'live' === $meeting_status ) : ?>
 					<span class="status-badge live"><?php esc_html_e( 'Live Now', 'ohmylms' ); ?></span>
-				<?php elseif ( $meeting_status === 'upcoming' ) : ?>
+				<?php elseif ( 'upcoming' === $meeting_status ) : ?>
 					<span class="status-badge upcoming"><?php esc_html_e( 'Upcoming', 'ohmylms' ); ?></span>
 				<?php else : ?>
 					<span class="status-badge ended"><?php esc_html_e( 'Ended', 'ohmylms' ); ?></span>
@@ -82,14 +82,14 @@ if ( $now >= $start_time && $now <= $end_time ) {
 
 		<?php if ( $meet_link ) : ?>
 			<div class="googlemeet-actions">
-				<?php if ( $meeting_status === 'live' ) : ?>
+				<?php if ( 'live' === $meeting_status ) : ?>
 					<a href="<?php echo esc_url( $meet_link ); ?>" 
 						target="_blank" 
 						rel="noopener noreferrer" 
 						class="button googlemeet-join-button primary">
 						<?php esc_html_e( 'Join Meeting Now', 'ohmylms' ); ?>
 					</a>
-				<?php elseif ( $meeting_status === 'upcoming' ) : ?>
+				<?php elseif ( 'upcoming' === $meeting_status ) : ?>
 					<a href="<?php echo esc_url( $meet_link ); ?>" 
 						target="_blank" 
 						rel="noopener noreferrer" 
@@ -126,7 +126,7 @@ if ( $now >= $start_time && $now <= $end_time ) {
 		<?php endif; ?>
 	</div>
 
-	<?php if ( $meeting_status === 'upcoming' ) : ?>
+	<?php if ( 'upcoming' === $meeting_status ) : ?>
 		<div class="googlemeet-countdown" data-start-time="<?php echo esc_attr( $start_time ); ?>">
 			<h3><?php esc_html_e( 'Starts in', 'ohmylms' ); ?></h3>
 			<div class="countdown-timer">

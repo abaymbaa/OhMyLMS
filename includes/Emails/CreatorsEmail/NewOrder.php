@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class NewOrder.
+ *
+ * @package OhMyLMS
+ */
 
 
 
@@ -82,7 +87,7 @@ class NewOrder {
 			return;
 		}
 
-		// Prevent duplicate emails - check if email was already sent
+		// Prevent duplicate emails - check if email was already sent.
 		$email_sent = get_post_meta( $order->get_id(), '_creator_new_order_email_sent', true );
 		if ( $email_sent ) {
 			return;
@@ -99,10 +104,10 @@ class NewOrder {
 				$settings['button_link'] = ohmylms_get_page_permalink( 'student_dashboard' );
 			}
 
-			// Use ohmylms_get_template to get the email body
+			// Use ohmylms_get_template to get the email body.
 			ob_start();
 			ohmylms_get_template(
-				'emails/new-order', // Template file name (without .php)
+				'emails/new-order', // Template file name (without .php).
 				array(
 					'order'          => $order,
 					'data'           => $data,
@@ -133,7 +138,7 @@ class NewOrder {
 
 			$email_sent = wp_mail( $to, $subject, $html_body, $headers );
 
-			// Mark email as sent to prevent duplicates
+			// Mark email as sent to prevent duplicates.
 			if ( $email_sent ) {
 				update_post_meta( $order->get_id(), '_creator_new_order_email_sent', true );
 			}

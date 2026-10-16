@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Answer review for the learner's result screen.
  *
@@ -209,7 +209,7 @@ final class AnswerReview {
 		foreach ( $attempts as $attempt ) {
 			if ( self::can_review( $settings, $attempt ) ) {
 				if ( $quiz ) {
-					$basis                   = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
+					$basis                    = AttemptReport::basis( (int) $attempt['quiz_attempt_id'], $quiz );
 					$attempt['review_result'] = self::result( (float) ( $attempt['total_achieved_marks'] ?? 0 ), $basis['max'], $basis['passing'], (string) ( $attempt['status'] ?? '' ) );
 				}
 				$list[] = $attempt;
@@ -250,7 +250,18 @@ final class AnswerReview {
 	 */
 	public static function url( $attempt_id, array $args = array() ) {
 		// Practice (retry) is dropped unless asked for, so moving between attempts or leaving practice does not keep it open.
-		return remove_query_arg( 'quiz', add_query_arg( array_merge( array( self::QUERY_VAR => (int) $attempt_id, 'retry' => false ), $args ) ) );
+		return remove_query_arg(
+			'quiz',
+			add_query_arg(
+				array_merge(
+					array(
+						self::QUERY_VAR => (int) $attempt_id,
+						'retry'         => false,
+					),
+					$args
+				)
+			)
+		);
 	}
 
 	/**
@@ -332,8 +343,8 @@ final class AnswerReview {
 	public static function preview( array $items ) {
 		$entries = array();
 		foreach ( $items as $item ) {
-			$grade    = (array) $item['grade'];
-			$marks    = (float) $item['marks'];
+			$grade = (array) $item['grade'];
+			$marks = (float) $item['marks'];
 			// A question with a teacher-marked part still credits its automatically marked parts, as a stored attempt does.
 			$fraction = ! empty( $grade['pending'] ) ? (float) ( $grade['auto_fraction'] ?? 0 ) : (float) ( $grade['fraction'] ?? 0 );
 			$entry    = self::entry(

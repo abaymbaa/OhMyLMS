@@ -1,4 +1,9 @@
 <?php
+/**
+ * Notices success template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

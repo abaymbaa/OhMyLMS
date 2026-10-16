@@ -40,7 +40,8 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 						isLoading: n,
 						setIsLoading: r,
 						handleManage( e ) {
-							( m( e ), u( ! 0 ) );
+							m( e );
+							u( ! 0 );
 						},
 					};
 				},
@@ -49,25 +50,25 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 			_ = ( 0, ReactHooks.useCallback )(
 				f1(
 					d1().m( function e() {
-						var t;
-						return d1().w( function ( e ) {
+						var _tLocal;
+						return d1().w( function ( _eLocal ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal.n ) {
 									case 0:
 										return (
 											o.setLoadingSetting( ! 0 ),
-											( e.n = 1 ),
+											( _eLocal.n = 1 ),
 											l()( {
 												path: 'ohmylms/v1/settings/payment-gateway',
 											} )
 										 );
 									case 1:
-										( ( t = e.v ),
-											o.setPaymentSettings( t ),
-											o.setLoadingSetting( ! 1 ),
-											v( ! 1 ) );
+										_tLocal = _eLocal.v;
+										o.setPaymentSettings( _tLocal );
+										o.setLoadingSetting( ! 1 );
+										v( ! 1 ); // Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal.a( 2 );
 								}
 							}
 						}, e );
@@ -83,10 +84,10 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 		);
 		var w,
 			E = function () {
-				( u( ! 1 ),
-					setTimeout( function () {
-						return m( null );
-					}, 300 ) );
+				u( ! 1 );
+				setTimeout( function () {
+					return m( null );
+				}, 300 );
 			};
 		return (
 			<React.Fragment>
@@ -107,7 +108,9 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 										variant={ 'secondary' }
 										onClick={ E }
 										className={ 'ohmylms-back-button '.concat(
-											null == d ? void 0 : d.id
+											d === null || d === void 0
+												? void 0
+												: d.id
 										) }
 										aria-label={ ( 0, I18n.__ )(
 											'Back to payment gateways',
@@ -138,9 +141,13 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 										color={ '#000D25' }
 									>
 										{ 'offline' ===
-										( null == d ? void 0 : d.id ) ? (
+										( d === null || d === void 0
+											? void 0
+											: d.id ) ? (
 											<React.Fragment>
-												{ null == d ? void 0 : d.name }
+												{ d === null || d === void 0
+													? void 0
+													: d.name }
 												{ ( 0, I18n.__ )(
 													' Payment',
 													'ohmylms'
@@ -148,7 +155,9 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 											</React.Fragment>
 										) : (
 											<React.Fragment>
-												{ null == d ? void 0 : d.name }
+												{ d === null || d === void 0
+													? void 0
+													: d.name }
 												{ ( 0, I18n.__ )(
 													' Payment Method',
 													'ohmylms'
@@ -163,23 +172,25 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 										return null;
 									}
 									if (
-										( r = d ).settings_fields &&
-										Array.isArray( r.settings_fields ) &&
-										r.settings_fields.length > 0
+										( _rLocal = d ).settings_fields &&
+										Array.isArray(
+											_rLocal.settings_fields
+										) &&
+										_rLocal.settings_fields.length > 0
 									) {
 										var e = 'ohmylms_'.concat(
 												d.id,
 												'_settings'
 											),
-											n = a[ e ] || {};
+											_nLocal = a[ e ] || {};
 										return React.createElement( u1, {
 											gateway: d,
 											onSave: t,
 											onCancel: E,
-											settings: n,
+											settings: _nLocal,
 										} );
 									}
-									var r;
+									var _rLocal;
 									return (
 										<Controls.CardWP
 											isBorderless={ ! 0 }
@@ -215,7 +226,7 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 									{
 										( ( w = ( function () {
 											var e,
-												t =
+												_tLocal2 =
 													( null === ( e = window ) ||
 													void 0 === e ||
 													null ===
@@ -225,85 +236,112 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 														? void 0
 														: e.payment_gateways ) ||
 													{},
-												n = [];
+												_nLocal2 = [];
 											return (
-												Array.isArray( t )
-													? ( n = t )
-													: 'object' === s1( t ) &&
-														null !== t &&
-														( n =
+												Array.isArray( _tLocal2 )
+													? ( _nLocal2 = _tLocal2 )
+													: 'object' ===
+															s1( _tLocal2 ) &&
+														null !== _tLocal2 &&
+														( _nLocal2 =
 															Object.values(
-																t
+																_tLocal2
 															) ),
-												n.filter( function ( e ) {
-													return !! (
-														e &&
-														e.id &&
-														e.title
-													);
-												} )
+												_nLocal2.filter(
+													function ( _eLocal2 ) {
+														return !! (
+															_eLocal2 &&
+															_eLocal2.id &&
+															_eLocal2.title
+														);
+													}
+												)
 											 );
 										} )() ),
-										f ? (
-											<Controls.FlexBlockWP
-												className={
-													'ohmylms-payment-flex-item'
-												}
-											>
-												<Controls.CardWP
-													isBorderless={ ! 0 }
-													variant={ 'secondary' }
-												>
-													<Controls.SpacerWP
-														padding={ 4 }
-														margin={ 0 }
-														marginBottom={ 0 }
+										( () => {
+											if ( f ) {
+												return (
+													<Controls.FlexBlockWP
+														className={
+															'ohmylms-payment-flex-item'
+														}
 													>
-														<Controls.TextWP
-															align={ 'center' }
+														<Controls.CardWP
+															isBorderless={ ! 0 }
+															variant={
+																'secondary'
+															}
 														>
-															{ ( 0, I18n.__ )(
-																'Loading payment gateways...',
-																'ohmylms'
-															) }
-														</Controls.TextWP>
-													</Controls.SpacerWP>
-												</Controls.CardWP>
-											</Controls.FlexBlockWP>
-										) : 0 === w.length ? (
-											<Controls.FlexBlockWP
-												className={
-													'ohmylms-payment-flex-item'
-												}
-											>
-												<Controls.CardWP
-													isBorderless={ ! 0 }
-													variant={ 'secondary' }
-												>
-													<Controls.SpacerWP
-														padding={ 4 }
-														margin={ 0 }
-														marginBottom={ 0 }
+															<Controls.SpacerWP
+																padding={ 4 }
+																margin={ 0 }
+																marginBottom={
+																	0
+																}
+															>
+																<Controls.TextWP
+																	align={
+																		'center'
+																	}
+																>
+																	{ ( 0,
+																	I18n.__ )(
+																		'Loading payment gateways...',
+																		'ohmylms'
+																	) }
+																</Controls.TextWP>
+															</Controls.SpacerWP>
+														</Controls.CardWP>
+													</Controls.FlexBlockWP>
+												);
+											}
+											if ( 0 === w.length ) {
+												return (
+													<Controls.FlexBlockWP
+														className={
+															'ohmylms-payment-flex-item'
+														}
 													>
-														<Controls.TextWP
-															align={ 'center' }
-															color={ '#666' }
+														<Controls.CardWP
+															isBorderless={ ! 0 }
+															variant={
+																'secondary'
+															}
 														>
-															{ ( 0, I18n.__ )(
-																'No payment gateways available. Please check your configuration.',
-																'ohmylms'
-															) }
-														</Controls.TextWP>
-													</Controls.SpacerWP>
-												</Controls.CardWP>
-											</Controls.FlexBlockWP>
-										) : (
-											w.map( function ( e ) {
-												var t = 'ohmylms_'.concat(
-														e.id,
-														'_settings'
-													),
-													n = a[ t ] || {};
+															<Controls.SpacerWP
+																padding={ 4 }
+																margin={ 0 }
+																marginBottom={
+																	0
+																}
+															>
+																<Controls.TextWP
+																	align={
+																		'center'
+																	}
+																	color={
+																		'#666'
+																	}
+																>
+																	{ ( 0,
+																	I18n.__ )(
+																		'No payment gateways available. Please check your configuration.',
+																		'ohmylms'
+																	) }
+																</Controls.TextWP>
+															</Controls.SpacerWP>
+														</Controls.CardWP>
+													</Controls.FlexBlockWP>
+												);
+											}
+											return w.map( function ( e ) {
+												var _tLocal3 =
+														'ohmylms_'.concat(
+															e.id,
+															'_settings'
+														),
+													_nLocal3 =
+														a[ _tLocal3 ] || {};
 												return (
 													<Controls.FlexBlockWP
 														key={ e.id }
@@ -314,12 +352,14 @@ export function createPaymentGatewaysSettings( readRuntime ) {
 														<J0
 															gateway={ e }
 															config={ h }
-															settings={ n }
+															settings={
+																_nLocal3
+															}
 														/>
 													</Controls.FlexBlockWP>
 												);
-											} )
-										) )
+											} );
+										} )() )
 									}
 								</Controls.FlexWP>
 							</React.Fragment>

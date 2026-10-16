@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ final class GradebookMath {
 		$max    = 0;
 		$graded = 0;
 		foreach ( $cells as $cell ) {
-			if ( $cell['score'] === null || $cell['max'] <= 0 ) {
+			if ( null === $cell['score'] || $cell['max'] <= 0 ) {
 				continue; }
 			$score += $cell['score'];
 			$max   += $cell['max'];
@@ -28,7 +28,7 @@ final class GradebookMath {
 			array_filter(
 				$values,
 				function ( $v ) {
-					return $v !== null;
+					return null !== $v;
 				}
 			)
 		);

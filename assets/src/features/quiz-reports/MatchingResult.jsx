@@ -19,7 +19,11 @@ export function createMatchingResult( readRuntime ) {
 				( props.type,
 				( 0, ReactHooks.useMemo )(
 					function () {
-						return j$( null == data ? void 0 : data.given_answer );
+						return j$(
+							data === null || data === void 0
+								? void 0
+								: data.given_answer
+						);
 					},
 					[ data ]
 				) );
@@ -47,29 +51,32 @@ export function createMatchingResult( readRuntime ) {
 								background: '#E6F7E9',
 							} }
 						>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( r = data.questions ) ||
 							void 0 === r ||
 							null === ( r = r.slice() ) ||
 							void 0 === r ||
 							null ===
-								( r = r.sort( function ( e, t ) {
+								( r = r.sort( function ( e, _tLocal ) {
 									return (
 										Number( e.order_number ) -
-										Number( t.order_number )
+										Number( _tLocal.order_number )
 									);
 								} ) ) ||
 							void 0 === r
 								? void 0
-								: r.map( function ( e, t ) {
-										var n, r, a, o;
+								: r.map( function ( e, _tLocal2 ) {
+										var _nLocal, _rLocal, a, o;
 										return (
 											<Controls.CardWP
 												key={ e.id }
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == t ? '0' : '16px 0 0'
+													0 == _tLocal2
+														? '0'
+														: '16px 0 0'
 												}
 											>
 												<Controls.FlexWP gap={ 6 }>
@@ -81,24 +88,30 @@ export function createMatchingResult( readRuntime ) {
 													>
 														<Controls.FlexWP>
 															<Controls.TextWP>
-																{ null == e
+																{ e === null ||
+																e === void 0
 																	? void 0
 																	: e.answer }
 															</Controls.TextWP>
-															{ ( null == e
+															{ ( e === null ||
+															e === void 0
 																? void 0
 																: e.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.image_url
 																		}
 																		alt={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.answer
 																		}
@@ -121,26 +134,31 @@ export function createMatchingResult( readRuntime ) {
 													>
 														<Controls.FlexWP>
 															<Controls.TextWP>
-																{ null == e ||
+																{ e === null ||
+																e === void 0 ||
 																null ===
-																	( n =
+																	( _nLocal =
 																		e.matching_data ) ||
-																void 0 === n
+																void 0 ===
+																	_nLocal
 																	? void 0
-																	: n.label }
+																	: _nLocal.label }
 															</Controls.TextWP>
-															{ ( null == e ||
+															{ ( e === null ||
+															e === void 0 ||
 															null ===
-																( r =
+																( _rLocal =
 																	e.matching_data ) ||
-															void 0 === r
+															void 0 === _rLocal
 																? void 0
-																: r.image_url ) && (
+																: _rLocal.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																				e ||
+																			e ===
+																				null ||
+																			e ===
+																				void 0 ||
 																			null ===
 																				( a =
 																					e.matching_data ) ||
@@ -150,8 +168,10 @@ export function createMatchingResult( readRuntime ) {
 																				: a.image_url
 																		}
 																		alt={
-																			null ==
-																				e ||
+																			e ===
+																				null ||
+																			e ===
+																				void 0 ||
 																			null ===
 																				( o =
 																					e.matching_data ) ||
@@ -180,68 +200,80 @@ export function createMatchingResult( readRuntime ) {
 				) : (
 					<React.Fragment>
 						<Controls.CardWP padding={ '16px' }>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( t = data.questions ) ||
 							void 0 === t ||
 							null === ( t = t.slice() ) ||
 							void 0 === t ||
 							null ===
-								( t = t.sort( function ( e, t ) {
+								( t = t.sort( function ( e, _tLocal3 ) {
 									return (
 										Number( e.order_number ) -
-										Number( t.order_number )
+										Number( _tLocal3.order_number )
 									);
 								} ) ) ||
 							void 0 === t
 								? void 0
-								: t.map( function ( e, t ) {
-										var n,
-											r,
+								: t.map( function ( e, _tLocal4 ) {
+										var _nLocal2,
+											_rLocal2,
 											o,
-											i,
+											_iLocal,
 											l,
 											c,
 											u =
-												null == data ||
+												data === null ||
+												data === void 0 ||
 												null ===
-													( n = data.given_answer ) ||
-												void 0 === n
+													( _nLocal2 =
+														data.given_answer ) ||
+												void 0 === _nLocal2
 													? void 0
-													: n[
-															null == e
+													: _nLocal2[
+															e === null ||
+															e === void 0
 																? void 0
 																: e.id
 														],
-											s =
-												( null == e
-													? void 0
-													: e.id ) === u
-													? e
-													: null == data ||
-														  null ===
-																( r =
-																	data.questions ) ||
-														  void 0 === r
+											s = ( () => {
+												if (
+													( e === null || e === void 0
 														? void 0
-														: r.find(
-																function ( e ) {
-																	return (
-																		e.id ==
-																		u
-																	);
-																}
-															);
+														: e.id ) === u
+												) {
+													return e;
+												}
+												if (
+													data === null ||
+													data === void 0 ||
+													null ===
+														( _rLocal2 =
+															data.questions ) ||
+													void 0 === _rLocal2
+												) {
+													return void 0;
+												}
+												return _rLocal2.find(
+													function ( _eLocal ) {
+														return _eLocal.id == u;
+													}
+												);
+											} )();
 										return (
 											<Controls.CardWP
 												key={ e.id }
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == t ? '0' : '16px 0 0'
+													0 == _tLocal4
+														? '0'
+														: '16px 0 0'
 												}
 												style={ {
 													background:
-														( null == e
+														( e === null ||
+														e === void 0
 															? void 0
 															: e.id ) === u
 															? '#E6F7E9'
@@ -257,7 +289,9 @@ export function createMatchingResult( readRuntime ) {
 														<Controls.FlexWP>
 															<Controls.TextWP
 																color={
-																	( null == e
+																	( e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.id ) ===
 																	u
@@ -265,24 +299,30 @@ export function createMatchingResult( readRuntime ) {
 																		: '#FF4955'
 																}
 															>
-																{ null == e
+																{ e === null ||
+																e === void 0
 																	? void 0
 																	: e.answer }
 															</Controls.TextWP>
-															{ ( null == e
+															{ ( e === null ||
+															e === void 0
 																? void 0
 																: e.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.image_url
 																		}
 																		alt={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.answer
 																		}
@@ -305,7 +345,9 @@ export function createMatchingResult( readRuntime ) {
 														<Controls.FlexWP>
 															<Controls.TextWP
 																color={
-																	( null == e
+																	( e ===
+																		null ||
+																	e === void 0
 																		? void 0
 																		: e.id ) ===
 																	u
@@ -313,7 +355,8 @@ export function createMatchingResult( readRuntime ) {
 																		: '#FF4955'
 																}
 															>
-																{ null == s ||
+																{ s === null ||
+																s === void 0 ||
 																null ===
 																	( o =
 																		s.matching_data ) ||
@@ -321,18 +364,21 @@ export function createMatchingResult( readRuntime ) {
 																	? void 0
 																	: o.label }
 															</Controls.TextWP>
-															{ ( null == s ||
+															{ ( s === null ||
+															s === void 0 ||
 															null ===
-																( i =
+																( _iLocal =
 																	s.matching_data ) ||
-															void 0 === i
+															void 0 === _iLocal
 																? void 0
-																: i.image_url ) && (
+																: _iLocal.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																				s ||
+																			s ===
+																				null ||
+																			s ===
+																				void 0 ||
 																			null ===
 																				( l =
 																					s.matching_data ) ||
@@ -342,8 +388,10 @@ export function createMatchingResult( readRuntime ) {
 																				: l.image_url
 																		}
 																		alt={
-																			null ==
-																				s ||
+																			s ===
+																				null ||
+																			s ===
+																				void 0 ||
 																			null ===
 																				( c =
 																					s.matching_data ) ||
@@ -388,29 +436,32 @@ export function createMatchingResult( readRuntime ) {
 								background: '#E6F7E9',
 							} }
 						>
-							{ null == data ||
+							{ data === null ||
+							data === void 0 ||
 							null === ( n = data.questions ) ||
 							void 0 === n ||
 							null === ( n = n.slice() ) ||
 							void 0 === n ||
 							null ===
-								( n = n.sort( function ( e, t ) {
+								( n = n.sort( function ( e, _tLocal5 ) {
 									return (
 										Number( e.order_number ) -
-										Number( t.order_number )
+										Number( _tLocal5.order_number )
 									);
 								} ) ) ||
 							void 0 === n
 								? void 0
-								: n.map( function ( e, t ) {
-										var n, r, a, o;
+								: n.map( function ( e, _tLocal6 ) {
+										var _nLocal3, _rLocal3, a, o;
 										return (
 											<Controls.CardWP
 												key={ e.id }
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == t ? '0' : '16px 0 0'
+													0 == _tLocal6
+														? '0'
+														: '16px 0 0'
 												}
 											>
 												<Controls.FlexWP gap={ 6 }>
@@ -422,24 +473,30 @@ export function createMatchingResult( readRuntime ) {
 													>
 														<Controls.FlexWP>
 															<Controls.TextWP>
-																{ null == e
+																{ e === null ||
+																e === void 0
 																	? void 0
 																	: e.answer }
 															</Controls.TextWP>
-															{ ( null == e
+															{ ( e === null ||
+															e === void 0
 																? void 0
 																: e.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.image_url
 																		}
 																		alt={
-																			null ==
-																			e
+																			e ===
+																				null ||
+																			e ===
+																				void 0
 																				? void 0
 																				: e.answer
 																		}
@@ -462,26 +519,31 @@ export function createMatchingResult( readRuntime ) {
 													>
 														<Controls.FlexWP>
 															<Controls.TextWP>
-																{ null == e ||
+																{ e === null ||
+																e === void 0 ||
 																null ===
-																	( n =
+																	( _nLocal3 =
 																		e.matching_data ) ||
-																void 0 === n
+																void 0 ===
+																	_nLocal3
 																	? void 0
-																	: n.label }
+																	: _nLocal3.label }
 															</Controls.TextWP>
-															{ ( null == e ||
+															{ ( e === null ||
+															e === void 0 ||
 															null ===
-																( r =
+																( _rLocal3 =
 																	e.matching_data ) ||
-															void 0 === r
+															void 0 === _rLocal3
 																? void 0
-																: r.image_url ) && (
+																: _rLocal3.image_url ) && (
 																<React.Fragment>
 																	<img
 																		src={
-																			null ==
-																				e ||
+																			e ===
+																				null ||
+																			e ===
+																				void 0 ||
 																			null ===
 																				( a =
 																					e.matching_data ) ||
@@ -491,8 +553,10 @@ export function createMatchingResult( readRuntime ) {
 																				: a.image_url
 																		}
 																		alt={
-																			null ==
-																				e ||
+																			e ===
+																				null ||
+																			e ===
+																				void 0 ||
 																			null ===
 																				( o =
 																					e.matching_data ) ||

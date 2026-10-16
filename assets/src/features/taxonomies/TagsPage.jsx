@@ -66,48 +66,48 @@ export function createTagsPage( readRuntime ) {
 			W = ( D[ 0 ], D[ 1 ] ),
 			B = ( 0, ReactHooks.useCallback )(
 				zY(
-					NY().m( function e() {
-						var n;
+					NY().m( function _eLocal() {
+						var _nLocal;
 						return NY().w(
-							function ( e ) {
+							function ( _eLocal2 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 										case 0:
 											return (
 												u( ! 0 ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+												( _eLocal2.p = 1 ),
+												( _eLocal2.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/tags',
 												} )
 											 );
 										case 2:
-											( ( n = e.v ),
-												o( n || [] ),
-												( e.n = 4 ) );
+											_nLocal = _eLocal2.v;
+											o( _nLocal || [] );
+											_eLocal2.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												e.v,
-												t(
-													'error',
-													( 0, I18n.__ )(
-														'Failed to load tags',
-														'ohmylms'
-													)
-												) );
+											_eLocal2.p = 3;
+											t(
+												'error',
+												( 0, I18n.__ )(
+													'Failed to load tags',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal2.p = 4 ),
 												u( ! 1 ),
-												e.f( 4 )
+												_eLocal2.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
@@ -121,63 +121,68 @@ export function createTagsPage( readRuntime ) {
 			},
 			[ B ]
 		);
-		var L = ( 0, ReactHooks.useCallback )( function ( e ) {
-				m( e );
+		var L = ( 0, ReactHooks.useCallback )( function ( _eLocal3 ) {
+				m( _eLocal3 );
 			}, [] ),
 			V = ( 0, ReactHooks.useCallback )( function () {
-				( S( null ), v( ! 0 ) );
+				S( null );
+				v( ! 0 );
 			}, [] ),
-			H = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( S( e ), v( ! 0 ) );
+			H = ( 0, ReactHooks.useCallback )( function ( _eLocal4 ) {
+				S( _eLocal4 );
+				v( ! 0 );
 			}, [] ),
-			G = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( C( e ), _( ! 0 ) );
+			G = ( 0, ReactHooks.useCallback )( function ( _eLocal5 ) {
+				C( _eLocal5 );
+				_( ! 0 );
 			}, [] ),
 			U = ( function () {
-				var e = zY(
-					NY().m( function e( n ) {
-						var r;
+				var _eLocal6 = zY(
+					NY().m( function _eLocal7( _nLocal2 ) {
+						var _rLocal;
 						return NY().w(
-							function ( e ) {
+							function ( _eLocal8 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal8.p = _eLocal8.n ) ) {
 										case 0:
 											if (
-												( k( ! 0 ), ( e.p = 1 ), ! E )
+												( k( ! 0 ),
+												( _eLocal8.p = 1 ),
+												! E )
 											) {
-												e.n = 3;
+												_eLocal8.n = 3;
 												break;
 											}
 											return (
-												( e.n = 2 ),
+												( _eLocal8.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/tags/'.concat(
 														E.term_id
 													),
 													method: 'PUT',
 													data: {
-														name: n.name,
+														name: _nLocal2.name,
 													},
 												} )
 											 );
 										case 2:
-											( t(
+											t(
 												'success',
 												( 0, I18n.__ )(
 													'Tag updated successfully',
 													'ohmylms'
 												)
-											),
-												( e.n = 5 ) );
+											);
+											_eLocal8.n = 5;
 											break;
 										case 3:
 											return (
-												( e.n = 4 ),
+												( _eLocal8.n = 4 ),
 												l()( {
 													path: '/ohmylms/v1/tags',
 													method: 'POST',
 													data: {
-														name: n.name,
+														name: _nLocal2.name,
 													},
 												} )
 											 );
@@ -189,73 +194,77 @@ export function createTagsPage( readRuntime ) {
 													'ohmylms'
 												)
 											);
+										// Falls through to the shared async state cleanup.
 										case 5:
-											( v( ! 1 ),
-												S( null ),
-												B(),
-												( e.n = 7 ) );
+											v( ! 1 );
+											S( null );
+											B();
+											_eLocal8.n = 7;
 											break;
 										case 6:
-											( ( e.p = 6 ),
-												( r = e.v ),
-												t(
-													'error',
-													r.message ||
-														( 0, I18n.__ )(
-															'Failed to save tag',
-															'ohmylms'
-														)
-												) );
+											_eLocal8.p = 6;
+											_rLocal = _eLocal8.v;
+											t(
+												'error',
+												_rLocal.message ||
+													( 0, I18n.__ )(
+														'Failed to save tag',
+														'ohmylms'
+													)
+											);
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( e.p = 7 ),
+												( _eLocal8.p = 7 ),
 												k( ! 1 ),
-												e.f( 7 )
+												_eLocal8.f( 7 )
 											 );
 										case 8:
-											return e.a( 2 );
+											return _eLocal8.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal7,
 							null,
 							[ [ 1, 6, 7, 8 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal6.apply( this, _args2 );
 				};
 			} )(),
 			Y = ( function () {
-				var e = zY(
-					NY().m( function e() {
-						var n;
+				var _eLocal9 = zY(
+					NY().m( function _eLocal0() {
+						var _nLocal3;
 						return NY().w(
-							function ( e ) {
+							function ( _eLocal1 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal1.p = _eLocal1.n ) ) {
 										case 0:
 											if ( x || 0 !== F.length ) {
-												e.n = 1;
+												_eLocal1.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal1.a( 2 );
 										case 1:
 											if ( ! A ) {
-												e.n = 2;
+												_eLocal1.n = 2;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal1.a( 2 );
 										case 2:
 											if (
-												( M( ! 0 ), ( e.p = 3 ), ! x )
+												( M( ! 0 ),
+												( _eLocal1.p = 3 ),
+												! x )
 											) {
-												e.n = 5;
+												_eLocal1.n = 5;
 												break;
 											}
 											return (
-												( e.n = 4 ),
+												( _eLocal1.n = 4 ),
 												l()( {
 													path: '/ohmylms/v1/tags/'.concat(
 														x.term_id
@@ -264,18 +273,18 @@ export function createTagsPage( readRuntime ) {
 												} )
 											 );
 										case 4:
-											( t(
+											t(
 												'success',
 												( 0, I18n.__ )(
 													'Tag deleted successfully',
 													'ohmylms'
 												)
-											),
-												( e.n = 7 ) );
+											);
+											_eLocal1.n = 7;
 											break;
 										case 5:
 											return (
-												( e.n = 6 ),
+												( _eLocal1.n = 6 ),
 												l()( {
 													path: '/ohmylms/v1/tags/bulk',
 													method: 'DELETE',
@@ -289,61 +298,66 @@ export function createTagsPage( readRuntime ) {
 												} )
 											 );
 										case 6:
-											( t(
+											t(
 												'success',
 												( 0, I18n.__ )(
 													'Tags deleted successfully',
 													'ohmylms'
 												)
-											),
-												N( [] ) );
+											);
+											N( [] );
+										// Falls through to the shared async state cleanup.
 										case 7:
-											( _( ! 1 ),
-												C( null ),
-												B(),
-												( e.n = 9 ) );
+											_( ! 1 );
+											C( null );
+											B();
+											_eLocal1.n = 9;
 											break;
 										case 8:
-											( ( e.p = 8 ),
-												( n = e.v ),
-												t(
-													'error',
-													n.message ||
-														( 0, I18n.__ )(
-															'Failed to delete tag',
-															'ohmylms'
-														)
-												) );
+											_eLocal1.p = 8;
+											_nLocal3 = _eLocal1.v;
+											t(
+												'error',
+												_nLocal3.message ||
+													( 0, I18n.__ )(
+														'Failed to delete tag',
+														'ohmylms'
+													)
+											);
+										// Falls through to the shared async state cleanup.
 										case 9:
 											return (
-												( e.p = 9 ),
+												( _eLocal1.p = 9 ),
 												M( ! 1 ),
-												e.f( 9 )
+												_eLocal1.f( 9 )
 											 );
 										case 10:
-											return e.a( 2 );
+											return _eLocal1.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal0,
 							null,
 							[ [ 3, 8, 9, 10 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal9.apply( this, _args );
 				};
 			} )(),
 			Q = ( 0, ReactHooks.useMemo )(
 				function () {
-					return a.filter( function ( e ) {
-						var t;
-						return null == e ||
-							null === ( t = e.name ) ||
-							void 0 === t
+					return a.filter( function ( _eLocal10 ) {
+						var _tLocal2;
+						return _eLocal10 === null ||
+							_eLocal10 === void 0 ||
+							null === ( _tLocal2 = _eLocal10.name ) ||
+							void 0 === _tLocal2
 							? void 0
-							: t.toLowerCase().includes( d.toLowerCase() );
+							: _tLocal2
+									.toLowerCase()
+									.includes( d.toLowerCase() );
 					} );
 				},
 				[ a, d ]
@@ -383,13 +397,13 @@ export function createTagsPage( readRuntime ) {
 					dataIndex: 'term_id',
 					key: 'term_id',
 					width: '80px',
-					render( e ) {
+					render( _eLocal11 ) {
 						return (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
 							>
-								{ e }
+								{ _eLocal11 }
 							</Controls.BadgeWP>
 						);
 					},
@@ -398,14 +412,14 @@ export function createTagsPage( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Name', 'ohmylms' ),
 					dataIndex: 'name',
 					key: 'name',
-					render( e ) {
+					render( _eLocal12 ) {
 						return (
 							<span
 								style={ {
 									fontWeight: 500,
 								} }
 							>
-								{ e }
+								{ _eLocal12 }
 							</span>
 						);
 					},
@@ -415,9 +429,9 @@ export function createTagsPage( readRuntime ) {
 					dataIndex: 'count',
 					key: 'count',
 					width: '150px',
-					render( e, t ) {
-						var n;
-						return e && 0 !== e ? (
+					render( _eLocal13, _tLocal3 ) {
+						var _nLocal4;
+						return _eLocal13 && 0 !== _eLocal13 ? (
 							<Controls.TooltipWP
 								text={
 									<div
@@ -436,23 +450,30 @@ export function createTagsPage( readRuntime ) {
 												'ohmylms'
 											) }
 										</div>
-										{ null === ( n = t.courses ) ||
-										void 0 === n
+										{ null ===
+											( _nLocal4 = _tLocal3.courses ) ||
+										void 0 === _nLocal4
 											? void 0
-											: n.map( function ( e ) {
-													return (
-														<div
-															key={ e.id }
-															style={ {
-																padding:
-																	'4px 0',
-															} }
-														>
-															{ '• ' }
-															{ Ge( e.title ) }
-														</div>
-													);
-												} ) }
+											: _nLocal4.map(
+													function ( _eLocal14 ) {
+														return (
+															<div
+																key={
+																	_eLocal14.id
+																}
+																style={ {
+																	padding:
+																		'4px 0',
+																} }
+															>
+																{ '• ' }
+																{ Ge(
+																	_eLocal14.title
+																) }
+															</div>
+														);
+													}
+												) }
 									</div>
 								}
 								position={ 'top' }
@@ -461,7 +482,7 @@ export function createTagsPage( readRuntime ) {
 									variant={ 'secondary' }
 									isBorderLess={ ! 0 }
 								>
-									{ e }
+									{ _eLocal13 }
 								</Controls.BadgeWP>
 							</Controls.TooltipWP>
 						) : (
@@ -479,7 +500,7 @@ export function createTagsPage( readRuntime ) {
 					dataIndex: 'action',
 					key: 'action',
 					width: '100px',
-					render( e, t ) {
+					render( _eLocal15, _tLocal4 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -489,7 +510,7 @@ export function createTagsPage( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return H( t );
+											return H( _tLocal4 );
 										},
 										icon: (
 											<span>
@@ -503,7 +524,7 @@ export function createTagsPage( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return G( t );
+											return G( _tLocal4 );
 										},
 										icon: <We />,
 									},
@@ -555,8 +576,13 @@ export function createTagsPage( readRuntime ) {
 								scroll={ {
 									x: 'max-content',
 								} }
-								onRowMouseEnter={ function ( e ) {
-									return W( null == e ? void 0 : e.term_id );
+								onRowMouseEnter={ function ( _eLocal16 ) {
+									return W(
+										_eLocal16 === null ||
+											_eLocal16 === void 0
+											? void 0
+											: _eLocal16.term_id
+									);
 								} }
 								onRowMouseLeave={ function () {
 									return W( null );
@@ -587,7 +613,8 @@ export function createTagsPage( readRuntime ) {
 					<TaxonomyModal
 						isOpen={ f }
 						onClose={ function () {
-							( v( ! 1 ), S( null ) );
+							v( ! 1 );
+							S( null );
 						} }
 						onSubmit={ U }
 						title={
@@ -604,26 +631,33 @@ export function createTagsPage( readRuntime ) {
 					<Ie
 						isOpen={ y }
 						onClose={ function () {
-							( _( ! 1 ), C( null ) );
+							_( ! 1 );
+							C( null );
 						} }
 						onDelete={ Y }
 						title={ ( 0, I18n.__ )( 'Delete Tag', 'ohmylms' ) }
-						description={
-							( null == x ? void 0 : x.count ) > 0
-								? ( 0, I18n.__ )(
-										'This tag is assigned to courses. Deleting it will remove the tag from those courses. Are you sure you want to continue?',
-										'ohmylms'
-									)
-								: F.length > 0
-									? ( 0, I18n.__ )(
-											'Are you sure you want to delete the selected tags?',
-											'ohmylms'
-										)
-									: ( 0, I18n.__ )(
-											'Are you sure you want to delete this tag?',
-											'ohmylms'
-										)
-						}
+						description={ ( () => {
+							if (
+								( x === null || x === void 0
+									? void 0
+									: x.count ) > 0
+							) {
+								return ( 0, I18n.__ )(
+									'This tag is assigned to courses. Deleting it will remove the tag from those courses. Are you sure you want to continue?',
+									'ohmylms'
+								);
+							}
+							if ( F.length > 0 ) {
+								return ( 0, I18n.__ )(
+									'Are you sure you want to delete the selected tags?',
+									'ohmylms'
+								);
+							}
+							return ( 0, I18n.__ )(
+								'Are you sure you want to delete this tag?',
+								'ohmylms'
+							);
+						} )() }
 						actionBtnText={ ( 0, I18n.__ )( 'Delete', 'ohmylms' ) }
 						loading={ A }
 						isDelete={ ! 0 }

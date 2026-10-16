@@ -95,7 +95,10 @@ export function ExistingSkill( {
 							size="small"
 							disabled={ pending }
 							aria-label={ sprintf(
-								__( 'Add %s to this folder', 'ohmylms' ),
+								/* translators: %s: curriculum item name. */ __(
+									'Add %s to this folder',
+									'ohmylms'
+								),
 								row.title
 							) }
 							onClick={ () => onPlace( row.id ) }

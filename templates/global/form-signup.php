@@ -170,7 +170,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</p>
 
 	<p class="ohmylms-form-row dont-have-account">
-		<?php echo __( 'Already have an account?', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Already have an account?', 'ohmylms' ); ?>
 		<a href="#" class="ohmylms-show-login-form">
 			<?php esc_html_e( 'Log In', 'ohmylms' ); ?>
 		</a>

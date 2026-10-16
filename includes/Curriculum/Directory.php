@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Public skill directories use a publication snapshot; previews read the editor's outline.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 defined( 'ABSPATH' ) || exit;
@@ -39,7 +44,7 @@ final class Directory {
 					continue; }
 				$skills = array();
 				foreach ( $group['skills'] as $skill ) {
-					if ( $allowed !== null && ! in_array( (int) $skill['term_id'], $allowed, true ) ) {
+					if ( null !== $allowed && ! in_array( (int) $skill['term_id'], $allowed, true ) ) {
 						continue; }
 					$skills[] = array_intersect_key( $skill, array_flip( array( 'term_id', 'name', 'code', 'category' ) ) );
 				}

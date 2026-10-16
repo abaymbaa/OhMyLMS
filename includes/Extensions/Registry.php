@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Registration is explicit; callbacks are supplied by trusted plugins or themes only.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Registration is explicit; callbacks are supplied by trusted plugins or themes only. */
@@ -20,12 +25,12 @@ final class Registry {
 		if ( empty( $definition['label'] ) ) {
 			throw new \InvalidArgumentException( 'An extension label is required.' );
 		}
-		foreach ( $kind === 'question' ? array( 'render', 'validate', 'grade' ) : array( 'render' ) as $callback ) {
+		foreach ( 'question' === $kind ? array( 'render', 'validate', 'grade' ) : array( 'render' ) as $callback ) {
 			if ( ! is_callable( $definition[ $callback ] ?? null ) ) {
 				throw new \InvalidArgumentException( 'Missing callback: ' . $callback );
 			}
 		}
-		if ( $kind === 'layout' && ( ! isset( $definition['contexts'] ) || array_diff( $definition['contexts'], array( 'course', 'chapter', 'lesson', 'quiz' ) ) ) ) {
+		if ( 'layout' === $kind && ( ! isset( $definition['contexts'] ) || array_diff( $definition['contexts'], array( 'course', 'chapter', 'lesson', 'quiz' ) ) ) ) {
 			throw new \InvalidArgumentException( 'Invalid layout contexts.' );
 		}
 		self::$items[ $kind ][ $id ] = $definition;

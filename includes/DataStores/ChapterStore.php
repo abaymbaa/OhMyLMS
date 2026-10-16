@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class ChapterStore.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -261,11 +266,11 @@ class ChapterStore extends DataStore {
 			$values[] = $lesson['order_number'];
 			$values[] = isset( $lesson['content_type'] ) ? $lesson['content_type'] : $lesson['type'];
 
-			// Create placeholders for each set of values
+			// Create placeholders for each set of values.
 			$placeholders[] = '(%d, %d, %d, %s)';
 		}
 
-		// Construct the query with ON DUPLICATE KEY UPDATE
+		// Construct the query with ON DUPLICATE KEY UPDATE.
 		$insert_query = "
 			INSERT INTO $table_name (chapter_id, content_id, order_number, content_type)
 			VALUES " . implode( ', ', $placeholders ) . '
@@ -273,7 +278,7 @@ class ChapterStore extends DataStore {
 			order_number = VALUES(order_number)
 		';
 
-		// Execute the query using prepared statements to prevent SQL injection
+		// Execute the query using prepared statements to prevent SQL injection.
 		$wpdb->query( $wpdb->prepare( $insert_query, $values ) );
 		$this->invalidate_chapter_cache( $chapter_id );
 
@@ -353,12 +358,12 @@ class ChapterStore extends DataStore {
 		$chapter_id = $chapter->get_id();
 		$cache_key  = $chapter_id . '_' . $return_type;
 
-		// Check if result is already cached
+		// Check if result is already cached.
 		if ( isset( self::$lessons_cache[ $cache_key ] ) ) {
 			return self::$lessons_cache[ $cache_key ];
 		}
 
-		// Check if raw database results are cached
+		// Check if raw database results are cached.
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
 			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';
@@ -396,7 +401,7 @@ class ChapterStore extends DataStore {
 					$lesson_id = $lesson_obj->get_id();
 					$post      = get_post( $lesson_id );
 
-					// check post author
+					// check post author.
 					if ( $post && (int) $post->post_author !== (int) get_current_user_id() ) {
 						continue;
 					}
@@ -432,7 +437,7 @@ class ChapterStore extends DataStore {
 			}
 		}
 
-		// Cache the result
+		// Cache the result.
 		self::$lessons_cache[ $cache_key ] = $filtered_lessons;
 
 		return $filtered_lessons;
@@ -486,7 +491,7 @@ class ChapterStore extends DataStore {
 			return self::$lessons_cache[ $cache_key ];
 		}
 
-		// Check if raw database results are cached
+		// Check if raw database results are cached.
 		if ( ! isset( self::$raw_contents_cache[ $chapter_id ] ) ) {
 			global $wpdb;
 			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';

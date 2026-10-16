@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Cleans and checks the rows of a syllabus import before anything is planned or written. A row is
+ * one line of the administrator's CSV after the browser mapped its columns:.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 /**
@@ -61,7 +67,7 @@ final class SyllabusRows {
 			array_filter(
 				array_map( 'trim', $parts ?: array() ),
 				static function ( $part ) {
-					return $part !== '';
+					return '' !== $part;
 				}
 			)
 		);
@@ -103,14 +109,14 @@ final class SyllabusRows {
 			$category     = self::line( $row['category'] ?? '' );
 
 			// A code with no name is allowed for contents and groups (the code is then the name).
-			if ( ! $path && $content_code !== '' ) {
+			if ( ! $path && '' !== $content_code ) {
 				$path         = array( $content_code );
 				$content_code = ''; }
-			if ( $group === '' && $group_code !== '' ) {
+			if ( '' === $group && '' !== $group_code ) {
 				$group = $group_code; }
 
-			if ( ! $path && $group === '' && $skill === '' && $skill_code === '' ) {
-				if ( $description !== '' ) {
+			if ( ! $path && '' === $group && '' === $skill && '' === $skill_code ) {
+				if ( '' !== $description ) {
 					$warnings[] = array(
 						'line'    => $line,
 						'message' => __( 'Notes without a skill were ignored.', 'ohmylms' ),
@@ -121,7 +127,7 @@ final class SyllabusRows {
 			$problems = array();
 			if ( self::length( $category ) > 60 ) {
 				$problems[] = __( 'A skill category can have at most 60 characters.', 'ohmylms' ); }
-			if ( $skill === '' && $skill_code !== '' ) {
+			if ( '' === $skill && '' !== $skill_code ) {
 				$problems[] = sprintf( __( 'Skill code “%s” has no skill name.', 'ohmylms' ), $skill_code ); }
 			if ( count( $path ) > self::MAX_DEPTH ) {
 				$problems[] = sprintf( __( 'A content path can have at most %d levels.', 'ohmylms' ), self::MAX_DEPTH ); }
@@ -150,7 +156,7 @@ final class SyllabusRows {
 					); }
 				continue;
 			}
-			if ( $skill === '' && $description !== '' ) {
+			if ( '' === $skill && '' !== $description ) {
 				$warnings[]  = array(
 					'line'    => $line,
 					'message' => __( 'Notes without a skill were ignored.', 'ohmylms' ),

@@ -25,12 +25,23 @@ import {
 import { courseEditPath } from './hubRoutes.mjs';
 import { SkillPicker } from './SkillPicker';
 import { lessonEditorHref } from './editorNavigation.mjs';
-
 const statusOptions = () => [
-	{ label: __( 'All statuses', 'ohmylms' ), value: '' },
-	{ label: __( 'Published', 'ohmylms' ), value: 'publish' },
-	{ label: __( 'Draft', 'ohmylms' ), value: 'draft' },
-	{ label: __( 'Private', 'ohmylms' ), value: 'private' },
+	{
+		label: __( 'All statuses', 'ohmylms' ),
+		value: '',
+	},
+	{
+		label: __( 'Published', 'ohmylms' ),
+		value: 'publish',
+	},
+	{
+		label: __( 'Draft', 'ohmylms' ),
+		value: 'draft',
+	},
+	{
+		label: __( 'Private', 'ohmylms' ),
+		value: 'private',
+	},
 ];
 const statusLabel = ( status ) =>
 	( {
@@ -51,7 +62,11 @@ const formatDate = ( iso ) => {
  */
 export function LessonsPage() {
 	const [ input, setInput ] = useState( '' );
-	const [ query, setQuery ] = useState( { search: '', status: '', page: 1 } );
+	const [ query, setQuery ] = useState( {
+		search: '',
+		status: '',
+		page: 1,
+	} );
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ notice, setNotice ] = useState( '' );
@@ -60,20 +75,22 @@ export function LessonsPage() {
 	const [ skillsFor, setSkillsFor ] = useState( null );
 	const [ confirm, setConfirm ] = useState( null );
 	const latest = useRef( 0 );
-
 	useEffect( () => {
 		const timer = setTimeout(
 			() =>
 				setQuery( ( current ) =>
 					current.search === input
 						? current
-						: { ...current, search: input, page: 1 }
+						: {
+								...current,
+								search: input,
+								page: 1,
+							}
 				),
 			300
 		);
 		return () => clearTimeout( timer );
 	}, [ input ] );
-
 	const load = useCallback( () => {
 		const id = ++latest.current;
 		return listLessons( {
@@ -102,7 +119,6 @@ export function LessonsPage() {
 	useEffect( () => {
 		load();
 	}, [ load ] );
-
 	async function run( work, success ) {
 		setBusy( true );
 		setError( '' );
@@ -121,7 +137,6 @@ export function LessonsPage() {
 			setBusy( false );
 		}
 	}
-
 	const items = data?.items || [];
 	const allSelected =
 		items.length > 0 && items.every( ( item ) => selected.has( item.id ) );
@@ -143,7 +158,6 @@ export function LessonsPage() {
 		items.filter(
 			( item ) => ids.includes( item.id ) && item.courses.length
 		).length;
-
 	return (
 		<AdminPage
 			className="ohmylms-lessons"
@@ -178,7 +192,11 @@ export function LessonsPage() {
 						value={ query.status }
 						options={ statusOptions() }
 						onChange={ ( status ) =>
-							setQuery( { ...query, status, page: 1 } )
+							setQuery( {
+								...query,
+								status,
+								page: 1,
+							} )
 						}
 						__nextHasNoMarginBottom
 					/>
@@ -189,7 +207,10 @@ export function LessonsPage() {
 						onClick={ () => setConfirm( [ ...selected ] ) }
 					>
 						{ sprintf(
-							__( 'Move to trash (%d)', 'ohmylms' ),
+							/* translators: %d: lesson or chapter title. */ __(
+								'Move to trash (%d)',
+								'ohmylms'
+							),
 							selected.size
 						) }
 					</Button>
@@ -240,7 +261,7 @@ export function LessonsPage() {
 										<td className="check-column">
 											<CheckboxControl
 												label={ sprintf(
-													__(
+													/* translators: %s: lesson or chapter title. */ __(
 														'Select %s',
 														'ohmylms'
 													),
@@ -354,7 +375,7 @@ export function LessonsPage() {
 															await load();
 														},
 														sprintf(
-															__(
+															/* translators: %s: lesson or chapter title. */ __(
 																'Copied “%s” as a draft.',
 																'ohmylms'
 															),
@@ -392,14 +413,20 @@ export function LessonsPage() {
 							variant="secondary"
 							disabled={ query.page <= 1 }
 							onClick={ () =>
-								setQuery( { ...query, page: query.page - 1 } )
+								setQuery( {
+									...query,
+									page: query.page - 1,
+								} )
 							}
 						>
 							{ __( 'Previous', 'ohmylms' ) }
 						</Button>
 						<span>
 							{ sprintf(
-								__( 'Page %1$d of %2$d', 'ohmylms' ),
+								/* translators: %1$d: current page number; %2$d: total number of pages. */ __(
+									'Page %1$d of %2$d',
+									'ohmylms'
+								),
 								query.page,
 								data.pages
 							) }
@@ -408,7 +435,10 @@ export function LessonsPage() {
 							variant="secondary"
 							disabled={ query.page >= data.pages }
 							onClick={ () =>
-								setQuery( { ...query, page: query.page + 1 } )
+								setQuery( {
+									...query,
+									page: query.page + 1,
+								} )
 							}
 						>
 							{ __( 'Next', 'ohmylms' ) }
@@ -419,7 +449,10 @@ export function LessonsPage() {
 			{ skillsFor && (
 				<SkillPicker
 					title={ sprintf(
-						__( 'Skills for “%s”', 'ohmylms' ),
+						/* translators: %s: lesson or chapter title. */ __(
+							'Skills for “%s”',
+							'ohmylms'
+						),
 						skillsFor.title
 					) }
 					confirmLabel={ __( 'Save skills', 'ohmylms' ) }
@@ -469,7 +502,7 @@ export function LessonsPage() {
 				>
 					<p>
 						{ sprintf(
-							_n(
+							/* translators: %d: number of selected lessons. */ _n(
 								'%d lesson will be moved to the trash.',
 								'%d lessons will be moved to the trash.',
 								confirm.length,
@@ -481,7 +514,7 @@ export function LessonsPage() {
 					{ usedByCount( confirm ) > 0 && (
 						<Notice status="warning" isDismissible={ false }>
 							{ sprintf(
-								_n(
+								/* translators: %d: number of selected lessons used in courses. */ _n(
 									'%d of them is used in a course and will become unavailable to learners there.',
 									'%d of them are used in courses and will become unavailable to learners there.',
 									usedByCount( confirm ),
@@ -512,7 +545,7 @@ export function LessonsPage() {
 										if ( result.skipped?.length ) {
 											throw new Error(
 												sprintf(
-													__(
+													/* translators: %d: number of selected lessons. */ __(
 														'%d lessons could not be moved to the trash.',
 														'ohmylms'
 													),

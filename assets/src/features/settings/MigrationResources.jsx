@@ -135,10 +135,10 @@ export function createMigrationResources( readRuntime ) {
 							justify={ 'start' }
 							gap={ 3 }
 						>
-							{ e.map( function ( e, t ) {
+							{ e.map( function ( _eLocal, t ) {
 								return (
 									<v.Link
-										to={ e.url }
+										to={ _eLocal.url }
 										key={ t }
 										target={ '_blank' }
 										rel={ 'noopener noreferrer' }
@@ -170,7 +170,7 @@ export function createMigrationResources( readRuntime ) {
 																'center',
 														} }
 													>
-														{ e.icon }
+														{ _eLocal.icon }
 													</span>
 													<Controls.TextWP
 														as={ 'p' }
@@ -178,7 +178,7 @@ export function createMigrationResources( readRuntime ) {
 														weight={ '500' }
 														color={ '#444D5E' }
 													>
-														{ e.label }
+														{ _eLocal.label }
 													</Controls.TextWP>
 												</Controls.FlexWP>
 											</Controls.SpacerWP>

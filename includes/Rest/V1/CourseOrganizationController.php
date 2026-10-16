@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * How a course is organized: the curriculum items it is linked to and the Course Bundles it belongs
+ * to. This replaces course categories and tags in the course editor.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -78,7 +84,7 @@ class CourseOrganizationController extends RestController {
 	private function describe( $course_id ) {
 		return rest_ensure_response(
 			array(
-				'curriculum'        => Placement::items( $course_id ),
+				'curriculum'         => Placement::items( $course_id ),
 				'bundles'            => Placement::bundles( $course_id ),
 				'can_manage_bundles' => Access::can_manage(),
 			)
@@ -93,10 +99,10 @@ class CourseOrganizationController extends RestController {
 	public function update( WP_REST_Request $request ) {
 		$course_id  = (int) $request['id'];
 		$curriculum = $request->get_param( 'curriculum_ids' );
-		$bundles     = $request->get_param( 'bundle_ids' );
-		if ( $curriculum !== null && ! is_array( $curriculum ) ) {
+		$bundles    = $request->get_param( 'bundle_ids' );
+		if ( null !== $curriculum && ! is_array( $curriculum ) ) {
 			return Access::error( 'ohmylms_organization_invalid', __( 'Send the curriculum items as a list.', 'ohmylms' ) ); }
-		if ( $bundles !== null && ! is_array( $bundles ) ) {
+		if ( null !== $bundles && ! is_array( $bundles ) ) {
 			return Access::error( 'ohmylms_organization_invalid', __( 'Send the course bundles as a list.', 'ohmylms' ) ); }
 		if ( is_array( $bundles ) && ! Access::can_manage() ) {
 			$wanted  = array_values( array_unique( array_filter( array_map( 'intval', $bundles ) ) ) );
@@ -136,7 +142,7 @@ class CourseOrganizationController extends RestController {
 							'code'      => $row['code'],
 							'version'   => $row['version'],
 						);
-						if ( $courses !== null ) {
+						if ( null !== $courses ) {
 							$item['courses'] = $courses[ (int) $row['id'] ] ?? array(); }
 						return $item;
 					},

@@ -10,7 +10,6 @@ export function createMembershipList( readRuntime ) {
 			He,
 			I: Controls,
 			Ie,
-			L: Entitlements,
 			L8: MembershipEditor,
 			Ne,
 			React,
@@ -39,603 +38,648 @@ export function createMembershipList( readRuntime ) {
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
-		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
-			}, [] ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
-			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getMembershipPagination();
-			}, [] ),
-			totalPlans = r.totalPlans,
-			o =
-				( r.totalPages,
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getMemberships();
-				}, [] ) ),
-			i = true,
-			c = Y8( ( 0, ReactHooks.useState )( ! 0 ), 2 ),
-			u = c[ 0 ],
-			s = c[ 1 ],
-			d = Y8( ( 0, ReactHooks.useState )( [] ), 2 ),
-			m = d[ 0 ],
-			p = d[ 1 ],
-			v = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			h = v[ 0 ],
-			_ = v[ 1 ],
-			w = Y8( ( 0, ReactHooks.useState )( 1 ), 2 ),
-			E = w[ 0 ],
-			S = w[ 1 ],
-			R = Y8( ( 0, ReactHooks.useState )( 10 ), 2 ),
-			x = R[ 0 ],
-			C = ( R[ 1 ], Y8( ( 0, ReactHooks.useState )( '' ), 2 ) ),
-			P = C[ 0 ],
-			O = C[ 1 ],
-			k = Y8( ( 0, ReactHooks.useState )( 'All' ), 2 ),
-			j = k[ 0 ],
-			A = k[ 1 ],
-			M = Y8( ( 0, ReactHooks.useState )( null ), 2 ),
-			F = M[ 0 ],
-			N = M[ 1 ],
-			W = Y8( ( 0, ReactHooks.useState )( null ), 2 ),
-			B = ( W[ 0 ], W[ 1 ] ),
-			V = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			H = V[ 0 ],
-			G = V[ 1 ],
-			U = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			Y = U[ 0 ],
-			Q = U[ 1 ],
-			Z = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			$ = Z[ 0 ],
-			K = Z[ 1 ],
-			J = Y8( ( 0, ReactHooks.useState )( 'all' ), 2 ),
-			X = J[ 0 ],
-			ee = J[ 1 ],
-			te = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			ne = te[ 0 ],
-			re = te[ 1 ],
-			ae = ( 0, Notifications.A )(),
-			openNotificationWithIcon = ae.openNotificationWithIcon,
-			contextHolder = ae.contextHolder,
-			le =
-				( ( 0, Router.Zp )(),
-				( 0, ReactHooks.useCallback )( function ( e ) {
-					( O( e ), S( 1 ) );
-				}, [] ) ),
-			ce = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( A( e ), S( 1 ) );
-			}, [] ),
-			ue = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( ee( e ), S( 1 ) );
-			}, [] ),
-			se = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( S( e ), p( [] ) );
-			}, [] ),
-			de = ( 0, ReactHooks.useCallback )(
-				( function () {
-					var t = q8(
-						H8().m( function t( n ) {
-							var r, a;
-							return H8().w(
-								function ( t ) {
-									for (;;) {
-										switch ( ( t.p = t.n ) ) {
-											case 0:
-												{
-													t.n = 1;
-													break;
-												}
-												return ( re( ! 0 ), t.a( 2 ) );
-											case 1:
-												return (
-													( t.p = 1 ),
-													G( ! 0 ),
-													Q( ! 0 ),
-													( t.n = 2 ),
-													l()( {
-														path: '/ohmylms/v1/membership/'.concat(
-															n
-														),
-														method: 'GET',
-														headers: {
-															'Content-Type':
-																'application/json',
-														},
-													} )
-												 );
-											case 2:
-												( ( r = t.v ),
-													e.addFullMembershipPlan(
-														r
-													),
-													( t.n = 4 ) );
-												break;
-											case 3:
-												( ( t.p = 3 ),
-													( a = t.v ),
-													console.error( a ) );
-											case 4:
-												return (
-													( t.p = 4 ),
-													Q( ! 1 ),
-													t.f( 4 )
-												 );
-											case 5:
-												return t.a( 2 );
-										}
-									}
-								},
-								t,
-								null,
-								[ [ 1, 3, 4, 5 ] ]
-							);
-						} )
-					);
-					return function ( e ) {
-						return t.apply( this, arguments );
-					};
-				} )(),
-				[]
-			),
-			me = ( 0, ReactHooks.useCallback )(
-				q8(
-					H8().m( function t() {
-						var n,
-							r,
-							a,
-							o = arguments;
-						return H8().w( function ( t ) {
-							for (;;) {
-								switch ( t.n ) {
-									case 0:
-										{
-											n =
-												o.length > 0 &&
-												void 0 !== o[ 0 ]
-													? o[ 0 ]
-													: 'date';
-											r =
-												o.length > 1 &&
-												void 0 !== o[ 1 ]
-													? o[ 1 ]
-													: 'DESC';
+		var e = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).getNotificationMessage();
+		}, [] );
+		var n = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+			return _eLocal2( StoreModule.default ).getNotificationStatus();
+		}, [] );
+		var r = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+			return _eLocal3( StoreModule.default ).getMembershipPagination();
+		}, [] );
+		var totalPlans = r.totalPlans;
+		var o =
+			( r.totalPages,
+			( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+				return _eLocal4( StoreModule.default ).getMemberships();
+			}, [] ) );
+		var c = Y8( ( 0, ReactHooks.useState )( ! 0 ), 2 );
+		var u = c[ 0 ];
+		var s = c[ 1 ];
+		var d = Y8( ( 0, ReactHooks.useState )( [] ), 2 );
+		var m = d[ 0 ];
+		var p = d[ 1 ];
+		var v = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var h = v[ 0 ];
+		var _ = v[ 1 ];
+		var w = Y8( ( 0, ReactHooks.useState )( 1 ), 2 );
+		var E = w[ 0 ];
+		var S = w[ 1 ];
+		var R = Y8( ( 0, ReactHooks.useState )( 10 ), 2 );
+		var x = R[ 0 ];
+		var C = ( R[ 1 ], Y8( ( 0, ReactHooks.useState )( '' ), 2 ) );
+		var P = C[ 0 ];
+		var O = C[ 1 ];
+		var k = Y8( ( 0, ReactHooks.useState )( 'All' ), 2 );
+		var j = k[ 0 ];
+		var A = k[ 1 ];
+		var M = Y8( ( 0, ReactHooks.useState )( null ), 2 );
+		var F = M[ 0 ];
+		var N = M[ 1 ];
+		var W = Y8( ( 0, ReactHooks.useState )( null ), 2 );
+		var B = ( W[ 0 ], W[ 1 ] );
+		var V = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var H = V[ 0 ];
+		var G = V[ 1 ];
+		var U = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var Y = U[ 0 ];
+		var Q = U[ 1 ];
+		var Z = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var $ = Z[ 0 ];
+		var K = Z[ 1 ];
+		var J = Y8( ( 0, ReactHooks.useState )( 'all' ), 2 );
+		var X = J[ 0 ];
+		var ee = J[ 1 ];
+		var te = Y8( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var ne = te[ 0 ];
+		var re = te[ 1 ];
+		var ae = ( 0, Notifications.A )();
+		var openNotificationWithIcon = ae.openNotificationWithIcon;
+		var contextHolder = ae.contextHolder;
+		var le =
+			( ( 0, Router.Zp )(),
+			( 0, ReactHooks.useCallback )( function ( _eLocal5 ) {
+				O( _eLocal5 );
+				S( 1 );
+			}, [] ) );
+		var ce = ( 0, ReactHooks.useCallback )( function ( _eLocal6 ) {
+			A( _eLocal6 );
+			S( 1 );
+		}, [] );
+		var ue = ( 0, ReactHooks.useCallback )( function ( _eLocal7 ) {
+			ee( _eLocal7 );
+			S( 1 );
+		}, [] );
+		var se = ( 0, ReactHooks.useCallback )( function ( _eLocal8 ) {
+			S( _eLocal8 );
+			p( [] );
+		}, [] );
+		var de = ( 0, ReactHooks.useCallback )(
+			( function () {
+				var _tLocal = q8(
+					H8().m( function _tLocal2( _nLocal ) {
+						var _rLocal, a;
+						return H8().w(
+							function ( _tLocal3 ) {
+								for (;;) {
+									switch ( ( _tLocal3.p = _tLocal3.n ) ) {
+										case 0:
 											{
-												t.n = 1;
+												_tLocal3.n = 1;
 												break;
 											}
-										}
-										return ( s( ! 1 ), t.a( 2 ) );
-									case 1:
-										( s( ! 0 ),
-											( a = {
-												offset: ( E - 1 ) * x,
-												order: r,
-												page: E,
-												per_page: x,
-												search: P,
-												post_status: j,
-												orderby: n,
-												date_filter: X,
-											} ),
-											xq( X ) &&
-												( ( a.date_filter = 'custom' ),
-												( a.start_date = sn()(
-													X[ 0 ]
-												).format( 'YYYY-MM-DD' ) ),
-												( a.end_date = sn()(
-													X[ 1 ]
-												).format( 'YYYY-MM-DD' ) ) ),
-											e
-												.fetchMembershipPlans( a )
-												.finally( function () {
-													s( ! 1 );
-												} ) );
-									case 2:
-										return t.a( 2 );
+											return (
+												re( ! 0 ),
+												_tLocal3.a( 2 )
+											 );
+										case 1:
+											return (
+												( _tLocal3.p = 1 ),
+												G( ! 0 ),
+												Q( ! 0 ),
+												( _tLocal3.n = 2 ),
+												l()( {
+													path: '/ohmylms/v1/membership/'.concat(
+														_nLocal
+													),
+													method: 'GET',
+													headers: {
+														'Content-Type':
+															'application/json',
+													},
+												} )
+											 );
+										case 2:
+											_rLocal = _tLocal3.v;
+											e.addFullMembershipPlan( _rLocal );
+											_tLocal3.n = 4;
+											break;
+										case 3:
+											_tLocal3.p = 3;
+											a = _tLocal3.v;
+											console.error( a );
+										// Falls through to the shared async state cleanup.
+										case 4:
+											return (
+												( _tLocal3.p = 4 ),
+												Q( ! 1 ),
+												_tLocal3.f( 4 )
+											 );
+										case 5:
+											return _tLocal3.a( 2 );
+									}
 								}
-							}
-						}, t );
-					} )
-				),
-				[ E, x, P, j, X ]
-			),
-			pe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( _( ! 0 ), N( e ) );
-			}, [] ),
-			fe = ( 0, ReactHooks.useCallback )( function () {
-				_( ! 1 );
-			}, [] ),
-			ve = ( 0, ReactHooks.useCallback )(
-				q8(
-					H8().m( function t() {
-						return H8().w( function ( t ) {
-							for (;;) {
-								switch ( t.n ) {
-									case 0:
-										return (
-											( t.n = 1 ),
-											e.handleBulkDelete( 'membership', {
-												membership_ids: F ? [ F ] : m,
-											} )
-										 );
-									case 1:
-										( me(),
-											p( [] ),
-											S( 1 ),
-											N( null ),
-											_( ! 1 ),
-											K( ! 0 ) );
-									case 2:
-										return t.a( 2 );
-								}
-							}
-						}, t );
-					} )
-				),
-				[ m, F, me ]
-			),
-			ge = ( 0, ReactHooks.useCallback )(
-				function ( e, t, n ) {
-					var r =
-							{
-								number_of_submissions: 'number_of_submissions',
-								name: 'title',
-							}[ n.field ] || n.field,
-						a =
-							{
-								ascend: 'ASC',
-								descend: 'DESC',
-							}[ n.order ] || n.order;
-					( S( 1 ), me( r, a ) );
-				},
-				[ me, S ]
-			),
-			he = ( 0, ReactHooks.useMemo )(
-				function () {
-					return [
-						{
-							label: ( 0, I18n.__ )( 'Delete', 'ohmylms' ),
-							value: 'delete',
-							action() {
-								_( ! 0 );
 							},
-						},
-					];
-				},
-				[ m ]
-			),
-			ye = ( 0, ReactHooks.useMemo )( function () {
-				return [
-					{
-						value: 'all',
-						label: ( 0, I18n.__ )( 'All', 'ohmylms' ),
-					},
-					{
-						value: 'publish',
-						label: ( 0, I18n.__ )( 'Published', 'ohmylms' ),
-					},
-					{
-						value: 'draft',
-						label: ( 0, I18n.__ )( 'Draft', 'ohmylms' ),
-					},
-				];
-			}, [] ),
-			be = ( 0, ReactHooks.useMemo )( function () {
-				return [
-					{
-						value: 'last_30_days',
-						label: ( 0, I18n.__ )( 'Last 30 days', 'ohmylms' ),
-					},
-					{
-						value: 'current_month',
-						label: ( 0, I18n.__ )( 'Current month', 'ohmylms' ),
-					},
-					{
-						value: 'previous_month',
-						label: ( 0, I18n.__ )( 'Previous month', 'ohmylms' ),
-					},
-					{
-						value: 'current_year',
-						label: ( 0, I18n.__ )( 'Current year', 'ohmylms' ),
-					},
-					{
-						value: 'last_12_months',
-						label: ( 0, I18n.__ )( 'Last 12 months', 'ohmylms' ),
-					},
-				];
-			}, [] ),
-			_e = ( 0, ReactHooks.useMemo )(
-				function () {
-					return {
-						selectedRowKeys: m,
-						onChange: p,
-					};
-				},
-				[ m ]
-			),
-			we = ( 0, ReactHooks.useMemo )( function () {
-				return {
-					label: ( 0, I18n.__ )( 'Add Membership', 'ohmylms' ),
-					onClick() {
-						return G( ! 0 );
-					},
-				};
-			}, [] ),
-			Ee = [
-				{
-					title: ( 0, I18n.__ )( 'ID', 'ohmylms' ),
-					dataIndex: 'id',
-					key: 'id',
-					sorter: ! 0,
-					render( e ) {
-						return (
-							<Buttons.A
-								variant={ 'link' }
-								onClick={ function () {
-									return de( e );
-								} }
-							>
-								{ '#' }
-								{ e || '#' }
-							</Buttons.A>
+							_tLocal2,
+							null,
+							[ [ 1, 3, 4, 5 ] ]
 						);
+					} )
+				);
+				return function ( ..._args2 ) {
+					return _tLocal.apply( this, _args2 );
+				};
+			} )(),
+			[]
+		);
+		var me = ( 0, ReactHooks.useCallback )(
+			q8(
+				H8().m( function _tLocal4( ..._args ) {
+					var _nLocal2,
+						_rLocal2,
+						a,
+						_oLocal = _args;
+					return H8().w( function ( _tLocal5 ) {
+						for (;;) {
+							switch ( _tLocal5.n ) {
+								case 0:
+									{
+										_nLocal2 =
+											_oLocal.length > 0 &&
+											void 0 !== _oLocal[ 0 ]
+												? _oLocal[ 0 ]
+												: 'date';
+										_rLocal2 =
+											_oLocal.length > 1 &&
+											void 0 !== _oLocal[ 1 ]
+												? _oLocal[ 1 ]
+												: 'DESC';
+										{
+											_tLocal5.n = 1;
+											break;
+										}
+									}
+									return ( s( ! 1 ), _tLocal5.a( 2 ) );
+								case 1:
+									s( ! 0 );
+									a = {
+										offset: ( E - 1 ) * x,
+										order: _rLocal2,
+										page: E,
+										per_page: x,
+										search: P,
+										post_status: j,
+										orderby: _nLocal2,
+										date_filter: X,
+									};
+									if ( xq( X ) ) {
+										{
+											a.date_filter = 'custom';
+											a.start_date = sn()(
+												X[ 0 ]
+											).format( 'YYYY-MM-DD' );
+											a.end_date = sn()( X[ 1 ] ).format(
+												'YYYY-MM-DD'
+											);
+										}
+									}
+									e.fetchMembershipPlans( a ).finally(
+										function () {
+											s( ! 1 );
+										}
+									); // Falls through to the shared async state cleanup.
+								// Falls through to the shared async state cleanup.
+								case 2:
+									return _tLocal5.a( 2 );
+							}
+						}
+					}, _tLocal4 );
+				} )
+			),
+			[ E, x, P, j, X ]
+		);
+		var pe = ( 0, ReactHooks.useCallback )( function ( _eLocal0 ) {
+			_( ! 0 );
+			N( _eLocal0 );
+		}, [] );
+		var fe = ( 0, ReactHooks.useCallback )( function () {
+			_( ! 1 );
+		}, [] );
+		var ve = ( 0, ReactHooks.useCallback )(
+			q8(
+				H8().m( function _tLocal6() {
+					return H8().w( function ( _tLocal7 ) {
+						for (;;) {
+							switch ( _tLocal7.n ) {
+								case 0:
+									return (
+										( _tLocal7.n = 1 ),
+										e.handleBulkDelete( 'membership', {
+											membership_ids: F ? [ F ] : m,
+										} )
+									 );
+								case 1:
+									me();
+									p( [] );
+									S( 1 );
+									N( null );
+									_( ! 1 );
+									K( ! 0 ); // Falls through to the shared async state cleanup.
+								// Falls through to the shared async state cleanup.
+								case 2:
+									return _tLocal7.a( 2 );
+							}
+						}
+					}, _tLocal6 );
+				} )
+			),
+			[ m, F, me ]
+		);
+		var ge = ( 0, ReactHooks.useCallback )(
+			function ( _eLocal1, _tLocal8, _nLocal3 ) {
+				var _rLocal3 =
+						{
+							number_of_submissions: 'number_of_submissions',
+							name: 'title',
+						}[ _nLocal3.field ] || _nLocal3.field,
+					a =
+						{
+							ascend: 'ASC',
+							descend: 'DESC',
+						}[ _nLocal3.order ] || _nLocal3.order;
+				S( 1 );
+				me( _rLocal3, a );
+			},
+			[ me, S ]
+		);
+		var he = ( 0, ReactHooks.useMemo )(
+			function () {
+				return [
+					{
+						label: ( 0, I18n.__ )( 'Delete', 'ohmylms' ),
+						value: 'delete',
+						action() {
+							_( ! 0 );
+						},
 					},
+				];
+			},
+			[ m ]
+		);
+		var ye = ( 0, ReactHooks.useMemo )( function () {
+			return [
+				{
+					value: 'all',
+					label: ( 0, I18n.__ )( 'All', 'ohmylms' ),
 				},
 				{
-					title: ( 0, I18n.__ )( 'Membership Plan', 'ohmylms' ),
-					dataIndex: 'name',
-					key: 'name',
-					sorter: ! 0,
-					render( e ) {
-						return <span>{ Ge( e ) || 'Untitled' }</span>;
-					},
+					value: 'publish',
+					label: ( 0, I18n.__ )( 'Published', 'ohmylms' ),
 				},
 				{
-					title: ( 0, I18n.__ )( 'Price', 'ohmylms' ),
-					dataIndex: 'price',
-					key: 'price',
-					sorter: ! 0,
-					render( e, t ) {
-						return (
-							<Controls.BadgeWP
-								variant={ 'secondary' }
-								isBorderLess={ ! 0 }
-							>
-								{ null != t && t.sale_price ? (
-									<React.Fragment>
-										<span>
+					value: 'draft',
+					label: ( 0, I18n.__ )( 'Draft', 'ohmylms' ),
+				},
+			];
+		}, [] );
+		var be = ( 0, ReactHooks.useMemo )( function () {
+			return [
+				{
+					value: 'last_30_days',
+					label: ( 0, I18n.__ )( 'Last 30 days', 'ohmylms' ),
+				},
+				{
+					value: 'current_month',
+					label: ( 0, I18n.__ )( 'Current month', 'ohmylms' ),
+				},
+				{
+					value: 'previous_month',
+					label: ( 0, I18n.__ )( 'Previous month', 'ohmylms' ),
+				},
+				{
+					value: 'current_year',
+					label: ( 0, I18n.__ )( 'Current year', 'ohmylms' ),
+				},
+				{
+					value: 'last_12_months',
+					label: ( 0, I18n.__ )( 'Last 12 months', 'ohmylms' ),
+				},
+			];
+		}, [] );
+		var _e = ( 0, ReactHooks.useMemo )(
+			function () {
+				return {
+					selectedRowKeys: m,
+					onChange: p,
+				};
+			},
+			[ m ]
+		);
+		var we = ( 0, ReactHooks.useMemo )( function () {
+			return {
+				label: ( 0, I18n.__ )( 'Add Membership', 'ohmylms' ),
+				onClick() {
+					return G( ! 0 );
+				},
+			};
+		}, [] );
+		var Ee = [
+			{
+				title: ( 0, I18n.__ )( 'ID', 'ohmylms' ),
+				dataIndex: 'id',
+				key: 'id',
+				sorter: ! 0,
+				render( _eLocal10 ) {
+					return (
+						<Buttons.A
+							variant={ 'link' }
+							onClick={ function () {
+								return de( _eLocal10 );
+							} }
+						>
+							{ '#' }
+							{ _eLocal10 || '#' }
+						</Buttons.A>
+					);
+				},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Membership Plan', 'ohmylms' ),
+				dataIndex: 'name',
+				key: 'name',
+				sorter: ! 0,
+				render( _eLocal11 ) {
+					return <span>{ Ge( _eLocal11 ) || 'Untitled' }</span>;
+				},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Price', 'ohmylms' ),
+				dataIndex: 'price',
+				key: 'price',
+				sorter: ! 0,
+				render( _eLocal12, _tLocal9 ) {
+					return (
+						<Controls.BadgeWP
+							variant={ 'secondary' }
+							isBorderLess={ ! 0 }
+						>
+							{ _tLocal9 !== null &&
+							_tLocal9 !== void 0 &&
+							_tLocal9.sale_price ? (
+								<React.Fragment>
+									<span>
+										<YH
+											currency={
+												( _tLocal9 === null ||
+												_tLocal9 === void 0
+													? void 0
+													: _tLocal9.currency ) || '$'
+											}
+											currency_pos={
+												( _tLocal9 === null ||
+												_tLocal9 === void 0
+													? void 0
+													: _tLocal9.currency_pos ) ||
+												'left'
+											}
+											price={ Number(
+												( _tLocal9 === null ||
+												_tLocal9 === void 0
+													? void 0
+													: _tLocal9.sale_price ) ||
+													'0'
+											) }
+										/>
+										{ ' ' }
+										<del>
 											<YH
 												currency={
-													( null == t
+													( _tLocal9 === null ||
+													_tLocal9 === void 0
 														? void 0
-														: t.currency ) || '$'
+														: _tLocal9.currency ) ||
+													'$'
 												}
 												currency_pos={
-													( null == t
+													( _tLocal9 === null ||
+													_tLocal9 === void 0
 														? void 0
-														: t.currency_pos ) ||
+														: _tLocal9.currency_pos ) ||
 													'left'
 												}
 												price={ Number(
-													( null == t
+													( _tLocal9 === null ||
+													_tLocal9 === void 0
 														? void 0
-														: t.sale_price ) || '0'
+														: _tLocal9.regular_price ) ||
+														'0'
 												) }
+												del={ ! 0 }
 											/>
-											{ ' ' }
-											<del>
-												<YH
-													currency={
-														( null == t
-															? void 0
-															: t.currency ) ||
-														'$'
-													}
-													currency_pos={
-														( null == t
-															? void 0
-															: t.currency_pos ) ||
-														'left'
-													}
-													price={ Number(
-														( null == t
-															? void 0
-															: t.regular_price ) ||
-															'0'
-													) }
-													del={ ! 0 }
-												/>
-											</del>
-										</span>
-									</React.Fragment>
-								) : (
-									<YH
-										currency={
-											( null == t
-												? void 0
-												: t.currency ) || '$'
-										}
-										currency_pos={
-											( null == t
-												? void 0
-												: t.currency_pos ) || 'left'
-										}
-										price={ Number(
-											( null == t ? void 0 : t.price ) ||
-												'0'
-										) }
-									/>
-								) }
-							</Controls.BadgeWP>
-						);
-					},
+										</del>
+									</span>
+								</React.Fragment>
+							) : (
+								<YH
+									currency={
+										( _tLocal9 === null ||
+										_tLocal9 === void 0
+											? void 0
+											: _tLocal9.currency ) || '$'
+									}
+									currency_pos={
+										( _tLocal9 === null ||
+										_tLocal9 === void 0
+											? void 0
+											: _tLocal9.currency_pos ) || 'left'
+									}
+									price={ Number(
+										( _tLocal9 === null ||
+										_tLocal9 === void 0
+											? void 0
+											: _tLocal9.price ) || '0'
+									) }
+								/>
+							) }
+						</Controls.BadgeWP>
+					);
 				},
-				{
-					title: ( 0, I18n.__ )( 'Billing Cycle', 'ohmylms' ),
-					dataIndex: 'subscription_period',
-					key: 'subscription_period',
-					sorter: ! 0,
-					render( e ) {
-						var t = {
-							day: ( 0, I18n.__ )( 'Daily', 'ohmylms' ),
-							week: ( 0, I18n.__ )( 'Weekly', 'ohmylms' ),
-							month: ( 0, I18n.__ )( 'Monthly', 'ohmylms' ),
-							year: ( 0, I18n.__ )( 'Yearly', 'ohmylms' ),
-							one_time: ( 0, I18n.__ )( 'One Time', 'ohmylms' ),
-						};
-						return (
-							<Controls.BadgeWP
-								isBorderLess={ ! 0 }
-								variant={ 'secondary' }
-							>
-								{ t[ e ] || e }
-							</Controls.BadgeWP>
-						);
-					},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Billing Cycle', 'ohmylms' ),
+				dataIndex: 'subscription_period',
+				key: 'subscription_period',
+				sorter: ! 0,
+				render( _eLocal13 ) {
+					var _tLocal0 = {
+						day: ( 0, I18n.__ )( 'Daily', 'ohmylms' ),
+						week: ( 0, I18n.__ )( 'Weekly', 'ohmylms' ),
+						month: ( 0, I18n.__ )( 'Monthly', 'ohmylms' ),
+						year: ( 0, I18n.__ )( 'Yearly', 'ohmylms' ),
+						one_time: ( 0, I18n.__ )( 'One Time', 'ohmylms' ),
+					};
+					return (
+						<Controls.BadgeWP
+							isBorderLess={ ! 0 }
+							variant={ 'secondary' }
+						>
+							{ _tLocal0[ _eLocal13 ] || _eLocal13 }
+						</Controls.BadgeWP>
+					);
 				},
-				{
-					title: ( 0, I18n.__ )( 'Subscribers', 'ohmylms' ),
-					dataIndex: 'members',
-					key: 'members',
-					sorter: ! 0,
-					render( e ) {
-						return (
-							<Controls.BadgeWP
-								isBorderLess={ ! 0 }
-								variant={ 'secondary' }
-							>
-								{ e || 0 }
-							</Controls.BadgeWP>
-						);
-					},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Subscribers', 'ohmylms' ),
+				dataIndex: 'members',
+				key: 'members',
+				sorter: ! 0,
+				render( _eLocal14 ) {
+					return (
+						<Controls.BadgeWP
+							isBorderLess={ ! 0 }
+							variant={ 'secondary' }
+						>
+							{ _eLocal14 || 0 }
+						</Controls.BadgeWP>
+					);
 				},
-				{
-					title: ( 0, I18n.__ )( 'Courses', 'ohmylms' ),
-					dataIndex: 'courses',
-					key: 'courses',
-					sorter: ! 0,
-					render( e ) {
-						return (
-							<Controls.BadgeWP
-								isBorderLess={ ! 0 }
-								variant={ 'secondary' }
-							>
-								{ e || 0 }
-							</Controls.BadgeWP>
-						);
-					},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Courses', 'ohmylms' ),
+				dataIndex: 'courses',
+				key: 'courses',
+				sorter: ! 0,
+				render( _eLocal15 ) {
+					return (
+						<Controls.BadgeWP
+							isBorderLess={ ! 0 }
+							variant={ 'secondary' }
+						>
+							{ _eLocal15 || 0 }
+						</Controls.BadgeWP>
+					);
 				},
-				{
-					title: ( 0, I18n.__ )( 'Status', 'ohmylms' ),
-					dataIndex: 'status',
-					key: 'status',
-					render( e ) {
-						return (
-							<Controls.BadgeWP
-								isBorderLess={ ! 0 }
-								variant={
-									'publish' === e ? 'success' : 'secondary'
+			},
+			{
+				title: ( 0, I18n.__ )( 'Status', 'ohmylms' ),
+				dataIndex: 'status',
+				key: 'status',
+				render( _eLocal16 ) {
+					return (
+						<Controls.BadgeWP
+							isBorderLess={ ! 0 }
+							variant={
+								'publish' === _eLocal16
+									? 'success'
+									: 'secondary'
+							}
+							style={ {
+								textTransform: 'capitalize',
+							} }
+						>
+							{ ( () => {
+								if ( 'publish' === _eLocal16 ) {
+									return ( 0, I18n.__ )(
+										'Published',
+										'ohmylms'
+									);
 								}
-								style={ {
-									textTransform: 'capitalize',
-								} }
+								if ( 'future' === _eLocal16 ) {
+									return ( 0, I18n.__ )(
+										'Scheduled',
+										'ohmylms'
+									);
+								}
+								return ( 0, I18n.__ )( 'Draft', 'ohmylms' );
+							} )() }
+						</Controls.BadgeWP>
+					);
+				},
+			},
+			{
+				title: ( 0, I18n.__ )( 'Last Updated', 'ohmylms' ),
+				dataIndex: 'date_modified',
+				key: 'date_modified',
+				render( _eLocal17 ) {
+					var _tLocal1,
+						_nLocal4 = '',
+						_rLocal4 =
+							( null === ( _tLocal1 = window.ohmylms_params ) ||
+							void 0 === _tLocal1
+								? void 0
+								: _tLocal1.date_format ) || 'F j, Y',
+						a = ''.concat( _rLocal4 );
+					return (
+						_eLocal17 &&
+						'object' === V8( _eLocal17 ) &&
+						_eLocal17.date
+							? ( _nLocal4 = ( 0, wq.dateI18n )(
+									a,
+									_eLocal17.date
+								) )
+							: 'string' === typeof _eLocal17 &&
+								( _nLocal4 = ( 0, wq.dateI18n )(
+									a,
+									_eLocal17
+								) ),
+						(
+							<Controls.BadgeWP
+								isBorderLess={ ! 0 }
+								variant={ 'secondary' }
 							>
-								{ 'publish' === e
-									? ( 0, I18n.__ )( 'Published', 'ohmylms' )
-									: 'future' === e
-										? ( 0, I18n.__ )(
-												'Scheduled',
-												'ohmylms'
-											)
-										: ( 0, I18n.__ )( 'Draft', 'ohmylms' ) }
+								{ _nLocal4 || '-' }
 							</Controls.BadgeWP>
-						);
-					},
+						 )
+					 );
 				},
-				{
-					title: ( 0, I18n.__ )( 'Last Updated', 'ohmylms' ),
-					dataIndex: 'date_modified',
-					key: 'date_modified',
-					render( e ) {
-						var t,
-							n = '',
-							r =
-								( null === ( t = window.ohmylms_params ) ||
-								void 0 === t
-									? void 0
-									: t.date_format ) || 'F j, Y',
-							a = ''.concat( r );
-						return (
-							e && 'object' === V8( e ) && e.date
-								? ( n = ( 0, wq.dateI18n )( a, e.date ) )
-								: 'string' === typeof e &&
-									( n = ( 0, wq.dateI18n )( a, e ) ),
-							(
-								<Controls.BadgeWP
-									isBorderLess={ ! 0 }
-									variant={ 'secondary' }
-								>
-									{ n || '-' }
-								</Controls.BadgeWP>
-							 )
-						 );
-					},
-				},
-				{
-					title: 'Action',
-					dataIndex: 'action',
-					key: 'action',
-					render( e, t ) {
-						return (
-							<Controls.DropdownMenuWP
-								controls={ [
-									{
-										title: ( 0, I18n.__ )(
-											'Edit',
-											'ohmylms'
-										),
-										key: 'edit',
-										onClick() {
-											return de(
-												null == t ? void 0 : t.id
-											);
-										},
-										icon: (
-											<span>
-												<pG.A />
-											</span>
-										),
+			},
+			{
+				title: 'Action',
+				dataIndex: 'action',
+				key: 'action',
+				render( _eLocal18, _tLocal10 ) {
+					return (
+						<Controls.DropdownMenuWP
+							controls={ [
+								{
+									title: ( 0, I18n.__ )( 'Edit', 'ohmylms' ),
+									key: 'edit',
+									onClick() {
+										return de(
+											_tLocal10 === null ||
+												_tLocal10 === void 0
+												? void 0
+												: _tLocal10.id
+										);
 									},
-									{
-										title: ( 0, I18n.__ )(
-											'Delete',
-											'ohmylms'
-										),
-										key: 'delete',
-										onClick() {
-											return pe(
-												null == t ? void 0 : t.id
-											);
-										},
-										icon: <We />,
+									icon: (
+										<span>
+											<pG.A />
+										</span>
+									),
+								},
+								{
+									title: ( 0, I18n.__ )(
+										'Delete',
+										'ohmylms'
+									),
+									key: 'delete',
+									onClick() {
+										return pe(
+											_tLocal10 === null ||
+												_tLocal10 === void 0
+												? void 0
+												: _tLocal10.id
+										);
 									},
-								] }
-								icon={ <q.Icon icon={ Ne.A } /> }
-							/>
-						);
-					},
+									icon: <We />,
+								},
+							] }
+							icon={ <q.Icon icon={ Ne.A } /> }
+						/>
+					);
 				},
-			];
+			},
+		];
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = ! 0;
+					var _eLocal19 = ! 0;
 					return (
-						e && me(),
+						_eLocal19 && me(),
 						function () {
-							e = ! 1;
+							_eLocal19 = ! 1;
 						}
 					 );
 				},
@@ -643,7 +687,9 @@ export function createMembershipList( readRuntime ) {
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! u && t && openNotificationWithIcon( n, t );
+					if ( ! u && t ) {
+						openNotificationWithIcon( n, t );
+					}
 				},
 				[ t ]
 			),
@@ -697,8 +743,13 @@ export function createMembershipList( readRuntime ) {
 									pagination={ ! 1 }
 									loading={ u }
 									onChange={ ge }
-									onRowMouseEnter={ function ( e ) {
-										return B( null == e ? void 0 : e.id );
+									onRowMouseEnter={ function ( _eLocal20 ) {
+										return B(
+											_eLocal20 === null ||
+												_eLocal20 === void 0
+												? void 0
+												: _eLocal20.id
+										);
 									} }
 									onRowMouseLeave={ function () {
 										return B( null );

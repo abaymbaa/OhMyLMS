@@ -42,34 +42,40 @@ export function ChapterPane( { node } ) {
 	const chapterId = group.chapter_id || 0;
 	const ready = Boolean( catalog && chapterId );
 	const attached = ready
-		? attachmentsFor( catalog.attachments, { chapterId } )
+		? attachmentsFor( catalog.attachments, {
+				chapterId,
+			} )
 		: [];
 	const skills = node.children;
 	const holder = w.tree.index.get( node.parentKey );
 	const first = stepAmongSiblings( w.tree, node, -1 ) === null;
 	const last = stepAmongSiblings( w.tree, node, 1 ) === null;
-
 	const check = ( text, key ) => {
 		const draft =
 			key === 'name'
-				? { name: text, code: group.code }
-				: { name: group.name, code: text };
+				? {
+						name: text,
+						code: group.code,
+					}
+				: {
+						name: group.name,
+						code: text,
+					};
 		const code = validateGroup( draft )[ key ];
 		return code ? MESSAGES[ code ]() : '';
 	};
 	const attachedTo = ( skill ) =>
 		ready
-			? attachmentsFor( catalog.attachments, { skillId: skill.term_id } )
-					.length
+			? attachmentsFor( catalog.attachments, {
+					skillId: skill.term_id,
+				} ).length
 			: 0;
 	// What the course requires of each skill (the syllabus decides the chapters and skills; the course, this).
 	const entries = new Map(
 		( catalog?.skills || [] ).map( ( entry ) => [ entry.term_id, entry ] )
 	);
-
 	const openAttach = () => setAttaching( true );
 	const noCourse = ! ready;
-
 	const skillControls = ( child, position ) => [
 		{
 			title: __( 'Open', 'ohmylms' ),
@@ -90,17 +96,20 @@ export function ChapterPane( { node } ) {
 			onClick: () => w.actions.removeSkill( group.id, child.id ),
 		},
 	];
-
 	return (
 		<div className="ohmylms-ws-pane">
 			<Breadcrumb
 				nodes={ pathTo( w.tree.index, node.key ) }
 				labelOf={ ( entry ) =>
-					entry.kind === 'group'
-						? groupLabel( entry.group )
-						: entry.depth === 0
-							? entry.content.name
-							: topicLabel( entry.content )
+					( () => {
+						if ( entry.kind === 'group' ) {
+							return groupLabel( entry.group );
+						}
+						if ( entry.depth === 0 ) {
+							return entry.content.name;
+						}
+						return topicLabel( entry.content );
+					} )()
 				}
 				onSelect={ w.select }
 			/>
@@ -146,7 +155,12 @@ export function ChapterPane( { node } ) {
 				</div>
 				<p className="ohmylms-ws-counts">
 					{ sprintf(
-						_n( '%d skill', '%d skills', skills.length, 'ohmylms' ),
+						/* translators: %d: number of skills. */ _n(
+							'%d skill',
+							'%d skills',
+							skills.length,
+							'ohmylms'
+						),
 						skills.length
 					) }
 				</p>
@@ -191,7 +205,9 @@ export function ChapterPane( { node } ) {
 						text.length > 2000 ? MESSAGES[ 'too-long' ]() : ''
 					}
 					onSave={ ( text ) =>
-						w.actions.saveChapter( group, { description: text } )
+						w.actions.saveChapter( group, {
+							description: text,
+						} )
 					}
 				/>
 			</header>
@@ -334,7 +350,7 @@ export function ChapterPane( { node } ) {
 									meta={
 										owned
 											? sprintf(
-													_n(
+													/* translators: %d: number of attached learning activities. */ _n(
 														'%d attached',
 														'%d attached',
 														owned,
@@ -348,7 +364,7 @@ export function ChapterPane( { node } ) {
 									menu={
 										<RowMenu
 											label={ sprintf(
-												__(
+												/* translators: %s: curriculum item name. */ __(
 													'Actions for %s',
 													'ohmylms'
 												),
@@ -441,7 +457,10 @@ export function ChapterPane( { node } ) {
 					courseId={ catalog.course.id }
 					chapters={ catalog.chapters }
 					skills={ catalog.skills }
-					scope={ { chapterId, skillIds: [] } }
+					scope={ {
+						chapterId,
+						skillIds: [],
+					} }
 					onClose={ () => setAttaching( false ) }
 					onConfirm={ ( { picks, scope, options } ) => {
 						setAttaching( false );

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class WebhookSender.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Webhooks;
 
@@ -24,23 +29,23 @@ class WebhookSender {
 	 * @since 1.0.0
 	 */
 	public function init() {
-		// Course related triggers
+		// Course related triggers.
 		add_action( 'ohmylms_after_checkout_process', array( $this, 'trigger_course_purchase' ), 10 );
 		add_action( 'ohmylms_after_enrolled_student', array( $this, 'trigger_course_enrollment' ), 10, 1 );
 		add_action( 'ohmylms_lesson_already_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
-		// add_action( 'ohmylms_student_completed_course_after_reviewing_quiz', array( $this, 'trigger_course_completion' ), 10, 2 );
+		// add_action( 'ohmylms_student_completed_course_after_reviewing_quiz', array( $this, 'trigger_course_completion' ), 10, 2 );.
 		add_action( 'ohmylms_course_completed', array( $this, 'trigger_course_completion' ), 10, 2 );
 
-		// Lesson related triggers
+		// Lesson related triggers.
 		add_action( 'ohmylms_lesson_completed', array( $this, 'trigger_lesson_completion' ), 10, 3 );
 
-		// Quiz related triggers
+		// Quiz related triggers.
 		add_action( 'ohmylms_quiz_submission', array( $this, 'trigger_quiz_submission' ), 10, 4 );
 
-		// Quiz achievement after review
+		// Quiz achievement after review.
 		add_action( 'ohmylms_rest_review_quiz_attempt', array( $this, 'trigger_quiz_achievement' ), 10, 4 );
 
-		// Assignment related triggers
+		// Assignment related triggers.
 		add_action( 'ohmylms_after_assignment_submitted', array( $this, 'trigger_assignment_submission' ), 10, 3 );
 
 		add_action( 'ohmylms_pro_after_assignment_review', array( $this, 'trigger_assignment_achievement' ), 10, 4 );
@@ -188,8 +193,8 @@ class WebhookSender {
 			return;
 		}
 
-		// Get completion percentage
-		$completion_percentage = 100; // Default to 100% on completion
+		// Get completion percentage.
+		$completion_percentage = 100; // Default to 100% on completion.
 		$student               = new \OhMyLMS\Data\Student( $student_id );
 		$payload_data          = array(
 			'user_id'               => $student_id,
@@ -441,7 +446,7 @@ class WebhookSender {
 		$args = array(
 			'status'        => 'active',
 			'trigger_event' => $trigger_event,
-			'limit'         => -1, // Get all active webhooks for this trigger
+			'limit'         => -1, // Get all active webhooks for this trigger.
 		);
 
 		$webhooks = WebhookStore::get_webhooks( $args );
@@ -450,7 +455,7 @@ class WebhookSender {
 			return array();
 		}
 
-		// Convert to Webhook objects
+		// Convert to Webhook objects.
 		$webhook_objects = array();
 		foreach ( $webhooks as $webhook_data ) {
 			$webhook_objects[] = new Webhook( $webhook_data->id );
@@ -481,27 +486,27 @@ class WebhookSender {
 			return;
 		}
 
-		// Build the final payload based on data mapping
+		// Build the final payload based on data mapping.
 		$payload = $this->build_payload( $payload_data, $data_mapping );
 
-		// Prepare request arguments
+		// Prepare request arguments.
 		$args = array(
 			'method'  => $http_method,
 			'timeout' => 30,
 			'headers' => $this->get_headers( $data_type ),
 		);
 
-		// Format payload based on data type
-		if ( $http_method === 'GET' ) {
+		// Format payload based on data type.
+		if ( 'GET' === $http_method ) {
 			$webhook_url = add_query_arg( $payload, $webhook_url );
 		} else {
 			$args['body'] = $this->format_payload( $payload, $data_type );
 		}
 
-		// Send the webhook
+		// Send the webhook.
 		$response = wp_remote_request( $webhook_url, $args );
 
-		// Log the webhook (optional - you can implement logging if needed)
+		// Log the webhook (optional - you can implement logging if needed).
 		$this->log_webhook( $webhook, $payload, $response );
 	}
 
@@ -519,7 +524,7 @@ class WebhookSender {
 			return $payload_data;
 		}
 
-		// Decode data mapping if it's a JSON string
+		// Decode data mapping if it's a JSON string.
 		if ( is_string( $data_mapping ) ) {
 			$mappings = json_decode( $data_mapping, true );
 		} else {
@@ -540,12 +545,12 @@ class WebhookSender {
 			$key   = $mapping['key'];
 			$value = $mapping['value'];
 
-			// Skip empty keys
+			// Skip empty keys.
 			if ( empty( $key ) ) {
 				continue;
 			}
 
-			// Map the value from payload_data
+			// Map the value from payload_data.
 			if ( isset( $payload_data[ $value ] ) ) {
 				$payload[ $key ] = $payload_data[ $value ];
 			}
@@ -644,7 +649,7 @@ class WebhookSender {
 	 */
 	private function log_webhook( $webhook, $payload, $response ) {
 		// Optional: Implement webhook logging
-		// This could be saved to a custom table or WordPress options
+		// This could be saved to a custom table or WordPress options.
 
 		$log_data = array(
 			'webhook_id'    => $webhook->get_id(),
@@ -664,10 +669,10 @@ class WebhookSender {
 			$log_data['response_body'] = wp_remote_retrieve_body( $response );
 		}
 
-		// Fire action for logging (can be hooked by other plugins/extensions)
+		// Fire action for logging (can be hooked by other plugins/extensions).
 		do_action( 'ohmylms_webhook_sent', $log_data );
 
 		// Optional: Save to custom table or transient for debugging
-		// You can implement this based on your logging requirements
+		// You can implement this based on your logging requirements.
 	}
 }

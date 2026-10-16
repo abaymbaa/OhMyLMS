@@ -13,31 +13,39 @@ export function createSingleChoiceResult( readRuntime ) {
 			data = props.data,
 			index = props.index,
 			o = ( function ( e ) {
-				var t = e.given_answer,
-					n = e.questions;
-				if ( ! t || ! Array.isArray( t ) ) {
+				var _tLocal = e.given_answer,
+					_nLocal = e.questions;
+				if ( ! _tLocal || ! Array.isArray( _tLocal ) ) {
 					return 'in-review';
 				}
-				var r = n
-						.filter( function ( e ) {
-							return '1' === e.is_correct;
+				var r = _nLocal
+						.filter( function ( _eLocal ) {
+							return '1' === _eLocal.is_correct;
 						} )
-						.map( function ( e ) {
-							return e.id;
+						.map( function ( _eLocal2 ) {
+							return _eLocal2.id;
 						} ),
-					a = t.every( function ( e ) {
-						return r.includes( e );
+					a = _tLocal.every( function ( _eLocal3 ) {
+						return r.includes( _eLocal3 );
 					} );
-				return 'single-choice' === e.settings.type
-					? a && 1 === t.length
-						? 'correct'
-						: 'incorrect'
-					: a && t.length === r.length
-						? 'correct'
-						: 'incorrect';
+				return ( () => {
+					if ( 'single-choice' === e.settings.type ) {
+						if ( a && 1 === _tLocal.length ) {
+							return 'correct';
+						}
+						return 'incorrect';
+					}
+					if ( a && _tLocal.length === r.length ) {
+						return 'correct';
+					}
+					return 'incorrect';
+				} )();
 			} )( data ),
 			i =
-				null == data || null === ( t = data.questions ) || void 0 === t
+				data === null ||
+				data === void 0 ||
+				null === ( t = data.questions ) ||
+				void 0 === t
 					? void 0
 					: t.map( function ( e ) {
 							return {
@@ -72,13 +80,22 @@ export function createSingleChoiceResult( readRuntime ) {
 							<Controls.FlexWP direction={ 'column' } gap={ 3 }>
 								<Controls.RadioWP
 									key={ index }
-									selected={
-										null != data && data.given_answer
-											? null == data
-												? void 0
-												: data.given_answer[ 0 ]
-											: null
-									}
+									selected={ ( () => {
+										if (
+											data !== null &&
+											data !== void 0 &&
+											data.given_answer
+										) {
+											if (
+												data === null ||
+												data === void 0
+											) {
+												return void 0;
+											}
+											return data.given_answer[ 0 ];
+										}
+										return null;
+									} )() }
 									disabled={ ! 0 }
 									options={ i }
 								/>
@@ -98,14 +115,15 @@ export function createSingleChoiceResult( readRuntime ) {
 								{ ( 0, I18n.__ )( 'Answer of this question:' ) }
 								<br />
 								<strong>
-									{ ( null == data ||
+									{ ( data === null ||
+									data === void 0 ||
 									null === ( n = data.questions ) ||
 									void 0 === n ||
 									null ===
 										( n = n.find( function ( e ) {
 											return (
 												'1' ===
-												( null == e
+												( e === null || e === void 0
 													? void 0
 													: e.is_correct )
 											);

@@ -20,21 +20,25 @@ export function createQuizNameCell( readRuntime ) {
 				function () {
 					n(
 						'/quiz-edit/'.concat(
-							null == record ? void 0 : record.id
+							record === null || record === void 0
+								? void 0
+								: record.id
 						)
 					);
 				},
-				[ null == record ? void 0 : record.id, n ]
+				[ record === null || record === void 0 ? void 0 : record.id, n ]
 			),
 			a = ( 0, ReactHooks.useCallback )(
 				function () {
 					n(
 						'/quiz-report/'.concat(
-							null == record ? void 0 : record.id
+							record === null || record === void 0
+								? void 0
+								: record.id
 						)
 					);
 				},
-				[ null == record ? void 0 : record.id, n ]
+				[ record === null || record === void 0 ? void 0 : record.id, n ]
 			);
 		return (
 			<React.Fragment>
@@ -51,7 +55,9 @@ export function createQuizNameCell( readRuntime ) {
 					>
 						<v.Link
 							to={ '/quiz-edit/'.concat(
-								null == record ? void 0 : record.id
+								record === null || record === void 0
+									? void 0
+									: record.id
 							) }
 						>
 							<svg
@@ -82,9 +88,15 @@ export function createQuizNameCell( readRuntime ) {
 						>
 							<v.Link
 								to={ '/quiz-edit/'.concat(
-									null == record ? void 0 : record.id
+									record === null || record === void 0
+										? void 0
+										: record.id
 								) }
-								title={ null == record ? void 0 : record.name }
+								title={
+									record === null || record === void 0
+										? void 0
+										: record.name
+								}
 								style={ {
 									textDecoration: 'none',
 								} }
@@ -97,7 +109,9 @@ export function createQuizNameCell( readRuntime ) {
 									truncate={ ! 0 }
 								>
 									{ Ge(
-										null == record ? void 0 : record.name
+										record === null || record === void 0
+											? void 0
+											: record.name
 									) }
 								</Controls.TextWP>
 							</v.Link>

@@ -15,7 +15,6 @@ export function createMigrationProgressModal( readRuntime ) {
 			j4,
 			y: WordPressData,
 		} = readRuntime();
-		props.lms;
 		var t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			n = ( 0, Router.Zp )(),
 			r = ( 0, WordPressData.useSelect )( function ( e ) {
@@ -36,87 +35,106 @@ export function createMigrationProgressModal( readRuntime ) {
 			c = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getMigrationTool();
 			}, [] ),
-			u = ( function ( e, t ) {
+			u = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal2, _tLocal2 ) {
+						var _nLocal =
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
-								o,
-								i,
-								l = [],
-								c = ! 0,
-								u = ! 1;
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
+							var _rLocal,
+								_aLocal,
+								_oLocal,
+								_iLocal,
+								_lLocal = [],
+								_cLocal = ! 0,
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( _oLocal = ( _nLocal =
+										_nLocal.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
-									c = ! 1;
+									_cLocal = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
+										! ( _cLocal = ( _rLocal =
+											_oLocal.call( _nLocal ) ).done ) &&
+										( _lLocal.push( _rLocal.value ),
+										_lLocal.length !== _tLocal2 );
+										_cLocal = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								_uLocal = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
-										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
-										Object( i ) !== i )
+										! _cLocal &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( _iLocal = _nLocal.return() ),
+										Object( _iLocal ) !== _iLocal )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal;
 									}
 								}
 							}
-							return l;
+							return _lLocal;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return T4( e, t );
+					} )( e, _tLocal ) ||
+					( function ( _eLocal4, _tLocal3 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return T4( _eLocal4, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal4 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? T4( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal4.constructor &&
+									( _nLocal2 = _eLocal4.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return T4( _eLocal4, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -127,7 +145,7 @@ export function createMigrationProgressModal( readRuntime ) {
 			s = u[ 0 ],
 			d = u[ 1 ],
 			m = ( 0, ReactHooks.useRef )( ! 1 );
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
 				if (
 					r &&
@@ -136,117 +154,154 @@ export function createMigrationProgressModal( readRuntime ) {
 					c &&
 					0 !== o.length
 				) {
-					( ( m.current = ! 0 ), t.setMigratedCourse( [] ) );
+					m.current = ! 0;
+					t.setMigratedCourse( [] );
 					var e = ( function () {
-						var e,
-							n =
-								( ( e = j4().m( function e() {
-									var n, r;
+						var _eLocal5,
+							_nLocal3 =
+								( ( _eLocal5 = j4().m( function _eLocal6() {
+									var _nLocal4, _rLocal2;
 									return j4().w(
-										function ( e ) {
+										function ( _eLocal7 ) {
 											for (;;) {
-												switch ( ( e.p = e.n ) ) {
+												switch (
+													( _eLocal7.p = _eLocal7.n )
+												) {
 													case 0:
-														( ( e.p = 0 ),
-															( n = 0 ) );
+														_eLocal7.p = 0;
+														_nLocal4 = 0;
+													// Falls through to the shared async state cleanup.
 													case 1:
 														if (
-															! ( n < o.length )
+															! (
+																_nLocal4 <
+																o.length
+															)
 														) {
-															e.n = 3;
+															_eLocal7.n = 3;
 															break;
 														}
 														return (
-															( e.n = 2 ),
+															( _eLocal7.n = 2 ),
 															t.migrateSingleCourse(
 																c,
-																o[ n ]
+																o[ _nLocal4 ]
 															)
 														 );
 													case 2:
-														( n++, ( e.n = 1 ) );
+														_nLocal4++;
+														_eLocal7.n = 1;
 														break;
 													case 3:
-														e.n = 5;
+														_eLocal7.n = 5;
 														break;
 													case 4:
-														( ( e.p = 4 ),
-															( r = e.v ),
-															console.error(
-																'Migration failed',
-																r
-															) );
+														_eLocal7.p = 4;
+														_rLocal2 = _eLocal7.v;
+														console.error(
+															'Migration failed',
+															_rLocal2
+														);
+													// Falls through to the shared async state cleanup.
 													case 5:
 														return (
-															( e.p = 5 ),
+															( _eLocal7.p = 5 ),
 															t.setMigrationStatus(
 																null
 															),
 															d( ! 0 ),
-															e.f( 5 )
+															_eLocal7.f( 5 )
 														 );
 													case 6:
-														return e.a( 2 );
+														return _eLocal7.a( 2 );
 												}
 											}
 										},
-										e,
+										_eLocal6,
 										null,
 										[ [ 0, 4, 5, 6 ] ]
 									);
 								} ) ),
-								function () {
-									var t = this,
-										n = arguments;
-									return new Promise( function ( r, a ) {
-										var o = e.apply( t, n );
-										function i( e ) {
-											M4( o, r, a, i, l, 'next', e );
+								function ( ..._args ) {
+									var _tLocal4 = this,
+										_nLocal5 = _args;
+									return new Promise( function (
+										_rLocal3,
+										_aLocal2
+									) {
+										var _oLocal2 = _eLocal5.apply(
+											_tLocal4,
+											_nLocal5
+										);
+										function _iLocal2( _eLocal8 ) {
+											M4(
+												_oLocal2,
+												_rLocal3,
+												_aLocal2,
+												_iLocal2,
+												_lLocal2,
+												'next',
+												_eLocal8
+											);
 										}
-										function l( e ) {
-											M4( o, r, a, i, l, 'throw', e );
+										function _lLocal2( _eLocal9 ) {
+											M4(
+												_oLocal2,
+												_rLocal3,
+												_aLocal2,
+												_iLocal2,
+												_lLocal2,
+												'throw',
+												_eLocal9
+											);
 										}
-										i( void 0 );
+										_iLocal2( void 0 );
 									} );
 								} );
-						return function () {
-							return n.apply( this, arguments );
+						return function ( ..._args2 ) {
+							return _nLocal3.apply( this, _args2 );
 						};
 					} )();
 					e();
 				}
 			},
 			[ r, a ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					r ||
-						( ( m.current = ! 1 ),
-						d( ! 1 ),
-						t.setMigratedCourse( [] ) );
-				},
-				[ r ]
-			) );
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( ! r ) {
+					{
+						m.current = ! 1;
+						d( ! 1 );
+						t.setMigratedCourse( [] );
+					}
+				}
+			},
+			[ r ]
+		);
 		var p = ( 0, ReactHooks.useCallback )(
 				function () {
-					'migrating' !== a &&
-						( t.setMigrationModalOpen( ! 1 ),
-						t.setMigrationStatus( null ),
-						t.setMigrationCourses( [] ),
-						t.setMigratedCourse( [] ),
-						d( ! 1 ),
-						( m.current = ! 1 ) );
+					if ( 'migrating' !== a ) {
+						{
+							t.setMigrationModalOpen( ! 1 );
+							t.setMigrationStatus( null );
+							t.setMigrationCourses( [] );
+							t.setMigratedCourse( [] );
+							d( ! 1 );
+							m.current = ! 1;
+						}
+					}
 				},
 				[ a ]
 			),
 			v = ( 0, ReactHooks.useCallback )( function () {
-				( t.setMigrationModalOpen( ! 1 ),
-					t.setMigrationStatus( null ),
-					t.setMigrationCourses( [] ),
-					t.setMigratedCourse( [] ),
-					d( ! 1 ),
-					( m.current = ! 1 ),
-					n( '/courses' ) );
+				t.setMigrationModalOpen( ! 1 );
+				t.setMigrationStatus( null );
+				t.setMigrationCourses( [] );
+				t.setMigratedCourse( [] );
+				d( ! 1 );
+				m.current = ! 1;
+				n( '/courses' );
 			}, [] );
 		if ( ! r ) {
 			return null;
@@ -494,24 +549,30 @@ export function createMigrationProgressModal( readRuntime ) {
 							) }
 						</Controls.TextWP>
 						<Controls.FlexWP direction={ 'column' } gap={ 3 }>
-							{ o.map( function ( e, t ) {
-								var n = i.find( function ( t ) {
-										return t.value === e;
+							{ o.map( function ( e, _tLocal5 ) {
+								var _nLocal6 = i.find( function ( _tLocal6 ) {
+										return _tLocal6.value === e;
 									} ),
-									r =
-										( null == n ? void 0 : n.label ) ||
-										String( e ),
-									a = l.includes( e )
-										? 'complete'
-										: t === E
-											? 'processing'
-											: 'pending';
+									_rLocal4 =
+										( _nLocal6 === null ||
+										_nLocal6 === void 0
+											? void 0
+											: _nLocal6.label ) || String( e ),
+									_aLocal3 = ( () => {
+										if ( l.includes( e ) ) {
+											return 'complete';
+										}
+										if ( _tLocal5 === E ) {
+											return 'processing';
+										}
+										return 'pending';
+									} )();
 								return (
 									<N4
 										key={ e }
-										label={ r }
-										index={ t }
-										status={ a }
+										label={ _rLocal4 }
+										index={ _tLocal5 }
+										status={ _aLocal3 }
 									/>
 								);
 							} ) }

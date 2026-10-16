@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Point system Helper class.
  *
@@ -92,7 +92,7 @@ class Point {
 	 */
 	public static function add_points( $user_id, $type, $points, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
 		if ( ! self::maybe_enable() || ! is_numeric( $points ) || $points <= 0 || ! $user_id ) {
-			return false; // Point system is not enabled
+			return false; // Point system is not enabled.
 		}
 
 		$data     = array(
@@ -110,7 +110,7 @@ class Point {
 			set_transient( 'points_added_for_user_' . $user_id, true, 60 );
 			do_action( 'ohmylms_after_point_added', $user_id, $points, $type );
 
-			// Trigger gamification event for tracking
+			// Trigger gamification event for tracking.
 			do_action(
 				'ohmylms_gamification_trigger_used',
 				$type,
@@ -155,13 +155,13 @@ class Point {
 	 */
 	public static function deduct_points( $user_id, $type, $points, $reason = '', $course_id = null, $membership_id = null, $content_id = null ) {
 		if ( ! Reward::maybe_enable() || ! is_numeric( $points ) || $points <= 0 || ! $user_id ) {
-			return false; // Point system is not enabled
+			return false; // Point system is not enabled.
 		}
 
 		$data     = array(
 			'user_id'       => $user_id,
 			'type'          => $type,
-			'points'        => $points ? -$points : 0, // Deduct points
+			'points'        => $points ? -$points : 0, // Deduct points.
 			'reason'        => $reason,
 			'course_id'     => $course_id,
 			'membership_id' => $membership_id,
@@ -198,7 +198,7 @@ class Point {
 				}
 			}
 		}
-		return 0; // Default points if not found
+		return 0; // Default points if not found.
 	}
 
 

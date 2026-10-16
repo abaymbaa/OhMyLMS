@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Student Dashboard Shortcode
  *
@@ -48,24 +48,24 @@ class ShortCodeDashboard {
 	private static function dashboard( $atts ) {
 		$args = shortcode_atts(
 			array(
-				// Header visibility and configuration
+				// Header visibility and configuration.
 				'show_header'                    => 'yes',
-				// Header styling
+				// Header styling.
 				'header_bg_color'                => '#000D2C',
-				// User menu styling
+				// User menu styling.
 				'user_menu_color'                => '#7A8B9A',
 				'user_menu_bg_color'             => '#FFFFFF',
 				'user_menu_font_size'            => 14,
 				'user_menu_font_weight'          => 400,
-				// User menu hover styling
+				// User menu hover styling.
 				'user_menu_hover_color'          => '#000D25',
 				'user_menu_hover_bg_color'       => '#f5f5f5',
-				// User menu icon styling
+				// User menu icon styling.
 				'user_menu_icon_color'           => '#7A8B9A',
 				'user_menu_icon_hover_color'     => '#4361EE',
-				// Dashboard background
+				// Dashboard background.
 				'dashboard_bg_color'             => '#F9FAFD',
-				// Course card button styling
+				// Course card button styling.
 				'course_button_text_color'       => '#FFFFFF',
 				'course_button_bg_color'         => '#4361EE',
 				'course_button_font_size'        => 15,
@@ -73,7 +73,7 @@ class ShortCodeDashboard {
 				'course_button_border_radius'    => 10,
 				'course_button_hover_text_color' => '#ffffff',
 				'course_button_hover_bg_color'   => 'transparent',
-				// Card styling
+				// Card styling.
 				'card_bg_color'                  => '#FFFFFF',
 				'card_text_color'                => '#52525B',
 				'card_text_font_size'            => 14,
@@ -81,7 +81,7 @@ class ShortCodeDashboard {
 				'card_number_color'              => '#1E1E1E',
 				'card_number_font_size'          => 30,
 				'card_number_font_weight'        => 700,
-				// Title styling
+				// Title styling.
 				'title_color'                    => '#1E1E1E',
 				'title_font_size'                => 22,
 				'title_font_weight'              => 700,
@@ -92,10 +92,10 @@ class ShortCodeDashboard {
 
 		$student = new Student( get_current_user_id() );
 
-		// Generate custom styles
+		// Generate custom styles.
 		self::generate_custom_styles( $args );
 
-		// Display header with navigation if enabled
+		// Display header with navigation if enabled.
 		$show_header = filter_var( $args['show_header'], FILTER_VALIDATE_BOOLEAN );
 		if ( $show_header ) {
 			ohmylms_get_template(
@@ -145,7 +145,7 @@ class ShortCodeDashboard {
 	 * @since 1.0.0
 	 */
 	private static function add_navigation_handler( $args = array() ) {
-		// Get URLs from global settings
+		// Get URLs from global settings.
 		$my_profile_url = ohmylms_get_nav_link_url( 'profile' );
 		$my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 		?>
@@ -192,7 +192,7 @@ class ShortCodeDashboard {
 	 * @since 1.0.0
 	 */
 	private static function generate_custom_styles( $args ) {
-		// Sanitize values
+		// Sanitize values.
 		$header_bg_color                = sanitize_hex_color( $args['header_bg_color'] );
 		$user_menu_color                = sanitize_hex_color( $args['user_menu_color'] );
 		$user_menu_bg_color             = sanitize_hex_color( $args['user_menu_bg_color'] );
@@ -211,7 +211,7 @@ class ShortCodeDashboard {
 		$course_button_hover_text_color = sanitize_hex_color( $args['course_button_hover_text_color'] );
 		$course_button_hover_bg_color   = sanitize_hex_color( $args['course_button_hover_bg_color'] );
 
-		// Generate CSS
+		// Generate CSS.
 		?>
 		<style id="ohmylms-dashboard-custom-styles">
 			/* Header Background */

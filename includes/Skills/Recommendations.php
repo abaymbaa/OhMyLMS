@@ -1,4 +1,13 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Next steps for a learner, phrased as suggestions:
+ *  - help: repeated recent errors on a skill suggest its linked lessons, and prerequisites
+ *    that are not yet proficient (a hint to revisit, not proof of a deficit);
+ *  - review: proficient/mastered skills whose evidence has gone stale;
+ *  - ready: unassessed skills whose prerequisites are all proficient or mastered.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
@@ -25,7 +34,7 @@ final class Recommendations {
 		};
 		$items  = array();
 		foreach ( $states as $term_id => $state ) {
-			if ( $state['level'] === 'developing' && self::struggling( $student_id, $term_id ) ) {
+			if ( 'developing' === $state['level'] && self::struggling( $student_id, $term_id ) ) {
 				$weak_prerequisites = array_values(
 					array_filter(
 						Taxonomy::prerequisites( $term_id ),

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class CourseStore.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -75,7 +80,7 @@ class MembershipStore extends DataStore {
 		$post_object = get_post( $membership->get_id() );
 		if ( ! $membership->get_id() || ! $post_object || OHMYLMS_MEMBERSHIP_CPT !== $post_object->post_type ) {
 			return;
-			// throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );
+			// throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );.
 		}
 
 		$membership->set_props(
@@ -155,7 +160,7 @@ class MembershipStore extends DataStore {
 			'_course_categories'            => 'course_categories',
 			'_course_tags'                  => 'course_tags',
 			'_course_curriculum'            => 'course_curriculum',
-			'_course_bundles'                => 'course_bundles',
+			'_course_bundles'               => 'course_bundles',
 			'_excluded_courses'             => 'excluded_courses',
 		);
 
@@ -243,7 +248,7 @@ class MembershipStore extends DataStore {
 			'_course_categories'            => 'course_categories',
 			'_course_tags'                  => 'course_tags',
 			'_course_curriculum'            => 'course_curriculum',
-			'_course_bundles'                => 'course_bundles',
+			'_course_bundles'               => 'course_bundles',
 			'_excluded_courses'             => 'excluded_courses',
 		);
 
@@ -263,13 +268,13 @@ class MembershipStore extends DataStore {
 	public function is_already_purchased( &$membership ) {
 		global $wpdb;
 
-		// Get the current user ID
+		// Get the current user ID.
 		$user_id = get_current_user_id();
 
-		// Prepare the query
+		// Prepare the query.
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 		$query      = $wpdb->prepare( "SELECT membership_id FROM $table_name WHERE user_id = %d AND `status` = %s AND membership_id = %d", $user_id, 'enrolled', $membership->get_id() );
-		// Execute the query and return the result
+		// Execute the query and return the result.
 		$result = $wpdb->get_row( $query, ARRAY_A );
 		return ! empty( $result ) ? true : false;
 	}
@@ -282,17 +287,17 @@ class MembershipStore extends DataStore {
 	public function count_membership_members( &$membership ) {
 		global $wpdb;
 
-		// Table name
+		// Table name.
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
-		// Prepare the query to count rows
+		// Prepare the query to count rows.
 		$query = $wpdb->prepare(
 			"SELECT COUNT(*) FROM $table_name WHERE `status` = %s AND membership_id = %d",
 			'enrolled',
 			$membership->get_id()
 		);
 
-		// Execute the query and return the count
+		// Execute the query and return the count.
 		$count = $wpdb->get_var( $query );
 		return (int) $count;
 	}
@@ -306,32 +311,32 @@ class MembershipStore extends DataStore {
 	public function update_membership_status( &$membership, $new_status ) {
 		global $wpdb;
 
-		// Table where the membership statuses are stored
+		// Table where the membership statuses are stored.
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
-		// Get the current user ID
+		// Get the current user ID.
 		$user_id = get_current_user_id();
 
-		// Validate the input parameters
+		// Validate the input parameters.
 		if ( empty( $membership ) || empty( $new_status ) ) {
 			return false;
 		}
 
-		// Update the membership status in the database
+		// Update the membership status in the database.
 		$result = $wpdb->update(
 			$table_name,
-			array( 'status' => $new_status ), // Data to update
+			array( 'status' => $new_status ), // Data to update.
 			array(
 				'user_id'       => $user_id,
 				'membership_id' => $membership->get_id(),
-			), // Where conditions
-			array( '%s' ), // Format for the updated data
-			array( '%d', '%d', '%s' ) // Format for the where conditions
+			), // Where conditions.
+			array( '%s' ), // Format for the updated data.
+			array( '%d', '%d', '%s' ) // Format for the where conditions.
 		);
 
-		// Check if the update was successful
-		if ( $result !== false ) {
-			// Log the status change or trigger an action hook
+		// Check if the update was successful.
+		if ( false !== $result ) {
+			// Log the status change or trigger an action hook.
 			do_action( 'ohmylms_membership_status_updated', $membership->get_id(), $new_status, $user_id );
 
 			return true;
@@ -363,7 +368,7 @@ class MembershipStore extends DataStore {
 			}
 		}
 
-		// Remove the user from the membership
+		// Remove the user from the membership.
 		$wpdb->update(
 			$membership_table,
 			array(
@@ -400,7 +405,7 @@ class MembershipStore extends DataStore {
 			return false;
 		}
 
-		if ( $subscription_data['period'] === 'every' ) {
+		if ( 'every' === $subscription_data['period'] ) {
 			return 1;
 		}
 		return $subscription_data['duration'];

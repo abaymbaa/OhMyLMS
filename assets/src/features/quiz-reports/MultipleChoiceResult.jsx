@@ -13,42 +13,76 @@ export function createMultipleChoiceResult( readRuntime ) {
 			data = props.data,
 			index = props.index,
 			o = ( function ( e ) {
-				var t,
-					n = e.given_answer,
+				var _tLocal,
+					_nLocal = e.given_answer,
 					r = e.questions;
-				if ( ! n || ! Array.isArray( n ) ) {
+				if ( ! _nLocal || ! Array.isArray( _nLocal ) ) {
 					return 'in-review';
 				}
 				var a = r
-						.filter( function ( e ) {
-							return 1 == ( null == e ? void 0 : e.is_correct );
+						.filter( function ( _eLocal ) {
+							return (
+								1 ==
+								( _eLocal === null || _eLocal === void 0
+									? void 0
+									: _eLocal.is_correct )
+							);
 						} )
-						.map( function ( e ) {
-							return null == e ? void 0 : e.id;
+						.map( function ( _eLocal2 ) {
+							return _eLocal2 === null || _eLocal2 === void 0
+								? void 0
+								: _eLocal2.id;
 						} ),
-					o =
-						null == n
+					_oLocal =
+						_nLocal === null || _nLocal === void 0
 							? void 0
-							: n.every( function ( e ) {
-									return null == a ? void 0 : a.includes( e );
+							: _nLocal.every( function ( _eLocal3 ) {
+									return a === null || a === void 0
+										? void 0
+										: a.includes( _eLocal3 );
 								} );
-				return 'single-choice' ===
-					( null == e || null === ( t = e.settings ) || void 0 === t
-						? void 0
-						: t.type )
-					? o &&
-						1 == ( null == n ? void 0 : n.length ) &&
-						null != a &&
-						a.includes( n[ 0 ] )
-						? 'correct'
-						: 'incorrect'
-					: 'multiple-choice' === e.settings.type
-						? o &&
-							( null == n ? void 0 : n.length ) ===
-								( null == a ? void 0 : a.length )
-							? 'correct'
-							: 'incorrect'
-						: 'in-review';
+				return ( () => {
+					if (
+						'single-choice' ===
+						( e === null ||
+						e === void 0 ||
+						null === ( _tLocal = e.settings ) ||
+						void 0 === _tLocal
+							? void 0
+							: _tLocal.type )
+					) {
+						if (
+							_oLocal &&
+							1 ==
+								( _nLocal === null || _nLocal === void 0
+									? void 0
+									: _nLocal.length ) &&
+							a !== null &&
+							a !== void 0 &&
+							a.includes( _nLocal[ 0 ] )
+						) {
+							return 'correct';
+						}
+						return 'incorrect';
+					}
+					return ( () => {
+						if ( 'multiple-choice' === e.settings.type ) {
+							if (
+								_oLocal &&
+								( _nLocal === null || _nLocal === void 0
+									? void 0
+									: _nLocal.length ) ===
+									( a === null || a === void 0
+										? void 0
+										: a.length )
+							) {
+								return 'correct';
+							}
+							return 'incorrect';
+						}
+						return 'in-review';
+					} )();
+				} )();
 			} )( data );
 		return (
 			<React.Fragment>
@@ -75,73 +109,91 @@ export function createMultipleChoiceResult( readRuntime ) {
 							} }
 						>
 							<Controls.FlexWP direction={ 'column' } gap={ 3 }>
-								{ null == data ||
+								{ data === null ||
+								data === void 0 ||
 								null === ( t = data.questions ) ||
 								void 0 === t
 									? void 0
-									: t.map( function ( e, t ) {
-											var n, a, o, i;
+									: t.map( function ( e, _tLocal2 ) {
+											var _nLocal2, a, _oLocal2, i;
 											return (
 												<Controls.CheckboxWP
-													key={ t }
+													key={ _tLocal2 }
 													value={
-														null == e
+														e === null ||
+														e === void 0
 															? void 0
 															: e.id
 													}
 													disabled={ ! 0 }
 													checked={
-														( null == data ||
+														( data === null ||
+														data === void 0 ||
 														null ===
-															( n =
+															( _nLocal2 =
 																data.given_answer ) ||
-														void 0 === n
+														void 0 === _nLocal2
 															? void 0
-															: n.includes(
+															: _nLocal2.includes(
 																	Number(
-																		null ==
-																			e
+																		e ===
+																			null ||
+																			e ===
+																				void 0
 																			? void 0
 																			: e.id
 																	)
 																) ) ||
-														( null == data ||
+														( data === null ||
+														data === void 0 ||
 														null ===
 															( a =
 																data.given_answer ) ||
 														void 0 === a
 															? void 0
 															: a.includes(
-																	null == e
+																	e ===
+																		null ||
+																		e ===
+																			void 0
 																		? void 0
 																		: e.id
 																) )
 													}
 													className={ '\n                                                '
 														.concat(
-															( null != data &&
+															( data !== null &&
+																data !==
+																	void 0 &&
 																null !==
-																	( o =
+																	( _oLocal2 =
 																		data.given_answer ) &&
-																void 0 !== o &&
-																o.includes(
+																void 0 !==
+																	_oLocal2 &&
+																_oLocal2.includes(
 																	Number(
-																		null ==
-																			e
+																		e ===
+																			null ||
+																			e ===
+																				void 0
 																			? void 0
 																			: e.id
 																	)
 																) ) ||
-																( null !=
-																	data &&
+																( data !==
+																	null &&
+																	data !==
+																		void 0 &&
 																	null !==
 																		( i =
 																			data.given_answer ) &&
 																	void 0 !==
 																		i &&
 																	i.includes(
-																		null ==
-																			e
+																		e ===
+																			null ||
+																			e ===
+																				void 0
 																			? void 0
 																			: e.id
 																	) )
@@ -151,7 +203,8 @@ export function createMultipleChoiceResult( readRuntime ) {
 														)
 														.concat(
 															1 ==
-																( null == e
+																( e === null ||
+																e === void 0
 																	? void 0
 																	: e.is_correct )
 																? 'ohmylms-correct'
@@ -159,7 +212,8 @@ export function createMultipleChoiceResult( readRuntime ) {
 															'\n                                            '
 														) }
 													label={
-														null == e
+														e === null ||
+														e === void 0
 															? void 0
 															: e.answer
 													}
@@ -182,14 +236,15 @@ export function createMultipleChoiceResult( readRuntime ) {
 								{ ( 0, I18n.__ )( 'Answer of this question:' ) }
 								<br />
 								<strong>
-									{ ( null == data ||
+									{ ( data === null ||
+									data === void 0 ||
 									null === ( n = data.questions ) ||
 									void 0 === n ||
 									null ===
 										( n = n.filter( function ( e ) {
 											return (
 												'1' ===
-												( null == e
+												( e === null || e === void 0
 													? void 0
 													: e.is_correct )
 											);

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Object-level authorization for question and quiz authoring.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 defined( 'ABSPATH' ) || exit;

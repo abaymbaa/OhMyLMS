@@ -45,10 +45,10 @@ export function createMatchingEditor( readRuntime ) {
 			s = pm( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
 			d = s[ 0 ],
 			m = s[ 1 ],
-			p = function ( n, r, a ) {
+			p = function ( n, r, _aLocal ) {
 				addContentToQuestion(
 					questionId,
-					a
+					_aLocal
 						? options.map( function ( e ) {
 								return e.id === n
 									? dm(
@@ -79,7 +79,7 @@ export function createMatchingEditor( readRuntime ) {
 							} )
 				);
 			},
-			Router = function ( n, r, a ) {
+			Router = function ( n, r, _aLocal2 ) {
 				addContentToQuestion(
 					questionId,
 					options.map( function ( e ) {
@@ -88,7 +88,7 @@ export function createMatchingEditor( readRuntime ) {
 							: dm(
 									dm( {}, e ),
 									{},
-									a
+									_aLocal2
 										? {
 												matching_data: dm(
 													dm( {}, e.matching_data ),
@@ -152,50 +152,50 @@ export function createMatchingEditor( readRuntime ) {
 						</Controls.TextWP>
 					</Controls.FlexBlockWP>
 				</Controls.FlexWP>
-				{ ( 0, xs.I )( options ).map( function ( a, l ) {
-					var c, s;
+				{ ( 0, xs.I )( options ).map( function ( _aLocal3, _lLocal ) {
+					var _cLocal, _sLocal;
 					return (
 						<Controls.CardWP
-							key={ a.id }
+							key={ _aLocal3.id }
 							isBorderless={ ! 0 }
-							draggable={ d !== a.id }
+							draggable={ d !== _aLocal3.id }
 							onDragStart={ function ( e ) {
-								return ( function ( e, t ) {
-									( h( t ),
-										localStorage.setItem(
-											'draggedItemIndex',
-											t
-										),
-										e.currentTarget.classList.add(
-											'dragging'
-										) );
-								} )( e, l );
+								return ( function ( _eLocal, t ) {
+									h( t );
+									localStorage.setItem(
+										'draggedItemIndex',
+										t
+									);
+									_eLocal.currentTarget.classList.add(
+										'dragging'
+									);
+								} )( e, _lLocal );
 							} }
 							onDragOver={ _ }
 							onDrop={ function ( n ) {
-								return ( function ( n, r ) {
-									n.preventDefault();
-									var a =
+								return ( function ( _nLocal, r ) {
+									_nLocal.preventDefault();
+									var _aLocal4 =
 										localStorage.getItem(
 											'draggedItemIndex'
 										);
-									if ( null !== a && a != r ) {
+									if ( null !== _aLocal4 && _aLocal4 != r ) {
 										var i = um( options ),
-											l = pm( i.splice( a, 1 ), 1 )[ 0 ];
-										( i.splice( r, 0, l ),
-											i.forEach( function ( e, t ) {
-												e.order_number = t + 1;
-											} ),
-											addContentToQuestion(
-												questionId,
-												i
-											),
-											h( null ),
-											localStorage.removeItem(
-												'draggedItemIndex'
-											) );
+											_lLocal2 = pm(
+												i.splice( _aLocal4, 1 ),
+												1
+											)[ 0 ];
+										i.splice( r, 0, _lLocal2 );
+										i.forEach( function ( e, t ) {
+											e.order_number = t + 1;
+										} );
+										addContentToQuestion( questionId, i );
+										h( null );
+										localStorage.removeItem(
+											'draggedItemIndex'
+										);
 									}
-								} )( n, l );
+								} )( n, _lLocal );
 							} }
 							onDragEnd={ w }
 							padding={ '4px' }
@@ -211,30 +211,33 @@ export function createMatchingEditor( readRuntime ) {
 											<Controls.FlexBlockWP>
 												{ React.createElement( qd, {
 													id:
-														null == a
+														_aLocal3 === null ||
+														_aLocal3 === void 0
 															? void 0
-															: a.id,
+															: _aLocal3.id,
 													value:
-														null == a
+														_aLocal3 === null ||
+														_aLocal3 === void 0
 															? void 0
-															: a.answer,
+															: _aLocal3.answer,
 													imgSrc:
-														null == a
+														_aLocal3 === null ||
+														_aLocal3 === void 0
 															? void 0
-															: a.image_url,
+															: _aLocal3.image_url,
 													onChange( e ) {
 														return p(
-															a.id,
+															_aLocal3.id,
 															e,
 															! 1
 														);
 													},
 													onImageChange: Router,
 													onFocus() {
-														return E( a.id );
+														return E( _aLocal3.id );
 													},
 													onBlur() {
-														return S( a.id );
+														return S( _aLocal3.id );
 													},
 													showError:
 														hasValidationErrors,
@@ -257,28 +260,31 @@ export function createMatchingEditor( readRuntime ) {
 											<Controls.FlexBlockWP>
 												{ React.createElement( qd, {
 													id:
-														null == a
+														_aLocal3 === null ||
+														_aLocal3 === void 0
 															? void 0
-															: a.id,
+															: _aLocal3.id,
 													value:
-														null == a ||
+														_aLocal3 === null ||
+														_aLocal3 === void 0 ||
 														null ===
-															( c =
-																a.matching_data ) ||
-														void 0 === c
+															( _cLocal =
+																_aLocal3.matching_data ) ||
+														void 0 === _cLocal
 															? void 0
-															: c.label,
+															: _cLocal.label,
 													imgSrc:
-														null == a ||
+														_aLocal3 === null ||
+														_aLocal3 === void 0 ||
 														null ===
-															( s =
-																a.matching_data ) ||
-														void 0 === s
+															( _sLocal =
+																_aLocal3.matching_data ) ||
+														void 0 === _sLocal
 															? void 0
-															: s.image_url,
+															: _sLocal.image_url,
 													onChange( e ) {
 														return p(
-															a.id,
+															_aLocal3.id,
 															e,
 															! 0
 														);
@@ -291,10 +297,10 @@ export function createMatchingEditor( readRuntime ) {
 														);
 													},
 													onFocus() {
-														return E( a.id );
+														return E( _aLocal3.id );
 													},
 													onBlur() {
-														return S( a.id );
+														return S( _aLocal3.id );
 													},
 													showError:
 														hasValidationErrors,
@@ -329,18 +335,15 @@ export function createMatchingEditor( readRuntime ) {
 													)
 												 );
 											}
-											var a = options.filter(
+											var _aLocal5 = options.filter(
 													function ( e ) {
 														return e.id !== r;
 													}
 												),
 												o = dm( {}, question );
-											( ( o.questions = a ),
-												updateQuestionData(
-													questionId,
-													o
-												) );
-										} )( a.id );
+											o.questions = _aLocal5;
+											updateQuestionData( questionId, o );
+										} )( _aLocal3.id );
 									} }
 								/>
 							</Controls.FlexWP>
@@ -364,7 +367,7 @@ export function createMatchingEditor( readRuntime ) {
 					}
 					onClick={ function () {
 						var r = dm( {}, question ),
-							a = {
+							_aLocal6 = {
 								id: Date.now(),
 								answer: '',
 								is_correct: ! 1,
@@ -378,14 +381,14 @@ export function createMatchingEditor( readRuntime ) {
 									image_url: '',
 								},
 							};
-						( ( r.questions = [].concat( um( r.questions ), [
-							dm( {}, a ),
-						] ) ),
-							updateQuestionData( questionId, r ),
-							addContentToQuestion(
-								questionId,
-								[].concat( um( options ), [ dm( {}, a ) ] )
-							) );
+						r.questions = [].concat( um( r.questions ), [
+							dm( {}, _aLocal6 ),
+						] );
+						updateQuestionData( questionId, r );
+						addContentToQuestion(
+							questionId,
+							[].concat( um( options ), [ dm( {}, _aLocal6 ) ] )
+						);
 					} }
 					variant={ 'secondary' }
 					size={ 'small' }

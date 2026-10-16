@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling quiz REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -495,7 +500,7 @@ class QuizController extends RestController {
 			);
 		}
 
-		if ( isset( $request['orderby'] ) && $request['orderby'] === 'course_name' ) {
+		if ( isset( $request['orderby'] ) && 'course_name' === $request['orderby'] ) {
 			usort(
 				$posts,
 				function ( $a, $b ) use ( $request ) {
@@ -517,7 +522,7 @@ class QuizController extends RestController {
 				}
 			);
 
-			// Re-index array (optional)
+			// Re-index array (optional).
 			$posts                = array_values( $posts );
 			$total_filtered_posts = count( $posts );
 		}
@@ -1397,12 +1402,12 @@ class QuizController extends RestController {
 	 */
 	public function get_questions( $request ) {
 		$quiz_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
-		// Check the chapter id exist or not
+		// Check the chapter id exist or not.
 		if ( ! $quiz_id ) {
 			return new WP_Error( 'ohmylms_rest_quiz_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing chapter by chapter id
+		// Get existing chapter by chapter id.
 		$quiz = ohmylms_get_quiz( $quiz_id );
 
 		// Check the chapter exist or not.
@@ -1436,12 +1441,12 @@ class QuizController extends RestController {
 	public function update_questions( $request ) {
 		$quiz_id = (int) $request['id'];
 
-		// Check the chapter id exist or not
+		// Check the chapter id exist or not.
 		if ( ! $quiz_id ) {
 			return new WP_Error( 'ohmylms_rest_chapter_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing chapter by chapter id
+		// Get existing chapter by chapter id.
 		$quiz = ohmylms_get_quiz( $quiz_id );
 
 		// Check the chapter exist or not.

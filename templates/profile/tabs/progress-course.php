@@ -36,11 +36,11 @@ $no_course_found = false;
 				?>
 			<?php endif; ?>
 		<?php endforeach; ?>
-		<?php if ( $no_course_found == false ) : ?>
+		<?php if ( false == $no_course_found ) : ?>
 			<div class="no-course-data">
 				<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 				<p>
-					<?php echo __( 'No In-Progress Courses.', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'No In-Progress Courses.', 'ohmylms' ); ?>
 				</p>
 			</div>
 		<?php endif; ?>
@@ -49,7 +49,7 @@ $no_course_found = false;
 	<div class="no-course-data">
 		<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 		<p>
-			<?php echo __( 'No In-Progress Courses.', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'No In-Progress Courses.', 'ohmylms' ); ?>
 		</p>
 	</div>
 <?php } ?>

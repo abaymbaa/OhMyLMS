@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * CourseListElement class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\WPBakery\Elements;
 
@@ -23,10 +28,10 @@ class CourseListElement {
 	public function __construct() {
 		$this->register_element();
 
-		// Add filter to decode param_group data
+		// Add filter to decode param_group data.
 		add_filter( 'shortcode_atts_ohmylms_course_list', array( $this, 'decode_course_rows' ), 10, 3 );
 
-		// Disable WPBakery shortcode caching for real-time preview updates
+		// Disable WPBakery shortcode caching for real-time preview updates.
 		add_filter( 'vc_shortcode_content_filter_after', array( $this, 'disable_cache_for_preview' ), 10, 2 );
 	}
 
@@ -39,7 +44,7 @@ class CourseListElement {
 	 */
 	public function disable_cache_for_preview( $output, $shortcode ) {
 		if ( 'ohmylms_course_list' === $shortcode ) {
-			// Add a timestamp to force cache bypass in editor
+			// Add a timestamp to force cache bypass in editor.
 			if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 				$output .= '<!-- vc-no-cache:' . time() . ' -->';
 			}
@@ -74,11 +79,11 @@ class CourseListElement {
 	 * @return array Modified attributes
 	 */
 	public function decode_course_rows( $out, $pairs, $atts ) {
-		// Only sync settings to main options if in WPBakery editor/admin, not on frontend/default listing
+		// Only sync settings to main options if in WPBakery editor/admin, not on frontend/default listing.
 		if ( is_admin() && function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 			self::sync_settings_to_options( $atts );
 		}
-		// Fallback to global options if not set in shortcode/element
+		// Fallback to global options if not set in shortcode/element.
 		if ( empty( $out['layout'] ) ) {
 			$out['layout'] = get_option( 'ohmylms_archive_page_layout', 'grid' );
 		}
@@ -92,7 +97,7 @@ class CourseListElement {
 		if ( empty( $out['show_filter'] ) ) {
 			$out['show_filter'] = get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' );
 		}
-		// Course rows (for carousel/grid-style3/4)
+		// Course rows (for carousel/grid-style3/4).
 		if ( isset( $atts['course_rows'] ) && is_string( $atts['course_rows'] ) && ! empty( $atts['course_rows'] ) ) {
 			$decoded = json_decode( urldecode( $atts['course_rows'] ), true );
 			if ( is_array( $decoded ) ) {
@@ -102,7 +107,7 @@ class CourseListElement {
 			$out['course_rows'] = get_option( 'ohmylms_archive_page_row', array() );
 		}
 
-		// Filter out show_filter, show_search, show_sort for Layout 3 and 4
+		// Filter out show_filter, show_search, show_sort for Layout 3 and 4.
 		if ( isset( $out['layout_style'] ) && in_array( $out['layout_style'], array( 'grid-style3', 'grid-style4' ) ) ) {
 			$out['show_filter'] = 'no';
 			$out['show_search'] = 'no';
@@ -122,23 +127,23 @@ class CourseListElement {
 			return;
 		}
 
-		// Build layout style options based on pro license
+		// Build layout style options based on pro license.
 		$is_pro_active = true;
 
 		$layout_style_options = array(
 			__( 'Layout 1', 'ohmylms' ) => 'grid-style1',
 		);
 
-		// Add Layout 3 & 4 only if pro is active
+		// Add Layout 3 & 4 only if pro is active.
 		if ( $is_pro_active ) {
 			$layout_style_options[ __( 'Layout 2 (Pro)', 'ohmylms' ) ] = 'grid-style2';
 			$layout_style_options[ __( 'Layout 3 (Pro)', 'ohmylms' ) ] = 'grid-style3';
 			$layout_style_options[ __( 'Layout 4 (Pro)', 'ohmylms' ) ] = 'grid-style4';
 		}
 
-		// Build params array
+		// Build params array.
 		$params = array(
-			// Layout
+			// Layout.
 			array(
 				'type'        => 'dropdown',
 				'heading'     => __( 'Layout', 'ohmylms' ),
@@ -151,7 +156,7 @@ class CourseListElement {
 				'description' => __( 'Choose layout type', 'ohmylms' ),
 				'admin_label' => true,
 			),
-			// Layout Style
+			// Layout Style.
 			array(
 				'type'             => 'dropdown',
 				'heading'          => __( 'Layout Style', 'ohmylms' ),
@@ -166,7 +171,7 @@ class CourseListElement {
 				'edit_field_class' => 'vc_col-sm-6 vc_column',
 			),
 
-			// Columns
+			// Columns.
 				array(
 					'type'        => 'dropdown',
 					'heading'     => __( 'Columns Per Row', 'ohmylms' ),
@@ -185,7 +190,7 @@ class CourseListElement {
 					),
 				),
 
-			// Feature Toggles
+			// Feature Toggles.
 				array(
 					'type'        => 'checkbox',
 					'heading'     => __( 'Show Filter', 'ohmylms' ),
@@ -248,7 +253,7 @@ class CourseListElement {
 				'value'       => self::dropdown_values( \OhMyLMS\Curriculum\Placement::bundle_options() ),
 				'description' => __( 'Only show courses in this Course Bundle.', 'ohmylms' ),
 			),
-			// Row Settings (Pro)
+			// Row Settings (Pro).
 
 						array(
 							'type'        => 'param_group',
@@ -334,7 +339,7 @@ class CourseListElement {
 				'param_name' => 'button_color',
 				'group'      => __( 'Style', 'ohmylms' ),
 			),
-			// Advanced
+			// Advanced.
 			array(
 				'type'        => 'textfield',
 				'heading'     => __( 'Extra CSS Class', 'ohmylms' ),
@@ -344,12 +349,12 @@ class CourseListElement {
 			),
 		);
 
-		// Add Pro-only fields if Pro is active
+		// Add Pro-only fields if Pro is active.
 		if ( $is_pro_active ) {
-			// Add Carousel Layout Notice after layout_style
+			// Add Carousel Layout Notice after layout_style.
 			$layout_style_index = 0;
 			foreach ( $params as $index => $param ) {
-				if ( isset( $param['param_name'] ) && $param['param_name'] === 'layout_style' ) {
+				if ( isset( $param['param_name'] ) && 'layout_style' === $param['param_name'] ) {
 					$layout_style_index = $index + 1;
 					break;
 				}
@@ -374,10 +379,10 @@ class CourseListElement {
 				);
 			}
 
-			// Add "Courses Per Page" field after "columns"
+			// Add "Courses Per Page" field after "columns".
 			$columns_index = 0;
 			foreach ( $params as $index => $param ) {
-				if ( isset( $param['param_name'] ) && $param['param_name'] === 'columns' ) {
+				if ( isset( $param['param_name'] ) && 'columns' === $param['param_name'] ) {
 					$columns_index = $index + 1;
 					break;
 				}
@@ -402,9 +407,9 @@ class CourseListElement {
 			}
 		}
 
-		// Add pro notices if pro is not active
+		// Add pro notices if pro is not active.
 		if ( ! $is_pro_active ) {
-			// Layout 3/4 Pro Notice
+			// Layout 3/4 Pro Notice.
 			array_splice(
 				$params,
 				2,
@@ -422,10 +427,10 @@ class CourseListElement {
 				)
 			);
 
-			// Add Courses Per Page Pro Notice after columns field
+			// Add Courses Per Page Pro Notice after columns field.
 			$columns_index = 0;
 			foreach ( $params as $index => $param ) {
-				if ( isset( $param['param_name'] ) && $param['param_name'] === 'columns' ) {
+				if ( isset( $param['param_name'] ) && 'columns' === $param['param_name'] ) {
 					$columns_index = $index + 1;
 					break;
 				}
@@ -473,7 +478,7 @@ class CourseListElement {
 		if ( isset( $atts['layout_style'] ) ) {
 			update_option( 'ohmylms_archive_page_layout_style', $atts['layout_style'] );
 		}
-		// Only allow changing posts_per_page if pro is active
+		// Only allow changing posts_per_page if pro is active.
 		if ( isset( $atts['posts_per_page'] ) && true ) {
 			update_option( 'ohmylms_archive_page_per_page', $atts['posts_per_page'] );
 		}

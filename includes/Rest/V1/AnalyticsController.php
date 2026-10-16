@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -171,7 +171,7 @@ class AnalyticsController extends RestController {
 	private function get_course_earning_data( $course_id, $filter, $start_date = null, $end_date = null ) {
 		global $wpdb;
 
-		// Convert filters into actual date ranges
+		// Convert filters into actual date ranges.
 		switch ( $filter ) {
 			case 'last_30_days':
 				$start_date = ( new \DateTime( '-30 days' ) )->format( 'Y-m-d' );
@@ -194,7 +194,7 @@ class AnalyticsController extends RestController {
 				$end_date   = ( new \DateTime() )->format( 'Y-m-d' );
 				break;
 			case 'custom':
-				// Ensure both dates are provided
+				// Ensure both dates are provided.
 				if ( ! $start_date || ! $end_date ) {
 					return new \WP_Error( 'invalid_date', 'Start and End date are required for custom filter' );
 				}
@@ -205,7 +205,7 @@ class AnalyticsController extends RestController {
 				break;
 		}
 
-		// Base query filtered by course_id in order item meta
+		// Base query filtered by course_id in order item meta.
 		$query = "
             SELECT
                 p.ID as order_id,
@@ -234,12 +234,12 @@ class AnalyticsController extends RestController {
 
 		$results = $wpdb->get_results( $query, ARRAY_A );
 
-		// Setup vars
+		// Setup vars.
 		$total_earning     = 0;
 		$total_net_earning = 0;
 		$total_refund      = 0;
 
-		// Determine grouping
+		// Determine grouping.
 		$group_by = 'daily';
 		$start    = new \DateTime( $start_date );
 		$end      = new \DateTime( $end_date );
@@ -251,15 +251,15 @@ class AnalyticsController extends RestController {
 		if ( $interval->y >= 1 && $interval->m + $interval->y * 12 > 12 ) {
 			$group_by = 'yearly';
 		}
-		if ( $filter === 'current_year' || $filter === 'last_12_months' ) {
+		if ( 'current_year' === $filter || 'last_12_months' === $filter ) {
 			$group_by = 'monthly';
 		}
 
-		// Fill in data
+		// Fill in data.
 		foreach ( $results as $result ) {
 			$line_total     = floatval( $result['order_total'] );
 			$total_earning += $line_total;
-			if ( $result['order_status'] === 'ohmylms-completed' ) {
+			if ( 'ohmylms-completed' === $result['order_status'] ) {
 				$total_net_earning += $line_total;
 
 				$order = ohmylms_ecommerce_get_order( $result['order_id'] );
@@ -269,7 +269,7 @@ class AnalyticsController extends RestController {
 					$total_net_earning -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
-			if ( $result['order_status'] === 'ohmylms-refunded' ) {
+			if ( 'ohmylms-refunded' === $result['order_status'] ) {
 				$total_refund += $line_total;
 			}
 		}
@@ -289,7 +289,7 @@ class AnalyticsController extends RestController {
 	private function get_course_earning_graph_data( $course_id, $filter, $start_date = null, $end_date = null ) {
 		global $wpdb;
 
-		// Convert filters into actual date ranges
+		// Convert filters into actual date ranges.
 		switch ( $filter ) {
 			case 'last_30_days':
 				$start_date = ( new \DateTime( '-30 days' ) )->format( 'Y-m-d' );
@@ -312,7 +312,7 @@ class AnalyticsController extends RestController {
 				$end_date   = ( new \DateTime() )->format( 'Y-m-d' );
 				break;
 			case 'custom':
-				// Ensure both dates are provided
+				// Ensure both dates are provided.
 				if ( ! $start_date || ! $end_date ) {
 					return new \WP_Error( 'invalid_date', 'Start and End date are required for custom filter' );
 				}
@@ -323,7 +323,7 @@ class AnalyticsController extends RestController {
 				break;
 		}
 
-		// Base query filtered by course_id in order item meta
+		// Base query filtered by course_id in order item meta.
 		$query = "
             SELECT
                 p.ID as order_id,
@@ -351,7 +351,7 @@ class AnalyticsController extends RestController {
 
 		$graph_data = array();
 
-		// Determine grouping
+		// Determine grouping.
 		$group_by = 'daily';
 		$start    = new \DateTime( $start_date );
 		$end      = new \DateTime( $end_date );
@@ -363,16 +363,16 @@ class AnalyticsController extends RestController {
 		if ( $interval->y >= 1 && $interval->m + $interval->y * 12 > 12 ) {
 			$group_by = 'yearly';
 		}
-		if ( $filter === 'current_year' || $filter === 'last_12_months' ) {
+		if ( 'current_year' === $filter || 'last_12_months' === $filter ) {
 			$group_by = 'monthly';
 		}
 
-		// Create the period
-		$period_interval = $group_by === 'daily' ? 'P1D' : ( $group_by === 'monthly' ? 'P1M' : 'P1Y' );
+		// Create the period.
+		$period_interval = 'daily' === $group_by ? 'P1D' : ( 'monthly' === $group_by ? 'P1M' : 'P1Y' );
 		$date_period     = new \DatePeriod( $start, new \DateInterval( $period_interval ), $end->modify( '+1 day' ) );
 
 		foreach ( $date_period as $date ) {
-			$key                = $date->format( $group_by === 'daily' ? 'Y-m-d' : ( $group_by === 'monthly' ? 'Y-m' : 'Y' ) );
+			$key                = $date->format( 'daily' === $group_by ? 'Y-m-d' : ( 'monthly' === $group_by ? 'Y-m' : 'Y' ) );
 			$graph_data[ $key ] = array(
 				'earning' => 0,
 				'net'     => 0,
@@ -380,13 +380,13 @@ class AnalyticsController extends RestController {
 			);
 		}
 
-		// Fill in data
+		// Fill in data.
 		foreach ( $results as $result ) {
 			$line_total = floatval( $result['line_total'] );
 
-			$date_key = date( $group_by === 'daily' ? 'Y-m-d' : ( $group_by === 'monthly' ? 'Y-m' : 'Y' ), strtotime( $result['post_date'] ) );
+			$date_key = date( 'daily' === $group_by ? 'Y-m-d' : ( 'monthly' === $group_by ? 'Y-m' : 'Y' ), strtotime( $result['post_date'] ) );
 
-			if ( $result['order_status'] === 'ohmylms-completed' ) {
+			if ( 'ohmylms-completed' === $result['order_status'] ) {
 
 				$graph_data[ $date_key ]['net'] += $line_total;
 
@@ -397,7 +397,7 @@ class AnalyticsController extends RestController {
 					$graph_data[ $date_key ]['net']    -= ohmylms_format_decimal( get_post_meta( $refund_id, '_refund_amount', true ), ohmylms_get_price_decimals() );
 				}
 			}
-			if ( $result['order_status'] === 'ohmylms-refunded' ) {
+			if ( 'ohmylms-refunded' === $result['order_status'] ) {
 
 				$graph_data[ $date_key ]['refund'] += $line_total;
 			}
@@ -468,17 +468,17 @@ class AnalyticsController extends RestController {
 		$order          = sanitize_key( $request->get_param( 'order' ) );
 		$search         = sanitize_text_field( $request->get_param( 'search' ) );
 
-		// Default fallback if empty
+		// Default fallback if empty.
 		$type    = ! empty( $type ) ? $type : 'all';
 		$sort_by = ! empty( $sort_by ) ? $sort_by : 'date';
 		$order   = ! empty( $order ) ? strtoupper( $order ) : 'DESC';
 
-		// Validate order value (only ASC or DESC allowed)
+		// Validate order value (only ASC or DESC allowed).
 		if ( ! in_array( $order, array( 'ASC', 'DESC' ), true ) ) {
 			$order = 'DESC';
 		}
 
-		// Validate date formats (optional stricter check)
+		// Validate date formats (optional stricter check).
 		if ( ! empty( $start_date ) && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start_date ) ) {
 			return new WP_Error( 'ohmylms_rest_invalid_start_date', __( 'Invalid start date format.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
@@ -487,13 +487,13 @@ class AnalyticsController extends RestController {
 			return new WP_Error( 'ohmylms_rest_invalid_end_date', __( 'Invalid end date format.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get range and grouping
+		// Get range and grouping.
 		$range      = $this->get_date_range_from_filter( $filter, $start_date, $end_date );
 		$start_date = $range['start_date'];
 		$end_date   = $range['end_date'];
 		$group_by   = $range['group_by'];
 
-		// Query Preparation
+		// Query Preparation.
 		if ( 'all' !== $filter ) {
 			$query = "SELECT 
 				p.ID as order_id, 
@@ -520,20 +520,20 @@ class AnalyticsController extends RestController {
 				AND p.post_status IN ('ohmylms-completed', 'ohmylms-refunded')
 				AND pm.meta_key = '_order_total'";
 
-			$prepared_query = $query; // No dynamic data
+			$prepared_query = $query; // No dynamic data.
 		}
 
 		$results = $wpdb->get_results( $prepared_query, ARRAY_A );
 
-		// Initialize
+		// Initialize.
 		$total_earning     = 0;
 		$total_net_earning = 0;
 		$total_refund      = 0;
 		$graph_data        = array();
 
-		// Setup graph buckets
+		// Setup graph buckets.
 		$interval = new \DateInterval(
-			$group_by === 'daily' ? 'P1D' : ( $group_by === 'monthly' ? 'P1M' : 'P1Y' )
+			'daily' === $group_by ? 'P1D' : ( 'monthly' === $group_by ? 'P1M' : 'P1Y' )
 		);
 		$start    = new \DateTime( $start_date );
 		$end      = ( new \DateTime( $end_date ) )->modify( '+1 day' );
@@ -541,7 +541,7 @@ class AnalyticsController extends RestController {
 
 		foreach ( $period as $date ) {
 			$key                = $date->format(
-				$group_by === 'daily' ? 'Y-m-d' : ( $group_by === 'monthly' ? 'Y-m' : 'Y' )
+				'daily' === $group_by ? 'Y-m-d' : ( 'monthly' === $group_by ? 'Y-m' : 'Y' )
 			);
 			$graph_data[ $key ] = array(
 				'earning' => 0,
@@ -550,15 +550,15 @@ class AnalyticsController extends RestController {
 			);
 		}
 
-		// Parse Results
+		// Parse Results.
 		foreach ( $results as $result ) {
 			$amount   = floatval( $result['order_total'] );
 			$date_key = date(
-				$group_by === 'daily' ? 'Y-m-d' : ( $group_by === 'monthly' ? 'Y-m' : 'Y' ),
+				'daily' === $group_by ? 'Y-m-d' : ( 'monthly' === $group_by ? 'Y-m' : 'Y' ),
 				strtotime( $result['post_date'] )
 			);
 
-			if ( $result['order_status'] === 'ohmylms-completed' ) {
+			if ( 'ohmylms-completed' === $result['order_status'] ) {
 				$total_net_earning              += $amount;
 				$graph_data[ $date_key ]['net'] += $amount;
 				$single_order                    = ohmylms_ecommerce_get_order( $result['order_id'] );
@@ -572,7 +572,7 @@ class AnalyticsController extends RestController {
 				}
 			}
 
-			if ( $result['order_status'] === 'ohmylms-refunded' ) {
+			if ( 'ohmylms-refunded' === $result['order_status'] ) {
 				$total_refund                      += $amount;
 				$graph_data[ $date_key ]['refund'] += $amount;
 			}
@@ -583,7 +583,7 @@ class AnalyticsController extends RestController {
 
 		ksort( $graph_data );
 
-		// Previous period calculations
+		// Previous period calculations.
 		$previous_range      = $this->get_previous_date_range( $start_date, $end_date );
 		$previous_start_date = $previous_range['start_date'];
 		$previous_end_date   = $previous_range['end_date'];
@@ -598,11 +598,11 @@ class AnalyticsController extends RestController {
 		foreach ( $previous_results as $result ) {
 			$amount = floatval( $result['order_total'] );
 
-			if ( $result['order_status'] === 'ohmylms-completed' ) {
+			if ( 'ohmylms-completed' === $result['order_status'] ) {
 				$previous_total_net_earning += $amount;
 			}
 
-			if ( $result['order_status'] === 'ohmylms-refunded' ) {
+			if ( 'ohmylms-refunded' === $result['order_status'] ) {
 				$previous_total_refund += $amount;
 			}
 
@@ -719,7 +719,7 @@ class AnalyticsController extends RestController {
 				break;
 
 			default:
-				// Fallback to last 30 days
+				// Fallback to last 30 days.
 				$start_date = ( clone $today )->modify( '-30 days' )->format( 'Y-m-d H:i:s' );
 				$end_date   = $today->format( 'Y-m-d H:i:s' );
 				$group_by   = 'daily';

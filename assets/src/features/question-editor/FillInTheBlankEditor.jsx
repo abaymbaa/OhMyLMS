@@ -1,37 +1,37 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import { createElement } from '@wordpress/element';
+import { createElement, useId } from '@wordpress/element';
 export function createFillInTheBlankEditor( readRuntime ) {
 	return function FillInTheBlankEditor() {
+		const _controlId = useId();
 		const {
 			Fd,
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			b: I18n,
 			y: WordPressData,
 		} = readRuntime();
-		var e,
-			t,
-			n = true,
-			questionId = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectSelectedQuestionId();
-			}, [] ),
-			a =
-				( 0, WordPressData.useSelect )(
-					function ( e ) {
-						return e( StoreModule.default ).getQuestionContents();
-					},
-					[ questionId ]
-				) || [],
-			hasValidationErrors = ( 0, WordPressData.useSelect )( function (
-				e
-			) {
-				return e( StoreModule.default ).selectQuizzesError();
-			}, [] ),
-			i = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			addContentToQuestion = i.addContentToQuestion,
-			setIsProModalOpen = i.setIsProModalOpen;
+		var e;
+		var t;
+		var questionId = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).selectSelectedQuestionId();
+		}, [] );
+		var a =
+			( 0, WordPressData.useSelect )(
+				function ( _eLocal2 ) {
+					return _eLocal2(
+						StoreModule.default
+					).getQuestionContents();
+				},
+				[ questionId ]
+			) || [];
+		var hasValidationErrors = ( 0, WordPressData.useSelect )( function (
+			_eLocal3
+		) {
+			return _eLocal3( StoreModule.default ).selectQuizzesError();
+		}, [] );
+		var i = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var addContentToQuestion = i.addContentToQuestion;
 		const selected = WordPressData.useSelect(
 			( select ) => select( StoreModule.default ).selectQuestion(),
 			[]
@@ -47,7 +47,13 @@ export function createFillInTheBlankEditor( readRuntime ) {
 			selected?.settings?.case_sensitive
 		);
 		const caseSetting = (
-			<label style={ { display: 'block', marginBottom: 16 } }>
+			<label
+				style={ {
+					display: 'block',
+					marginBottom: 16,
+				} }
+				htmlFor={ _controlId + '-field-1' }
+			>
 				<input
 					type="checkbox"
 					checked={ caseSensitive }
@@ -59,9 +65,15 @@ export function createFillInTheBlankEditor( readRuntime ) {
 							},
 						} )
 					}
+					id={ _controlId + '-field-1' }
 				/>{ ' ' }
 				{ I18n.__( 'Case-sensitive answers', 'ohmylms' ) }
-				<small style={ { display: 'block', marginTop: 4 } }>
+				<small
+					style={ {
+						display: 'block',
+						marginTop: 4,
+					} }
+				>
 					{ I18n.__(
 						'When off, Paris and paris are both accepted.',
 						'ohmylms'
@@ -96,31 +108,34 @@ export function createFillInTheBlankEditor( readRuntime ) {
 								? void 0
 								: e.answer
 						}
-						onChange={ function ( e ) {
-							var t;
-							return ( function ( e, t ) {
-								e &&
+						onChange={ function ( _eLocal4 ) {
+							var _tLocal;
+							return ( function ( _eLocal5, _tLocal2 ) {
+								if ( _eLocal5 ) {
 									addContentToQuestion(
 										questionId,
-										a.map( function ( n ) {
-											return ( null == n
+										a.map( function ( _nLocal ) {
+											return ( _nLocal === null ||
+											_nLocal === void 0
 												? void 0
-												: n.id ) === e
+												: _nLocal.id ) === _eLocal5
 												? Fd(
-														Fd( {}, n ),
+														Fd( {}, _nLocal ),
 														{},
 														{
-															answer: t,
+															answer: _tLocal2,
 														}
 													)
-												: n;
+												: _nLocal;
 										} )
 									);
+								}
 							} )(
-								null === ( t = a[ 0 ] ) || void 0 === t
+								null === ( _tLocal = a[ 0 ] ) ||
+									void 0 === _tLocal
 									? void 0
-									: t.id,
-								e
+									: _tLocal.id,
+								_eLocal4
 							);
 						} }
 					/>

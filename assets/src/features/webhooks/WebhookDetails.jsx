@@ -22,8 +22,9 @@ export function createWebhookDetails( readRuntime ) {
 			a = ( 0, WordPressData.useDispatch )(
 				StoreModule.default
 			).updateWebhookFormData,
-			o = function ( e, t ) {
-				( a( e, t ), n( k5( k5( {}, r ), {}, j5( {}, e, t ) ) ) );
+			o = function ( e, _tLocal ) {
+				a( e, _tLocal );
+				n( k5( k5( {}, r ), {}, j5( {}, e, _tLocal ) ) );
 			},
 			i = [
 				{
@@ -84,11 +85,13 @@ export function createWebhookDetails( readRuntime ) {
 						'This name helps you identify the webhook.',
 						'ohmylms'
 					) }
-					value={ Ge( ( null == r ? void 0 : r.name ) || '' ) }
+					value={ Ge(
+						( r === null || r === void 0 ? void 0 : r.name ) || ''
+					) }
 					onChange={ function ( e ) {
 						return o( 'name', e );
 					} }
-					error={ null == t ? void 0 : t.name }
+					error={ t === null || t === void 0 ? void 0 : t.name }
 					placeholder={ ( 0, I18n.__ )(
 						'e.g. Zapier Course Purchase Hook',
 						'ohmylms'
@@ -105,11 +108,17 @@ export function createWebhookDetails( readRuntime ) {
 						'This is the destination URL for the webhook.',
 						'ohmylms'
 					) }
-					value={ ( null == r ? void 0 : r.webhook_url ) || '' }
+					value={
+						( r === null || r === void 0
+							? void 0
+							: r.webhook_url ) || ''
+					}
 					onChange={ function ( e ) {
 						return o( 'webhook_url', e );
 					} }
-					error={ null == t ? void 0 : t.webhook_url }
+					error={
+						t === null || t === void 0 ? void 0 : t.webhook_url
+					}
 					placeholder={ ( 0, I18n.__ )(
 						'https://hooks.zapier.com/hooks/catch/11896719/brzfge4',
 						'ohmylms'
@@ -139,9 +148,13 @@ export function createWebhookDetails( readRuntime ) {
 					onChange={ function ( e ) {
 						return o( 'trigger_event', e );
 					} }
-					value={ null == r ? void 0 : r.trigger_event }
+					value={
+						r === null || r === void 0 ? void 0 : r.trigger_event
+					}
 					staticSearch={ ! 0 }
-					error={ null == t ? void 0 : t.trigger_event }
+					error={
+						t === null || t === void 0 ? void 0 : t.trigger_event
+					}
 				/>
 				<Controls.DividerWP marginStart={ '2' } marginEnd={ '2' } />
 				<Nm
@@ -184,7 +197,9 @@ export function createWebhookDetails( readRuntime ) {
 					onChange={ function ( e ) {
 						return o( 'http_method', e );
 					} }
-					value={ null == r ? void 0 : r.http_method }
+					value={
+						r === null || r === void 0 ? void 0 : r.http_method
+					}
 					staticSearch={ ! 0 }
 				/>
 				<Controls.DividerWP marginStart={ '2' } marginEnd={ '2' } />
@@ -220,7 +235,7 @@ export function createWebhookDetails( readRuntime ) {
 					onChange={ function ( e ) {
 						return o( 'data_type', e );
 					} }
-					value={ null == r ? void 0 : r.data_type }
+					value={ r === null || r === void 0 ? void 0 : r.data_type }
 					staticSearch={ ! 0 }
 				/>
 				<Controls.DividerWP marginStart={ '2' } marginEnd={ '2' } />
@@ -240,7 +255,7 @@ export function createWebhookDetails( readRuntime ) {
 					onChange={ function ( e ) {
 						return o( 'status', e );
 					} }
-					value={ null == r ? void 0 : r.status }
+					value={ r === null || r === void 0 ? void 0 : r.status }
 					staticSearch={ ! 0 }
 				/>
 			</React.Fragment>

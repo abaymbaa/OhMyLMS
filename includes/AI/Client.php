@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Sends one prompt to the configured provider and returns its text.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI;
 
 use OhMyLMS\AI\Providers\Anthropic;
@@ -37,7 +42,7 @@ final class Client {
 		$settings = Settings::get();
 		$key      = Settings::api_key();
 		$provider = self::provider( $settings['provider'] );
-		if ( ! $provider || $settings['model'] === '' || $key === '' ) {
+		if ( ! $provider || '' === $settings['model'] || '' === $key ) {
 			return new \WP_Error( 'ohmylms_ai_unconfigured', __( 'AI feedback is not set up.', 'ohmylms' ), array( 'status' => 503 ) ); }
 		$request['max_tokens'] = min( (int) ( $request['max_tokens'] ?? $settings['max_tokens'] ), (int) $settings['max_tokens'] );
 		$http                  = $provider->request( $settings, $key, $request );

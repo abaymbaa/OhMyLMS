@@ -9,12 +9,12 @@
  * @since 1.0.0
  */
 function ohmylms_get_course( $course_id ) {
-	// Ensure the plugin is loaded and course_factory exists
+	// Ensure the plugin is loaded and course_factory exists.
 	if ( function_exists( 'OhMyLMS' ) && isset( ohmylms()->course_factory ) && ohmylms()->course_factory ) {
 		return ohmylms()->course_factory->get_course( $course_id );
 	}
 
-	// Fallback: return null if course_factory is not ready
+	// Fallback: return null if course_factory is not ready.
 	return null;
 }
 
@@ -36,7 +36,7 @@ function ohmylms_get_course_id_by_content_id( $content_id ) {
 
 	// A course whose published learning program places this content counts too (see Placements).
 	$course_id = \OhMyLMS\Learning\Placements::resolve( $content_id, $course_id, 0 );
-	if ( $course_id === null || ! $course_id ) {
+	if ( null === $course_id || ! $course_id ) {
 		return false;
 	}
 
@@ -73,14 +73,14 @@ function ohmylms_get_course_first_lesson_url( $course_id ) {
 					if ( isset( $lesson_array['type'] ) && 'quiz' === $lesson_array['type'] ) {
 						$quiz = ohmylms_get_quiz( $lesson_array['id'] );
 						if ( $quiz ) {
-							return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
+							return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz.
 						}
 					}
 
 					if ( isset( $lesson_array['type'] ) && 'assignment' === $lesson_array['type'] ) {
 						$assignment = ohmylms_get_assignment( $lesson_array['id'] );
 						if ( $assignment ) {
-							return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
+							return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment.
 						}
 					}
 
@@ -88,7 +88,7 @@ function ohmylms_get_course_first_lesson_url( $course_id ) {
 					if ( ! $lesson ) {
 						continue;
 					}
-					return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson
+					return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson.
 
 				}
 			}
@@ -182,14 +182,14 @@ function ohmylms_get_best_selling_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch best-selling courses
+	// Base query to fetch best-selling courses.
 	$query = "
         SELECT p.ID
         FROM {$wpdb->posts} p
         INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON p.ID = m.meta_value
     ";
 
-	// Add conditions for post type, status, and course ID meta key
+	// Add conditions for post type, status, and course ID meta key.
 	$query .= '
         WHERE p.post_type = %s 
           AND p.post_status = %s
@@ -201,7 +201,7 @@ function ohmylms_get_best_selling_course_ids( $category = null ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Group by course ID and order by sales count in descending order
+	// Group by course ID and order by sales count in descending order.
 	$query .= '
         GROUP BY p.ID
         ORDER BY COUNT(m.meta_value) DESC
@@ -209,8 +209,8 @@ function ohmylms_get_best_selling_course_ids( $category = null ) {
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_course_id' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 
 	return $results;
 }
@@ -228,14 +228,14 @@ function ohmylms_get_top_rated_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch courses with average rating
+	// Base query to fetch courses with average rating.
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
 
-	// Adding conditions for post type, status, and average rating meta key
+	// Adding conditions for post type, status, and average rating meta key.
 	$query .= '
         WHERE p.post_type = %s
           AND p.post_status = %s
@@ -247,15 +247,15 @@ function ohmylms_get_top_rated_course_ids( $category = null ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Order by average rating in descending order
+	// Order by average rating in descending order.
 	$query .= '
         ORDER BY CAST(pm.meta_value AS DECIMAL(10,2)) DESC
     ';
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_average_rating' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 
 	return $results;
 }
@@ -273,14 +273,14 @@ function ohmylms_get_top_reviewed_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch courses with average rating
+	// Base query to fetch courses with average rating.
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
 
-	// Adding conditions for post type, status, and review count
+	// Adding conditions for post type, status, and review count.
 	$query .= '
         WHERE p.post_type = %s
           AND p.post_status = %s
@@ -292,15 +292,15 @@ function ohmylms_get_top_reviewed_course_ids( $category = null ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Order by review count (assuming _review_count stores numeric values)
+	// Order by review count (assuming _review_count stores numeric values).
 	$query .= '
         ORDER BY CAST(pm.meta_value AS DECIMAL(10,2)) DESC
     ';
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_review_count' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 	return $results;
 }
 
@@ -316,14 +316,14 @@ function ohmylms_get_free_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch free courses
+	// Base query to fetch free courses.
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
 
-	// Adding conditions for post type, status, and free price type
+	// Adding conditions for post type, status, and free price type.
 	$query .= '
         WHERE p.post_type = %s
           AND p.post_status = %s
@@ -338,8 +338,8 @@ function ohmylms_get_free_course_ids( $category = null ) {
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'free' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 	return $results;
 }
 
@@ -355,14 +355,14 @@ function ohmylms_get_paid_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch paid courses
+	// Base query to fetch paid courses.
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
         LEFT JOIN {$wpdb->prefix}postmeta pm ON p.ID = pm.post_id
     ";
 
-	// Adding conditions for post type, status, and paid price type
+	// Adding conditions for post type, status, and paid price type.
 	$query .= '
         WHERE p.post_type = %s
           AND p.post_status = %s
@@ -377,8 +377,8 @@ function ohmylms_get_paid_course_ids( $category = null ) {
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish', '_price_type', 'paid' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 	return $results;
 }
 
@@ -396,13 +396,13 @@ function ohmylms_get_recent_course_ids( $category = null ) {
 	if ( array() === $group ) {
 		return array();
 	}
-	// Base query to fetch recent courses
+	// Base query to fetch recent courses.
 	$query = "
         SELECT p.ID AS course_id
         FROM {$wpdb->posts} p
     ";
 
-	// Adding conditions for post type and post status
+	// Adding conditions for post type and post status.
 	$query .= '
         WHERE p.post_type = %s
           AND p.post_status = %s
@@ -413,12 +413,12 @@ function ohmylms_get_recent_course_ids( $category = null ) {
 		$query .= ' AND p.ID IN (' . implode( ',', array_map( 'intval', $group ) ) . ') ';
 	}
 
-	// Order by post_date to get the most recent courses
+	// Order by post_date to get the most recent courses.
 	$query .= ' ORDER BY p.post_date DESC ';
 
 	$prepared_query = $wpdb->prepare( $query, 'ohmylms-course', 'publish' );
 
-	// Execute the query and return the results
-	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs
+	// Execute the query and return the results.
+	$results = $wpdb->get_col( $prepared_query ); // Fetch only course IDs.
 	return $results;
 }

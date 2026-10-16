@@ -18,7 +18,7 @@ class OhMyLMS_Gateway_Offline extends PaymentGateway {
 		$this->testmode             = 'yes' === $this->get_setting( 'test_mode', 'no' );
 		$this->enabled              = $this->get_setting( 'enabled', 'no' );
 
-		// Actions
+		// Actions.
 		add_action( 'ohmylms_update_options_payment_gateways_' . $this->id, array( $this, 'process_admin_options' ) );
 	}
 

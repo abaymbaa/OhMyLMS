@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\GoogleMeet;
 
@@ -21,7 +21,7 @@ class GoogleMeet {
 	}
 
 	private function init_classes() {
-		// Register REST API routes for Google Meet settings
+		// Register REST API routes for Google Meet settings.
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
 		\add_action(
 			'rest_api_init',

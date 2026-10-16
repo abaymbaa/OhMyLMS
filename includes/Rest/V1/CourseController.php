@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling course REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Rest\V1;
 
@@ -39,7 +44,7 @@ class CourseController extends RestController {
 	public function check_course_scorm_export_permission( $request ) {
 		// Allow cookie authentication with nonce for direct download links
 		// WordPress REST API automatically handles cookie + nonce authentication
-		// The nonce can be sent via X-WP-Nonce header or _wpnonce query parameter
+		// The nonce can be sent via X-WP-Nonce header or _wpnonce query parameter.
 		if ( ! is_user_logged_in() ) {
 			return false;
 		}
@@ -519,7 +524,7 @@ class CourseController extends RestController {
 			}
 		}
 
-		// If custom before/after are passed directly
+		// If custom before/after are passed directly.
 		if ( isset( $request['before'] ) || isset( $request['after'] ) ) {
 			$manual_query = array();
 			if ( isset( $request['before'] ) ) {
@@ -539,16 +544,16 @@ class CourseController extends RestController {
 		}
 
 		if ( isset( $request['orderby'] ) && in_array( $request['orderby'], array( 'price' ) ) ) {
-			if ( $request['orderby'] === 'price' ) {
-				$args['meta_key'] = '_price'; // actual meta key in DB
-				$args['orderby']  = 'meta_value_num'; // sort numerically
+			if ( 'price' === $request['orderby'] ) {
+				$args['meta_key'] = '_price'; // actual meta key in DB.
+				$args['orderby']  = 'meta_value_num'; // sort numerically.
 			}
 		}
 
 		// Filter by curriculum item (courses linked beneath it count too) and by course bundle.
 		// category_id and tag_id are the former category and tag parameters: they now mean a curriculum
 		// item ID and a course bundle ID, so existing list filters keep working.
-		$item_filter  = array_filter( array( $request['curriculum_id'] ?? null, $request['category_id'] ?? null ), 'is_numeric' );
+		$item_filter   = array_filter( array( $request['curriculum_id'] ?? null, $request['category_id'] ?? null ), 'is_numeric' );
 		$bundle_filter = array_filter( array( $request['bundle_id'] ?? null, $request['tag_id'] ?? null ), 'is_numeric' );
 		if ( $item_filter || $bundle_filter ) {
 			$args = \OhMyLMS\Curriculum\Placement::narrow_query( $args, array_map( 'intval', $item_filter ), array_map( 'intval', $bundle_filter ) );
@@ -587,7 +592,7 @@ class CourseController extends RestController {
 			'post_type'      => 'ohmylms-course',
 			'post_status'    => array( 'publish', 'draft', 'future' ),
 			'posts_per_page' => -1,
-			'fields'         => 'ids', // Only retrieve IDs to improve performance
+			'fields'         => 'ids', // Only retrieve IDs to improve performance.
 		);
 
 		$query       = new WP_Query( $args );
@@ -663,11 +668,11 @@ class CourseController extends RestController {
 		}
 
 		try {
-			// Instantiate the ScormImporter class
+			// Instantiate the ScormImporter class.
 			$importer = new \OhMyLMS\Importers\ScormImporter( $file['file'] );
 			$result   = $importer->import_scorm_package();
 
-			// Return success response with detailed report
+			// Return success response with detailed report.
 			return new \WP_REST_Response(
 				array(
 					'success' => $result['success'],
@@ -741,7 +746,7 @@ class CourseController extends RestController {
 			return new \WP_Error( 'invalid_id', __( 'Invalid course ID. Please select at least one course.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Validate course IDs
+		// Validate course IDs.
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( $course_id );
 			if ( ! $course || $course->post_type !== OHMYLMS_COURSE_CPT ) {
@@ -753,13 +758,13 @@ class CourseController extends RestController {
 			}
 		}
 
-		// Default to SCORM 1.2 if not specified
+		// Default to SCORM 1.2 if not specified.
 		if ( empty( $scorm_version ) || ! in_array( $scorm_version, array( '1.2', '2004' ) ) ) {
 			$scorm_version = '1.2';
 		}
 
 		try {
-			// Increase memory limit for large courses
+			// Increase memory limit for large courses.
 			if ( function_exists( 'ini_set' ) ) {
 				@ini_set( 'memory_limit', '512M' );
 			}
@@ -768,7 +773,7 @@ class CourseController extends RestController {
 			$exporter->export_courses_as_scorm();
 
 			// The export method handles the download and exits, so this won't be reached
-			// But we keep it for consistency
+			// But we keep it for consistency.
 			exit;
 
 		} catch ( \Exception $e ) {
@@ -811,11 +816,11 @@ class CourseController extends RestController {
 				'start_date' => current_time( 'mysql' ),
 			);
 			$student         = new \OhMyLMS\Data\Student( $student_id );
-			// update user meta
+			// update user meta.
 			update_user_meta( $student_id, '_is_ohmylms_student', 'yes' );
 			update_user_meta( $student_id, '_is_ohmylms_user', 'yes' );
 			if ( $student && ! $student->maybe_enrolled( $course_id ) ) {
-				// Check if the record exists
+				// Check if the record exists.
 				$existing_record = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
@@ -835,7 +840,7 @@ class CourseController extends RestController {
 						$enrollment_data
 					);
 
-					// Trigger action hook for manual enrollment to enable community access and other integrations
+					// Trigger action hook for manual enrollment to enable community access and other integrations.
 					do_action( 'ohmylms_manual_student_enrollment', $student_id, $course_id );
 
 					$response = array(
@@ -879,7 +884,7 @@ class CourseController extends RestController {
 			global $wpdb;
 			$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 
-			// Check if the enrollment exists
+			// Check if the enrollment exists.
 			$existing_record = $wpdb->get_var(
 				$wpdb->prepare(
 					"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
@@ -896,7 +901,7 @@ class CourseController extends RestController {
 				);
 			}
 
-			// Delete the enrollment
+			// Delete the enrollment.
 			$deleted = $wpdb->delete(
 				$enrollment_table,
 				array(
@@ -1255,15 +1260,15 @@ class CourseController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function delete_item( $request ) {
-		// Get course id
+		// Get course id.
 		$course_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 
-		// Check the course id exist or not
+		// Check the course id exist or not.
 		if ( ! $course_id ) {
 			return new WP_Error( 'ohmylms_rest_course_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing course by course id
+		// Get existing course by course id.
 		$course = ohmylms_get_course( $course_id );
 
 		// Check the course exist or not.
@@ -1282,7 +1287,7 @@ class CourseController extends RestController {
 		 */
 		do_action( 'ohmylms_rest_before_delete_course', $course_id, $course, $request );
 
-		// Delete the course
+		// Delete the course.
 		$course->delete();
 
 		/**
@@ -1336,14 +1341,14 @@ class CourseController extends RestController {
 			return new \WP_Error( 'pro_feature', __( 'This is pro feature.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get course id
+		// Get course id.
 		$course_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 
-		// Check the course id exist or not
+		// Check the course id exist or not.
 		if ( ! $course_id ) {
 			return new WP_Error( 'ohmylms_rest_course_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
-		// Get existing course by course id
+		// Get existing course by course id.
 		$course = ohmylms_get_course( $course_id );
 		// Check the course exist or not.
 		if ( ! ( $course instanceof Course ) ) {
@@ -1377,12 +1382,12 @@ class CourseController extends RestController {
 
 		$course_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 
-		// Check the course id exist or not
+		// Check the course id exist or not.
 		if ( ! $course_id ) {
 			return new WP_Error( 'ohmylms_rest_course_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing course by course id
+		// Get existing course by course id.
 		$course = ohmylms_get_course( $course_id );
 
 		// Check the course exist or not.
@@ -1415,12 +1420,12 @@ class CourseController extends RestController {
 	public function update_chapters( $request ) {
 		$course_id = (int) $request['id'];
 
-		// Check the course id exist or not
+		// Check the course id exist or not.
 		if ( ! $course_id ) {
 			return new WP_Error( 'ohmylms_rest_course_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing course by course id
+		// Get existing course by course id.
 		$course = ohmylms_get_course( $course_id );
 
 		// Check the course exist or not.
@@ -1650,7 +1655,7 @@ class CourseController extends RestController {
 		 */
 		do_action( 'ohmylms_rest_before_save_course', $course, $request );
 
-		// Save the course
+		// Save the course.
 		$course_id = $course->save();
 
 		/**
@@ -1693,7 +1698,7 @@ class CourseController extends RestController {
 		// Save course meta fields.
 		$course = $this->set_course_meta( $course, $request );
 
-		// Set tracking meta fields if this is a new course creation
+		// Set tracking meta fields if this is a new course creation.
 		if ( isset( $request['creation_source'] ) ) {
 			update_post_meta( $course->get_id(), '_ohmylms_creation_source', sanitize_text_field( $request['creation_source'] ) );
 		}
@@ -1812,7 +1817,7 @@ class CourseController extends RestController {
 
 		if ( isset( $request['certificate_id'] ) ) {
 			$course->set_certificate( $request['certificate_id'] );
-			// Track certificate enabled status
+			// Track certificate enabled status.
 			$has_certificate = ! empty( $request['certificate_id'] ) ? 'yes' : 'no';
 			update_post_meta( $course->get_id(), '_ohmylms_certificate_enabled', $has_certificate );
 		}
@@ -1830,7 +1835,7 @@ class CourseController extends RestController {
 		if ( isset( $request['funnel_steps'] ) && is_array( $request['funnel_steps'] ) ) {
 			if ( method_exists( $course, 'set_funnel_steps' ) ) {
 				$course->set_funnel_steps( $request['funnel_steps'] );
-				// Track automation enabled status
+				// Track automation enabled status.
 				$has_automation = ! empty( $request['funnel_steps'] ) ? 'yes' : 'no';
 				update_post_meta( $course->get_id(), '_ohmylms_automation_enabled', $has_automation );
 			}
@@ -1914,7 +1919,7 @@ class CourseController extends RestController {
 		$course_id = $request['id'];
 		$course    = get_post( $course_id );
 
-		if ( ! $course || $course->post_type !== 'ohmylms-course' ) {
+		if ( ! $course || 'ohmylms-course' !== $course->post_type ) {
 			$response = array(
 				'status'  => 'error',
 				'message' => __( 'Course not found.', 'ohmylms' ),
@@ -1992,7 +1997,7 @@ class CourseController extends RestController {
 			return new \WP_Error( 'invalid_data', __( 'Invalid course ID or attachment ID.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		if ( $media_type === 'video' ) {
+		if ( 'video' === $media_type ) {
 			$course = ohmylms_get_course( $course_id );
 			$course->set_video_id( $attachment_id );
 			$course->save();
@@ -2034,7 +2039,7 @@ class CourseController extends RestController {
 			return new \WP_Error( 'invalid_data', __( 'Invalid course ID.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		if ( $type === 'video' ) {
+		if ( 'video' === $type ) {
 			$course->set_video_id( 0 );
 			$course->save();
 			$message = __( 'Cover Video removed successfully.', 'ohmylms' );
@@ -2066,9 +2071,9 @@ class CourseController extends RestController {
 	 * @since 1.0.0
 	 */
 	protected function get_course_data( $course ) {
-		// Get WP timezone as DateTimeZone object
+		// Get WP timezone as DateTimeZone object.
 		$wp_timezone = wp_timezone();
-		// Get post datetime in WP timezone
+		// Get post datetime in WP timezone.
 		$datetime = get_post_datetime( $course->get_id(), 'date', $wp_timezone );
 
 		$data = array(
@@ -2103,7 +2108,7 @@ class CourseController extends RestController {
 			'categories'            => $this->get_taxonomy_terms( $course ),
 			'tags'                  => $this->get_taxonomy_terms( $course, 'tag' ),
 			'curriculum'            => \OhMyLMS\Curriculum\Placement::items( $course->get_id() ),
-			'learning_bundles'       => \OhMyLMS\Curriculum\Placement::bundles( $course->get_id() ),
+			'learning_bundles'      => \OhMyLMS\Curriculum\Placement::bundles( $course->get_id() ),
 			'course_url'            => get_permalink( $course->get_id() ),
 			'content'               => array(
 				'chapters' => count( $course->get_chapters() ),
@@ -2291,17 +2296,17 @@ class CourseController extends RestController {
 			return new WP_Error( 'rest_course_not_found', __( 'Course not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
-		// Get the current post to check previous status
+		// Get the current post to check previous status.
 		$post         = get_post( $course_id );
 		$current_time = current_time( 'mysql' );
 
-		// Handle post_date update when changing from 'future' status
+		// Handle post_date update when changing from 'future' status.
 		$update_data = array(
 			'ID'          => $course_id,
 			'post_status' => $status,
 		);
 
-		// If changing from future status to publish/draft, update post_date
+		// If changing from future status to publish/draft, update post_date.
 		if ( 'future' === $post->post_status && in_array( $status, array( 'publish', 'draft' ) ) ) {
 			$update_data['post_date']     = current_time( 'mysql' );
 			$update_data['post_date_gmt'] = get_gmt_from_date( current_time( 'mysql' ) );
@@ -2439,14 +2444,14 @@ class CourseController extends RestController {
 	 * @return void
 	 */
 	protected function update_course_status_and_password( $course_id, $request ) {
-		$current_time = current_time( 'mysql' ); // Get the current date and time
-		$post         = get_post( $course_id ); // Retrieve the post details
+		$current_time = current_time( 'mysql' ); // Get the current date and time.
+		$post         = get_post( $course_id ); // Retrieve the post details.
 
 		if ( ! $post ) {
 			return;
 		}
 
-		// Get the current post_date
+		// Get the current post_date.
 		$existing_post_date = $post->post_date;
 
 		if ( isset( $request['status'] ) ) {

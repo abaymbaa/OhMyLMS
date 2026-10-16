@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * DripContent class
  */
@@ -40,14 +40,14 @@ class DripContent {
 		} elseif ( 'ohmylms-session' === $post_type ) {
 			$lesson = ohmylms_get_session( $lesson_id );
 		} else {
-			return $is_locked; // Unsupported post type, return original status
+			return $is_locked; // Unsupported post type, return original status.
 		}
 
 		if ( ! $lesson ) {
 			return $is_locked;
 		}
 
-		// Check if get_drip_settings method exists before calling
+		// Check if get_drip_settings method exists before calling.
 		if ( ! method_exists( $lesson, 'get_drip_settings' ) ) {
 			return $is_locked;
 		}
@@ -60,7 +60,7 @@ class DripContent {
 		$now      = new \DateTime( 'now', $timezone );
 		$type     = $drip_settings['type'] ?? '';
 
-		if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
+		if ( 'cohort-start' === $type || 'cohort-from-x-days' === $type ) {
 			$course = ohmylms_get_course( $course_id );
 			if ( ! $course ) {
 				return $is_locked;
@@ -70,13 +70,13 @@ class DripContent {
 			if ( ! $cohort || empty( $cohort['start_date'] ) ) {
 				return $is_locked;
 			}
-			// Handle both 'Y-m-d\\TH:i:s' and 'Y-m-d' formats
+			// Handle both 'Y-m-d\\TH:i:s' and 'Y-m-d' formats.
 			$start_date = \DateTime::createFromFormat( 'Y-m-d\TH:i:s', $cohort['start_date'], $timezone );
 
 			if ( ! $start_date ) {
 				return $is_locked;
 			}
-			if ( $type === 'cohort-from-x-days' ) {
+			if ( 'cohort-from-x-days' === $type ) {
 				$days = intval( $drip_settings['days'] ?? 0 );
 				$start_date->modify( "+{$days} days" );
 			}
@@ -84,7 +84,7 @@ class DripContent {
 			return $now < $start_date;
 		}
 
-		if ( $type === 'specific-date' ) {
+		if ( 'specific-date' === $type ) {
 			$date = $drip_settings['date'] ?? '';
 			$time = $drip_settings['time'] ?? '00:00:00';
 			if ( ! $date ) {
@@ -100,7 +100,7 @@ class DripContent {
 			return $now < $unlock_date;
 		}
 
-		if ( $type === 'enrollment-from-x-days' ) {
+		if ( 'enrollment-from-x-days' === $type ) {
 			global $wpdb;
 			$enrollment_date = $wpdb->get_var(
 				$wpdb->prepare(
@@ -152,7 +152,7 @@ class DripContent {
 		$timezone = new \DateTimeZone( function_exists( 'ohmylms_timezone_string' ) ? ohmylms_timezone_string() : 'UTC' );
 		$type     = $drip_settings['type'] ?? '';
 
-		if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
+		if ( 'cohort-start' === $type || 'cohort-from-x-days' === $type ) {
 			$course = ohmylms_get_course( $course_id );
 			if ( ! $course ) {
 				return $unlock_date;
@@ -166,14 +166,14 @@ class DripContent {
 			if ( ! $start_date ) {
 				return $unlock_date;
 			}
-			if ( $type === 'cohort-from-x-days' ) {
+			if ( 'cohort-from-x-days' === $type ) {
 				$days = intval( $drip_settings['days'] ?? 0 );
 				$start_date->modify( "+{$days} days" );
 			}
 			return $start_date->format( 'Y-m-d' );
 		}
 
-		if ( $type === 'specific-date' ) {
+		if ( 'specific-date' === $type ) {
 			$date = $drip_settings['date'] ?? '';
 			$time = $drip_settings['time'] ?? '00:00:00';
 			if ( ! $date ) {
@@ -205,7 +205,7 @@ class DripContent {
 	public function drip_protection_message( $output, $content_id, $post_type, $student_id ) {
 		$is_locked = $this->is_lesson_locked( true, $content_id, ohmylms_get_course_by_content_id( $content_id ), $student_id );
 		if ( ! $is_locked ) {
-			return $output; // No drip protection, return original output
+			return $output; // No drip protection, return original output.
 		}
 		$content      = null;
 		$content_type = '';
@@ -233,7 +233,7 @@ class DripContent {
 		$timezone        = new \DateTimeZone( function_exists( 'ohmylms_timezone_string' ) ? ohmylms_timezone_string() : 'UTC' );
 		$type            = $drip_settings['type'] ?? '';
 		$unlock_datetime = null;
-		if ( $type === 'cohort-start' || $type === 'cohort-from-x-days' ) {
+		if ( 'cohort-start' === $type || 'cohort-from-x-days' === $type ) {
 			$course = ohmylms_get_course( $course_id );
 			if ( $course ) {
 				$cohorts = $course->get_cohort();
@@ -241,7 +241,7 @@ class DripContent {
 				if ( $cohort && ! empty( $cohort['start_date'] ) ) {
 					$start_date = \DateTime::createFromFormat( 'Y-m-d\TH:i:s', $cohort['start_date'], $timezone );
 					if ( $start_date ) {
-						if ( $type === 'cohort-from-x-days' ) {
+						if ( 'cohort-from-x-days' === $type ) {
 							$days = intval( $drip_settings['days'] ?? 0 );
 							$start_date->modify( "+{$days} days" );
 						}
@@ -249,7 +249,7 @@ class DripContent {
 					}
 				}
 			}
-		} elseif ( $type === 'specific-date' ) {
+		} elseif ( 'specific-date' === $type ) {
 			$date = $drip_settings['date'] ?? '';
 			$time = $drip_settings['time'] ?? '00:00:00';
 			if ( $date ) {
@@ -261,7 +261,7 @@ class DripContent {
 					$unlock_datetime = $unlock_date;
 				}
 			}
-		} elseif ( $type === 'enrollment-from-x-days' ) {
+		} elseif ( 'enrollment-from-x-days' === $type ) {
 			global $wpdb;
 			$enrollment_date = $wpdb->get_var(
 				$wpdb->prepare(
@@ -285,7 +285,7 @@ class DripContent {
 		}
 
 		if ( $unlock_datetime ) {
-			// Use WordPress date and time format
+			// Use WordPress date and time format.
 			$date_format = get_option( 'date_format', 'F j, Y' );
 			$time_format = get_option( 'time_format', 'g:i a' );
 			$formatted   = $unlock_datetime->format( "$date_format \\a\\t $time_format" );

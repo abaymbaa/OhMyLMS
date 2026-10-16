@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * @package    OhMyLMS\Duplicate
  * @subpackage OhMyLMSPro
@@ -173,8 +173,8 @@ class Course {
 					)
 				);
 
-				// If content is quiz, duplicate quiz questions and answers
-				if ( $content_post->post_type === 'ohmylms-quiz' ) {
+				// If content is quiz, duplicate quiz questions and answers.
+				if ( 'ohmylms-quiz' === $content_post->post_type ) {
 					$this->duplicate_quiz_questions( $original_content_id, $new_content_id );
 				}
 			}

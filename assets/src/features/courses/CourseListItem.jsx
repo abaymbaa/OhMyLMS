@@ -29,12 +29,14 @@ export function createCourseListItem( readRuntime ) {
 				function () {
 					r(
 						'/course/'.concat(
-							null == course ? void 0 : course.id,
+							course === null || course === void 0
+								? void 0
+								: course.id,
 							'/report'
 						)
 					);
 				},
-				[ null == course ? void 0 : course.id, r ]
+				[ course === null || course === void 0 ? void 0 : course.id, r ]
 			);
 		return (
 			<React.Fragment>
@@ -47,19 +49,33 @@ export function createCourseListItem( readRuntime ) {
 						to={ courseEditPath( course ) }
 						className={ 'ohmylms-td-thumbnail' }
 					>
-						{ null != course && course.image_src ? (
-							<gG.A
-								shape={ 'square' }
-								src={ course.image_src }
-								size={ 100 }
-							/>
-						) : null != course && course.video_src ? (
-							<video src={ course.video_src } />
-						) : (
-							<span>
-								<SB />
-							</span>
-						) }
+						{ ( () => {
+							if (
+								course !== null &&
+								course !== void 0 &&
+								course.image_src
+							) {
+								return (
+									<gG.A
+										shape={ 'square' }
+										src={ course.image_src }
+										size={ 100 }
+									/>
+								);
+							}
+							if (
+								course !== null &&
+								course !== void 0 &&
+								course.video_src
+							) {
+								return <video src={ course.video_src } />;
+							}
+							return (
+								<span>
+									<SB />
+								</span>
+							);
+						} )() }
 					</v.Link>
 					<Controls.FlexWP
 						direction={ 'column' }
@@ -67,7 +83,11 @@ export function createCourseListItem( readRuntime ) {
 					>
 						<v.Link
 							to={ courseEditPath( course ) }
-							title={ null == course ? void 0 : course.name }
+							title={
+								course === null || course === void 0
+									? void 0
+									: course.name
+							}
 							style={ {
 								textDecoration: 'none',
 							} }
@@ -80,15 +100,26 @@ export function createCourseListItem( readRuntime ) {
 								truncate={ ! 0 }
 							>
 								{ Ge(
-									null !==
-										( t =
-											null == course
-												? void 0
-												: course.name ) && void 0 !== t
-										? t
-										: null == course
-											? void 0
-											: course.title
+									( () => {
+										if (
+											null !==
+												( t =
+													course === null ||
+													course === void 0
+														? void 0
+														: course.name ) &&
+											void 0 !== t
+										) {
+											return t;
+										}
+										if (
+											course === null ||
+											course === void 0
+										) {
+											return void 0;
+										}
+										return course.title;
+									} )()
 								) }
 							</Controls.TextWP>
 						</v.Link>

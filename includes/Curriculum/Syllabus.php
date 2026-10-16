@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A syllabus is a curriculum item flagged `is_syllabus` (any item can be one: an exam board's
+ * Mathematics 0580, a national grade 11 programme). Inside it:.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Skills\Taxonomy;
@@ -335,9 +341,9 @@ final class Syllabus {
 		if ( ! $partial || array_key_exists( 'name', $data ) ) {
 			$name = SyllabusRows::line( $data['name'] ?? '' );
 			// A new group may be given only a code; the code then names it.
-			if ( $name === '' && ! $partial ) {
+			if ( '' === $name && ! $partial ) {
 				$name = SyllabusRows::line( $data['code'] ?? '' ); }
-			if ( $name === '' ) {
+			if ( '' === $name ) {
 				return Access::error( 'ohmylms_syllabus_invalid', __( 'A skill group needs a name or a code.', 'ohmylms' ) ); }
 			if ( mb_strlen( $name ) > SyllabusRows::NAME_LIMIT ) {
 				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill group name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
@@ -390,7 +396,7 @@ final class Syllabus {
 		$item_id = (int) ( $data['item_id'] ?? 0 ) ?: (int) $syllabus_id;
 		if ( ! in_array( $item_id, Items::with_descendants( $syllabus_id ), true ) ) {
 			return Access::error( 'ohmylms_syllabus_invalid', __( 'A skill group must sit under the syllabus or one of its content items.', 'ohmylms' ) ); }
-		$position = isset( $data['position'] ) && $data['position'] !== '' && $data['position'] !== null ? (int) $data['position'] : null;
+		$position = isset( $data['position'] ) && '' !== $data['position'] && null !== $data['position'] ? (int) $data['position'] : null;
 		return Items::exclusive(
 			static function () use ( $syllabus_id, $item_id, $fields, $position ) {
 				if ( self::group_count( Items::with_descendants( $syllabus_id ) ) >= self::MAX_GROUPS ) {
@@ -442,7 +448,7 @@ final class Syllabus {
 					throw new \RuntimeException( 'Group move failed' ); }
 				if ( $old !== $item_id ) {
 					self::renumber_groups( self::group_ids_in( $old ) ); }
-				self::renumber_groups( Tree::insert_at( array_values( array_diff( self::group_ids_in( $item_id ), array( (int) $group['id'] ) ) ), (int) $group['id'], $position === null || $position === '' ? null : (int) $position ) );
+				self::renumber_groups( Tree::insert_at( array_values( array_diff( self::group_ids_in( $item_id ), array( (int) $group['id'] ) ) ), (int) $group['id'], null === $position || '' === $position ? null : (int) $position ) );
 				return true;
 			}
 		);
@@ -536,7 +542,7 @@ final class Syllabus {
 		}
 		if ( ! $partial || array_key_exists( 'name', $data ) ) {
 			$name = SyllabusRows::line( $data['name'] ?? '' );
-			if ( $name === '' ) {
+			if ( '' === $name ) {
 				return Access::error( 'ohmylms_syllabus_invalid', __( 'A skill needs a name.', 'ohmylms' ) ); }
 			if ( mb_strlen( $name ) > SyllabusRows::NAME_LIMIT ) {
 				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
@@ -566,7 +572,7 @@ final class Syllabus {
 
 	/** Another skill of this syllabus that already uses the code (skill codes are unique per syllabus). */
 	private static function code_taken( $syllabus_id, $code, $except_term = 0 ) {
-		if ( $code === '' ) {
+		if ( '' === $code ) {
 			return false; }
 		foreach ( self::skill_ids( Items::with_descendants( $syllabus_id ) ) as $term_id ) {
 			if ( $term_id !== (int) $except_term && SyllabusPlan::key( (string) get_term_meta( $term_id, self::CODE_META, true ) ) === SyllabusPlan::key( $code ) ) {
@@ -594,9 +600,9 @@ final class Syllabus {
 			return $term; }
 		$id = (int) $term['term_id'];
 		Taxonomy::uuid( $id );
-		if ( $code !== '' ) {
+		if ( '' !== $code ) {
 			update_term_meta( $id, self::CODE_META, mb_substr( $code, 0, SyllabusRows::SKILL_CODE_LIMIT ) ); }
-		if ( $category !== '' ) {
+		if ( '' !== $category ) {
 			update_term_meta( $id, self::CATEGORY_META, sanitize_text_field( $category ) ); }
 		return array(
 			'term_id' => $id,
@@ -622,7 +628,7 @@ final class Syllabus {
 		$fields = self::clean_skill( $data, false );
 		if ( is_wp_error( $fields ) ) {
 			return $fields; }
-		$position = isset( $data['position'] ) && $data['position'] !== '' && $data['position'] !== null ? (int) $data['position'] : null;
+		$position = isset( $data['position'] ) && '' !== $data['position'] && null !== $data['position'] ? (int) $data['position'] : null;
 		return Items::exclusive(
 			static function () use ( $syllabus_id, $group, $fields, $position ) {
 				$category_check = SyllabusSettings::check_category( $syllabus_id, $fields );
@@ -758,7 +764,7 @@ final class Syllabus {
 			return Access::error( 'ohmylms_syllabus_invalid', __( 'That skill is not in this skill group.', 'ohmylms' ), 404 ); }
 		return Items::exclusive(
 			static function () use ( $wpdb, $group_id, $to, $term_id, $position ) {
-				self::move_placement( $group_id, $to, $term_id, $position === null || $position === '' ? null : (int) $position );
+				self::move_placement( $group_id, $to, $term_id, null === $position || '' === $position ? null : (int) $position );
 				return true;
 			}
 		);
@@ -830,7 +836,7 @@ final class Syllabus {
 		if ( is_wp_error( $result ) ) {
 			if ( $created_terms ) {
 				clean_term_cache( $created_terms, Taxonomy::NAME ); }
-			return $failure !== '' ? Access::error( 'ohmylms_syllabus_import_failed', $failure . ' ' . __( 'Nothing was changed.', 'ohmylms' ), 500 ) : $result;
+			return '' !== $failure ? Access::error( 'ohmylms_syllabus_import_failed', $failure . ' ' . __( 'Nothing was changed.', 'ohmylms' ), 500 ) : $result;
 		}
 		$report['applied'] = true;
 		return $report;

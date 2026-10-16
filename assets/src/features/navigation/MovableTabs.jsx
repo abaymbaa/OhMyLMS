@@ -1,4 +1,10 @@
-import { createElement, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	useEffect,
+	useRef,
+	useState,
+	useId,
+} from '@wordpress/element';
 import { Modal } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import {
@@ -9,14 +15,16 @@ import {
 	normalizeLayout,
 } from './tabLayout.mjs';
 import { tabPreferences } from './tabPreferences';
-
 const textLabel = ( node ) =>
-	typeof node === 'string' || typeof node === 'number'
-		? String( node )
-		: Array.isArray( node )
-			? node.map( textLabel ).join( '' )
-			: textLabel( node?.props?.children || '' );
-
+	( () => {
+		if ( typeof node === 'string' || typeof node === 'number' ) {
+			return String( node );
+		}
+		if ( Array.isArray( node ) ) {
+			return node.map( textLabel ).join( '' );
+		}
+		return textLabel( node?.props?.children || '' );
+	} )();
 export function MovableTabs( {
 	scope,
 	tabs,
@@ -27,6 +35,7 @@ export function MovableTabs( {
 	className = '',
 	orientation = 'horizontal',
 } ) {
+	const _controlId = useId();
 	const ids = tabs.map( ( tab ) => tab.id );
 	const store = tabPreferences( scope, ids );
 	const [ state, setState ] = useState( store.read );
@@ -46,7 +55,12 @@ export function MovableTabs( {
 		save( {
 			...layout,
 			groups: layout.groups.map( ( group ) =>
-				group.id === id ? { ...group, ...patch } : group
+				group.id === id
+					? {
+							...group,
+							...patch,
+						}
+					: group
 			),
 		} );
 	const startDrag = ( event, item ) => {
@@ -124,7 +138,10 @@ export function MovableTabs( {
 					setEditing( true );
 				} }
 				onDragStart={ ( event ) =>
-					startDrag( event, { type: 'tab', id } )
+					startDrag( event, {
+						type: 'tab',
+						id,
+					} )
 				}
 				onDragEnd={ endDrag }
 				onKeyDown={ ( event ) => {
@@ -272,7 +289,11 @@ export function MovableTabs( {
 						{ layout.groups.map( ( group ) => (
 							<fieldset key={ group.id }>
 								<legend>{ group.name }</legend>
-								<label>
+								<label
+									htmlFor={
+										_controlId + '-field-1' + '-' + group.id
+									}
+								>
 									{ __( 'Group name', 'ohmylms' ) }
 									<input
 										type="text"
@@ -283,9 +304,19 @@ export function MovableTabs( {
 												name: event.target.value,
 											} )
 										}
+										id={
+											_controlId +
+											'-field-1' +
+											'-' +
+											group.id
+										}
 									/>
 								</label>
-								<label>
+								<label
+									htmlFor={
+										_controlId + '-field-2' + '-' + group.id
+									}
+								>
 									{ __( 'Background color', 'ohmylms' ) }
 									<input
 										type="color"
@@ -295,9 +326,19 @@ export function MovableTabs( {
 												background: event.target.value,
 											} )
 										}
+										id={
+											_controlId +
+											'-field-2' +
+											'-' +
+											group.id
+										}
 									/>
 								</label>
-								<label>
+								<label
+									htmlFor={
+										_controlId + '-field-3' + '-' + group.id
+									}
+								>
 									{ __( 'Text color', 'ohmylms' ) }
 									<input
 										type="color"
@@ -306,6 +347,12 @@ export function MovableTabs( {
 											updateGroup( group.id, {
 												text: event.target.value,
 											} )
+										}
+										id={
+											_controlId +
+											'-field-3' +
+											'-' +
+											group.id
 										}
 									/>
 								</label>
@@ -358,7 +405,11 @@ export function MovableTabs( {
 					<div className="ohmylms-tab-assignments">
 						{ layout.order.map( ( id, index ) => (
 							<div key={ id }>
-								<label>
+								<label
+									htmlFor={
+										_controlId + '-field-4' + '-' + id
+									}
+								>
 									{ labels[ id ] }
 									<select
 										value={ layout.assignments[ id ] || '' }
@@ -370,6 +421,9 @@ export function MovableTabs( {
 													event.target.value
 												)
 											)
+										}
+										id={
+											_controlId + '-field-4' + '-' + id
 										}
 									>
 										<option value="">
@@ -390,7 +444,10 @@ export function MovableTabs( {
 									className="button"
 									disabled={ index === 0 }
 									aria-label={ sprintf(
-										__( 'Move %s left', 'ohmylms' ),
+										/* translators: %s: tab label. */ __(
+											'Move %s left',
+											'ohmylms'
+										),
 										textLabel( labels[ id ] )
 									) }
 									onClick={ () =>
@@ -412,7 +469,10 @@ export function MovableTabs( {
 										index === layout.order.length - 1
 									}
 									aria-label={ sprintf(
-										__( 'Move %s right', 'ohmylms' ),
+										/* translators: %s: tab label. */ __(
+											'Move %s right',
+											'ohmylms'
+										),
 										textLabel( labels[ id ] )
 									) }
 									onClick={ () =>

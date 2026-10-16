@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Account switching keeps the administrator's session server-side.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -36,7 +41,7 @@ final class ViewAs {
 					'permission_callback' => function ( $r ) use ( $action ) {
 						if ( ! is_user_logged_in() || ! wp_verify_nonce( $r->get_header( 'X-WP-Nonce' ), 'wp_rest' ) ) {
 							return new \WP_Error( 'view_as_auth', 'Refresh the page and sign in again.', array( 'status' => 403 ) ); }
-						return ( $action === 'return' ? (bool) self::session() : current_user_can( 'manage_options' ) ) ? true : new \WP_Error( 'view_as_forbidden', 'Only an administrator can switch accounts.', array( 'status' => 403 ) );
+						return ( 'return' === $action ? (bool) self::session() : current_user_can( 'manage_options' ) ) ? true : new \WP_Error( 'view_as_forbidden', 'Only an administrator can switch accounts.', array( 'status' => 403 ) );
 					},
 					'callback'            => function ( $r ) use ( $action ) {
 						try {
@@ -66,12 +71,12 @@ final class ViewAs {
 		if ( $class ) {
 			Service::need( in_array( $role, array( 'student', 'instructor' ), true ) && Service::row( 'classes', $class ), 'Class not available.' );
 			$m               = Schema::table( 'class_memberships' );
-			$args['include'] = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE class_id=%d AND role=%s AND status='active'", $class, $role === 'instructor' ? 'teacher' : 'student' ) ) ?: array( 0 );
+			$args['include'] = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE class_id=%d AND role=%s AND status='active'", $class, 'instructor' === $role ? 'teacher' : 'student' ) ) ?: array( 0 );
 		} elseif ( $course ) {
 			$post = get_post( $course );
 			Service::need( in_array( $role, array( 'student', 'instructor' ), true ) && $post && $post->post_type === OHMYLMS_COURSE_CPT, 'Course not available.' );
 			$m               = Schema::table( 'user_enrollment' );
-			$args['include'] = $role === 'instructor' ? array( (int) $post->post_author ) : ( $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE course_id=%d AND status='enrolled'", $course ) ) ?: array( 0 ) );
+			$args['include'] = 'instructor' === $role ? array( (int) $post->post_author ) : ( $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE course_id=%d AND status='enrolled'", $course ) ) ?: array( 0 ) );
 		} else {
 			$roles = array(
 				'student'    => array( 'subscriber', 'ohmylms_student' ),
@@ -79,7 +84,7 @@ final class ViewAs {
 				'instructor' => array( 'ohmylms_instructor' ),
 				'parent'     => array( 'ohmylms_parent' ),
 			);
-			if ( $role === 'student' && function_exists( 'ohmylms_get_student_role' ) ) {
+			if ( 'student' === $role && function_exists( 'ohmylms_get_student_role' ) ) {
 				$roles['student'][] = ohmylms_get_student_role(); }
 			$ids = get_users(
 				array(
@@ -90,7 +95,7 @@ final class ViewAs {
 			if ( in_array( $role, array( 'student', 'teacher' ), true ) ) {
 				$m   = Schema::table( 'school_memberships' );
 				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE role=%s AND status='active'", $role ) ) );
-			} elseif ( $role === 'parent' ) {
+			} elseif ( 'parent' === $role ) {
 				$m   = Schema::table( 'guardian_links' );
 				$ids = array_merge( $ids, $wpdb->get_col( "SELECT guardian_user_id FROM $m WHERE status='active'" ) );
 			}
@@ -159,30 +164,30 @@ final class ViewAs {
 					'class'  => $class['id'],
 				),
 				$url
-			); } elseif ( $role === 'student' && function_exists( 'ohmylms_get_page_id' ) ) {
+			); } elseif ( 'student' === $role && function_exists( 'ohmylms_get_page_id' ) ) {
 				$profile = ohmylms_get_page_id( 'student_dashboard' );
 				if ( $profile > 0 ) {
 					$url = get_permalink( $profile ); }
 			}
-			if ( ! $r['course_id'] && ! ( $role === 'student' && ! $r['class_id'] && $url !== Views::portal_url() ) ) {
-				$url = add_query_arg( 'view', $role === 'parent' ? 'parent-dashboard' : ( $role === 'student' ? 'student-assignments' : 'teacher-dashboard' ), $url ); }
+			if ( ! $r['course_id'] && ! ( 'student' === $role && ! $r['class_id'] && $url !== Views::portal_url() ) ) {
+				$url = add_query_arg( 'view', 'parent' === $role ? 'parent-dashboard' : ( 'student' === $role ? 'student-assignments' : 'teacher-dashboard' ), $url ); }
 				// Preview lands in the hub workspace for the viewed role; the old portal is not used.
-				if ( empty( $r['course_id'] ) && class_exists( '\OhMyLMS\Student\Hub' ) && \OhMyLMS\Student\Hub::base_url() ) {
-					$class_id = absint( $r['class_id'] );
-					if ( 'parent' === $role ) {
-						$url = \OhMyLMS\Student\ParentWorkspace::url();
-					} elseif ( 'teacher' === $role ) {
-						$url = \OhMyLMS\Student\TeacherWorkspace::url();
-						if ( $class_id ) {
-							$url = add_query_arg( 'hub_class', $class_id, $url );
-						}
-					} else {
-						$url = \OhMyLMS\Student\Hub::url( $class_id ? 'classes' : 'learn' );
-						if ( $class_id ) {
-							$url = add_query_arg( 'hub_class', $class_id, $url );
-						}
+			if ( empty( $r['course_id'] ) && class_exists( '\OhMyLMS\Student\Hub' ) && \OhMyLMS\Student\Hub::base_url() ) {
+				$class_id = absint( $r['class_id'] );
+				if ( 'parent' === $role ) {
+					$url = \OhMyLMS\Student\ParentWorkspace::url();
+				} elseif ( 'teacher' === $role ) {
+					$url = \OhMyLMS\Student\TeacherWorkspace::url();
+					if ( $class_id ) {
+						$url = add_query_arg( 'hub_class', $class_id, $url );
+					}
+				} else {
+					$url = \OhMyLMS\Student\Hub::url( $class_id ? 'classes' : 'learn' );
+					if ( $class_id ) {
+						$url = add_query_arg( 'hub_class', $class_id, $url );
 					}
 				}
+			}
 				return array( 'url' => $url );
 	}
 	public static function session() {

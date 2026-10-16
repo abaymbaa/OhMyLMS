@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Webhooks\Includes;
 
@@ -60,11 +60,11 @@ class Hooks {
 	 * @since 1.0.0
 	 */
 	public function on_integration_updated( $old_value, $new_value ) {
-		// Check if webhooks was just enabled
+		// Check if webhooks was just enabled.
 		$old_webhooks_enabled = isset( $old_value['webhooks']['is_enable'] ) && 1 === (int) $old_value['webhooks']['is_enable'];
 		$new_webhooks_enabled = isset( $new_value['webhooks']['is_enable'] ) && 1 === (int) $new_value['webhooks']['is_enable'];
 
-		// If webhooks just got enabled, trigger table creation
+		// If webhooks just got enabled, trigger table creation.
 		if ( ! $old_webhooks_enabled && $new_webhooks_enabled ) {
 			WebhooksMigration::maybe_create_webhooks_table();
 		}

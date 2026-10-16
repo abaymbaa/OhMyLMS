@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 <?php
 $cart_items = \OhMyLMS\Commerce\ecommerce()->cart->get_cart();
 foreach ( $cart_items as $cart_item_key => $cart_item ) {
-	if ( isset( $cart_item['type'] ) && $cart_item['type'] === 'ohmylms-membership' ) {
+	if ( isset( $cart_item['type'] ) && 'ohmylms-membership' === $cart_item['type'] ) {
 		?>
 		<input type="hidden" id="membership_id" name="membership_id" value="<?php echo $cart_item['data']->get_id(); ?>">
 		<?php
 	}
-	if ( isset( $cart_item['type'] ) && $cart_item['type'] === 'ohmylms-course' ) {
+	if ( isset( $cart_item['type'] ) && 'ohmylms-course' === $cart_item['type'] ) {
 		?>
 		<input type="hidden" id="course_id" name="course_id" value="<?php echo $cart_item['data']->get_id(); ?>">
 		<?php

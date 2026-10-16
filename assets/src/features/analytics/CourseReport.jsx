@@ -55,15 +55,16 @@ export function createCourseReport( readRuntime ) {
 			S,
 			R,
 			x = ( 0, Router.g )().id;
-		( x || Router.C5,
-			HG( 'ohmylms', 'course' ),
-			( 0, WordPressData.useDispatch )( StoreModule.default ) );
+		if ( ! x ) {
+		}
+		HG( 'ohmylms', 'course' );
+		( 0, WordPressData.useDispatch )( StoreModule.default );
 		var C = hq( ( 0, ReactHooks.useState )( {} ), 2 ),
 			P = C[ 0 ],
 			O = C[ 1 ],
 			k =
-				( ( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getDashboardFilter();
+				( ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+					return _eLocal( StoreModule.default ).getDashboardFilter();
 				}, [] ),
 				hq( ( 0, ReactHooks.useState )( ! 0 ), 2 ) ),
 			j = k[ 0 ],
@@ -79,46 +80,46 @@ export function createCourseReport( readRuntime ) {
 				( 0, Router.Zp )(),
 				( 0, ReactHooks.useCallback )(
 					gq(
-						pq().m( function e() {
-							var t,
-								n,
-								r,
-								a,
-								o,
-								i = arguments;
+						pq().m( function _eLocal2( ..._args ) {
+							var _tLocal,
+								_nLocal,
+								_rLocal,
+								_aLocal,
+								_oLocal,
+								_iLocal = _args;
 							return pq().w(
-								function ( e ) {
+								function ( _eLocal3 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 											case 0:
 												return (
-													( t =
-														i.length > 0 &&
-														void 0 !== i[ 0 ]
-															? i[ 0 ]
+													( _tLocal =
+														_iLocal.length > 0 &&
+														void 0 !== _iLocal[ 0 ]
+															? _iLocal[ 0 ]
 															: 'date' ),
-													( n =
-														i.length > 1 &&
-														void 0 !== i[ 1 ]
-															? i[ 1 ]
+													( _nLocal =
+														_iLocal.length > 1 &&
+														void 0 !== _iLocal[ 1 ]
+															? _iLocal[ 1 ]
 															: 'DESC' ),
 													A( ! 0 ),
-													( e.p = 1 ),
-													( r = {
-														sort_by: n,
+													( _eLocal3.p = 1 ),
+													( _rLocal = {
+														sort_by: _nLocal,
 														filter: D,
 														search: F || '',
-														order: t,
+														order: _tLocal,
 														completion_type: z,
 													} ),
-													( e.n = 2 ),
+													( _eLocal3.n = 2 ),
 													l()( {
 														path: ( 0,
 														lN.addQueryArgs )(
 															'/ohmylms/v1/analytics/course/'.concat(
 																x
 															),
-															r
+															_rLocal
 														),
 														method: 'GET',
 														headers: {
@@ -128,29 +129,30 @@ export function createCourseReport( readRuntime ) {
 													} )
 												 );
 											case 2:
-												( ( a = e.v ),
-													O( a ),
-													( e.n = 4 ) );
+												_aLocal = _eLocal3.v;
+												O( _aLocal );
+												_eLocal3.n = 4;
 												break;
 											case 3:
-												( ( e.p = 3 ),
-													( o = e.v ),
-													console.error(
-														'Error fetching data:',
-														o
-													) );
+												_eLocal3.p = 3;
+												_oLocal = _eLocal3.v;
+												console.error(
+													'Error fetching data:',
+													_oLocal
+												);
+											// Falls through to the shared async state cleanup.
 											case 4:
 												return (
-													( e.p = 4 ),
+													( _eLocal3.p = 4 ),
 													A( ! 1 ),
-													e.f( 4 )
+													_eLocal3.f( 4 )
 												 );
 											case 5:
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal2,
 								null,
 								[ [ 1, 3, 4, 5 ] ]
 							);
@@ -160,11 +162,11 @@ export function createCourseReport( readRuntime ) {
 				) );
 		( 0, ReactHooks.useEffect )(
 			function () {
-				var e = ! 0;
+				var _eLocal4 = ! 0;
 				return (
-					e && B(),
+					_eLocal4 && B(),
 					function () {
-						e = ! 1;
+						_eLocal4 = ! 1;
 					}
 				 );
 			},
@@ -193,7 +195,11 @@ export function createCourseReport( readRuntime ) {
 								{ ! j && (
 									<small>
 										{ '(' }
-										{ Ge( null == P ? void 0 : P.title ) }
+										{ Ge(
+											P === null || P === void 0
+												? void 0
+												: P.title
+										) }
 										{ ')' }
 									</small>
 								) }
@@ -265,8 +271,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( e =
 																					P.content_data ) ||
@@ -290,8 +298,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( t =
 																					P.content_data ) ||
@@ -323,8 +333,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( n =
 																					P.content_data ) ||
@@ -347,8 +359,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( r =
 																					P.content_data ) ||
@@ -399,8 +413,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( a =
 																					P.content_data ) ||
@@ -423,8 +439,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( o =
 																					P.content_data ) ||
@@ -456,8 +474,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( i =
 																					P.content_data ) ||
@@ -480,8 +500,10 @@ export function createCourseReport( readRuntime ) {
 																			'ohmylms'
 																		) }
 																		cardNumber={
-																			( null ==
-																				P ||
+																			( P ===
+																				null ||
+																			P ===
+																				void 0 ||
 																			null ===
 																				( c =
 																					P.content_data ) ||
@@ -582,8 +604,10 @@ export function createCourseReport( readRuntime ) {
 																		>
 																			<Price
 																				currency={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( u =
 																							P.earning ) ||
@@ -593,8 +617,10 @@ export function createCourseReport( readRuntime ) {
 																						: u.currency
 																				}
 																				currency_pos={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( s =
 																							P.earning ) ||
@@ -604,8 +630,10 @@ export function createCourseReport( readRuntime ) {
 																						: s.currency_pos
 																				}
 																				price={ Number(
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																						P ===
+																							void 0 ||
 																						null ===
 																							( d =
 																								P.earning ) ||
@@ -650,8 +678,10 @@ export function createCourseReport( readRuntime ) {
 																		>
 																			<Price
 																				currency={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( m =
 																							P.earning ) ||
@@ -661,8 +691,10 @@ export function createCourseReport( readRuntime ) {
 																						: m.currency
 																				}
 																				currency_pos={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( p =
 																							P.earning ) ||
@@ -672,8 +704,10 @@ export function createCourseReport( readRuntime ) {
 																						: p.currency_pos
 																				}
 																				price={ Number(
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																						P ===
+																							void 0 ||
 																						null ===
 																							( v =
 																								P.earning ) ||
@@ -718,8 +752,10 @@ export function createCourseReport( readRuntime ) {
 																		>
 																			<Price
 																				currency={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( h =
 																							P.earning ) ||
@@ -729,8 +765,10 @@ export function createCourseReport( readRuntime ) {
 																						: h.currency
 																				}
 																				currency_pos={
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																					P ===
+																						void 0 ||
 																					null ===
 																						( _ =
 																							P.earning ) ||
@@ -740,8 +778,10 @@ export function createCourseReport( readRuntime ) {
 																						: _.currency_pos
 																				}
 																				price={ Number(
-																					null ==
-																						P ||
+																					P ===
+																						null ||
+																						P ===
+																							void 0 ||
 																						null ===
 																							( w =
 																								P.earning ) ||
@@ -774,7 +814,10 @@ export function createCourseReport( readRuntime ) {
 														>
 															<EarningsChart
 																currency={
-																	null == P ||
+																	P ===
+																		null ||
+																	P ===
+																		void 0 ||
 																	null ===
 																		( E =
 																			P.earning ) ||
@@ -783,7 +826,10 @@ export function createCourseReport( readRuntime ) {
 																		: E.currency
 																}
 																currency_pos={
-																	null == P ||
+																	P ===
+																		null ||
+																	P ===
+																		void 0 ||
 																	null ===
 																		( S =
 																			P.earning ) ||
@@ -792,8 +838,10 @@ export function createCourseReport( readRuntime ) {
 																		: S.currency_pos
 																}
 																graphData={
-																	( null ==
-																		P ||
+																	( P ===
+																		null ||
+																	P ===
+																		void 0 ||
 																	null ===
 																		( R =
 																			P.earning ) ||
@@ -899,7 +947,9 @@ export function createCourseReport( readRuntime ) {
 								>
 									<CourseStudentsReport
 										students={
-											null == P ? void 0 : P.students
+											P === null || P === void 0
+												? void 0
+												: P.students
 										}
 									/>
 								</Controls.SpacerWP>

@@ -18,9 +18,7 @@ export const INTERACTIVE_TYPES = [
 
 /** Answer shapes the expression engine can require. */
 export const ANSWER_FORMS = [ 'any', 'expanded', 'factored', 'simplified' ];
-
 export const isInteractiveType = ( type ) => INTERACTIVE_TYPES.includes( type );
-
 const MARKER = /\{([a-z0-9_-]{1,20})\}/gi;
 
 /**
@@ -59,26 +57,50 @@ export function interactiveDefaults( type ) {
 						choices: [ 'positive', 'negative' ],
 						answer: 'positive',
 					},
-					{ id: '2', choices: [ 'rises', 'falls' ], answer: 'rises' },
+					{
+						id: '2',
+						choices: [ 'rises', 'falls' ],
+						answer: 'rises',
+					},
 				],
 			};
 		case 'categorize':
 			return {
 				buckets: [
-					{ id: 'b1', label: '' },
-					{ id: 'b2', label: '' },
+					{
+						id: 'b1',
+						label: '',
+					},
+					{
+						id: 'b2',
+						label: '',
+					},
 				],
 				items: [
-					{ id: 'i1', text: '' },
-					{ id: 'i2', text: '' },
+					{
+						id: 'i1',
+						text: '',
+					},
+					{
+						id: 'i2',
+						text: '',
+					},
 				],
-				key: { i1: 'b1', i2: 'b2' },
+				key: {
+					i1: 'b1',
+					i2: 'b2',
+				},
 			};
 		case 'multi-blank':
 			return {
 				layout: 'inline',
 				text: '3 + 4 = {a}',
-				blanks: { a: { kind: 'numerical', answer: 7 } },
+				blanks: {
+					a: {
+						kind: 'numerical',
+						answer: 7,
+					},
+				},
 			};
 		case 'build-expression':
 			return {
@@ -89,13 +111,33 @@ export function interactiveDefaults( type ) {
 				form: 'any',
 			};
 		case 'expression':
-			return { answer: '2x+6', alternatives: [], form: 'any' };
+			return {
+				answer: '2x+6',
+				alternatives: [],
+				form: 'any',
+			};
 		case 'number-line':
-			return { min: 0, max: 10, step: 1, target: 5 };
+			return {
+				min: 0,
+				max: 10,
+				step: 1,
+				target: 5,
+			};
 		case 'fill-level':
-			return { min: 0, max: 1000, step: 50, unit: 'ml', target: 500 };
+			return {
+				min: 0,
+				max: 1000,
+				step: 50,
+				unit: 'ml',
+				target: 500,
+			};
 		case 'shade-model':
-			return { shape: 'bar', parts: 8, cols: 8, answer: 3 };
+			return {
+				shape: 'bar',
+				parts: 8,
+				cols: 8,
+				answer: 3,
+			};
 		case 'count-blocks':
 			return {
 				places: [ 'hundreds', 'tens', 'ones' ],
@@ -120,20 +162,33 @@ export function interactiveDefaults( type ) {
 		case 'build-chart':
 			return {
 				categories: [
-					{ id: 'a', label: 'A' },
-					{ id: 'b', label: 'B' },
+					{
+						id: 'a',
+						label: 'A',
+					},
+					{
+						id: 'b',
+						label: 'B',
+					},
 				],
 				max: 10,
 				step: 1,
 				unit: '',
-				values: { a: 4, b: 7 },
+				values: {
+					a: 4,
+					b: 7,
+				},
 				show_table: true,
 			};
 		case 'grid-build':
 			return {
 				rows: 6,
 				cols: 6,
-				constraints: { area: 12, perimeter: 14, rectangle: true },
+				constraints: {
+					area: 12,
+					perimeter: 14,
+					rectangle: true,
+				},
 				show_measures: false,
 			};
 		default:
@@ -203,7 +258,9 @@ export function nextId( list, prefix ) {
  * @param bucketId
  */
 export function removeBucket( settings, bucketId ) {
-	const key = { ...settings.key };
+	const key = {
+		...settings.key,
+	};
 	for ( const [ item, bucket ] of Object.entries( key ) ) {
 		if ( bucket === bucketId ) {
 			delete key[ item ];
@@ -223,7 +280,9 @@ export function removeBucket( settings, bucketId ) {
  * @param itemId
  */
 export function removeItem( settings, itemId ) {
-	const key = { ...settings.key };
+	const key = {
+		...settings.key,
+	};
 	delete key[ itemId ];
 	return {
 		items: settings.items.filter( ( item ) => item.id !== itemId ),
@@ -325,17 +384,20 @@ export function interactiveIssues( type, settings = {} ) {
 		}
 		for ( const id of ids ) {
 			const spec = settings.blanks?.[ id ] || {};
-			const answered =
-				spec.kind === 'expression'
-					? String( spec.answer || '' ).trim() !== ''
-					: spec.kind === 'numerical'
-						? [ spec.answer, ...( spec.answers || [] ) ].some(
-								( value ) =>
-									value !== undefined &&
-									value !== '' &&
-									Number.isFinite( Number( value ) )
-							)
-						: ( spec.accepted || [] ).some( ( a ) => a.trim() );
+			const answered = ( () => {
+				if ( spec.kind === 'expression' ) {
+					return String( spec.answer || '' ).trim() !== '';
+				}
+				if ( spec.kind === 'numerical' ) {
+					return [ spec.answer, ...( spec.answers || [] ) ].some(
+						( value ) =>
+							value !== undefined &&
+							value !== '' &&
+							Number.isFinite( Number( value ) )
+					);
+				}
+				return ( spec.accepted || [] ).some( ( a ) => a.trim() );
+			} )();
 			if ( ! answered ) {
 				issues.push( 'answers' );
 				break;
@@ -353,13 +415,11 @@ export function interactiveIssues( type, settings = {} ) {
 	issues.push( ...visualIssues( type, settings ) );
 	return issues;
 }
-
 const finite = ( value ) =>
 	value !== undefined &&
 	value !== null &&
 	value !== '' &&
 	Number.isFinite( Number( value ) );
-
 export const PLACE_VALUES = {
 	thousands: 1000,
 	hundreds: 100,
@@ -395,9 +455,15 @@ export function addCategory( settings ) {
 	return {
 		categories: [
 			...categories,
-			{ id, label: String.fromCharCode( 65 + categories.length ) },
+			{
+				id,
+				label: String.fromCharCode( 65 + categories.length ),
+			},
 		],
-		values: { ...settings.values, [ id ]: 0 },
+		values: {
+			...settings.values,
+			[ id ]: 0,
+		},
 	};
 }
 
@@ -407,7 +473,9 @@ export function addCategory( settings ) {
  * @param id
  */
 export function removeCategory( settings, id ) {
-	const values = { ...settings.values };
+	const values = {
+		...settings.values,
+	};
 	delete values[ id ];
 	return {
 		categories: ( settings.categories || [] ).filter(

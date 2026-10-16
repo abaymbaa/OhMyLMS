@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learner dashboard presentation; all learning rules remain in their existing services.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\Schema;

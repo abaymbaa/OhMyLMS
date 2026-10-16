@@ -41,84 +41,95 @@ export function createBadgeImageField( readRuntime ) {
 			f = void 0 === maxWidth ? 'unset' : maxWidth,
 			v =
 				( ( function ( e, t ) {
-					if ( null == e ) {
+					if ( e === null || e === void 0 ) {
 						return {};
 					}
 					var n,
 						r,
-						a = ( function ( e, t ) {
-							if ( null == e ) {
+						a = ( function ( _eLocal, _tLocal ) {
+							if ( _eLocal === null || _eLocal === void 0 ) {
 								return {};
 							}
-							var n = {};
-							for ( var r in e ) {
-								if ( {}.hasOwnProperty.call( e, r ) ) {
-									if ( -1 !== t.indexOf( r ) ) {
+							var _nLocal = {};
+							for ( var _rLocal in _eLocal ) {
+								if (
+									{}.hasOwnProperty.call( _eLocal, _rLocal )
+								) {
+									if ( -1 !== _tLocal.indexOf( _rLocal ) ) {
 										continue;
 									}
-									n[ r ] = e[ r ];
+									_nLocal[ _rLocal ] = _eLocal[ _rLocal ];
 								}
 							}
-							return n;
+							return _nLocal;
 						} )( e, t );
 					if ( Object.getOwnPropertySymbols ) {
 						var o = Object.getOwnPropertySymbols( e );
 						for ( r = 0; r < o.length; r++ ) {
-							( ( n = o[ r ] ),
+							n = o[ r ];
+							if (
 								-1 === t.indexOf( n ) &&
-									{}.propertyIsEnumerable.call( e, n ) &&
-									( a[ n ] = e[ n ] ) );
+								{}.propertyIsEnumerable.call( e, n )
+							) {
+								a[ n ] = e[ n ];
+							}
 						}
 					}
 				} )( props, D2 ),
 				( function ( e, t ) {
 					return (
-						( function ( e ) {
-							if ( Array.isArray( e ) ) {
-								return e;
+						( function ( _eLocal2 ) {
+							if ( Array.isArray( _eLocal2 ) ) {
+								return _eLocal2;
 							}
 						} )( e ) ||
-						( function ( e, t ) {
+						( function ( _eLocal3, _tLocal2 ) {
 							var n =
-								null == e
+								_eLocal3 === null || _eLocal3 === void 0
 									? null
 									: ( 'undefined' !== typeof Symbol &&
-											e[ Symbol.iterator ] ) ||
-										e[ '@@iterator' ];
-							if ( null != n ) {
+											_eLocal3[ Symbol.iterator ] ) ||
+										_eLocal3[ '@@iterator' ];
+							if ( n !== null && n !== void 0 ) {
 								var r,
 									a,
 									o,
 									i,
 									l = [],
-									c = ! 0,
+									_cLocal = ! 0,
 									u = ! 1;
 								try {
 									if (
-										( ( o = ( n = n.call( e ) ).next ),
-										0 === t )
+										( ( o = ( n = n.call( _eLocal3 ) )
+											.next ),
+										0 === _tLocal2 )
 									) {
 										if ( Object( n ) !== n ) {
 											return;
 										}
-										c = ! 1;
+										_cLocal = ! 1;
 									} else {
 										for (
 											;
-											! ( c = ( r = o.call( n ) )
+											! ( _cLocal = ( r = o.call( n ) )
 												.done ) &&
 											( l.push( r.value ),
-											l.length !== t );
-											c = ! 0
+											l.length !== _tLocal2 );
+											_cLocal = ! 0
 										) {}
 									}
-								} catch ( e ) {
-									( ( u = ! 0 ), ( a = e ) );
+								} catch ( _eLocal4 ) {
+									u = ! 0;
+									a = _eLocal4;
 								} finally {
 									try {
 										if (
-											! c &&
-											null != n.return &&
+											! _cLocal &&
+											( ( _nullableValue ) =>
+												_nullableValue !== null &&
+												_nullableValue !== void 0 )(
+												n.return
+											) &&
 											( ( i = n.return() ),
 											Object( i ) !== i )
 										) {
@@ -133,24 +144,32 @@ export function createBadgeImageField( readRuntime ) {
 								return l;
 							}
 						} )( e, t ) ||
-						( function ( e, t ) {
-							if ( e ) {
-								if ( 'string' === typeof e ) {
-									return z2( e, t );
+						( function ( _eLocal5, _tLocal3 ) {
+							if ( _eLocal5 ) {
+								if ( 'string' === typeof _eLocal5 ) {
+									return z2( _eLocal5, _tLocal3 );
 								}
-								var n = {}.toString.call( e ).slice( 8, -1 );
+								var n = {}.toString
+									.call( _eLocal5 )
+									.slice( 8, -1 );
 								return (
 									'Object' === n &&
-										e.constructor &&
-										( n = e.constructor.name ),
-									'Map' === n || 'Set' === n
-										? Array.from( e )
-										: 'Arguments' === n ||
-											  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-													n
-											  )
-											? z2( e, t )
-											: void 0
+										_eLocal5.constructor &&
+										( n = _eLocal5.constructor.name ),
+									( () => {
+										if ( 'Map' === n || 'Set' === n ) {
+											return Array.from( _eLocal5 );
+										}
+										if (
+											'Arguments' === n ||
+											/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+												n
+											)
+										) {
+											return z2( _eLocal5, _tLocal3 );
+										}
+										return void 0;
+									} )()
 								 );
 							}
 						} )( e, t ) ||
@@ -171,21 +190,29 @@ export function createBadgeImageField( readRuntime ) {
 					},
 					multiple: ! 1,
 				} );
-				( t.on( 'select', function () {
+				t.on( 'select', function () {
 					var n = t.state().get( 'selection' ).first().toJSON(),
-						r = y.some( function ( e ) {
-							return n.url.toLowerCase().endsWith( e );
+						r = y.some( function ( _eLocal6 ) {
+							return n.url.toLowerCase().endsWith( _eLocal6 );
 						} ),
 						a =
 							( 'image' === e && 'image' === n.type ) ||
 							( 'video' === e && 'video' === n.type );
-					r && a
-						? 'image' === e &&
-							( handleChange( n.url, null == n ? void 0 : n.id ),
-							h( n.url ) )
-						: alert( 'Invalid file type or media type.' );
-				} ),
-					t.open() );
+					if ( r && a ) {
+						if ( 'image' === e ) {
+							{
+								handleChange(
+									n.url,
+									n === null || n === void 0 ? void 0 : n.id
+								);
+								h( n.url );
+							}
+						}
+					} else {
+						alert( 'Invalid file type or media type.' );
+					}
+				} );
+				t.open();
 			};
 		return (
 			<React.Fragment>
@@ -283,11 +310,11 @@ export function createBadgeImageField( readRuntime ) {
 										<FK
 											{ ...W2(
 												{
-													key: t,
 													format: 'hex',
 												},
 												e
 											) }
+											key={ t }
 										/>
 									);
 								} ) }

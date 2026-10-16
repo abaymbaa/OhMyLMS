@@ -25,12 +25,12 @@ $post_ids = ! empty( $post_ids ) ? (array) $post_ids : array();
 if ( empty( $post_ids ) ) {
 	return;
 }
-// if ( ! empty( $post_ids ) ) {
+// if ( ! empty( $post_ids ) ) {.
 ?>
 
 <div class="ohmylms-thankyou-table-wrapper subscription-info">
 	<h2 class="ohmylms-order-summary-title">
-		<?php echo __( 'Subscription Details', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Subscription Details', 'ohmylms' ); ?>
 	</h2>
 	<?php
 	foreach ( $post_ids as $post_id ) {
@@ -103,21 +103,21 @@ if ( empty( $post_ids ) ) {
 
 				</tr>
 				<tr class="subscription-status">
-					<td><?php echo __( 'Status', 'ohmylms' ); ?></td>
+					<td><?php echo esc_html__( 'Status', 'ohmylms' ); ?></td>
 					<td class="status-<?php echo esc_attr( $subscription->get_status() ); ?>"><?php echo $subscription->get_status(); ?></td>
 				</tr>
 				<tr class="subscription-started">
-					<td><?php echo __( 'Started', 'ohmylms' ); ?></td>
+					<td><?php echo esc_html__( 'Started', 'ohmylms' ); ?></td>
 					<td><?php echo date_i18n( 'F j, Y', strtotime( $subscription->get_schedule_start_date() ) ); ?></td>
 				</tr>
 				<?php if ( $renewal_date ) : ?>
 					<tr class="subscription-next-payment">
-						<td><?php echo __( 'Next Billing', 'ohmylms' ); ?></td>
+						<td><?php echo esc_html__( 'Next Billing', 'ohmylms' ); ?></td>
 						<td><?php echo esc_html( $renewal_date ); ?></td>
 					</tr>
 				<?php endif; ?>
 				<tr class="subscription-amount">
-					<td><?php echo __( 'Amount', 'ohmylms' ); ?></td>
+					<td><?php echo esc_html__( 'Amount', 'ohmylms' ); ?></td>
 					<td style="font-weight: bold;"><?php echo ohmylms_price( $recurring_amount ) . '/' . $subscription->get_billing_period(); ?></td>
 				</tr>
 			</tbody>

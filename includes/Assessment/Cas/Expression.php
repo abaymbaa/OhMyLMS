@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A small, safe algebra engine for grading typed math.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment\Cas;
 
 defined( 'ABSPATH' ) || exit;
@@ -88,10 +93,10 @@ final class Expression {
 	 */
 	public static function parse( $input ) {
 		$text = self::normalize( $input );
-		if ( $text === '' || strlen( $text ) > self::MAX_LENGTH ) {
+		if ( '' === $text || strlen( $text ) > self::MAX_LENGTH ) {
 			return null; }
 		$tokens = self::tokenize( $text );
-		if ( $tokens === null ) {
+		if ( null === $tokens ) {
 			return null; }
 		$state = array(
 			'tokens' => $tokens,
@@ -99,13 +104,13 @@ final class Expression {
 			'nodes'  => 0,
 		);
 		$left  = self::parse_sum( $state, 0 );
-		if ( $left === null ) {
+		if ( null === $left ) {
 			return null; }
 		$tree = $left;
 		if ( self::peek( $state ) === array( 'op', '=' ) ) {
 			++$state['pos'];
 			$right = self::parse_sum( $state, 0 );
-			if ( $right === null ) {
+			if ( null === $right ) {
 				return null; }
 			$tree = array( '=', $left, $right );
 		}
@@ -155,18 +160,18 @@ final class Expression {
 				return strlen( $b ) - strlen( $a );
 			}
 		);
-		while ( $word !== '' ) {
+		while ( '' !== $word ) {
 			$matched = false;
 			foreach ( $names as $name ) {
 				if ( strpos( $word, $name ) === 0 ) {
-					$parts[] = $name === 'pi' ? array( 'const', 'pi' ) : array( 'fn', $name );
+					$parts[] = 'pi' === $name ? array( 'const', 'pi' ) : array( 'fn', $name );
 					$word    = substr( $word, strlen( $name ) );
 					$matched = true;
 					break;
 				}
 			}
 			if ( ! $matched ) {
-				$parts[] = $word[0] === 'e' ? array( 'const', 'e' ) : array( 'var', $word[0] );
+				$parts[] = 'e' === $word[0] ? array( 'const', 'e' ) : array( 'var', $word[0] );
 				$word    = substr( $word, 1 );
 			}
 		}
@@ -185,12 +190,12 @@ final class Expression {
 		if ( $depth > self::MAX_DEPTH ) {
 			return null; }
 		$left = self::parse_product( $state, $depth + 1 );
-		while ( $left !== null ) {
+		while ( null !== $left ) {
 			$token = self::peek( $state );
 			if ( $token === array( 'op', '+' ) || $token === array( 'op', '-' ) ) {
 				++$state['pos'];
 				$right = self::parse_product( $state, $depth + 1 );
-				$left  = $right === null ? null : self::node( $state, array( $token[1], $left, $right ) );
+				$left  = null === $right ? null : self::node( $state, array( $token[1], $left, $right ) );
 			} else {
 				break; }
 		}
@@ -198,21 +203,21 @@ final class Expression {
 	}
 
 	private static function starts_factor( $token ) {
-		return $token !== null && ( in_array( $token[0], array( 'num', 'var', 'const', 'fn' ), true ) || $token === array( 'op', '(' ) );
+		return null !== $token && ( in_array( $token[0], array( 'num', 'var', 'const', 'fn' ), true ) || $token === array( 'op', '(' ) );
 	}
 
 	private static function parse_product( array &$state, $depth ) {
 		$left = self::parse_unary( $state, $depth + 1 );
-		while ( $left !== null ) {
+		while ( null !== $left ) {
 			$token = self::peek( $state );
 			if ( $token === array( 'op', '*' ) || $token === array( 'op', '/' ) ) {
 				++$state['pos'];
 				$right = self::parse_unary( $state, $depth + 1 );
-				$left  = $right === null ? null : self::node( $state, array( $token[1], $left, $right ) );
+				$left  = null === $right ? null : self::node( $state, array( $token[1], $left, $right ) );
 			} elseif ( self::starts_factor( $token ) ) {
 				// Implicit multiplication: 2x, 2(x+1), x sin(x).
 				$right = self::parse_unary( $state, $depth + 1 );
-				$left  = $right === null ? null : self::node( $state, array( '*', $left, $right ) );
+				$left  = null === $right ? null : self::node( $state, array( '*', $left, $right ) );
 			} else {
 				break; }
 		}
@@ -226,20 +231,20 @@ final class Expression {
 		if ( $token === array( 'op', '-' ) || $token === array( 'op', '+' ) ) {
 			++$state['pos'];
 			$operand = self::parse_unary( $state, $depth + 1 );
-			if ( $operand === null ) {
+			if ( null === $operand ) {
 				return null; }
-			return $token[1] === '-' ? self::node( $state, array( 'neg', $operand ) ) : $operand;
+			return '-' === $token[1] ? self::node( $state, array( 'neg', $operand ) ) : $operand;
 		}
 		return self::parse_power( $state, $depth + 1 );
 	}
 
 	private static function parse_power( array &$state, $depth ) {
 		$base = self::parse_primary( $state, $depth + 1 );
-		if ( $base !== null && self::peek( $state ) === array( 'op', '^' ) ) {
+		if ( null !== $base && self::peek( $state ) === array( 'op', '^' ) ) {
 			++$state['pos'];
 			// Right associative; the exponent may carry a sign (x^-2).
 			$exponent = self::parse_unary( $state, $depth + 1 );
-			return $exponent === null ? null : self::node( $state, array( '^', $base, $exponent ) );
+			return null === $exponent ? null : self::node( $state, array( '^', $base, $exponent ) );
 		}
 		return $base;
 	}
@@ -248,35 +253,35 @@ final class Expression {
 		if ( $depth > self::MAX_DEPTH ) {
 			return null; }
 		$token = self::peek( $state );
-		if ( $token === null ) {
+		if ( null === $token ) {
 			return null; }
 		++$state['pos'];
-		if ( $token[0] === 'num' ) {
+		if ( 'num' === $token[0] ) {
 			return self::node( $state, array( 'num', $token[1] ) ); }
-		if ( $token[0] === 'var' || $token[0] === 'const' ) {
+		if ( 'var' === $token[0] || 'const' === $token[0] ) {
 			return self::node( $state, array( $token[0], $token[1] ) ); }
 		if ( $token === array( 'op', '(' ) ) {
 			$inner = self::parse_sum( $state, $depth + 1 );
-			if ( $inner === null || self::peek( $state ) !== array( 'op', ')' ) ) {
+			if ( null === $inner || self::peek( $state ) !== array( 'op', ')' ) ) {
 				return null; }
 			++$state['pos'];
 			return $inner;
 		}
 		if ( $token === array( 'op', '|' ) ) {
 			$inner = self::parse_sum( $state, $depth + 1 );
-			if ( $inner === null || self::peek( $state ) !== array( 'op', '|' ) ) {
+			if ( null === $inner || self::peek( $state ) !== array( 'op', '|' ) ) {
 				return null; }
 			++$state['pos'];
 			return self::node( $state, array( 'fn', 'abs', $inner ) );
 		}
-		if ( $token[0] === 'fn' ) {
+		if ( 'fn' === $token[0] ) {
 			if ( self::peek( $state ) === array( 'op', '(' ) ) {
 				// f(x) or f(x, y): a comma-separated argument list.
 				++$state['pos'];
 				$args = array();
 				do {
 					$arg = self::parse_sum( $state, $depth + 1 );
-					if ( $arg === null || count( $args ) >= 3 ) {
+					if ( null === $arg || count( $args ) >= 3 ) {
 						return null; }
 					$args[] = $arg;
 					$more   = self::peek( $state ) === array( 'op', ',' );
@@ -290,7 +295,7 @@ final class Expression {
 			}
 			// As typed on paper: sin x.
 			$argument = self::parse_power( $state, $depth + 1 );
-			return $argument === null ? null : self::node( $state, array( 'fn', $token[1], $argument ) );
+			return null === $argument ? null : self::node( $state, array( 'fn', $token[1], $argument ) );
 		}
 		return null;
 	}
@@ -305,15 +310,15 @@ final class Expression {
 			case 'var':
 				return $vars[ $tree[1] ] ?? null;
 			case 'const':
-				return $tree[1] === 'pi' ? M_PI : M_E;
+				return 'pi' === $tree[1] ? M_PI : M_E;
 			case 'neg':
 				$a = self::evaluate( $tree[1], $vars );
-				return $a === null ? null : -$a;
+				return null === $a ? null : -$a;
 			case 'fn':
 				$args = array();
 				foreach ( array_slice( $tree, 2 ) as $argument ) {
 					$value = self::evaluate( $argument, $vars );
-					if ( $value === null ) {
+					if ( null === $value ) {
 						return null; }
 					$args[] = $value;
 				}
@@ -321,7 +326,7 @@ final class Expression {
 		}
 		$a = self::evaluate( $tree[1], $vars );
 		$b = self::evaluate( $tree[2], $vars );
-		if ( $a === null || $b === null ) {
+		if ( null === $a || null === $b ) {
 			return null; }
 		switch ( $tree[0] ) {
 			case '+':
@@ -339,7 +344,7 @@ final class Expression {
 				$value = $a / $b;
 				break;
 			case '^':
-				if ( ( $a == 0.0 && $b <= 0.0 ) || ( $a < 0 && floor( $b ) !== $b ) || abs( $b ) > 200 ) {
+				if ( ( 0.0 == $a && $b <= 0.0 ) || ( $a < 0 && floor( $b ) !== $b ) || abs( $b ) > 200 ) {
 					return null; }
 				$value = pow( $a, $b );
 				break;
@@ -358,25 +363,25 @@ final class Expression {
 	private static function apply( $name, array $args ) {
 		$count = count( $args );
 		if ( in_array( $name, array( 'min', 'max' ), true ) ) {
-			return $count >= 1 ? ( $name === 'min' ? min( $args ) : max( $args ) ) : null; }
+			return $count >= 1 ? ( 'min' === $name ? min( $args ) : max( $args ) ) : null; }
 		if ( in_array( $name, array( 'gcd', 'lcm', 'mod' ), true ) ) {
-			$a = $count === 2 ? self::whole( $args[0] ) : null;
-			$b = $count === 2 ? self::whole( $args[1] ) : null;
-			if ( $a === null || $b === null ) {
+			$a = 2 === $count ? self::whole( $args[0] ) : null;
+			$b = 2 === $count ? self::whole( $args[1] ) : null;
+			if ( null === $a || null === $b ) {
 				return null; }
-			if ( $name === 'mod' ) {
+			if ( 'mod' === $name ) {
 				// Result takes the sign of the divisor, as in school maths (mod(-1, 5) = 4).
-				return $b === 0 ? null : (float) ( ( ( $a % $b ) + $b ) % $b );
+				return 0 === $b ? null : (float) ( ( ( $a % $b ) + $b ) % $b );
 			}
 			$g = self::gcd( $a, $b );
-			return $name === 'gcd' ? (float) $g : ( $a === 0 || $b === 0 ? 0.0 : (float) abs( intdiv( $a, $g ) * $b ) );
+			return 'gcd' === $name ? (float) $g : ( 0 === $a || 0 === $b ? 0.0 : (float) abs( intdiv( $a, $g ) * $b ) );
 		}
-		if ( $name === 'round' ) {
-			if ( $count === 1 ) {
+		if ( 'round' === $name ) {
+			if ( 1 === $count ) {
 				return round( $args[0] ); }
-			return $count === 2 && abs( $args[1] ) <= 9 ? round( $args[0], (int) $args[1] ) : null;
+			return 2 === $count && abs( $args[1] ) <= 9 ? round( $args[0], (int) $args[1] ) : null;
 		}
-		return $count === 1 ? self::apply_unary( $name, $args[0] ) : null;
+		return 1 === $count ? self::apply_unary( $name, $args[0] ) : null;
 	}
 
 	private static function apply_unary( $name, $a ) {
@@ -413,7 +418,7 @@ final class Expression {
 
 	/** Variable names used in a tree. */
 	public static function variables( array $tree, array $found = array() ) {
-		if ( $tree[0] === 'var' ) {
+		if ( 'var' === $tree[0] ) {
 			$found[ $tree[1] ] = true;
 			return $found; }
 		foreach ( array_slice( $tree, 1 ) as $child ) {
@@ -434,7 +439,7 @@ final class Expression {
 	public static function check( $student, $key, $form = 'any', array $settings = array() ) {
 		$s_tree = self::parse( $student );
 		$k_tree = self::parse( $key );
-		if ( $s_tree === null || $k_tree === null ) {
+		if ( null === $s_tree || null === $k_tree ) {
 			return array(
 				'correct' => false,
 				'reason'  => 'parse',
@@ -462,14 +467,14 @@ final class Expression {
 	}
 
 	public static function equivalent( array $a, array $b ) {
-		$equation_a = $a[0] === '=';
-		if ( $equation_a !== ( $b[0] === '=' ) ) {
+		$equation_a = '=' === $a[0];
+		if ( $equation_a !== ( '=' === $b[0] ) ) {
 			return false; }
 		if ( $equation_a ) {
 			$a = array( '-', $a[1], $a[2] );
 			$b = array( '-', $b[1], $b[2] );
 		}
-		$names  = array_keys( self::variables( $b, self::variables( $a ) ) );
+		$names = array_keys( self::variables( $b, self::variables( $a ) ) );
 		sort( $names );
 		$ratio  = null;
 		$agreed = 0;
@@ -481,9 +486,9 @@ final class Expression {
 			}
 			$x = self::evaluate( $a, $vars );
 			$y = self::evaluate( $b, $vars );
-			if ( $x === null && $y === null ) {
+			if ( null === $x && null === $y ) {
 				continue; }
-			if ( $x === null || $y === null ) {
+			if ( null === $x || null === $y ) {
 				return false; }
 			if ( $equation_a ) {
 				// Equal up to a non-zero constant: both sides vanish together, or the ratio is constant.
@@ -518,7 +523,7 @@ final class Expression {
 	/* ---------- Form checks ---------- */
 
 	public static function has_form( array $tree, $form ) {
-		if ( $tree[0] === '=' ) {
+		if ( '=' === $tree[0] ) {
 			return self::has_form( $tree[1], $form ) && self::has_form( $tree[2], $form ); }
 		switch ( $form ) {
 			case 'expanded':
@@ -533,19 +538,19 @@ final class Expression {
 
 	/** Top-level terms with their signs removed. */
 	private static function terms( array $tree ) {
-		if ( $tree[0] === '+' ) {
+		if ( '+' === $tree[0] ) {
 			return array_merge( self::terms( $tree[1] ), self::terms( $tree[2] ) ); }
-		if ( $tree[0] === '-' ) {
+		if ( '-' === $tree[0] ) {
 			// a - (b + c) keeps its bracket as one (unexpanded) term.
 			$right = in_array( $tree[2][0], array( '+', '-' ), true ) ? array( $tree[2] ) : self::terms( $tree[2] );
 			return array_merge( self::terms( $tree[1] ), $right ); }
-		return array( $tree[0] === 'neg' ? $tree[1] : $tree );
+		return array( 'neg' === $tree[0] ? $tree[1] : $tree );
 	}
 
 	private static function contains_sum( array $tree ) {
 		if ( in_array( $tree[0], array( '+', '-' ), true ) ) {
 			return true; }
-		if ( $tree[0] === 'fn' ) {
+		if ( 'fn' === $tree[0] ) {
 			return false; }
 		foreach ( array_slice( $tree, 1 ) as $child ) {
 			if ( is_array( $child ) && self::contains_sum( $child ) ) {
@@ -556,11 +561,11 @@ final class Expression {
 
 	/** A number built only from literals. */
 	private static function is_constant( array $tree ) {
-		return $tree[0] === 'num' || ( $tree[0] !== 'var' && self::variables( $tree ) === array() && ! self::contains_function( $tree ) );
+		return 'num' === $tree[0] || ( 'var' !== $tree[0] && self::variables( $tree ) === array() && ! self::contains_function( $tree ) );
 	}
 
 	private static function contains_function( array $tree ) {
-		if ( $tree[0] === 'fn' ) {
+		if ( 'fn' === $tree[0] ) {
 			return true; }
 		foreach ( array_slice( $tree, 1 ) as $child ) {
 			if ( is_array( $child ) && self::contains_function( $child ) ) {
@@ -590,12 +595,12 @@ final class Expression {
 				return self::monomial( $tree[1], $powers, $coefficients ) && self::monomial( $tree[2], $powers, $coefficients );
 			case '/':
 				// Division by a number only (x/2); a variable denominator is not a polynomial term.
-				if ( $tree[2][0] !== 'num' ) {
+				if ( 'num' !== $tree[2][0] ) {
 					return false; }
 				++$coefficients;
 				return self::monomial( $tree[1], $powers, $coefficients );
 			case '^':
-				if ( $tree[1][0] === 'var' && $tree[2][0] === 'num' && $tree[2][1] >= 2 && floor( $tree[2][1] ) === $tree[2][1] ) {
+				if ( 'var' === $tree[1][0] && 'num' === $tree[2][0] && $tree[2][1] >= 2 && floor( $tree[2][1] ) === $tree[2][1] ) {
 					$powers[ $tree[1][1] ] = ( $powers[ $tree[1][1] ] ?? 0 ) + (int) $tree[2][1];
 					return true; }
 				return false;
@@ -615,7 +620,7 @@ final class Expression {
 			ksort( $powers );
 			$signature = json_encode( $powers );
 			if ( isset( $seen[ $signature ] ) ) {
-				return false; // like terms not combined
+				return false; // like terms not combined.
 			}
 			$seen[ $signature ] = true;
 		}
@@ -623,29 +628,29 @@ final class Expression {
 	}
 
 	private static function is_factored( array $tree ) {
-		if ( $tree[0] === 'neg' ) {
+		if ( 'neg' === $tree[0] ) {
 			return self::is_factored( $tree[1] ); }
 		if ( in_array( $tree[0], array( '+', '-' ), true ) ) {
 			return false; }
-		if ( $tree[0] === '^' ) {
-			return self::contains_sum( $tree[1] ) && $tree[2][0] === 'num' && $tree[2][1] >= 2; }
-		if ( $tree[0] === '/' ) {
-			return self::is_factored( $tree[1] ) && ( $tree[2][0] === 'num' || self::is_factored( $tree[2] ) || ! self::contains_sum( $tree[2] ) ); }
-		if ( $tree[0] !== '*' ) {
+		if ( '^' === $tree[0] ) {
+			return self::contains_sum( $tree[1] ) && 'num' === $tree[2][0] && $tree[2][1] >= 2; }
+		if ( '/' === $tree[0] ) {
+			return self::is_factored( $tree[1] ) && ( 'num' === $tree[2][0] || self::is_factored( $tree[2] ) || ! self::contains_sum( $tree[2] ) ); }
+		if ( '*' !== $tree[0] ) {
 			return false; }
 		// A product with at least two non-numeric factors, none of which is a product of sums left unexpanded wrongly.
 		$factors = self::factors( $tree );
 		$real    = array_filter(
 			$factors,
 			static function ( $factor ) {
-				return $factor[0] !== 'num';
+				return 'num' !== $factor[0];
 			}
 		);
 		return count( $real ) >= 2 || ( count( $real ) === 1 && count( $factors ) > 1 && self::contains_sum( reset( $real ) ) );
 	}
 
 	private static function factors( array $tree ) {
-		return $tree[0] === '*' ? array_merge( self::factors( $tree[1] ), self::factors( $tree[2] ) ) : array( $tree );
+		return '*' === $tree[0] ? array_merge( self::factors( $tree[1] ), self::factors( $tree[2] ) ) : array( $tree );
 	}
 
 	private static function is_simplified( array $tree ) {
@@ -672,23 +677,23 @@ final class Expression {
 		if ( in_array( $op, array( '+', '-', '*', '/', '^' ), true ) ) {
 			$left  = $tree[1];
 			$right = $tree[2];
-			if ( $left[0] === 'num' && $right[0] === 'num' ) {
-				if ( $op === '/' && floor( $left[1] ) === $left[1] && floor( $right[1] ) === $right[1] && $right[1] != 0 ) {
-					if ( self::gcd( (int) $left[1], (int) $right[1] ) === 1 && $right[1] != 1 ) {
+			if ( 'num' === $left[0] && 'num' === $right[0] ) {
+				if ( '/' === $op && floor( $left[1] ) === $left[1] && floor( $right[1] ) === $right[1] && 0 != $right[1] ) {
+					if ( self::gcd( (int) $left[1], (int) $right[1] ) === 1 && 1 != $right[1] ) {
 						return true; }
 				}
 				return false;
 			}
-			if ( ( $op === '*' && ( ( $left[0] === 'num' && $left[1] == 1 ) || ( $right[0] === 'num' && $right[1] == 1 ) ) )
-				|| ( in_array( $op, array( '+', '-' ), true ) && ( ( $left[0] === 'num' && $left[1] == 0 ) || ( $right[0] === 'num' && $right[1] == 0 ) ) )
-				|| ( $op === '^' && $right[0] === 'num' && ( $right[1] == 1 || $right[1] == 0 ) ) ) {
+			if ( ( '*' === $op && ( ( 'num' === $left[0] && 1 == $left[1] ) || ( 'num' === $right[0] && 1 == $right[1] ) ) )
+				|| ( in_array( $op, array( '+', '-' ), true ) && ( ( 'num' === $left[0] && 0 == $left[1] ) || ( 'num' === $right[0] && 0 == $right[1] ) ) )
+				|| ( '^' === $op && 'num' === $right[0] && ( 1 == $right[1] || 0 == $right[1] ) ) ) {
 				return false;
 			}
 			return self::free_of_foldable( $left ) && self::free_of_foldable( $right );
 		}
-		if ( $op === 'neg' ) {
+		if ( 'neg' === $op ) {
 			return self::free_of_foldable( $tree[1] ); }
-		if ( $op === 'fn' ) {
+		if ( 'fn' === $op ) {
 			foreach ( array_slice( $tree, 2 ) as $argument ) {
 				if ( ! self::free_of_foldable( $argument ) ) {
 					return false; }

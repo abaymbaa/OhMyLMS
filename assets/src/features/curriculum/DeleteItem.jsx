@@ -28,7 +28,6 @@ export function DeleteItem( { item, dependents } ) {
 	const links = branch ? info.links : info.own_links;
 	const bundles = branch ? info.bundles : info.own_bundles;
 	const groups = ( branch ? info.groups : info.own_groups ) || 0;
-
 	async function remove() {
 		const ok = await c.actions.remove( item, {
 			children: info.children ? strategy : '',
@@ -38,7 +37,6 @@ export function DeleteItem( { item, dependents } ) {
 			setConfirming( true );
 		}
 	}
-
 	if ( ! confirming ) {
 		return (
 			<div className="ohmylms-cur-delete">
@@ -47,7 +45,10 @@ export function DeleteItem( { item, dependents } ) {
 					isDestructive
 					onClick={ () => setConfirming( true ) }
 					aria-label={ sprintf(
-						__( 'Delete %s…', 'ohmylms' ),
+						/* translators: %s: curriculum item name. */ __(
+							'Delete %s…',
+							'ohmylms'
+						),
 						item.name
 					) }
 				>
@@ -61,19 +62,28 @@ export function DeleteItem( { item, dependents } ) {
 			className="ohmylms-cur-delete is-confirming"
 			role="group"
 			aria-label={ sprintf(
-				__( 'Confirm deleting %s', 'ohmylms' ),
+				/* translators: %s: curriculum item name. */ __(
+					'Confirm deleting %s',
+					'ohmylms'
+				),
 				item.name
 			) }
 		>
 			<p>
 				<strong>
-					{ sprintf( __( 'Delete “%s”?', 'ohmylms' ), item.name ) }
+					{ sprintf(
+						/* translators: %s: curriculum item name. */ __(
+							'Delete “%s”?',
+							'ohmylms'
+						),
+						item.name
+					) }
 				</strong>
 			</p>
 			{ info.children > 0 && (
 				<RadioControl
 					label={ sprintf(
-						_n(
+						/* translators: %d: number of child curriculum items. */ _n(
 							'This item has %d child.',
 							'This item has %d children.',
 							info.children,
@@ -86,8 +96,8 @@ export function DeleteItem( { item, dependents } ) {
 						{
 							value: 'promote',
 							label: sprintf(
-								_n(
-									'Move its child up one level and delete only this item',
+								/* translators: %d: number of child curriculum items. */ _n(
+									'Move its %d child up one level and delete only this item',
 									'Move its %d children up one level and delete only this item',
 									info.children,
 									'ohmylms'
@@ -98,7 +108,7 @@ export function DeleteItem( { item, dependents } ) {
 						{
 							value: 'delete',
 							label: sprintf(
-								_n(
+								/* translators: %d: number of curriculum items. */ _n(
 									'Delete this item and everything under it (%d item in total)',
 									'Delete this item and everything under it (%d items in total)',
 									info.descendants + 1,
@@ -115,7 +125,7 @@ export function DeleteItem( { item, dependents } ) {
 				<li>
 					{ links
 						? sprintf(
-								_n(
+								/* translators: %d: number of selected questions. */ _n(
 									'%d link to courses, skills, question banks or exams will be removed. The content itself is not deleted.',
 									'%d links to courses, skills, question banks or exams will be removed. The content itself is not deleted.',
 									links,
@@ -128,7 +138,7 @@ export function DeleteItem( { item, dependents } ) {
 				{ groups > 0 && (
 					<li>
 						{ sprintf(
-							_n(
+							/* translators: %d: number of skills. */ _n(
 								'%d folder will be deleted. The skills in it stay in the skill library.',
 								'%d folders will be deleted. The skills in them stay in the skill library.',
 								groups,
@@ -141,7 +151,7 @@ export function DeleteItem( { item, dependents } ) {
 				{ bundles > 0 && (
 					<li>
 						{ sprintf(
-							_n(
+							/* translators: %d: number of course bundles. */ _n(
 								'It will be removed from %d course bundle.',
 								'It will be removed from %d course bundles.',
 								bundles,

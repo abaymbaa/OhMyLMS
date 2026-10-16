@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * FunnelManager Class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Integrations\Funnel\Includes;
 
@@ -22,12 +27,12 @@ class FunnelManager {
 	 */
 	public function maybe_process_funnel( $order_id, $posted_data, $payment_result ) {
 
-		// Check if the order is with supported payment methods
+		// Check if the order is with supported payment methods.
 		if ( ! $this->is_supported_payment_method( $order_id ) ) {
 			return false;
 		}
 
-		// Only process funnel for successful payments
+		// Only process funnel for successful payments.
 		if ( ! $this->is_payment_successful( $payment_result ) ) {
 			return false;
 		}
@@ -52,20 +57,20 @@ class FunnelManager {
 		 */
 		do_action( 'ohmylms_process_funnel', $order_id, $posted_data, $payment_result );
 
-		// Check if we have funnel steps configured for this order
+		// Check if we have funnel steps configured for this order.
 		$funnel_course = $this->find_funnel_course( $order_id );
 		if ( ! $funnel_course ) {
 			return $payment_result;
 		}
 
-		// Get the first funnel step
+		// Get the first funnel step.
 		$first_funnel_step = $this->get_first_funnel_step( $funnel_course );
 
 		if ( ! $first_funnel_step ) {
 			return $payment_result;
 		}
 
-		// Store funnel session data
+		// Store funnel session data.
 		$funnel_session_data = array(
 			'order_id'     => $order_id,
 			'course_id'    => $funnel_course,
@@ -75,10 +80,10 @@ class FunnelManager {
 		);
 		$this->store_funnel_session( $funnel_session_data );
 
-		// Build funnel step URL
+		// Build funnel step URL.
 		$funnel_url = $this->build_funnel_step_url( $order_id, $first_funnel_step );
 
-		// Return redirect to funnel step instead of thank you page
+		// Return redirect to funnel step instead of thank you page.
 		return array(
 			'result'   => 'success',
 			'redirect' => $funnel_url,
@@ -185,7 +190,7 @@ class FunnelManager {
 			return null;
 		}
 
-		// Return the first step
+		// Return the first step.
 		return reset( $funnel_steps );
 	}
 
@@ -266,7 +271,7 @@ class FunnelManager {
 	 */
 	public function process_order_funnel( $order_id, $posted_data ) {
 		// This method is for compatibility with ohmylms-pro funnel system
-		// We need to create a dummy payment result for the maybe_process_funnel method
+		// We need to create a dummy payment result for the maybe_process_funnel method.
 		$payment_result = array(
 			'result'  => 'success',
 			'success' => true,

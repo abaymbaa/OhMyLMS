@@ -12,27 +12,44 @@ import {
 	typeLabel,
 } from './model.mjs';
 import { workspacePath } from './workspace.mjs';
-
 function counts( item ) {
 	const parts = [];
 	const { course = 0, skill = 0, bank = 0, quiz = 0 } = item.links || {};
 	if ( course ) {
 		parts.push(
 			sprintf(
-				_n( '%d course', '%d courses', course, 'ohmylms' ),
+				/* translators: %d: number of courses. */ _n(
+					'%d course',
+					'%d courses',
+					course,
+					'ohmylms'
+				),
 				course
 			)
 		);
 	}
 	if ( skill ) {
 		parts.push(
-			sprintf( _n( '%d skill', '%d skills', skill, 'ohmylms' ), skill )
+			sprintf(
+				/* translators: %d: number of skills. */ _n(
+					'%d skill',
+					'%d skills',
+					skill,
+					'ohmylms'
+				),
+				skill
+			)
 		);
 	}
 	if ( bank ) {
 		parts.push(
 			sprintf(
-				_n( '%d question bank', '%d question banks', bank, 'ohmylms' ),
+				/* translators: %d: number of selected questions. */ _n(
+					'%d question bank',
+					'%d question banks',
+					bank,
+					'ohmylms'
+				),
 				bank
 			)
 		);
@@ -40,7 +57,12 @@ function counts( item ) {
 	if ( quiz ) {
 		parts.push(
 			sprintf(
-				_n( '%d quiz or exam', '%d quizzes or exams', quiz, 'ohmylms' ),
+				/* translators: %d: number of quizzes. */ _n(
+					'%d quiz or exam',
+					'%d quizzes or exams',
+					quiz,
+					'ohmylms'
+				),
 				quiz
 			)
 		);
@@ -50,7 +72,12 @@ function counts( item ) {
 	if ( groups ) {
 		parts.push(
 			sprintf(
-				_n( '%d folder', '%d folders', groups, 'ohmylms' ),
+				/* translators: %d: number of curriculum folders. */ _n(
+					'%d folder',
+					'%d folders',
+					groups,
+					'ohmylms'
+				),
 				groups
 			)
 		);
@@ -58,7 +85,7 @@ function counts( item ) {
 	if ( placed ) {
 		parts.push(
 			sprintf(
-				_n(
+				/* translators: %d: number of skills. */ _n(
 					'%d skill in groups',
 					'%d skills in groups',
 					placed,
@@ -92,7 +119,9 @@ export function TreeNode( { node } ) {
 		<li className="ohmylms-cur-node">
 			<div
 				className={ `ohmylms-cur-row${ editing ? ' is-editing' : '' }${ c.search.matches.has( item.id ) ? ' is-match' : '' }` }
-				style={ { '--ohmylms-cur-depth': node.depth } }
+				style={ {
+					'--ohmylms-cur-depth': node.depth,
+				} }
 			>
 				{ c.roadmapSelection && item.is_syllabus && (
 					<input
@@ -123,12 +152,21 @@ export function TreeNode( { node } ) {
 						className="ohmylms-cur-toggle"
 						aria-expanded={ open }
 						aria-controls={ open ? childrenId : undefined }
-						aria-label={ sprintf(
+						aria-label={
 							open
-								? __( 'Collapse %s', 'ohmylms' )
-								: __( 'Expand %s', 'ohmylms' ),
-							item.name
-						) }
+								? sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Collapse %s', 'ohmylms' ),
+										item.name
+									)
+								: sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Expand %s', 'ohmylms' ),
+										item.name
+									)
+						}
 						onClick={ () => c.actions.toggle( item.id ) }
 					>
 						<span aria-hidden="true">{ open ? '▾' : '▸' }</span>
@@ -140,7 +178,13 @@ export function TreeNode( { node } ) {
 					/>
 				) }
 				<span className="screen-reader-text">
-					{ sprintf( __( 'Level %d', 'ohmylms' ), node.depth + 1 ) }
+					{ sprintf(
+						/* translators: %d: level number. */ __(
+							'Level %d',
+							'ohmylms'
+						),
+						node.depth + 1
+					) }
 				</span>
 				<span className="ohmylms-cur-type">
 					{ typeLabel( item.item_type ) }
@@ -178,12 +222,21 @@ export function TreeNode( { node } ) {
 						size="small"
 						aria-expanded={ editing }
 						aria-controls={ editing ? panelId : undefined }
-						aria-label={ sprintf(
+						aria-label={
 							editing
-								? __( 'Close editor for %s', 'ohmylms' )
-								: __( 'Edit %s', 'ohmylms' ),
-							item.name
-						) }
+								? sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Close editor for %s', 'ohmylms' ),
+										item.name
+									)
+								: sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Edit %s', 'ohmylms' ),
+										item.name
+									)
+						}
 						onClick={ () =>
 							item.item_type === 'roadmap'
 								? ( window.location.hash = workspacePath(
@@ -202,7 +255,10 @@ export function TreeNode( { node } ) {
 							variant="secondary"
 							size="small"
 							aria-label={ sprintf(
-								__( 'Add child to %s', 'ohmylms' ),
+								/* translators: %s: curriculum item name. */ __(
+									'Add child to %s',
+									'ohmylms'
+								),
 								item.name
 							) }
 							onClick={ () => c.actions.startAdd( item.id ) }
@@ -216,7 +272,10 @@ export function TreeNode( { node } ) {
 						size="small"
 						disabled={ c.pending || c.search.active || index <= 0 }
 						aria-label={ sprintf(
-							__( 'Move %s up', 'ohmylms' ),
+							/* translators: %s: curriculum item name. */ __(
+								'Move %s up',
+								'ohmylms'
+							),
 							item.name
 						) }
 						onClick={ () => c.actions.step( item, -1 ) }
@@ -234,7 +293,10 @@ export function TreeNode( { node } ) {
 							index >= count - 1
 						}
 						aria-label={ sprintf(
-							__( 'Move %s down', 'ohmylms' ),
+							/* translators: %s: curriculum item name. */ __(
+								'Move %s down',
+								'ohmylms'
+							),
 							item.name
 						) }
 						onClick={ () => c.actions.step( item, 1 ) }
@@ -292,7 +354,9 @@ export function TreeNode( { node } ) {
 			{ adding && (
 				<div
 					className="ohmylms-cur-add-wrap"
-					style={ { '--ohmylms-cur-depth': node.depth + 1 } }
+					style={ {
+						'--ohmylms-cur-depth': node.depth + 1,
+					} }
 				>
 					<AddItemRow parentId={ item.id } parentName={ item.name } />
 				</div>

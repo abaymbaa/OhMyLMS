@@ -55,9 +55,17 @@ const compiled = new Map(
 );
 const plain = ( value ) =>
 	JSON.parse(
-		JSON.stringify( value, ( key, item ) =>
-			typeof item === 'function' ? '[callback]' : item
-		)
+		JSON.stringify( value, ( key, item ) => {
+			// Explicit control associations are covered separately from legacy rendering parity.
+			if (
+				[ 'id', 'htmlFor' ].includes( key ) &&
+				typeof item === 'string' &&
+				item.startsWith( 'lint-test-' )
+			) {
+				return undefined;
+			}
+			return typeof item === 'function' ? '[callback]' : item;
+		} )
 	);
 const find = ( tree, type ) => {
 	if ( ! tree || typeof tree !== 'object' ) return undefined;
@@ -84,6 +92,7 @@ function harness( states = [] ) {
 	const controls = new Proxy( {}, { get: ( _, name ) => String( name ) } );
 	const globals = {
 		React,
+		useId: () => 'lint-test-analytics',
 		h: () => React,
 		console: { error() {} },
 		loadDashboard,

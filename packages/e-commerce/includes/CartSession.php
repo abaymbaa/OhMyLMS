@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -166,7 +166,7 @@ class CartSession {
 	public function maybe_set_cart_cookies() {
 		// if ( headers_sent() || ! did_action( 'wp_loaded' ) ) {
 		// return;
-		// }
+		// }.
 
 		if ( ! $this->cart->is_empty() ) {
 			$this->set_cart_cookies( true );

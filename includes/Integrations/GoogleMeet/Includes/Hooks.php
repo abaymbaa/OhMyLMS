@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Hooks class.
  *
@@ -30,23 +30,23 @@ class Hooks {
 	 * @return void
 	 */
 	private function init_hooks() {
-		// Register GoogleMeet in integrations list
+		// Register GoogleMeet in integrations list.
 		\add_filter( 'ohmylms_integrations', array( $this, 'register_googlemeet_integration' ), 10, 1 );
 		\add_filter( 'init', array( $this, 'google_meet_authentication' ), 10 );
 
-		// Add GoogleMeet as a live class platform option
+		// Add GoogleMeet as a live class platform option.
 		\add_filter( 'ohmylms_live_class_platforms', array( $this, 'add_googlemeet_platform' ) );
 
-		// Register Sessions menu when GoogleMeet is enabled
+		// Register Sessions menu when GoogleMeet is enabled.
 		\add_filter( 'ohmylms_show_sessions_menu', array( $this, 'register_session_menu' ) );
 
-		// Enqueue scripts for GoogleMeet
+		// Enqueue scripts for GoogleMeet.
 		\add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_scripts' ) );
 
-		// Add GoogleMeet template
+		// Add GoogleMeet template.
 		\add_filter( 'ohmylms_lesson_template_path', array( $this, 'add_googlemeet_template' ), 10, 2 );
 
-		// Session lifecycle hooks
+		// Session lifecycle hooks.
 
 		\add_action( 'ohmylms_googlemeet_session_created', array( $this, 'create_googlemeet_session' ), 10, 2 );
 		\add_action( 'ohmylms_googlemeet_session_updated', array( $this, 'update_googlemeet_session' ), 10, 2 );
@@ -125,7 +125,7 @@ class Hooks {
 			global $post;
 			$platform = get_post_meta( $post->ID, '_lesson_platform', true );
 
-			if ( $platform === 'googlemeet' ) {
+			if ( 'googlemeet' === $platform ) {
 				\wp_enqueue_script(
 					'ohmylms-googlemeet-content',
 					OHMYLMS_GOOGLEMEET_INTEGRATION_URL . '/includes/Integrations/GoogleMeet/Assets/js/content-googlemeet.js',
@@ -148,7 +148,7 @@ class Hooks {
 	 * @return string The template path.
 	 */
 	public function add_googlemeet_template( $template, $platform ) {
-		if ( $platform === 'googlemeet' ) {
+		if ( 'googlemeet' === $platform ) {
 			$googlemeet_template = plugin_dir_path( OHMYLMS_PRO_FILE ) . 'includes/Integrations/GoogleMeet/Templates/content-googlemeet.php';
 			if ( file_exists( $googlemeet_template ) ) {
 				return $googlemeet_template;
@@ -179,7 +179,7 @@ class Hooks {
 			return;
 		}
 
-		// Basic event details
+		// Basic event details.
 		$title    = $request->get_param( 'topic' );
 		$start    = $request->get_param( 'date' );
 		$end      = $request->get_param( 'endDate' );
@@ -236,7 +236,7 @@ class Hooks {
 		if ( isset( $body['hangoutLink'] ) ) {
 			update_post_meta( $session_id, '_googlemeet_link', $body['hangoutLink'] );
 			// For Google Meet, both instructor and student use the same link
-			// But we save them separately for consistency with Zoom
+			// But we save them separately for consistency with Zoom.
 			update_post_meta( $session_id, '_start_url', $body['hangoutLink'] );
 			update_post_meta( $session_id, '_join_url', $body['hangoutLink'] );
 		}
@@ -324,14 +324,14 @@ class Hooks {
 			return;
 		}
 
-		// Gather fields
+		// Gather fields.
 		$title    = sanitize_text_field( $request->get_param( 'topic' ) );
 		$start    = sanitize_text_field( $request->get_param( 'date' ) );
 		$end      = sanitize_text_field( $request->get_param( 'endDate' ) );
 		$desc     = sanitize_textarea_field( $request->get_param( 'agenda' ) );
 		$timezone = sanitize_text_field( $request->get_param( 'timezone' ) ?: 'UTC' );
 
-		// Prepare event payload
+		// Prepare event payload.
 		$event_data = array(
 			'summary'     => $title,
 			'description' => $desc,
@@ -355,7 +355,7 @@ class Hooks {
 		 */
 		$existing_meet_link = get_post_meta( $session_id, '_googlemeet_link', true );
 
-		// Include conferenceData only if no Meet exists
+		// Include conferenceData only if no Meet exists.
 		if ( empty( $existing_meet_link ) ) {
 			$event_data['conferenceData'] = array(
 				'createRequest' => array(
@@ -370,7 +370,7 @@ class Hooks {
 			$existing_meeting_id
 		);
 
-		// PATCH method is correct for partial updates
+		// PATCH method is correct for partial updates.
 		$response = wp_remote_request(
 			$api_url,
 			array(
@@ -402,7 +402,7 @@ class Hooks {
 		if ( isset( $body['hangoutLink'] ) ) {
 			update_post_meta( $session_id, '_googlemeet_link', esc_url_raw( $body['hangoutLink'] ) );
 			// For Google Meet, both instructor and student use the same link
-			// But we save them separately for consistency with Zoom
+			// But we save them separately for consistency with Zoom.
 			update_post_meta( $session_id, '_start_url', esc_url_raw( $body['hangoutLink'] ) );
 			update_post_meta( $session_id, '_join_url', esc_url_raw( $body['hangoutLink'] ) );
 		}
@@ -433,7 +433,7 @@ class Hooks {
 			$result          = $meeting_service->delete_meeting( $meeting_id );
 
 			if ( isset( $result['success'] ) && $result['success'] ) {
-				// Clean up all GoogleMeet-related post meta
+				// Clean up all GoogleMeet-related post meta.
 				\delete_post_meta( $session_id, '_googlemeet_meeting_id' );
 				\delete_post_meta( $session_id, '_googlemeet_link' );
 				\delete_post_meta( $session_id, '_googlemeet_html_link' );
@@ -445,13 +445,13 @@ class Hooks {
 
 
 	public function google_meet_authentication() {
-		if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) && $_GET['state'] === 'googlemeet_auth' ) {
+		if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) && 'googlemeet_auth' === $_GET['state'] ) {
 			$code    = sanitize_text_field( wp_unslash( $_GET['code'] ) );
 			$user_id = get_current_user_id();
 			$creds   = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 
 			if ( empty( $creds['client_id'] ) || empty( $creds['client_secret'] ) ) {
-				// Redirect back with error
+				// Redirect back with error.
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=missing_credentials' ) );
 				exit;
 			}
@@ -470,7 +470,7 @@ class Hooks {
 			);
 
 			if ( is_wp_error( $response ) ) {
-				// Redirect back with error
+				// Redirect back with error.
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=oauth_failed' ) );
 				exit;
 			}
@@ -487,11 +487,11 @@ class Hooks {
 					)
 				);
 
-				// Redirect back to integrations page with success
+				// Redirect back to integrations page with success.
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=success' ) );
 				exit;
 			} else {
-				// Redirect back with error
+				// Redirect back with error.
 				wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/integrations?auth=error&message=no_access_token' ) );
 				exit;
 			}

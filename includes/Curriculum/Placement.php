@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Where a course sits: the curriculum items it is linked to and the Course Bundles it belongs to.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Bundles\Bundles;
@@ -20,7 +25,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Placement {
 	/** Filter slugs are synthetic so the public filter markup and script work unchanged. */
-	const ITEM_PREFIX  = 'c';
+	const ITEM_PREFIX   = 'c';
 	const BUNDLE_PREFIX = 'b';
 
 	public static function item_slug( $id ) {
@@ -39,7 +44,7 @@ final class Placement {
 
 	/** IDs from filter slugs of one kind ('item' or 'bundle'); anything else is ignored. */
 	public static function ids_from_slugs( $slugs, $kind ) {
-		$prefix = $kind === 'bundle' ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
+		$prefix = 'bundle' === $kind ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
 		$ids    = array();
 		foreach ( (array) $slugs as $slug ) {
 			if ( is_string( $slug ) && preg_match( '/^' . $prefix . '(\d+)$/D', $slug, $match ) ) {
@@ -54,7 +59,7 @@ final class Placement {
 	 * shows no courses instead of silently showing all of them.
 	 */
 	public static function ids_from_list( $value, $kind ) {
-		$prefix = $kind === 'bundle' ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
+		$prefix = 'bundle' === $kind ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
 		$parts  = is_array( $value ) ? $value : preg_split( '/\s*,\s*/', trim( (string) $value ), -1, PREG_SPLIT_NO_EMPTY );
 		$ids    = array();
 		foreach ( $parts as $part ) {
@@ -144,7 +149,7 @@ final class Placement {
 		$courses      = array();
 		$items        = array();
 		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT item_type, item_id FROM ' . Bundles::members_table() . " WHERE bundle_id IN ($placeholders)", $bundle_ids ), ARRAY_A ) as $row ) {
-			if ( $row['item_type'] === 'course' ) {
+			if ( 'course' === $row['item_type'] ) {
 				$courses[] = (int) $row['item_id'];
 			} else {
 				$items[] = (int) $row['item_id']; }
@@ -155,7 +160,7 @@ final class Placement {
 	/** Course IDs matching filter slugs of one kind: the union of everything selected. */
 	public static function course_ids_for_slugs( $slugs, $kind ) {
 		$ids = self::ids_from_slugs( $slugs, $kind );
-		return $kind === 'bundle' ? self::course_ids_for_bundles( $ids ) : self::course_ids_for_items( $ids );
+		return 'bundle' === $kind ? self::course_ids_for_bundles( $ids ) : self::course_ids_for_items( $ids );
 	}
 
 	/**
@@ -246,7 +251,7 @@ final class Placement {
 		$terms = array();
 		if ( $bundles ) {
 			foreach ( self::bundles( $course_id ) as $bundle ) {
-				if ( $bundle['status'] === 'published' ) {
+				if ( 'published' === $bundle['status'] ) {
 					$terms[] = array(
 						'id'   => $bundle['id'],
 						'name' => $bundle['title'],
@@ -370,7 +375,7 @@ final class Placement {
 			return array(); }
 		$result = array();
 		foreach ( Bundles::all() as $row ) {
-			if ( $search !== '' && stripos( $row['title'], $search ) === false ) {
+			if ( '' !== $search && stripos( $row['title'], $search ) === false ) {
 				continue; }
 			$id      = (int) $row['id'];
 			$courses = array();

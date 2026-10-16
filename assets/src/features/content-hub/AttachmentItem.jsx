@@ -4,7 +4,6 @@ import { Button, CheckboxControl, TextControl } from '@wordpress/components';
 import { courseEditPath } from './hubRoutes.mjs';
 import { editPath } from './api.mjs';
 import { withEditorReturn, lessonEditorHref } from './editorNavigation.mjs';
-
 const typeLabel = ( type ) =>
 	( {
 		lesson: __( 'Lesson', 'ohmylms' ),
@@ -34,7 +33,10 @@ export function AttachmentItem( { item, skills, actions, returnTo } ) {
 				href={
 					item.type === 'lesson'
 						? lessonEditorHref(
-								{ ...item, id: item.content_id },
+								{
+									...item,
+									id: item.content_id,
+								},
 								returnTo
 							)
 						: `#${ withEditorReturn( editPath( item.type, item.content_id ), returnTo ) }`
@@ -52,7 +54,10 @@ export function AttachmentItem( { item, skills, actions, returnTo } ) {
 			{ covered.length > 1 && (
 				<span className="ohmylms-ext-muted">
 					{ sprintf(
-						__( 'Covers %d skills', 'ohmylms' ),
+						/* translators: %d: number of skills. */ __(
+							'Covers %d skills',
+							'ohmylms'
+						),
 						covered.length
 					) }
 				</span>
@@ -75,7 +80,9 @@ export function AttachmentItem( { item, skills, actions, returnTo } ) {
 					label={ __( 'Required', 'ohmylms' ) }
 					checked={ item.required }
 					onChange={ ( required ) =>
-						actions.updateAttachment( item.id, { required } )
+						actions.updateAttachment( item.id, {
+							required,
+						} )
 					}
 					__nextHasNoMarginBottom
 				/>
@@ -102,7 +109,10 @@ export function AttachmentItem( { item, skills, actions, returnTo } ) {
 					isDestructive
 					onClick={ () => actions.removeAttachment( item.id ) }
 					aria-label={ sprintf(
-						__( 'Remove %s from this course', 'ohmylms' ),
+						/* translators: %s: lesson or chapter title. */ __(
+							'Remove %s from this course',
+							'ohmylms'
+						),
 						item.title
 					) }
 				>

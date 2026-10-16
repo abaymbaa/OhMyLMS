@@ -18,22 +18,24 @@ export function createCertificateNameCell( readRuntime ) {
 			r = ( 0, ReactHooks.useCallback )(
 				function () {
 					n(
-						'/certificate-edit/'.concat( null == t ? void 0 : t.id )
+						'/certificate-edit/'.concat(
+							t === null || t === void 0 ? void 0 : t.id
+						)
 					);
 				},
-				[ null == t ? void 0 : t.id, n ]
+				[ t === null || t === void 0 ? void 0 : t.id, n ]
 			);
 		return (
 			( 0, ReactHooks.useCallback )(
 				function () {
 					n(
 						'/certificate/'.concat(
-							null == t ? void 0 : t.id,
+							t === null || t === void 0 ? void 0 : t.id,
 							'/report'
 						)
 					);
 				},
-				[ null == t ? void 0 : t.id, n ]
+				[ t === null || t === void 0 ? void 0 : t.id, n ]
 			),
 			(
 				<React.Fragment>
@@ -44,10 +46,10 @@ export function createCertificateNameCell( readRuntime ) {
 					>
 						<v.Link
 							to={ '/certificate-edit/'.concat(
-								null == t ? void 0 : t.id
+								t === null || t === void 0 ? void 0 : t.id
 							) }
 						>
-							{ null != t && t.image_src ? (
+							{ t !== null && t !== void 0 && t.image_src ? (
 								<gG.A
 									shape={ 'square' }
 									src={ t.image_src }
@@ -70,9 +72,11 @@ export function createCertificateNameCell( readRuntime ) {
 						>
 							<v.Link
 								to={ '/certificate-edit/'.concat(
-									null == t ? void 0 : t.id
+									t === null || t === void 0 ? void 0 : t.id
 								) }
-								title={ null == t ? void 0 : t.name }
+								title={
+									t === null || t === void 0 ? void 0 : t.name
+								}
 								style={ {
 									textDecoration: 'none',
 								} }
@@ -84,7 +88,11 @@ export function createCertificateNameCell( readRuntime ) {
 									numberOfLines={ 2 }
 									truncate={ ! 0 }
 								>
-									{ Ge( null == t ? void 0 : t.name ) }
+									{ Ge(
+										t === null || t === void 0
+											? void 0
+											: t.name
+									) }
 								</Controls.TextWP>
 							</v.Link>
 							<Controls.FlexWP

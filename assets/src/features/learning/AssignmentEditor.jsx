@@ -56,87 +56,100 @@ export function createAssignmentEditor( readRuntime ) {
 			h = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			getAssignment = h.getAssignment,
 			resetAssignmentState = h.resetAssignmentState,
-			E = ( function ( e, t ) {
+			E = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
+					( function ( _eLocal2, _tLocal2 ) {
 						var n =
-							null == e
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( n !== null && n !== void 0 ) {
 							var r,
-								a,
+								_aLocal,
 								o,
 								i,
 								l = [],
-								c = ! 0,
-								u = ! 1;
+								_cLocal = ! 0,
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( n = n.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
 									if ( Object( n ) !== n ) {
 										return;
 									}
-									c = ! 1;
+									_cLocal = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
+										! ( _cLocal = ( r = o.call( n ) )
+											.done ) &&
+										( l.push( r.value ),
+										l.length !== _tLocal2 );
+										_cLocal = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								_uLocal = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
-										! c &&
-										null != n.return &&
+										! _cLocal &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											n.return
+										) &&
 										( ( i = n.return() ),
 										Object( i ) !== i )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal;
 									}
 								}
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return $a( e, t );
+					} )( e, _tLocal ) ||
+					( function ( _eLocal4, _tLocal3 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return $a( _eLocal4, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var n = {}.toString.call( _eLocal4 ).slice( 8, -1 );
 							return (
 								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? $a( e, t )
-										: void 0
+									_eLocal4.constructor &&
+									( n = _eLocal4.constructor.name ),
+								( () => {
+									if ( 'Map' === n || 'Set' === n ) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === n ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											n
+										)
+									) {
+										return $a( _eLocal4, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -152,123 +165,164 @@ export function createAssignmentEditor( readRuntime ) {
 			S = E[ 0 ],
 			R = E[ 1 ],
 			x = ( 0, Router.Zp )();
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
-				! u && m && openNotificationWithIcon( p, m );
+				if ( ! u && m ) {
+					openNotificationWithIcon( p, m );
+				}
 			},
 			[ m ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e = ( function () {
-						var e,
-							t =
-								( ( e = Ya().m( function e() {
-									var t;
-									return Ya().w(
-										function ( e ) {
-											for (;;) {
-												switch ( ( e.p = e.n ) ) {
-													case 0:
-														if (
-															( ( e.p = 0 ), d )
-														) {
-															e.n = 1;
-															break;
-														}
-														return e.a( 2 );
-													case 1:
-														return (
-															( e.n = 2 ),
-															getAssignment( d )
-														 );
-													case 2:
-														e.n = 4;
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e = ( function () {
+					var _eLocal5,
+						_tLocal4 =
+							( ( _eLocal5 = Ya().m( function _eLocal6() {
+								var _tLocal5;
+								return Ya().w(
+									function ( _eLocal7 ) {
+										for (;;) {
+											switch (
+												( _eLocal7.p = _eLocal7.n )
+											) {
+												case 0:
+													if (
+														( ( _eLocal7.p = 0 ),
+														d )
+													) {
+														_eLocal7.n = 1;
 														break;
-													case 3:
-														( ( e.p = 3 ),
-															( t = e.v ),
-															console.error(
-																'Error fetching course data:',
-																t
-															) );
-													case 4:
-														return e.a( 2 );
-												}
+													}
+													return _eLocal7.a( 2 );
+												case 1:
+													return (
+														( _eLocal7.n = 2 ),
+														getAssignment( d )
+													 );
+												case 2:
+													_eLocal7.n = 4;
+													break;
+												case 3:
+													_eLocal7.p = 3;
+													_tLocal5 = _eLocal7.v;
+													console.error(
+														'Error fetching course data:',
+														_tLocal5
+													);
+												// Falls through to the shared async state cleanup.
+												case 4:
+													return _eLocal7.a( 2 );
 											}
-										},
-										e,
-										null,
-										[ [ 0, 3 ] ]
-									);
-								} ) ),
-								function () {
-									var t = this,
-										n = arguments;
-									return new Promise( function ( r, a ) {
-										var o = e.apply( t, n );
-										function i( e ) {
-											Za( o, r, a, i, l, 'next', e );
 										}
-										function l( e ) {
-											Za( o, r, a, i, l, 'throw', e );
-										}
-										i( void 0 );
-									} );
+									},
+									_eLocal6,
+									null,
+									[ [ 0, 3 ] ]
+								);
+							} ) ),
+							function ( ..._args ) {
+								var _tLocal6 = this,
+									n = _args;
+								return new Promise( function ( r, _aLocal2 ) {
+									var o = _eLocal5.apply( _tLocal6, n );
+									function i( _eLocal8 ) {
+										Za(
+											o,
+											r,
+											_aLocal2,
+											i,
+											l,
+											'next',
+											_eLocal8
+										);
+									}
+									function l( _eLocal9 ) {
+										Za(
+											o,
+											r,
+											_aLocal2,
+											i,
+											l,
+											'throw',
+											_eLocal9
+										);
+									}
+									i( void 0 );
 								} );
-						return function () {
-							return t.apply( this, arguments );
-						};
-					} )();
-					return (
-						e(),
-						function () {
-							resetAssignmentState();
-						}
-					 );
-				},
-				[ d ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					s &&
-						R( {
-							description:
-								( null == S ? void 0 : S.description ) ||
-								s.description ||
-								'',
-						} );
-				},
-				[ s ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					setLocalData && setLocalData( S );
-				},
-				[ S ]
-			) );
+							} );
+					return function ( ..._args2 ) {
+						return _tLocal4.apply( this, _args2 );
+					};
+				} )();
+				return (
+					e(),
+					function () {
+						resetAssignmentState();
+					}
+				 );
+			},
+			[ d ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( s ) {
+					R( {
+						description:
+							( S === null || S === void 0
+								? void 0
+								: S.description ) ||
+							s.description ||
+							'',
+					} );
+				}
+			},
+			[ s ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( setLocalData ) {
+					setLocalData( S );
+				}
+			},
+			[ S ]
+		);
 		var C = function () {
 			if (
 				La( s ) &&
 				( ( s.description = S.description ),
-				c.updateAssignment( null == s ? void 0 : s.id, s ),
+				c.updateAssignment(
+					s === null || s === void 0 ? void 0 : s.id,
+					s
+				),
 				chapterId )
 			) {
-				var e = null == v ? void 0 : v.byId;
-				e[ null == s ? void 0 : s.id ] = s;
-				var t = Object.values( e ).filter( function ( e ) {
-					return void 0 !== ( null == e ? void 0 : e.chapterId )
-						? ( null == e ? void 0 : e.chapterId ) === chapterId
-						: ( null == e ? void 0 : e.id ) ===
-								( null == s ? void 0 : s.id );
-				} );
-				c.setContentsToChapter( chapterId, t );
+				var e = v === null || v === void 0 ? void 0 : v.byId;
+				e[ s === null || s === void 0 ? void 0 : s.id ] = s;
+				var _tLocal7 = Object.values( e ).filter(
+					function ( _eLocal0 ) {
+						return void 0 !==
+							( _eLocal0 === null || _eLocal0 === void 0
+								? void 0
+								: _eLocal0.chapterId )
+							? ( _eLocal0 === null || _eLocal0 === void 0
+									? void 0
+									: _eLocal0.chapterId ) === chapterId
+							: ( _eLocal0 === null || _eLocal0 === void 0
+									? void 0
+									: _eLocal0.id ) ===
+									( s === null || s === void 0
+										? void 0
+										: s.id );
+					}
+				);
+				c.setContentsToChapter( chapterId, _tLocal7 );
 			}
 		};
 		return (
 			<React.Fragment>
 				{ ! chapterId && contextHolder }
-				{ ! u || ( null != s && s.id ) ? (
+				{ ! u || ( s !== null && s !== void 0 && s.id ) ? (
 					<React.Fragment>
 						{ ! chapterId && (
 							<LearningEditorHeader
@@ -301,14 +355,19 @@ export function createAssignmentEditor( readRuntime ) {
 										<Controls.ButtonWP
 											variant={ 'secondary' }
 											onClick={ function () {
-												null != s &&
-													s.preview_url &&
+												if (
+													s !== null &&
+													s !== void 0 &&
+													s.preview_url
+												) {
 													window.open(
-														null == s
+														s === null ||
+															s === void 0
 															? void 0
 															: s.preview_url,
 														'_blank'
 													);
+												}
 											} }
 											icon={ <Br /> }
 										>
@@ -351,9 +410,9 @@ export function createAssignmentEditor( readRuntime ) {
 										handleEditorContentChange={ function (
 											e
 										) {
-											R( function ( t ) {
+											R( function ( _tLocal8 ) {
 												return Ua(
-													Ua( {}, t ),
+													Ua( {}, _tLocal8 ),
 													{},
 													{
 														description: e,
@@ -363,9 +422,9 @@ export function createAssignmentEditor( readRuntime ) {
 										} }
 										handleUploadComplete={ function (
 											e,
-											t
+											_tLocal9
 										) {
-											switch ( t ) {
+											switch ( _tLocal9 ) {
 												case 'video':
 													c.setAssignment(
 														Ua(
@@ -430,8 +489,7 @@ export function createAssignmentEditor( readRuntime ) {
 										saveLesson={ C }
 										chapterId={ chapterId }
 										onExternalUploadComplete={ function (
-											e,
-											t
+											e
 										) {
 											c.setAssignment(
 												Ua(

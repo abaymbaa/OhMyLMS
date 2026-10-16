@@ -135,7 +135,7 @@ $items = array(
 	} else {
 		?>
 			<div class="no-filter">
-			<?php echo __( 'No filters available.', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'No filters available.', 'ohmylms' ); ?>
 			</div>
 			<?php
 	}

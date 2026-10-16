@@ -1,4 +1,9 @@
 <?php
+/**
+ * Profile streak template.
+ *
+ * @package OhMyLMS
+ */
 defined( 'ABSPATH' ) || exit;
 if ( ! is_user_logged_in() || ! \OhMyLMS\Engagement\StreakSettings::enabled() ) {
 	return; }

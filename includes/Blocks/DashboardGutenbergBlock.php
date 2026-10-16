@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Dashboard Block
  *
@@ -63,7 +63,7 @@ class DashboardGutenbergBlock {
 				'type'    => 'string',
 				'default' => 'full',
 			),
-			// Header visibility and configuration
+			// Header visibility and configuration.
 			'showHeader'                 => array(
 				'type'    => 'boolean',
 				'default' => true,
@@ -76,12 +76,12 @@ class DashboardGutenbergBlock {
 				'type'    => 'string',
 				'default' => '',
 			),
-			// Header styling
+			// Header styling.
 			'headerBgColor'              => array(
 				'type'    => 'string',
 				'default' => '#000D2C',
 			),
-			// User menu styling
+			// User menu styling.
 			'userMenuColor'              => array(
 				'type'    => 'string',
 				'default' => '#000000',
@@ -98,7 +98,7 @@ class DashboardGutenbergBlock {
 				'type'    => 'number',
 				'default' => 400,
 			),
-			// User menu hover styling
+			// User menu hover styling.
 			'userMenuHoverColor'         => array(
 				'type'    => 'string',
 				'default' => '#000000',
@@ -107,7 +107,7 @@ class DashboardGutenbergBlock {
 				'type'    => 'string',
 				'default' => '#F5F5F5',
 			),
-			// User menu icon styling
+			// User menu icon styling.
 			'userMenuIconColor'          => array(
 				'type'    => 'string',
 				'default' => '#000000',
@@ -116,12 +116,12 @@ class DashboardGutenbergBlock {
 				'type'    => 'string',
 				'default' => '#4361EE',
 			),
-			// Dashboard background
+			// Dashboard background.
 			'dashboardBgColor'           => array(
 				'type'    => 'string',
 				'default' => '#F9FAFD',
 			),
-			// Course card button styling
+			// Course card button styling.
 			'courseButtonTextColor'      => array(
 				'type'    => 'string',
 				'default' => '#FFFFFF',
@@ -150,7 +150,7 @@ class DashboardGutenbergBlock {
 				'type'    => 'string',
 				'default' => 'transparent',
 			),
-			// Card styling
+			// Card styling.
 			'cardBgColor'                => array(
 				'type'    => 'string',
 				'default' => '#FFFFFF',
@@ -179,7 +179,7 @@ class DashboardGutenbergBlock {
 				'type'    => 'number',
 				'default' => 700,
 			),
-			// Title styling
+			// Title styling.
 			'titleColor'                 => array(
 				'type'    => 'string',
 				'default' => '#1E1E1E',
@@ -204,7 +204,7 @@ class DashboardGutenbergBlock {
 	private function convert_attributes_to_shortcode_attrs( $attributes ) {
 		$shortcode_attrs = array();
 
-		// Map block attributes to shortcode attributes
+		// Map block attributes to shortcode attributes.
 		$attribute_map = array(
 			'showHeader'                 => 'show_header',
 			'headerBgColor'              => 'header_bg_color',
@@ -253,24 +253,24 @@ class DashboardGutenbergBlock {
 	 * @return string
 	 */
 	public function render_block( $attributes, $content = '' ) {
-		// Validate and sanitize attributes
+		// Validate and sanitize attributes.
 		$attributes = $this->validate_attributes( $attributes );
 
-		// Convert block attributes to shortcode attributes
+		// Convert block attributes to shortcode attributes.
 		$shortcode_attrs = $this->convert_attributes_to_shortcode_attrs( $attributes );
 
-		// Check if we're in the editor context (ServerSideRender)
+		// Check if we're in the editor context (ServerSideRender).
 		$is_editor = defined( 'REST_REQUEST' ) && REST_REQUEST;
 
-		// Start output buffering
+		// Start output buffering.
 		ob_start();
 
-		// Enable preview mode for Gutenberg editor to show dashboard even when not logged in
+		// Enable preview mode for Gutenberg editor to show dashboard even when not logged in.
 		if ( $is_editor ) {
 			add_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
 
-		// Add editor-specific styling for proper dashboard rendering
+		// Add editor-specific styling for proper dashboard rendering.
 		if ( $is_editor ) {
 			?>
 			<style>
@@ -360,17 +360,17 @@ class DashboardGutenbergBlock {
 			<?php
 		}
 
-		// Build wrapper attributes for frontend only
+		// Build wrapper attributes for frontend only.
 		$wrapper_attributes = array();
 
-		// Add alignment class for frontend (not in editor)
+		// Add alignment class for frontend (not in editor).
 		if ( ! $is_editor && ! empty( $attributes['align'] ) ) {
 			$wrapper_attributes['class'] = 'align' . $attributes['align'];
 		}
 
-		// Output block wrapper with alignment class only on frontend
+		// Output block wrapper with alignment class only on frontend.
 		if ( ! $is_editor && ! empty( $wrapper_attributes ) ) {
-			// Convert wrapper attributes to string
+			// Convert wrapper attributes to string.
 			$wrapper_attrs_string = '';
 			foreach ( $wrapper_attributes as $key => $value ) {
 				$wrapper_attrs_string .= ' ' . $key . '="' . esc_attr( $value ) . '"';
@@ -378,7 +378,7 @@ class DashboardGutenbergBlock {
 			echo '<div' . $wrapper_attrs_string . '>';
 		}
 
-		// Add proper wrapper classes for consistency with frontend
+		// Add proper wrapper classes for consistency with frontend.
 		$wrapper_classes = array( 'ohmylms' );
 		if ( $is_editor ) {
 			$wrapper_classes[] = 'ohmylms-page';
@@ -387,24 +387,24 @@ class DashboardGutenbergBlock {
 
 		echo '<div class="' . esc_attr( implode( ' ', $wrapper_classes ) ) . '">';
 
-		// Add preview notice in editor mode
+		// Add preview notice in editor mode.
 		if ( $is_editor ) {
 			echo '<div class="ohmylms-gutenberg-edit-mode" style="background: #f0f0f1; padding: 8px 12px; margin-bottom: 16px; border-left: 4px solid #2271b1; font-size: 12px; color: #3c434a;">';
 			echo '<small>' . esc_html__( 'Gutenberg Preview Mode: This is how the student dashboard will appear to logged-in users.', 'ohmylms' ) . '</small>';
 			echo '</div>';
 		}
 
-		// Output the dashboard
+		// Output the dashboard.
 		ShortCodeDashboard::output( $shortcode_attrs );
 
-		echo '</div>'; // Close ohmylms wrapper
+		echo '</div>'; // Close ohmylms wrapper.
 
-		// Close alignment wrapper only if it was opened (frontend only)
+		// Close alignment wrapper only if it was opened (frontend only).
 		if ( ! $is_editor && ! empty( $wrapper_attributes ) ) {
-			echo '</div>'; // Close alignment wrapper
+			echo '</div>'; // Close alignment wrapper.
 		}
 
-		// Remove preview mode filter if it was set
+		// Remove preview mode filter if it was set.
 		if ( $is_editor ) {
 			remove_filter( 'ohmylms_gutenberg_preview_mode', '__return_true' );
 		}
@@ -426,7 +426,7 @@ class DashboardGutenbergBlock {
 			if ( isset( $attributes[ $key ] ) ) {
 				$value = $attributes[ $key ];
 
-				// Validate based on type
+				// Validate based on type.
 				switch ( $config['type'] ) {
 					case 'boolean':
 						$validated[ $key ] = (bool) $value;

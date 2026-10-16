@@ -7,7 +7,6 @@ export function createBonusPointSettings( readRuntime ) {
 			A2,
 			I: Controls,
 			I2,
-			L: Entitlements,
 			M2,
 			O2,
 			React,
@@ -21,412 +20,418 @@ export function createBonusPointSettings( readRuntime ) {
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
-		var e,
-			t,
-			n,
-			r,
-			a,
-			o,
-			i = true,
-			c = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			u = M2(
-				( 0, ReactHooks.useState )( {
-					enable: ! 1,
-					rules: [
-						{
-							label: ( 0, I18n.__ )(
-								'Course Completion',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user completes an entire course.',
-								'ohmylms'
-							),
-							slug: 'course_completion_rate',
-							value: ! 1,
-							threshold: 100,
-							point: 10,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+		var e;
+		var t;
+		var n;
+		var r;
+		var a;
+		var o;
+		var c = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var u = M2(
+			( 0, ReactHooks.useState )( {
+				enable: ! 1,
+				rules: [
+					{
+						label: ( 0, I18n.__ )( 'Course Completion', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user completes an entire course.',
+							'ohmylms'
+						),
+						slug: 'course_completion_rate',
+						value: ! 1,
+						threshold: 100,
+						point: 10,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Lesson Completion',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a learner finishes a lesson successfully.',
-								'ohmylms'
-							),
-							slug: 'lesson_complete',
-							value: ! 1,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Lesson Completion', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a learner finishes a lesson successfully.',
+							'ohmylms'
+						),
+						slug: 'lesson_complete',
+						value: ! 1,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Quiz Achievement',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a learner scores at or above the defined pass mark on a quiz.',
-								'ohmylms'
-							),
-							slug: 'quiz_passing_mark',
-							value: ! 1,
-							threshold: 30,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Quiz Achievement', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a learner scores at or above the defined pass mark on a quiz.',
+							'ohmylms'
+						),
+						slug: 'quiz_passing_mark',
+						value: ! 1,
+						threshold: 30,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Assignment Achievement',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a learner meets the minimum passing score on an assignment.',
-								'ohmylms'
-							),
-							slug: 'assignment_passing_mark',
-							value: ! 1,
-							threshold: 30,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )(
+							'Assignment Achievement',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a learner meets the minimum passing score on an assignment.',
+							'ohmylms'
+						),
+						slug: 'assignment_passing_mark',
+						value: ! 1,
+						threshold: 30,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Quiz Submission',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points whenever a quiz is submitted, regardless of the score.',
-								'ohmylms'
-							),
-							slug: 'submit_quiz',
-							value: ! 1,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Quiz Submission', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points whenever a quiz is submitted, regardless of the score.',
+							'ohmylms'
+						),
+						slug: 'submit_quiz',
+						value: ! 1,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Assignment Submission',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a learner submits an assignment for review.',
-								'ohmylms'
-							),
-							slug: 'submit_assignment',
-							value: ! 1,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )(
+							'Assignment Submission',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a learner submits an assignment for review.',
+							'ohmylms'
+						),
+						slug: 'submit_assignment',
+						value: ! 1,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'First Comment on a Course',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a learner comments on a course for the first time.',
-								'ohmylms'
-							),
-							slug: 'comment_on_course',
-							value: ! 1,
-							point: 2,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )(
+							'First Comment on a Course',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a learner comments on a course for the first time.',
+							'ohmylms'
+						),
+						slug: 'comment_on_course',
+						value: ! 1,
+						point: 2,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'User Registration',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a new user registers on the site.',
-								'ohmylms'
-							),
-							slug: 'user_registration',
-							value: ! 1,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'User Registration', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a new user registers on the site.',
+							'ohmylms'
+						),
+						slug: 'user_registration',
+						value: ! 1,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Course Enrollment',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user enrolls in a course.',
-								'ohmylms'
-							),
-							slug: 'course_enrollment',
-							value: ! 1,
-							point: 5,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Course Enrollment', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user enrolls in a course.',
+							'ohmylms'
+						),
+						slug: 'course_enrollment',
+						value: ! 1,
+						point: 5,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )( 'Purchase', 'ohmylms' ),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user makes a purchase on the site.',
-								'ohmylms'
-							),
-							slug: 'purchase',
-							value: ! 1,
-							point: 10,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Purchase', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user makes a purchase on the site.',
+							'ohmylms'
+						),
+						slug: 'purchase',
+						value: ! 1,
+						point: 10,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Post on Community',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user creates a new post in the community.',
-								'ohmylms'
-							),
-							slug: 'community_post_create',
-							value: ! 1,
-							point: 8,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )( 'Post on Community', 'ohmylms' ),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user creates a new post in the community.',
+							'ohmylms'
+						),
+						slug: 'community_post_create',
+						value: ! 1,
+						point: 8,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Comment on Community Post',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user comments on a community post.',
-								'ohmylms'
-							),
-							slug: 'community_post_comment',
-							value: ! 1,
-							point: 3,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )(
+							'Comment on Community Post',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user comments on a community post.',
+							'ohmylms'
+						),
+						slug: 'community_post_comment',
+						value: ! 1,
+						point: 3,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-						{
-							label: ( 0, I18n.__ )(
-								'Reaction on Community',
-								'ohmylms'
-							),
-							tooltip: ( 0, I18n.__ )(
-								'Award points when a user reacts to community content (likes, loves, etc.).',
-								'ohmylms'
-							),
-							slug: 'community_reaction',
-							value: ! 1,
-							point: 1,
-							email: {
-								enable: ! 1,
-								subject: '',
-								body: '',
-							},
+					},
+					{
+						label: ( 0, I18n.__ )(
+							'Reaction on Community',
+							'ohmylms'
+						),
+						tooltip: ( 0, I18n.__ )(
+							'Award points when a user reacts to community content (likes, loves, etc.).',
+							'ohmylms'
+						),
+						slug: 'community_reaction',
+						value: ! 1,
+						point: 1,
+						email: {
+							enable: ! 1,
+							subject: '',
+							body: '',
 						},
-					],
-				} ),
-				2
-			),
-			s = u[ 0 ],
-			d = u[ 1 ],
-			m = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
-			}, [] ),
-			p = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
-			}, [] ),
-			f = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			v = f[ 0 ],
-			h = f[ 1 ],
-			_ = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			w = _[ 0 ],
-			E = _[ 1 ],
-			S = M2( ( 0, ReactHooks.useState )( null ), 2 ),
-			R = S[ 0 ],
-			x = S[ 1 ],
-			C = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			P = C[ 0 ],
-			O = C[ 1 ],
-			k = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			j = k[ 0 ],
-			A = k[ 1 ],
-			M = ( 0, Notifications.A )(),
-			openNotificationWithIcon = M.openNotificationWithIcon,
-			contextHolder = M.contextHolder,
-			D = ( 0, ReactHooks.useRef )( null );
+					},
+				],
+			} ),
+			2
+		);
+		var s = u[ 0 ];
+		var d = u[ 1 ];
+		var m = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).getNotificationMessage();
+		}, [] );
+		var p = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+			return _eLocal2( StoreModule.default ).getNotificationStatus();
+		}, [] );
+		var f = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var v = f[ 0 ];
+		var h = f[ 1 ];
+		var _ = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var w = _[ 0 ];
+		var E = _[ 1 ];
+		var S = M2( ( 0, ReactHooks.useState )( null ), 2 );
+		var R = S[ 0 ];
+		var x = S[ 1 ];
+		var C = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var P = C[ 0 ];
+		var O = C[ 1 ];
+		var k = M2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var j = k[ 0 ];
+		var A = k[ 1 ];
+		var M = ( 0, Notifications.A )();
+		var openNotificationWithIcon = M.openNotificationWithIcon;
+		var contextHolder = M.contextHolder;
+		var D = ( 0, ReactHooks.useRef )( null );
 		( 0, ReactHooks.useEffect )( function () {
-			var e = ( function () {
-				var e = A2(
-					x2().m( function e() {
-						var t, n, r;
-						return x2().w( function ( e ) {
+			var _eLocal3 = ( function () {
+				var _eLocal4 = A2(
+					x2().m( function _eLocal5() {
+						var _tLocal, _nLocal, _rLocal;
+						return x2().w( function ( _eLocal6 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal6.n ) {
 									case 0:
 										return (
 											h( ! 0 ),
-											( e.n = 1 ),
+											( _eLocal6.n = 1 ),
 											l()( {
 												path: 'ohmylms/v1/engagement/settings/point',
 											} )
 										 );
 									case 1:
-										( ( t = e.v ),
-											d( t || s ),
-											h( ! 1 ),
-											t &&
-												( ( n = W( t.rules || [], q ) ),
+										_tLocal = _eLocal6.v;
+										d( _tLocal || s );
+										h( ! 1 );
+										if ( _tLocal ) {
+											{
+												_nLocal = W(
+													_tLocal.rules || [],
+													q
+												);
 												d(
 													O2(
-														O2( {}, t ),
+														O2( {}, _tLocal ),
 														{},
 														{
-															rules: n,
+															rules: _nLocal,
 														}
 													)
-												),
-												( r = n.find( function ( e ) {
-													return e.value;
-												} ) ),
-												x( r ) ) );
+												);
+												_rLocal = _nLocal.find(
+													function ( _eLocal7 ) {
+														return _eLocal7.value;
+													}
+												);
+												x( _rLocal );
+											}
+										}
+									// Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal6.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal5 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal4.apply( this, _args );
 				};
 			} )();
-			e();
+			_eLocal3();
 		}, [] );
-		var W = function ( e, t ) {
-			var n = ( function ( e ) {
+		var W = function ( _eLocal8, _tLocal2 ) {
+			var _nLocal2 = ( function ( _eLocal9 ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return I2( e );
+					( function ( _eLocal0 ) {
+						if ( Array.isArray( _eLocal0 ) ) {
+							return I2( _eLocal0 );
 						}
-					} )( e ) ||
-					( function ( e ) {
+					} )( _eLocal9 ) ||
+					( function ( _eLocal1 ) {
 						if (
 							( 'undefined' !== typeof Symbol &&
-								null != e[ Symbol.iterator ] ) ||
-							null != e[ '@@iterator' ]
+								( ( _nullableValue ) =>
+									_nullableValue !== null &&
+									_nullableValue !== void 0 )(
+									_eLocal1[ Symbol.iterator ]
+								) ) ||
+							( ( _nullableValue2 ) =>
+								_nullableValue2 !== null &&
+								_nullableValue2 !== void 0 )(
+								_eLocal1[ '@@iterator' ]
+							)
 						) {
-							return Array.from( e );
+							return Array.from( _eLocal1 );
 						}
-					} )( e ) ||
-					T2( e ) ||
+					} )( _eLocal9 ) ||
+					T2( _eLocal9 ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
 						);
 					} )()
 				);
-			} )( e );
+			} )( _eLocal8 );
 			return (
-				t.forEach( function ( t ) {
-					e.some( function ( e ) {
-						return e.slug === t.slug;
-					} ) || n.push( t );
+				_tLocal2.forEach( function ( _tLocal3 ) {
+					if (
+						! _eLocal8.some( function ( _eLocal10 ) {
+							return _eLocal10.slug === _tLocal3.slug;
+						} )
+					) {
+						_nLocal2.push( _tLocal3 );
+					}
 				} ),
-				n
+				_nLocal2
 			 );
 		};
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
-				! v && m && openNotificationWithIcon( p, m );
+				if ( ! v && m ) {
+					openNotificationWithIcon( p, m );
+				}
 			},
 			[ m ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					if ( R ) {
-						var e = s.rules.findIndex( function ( e ) {
-							return e.slug === R.slug;
-						} );
-						d(
-							O2(
-								O2( {}, s ),
-								{},
-								{
-									rules: s.rules.map( function ( t, n ) {
-										return n === e ? R : t;
-									} ),
-								}
-							)
-						);
-					}
-				},
-				[ R ]
-			) );
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( R ) {
+					var _eLocal11 = s.rules.findIndex( function ( _eLocal12 ) {
+						return _eLocal12.slug === R.slug;
+					} );
+					d(
+						O2(
+							O2( {}, s ),
+							{},
+							{
+								rules: s.rules.map(
+									function ( _tLocal4, _nLocal3 ) {
+										return _nLocal3 === _eLocal11
+											? R
+											: _tLocal4;
+									}
+								),
+							}
+						)
+					);
+				}
+			},
+			[ R ]
+		);
 		var B = ( function () {
-				var e = A2(
-					x2().m( function e() {
-						var t;
+				var _eLocal13 = A2(
+					x2().m( function _eLocal14() {
+						var _tLocal5;
 						return x2().w(
-							function ( e ) {
+							function ( _eLocal15 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal15.p = _eLocal15.n ) ) {
 										case 0:
 											{
-												e.n = 1;
+												_eLocal15.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal15.a( 2 );
 										case 1:
 											return (
 												c.setLoadingSetting( ! 0 ),
 												E( ! 0 ),
-												( e.p = 2 ),
-												( e.n = 3 ),
+												( _eLocal15.p = 2 ),
+												( _eLocal15.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/settings/point',
 													method: 'POST',
@@ -439,7 +444,7 @@ export function createBonusPointSettings( readRuntime ) {
 											 );
 										case 3:
 											return (
-												( t = e.v ),
+												( _tLocal5 = _eLocal15.v ),
 												openNotificationWithIcon(
 													'success',
 													( 0, I18n.__ )(
@@ -447,113 +452,136 @@ export function createBonusPointSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												e.a( 2, t )
+												_eLocal15.a( 2, _tLocal5 )
 											 );
 										case 4:
-											( ( e.p = 4 ),
-												e.v,
-												E( ! 1 ),
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Something went wrong.',
-														'ohmylms'
-													)
-												) );
+											_eLocal15.p = 4;
+											E( ! 1 );
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Something went wrong.',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal15.p = 5 ),
 												c.setLoadingSetting( ! 1 ),
 												E( ! 1 ),
-												e.f( 5 )
+												_eLocal15.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal15.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal14,
 							null,
 							[ [ 2, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal13.apply( this, _args2 );
 				};
 			} )(),
 			V = ( function () {
-				var e = A2(
-					x2().m( function e( t, n ) {
-						var r, a;
+				var _eLocal16 = A2(
+					x2().m( function _eLocal17( _tLocal6, _nLocal4 ) {
+						var _rLocal2, _aLocal;
 						return x2().w(
-							function ( e ) {
+							function ( _eLocal18 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal18.p = _eLocal18.n ) ) {
 										case 0:
 											return (
-												d( function ( e ) {
-													var r = e.rules.map(
-														function ( e, r ) {
-															return r === t
-																? O2(
-																		O2(
+												d( function ( _eLocal19 ) {
+													var _rLocal3 =
+														_eLocal19.rules.map(
+															function (
+																_eLocal20,
+																_rLocal4
+															) {
+																return _rLocal4 ===
+																	_tLocal6
+																	? O2(
+																			O2(
+																				{},
+																				_eLocal20
+																			),
 																			{},
-																			e
-																		),
-																		{},
-																		{
-																			value: n,
-																		}
-																	)
-																: e;
-														}
-													);
+																			{
+																				value: _nLocal4,
+																			}
+																		)
+																	: _eLocal20;
+															}
+														);
 													return O2(
-														O2( {}, e ),
+														O2( {}, _eLocal19 ),
 														{},
 														{
-															rules: r,
+															rules: _rLocal3,
 														}
 													);
 												} ),
 												A( ! 1 ),
-												( r = O2(
+												( _rLocal2 = O2(
 													O2( {}, s ),
 													{},
 													{
 														rules: s.rules.map(
-															function ( e, r ) {
-																return r === t
+															function (
+																_eLocal21,
+																_rLocal5
+															) {
+																return _rLocal5 ===
+																	_tLocal6
 																	? O2(
 																			O2(
 																				{},
-																				e
+																				_eLocal21
 																			),
 																			{},
 																			{
-																				value: n,
+																				value: _nLocal4,
 																			}
 																		)
-																	: e;
+																	: _eLocal21;
 															}
 														),
 													}
 												) ),
-												( a = r.rules.filter(
-													function ( e ) {
-														return null == e
-															? void 0
-															: e.value;
+												( _aLocal =
+													_rLocal2.rules.filter(
+														function ( _eLocal22 ) {
+															return _eLocal22 ===
+																null ||
+																_eLocal22 ===
+																	void 0
+																? void 0
+																: _eLocal22.value;
+														}
+													) ),
+												( () => {
+													if ( _nLocal4 ) {
+														return x(
+															_rLocal2.rules[
+																_tLocal6
+															]
+														);
 													}
-												) ),
-												n
-													? x( r.rules[ t ] )
-													: a.length > 0
-														? x( a[ 0 ] )
-														: x( null ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+													if ( _aLocal.length > 0 ) {
+														return x(
+															_aLocal[ 0 ]
+														);
+													}
+													return x( null );
+												} )(),
+												( _eLocal18.p = 1 ),
+												( _eLocal18.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/settings/point',
 													method: 'POST',
@@ -561,80 +589,86 @@ export function createBonusPointSettings( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( r ),
+													body: JSON.stringify(
+														_rLocal2
+													),
 												} )
 											 );
 										case 2:
-											( openNotificationWithIcon(
+											openNotificationWithIcon(
 												'success',
 												( 0, I18n.__ )(
 													'Rule updated successfully.',
 													'ohmylms'
 												)
-											),
-												( e.n = 4 ) );
+											);
+											_eLocal18.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												e.v,
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Failed to update rule.',
-														'ohmylms'
-													)
-												) );
+											_eLocal18.p = 3;
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Failed to update rule.',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
-											return e.a( 2 );
+											return _eLocal18.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal17,
 							null,
 							[ [ 1, 3 ] ]
 						);
 					} )
 				);
-				return function ( t, n ) {
-					return e.apply( this, arguments );
+				return function ( ..._args4 ) {
+					return _eLocal16.apply( this, _args4 );
 				};
 			} )(),
 			H = function () {
-				( x( null ), O( ! 1 ) );
+				x( null );
+				O( ! 1 );
 			},
 			G = ( function () {
-				var e = A2(
-					x2().m( function e() {
-						var t;
+				var _eLocal23 = A2(
+					x2().m( function _eLocal24() {
+						var _tLocal8;
 						return x2().w(
-							function ( e ) {
+							function ( _eLocal25 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal25.p = _eLocal25.n ) ) {
 										case 0:
 											if ( R ) {
-												e.n = 1;
+												_eLocal25.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal25.a( 2 );
 										case 1:
 											return (
 												E( ! 0 ),
-												( e.p = 2 ),
-												( t = O2(
+												( _eLocal25.p = 2 ),
+												( _tLocal8 = O2(
 													O2( {}, s ),
 													{},
 													{
 														rules: s.rules.map(
-															function ( e, t ) {
-																return t ===
+															function (
+																_eLocal26,
+																_tLocal9
+															) {
+																return _tLocal9 ===
 																	R.index
 																	? R
-																	: e;
+																	: _eLocal26;
 															}
 														),
 													}
 												) ),
-												( e.n = 3 ),
+												( _eLocal25.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/settings/point',
 													method: 'POST',
@@ -642,55 +676,59 @@ export function createBonusPointSettings( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( t ),
+													body: JSON.stringify(
+														_tLocal8
+													),
 												} )
 											 );
 										case 3:
-											( d( t ),
-												openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Settings saved successfully.',
-														'ohmylms'
-													)
-												),
-												H(),
-												( e.n = 5 ) );
+											d( _tLocal8 );
+											openNotificationWithIcon(
+												'success',
+												( 0, I18n.__ )(
+													'Settings saved successfully.',
+													'ohmylms'
+												)
+											);
+											H();
+											_eLocal25.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												e.v,
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Failed to save settings.',
-														'ohmylms'
-													)
-												) );
+											_eLocal25.p = 4;
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Failed to save settings.',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal25.p = 5 ),
 												E( ! 1 ),
-												e.f( 5 )
+												_eLocal25.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal25.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal24,
 							null,
 							[ [ 2, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return _eLocal23.apply( this, _args3 );
 				};
 			} )(),
 			U = function () {
-				return s.rules.filter( function ( e ) {
-					return null == e ? void 0 : e.value;
+				return s.rules.filter( function ( _eLocal27 ) {
+					return _eLocal27 === null || _eLocal27 === void 0
+						? void 0
+						: _eLocal27.value;
 				} );
 			},
 			q = [
@@ -902,34 +940,37 @@ export function createBonusPointSettings( readRuntime ) {
 					},
 				},
 			],
-			Y = function ( e ) {
-				x( function ( t ) {
+			Y = function ( _eLocal28 ) {
+				x( function ( _tLocal0 ) {
 					return O2(
-						O2( {}, t ),
+						O2( {}, _tLocal0 ),
 						{},
 						{
 							email: O2(
-								O2( {}, t.email ),
+								O2( {}, _tLocal0.email ),
 								{},
 								{
-									body: e,
+									body: _eLocal28,
 								}
 							),
 						}
 					);
 				} );
 			},
-			Q = function ( e ) {
-				if ( ! e ) {
+			Q = function ( _eLocal29 ) {
+				if ( ! _eLocal29 ) {
 					return ! 1;
 				}
-				var t = null === e.point || '' === e.point || e.point < 0,
-					n =
-						void 0 !== e.threshold &&
-						( null === e.threshold ||
-							'' === e.threshold ||
-							e.threshold < 0 );
-				return t || n;
+				var _tLocal1 =
+						null === _eLocal29.point ||
+						'' === _eLocal29.point ||
+						_eLocal29.point < 0,
+					_nLocal6 =
+						void 0 !== _eLocal29.threshold &&
+						( null === _eLocal29.threshold ||
+							'' === _eLocal29.threshold ||
+							_eLocal29.threshold < 0 );
+				return _tLocal1 || _nLocal6;
 			};
 		return v ? (
 			<React.Fragment>
@@ -1071,31 +1112,31 @@ export function createBonusPointSettings( readRuntime ) {
 																{ s.rules
 																	.filter(
 																		function (
-																			e
+																			_eLocal30
 																		) {
-																			return ! e.value;
+																			return ! _eLocal30.value;
 																		}
 																	)
 																	.map(
 																		function (
-																			e,
-																			t
+																			_eLocal31,
+																			_tLocal10
 																		) {
-																			var n =
+																			var _nLocal7 =
 																				s.rules.findIndex(
 																					function (
-																						t
+																						_tLocal11
 																					) {
 																						return (
-																							t.slug ===
-																							e.slug
+																							_tLocal11.slug ===
+																							_eLocal31.slug
 																						);
 																					}
 																				);
 																			return (
 																				<div
 																					key={
-																						e.slug
+																						_eLocal31.slug
 																					}
 																					style={ {
 																						padding:
@@ -1104,42 +1145,65 @@ export function createBonusPointSettings( readRuntime ) {
 																						borderTop:
 																							''.concat(
 																								0 ===
-																									t
+																									_tLocal10
 																									? 'none'
 																									: '1px solid #eee'
 																							),
 																					} }
 																					onClick={ function () {
-																						Q(
-																							R
-																						)
-																							? openNotificationWithIcon(
-																									'error',
-																									( 0,
-																									I18n.__ )(
-																										'Please fix the errors in the current rule before adding a new one.',
-																										'ohmylms'
-																									)
+																						if (
+																							Q(
+																								R
+																							)
+																						) {
+																							openNotificationWithIcon(
+																								'error',
+																								( 0,
+																								I18n.__ )(
+																									'Please fix the errors in the current rule before adding a new one.',
+																									'ohmylms'
 																								)
-																							: ( V(
-																									n,
+																							);
+																						} else {
+																							{
+																								V(
+																									_nLocal7,
 																									! 0
-																								),
+																								);
 																								A(
 																									! 1
-																								) );
+																								);
+																							}
+																						}
 																					} }
 																					onMouseEnter={ function (
-																						e
+																						_eLocal32
 																					) {
-																						return ( e.currentTarget.style.backgroundColor =
+																						return ( _eLocal32.currentTarget.style.backgroundColor =
 																							'#f0f0f0' );
 																					} }
 																					onMouseLeave={ function (
-																						e
+																						_eLocal33
 																					) {
-																						return ( e.currentTarget.style.backgroundColor =
+																						return ( _eLocal33.currentTarget.style.backgroundColor =
 																							'transparent' );
+																					} }
+																					role="button"
+																					tabIndex={
+																						0
+																					}
+																					onKeyDown={ (
+																						event
+																					) => {
+																						if (
+																							event.key ===
+																								'Enter' ||
+																							event.key ===
+																								' '
+																						) {
+																							event.preventDefault();
+																							event.currentTarget.click();
+																						}
 																					} }
 																				>
 																					<Controls.TextWP
@@ -1148,7 +1212,7 @@ export function createBonusPointSettings( readRuntime ) {
 																						} }
 																					>
 																						{
-																							e.label
+																							_eLocal31.label
 																						}
 																					</Controls.TextWP>
 																					<Controls.SpacerWP
@@ -1164,7 +1228,7 @@ export function createBonusPointSettings( readRuntime ) {
 																						} }
 																					>
 																						{
-																							e.tooltip
+																							_eLocal31.tooltip
 																						}
 																					</Controls.TextWP>
 																				</div>
@@ -1174,12 +1238,14 @@ export function createBonusPointSettings( readRuntime ) {
 																{ 0 ===
 																	s.rules.filter(
 																		function (
-																			e
+																			_eLocal34
 																		) {
 																			return ! (
-																				null !=
-																					e &&
-																				e.value
+																				_eLocal34 !==
+																					null &&
+																				_eLocal34 !==
+																					void 0 &&
+																				_eLocal34.value
 																			);
 																		}
 																	)
@@ -1191,15 +1257,15 @@ export function createBonusPointSettings( readRuntime ) {
 																			cursor: 'pointer',
 																		} }
 																		onMouseEnter={ function (
-																			e
+																			_eLocal35
 																		) {
-																			return ( e.currentTarget.style.backgroundColor =
+																			return ( _eLocal35.currentTarget.style.backgroundColor =
 																				'#f0f0f0' );
 																		} }
 																		onMouseLeave={ function (
-																			e
+																			_eLocal36
 																		) {
-																			return ( e.currentTarget.style.backgroundColor =
+																			return ( _eLocal36.currentTarget.style.backgroundColor =
 																				'transparent' );
 																		} }
 																	>
@@ -1262,134 +1328,152 @@ export function createBonusPointSettings( readRuntime ) {
 														) }
 													</Controls.TextWP>
 												) }
-												{ U().map( function ( e, t ) {
-													var n = s.rules.findIndex(
-														function ( t ) {
-															return (
-																t.slug ===
-																e.slug
+												{ U().map(
+													function ( _eLocal37 ) {
+														var _nLocal8 =
+															s.rules.findIndex(
+																function (
+																	_tLocal13
+																) {
+																	return (
+																		_tLocal13.slug ===
+																		_eLocal37.slug
+																	);
+																}
 															);
-														}
-													);
-													return (
-														<Controls.CardWP
-															key={ e.slug }
-															isBorderless={ ! 0 }
-															padding={ '12px' }
-															onClick={ function () {
-																Q( R )
-																	? openNotificationWithIcon(
+														return (
+															<Controls.CardWP
+																key={
+																	_eLocal37.slug
+																}
+																isBorderless={
+																	! 0
+																}
+																padding={
+																	'12px'
+																}
+																onClick={ function () {
+																	if (
+																		Q( R )
+																	) {
+																		openNotificationWithIcon(
 																			'error',
 																			( 0,
 																			I18n.__ )(
 																				'Please fix the errors in the current rule before switching.',
 																				'ohmylms'
 																			)
-																		)
-																	: x(
+																		);
+																	} else {
+																		x(
 																			O2(
 																				O2(
 																					{},
-																					e
+																					_eLocal37
 																				),
 																				{},
 																				{
-																					index: n,
+																					index: _nLocal8,
 																				}
 																			)
 																		);
-															} }
-															style={ {
-																cursor: 'pointer',
-																backgroundColor:
-																	'#fff',
-																border:
-																	( null == R
-																		? void 0
-																		: R.slug ) ===
-																	e.slug
-																		? '1px solid #6e42d3'
-																		: '1px solid #e0e0e0',
-																borderRadius:
-																	'6px',
-															} }
-														>
-															<Controls.FlexWP
-																justify={
-																	'space-between'
-																}
-																align={
-																	'center'
-																}
+																	}
+																} }
+																style={ {
+																	cursor: 'pointer',
+																	backgroundColor:
+																		'#fff',
+																	border:
+																		( R ===
+																			null ||
+																		R ===
+																			void 0
+																			? void 0
+																			: R.slug ) ===
+																		_eLocal37.slug
+																			? '1px solid #6e42d3'
+																			: '1px solid #e0e0e0',
+																	borderRadius:
+																		'6px',
+																} }
 															>
-																<Controls.HeadingWP
-																	level={
-																		'4'
+																<Controls.FlexWP
+																	justify={
+																		'space-between'
 																	}
-																	style={ {
-																		fontWeight:
-																			'500',
-																	} }
+																	align={
+																		'center'
+																	}
 																>
-																	{ ( 0,
-																	I18n.__ )(
-																		e.label,
-																		'ohmylms'
-																	) }
-																</Controls.HeadingWP>
-																<Controls.ButtonWP
-																	variant={
-																		'ghost'
-																	}
-																	size={
-																		'sm'
-																	}
-																	onClick={ function (
-																		e
-																	) {
-																		( e.stopPropagation(),
+																	<Controls.HeadingWP
+																		level={
+																			'4'
+																		}
+																		style={ {
+																			fontWeight:
+																				'500',
+																		} }
+																	>
+																		{ ( 0,
+																		I18n.__ )(
+																			_eLocal37.label,
+																			'ohmylms'
+																		) }
+																	</Controls.HeadingWP>
+																	<Controls.ButtonWP
+																		variant={
+																			'ghost'
+																		}
+																		size={
+																			'sm'
+																		}
+																		onClick={ function (
+																			_eLocal38
+																		) {
+																			_eLocal38.stopPropagation();
 																			V(
-																				n,
+																				_nLocal8,
 																				! 1
-																			) );
-																	} }
-																	style={ {
-																		padding:
-																			'4px',
-																	} }
+																			);
+																		} }
+																		style={ {
+																			padding:
+																				'4px',
+																		} }
+																	>
+																		{ '✕' }
+																	</Controls.ButtonWP>
+																</Controls.FlexWP>
+																<Controls.FlexWP
+																	justify={
+																		'flex'
+																	}
+																	align={
+																		'center'
+																	}
 																>
-																	{ '✕' }
-																</Controls.ButtonWP>
-															</Controls.FlexWP>
-															<Controls.FlexWP
-																justify={
-																	'flex'
-																}
-																align={
-																	'center'
-																}
-															>
-																<Controls.TextWP
-																	style={ {
-																		fontWeight:
-																			'500',
-																	} }
-																>
-																	{ ( 0,
-																	I18n.__ )(
-																		e.point,
-																		'ohmylms'
-																	) }
-																	{ ( 0,
-																	I18n.__ )(
-																		' Points',
-																		'ohmylms'
-																	) }
-																</Controls.TextWP>
-															</Controls.FlexWP>
-														</Controls.CardWP>
-													);
-												} ) }
+																	<Controls.TextWP
+																		style={ {
+																			fontWeight:
+																				'500',
+																		} }
+																	>
+																		{ ( 0,
+																		I18n.__ )(
+																			_eLocal37.point,
+																			'ohmylms'
+																		) }
+																		{ ( 0,
+																		I18n.__ )(
+																			' Points',
+																			'ohmylms'
+																		) }
+																	</Controls.TextWP>
+																</Controls.FlexWP>
+															</Controls.CardWP>
+														);
+													}
+												) }
 											</div>
 										</Controls.FlexItemWP>
 										<Controls.FlexItemWP
@@ -1496,7 +1580,7 @@ export function createBonusPointSettings( readRuntime ) {
 																			R.threshold
 																		}
 																		onChange={ function (
-																			e
+																			_eLocal39
 																		) {
 																			return x(
 																				O2(
@@ -1507,7 +1591,7 @@ export function createBonusPointSettings( readRuntime ) {
 																					{},
 																					{
 																						threshold:
-																							e,
+																							_eLocal39,
 																					}
 																				)
 																			);
@@ -1571,7 +1655,7 @@ export function createBonusPointSettings( readRuntime ) {
 																			R.point
 																		}
 																		onChange={ function (
-																			e
+																			_eLocal40
 																		) {
 																			return x(
 																				O2(
@@ -1581,7 +1665,7 @@ export function createBonusPointSettings( readRuntime ) {
 																					),
 																					{},
 																					{
-																						point: e,
+																						point: _eLocal40,
 																					}
 																				)
 																			);
@@ -1664,27 +1748,27 @@ export function createBonusPointSettings( readRuntime ) {
 																							.enable
 																					}
 																					onChange={ function (
-																						e
+																						_eLocal41
 																					) {
 																						return x(
 																							function (
-																								t
+																								_tLocal14
 																							) {
 																								return O2(
 																									O2(
 																										{},
-																										t
+																										_tLocal14
 																									),
 																									{},
 																									{
 																										email: O2(
 																											O2(
 																												{},
-																												t.email
+																												_tLocal14.email
 																											),
 																											{},
 																											{
-																												enable: e,
+																												enable: _eLocal41,
 																											}
 																										),
 																									}
@@ -1727,28 +1811,28 @@ export function createBonusPointSettings( readRuntime ) {
 																						.subject
 																				}
 																				onChange={ function (
-																					e
+																					_eLocal42
 																				) {
 																					return x(
 																						function (
-																							t
+																							_tLocal15
 																						) {
 																							return O2(
 																								O2(
 																									{},
-																									t
+																									_tLocal15
 																								),
 																								{},
 																								{
 																									email: O2(
 																										O2(
 																											{},
-																											t.email
+																											_tLocal15.email
 																										),
 																										{},
 																										{
 																											subject:
-																												e,
+																												_eLocal42,
 																										}
 																									),
 																								}
@@ -1912,7 +1996,7 @@ export function createBonusPointSettings( readRuntime ) {
 											} }
 										>
 											{ void 0 !==
-												( null == R
+												( R === null || R === void 0
 													? void 0
 													: R.threshold ) && (
 												<div
@@ -1948,7 +2032,7 @@ export function createBonusPointSettings( readRuntime ) {
 													<Controls.InputNumberWP
 														value={ R.threshold }
 														onChange={ function (
-															e
+															_eLocal43
 														) {
 															return x(
 																O2(
@@ -1956,7 +2040,7 @@ export function createBonusPointSettings( readRuntime ) {
 																	{},
 																	{
 																		threshold:
-																			e,
+																			_eLocal43,
 																	}
 																)
 															);
@@ -1968,7 +2052,7 @@ export function createBonusPointSettings( readRuntime ) {
 												</div>
 											) }
 											{ void 0 !==
-												( null == R
+												( R === null || R === void 0
 													? void 0
 													: R.point ) && (
 												<div>
@@ -2000,14 +2084,14 @@ export function createBonusPointSettings( readRuntime ) {
 													<Controls.InputNumberWP
 														value={ R.point }
 														onChange={ function (
-															e
+															_eLocal44
 														) {
 															return x(
 																O2(
 																	O2( {}, R ),
 																	{},
 																	{
-																		point: e,
+																		point: _eLocal44,
 																	}
 																)
 															);
@@ -2033,7 +2117,8 @@ export function createBonusPointSettings( readRuntime ) {
 										gap={ 3 }
 									>
 										{ void 0 !==
-											( null == R ||
+											( R === null ||
+											R === void 0 ||
 											null === ( n = R.email ) ||
 											void 0 === n
 												? void 0
@@ -2078,27 +2163,27 @@ export function createBonusPointSettings( readRuntime ) {
 																R.email.enable
 															}
 															onChange={ function (
-																e
+																_eLocal45
 															) {
 																return x(
 																	function (
-																		t
+																		_tLocal16
 																	) {
 																		return O2(
 																			O2(
 																				{},
-																				t
+																				_tLocal16
 																			),
 																			{},
 																			{
 																				email: O2(
 																					O2(
 																						{},
-																						t.email
+																						_tLocal16.email
 																					),
 																					{},
 																					{
-																						enable: e,
+																						enable: _eLocal45,
 																					}
 																				),
 																			}
@@ -2111,7 +2196,8 @@ export function createBonusPointSettings( readRuntime ) {
 												</Controls.FlexWP>
 											</Controls.FlexItemWP>
 										) }
-										{ ( null == R ||
+										{ ( R === null ||
+										R === void 0 ||
 										null === ( r = R.email ) ||
 										void 0 === r
 											? void 0
@@ -2140,29 +2226,37 @@ export function createBonusPointSettings( readRuntime ) {
 												</Controls.TextWP>
 												<Controls.InputWP
 													value={
-														null == R ||
+														R === null ||
+														R === void 0 ||
 														null ===
 															( a = R.email ) ||
 														void 0 === a
 															? void 0
 															: a.subject
 													}
-													onChange={ function ( e ) {
+													onChange={ function (
+														_eLocal46
+													) {
 														return x(
-															function ( t ) {
+															function (
+																_tLocal17
+															) {
 																return O2(
-																	O2( {}, t ),
+																	O2(
+																		{},
+																		_tLocal17
+																	),
 																	{},
 																	{
 																		email: O2(
 																			O2(
 																				{},
-																				t.email
+																				_tLocal17.email
 																			),
 																			{},
 																			{
 																				subject:
-																					e,
+																					_eLocal46,
 																			}
 																		),
 																	}
@@ -2173,7 +2267,8 @@ export function createBonusPointSettings( readRuntime ) {
 												/>
 											</div>
 										) }
-										{ ( null == R ||
+										{ ( R === null ||
+										R === void 0 ||
 										null === ( o = R.email ) ||
 										void 0 === o
 											? void 0

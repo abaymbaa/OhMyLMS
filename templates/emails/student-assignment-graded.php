@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails student assignment graded template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

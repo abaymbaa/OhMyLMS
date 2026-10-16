@@ -39,20 +39,22 @@ export function createAssignmentReport( readRuntime ) {
 			y = ( 0, Router.g )().id;
 		( 0, ReactHooks.useEffect )(
 			function () {
-				var e = ( function () {
-					var e,
-						t =
-							( ( e = U$().m( function e() {
-								var t, n;
+				var _eLocal = ( function () {
+					var _eLocal2,
+						_tLocal =
+							( ( _eLocal2 = U$().m( function _eLocal3() {
+								var _tLocal2, _nLocal;
 								return U$().w(
-									function ( e ) {
+									function ( _eLocal4 ) {
 										for (;;) {
-											switch ( ( e.p = e.n ) ) {
+											switch (
+												( _eLocal4.p = _eLocal4.n )
+											) {
 												case 0:
 													return (
-														( e.p = 0 ),
+														( _eLocal4.p = 0 ),
 														m( ! 0 ),
-														( e.n = 1 ),
+														( _eLocal4.n = 1 ),
 														l()( {
 															path: '/ohmylms/v1/assignment/'.concat(
 																y,
@@ -66,60 +68,87 @@ export function createAssignmentReport( readRuntime ) {
 														} )
 													 );
 												case 1:
-													if ( ( t = e.v ) ) {
-														e.n = 2;
+													if (
+														( _tLocal2 =
+															_eLocal4.v )
+													) {
+														_eLocal4.n = 2;
 														break;
 													}
-													t = [];
+													_tLocal2 = [];
+												// Falls through to the shared async state cleanup.
 												case 2:
-													( u( t || [] ),
-														( e.n = 4 ) );
+													u( _tLocal2 || [] );
+													_eLocal4.n = 4;
 													break;
 												case 3:
-													( ( e.p = 3 ),
-														( n = e.v ),
-														console.error( n ) );
+													_eLocal4.p = 3;
+													_nLocal = _eLocal4.v;
+													console.error( _nLocal );
+												// Falls through to the shared async state cleanup.
 												case 4:
 													return (
-														( e.p = 4 ),
+														( _eLocal4.p = 4 ),
 														m( ! 1 ),
-														e.f( 4 )
+														_eLocal4.f( 4 )
 													 );
 												case 5:
-													return e.a( 2 );
+													return _eLocal4.a( 2 );
 											}
 										}
 									},
-									e,
+									_eLocal3,
 									null,
 									[ [ 0, 3, 4, 5 ] ]
 								);
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										Y$( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal3 = this,
+									_nLocal2 = _args;
+								return new Promise( function (
+									_rLocal,
+									_aLocal
+								) {
+									var _oLocal = _eLocal2.apply(
+										_tLocal3,
+										_nLocal2
+									);
+									function _iLocal( _eLocal5 ) {
+										Y$(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'next',
+											_eLocal5
+										);
 									}
-									function l( e ) {
-										Y$( o, r, a, i, l, 'throw', e );
+									function _lLocal( _eLocal6 ) {
+										Y$(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'throw',
+											_eLocal6
+										);
 									}
-									i( void 0 );
+									_iLocal( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal.apply( this, _args2 );
 					};
 				} )();
-				e();
+				_eLocal();
 			},
 			[ y ]
 		);
-		var _ = c.filter( function ( e ) {
-				return Object.values( e ).some( function ( e ) {
-					return String( e ).toLowerCase().includes( t );
+		var _ = c.filter( function ( _eLocal7 ) {
+				return Object.values( _eLocal7 ).some( function ( _eLocal8 ) {
+					return String( _eLocal8 ).toLowerCase().includes( t );
 				} );
 			} ),
 			w = [
@@ -137,32 +166,41 @@ export function createAssignmentReport( readRuntime ) {
 					title: 'Total Submitted',
 					dataIndex: 'submissions',
 					key: 'submissions',
-					render( e ) {
-						return ( null == e ? void 0 : e.length ) || 0;
+					render( _eLocal9 ) {
+						return (
+							( _eLocal9 === null || _eLocal9 === void 0
+								? void 0
+								: _eLocal9.length ) || 0
+						);
 					},
 				},
 				{
 					title: 'Status',
 					dataIndex: 'status',
 					key: 'status',
-					render( e, t ) {
-						var n = null == t ? void 0 : t.submissions[ 0 ].status;
+					render( _eLocal0, _tLocal4 ) {
+						var _nLocal3 =
+							_tLocal4 === null || _tLocal4 === void 0
+								? void 0
+								: _tLocal4.submissions[ 0 ].status;
 						return (
 							<Controls.BadgeWP
 								style={ {
 									textTransform: 'capitalize',
 								} }
-								variant={
-									'submitted' === n
-										? 'warning'
-										: 'passed' === n
-											? 'success'
-											: 'danger'
-								}
+								variant={ ( () => {
+									if ( 'submitted' === _nLocal3 ) {
+										return 'warning';
+									}
+									if ( 'passed' === _nLocal3 ) {
+										return 'success';
+									}
+									return 'danger';
+								} )() }
 							>
-								{ 'submitted' === n
+								{ 'submitted' === _nLocal3
 									? ( 0, I18n.__ )( 'Pending', 'ohmylms' )
-									: n }
+									: _nLocal3 }
 							</Controls.BadgeWP>
 						);
 					},
@@ -170,18 +208,24 @@ export function createAssignmentReport( readRuntime ) {
 				{
 					title: 'Action',
 					key: 'action',
-					render( e, t ) {
+					render( _eLocal1, _tLocal5 ) {
 						return (
 							<Controls.ButtonWP
 								variant={ 'primary' }
 								onClick={ function () {
 									return (
-										( e = null == t ? void 0 : t.user_id ),
+										( _eLocal10 =
+											_tLocal5 === null ||
+											_tLocal5 === void 0
+												? void 0
+												: _tLocal5.user_id ),
 										void h(
-											'grade-assignment/'.concat( e )
+											'grade-assignment/'.concat(
+												_eLocal10
+											)
 										)
 									 );
-									var e;
+									var _eLocal10;
 								} }
 							>
 								{ ( 0, I18n.__ )( 'Details', 'ohmylms' ) }
@@ -251,8 +295,8 @@ export function createAssignmentReport( readRuntime ) {
 											'Search Submission',
 											'ohmylms'
 										) }
-										onChange={ function ( e ) {
-											n( e.toLowerCase() );
+										onChange={ function ( _eLocal11 ) {
+											n( _eLocal11.toLowerCase() );
 										} }
 									/>
 								</Controls.SpacerWP>
@@ -286,8 +330,8 @@ export function createAssignmentReport( readRuntime ) {
 									React.createElement( fN, {
 										total: _.length,
 										currentPage: a,
-										onPageChange( e ) {
-											o( e );
+										onPageChange( _eLocal12 ) {
+											o( _eLocal12 );
 										},
 										perPage: p,
 									} ) }

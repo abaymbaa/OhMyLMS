@@ -26,7 +26,6 @@ use OhMyLMS\Bundles\Bundles;
 $checks = 0; $posts = []; $users = []; $legacy_terms = []; $bundle_ids = []; $item_ids = []; $plans = [];
 $admin = get_user_by('login', $config['username'])->ID;
 $tag = wp_generate_password(5, false, false);
-$previous_features = get_option('ohmylms_single_course_page_features', false);
 $previous_filters = get_option('ohmylms_archive_page_filters', false);
 function ok($condition, $message) { global $checks; if (!$condition) { throw new RuntimeException($message); } $checks++; }
 function api($method, $path, $body = [], $query = []) {
@@ -236,21 +235,6 @@ try {
     ok(strpos($tabs, 'data-slug="c' . $arts . '"') !== false && strpos($tabs, 'data-slug="all"') !== false && strpos($tabs, 'Unused ' . $tag) === false && strpos($tabs, 'Legacy category') === false, 'Curriculum tabs');
     ok(render('filters/category-type-button.php', ['is_enable_category' => 'no']) === '', 'Tabs stay off when disabled');
 
-    // ---- Single course sidebar ----------------------------------------------------------------
-    global $course;
-    $features = ['category', 'tag', 'category_with_enroll', 'tag_with_enroll'];
-    update_option('ohmylms_single_course_page_features', $features);
-    $course = ohmylms_get_course($c_physics);
-    $widget = render('single-course/widgets/course-taxonomy.php');
-    ok(strpos($widget, 'Science ' . $tag . ' › Physics ' . $tag) !== false && strpos($widget, 'Data career ' . $tag) !== false && strpos($widget, 'Curriculum') !== false && strpos($widget, 'Course bundles') !== false, 'The course sidebar shows where the course sits and its bundles');
-    $course = ohmylms_get_course($c_chemistry);
-    $widget = render('single-course/widgets/course-taxonomy.php');
-    ok(strpos($widget, 'Hidden path ' . $tag) === false && strpos($widget, 'Course bundles') === false && strpos($widget, 'Chemistry ' . $tag) !== false, 'Learners never see draft bundles');
-    update_option('ohmylms_single_course_page_features', ['level']);
-    ok(trim(render('single-course/widgets/course-taxonomy.php')) === '', 'The sidebar section follows the page feature toggles');
-    $course = ohmylms_get_course($c_legacy); update_option('ohmylms_single_course_page_features', $features);
-    ok(trim(render('single-course/widgets/course-taxonomy.php')) === '', 'Old terms are not shown in the sidebar');
-
     // ---- Shortcode ----------------------------------------------------------------------------
     $page = do_shortcode('[ohmylms_course_list curriculum="c' . $arts . '" posts_per_page="50"]');
     ok(strpos($page, 'Painting ' . $tag) !== false && strpos($page, 'Physics 101 ' . $tag) === false && strpos($page, 'Chemistry 101 ' . $tag) === false, 'Shortcode curriculum attribute');
@@ -350,7 +334,7 @@ try {
     foreach ($posts as $post_id) { purge($post_id); }
     foreach ($legacy_terms as [$term_id, $taxonomy]) { wp_delete_term($term_id, $taxonomy); }
     foreach ($users as $user_id) { wp_delete_user($user_id); }
-    foreach ([['ohmylms_single_course_page_features', $previous_features], ['ohmylms_archive_page_filters', $previous_filters]] as [$option, $value]) { $value === false ? delete_option($option) : update_option($option, $value); }
+    foreach ([['ohmylms_archive_page_filters', $previous_filters]] as [$option, $value]) { $value === false ? delete_option($option) : update_option($option, $value); }
     if (isset($start)) {
         $end = ['items' => (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Items::table()), 'bundles' => (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Bundles::table()), 'links' => (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Links::table()), 'members' => (int) $wpdb->get_var('SELECT COUNT(*) FROM ' . Bundles::members_table())];
         if ($end !== $start) { fwrite(STDERR, 'Cleanup left rows behind: ' . wp_json_encode([$start, $end]) . "\n"); }

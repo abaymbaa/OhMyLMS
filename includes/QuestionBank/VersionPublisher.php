@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Assigns persistent UUIDs and captures immutable question versions.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 use OhMyLMS\Assessment\QuestionSnapshot;

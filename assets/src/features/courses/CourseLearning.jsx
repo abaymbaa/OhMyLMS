@@ -14,29 +14,34 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
 const request = ( course, suffix = '', options = {} ) =>
 	window.wp.apiFetch( {
 		path: `/ohmylms/v1/courses/${ course }/learning${ suffix }`,
 		...options,
 	} );
 const targets = [
-	{ label: __( 'Proficient', 'ohmylms' ), value: 'proficient' },
-	{ label: __( 'Mastered', 'ohmylms' ), value: 'mastered' },
+	{
+		label: __( 'Proficient', 'ohmylms' ),
+		value: 'proficient',
+	},
+	{
+		label: __( 'Mastered', 'ohmylms' ),
+		value: 'mastered',
+	},
 ];
 const identity = () => {
 	if ( window.crypto.randomUUID ) {
 		return window.crypto.randomUUID();
 	}
 	const bytes = window.crypto.getRandomValues( new Uint8Array( 16 ) );
-	bytes[ 6 ] = ( bytes[ 6 ] & 15 ) | 64;
-	bytes[ 8 ] = ( bytes[ 8 ] & 63 ) | 128;
+	// Set the RFC 4122 version and variant digits in the random byte array.
+	bytes[ 6 ] = ( bytes[ 6 ] % 16 ) + 64;
+	bytes[ 8 ] = ( bytes[ 8 ] % 64 ) + 128;
 	const hex = Array.from( bytes, ( byte ) =>
 		byte.toString( 16 ).padStart( 2, '0' )
 	).join( '' );
 	return `${ hex.slice( 0, 8 ) }-${ hex.slice( 8, 12 ) }-${ hex.slice( 12, 16 ) }-${ hex.slice( 16, 20 ) }-${ hex.slice( 20 ) }`;
 };
-
 export function CourseLearning( { courseId } ) {
 	const [ loaded, setLoaded ] = useState( null );
 	const [ program, setProgram ] = useState( null );
@@ -69,7 +74,9 @@ export function CourseLearning( { courseId } ) {
 				setLoaded( data );
 				setProgram( data.draft );
 				const [ catalog, availableBanks ] = await Promise.all( [
-					window.wp.apiFetch( { path: '/ohmylms/v1/skills' } ),
+					window.wp.apiFetch( {
+						path: '/ohmylms/v1/skills',
+					} ),
 					window.wp.apiFetch( {
 						path: '/ohmylms/v1/question-banks',
 					} ),
@@ -95,20 +102,33 @@ export function CourseLearning( { courseId } ) {
 		return () => window.removeEventListener( 'beforeunload', handler );
 	}, [ dirty ] );
 	const update = ( patch ) => {
-		setProgram( ( value ) => ( { ...value, ...patch } ) );
+		setProgram( ( value ) => ( {
+			...value,
+			...patch,
+		} ) );
 		setDirty( true );
 		setPreview( null );
 	};
 	const outcome = ( index, patch ) =>
 		update( {
 			outcomes: program.outcomes.map( ( item, i ) =>
-				i === index ? { ...item, ...patch } : item
+				i === index
+					? {
+							...item,
+							...patch,
+						}
+					: item
 			),
 		} );
 	const placement = ( index, patch ) =>
 		update( {
 			items: program.items.map( ( item, i ) =>
-				i === index ? { ...item, ...patch } : item
+				i === index
+					? {
+							...item,
+							...patch,
+						}
+					: item
 			),
 		} );
 	async function run( work ) {
@@ -152,7 +172,9 @@ export function CourseLearning( { courseId } ) {
 			return;
 		}
 		[ items[ index ], items[ other ] ] = [ items[ other ], items[ index ] ];
-		update( { items } );
+		update( {
+			items,
+		} );
 	}
 	function addResource( resource ) {
 		update( {
@@ -165,7 +187,11 @@ export function CourseLearning( { courseId } ) {
 					name: resource.name,
 					chapter_id: 0,
 					required: program.mode !== 'skill-based',
-					...( resourceType === 'quiz' ? { pass_percent: 80 } : {} ),
+					...( resourceType === 'quiz'
+						? {
+								pass_percent: 80,
+							}
+						: {} ),
 				},
 			],
 		} );
@@ -235,9 +261,16 @@ export function CourseLearning( { courseId } ) {
 							label: __( 'Skill-based', 'ohmylms' ),
 							value: 'skill-based',
 						},
-						{ label: __( 'Blended', 'ohmylms' ), value: 'blended' },
+						{
+							label: __( 'Blended', 'ohmylms' ),
+							value: 'blended',
+						},
 					] }
-					onChange={ ( mode ) => update( { mode } ) }
+					onChange={ ( mode ) =>
+						update( {
+							mode,
+						} )
+					}
 				/>
 				<CheckboxControl
 					label={ __(
@@ -323,7 +356,9 @@ export function CourseLearning( { courseId } ) {
 											value={ item.target }
 											options={ targets }
 											onChange={ ( target ) =>
-												outcome( index, { target } )
+												outcome( index, {
+													target,
+												} )
 											}
 										/>
 									</td>
@@ -335,7 +370,9 @@ export function CourseLearning( { courseId } ) {
 											) }
 											checked={ item.required }
 											onChange={ ( required ) =>
-												outcome( index, { required } )
+												outcome( index, {
+													required,
+												} )
 											}
 										/>
 									</td>
@@ -413,8 +450,10 @@ export function CourseLearning( { courseId } ) {
 						'ohmylms'
 					) }
 					checked={ program.recognize_prior }
-					onChange={ ( recognize_prior ) =>
-						update( { recognize_prior } )
+					onChange={ ( _recognizePrior ) =>
+						update( {
+							recognize_prior: _recognizePrior,
+						} )
 					}
 				/>
 				<TextControl
@@ -424,7 +463,9 @@ export function CourseLearning( { courseId } ) {
 					max={ 3650 }
 					value={ program.evidence_days }
 					onChange={ ( value ) =>
-						update( { evidence_days: Number( value ) } )
+						update( {
+							evidence_days: Number( value ),
+						} )
 					}
 				/>
 				<SelectControl
@@ -432,7 +473,9 @@ export function CourseLearning( { courseId } ) {
 					label={ __( 'Allowed question banks', 'ohmylms' ) }
 					value={ program.bank_ids.map( String ) }
 					onChange={ ( values ) =>
-						update( { bank_ids: values.map( Number ) } )
+						update( {
+							bank_ids: values.map( Number ),
+						} )
 					}
 					options={ banks.map( ( bank ) => ( {
 						label: bank.name,
@@ -771,20 +814,28 @@ export function CourseLearning( { courseId } ) {
 																					skill.target
 																				}{ ' ' }
 																				(
-																				{ skill.met
-																					? __(
+																				{ ( () => {
+																					if (
+																						skill.met
+																					) {
+																						return __(
 																							'Target met',
 																							'ohmylms'
-																						)
-																					: skill.required
-																						? __(
-																								'Required',
-																								'ohmylms'
-																							)
-																						: __(
-																								'Optional',
-																								'ohmylms'
-																							) }
+																						);
+																					}
+																					if (
+																						skill.required
+																					) {
+																						return __(
+																							'Required',
+																							'ohmylms'
+																						);
+																					}
+																					return __(
+																						'Optional',
+																						'ohmylms'
+																					);
+																				} )() }
 
 																				)
 																			</li>
@@ -801,18 +852,27 @@ export function CourseLearning( { courseId } ) {
 															'Original curriculum',
 															'ohmylms'
 														)
-													: student.progress.completed
-														? __(
-																'Completed',
-																'ohmylms'
-															)
-														: student.progress
+													: ( () => {
+															if (
+																student.progress
+																	.completed
+															) {
+																return __(
+																	'Completed',
+																	'ohmylms'
+																);
+															}
+															if (
+																student.progress
 																	.pending
-															? __(
+															) {
+																return __(
 																	'Pending evaluation',
 																	'ohmylms'
-																)
-															: `${ student.progress.missing.length } ${ __( 'remaining', 'ohmylms' ) }` }
+																);
+															}
+															return `${ student.progress.missing.length } ${ __( 'remaining', 'ohmylms' ) }`;
+														} )() }
 											</td>
 										</tr>
 									) ) }

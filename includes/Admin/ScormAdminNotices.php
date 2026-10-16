@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class ScormAdminNotices.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Admin;
 
@@ -20,7 +25,7 @@ class ScormAdminNotices {
 		add_action( 'admin_notices', array( __CLASS__, 'show_scorm_feature_notice' ) );
 		add_action( 'ohmylms_cleanup_scorm_temp_files', array( __CLASS__, 'cleanup_temp_files' ) );
 
-		// Schedule cleanup task if not scheduled
+		// Schedule cleanup task if not scheduled.
 		if ( ! wp_next_scheduled( 'ohmylms_cleanup_scorm_temp_files' ) ) {
 			wp_schedule_event( time(), 'daily', 'ohmylms_cleanup_scorm_temp_files' );
 		}
@@ -32,12 +37,12 @@ class ScormAdminNotices {
 	public static function show_scorm_feature_notice() {
 		$screen = get_current_screen();
 
-		// Only show on course listing page
-		if ( ! $screen || $screen->id !== 'edit-ohmylms-course' ) {
+		// Only show on course listing page.
+		if ( ! $screen || 'edit-ohmylms-course' !== $screen->id ) {
 			return;
 		}
 
-		// Check if user dismissed the notice
+		// Check if user dismissed the notice.
 		$user_id   = get_current_user_id();
 		$dismissed = get_user_meta( $user_id, 'ohmylms_scorm_notice_dismissed', true );
 
@@ -87,7 +92,7 @@ class ScormAdminNotices {
 	 * Clean up old temporary SCORM files.
 	 */
 	public static function cleanup_temp_files() {
-		$deleted = ScormHelper::clean_old_temp_files( 1 ); // Delete files older than 1 day
+		$deleted = ScormHelper::clean_old_temp_files( 1 ); // Delete files older than 1 day.
 
 		if ( $deleted > 0 ) {
 			ScormHelper::log( 'Cleaned up temporary SCORM files', 'info', array( 'deleted_count' => $deleted ) );
@@ -95,7 +100,7 @@ class ScormAdminNotices {
 	}
 }
 
-// Handle AJAX request to dismiss notice
+// Handle AJAX request to dismiss notice.
 add_action(
 	'wp_ajax_ohmylms_dismiss_scorm_notice',
 	function () {

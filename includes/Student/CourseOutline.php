@@ -53,7 +53,7 @@ final class CourseOutline {
 			'id'          => $course_id,
 			'title'       => get_the_title( $course_id ),
 			'description' => $locked ? '' : wp_trim_words( wp_strip_all_tags( $post->post_excerpt ? $post->post_excerpt : $post->post_content ), 60 ),
-			'url'         => self::course_page( $course_id ),
+			'url'         => self::enroll_url( $course_id ),
 			'locked'      => $locked,
 			'enrolled'    => false,
 			'challenge'   => null,
@@ -62,7 +62,7 @@ final class CourseOutline {
 			'continue'    => array(
 				'state' => 'view',
 				'label' => __( 'View course', 'ohmylms' ),
-				'url'   => self::course_page( $course_id ),
+				'url'   => self::enroll_url( $course_id ),
 			),
 		);
 		if ( $locked || ! $course ) {
@@ -152,8 +152,8 @@ final class CourseOutline {
 				'enrolled'  => (bool) $enrollment,
 				'challenge' => $challenge,
 				'units'     => array_values( $units ),
-				'summary'  => $summary,
-				'continue' => self::continue_action( $course, $student, $state, (bool) $enrollment, $summary ),
+				'summary'   => $summary,
+				'continue'  => self::continue_action( $course, $student, $state, (bool) $enrollment, $summary ),
 			)
 		);
 	}
@@ -195,7 +195,7 @@ final class CourseOutline {
 						'learning_course'  => $course->get_id(),
 					),
 					home_url( '/' )
-				) : self::course_page( $course->get_id() ),
+				) : self::enroll_url( $course->get_id() ),
 			);
 		}
 		if ( 'publish' !== get_post_status( $content ) ) {
@@ -209,7 +209,7 @@ final class CourseOutline {
 		if ( $enrolled ) {
 			$url = ! empty( $item['url'] ) ? $item['url'] : ohmylms_get_pretty_content_permalink( $content );
 		} else {
-			$url = self::course_page( $course->get_id() );
+			$url = self::enroll_url( $course->get_id() );
 		}
 		// A quiz may be a unit test or a course challenge (mixed-skill assessments); everything else is "quiz".
 		$style = 'quiz' === $type && AssessmentSchema::ready() ? (string) AssessmentSettings::get( $content )['style'] : 'quiz';
@@ -244,13 +244,14 @@ final class CourseOutline {
 	}
 
 	/**
-	 * The classic course page, where enrolment happens. ?legacy=1 stops the hub redirecting back to the overview.
+	 * Where a learner who is not enrolled lands: the enroll card on the course overview.
 	 *
 	 * @param int $course_id Course ID.
 	 * @return string
 	 */
-	private static function course_page( $course_id ) {
-		return add_query_arg( 'legacy', 1, get_permalink( $course_id ) );
+	private static function enroll_url( $course_id ) {
+		$base = is_user_logged_in() && in_array( 'library', Hub::settings()['tabs'], true ) ? Hub::course_url( $course_id ) : get_permalink( $course_id );
+		return $base . '#oml-course-enroll';
 	}
 
 	/**
@@ -268,7 +269,7 @@ final class CourseOutline {
 			return array(
 				'state' => 'view',
 				'label' => __( 'View course', 'ohmylms' ),
-				'url'   => self::course_page( $course->get_id() ),
+				'url'   => self::enroll_url( $course->get_id() ),
 			);
 		}
 		if ( $state ) {
@@ -283,7 +284,7 @@ final class CourseOutline {
 			return array(
 				'state' => 'review',
 				'label' => __( 'Review course', 'ohmylms' ),
-				'url'   => self::course_page( $course->get_id() ),
+				'url'   => self::enroll_url( $course->get_id() ),
 			);
 		}
 		return array(

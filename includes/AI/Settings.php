@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Connection and policy settings for AI feedback (option "ohmylms_ai").
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI;
 
 defined( 'ABSPATH' ) || exit;
@@ -76,7 +81,7 @@ final class Settings {
 	/** True when requests can be made. */
 	public static function configured() {
 		$settings = self::get();
-		return ! empty( $settings['enabled'] ) && isset( self::PROVIDERS[ $settings['provider'] ] ) && $settings['model'] !== '' && self::api_key() !== '';
+		return ! empty( $settings['enabled'] ) && isset( self::PROVIDERS[ $settings['provider'] ] ) && '' !== $settings['model'] && self::api_key() !== '';
 	}
 
 	/**
@@ -102,11 +107,10 @@ final class Settings {
 		);
 		$new_key  = trim( (string) ( $input['key'] ?? '' ) );
 		if ( $clear_key ) {
-			$next['key'] = ''; }
-		elseif ( $new_key !== '' ) {
+			$next['key'] = ''; } elseif ( '' !== $new_key ) {
 			$next['key'] = Secrets::seal( $new_key ); }
-		update_option( self::OPTION, $next, false );
-		return $next;
+			update_option( self::OPTION, $next, false );
+			return $next;
 	}
 
 	/** Safe to send to the admin page: no key, only whether and where one exists. */
@@ -114,7 +118,7 @@ final class Settings {
 		$settings = self::get();
 		unset( $settings['key'] );
 		$key                   = self::api_key();
-		$settings['has_key']   = $key !== '';
+		$settings['has_key']   = '' !== $key;
 		$settings['key_hint']  = Secrets::hint( $key );
 		$settings['key_from']  = self::key_source();
 		$settings['providers'] = self::PROVIDERS;

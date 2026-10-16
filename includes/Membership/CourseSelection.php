@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Resolves live membership rules and keeps membership-owned enrollments in sync.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Membership;
 
 defined( 'ABSPATH' ) || exit;
@@ -30,7 +35,7 @@ final class CourseSelection {
 					'taxonomy'         => $taxonomy,
 					'field'            => 'term_id',
 					'terms'            => $terms,
-					'include_children' => $taxonomy === 'course_category',
+					'include_children' => 'course_category' === $taxonomy,
 				);
 			}
 		}
@@ -130,7 +135,7 @@ final class CourseSelection {
 		foreach ( $members as $member ) {
 			foreach ( $courses as $course ) {
 				$key = $member['user_id'] . ':' . $course;
-				if ( ! isset( $desired[ $key ] ) || $member['status'] === 'enrolled' ) {
+				if ( ! isset( $desired[ $key ] ) || 'enrolled' === $member['status'] ) {
 					$desired[ $key ] = array( $member, $course );
 				}
 			}

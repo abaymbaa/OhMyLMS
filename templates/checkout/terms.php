@@ -36,7 +36,7 @@ defined( 'ABSPATH' ) || exit();
 				if ( empty( $privacy_policy_text ) ) {
 					$privacy_policy_text = 'Your personal data will be used to process your order, support your experience throughout this website, and for other purposes described in our [privacy_policy].';
 				}
-					// releace the [privacy_policy] text with link
+					// releace the [privacy_policy] text with link.
 					$privacy_policy_text = str_replace( '[privacy_policy]', $privacy_policy_link, $privacy_policy_text );
 					echo $privacy_policy_text;
 				?>

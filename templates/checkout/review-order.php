@@ -32,11 +32,11 @@ $total_savings = 0;
 				$by_point         = false;
 				$is_including_tax = \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->prices_include_tax();
 			foreach ( $cart_items as $cart_item_key => $cart_item ) {
-				$by_point = isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point';
+				$by_point = isset( $cart_item['purchase_by'] ) && 'point' === $cart_item['purchase_by'];
 				$_course  = $cart_item['data'];
 				if ( $_course ) {
 
-					// If the course is purchased by point, we can skip the
+					// If the course is purchased by point, we can skip the.
 					?>
 						<tr class="ohmylms-cart-item">
 							<td class="ohmylms-course-name">
@@ -90,7 +90,7 @@ $total_savings = 0;
 
 			ohmylms_price( $price );
 
-				// Only show coupon form if price is greater than 0
+				// Only show coupon form if price is greater than 0.
 			if ( floatval( $price ) > 0 && ! $by_point ) :
 				?>
 				<tr class="coupon-tr">
@@ -98,7 +98,7 @@ $total_savings = 0;
 						<form id="" method="post" class="ohmylms-checkout-coupon checkout_coupon">
 							<input name="coupon_code" type="text" id="apply-coupon" class="apply-coupon" placeholder="Coupon code">
 							<button type="submit" id="apply-coupon-btn" class="apply-coupon-btn">
-							<?php echo __( 'Apply', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Apply', 'ohmylms' ); ?>
 							</button>
 						</form>
 					</td>

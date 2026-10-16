@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class SessionStore.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -117,7 +122,7 @@ class SessionStore extends DataStore {
 	 * @return void
 	 */
 	protected function read_session_data( &$session ) {
-		// Add meta reading here if needed in the future
+		// Add meta reading here if needed in the future.
 	}
 
 	/**
@@ -127,6 +132,6 @@ class SessionStore extends DataStore {
 	 * @return void
 	 */
 	protected function update_session_meta( &$session ) {
-		// Add meta updating here if needed in the future
+		// Add meta updating here if needed in the future.
 	}
 }

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Limited random question pools for quizzes and exams.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\QuestionBank\Usage;
@@ -40,7 +45,7 @@ final class Pools {
 			if ( ! is_numeric( $marks ) || (float) $marks < 0 ) {
 				return self::invalid( __( 'Pool marks must be zero or more.', 'ohmylms' ) ); }
 			$difficulty = (string) ( $rule['difficulty'] ?? '' );
-			if ( $difficulty !== '' && ! in_array( $difficulty, \OhMyLMS\QuestionBank\BankAttributes::DIFFICULTIES, true ) ) {
+			if ( '' !== $difficulty && ! in_array( $difficulty, \OhMyLMS\QuestionBank\BankAttributes::DIFFICULTIES, true ) ) {
 				return self::invalid( __( 'Unknown difficulty.', 'ohmylms' ) ); }
 			$clean[] = array(
 				'id'             => 'pool-' . ( $index + 1 ),
@@ -202,7 +207,7 @@ final class Pools {
 	}
 
 	private static function family_key( array $row ) {
-		return $row['family_id'] !== '' && $row['family_id'] !== null ? 'f:' . $row['family_id'] : 'q:' . (int) $row['question_id'];
+		return '' !== $row['family_id'] && null !== $row['family_id'] ? 'f:' . $row['family_id'] : 'q:' . (int) $row['question_id'];
 	}
 
 	private static function family_keys( array $question_ids ) {

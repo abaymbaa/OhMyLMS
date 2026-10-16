@@ -32,9 +32,7 @@ import {
 	toggleOpen,
 	withoutTopics,
 } from './model.mjs';
-
 const STORAGE_KEY = 'ohmylms-curriculum-expanded';
-
 function readStored() {
 	try {
 		const value = JSON.parse(
@@ -77,7 +75,6 @@ export function CurriculumPage() {
 	const busy = useRef( false );
 	const focusAfter = useRef( null );
 	const hub = useContext( HubContext );
-
 	const items = data?.items || [];
 	const visibleItems = useMemo( () => withoutTopics( items ), [ items ] );
 	const search = useMemo(
@@ -88,7 +85,6 @@ export function CurriculumPage() {
 		() => filterTree( buildTree( visibleItems ), search ),
 		[ visibleItems, search ]
 	);
-
 	const reload = () => {
 		setLoadError( '' );
 		return api
@@ -142,12 +138,17 @@ export function CurriculumPage() {
 			}
 		}
 	}, [ items, view ] );
-
 	const say = ( kind, text ) =>
-		setNotice( { id: Date.now() + Math.random(), kind, text } );
-
+		setNotice( {
+			id: Date.now() + Math.random(),
+			kind,
+			text,
+		} );
 	function applyItems( next ) {
-		setData( ( previous ) => ( { ...previous, items: next } ) );
+		setData( ( previous ) => ( {
+			...previous,
+			items: next,
+		} ) );
 		setView( ( previous ) => pruneState( previous, next ) );
 		setOpenId( ( id ) =>
 			next.some( ( item ) => item.id === id ) ? id : 0
@@ -201,7 +202,6 @@ export function CurriculumPage() {
 			setPending( false );
 		}
 	}
-
 	const actions = {
 		run,
 		say,
@@ -233,9 +233,19 @@ export function CurriculumPage() {
 		cancelAdd: () => setAdding( null ),
 		async create( parentId, fields ) {
 			const response = await run(
-				() => api.createItem( { parent_id: parentId, ...fields } ),
+				() =>
+					api.createItem( {
+						parent_id: parentId,
+						...fields,
+					} ),
 				( result ) =>
-					sprintf( __( 'Added “%s”.', 'ohmylms' ), result.item.name )
+					sprintf(
+						/* translators: %s: curriculum item name. */ __(
+							'Added “%s”.',
+							'ohmylms'
+						),
+						result.item.name
+					)
 			);
 			if ( response && parentId ) {
 				setView( ( previous ) => ensureOpen( previous, parentId ) );
@@ -250,14 +260,27 @@ export function CurriculumPage() {
 						expected_updated_at: item.updated_at,
 					} ),
 				( result ) =>
-					sprintf( __( 'Saved “%s”.', 'ohmylms' ), result.item.name )
+					sprintf(
+						/* translators: %s: curriculum item name. */ __(
+							'Saved “%s”.',
+							'ohmylms'
+						),
+						result.item.name
+					)
 			);
 			return Boolean( response );
 		},
 		async move( item, parentId, position ) {
 			const response = await run(
 				() => api.moveItem( item.id, parentId, position ),
-				() => sprintf( __( 'Moved “%s”.', 'ohmylms' ), item.name )
+				() =>
+					sprintf(
+						/* translators: %s: curriculum item name. */ __(
+							'Moved “%s”.',
+							'ohmylms'
+						),
+						item.name
+					)
 			);
 			if ( response && parentId ) {
 				setView( ( previous ) => ensureOpen( previous, parentId ) );
@@ -277,12 +300,19 @@ export function CurriculumPage() {
 			const response = await run(
 				() => api.moveItem( item.id, target.parentId, target.position ),
 				() =>
-					sprintf(
-						direction < 0
-							? __( 'Moved “%s” up.', 'ohmylms' )
-							: __( 'Moved “%s” down.', 'ohmylms' ),
-						item.name
-					)
+					direction < 0
+						? sprintf(
+								/* translators: %s: curriculum item name. */
+								/* translators: %s: curriculum item name. */
+								__( 'Moved “%s” up.', 'ohmylms' ),
+								item.name
+							)
+						: sprintf(
+								/* translators: %s: curriculum item name. */
+								/* translators: %s: curriculum item name. */
+								__( 'Moved “%s” down.', 'ohmylms' ),
+								item.name
+							)
 			);
 			if ( ! response ) {
 				focusAfter.current = null;
@@ -295,7 +325,7 @@ export function CurriculumPage() {
 				( result ) => {
 					const parts = [
 						sprintf(
-							_n(
+							/* translators: %1$s: deleted curriculum item name; %2$d: number of deleted descendants. */ _n(
 								'Deleted “%1$s” and %2$d item under it.',
 								'Deleted “%1$s” and %2$d items under it.',
 								Math.max(
@@ -311,7 +341,7 @@ export function CurriculumPage() {
 					if ( result.promoted ) {
 						parts.push(
 							sprintf(
-								_n(
+								/* translators: %d: number of child curriculum items. */ _n(
 									'%d child moved up.',
 									'%d children moved up.',
 									result.promoted,
@@ -324,7 +354,7 @@ export function CurriculumPage() {
 					if ( result.links_removed ) {
 						parts.push(
 							sprintf(
-								_n(
+								/* translators: %d: number of content links. */ _n(
 									'%d link removed.',
 									'%d links removed.',
 									result.links_removed,
@@ -337,7 +367,7 @@ export function CurriculumPage() {
 					if ( result.bundles_updated ) {
 						parts.push(
 							sprintf(
-								_n(
+								/* translators: %d: number of course bundles. */ _n(
 									'Removed from %d course bundle.',
 									'Removed from %d course bundles.',
 									result.bundles_updated,
@@ -353,7 +383,6 @@ export function CurriculumPage() {
 			return Boolean( response );
 		},
 	};
-
 	const context = {
 		roadmapSelection: creatingRoadmap
 			? {
@@ -377,7 +406,6 @@ export function CurriculumPage() {
 		pending,
 		actions,
 	};
-
 	return (
 		<AdminPage
 			className="ohmylms-curriculum"
@@ -524,24 +552,33 @@ export function CurriculumPage() {
 							className="ohmylms-ext-muted ohmylms-cur-search-status"
 							role="status"
 						>
-							{ search.active
-								? search.matches.size
-									? sprintf(
-											_n(
+							{ ( () => {
+								if ( search.active ) {
+									if ( search.matches.size ) {
+										return sprintf(
+											/* translators: %d: number of curriculum items. */ _n(
 												'%d matching item, shown inside its branch.',
 												'%d matching items, shown inside their branches.',
 												search.matches.size,
 												'ohmylms'
 											),
 											search.matches.size
-										)
-									: __( 'No matching items.', 'ohmylms' )
-								: '' }
+										);
+									}
+									return __(
+										'No matching items.',
+										'ohmylms'
+									);
+								}
+								return '';
+							} )() }
 						</p>
 						{ adding === 0 && (
 							<div
 								className="ohmylms-cur-add-wrap"
-								style={ { '--ohmylms-cur-depth': 0 } }
+								style={ {
+									'--ohmylms-cur-depth': 0,
+								} }
 							>
 								<AddItemRow parentId={ 0 } parentName="" />
 							</div>

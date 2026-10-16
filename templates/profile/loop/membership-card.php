@@ -1,10 +1,15 @@
 <?php
+/**
+ * Profile loop membership card template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 use function OhMyLMS\Commerce\ecommerce;
-// Extract data from membership object
+// Extract data from membership object.
 $subscription = isset( $memebership->subscription ) ? $memebership->subscription : null;
 $order        = isset( $memebership->order ) ? $memebership->order : null;
 $products     = $memebership->get_products();
@@ -22,11 +27,11 @@ if ( ! $is_one_time ) {
 }
 
 
-// Safely get status
+// Safely get status.
 $status         = $subscription ? $subscription->get_status() : '';
 $status_classes = 'ohmylms-membership-status ' . 'ohmylms-status-' . strtolower( $status );
 
-// Safely get price
+// Safely get price.
 $price_html = __( 'Not available', 'ohmylms' );
 
 if ( $is_one_time ) {
@@ -37,7 +42,7 @@ if ( $is_one_time ) {
 	$price_html = ohmylms_price( $memebership->get_regular_price() ) . ' / ' . $memebership->get_subscription_period();
 }
 
-// Safely get purchase date
+// Safely get purchase date.
 $purchase_date = $order ? ohmylms_format_datetime( $order->get_date_created() ) : __( 'Not available', 'ohmylms' );
 
 if ( ! $is_one_time ) {
@@ -82,7 +87,7 @@ if ( ! $is_one_time ) {
 	$renewal_date = '';
 }
 
-// Safely get payment method
+// Safely get payment method.
 $payment_method = $order && $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Not available', 'ohmylms' );
 ?>
 <div class="ohmylms-membership-card ohmylms-dashboard-single-membership">
@@ -93,38 +98,38 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
 	<div class="ohmylms-membership-card-body">
 		<ul class="ohmylms-membership-details">
 			<li>
-				<strong><?php echo __( 'Price:', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Price:', 'ohmylms' ); ?></strong>
 				<span><?php echo $price_html; ?></span>
 			</li>
 			<li>
-				<strong><?php echo __( 'Courses Included:', 'ohmylms' ); ?></strong>
-				<span><?php echo $course_count > 0 ? $course_count : __( 'No courses yet', 'ohmylms' ); ?></span>
+				<strong><?php echo esc_html__( 'Courses Included:', 'ohmylms' ); ?></strong>
+				<span><?php echo $course_count > 0 ? $course_count : esc_html__( 'No courses yet', 'ohmylms' ); ?></span>
 			</li>
 			<li>
-				<strong><?php echo __( 'Purchase Date:', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Purchase Date:', 'ohmylms' ); ?></strong>
 				<span><?php echo $purchase_date; ?></span>
 			</li>
 			<?php if ( ! $is_one_time ) : ?>
 			<li>
-				<strong><?php echo __( 'Next Renewal:', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Next Renewal:', 'ohmylms' ); ?></strong>
 				<span><?php echo $renewal_date; ?></span>
 			</li>
 			<?php endif; ?>
 			<li>
-				<strong><?php echo __( 'Payment Method:', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Payment Method:', 'ohmylms' ); ?></strong>
 				<span><?php echo esc_html( $payment_method ); ?></span>
 			</li>
 		</ul>
 	</div>
 	<div class="ohmylms-membership-card-footer">
-		<a href="#" class="ohmylms-button view-plan" role="button"><?php echo __( 'View Plan', 'ohmylms' ); ?></a>
+		<a href="#" class="ohmylms-button view-plan" role="button"><?php echo esc_html__( 'View Plan', 'ohmylms' ); ?></a>
 	</div>
 
 	<div class="ohmylms-membership-modal" aria-hidden="true">
 		<div class="ohmylms-membership-modal-wrapper">
 			<div class="ohmylms-membership-modal-inner">
 				<h4 class="membership-modal-title">
-					<?php echo __( 'Plan Details', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Plan Details', 'ohmylms' ); ?>
 					<a href="#" role="button" class="close-modal">
 						<svg width="14" height="14" fill="none" viewBox="0 0 14 14" xmlns="http://www.w3.org/2000/svg"><path stroke="#A1A1AA" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 1L1 13M1 1l12 12"/></svg>
 					</a>
@@ -144,7 +149,7 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
 						<?php endforeach; ?>
 					</ul>
 					<?php else : ?>
-						<p class="ohmylms-no-courses-message"><?php echo __( 'No courses are included in this membership yet.', 'ohmylms' ); ?></p>
+						<p class="ohmylms-no-courses-message"><?php echo esc_html__( 'No courses are included in this membership yet.', 'ohmylms' ); ?></p>
 					<?php endif; ?>
 				</div>
 			</div>

@@ -32,8 +32,8 @@ defined( 'ABSPATH' ) || exit();
 	<div class="ohmylms-account-fields">
 <!--		<p class="form-row form-row-wide create-account">-->
 <!--			<label class="ohmylms-form__label ohmylms-form__label-for-checkbox checkbox">-->
-<!--				<input class="ohmylms-form__input ohmylms-form__input-checkbox input-checkbox" id="createaccount" --><?php // checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'ohmylms_create_account_default_checked', false ) ) ), true ); ?><!-- type="checkbox" name="createaccount" value="1" />-->
-<!--				<span>--><?php // esc_html_e( 'Create an account?', 'ohmylms' ); ?><!--</span>-->
+<!--				<input class="ohmylms-form__input ohmylms-form__input-checkbox input-checkbox" id="createaccount" --><?php // checked( ( true === $checkout->get_value( 'createaccount' ) || ( true === apply_filters( 'ohmylms_create_account_default_checked', false ) ) ), true );. ?><!-- type="checkbox" name="createaccount" value="1" />-->
+<!--				<span>--><?php // esc_html_e( 'Create an account?', 'ohmylms' );. ?><!--</span>-->
 <!--			</label>-->
 <!--		</p>-->
 

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling ohmylms-session REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -167,10 +172,10 @@ class SessionController extends RestController {
 				continue;
 			}
 
-			// Check if session has a valid course_id
+			// Check if session has a valid course_id.
 			$course_id = ohmylms_get_course_by_content_id( $post->ID );
 			if ( empty( $course_id ) ) {
-				continue; // Skip sessions without a valid course_id
+				continue; // Skip sessions without a valid course_id.
 			}
 
 			$data    = $this->prepare_item_for_response( $post, $request );
@@ -178,7 +183,7 @@ class SessionController extends RestController {
 		}
 
 		$page        = (int) $query_args['paged'];
-		$total_posts = count( $posts ); // Use actual filtered count
+		$total_posts = count( $posts ); // Use actual filtered count.
 		$max_pages   = ceil( $total_posts / (int) $query_args['posts_per_page'] );
 
 		$response = rest_ensure_response( $posts );
@@ -197,7 +202,7 @@ class SessionController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== 'ohmylms-session' ) {
+		if ( empty( $id ) || empty( $post->ID ) || 'ohmylms-session' !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_session_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$data     = $this->prepare_item_for_response( $post, $request );
@@ -231,14 +236,14 @@ class SessionController extends RestController {
 		do_action( "ohmylms_{$request['platform']}_session_created", $post, $request );
 		$maybe_create_session = get_post_meta( $session_id, "_is_{$request['platform']}_session_created", true );
 
-		if ( $maybe_create_session !== 'yes' ) {
+		if ( 'yes' !== $maybe_create_session ) {
 			// Return with error that session is not created because API key is not configured or API key has not the permission to create a session.
 			$response = new WP_Error( 'ohmylms_rest_session_not_created', __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", 'ohmylms' ), array( 'status' => 500 ) );
 			return $response;
 		}
 
 		if ( 'googlemeet' === $request['platform'] ) {
-			// For Google Meet, update the session with meeting data
+			// For Google Meet, update the session with meeting data.
 			$title    = $request->get_param( 'topic' );
 			$start    = $request->get_param( 'date' );
 			$end      = $request->get_param( 'endDate' );
@@ -296,7 +301,7 @@ class SessionController extends RestController {
 		$request->set_param( 'context', 'edit' );
 		do_action( "ohmylms_{$request['platform']}_session_updated", $post, $request );
 		$maybe_create_zoom_session = get_post_meta( $session_id, "_is_{$request['platform']}_session_created", true );
-		if ( $maybe_create_zoom_session !== 'yes' ) {
+		if ( 'yes' !== $maybe_create_zoom_session ) {
 			// Return with error that Zoom session is not created because API key is not configured or API key has not the permission to create a session.
 			$response = new WP_Error( "ohmylms_rest_{$request['platform']}_session_not_created", __( "{$request['platform']} session could not be created. Please check your {$request['platform']} API key and permissions.", 'ohmylms' ), array( 'status' => 500 ) );
 			return $response;
@@ -304,7 +309,7 @@ class SessionController extends RestController {
 		$response = $this->prepare_item_for_response( $post, $request );
 
 		if ( 'googlemeet' === $request['platform'] ) {
-			// For Google Meet, update the session with meeting data
+			// For Google Meet, update the session with meeting data.
 			$title    = $request->get_param( 'topic' );
 			$start    = $request->get_param( 'date' );
 			$end      = $request->get_param( 'endDate' );
@@ -486,10 +491,10 @@ class SessionController extends RestController {
 		$meeting_data = null;
 		$end_date     = null;
 
-		if ( $platform === 'zoom' ) {
+		if ( 'zoom' === $platform ) {
 			$meeting_data = get_post_meta( $post->ID, '_zoom_meeting_data', true );
 			$meeting_data = json_decode( $meeting_data, true );
-		} elseif ( $platform === 'googlemeet' ) {
+		} elseif ( 'googlemeet' === $platform ) {
 			$meeting_data = get_post_meta( $post->ID, '_googlemeet_event_data', true );
 		}
 
@@ -500,8 +505,8 @@ class SessionController extends RestController {
 		$duration     = get_post_meta( $post->ID, '_duration', true );
 		$timezone     = get_post_meta( $post->ID, '_timezone', true );
 
-		// Handle Google Meet specific data
-		if ( $platform === 'googlemeet' && is_array( $meeting_data ) ) {
+		// Handle Google Meet specific data.
+		if ( 'googlemeet' === $platform && is_array( $meeting_data ) ) {
 			if ( isset( $meeting_data['start']['dateTime'] ) ) {
 				$start_date = $meeting_data['start']['dateTime'];
 			}
@@ -510,11 +515,11 @@ class SessionController extends RestController {
 			}
 			if ( isset( $meeting_data['end']['dateTime'] ) ) {
 				$end_date = $meeting_data['end']['dateTime'];
-				// Calculate duration from start and end dates
+				// Calculate duration from start and end dates.
 				$start_time = strtotime( $start_date );
 				$end_time   = strtotime( $end_date );
 				if ( $start_time && $end_time ) {
-					$duration = round( ( $end_time - $start_time ) / 60 ); // Convert to minutes and round
+					$duration = round( ( $end_time - $start_time ) / 60 ); // Convert to minutes and round.
 				}
 			}
 		}
@@ -527,11 +532,11 @@ class SessionController extends RestController {
 			$attachments = array();
 		}
 
-		// Calculate meeting status based on start date, duration, and current time
+		// Calculate meeting status based on start date, duration, and current time.
 		$meeting_status = $this->calculate_meeting_status( $start_date, $timezone, $duration );
 
 		// For response, we need both formatted and raw dates
-		// Convert to the session's timezone for proper display
+		// Convert to the session's timezone for proper display.
 		$formatted_start_date = '';
 		$formatted_end_date   = '';
 
@@ -562,9 +567,9 @@ class SessionController extends RestController {
 			'topic'             => $post->post_title,
 			'agenda'            => $post->post_content,
 			'date'              => $formatted_start_date,
-			'rawDate'           => $start_date, // Raw date for editing
+			'rawDate'           => $start_date, // Raw date for editing.
 			'endDate'           => $formatted_end_date,
-			'rawEndDate'        => $end_date, // Raw end date for editing
+			'rawEndDate'        => $end_date, // Raw end date for editing.
 			'duration'          => $duration,
 			'duration_unit'     => 'min',
 			'password'          => get_post_meta( $post->ID, '_password', true ),
@@ -681,13 +686,13 @@ class SessionController extends RestController {
 		}
 
 		try {
-			// Meeting start time in given timezone
+			// Meeting start time in given timezone.
 			$start = new \DateTime( $start_date, new \DateTimeZone( $timezone ) );
 
-			// Current time in same timezone
+			// Current time in same timezone.
 			$now = new \DateTime( 'now', new \DateTimeZone( $timezone ) );
 
-			// Calculate end time
+			// Calculate end time.
 			$end = clone $start;
 			$end->modify( "+{$duration} minutes" );
 
@@ -712,14 +717,14 @@ class SessionController extends RestController {
 	 * @return string The join URL.
 	 */
 	private function get_join_url( $post_id, $platform, $meeting_data ) {
-		// Check post meta first (used by Google Meet and Zoom)
+		// Check post meta first (used by Google Meet and Zoom).
 		$join_url = get_post_meta( $post_id, '_join_url', true );
 
 		if ( ! empty( $join_url ) ) {
 			return $join_url;
 		}
 
-		// Fallback to meeting data (Zoom)
+		// Fallback to meeting data (Zoom).
 		if ( is_array( $meeting_data ) && isset( $meeting_data['join_url'] ) ) {
 			return $meeting_data['join_url'];
 		}
@@ -736,14 +741,14 @@ class SessionController extends RestController {
 	 * @return string The start URL.
 	 */
 	private function get_start_url( $post_id, $platform, $meeting_data ) {
-		// Check post meta first (used by Google Meet and Zoom)
+		// Check post meta first (used by Google Meet and Zoom).
 		$start_url = get_post_meta( $post_id, '_start_url', true );
 
 		if ( ! empty( $start_url ) ) {
 			return $start_url;
 		}
 
-		// Fallback to meeting data (Zoom)
+		// Fallback to meeting data (Zoom).
 		if ( is_array( $meeting_data ) && isset( $meeting_data['start_url'] ) ) {
 			return $meeting_data['start_url'];
 		}

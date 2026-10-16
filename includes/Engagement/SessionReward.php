@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * What a learner gets to see when a practice session ends: XP and the daily goal, the change
+ * in the skill's mastery score, and the streak. Read-only: it reports what the ledgers hold.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Skills\Score;
@@ -17,13 +23,13 @@ final class SessionReward {
 			return null; }
 		$reward = array();
 		if ( Xp::enabled() ) {
-			$earned         = Xp::for_session( $student, $session['uuid'] ) ?: array(
+			$earned       = Xp::for_session( $student, $session['uuid'] ) ?: array(
 				'xp'     => 0,
 				'parts'  => array(),
 				'capped' => false,
 			);
-			$summary        = Xp::summary( $student );
-			$reward['xp']   = $earned + array(
+			$summary      = Xp::summary( $student );
+			$reward['xp'] = $earned + array(
 				'total'    => $summary['total'],
 				'today'    => $summary['today'],
 				'goal'     => $summary['goal'],

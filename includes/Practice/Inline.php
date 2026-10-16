@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Inline question checks inside lesson content.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\AttemptItems;
@@ -93,7 +98,7 @@ final class Inline {
 				<p class="ohmylms-inline-check-preview"><?php esc_html_e( 'Preview — this version is not approved, so answers are not recorded for learners.', 'ohmylms' ); ?></p><?php } ?>
 			<p class="ohmylms-inline-check-question"><?php echo \OhMyLMS\Assessment\InlineBlanks::render( $view, array( 'id' => 0 ) ); ?></p>
 			<?php
-			if ( $view['description'] !== '' ) {
+			if ( '' !== $view['description'] ) {
 				?>
 				<div class="ohmylms-inline-check-body"><?php echo apply_filters( 'the_content', $view['description'] ); ?></div><?php } ?>
 			<?php
@@ -191,7 +196,7 @@ final class Inline {
 		$table  = Schema::table( 'practice_sessions' );
 		$column = ! empty( $owner['student_id'] ) ? 'student_id' : 'guest_id';
 		$value  = (int) ( $owner['student_id'] ?? $owner['guest_id'] );
-		$sql    = $column === 'guest_id'
+		$sql    = 'guest_id' === $column
 			? "SELECT uuid FROM $table WHERE mode='inline' AND lesson_id=%d AND guest_id=%d AND student_id=0 ORDER BY id DESC LIMIT 1"
 			: "SELECT uuid FROM $table WHERE mode='inline' AND lesson_id=%d AND student_id=%d ORDER BY id DESC LIMIT 1";
 		$uuid   = $wpdb->get_var( $wpdb->prepare( $sql, (int) $lesson_id, $value ) );

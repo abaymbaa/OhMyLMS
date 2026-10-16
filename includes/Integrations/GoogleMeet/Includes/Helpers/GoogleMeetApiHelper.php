@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * GoogleMeetApiHelper class.
  *
@@ -37,17 +37,17 @@ class GoogleMeetApiHelper {
 			'status'     => $meeting_data['status'] ?? '',
 		);
 
-		// Extract Google Meet link
+		// Extract Google Meet link.
 		if ( isset( $meeting_data['conferenceData']['entryPoints'] ) ) {
 			foreach ( $meeting_data['conferenceData']['entryPoints'] as $entry ) {
-				if ( $entry['entryPointType'] === 'video' ) {
+				if ( 'video' === $entry['entryPointType'] ) {
 					$formatted['meet_link'] = $entry['uri'];
 					break;
 				}
 			}
 		}
 
-		// Calculate duration in minutes
+		// Calculate duration in minutes.
 		if ( $formatted['start_time'] && $formatted['end_time'] ) {
 			$start                 = new \DateTime( $formatted['start_time'] );
 			$end                   = new \DateTime( $formatted['end_time'] );

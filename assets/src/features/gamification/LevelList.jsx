@@ -61,9 +61,9 @@ export function createLevelList( readRuntime ) {
 				e.target.classList.remove( 'grabbing' );
 			},
 			M = function ( e ) {
-				( e.preventDefault(),
-					( k.current = null ),
-					( j.current = null ) );
+				e.preventDefault();
+				k.current = null;
+				j.current = null;
 			},
 			F = function ( e ) {
 				e.preventDefault();
@@ -129,7 +129,9 @@ export function createLevelList( readRuntime ) {
 										),
 										onClick() {
 											return W(
-												null == t ? void 0 : t.slug
+												t === null || t === void 0
+													? void 0
+													: t.slug
 											);
 										},
 										icon: <We />,
@@ -142,27 +144,33 @@ export function createLevelList( readRuntime ) {
 				},
 			],
 			D = function ( e ) {
-				( f( e ), d( ! 0 ) );
+				f( e );
+				d( ! 0 );
 			},
 			W = function ( e ) {
-				( S( ! 0 ), _( e ) );
+				S( ! 0 );
+				_( e );
 			},
 			B = ( function () {
 				var e = U3(
-					V3().m( function e() {
-						var t, n, a;
+					V3().m( function _eLocal() {
+						var t, _nLocal, _aLocal;
 						return V3().w(
-							function ( e ) {
+							function ( _eLocal2 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal2.p = 0 ),
 												c( ! 0 ),
-												( t = r.filter( function ( e ) {
-													return e.slug !== h;
-												} ) ),
-												( e.n = 1 ),
+												( t = r.filter(
+													function ( _eLocal3 ) {
+														return (
+															_eLocal3.slug !== h
+														);
+													}
+												) ),
+												( _eLocal2.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/levels',
 													method: 'DELETE',
@@ -174,93 +182,104 @@ export function createLevelList( readRuntime ) {
 												} )
 											 );
 										case 1:
-											( null != ( n = e.v ) &&
-												n.success &&
-												( L(),
-												S( ! 1 ),
-												openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Level deleted successfully!',
-														'ohmylms'
-													)
-												) ),
-												( e.n = 3 ) );
+											if (
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _nLocal = _eLocal2.v )
+												) &&
+												_nLocal.success
+											) {
+												{
+													L();
+													S( ! 1 );
+													openNotificationWithIcon(
+														'success',
+														( 0, I18n.__ )(
+															'Level deleted successfully!',
+															'ohmylms'
+														)
+													);
+												}
+											}
+											_eLocal2.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( a = e.v ),
-												console.error(
-													'Error deleting level:',
-													a
-												) );
+											_eLocal2.p = 2;
+											_aLocal = _eLocal2.v;
+											console.error(
+												'Error deleting level:',
+												_aLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal2.p = 3 ),
 												c( ! 1 ),
-												e.f( 3 )
+												_eLocal2.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )(),
 			L = ( function () {
 				var e = U3(
-					V3().m( function e() {
-						var n, r;
+					V3().m( function _eLocal4() {
+						var _nLocal2, _rLocal;
 						return V3().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal5.p = 0 ),
 												c( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal5.n = 1 ),
 												l()( {
 													path: 'ohmylms/v1/engagement/levels',
 												} )
 											 );
 										case 1:
-											( ( n = e.v ),
-												a( n ),
-												setLevelList( n ),
-												( e.n = 3 ) );
+											_nLocal2 = _eLocal5.v;
+											a( _nLocal2 );
+											setLevelList( _nLocal2 );
+											_eLocal5.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( r = e.v ),
-												console.error( r ) );
+											_eLocal5.p = 2;
+											_rLocal = _eLocal5.v;
+											console.error( _rLocal );
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal5.p = 3 ),
 												c( ! 1 ),
-												e.f( 3 )
+												_eLocal5.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal4,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )();
 		return (
@@ -275,13 +294,20 @@ export function createLevelList( readRuntime ) {
 			}, [] ),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					P && openNotificationWithIcon( O, P );
+					if ( P ) {
+						openNotificationWithIcon( O, P );
+					}
 				},
 				[ P ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					s || ( f( null ), _( null ) );
+					if ( ! s ) {
+						{
+							f( null );
+							_( null );
+						}
+					}
 				},
 				[ s ]
 			),
@@ -314,54 +340,77 @@ export function createLevelList( readRuntime ) {
 								scroll={ {
 									x: 'max-content',
 								} }
-								onRow={ function ( e, n ) {
+								onRow={ function ( e, _nLocal3 ) {
 									return {
 										draggable: ! 0,
-										onDragStart( e ) {
-											return ( function ( e, t ) {
-												( ( k.current = t ),
-													e.target.classList.add(
-														'grabbing'
-													) );
-											} )( e, n );
+										onDragStart( _eLocal6 ) {
+											return ( function ( _eLocal7, t ) {
+												k.current = t;
+												_eLocal7.target.classList.add(
+													'grabbing'
+												);
+											} )( _eLocal6, _nLocal3 );
 										},
-										onDragEnter( e ) {
-											return ( function ( e, n ) {
-												( e.preventDefault(),
-													( j.current = n ) );
-												var o = ( function ( e ) {
+										onDragEnter( _eLocal8 ) {
+											return ( function (
+												_eLocal9,
+												_nLocal4
+											) {
+												_eLocal9.preventDefault();
+												j.current = _nLocal4;
+												var _oLocal = ( function (
+														_eLocal0
+													) {
 														return (
-															( function ( e ) {
+															( function (
+																_eLocal1
+															) {
 																if (
 																	Array.isArray(
-																		e
+																		_eLocal1
 																	)
 																) {
 																	return Q3(
-																		e
+																		_eLocal1
 																	);
 																}
-															} )( e ) ||
-															( function ( e ) {
+															} )( _eLocal0 ) ||
+															( function (
+																_eLocal10
+															) {
 																if (
 																	( 'undefined' !==
 																		typeof Symbol &&
-																		null !=
-																			e[
+																		( (
+																			_nullableValue2
+																		) =>
+																			_nullableValue2 !==
+																				null &&
+																			_nullableValue2 !==
+																				void 0 )(
+																			_eLocal10[
 																				Symbol
 																					.iterator
-																			] ) ||
-																	null !=
-																		e[
+																			]
+																		) ) ||
+																	( (
+																		_nullableValue3
+																	) =>
+																		_nullableValue3 !==
+																			null &&
+																		_nullableValue3 !==
+																			void 0 )(
+																		_eLocal10[
 																			'@@iterator'
 																		]
+																	)
 																) {
 																	return Array.from(
-																		e
+																		_eLocal10
 																	);
 																}
-															} )( e ) ||
-															Y3( e ) ||
+															} )( _eLocal0 ) ||
+															Y3( _eLocal0 ) ||
 															( function () {
 																throw new TypeError(
 																	'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -369,14 +418,19 @@ export function createLevelList( readRuntime ) {
 															} )()
 														);
 													} )( r ),
-													i = o[ k.current ];
-												( o.splice( k.current, 1 ),
-													o.splice( j.current, 0, i ),
-													( k.current = j.current ),
-													( j.current = null ),
-													a( o ),
-													setLevelList( o ) );
-											} )( e, n );
+													_iLocal =
+														_oLocal[ k.current ];
+												_oLocal.splice( k.current, 1 );
+												_oLocal.splice(
+													j.current,
+													0,
+													_iLocal
+												);
+												k.current = j.current;
+												j.current = null;
+												a( _oLocal );
+												setLevelList( _oLocal );
+											} )( _eLocal8, _nLocal3 );
 										},
 										onDragEnd: A,
 										onDrop: M,

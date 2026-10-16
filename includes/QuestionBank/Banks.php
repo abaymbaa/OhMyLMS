@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Question banks: ownership and sharing.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 use OhMyLMS\Assessment\Schema;
@@ -28,11 +33,11 @@ final class Banks {
 		if ( ! AccessPolicy::can_author() ) {
 			return AccessPolicy::denied(); }
 		$name = sanitize_text_field( (string) $name );
-		if ( $name === '' ) {
+		if ( '' === $name ) {
 			return new \WP_Error( 'ohmylms_bank_invalid', __( 'A bank name is required.', 'ohmylms' ), array( 'status' => 400 ) ); }
 		if ( ! in_array( $visibility, array( 'private', 'shared', 'site' ), true ) ) {
 			$visibility = 'private'; }
-		if ( $visibility === 'site' && ! current_user_can( 'manage_options' ) ) {
+		if ( 'site' === $visibility && ! current_user_can( 'manage_options' ) ) {
 			$visibility = 'shared'; }
 		if ( $course_id && ! current_user_can( 'edit_post', (int) $course_id ) ) {
 			return AccessPolicy::denied( __( 'You cannot attach a bank to this course.', 'ohmylms' ) ); }
@@ -60,7 +65,7 @@ final class Banks {
 		if ( isset( $data['name'] ) ) {
 			$fields['name'] = sanitize_text_field( (string) $data['name'] ); }
 		if ( isset( $data['visibility'] ) && in_array( $data['visibility'], array( 'private', 'shared', 'site' ), true ) ) {
-			$fields['visibility'] = $data['visibility'] === 'site' && ! current_user_can( 'manage_options' ) ? 'shared' : $data['visibility'];
+			$fields['visibility'] = 'site' === $data['visibility'] && ! current_user_can( 'manage_options' ) ? 'shared' : $data['visibility'];
 		}
 		if ( $fields ) {
 			$wpdb->update( Schema::table( 'qb_banks' ), $fields, array( 'id' => (int) $bank_id ) ); }
@@ -81,7 +86,7 @@ final class Banks {
 			return false; }
 		if ( self::manages( $bank, $user_id ) ) {
 			return true; }
-		if ( $permission === 'use' && $bank['visibility'] === 'site' && user_can( $user_id, 'edit_posts' ) ) {
+		if ( 'use' === $permission && 'site' === $bank['visibility'] && user_can( $user_id, 'edit_posts' ) ) {
 			return true; }
 		$levels       = array_keys(
 			array_filter(

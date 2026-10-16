@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Funnel;
 
@@ -21,7 +21,7 @@ class Funnel {
 	 * @since 1.0.0
 	 */
 	public function define_constants() {
-		// Define any constants needed for the Funnel integration
+		// Define any constants needed for the Funnel integration.
 	}
 
 	/**

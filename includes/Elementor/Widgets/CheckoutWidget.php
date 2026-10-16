@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * OhMyLMS Checkout Widget for Elementor
  *
@@ -210,7 +210,7 @@ class CheckoutWidget extends Widget_Base {
 			)
 		);
 
-		// Title styling
+		// Title styling.
 		$this->add_control(
 			'empty_cart_title_heading',
 			array(
@@ -240,7 +240,7 @@ class CheckoutWidget extends Widget_Base {
 			)
 		);
 
-		// Message styling
+		// Message styling.
 		$this->add_control(
 			'empty_cart_message_heading',
 			array(
@@ -270,7 +270,7 @@ class CheckoutWidget extends Widget_Base {
 			)
 		);
 
-		// Button styling
+		// Button styling.
 		$this->add_control(
 			'empty_cart_button_heading',
 			array(
@@ -584,7 +584,7 @@ class CheckoutWidget extends Widget_Base {
 			)
 		);
 
-		// Input Labels Group
+		// Input Labels Group.
 		$this->add_control(
 			'input_label_heading',
 			array(
@@ -627,7 +627,7 @@ class CheckoutWidget extends Widget_Base {
 			)
 		);
 
-		// Input Fields Group
+		// Input Fields Group.
 		$this->add_control(
 			'input_field_heading',
 			array(
@@ -758,7 +758,7 @@ class CheckoutWidget extends Widget_Base {
 
 		$this->start_controls_tabs( 'button_style_tabs' );
 
-		// Normal state
+		// Normal state.
 		$this->start_controls_tab(
 			'button_normal',
 			array(
@@ -922,7 +922,7 @@ class CheckoutWidget extends Widget_Base {
 
 		$this->end_controls_tab();
 
-		// Hover state
+		// Hover state.
 		$this->start_controls_tab(
 			'button_hover',
 			array(
@@ -1307,19 +1307,19 @@ class CheckoutWidget extends Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		// Convert Elementor settings to shortcode attributes
+		// Convert Elementor settings to shortcode attributes.
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 
 		// Use the same wrapper class as shortcode for consistency
-		// The shortcode handles all styling through its built-in CSS system with ohmylms-checkout-custom-styles
+		// The shortcode handles all styling through its built-in CSS system with ohmylms-checkout-custom-styles.
 		echo '<div class="ohmylms-page ohmylms-checkout">';
 		echo '<div class="ohmylms">';
 
-		// Check if we're in Elementor edit mode
+		// Check if we're in Elementor edit mode.
 		if ( \Elementor\Plugin::$instance->editor->is_edit_mode() ) {
 			$this->render_edit_mode();
 		} else {
-			// Set preview mode to false for frontend
+			// Set preview mode to false for frontend.
 			add_filter( 'ohmylms_elementor_preview_mode', '__return_false' );
 			ShortCodeCheckout::output( $shortcode_attrs );
 			remove_filter( 'ohmylms_elementor_preview_mode', '__return_false' );
@@ -1335,12 +1335,12 @@ class CheckoutWidget extends Widget_Base {
 	 * @return bool
 	 */
 	private function should_display_checkout() {
-		// Check if cart system is available
+		// Check if cart system is available.
 		if ( is_null( ecommerce()->cart ) ) {
 			return false;
 		}
 
-		// Check if cart has items
+		// Check if cart has items.
 		if ( ! ecommerce()->cart->is_empty() ) {
 			return true;
 		}
@@ -1355,11 +1355,11 @@ class CheckoutWidget extends Widget_Base {
 	private function render_empty_cart_message() {
 		$settings = $this->get_settings_for_display();
 
-		// Always show empty cart message by default (even if setting is not explicitly set)
+		// Always show empty cart message by default (even if setting is not explicitly set).
 		$show_message = isset( $settings['show_empty_cart_message'] ) ? $settings['show_empty_cart_message'] : 'yes';
 
 		if ( 'yes' !== $show_message ) {
-			// If message is disabled, show a simple notice for administrators
+			// If message is disabled, show a simple notice for administrators.
 			if ( current_user_can( 'edit_posts' ) ) {
 				echo '<div class="ohmylms-admin-notice">';
 				echo '<p><em>' . esc_html__( 'Empty cart message is disabled. Enable it in widget settings to show a message when cart is empty.', 'ohmylms' ) . '</em></p>';
@@ -1406,7 +1406,7 @@ class CheckoutWidget extends Widget_Base {
 		echo '</div>';
 
 		// Always render the shortcode in edit mode with preview mode enabled
-		// This ensures consistency and proper styling preview
+		// This ensures consistency and proper styling preview.
 		add_filter( 'ohmylms_elementor_preview_mode', '__return_true' );
 		ShortCodeCheckout::output( $shortcode_attrs );
 		remove_filter( 'ohmylms_elementor_preview_mode', '__return_true' );
@@ -1421,9 +1421,9 @@ class CheckoutWidget extends Widget_Base {
 	 * @return array Shortcode attributes
 	 */
 	private function convert_settings_to_shortcode_attrs( $settings ) {
-		// Start with default attributes from shortcode (ensures consistent defaults)
+		// Start with default attributes from shortcode (ensures consistent defaults).
 		$attrs = array(
-			// Title defaults
+			// Title defaults.
 			'title_color'                    => 'var(--ohmylms-heading-color)',
 			'title_font_size'                => '22px',
 			'title_font_weight'              => '600',
@@ -1433,13 +1433,13 @@ class CheckoutWidget extends Widget_Base {
 			'title_line_height'              => '1.3',
 			'title_letter_spacing'           => '0',
 
-			// Input label defaults
+			// Input label defaults.
 			'input_label_color'              => 'var(--ohmylms-heading-color)',
 			'input_label_font_size'          => '14px',
 			'input_label_font_weight'        => '500',
 			'input_label_font_family'        => '',
 
-			// Input field defaults
+			// Input field defaults.
 			'input_font_size'                => '14px',
 			'input_font_weight'              => '400',
 			'input_color'                    => 'var(--ohmylms-heading-color)',
@@ -1450,7 +1450,7 @@ class CheckoutWidget extends Widget_Base {
 			'input_border_style'             => 'solid',
 			'input_border_radius'            => '10px',
 
-			// Button defaults
+			// Button defaults.
 			'button_background_color'        => '#6e42d3',
 			'button_color'                   => '#FFF',
 			'button_font_size'               => '18px',
@@ -1474,13 +1474,13 @@ class CheckoutWidget extends Widget_Base {
 			'button_border_style'            => 'solid',
 			'button_box_shadow'              => 'none',
 
-			// Button hover defaults
+			// Button hover defaults.
 			'button_hover_background_color'  => 'transparent',
 			'button_hover_color'             => '#6e42d3',
 			'button_hover_border_color'      => '#6e42d3',
 			'button_hover_box_shadow'        => 'none',
 
-			// Privacy text defaults
+			// Privacy text defaults.
 			'privacy_text_color'             => 'var(--ohmylms-heading-color)',
 			'privacy_text_font_size'         => '14px',
 			'privacy_text_font_weight'       => '400',
@@ -1490,7 +1490,7 @@ class CheckoutWidget extends Widget_Base {
 			'privacy_text_line_height'       => '1.3',
 			'privacy_text_letter_spacing'    => '0',
 
-			// Checkout box defaults
+			// Checkout box defaults.
 			'checkout_box_background_color'  => '#fff',
 			'checkout_box_padding_top'       => '30px',
 			'checkout_box_padding_right'     => '50px',
@@ -1505,7 +1505,7 @@ class CheckoutWidget extends Widget_Base {
 			'checkout_box_border_style'      => 'solid',
 			'checkout_box_border_radius'     => '0',
 
-			// Order summary defaults
+			// Order summary defaults.
 			'order_summary_background_color' => '',
 			'order_summary_padding_top'      => '30px',
 			'order_summary_padding_right'    => '0',
@@ -1522,7 +1522,7 @@ class CheckoutWidget extends Widget_Base {
 		);
 
 		// Override defaults with any custom settings from Elementor
-		// Title settings
+		// Title settings.
 		if ( ! empty( $settings['title_color'] ) ) {
 			$attrs['title_color'] = $settings['title_color'];
 		}
@@ -1548,7 +1548,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['title_letter_spacing'] = $settings['title_typography_letter_spacing']['size'] . ( $settings['title_typography_letter_spacing']['unit'] ?? 'px' );
 		}
 
-		// Input label settings
+		// Input label settings.
 		if ( ! empty( $settings['input_label_color'] ) ) {
 			$attrs['input_label_color'] = $settings['input_label_color'];
 		}
@@ -1562,7 +1562,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['input_label_font_family'] = $settings['input_label_typography_font_family'];
 		}
 
-		// Input field settings
+		// Input field settings.
 		if ( ! empty( $settings['input_color'] ) ) {
 			$attrs['input_color'] = $settings['input_color'];
 		}
@@ -1591,7 +1591,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['input_border_radius'] = $settings['input_border_radius']['top'] . ( $settings['input_border_radius']['unit'] ?? 'px' );
 		}
 
-		// Button settings
+		// Button settings.
 		if ( ! empty( $settings['button_color'] ) ) {
 			$attrs['button_color'] = $settings['button_color'];
 		}
@@ -1620,7 +1620,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['button_letter_spacing'] = $settings['button_typography_letter_spacing']['size'] . ( $settings['button_typography_letter_spacing']['unit'] ?? 'px' );
 		}
 
-		// Button padding
+		// Button padding.
 		if ( ! empty( $settings['button_padding']['top'] ) ) {
 			$attrs['button_padding_top'] = $settings['button_padding']['top'] . ( $settings['button_padding']['unit'] ?? 'px' );
 		}
@@ -1634,7 +1634,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['button_padding_left'] = $settings['button_padding']['left'] . ( $settings['button_padding']['unit'] ?? 'px' );
 		}
 
-		// Button margin
+		// Button margin.
 		if ( ! empty( $settings['button_margin']['top'] ) ) {
 			$attrs['button_margin_top'] = $settings['button_margin']['top'] . ( $settings['button_margin']['unit'] ?? 'px' );
 		}
@@ -1648,7 +1648,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['button_margin_left'] = $settings['button_margin']['left'] . ( $settings['button_margin']['unit'] ?? 'px' );
 		}
 
-		// Button border
+		// Button border.
 		if ( ! empty( $settings['button_border_radius']['top'] ) ) {
 			$attrs['button_border_radius'] = $settings['button_border_radius']['top'] . ( $settings['button_border_radius']['unit'] ?? 'px' );
 		}
@@ -1662,7 +1662,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['button_border_style'] = $settings['button_border_border'];
 		}
 
-		// Button hover states
+		// Button hover states.
 		if ( ! empty( $settings['button_hover_color'] ) ) {
 			$attrs['button_hover_color'] = $settings['button_hover_color'];
 		}
@@ -1673,7 +1673,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['button_hover_border_color'] = $settings['button_hover_border_color'];
 		}
 
-		// Privacy text settings
+		// Privacy text settings.
 		if ( ! empty( $settings['privacy_text_color'] ) ) {
 			$attrs['privacy_text_color'] = $settings['privacy_text_color'];
 		}
@@ -1699,7 +1699,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['privacy_text_letter_spacing'] = $settings['privacy_text_typography_letter_spacing']['size'] . ( $settings['privacy_text_typography_letter_spacing']['unit'] ?? 'px' );
 		}
 
-		// Checkout box settings
+		// Checkout box settings.
 		if ( ! empty( $settings['checkout_box_background_color'] ) ) {
 			$attrs['checkout_box_background_color'] = $settings['checkout_box_background_color'];
 		}
@@ -1740,7 +1740,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['checkout_box_border_radius'] = $settings['checkout_box_border_radius']['top'] . ( $settings['checkout_box_border_radius']['unit'] ?? 'px' );
 		}
 
-		// Order summary settings
+		// Order summary settings.
 		if ( ! empty( $settings['order_summary_background_color'] ) ) {
 			$attrs['order_summary_background_color'] = $settings['order_summary_background_color'];
 		}
@@ -1781,7 +1781,7 @@ class CheckoutWidget extends Widget_Base {
 			$attrs['order_summary_border_radius'] = $settings['order_summary_border_radius']['top'] . ( $settings['order_summary_border_radius']['unit'] ?? 'px' );
 		}
 
-		// Layout type
+		// Layout type.
 		if ( isset( $settings['layout_type'] ) ) {
 			$attrs['layout_type'] = $settings['layout_type'];
 		}

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Persistence events carry their owner; the logged-in grader is never the award target.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 /** Persistence events carry their owner; the logged-in grader is never the award target. */
@@ -65,12 +70,12 @@ final class StreakHooks {
 		if ( ! \OhMyLMS\Assessment\Schema::ready() ) {
 			return; }
 		$session = \OhMyLMS\Practice\Sessions::get( $uuid );
-		if ( ! $session || $session['mode'] !== 'skill' || $session['status'] !== 'complete' || ! (int) $session['student_id'] ) {
+		if ( ! $session || 'skill' !== $session['mode'] || 'complete' !== $session['status'] || ! (int) $session['student_id'] ) {
 			return; }
 		$answered = array_filter(
 			\OhMyLMS\Practice\Sessions::items( $session['id'] ),
 			static function ( $item ) {
-				return $item['answered_at'] !== null && StreakCalendar::meaningful( $item['response'] );
+				return null !== $item['answered_at'] && StreakCalendar::meaningful( $item['response'] );
 			}
 		);
 		if ( count( $answered ) >= StreakSettings::get()['practice_minimum'] ) {

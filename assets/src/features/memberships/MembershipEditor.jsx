@@ -12,7 +12,6 @@ export function createMembershipEditor( readRuntime ) {
 			I: Controls,
 			I8: MembershipCourses,
 			w8: MembershipDetails,
-			L: Entitlements,
 			He: UpgradeModal,
 			T: StoreModule,
 			b: I18n,
@@ -164,10 +163,9 @@ export function createMembershipEditor( readRuntime ) {
 											isBusy={ saving }
 											className="ohmylms-membership-plan-save-button"
 										>
-											{ I18n.__(
-												step === '1' ? 'Next' : 'Save',
-												'ohmylms'
-											) }
+											{ step === '1'
+												? I18n.__( 'Next', 'ohmylms' )
+												: I18n.__( 'Save', 'ohmylms' ) }
 										</Controls.ButtonWP>
 									</Controls.FlexWP>
 								</Controls.SpacerWP>

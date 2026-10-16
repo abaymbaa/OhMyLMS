@@ -12,13 +12,13 @@ defined( 'ABSPATH' ) || exit();
 $my_course_tab = apply_filters( 'ohmylms_my_course_tabs', array() );
 ?>
 <div class="ohmylms-dashboard-wrapper">
-	<h1 class="student-name"><?php echo __( 'My Courses', 'ohmylms' ); ?></h1>
+	<h1 class="student-name"><?php echo esc_html__( 'My Courses', 'ohmylms' ); ?></h1>
 	<div class="ohmylms-my-courses-tab-nav">
 		<div class="ohmylms-my-courses-tab">
 			<ul role="tablist" id="my-courses-tab">
 				<?php foreach ( $my_course_tab as $key => $course_tab ) : ?>
-					<li class="<?php echo $key === 'enrolled-courses' ? 'active' : ''; ?>" role="presentation">
-						<button type="button" role="tab" aria-controls="course-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $key === 'enrolled-courses' ? 'true' : 'false'; ?>" tabindex="<?php echo $key === 'enrolled-courses' ? '0' : '-1'; ?>" data-target="#course-<?php echo esc_attr( $key ); ?>">
+					<li class="<?php echo 'enrolled-courses' === $key ? 'active' : ''; ?>" role="presentation">
+						<button type="button" role="tab" aria-controls="course-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo 'enrolled-courses' === $key ? 'true' : 'false'; ?>" tabindex="<?php echo 'enrolled-courses' === $key ? '0' : '-1'; ?>" data-target="#course-<?php echo esc_attr( $key ); ?>">
 							<?php echo wp_kses_post( $course_tab['title'] ); ?>
 						</button>
 					</li>
@@ -31,7 +31,7 @@ $my_course_tab = apply_filters( 'ohmylms_my_course_tabs', array() );
 			foreach ( $my_course_tab as $key => $course_tab ) :
 				$courseClass = 'ohmylms-single-tab-content course-' . esc_attr( $key );
 
-				if ( $key === 'enrolled-courses' ) {
+				if ( 'enrolled-courses' === $key ) {
 					$courseClass .= ' active';
 				}
 				$courseId = 'course-' . esc_attr( $key );

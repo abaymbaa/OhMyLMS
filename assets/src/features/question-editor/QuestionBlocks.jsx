@@ -19,9 +19,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { QUESTION_BLOCK_TYPES, questionBlockName } from './questionBlocks.mjs';
 import { QuestionLivePreview } from './QuestionLivePreview';
-
 export const QuestionBlockContext = createContext( null );
-
 function AnswerBlock( { type, label } ) {
 	const context = useContext( QuestionBlockContext );
 	const [ preview, setPreview ] = useState( false );
@@ -56,20 +54,24 @@ function AnswerBlock( { type, label } ) {
 						: __( 'Preview question', 'ohmylms' ) }
 				</Button>
 			</div>
-			{ context?.type === type ? (
-				preview ? (
-					<QuestionLivePreview question={ context.preview } />
-				) : (
-					context.content
-				)
-			) : (
-				<p>
-					{ __(
-						'Select this question type to configure its answers.',
-						'ohmylms'
-					) }
-				</p>
-			) }
+			{ ( () => {
+				if ( context?.type === type ) {
+					if ( preview ) {
+						return (
+							<QuestionLivePreview question={ context.preview } />
+						);
+					}
+					return context.content;
+				}
+				return (
+					<p>
+						{ __(
+							'Select this question type to configure its answers.',
+							'ohmylms'
+						) }
+					</p>
+				);
+			} )() }
 			{ context?.type === type && (
 				<InspectorControls>
 					<PanelBody title={ __( 'Question settings', 'ohmylms' ) }>
@@ -80,7 +82,6 @@ function AnswerBlock( { type, label } ) {
 		</div>
 	);
 }
-
 export function registerQuestionBlocks() {
 	for ( const [ type, label ] of QUESTION_BLOCK_TYPES ) {
 		const name = questionBlockName( type );
@@ -96,7 +97,12 @@ export function registerQuestionBlocks() {
 				'An assessment question with answers managed by OhMyLMS.',
 				'ohmylms'
 			),
-			attributes: { questionId: { type: 'string', default: '' } },
+			attributes: {
+				questionId: {
+					type: 'string',
+					default: '',
+				},
+			},
 			supports: {
 				html: false,
 				multiple: false,

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * OhMyLMS Subscription Manager.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Commerce;
 
@@ -40,9 +45,9 @@ class SubscriptionManager {
 	 * @since 1.0.0
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object for which the subscription is created.
-	 * @param int                           $membership_id The ID of the membership plan post.
-	 * @param array                         $gateway_meta Optional. Metadata from the payment gateway.
-	 *                                                    Expected keys: 'customer_id', 'payment_method_token'.
+	 * @param int                          $membership_id The ID of the membership plan post.
+	 * @param array                        $gateway_meta Optional. Metadata from the payment gateway.
+	 *                                                   Expected keys: 'customer_id', 'payment_method_token'.
 	 * @return int|\WP_Error The new subscription post ID on success, or \WP_Error on failure.
 	 */
 	public static function create_subscription( $order, $membership_id, $gateway_meta = array() ) {
@@ -50,7 +55,7 @@ class SubscriptionManager {
 			return new \WP_Error( 'invalid_order_object', __( 'Invalid order object provided for subscription creation.', 'ohmylms' ) );
 		}
 		$membership_id = absint( $membership_id );
-		if ( empty( $membership_id ) ) { // Simplified check for now
+		if ( empty( $membership_id ) ) { // Simplified check for now.
 			return new \WP_Error( 'invalid_membership_id', __( 'Invalid membership ID provided for subscription creation.', 'ohmylms' ) );
 		}
 
@@ -111,7 +116,7 @@ class SubscriptionManager {
 		update_post_meta( $subscription_id, '_billing_interval', $subscription_period_interval );
 		update_post_meta( $subscription_id, '_billing_period', $subscription_period );
 
-		// Save order key from order object
+		// Save order key from order object.
 		if ( method_exists( $order, 'get_order_key' ) ) {
 			$order_key = $order->get_order_key();
 			if ( $order_key ) {
@@ -119,10 +124,10 @@ class SubscriptionManager {
 			}
 		}
 
-		// Save all meta from order to subscription
+		// Save all meta from order to subscription.
 		self::copy_order_meta_to_subscription( $order->get_id(), $subscription_id );
 
-		// Save _order_version
+		// Save _order_version.
 		if ( defined( 'OHMYLMS_VERSION' ) ) {
 			update_post_meta( $subscription_id, '_order_version', OHMYLMS_VERSION );
 		}
@@ -154,7 +159,7 @@ class SubscriptionManager {
 			$post_id = absint( $subscription_ref->ID );
 		}
 
-		if ( $post_id === 0 ) {
+		if ( 0 === $post_id ) {
 			return false; // Cannot add a comment to a non-existent post.
 		}
 
@@ -165,7 +170,7 @@ class SubscriptionManager {
 
 		// Determine comment author.
 		$comment_author = __( 'OhMyLMS System', 'ohmylms' );
-		// Generate a unique system email, e.g., system@mydomain.com (removes www.)
+		// Generate a unique system email, e.g., system@mydomain.com (removes www.).
 		$comment_author_email = 'system@' . preg_replace( '#^www\.#', '', strtolower( wp_parse_url( home_url( '/' ), PHP_URL_HOST ) ) );
 		$comment_author_url   = '';
 		$user_id              = 0; // System comment by default.
@@ -203,7 +208,7 @@ class SubscriptionManager {
 		// Future: if $is_customer_note functionality is added for subscriptions.
 		// if ( $comment_id && $is_customer_note ) {
 		// add_comment_meta( $comment_id, '_is_customer_note', 1 );
-		// }
+		// }.
 
 		return $comment_id;
 	}
@@ -247,7 +252,7 @@ class SubscriptionManager {
 					$next_payment_dt = ( new \DateTime( "@$base_ts" ) )->setTimezone( new \DateTimeZone( 'GMT' ) );
 					$next_payment_dt->modify( "+{$interval} {$period}" );
 					$next_payment_timestamp_gmt = $next_payment_dt->getTimestamp();
-					// Only schedule if before end date
+					// Only schedule if before end date.
 					if ( empty( $end_date_gmt ) || $next_payment_timestamp_gmt <= strtotime( $end_date_gmt ) ) {
 						self::clear_scheduled_renewal_actions( $subscription_id );
 						self::schedule_renewal_payment( $subscription_id, $next_payment_timestamp_gmt );
@@ -429,7 +434,7 @@ class SubscriptionManager {
 		$next_payment_date     = '';
 		$end_date              = '';
 
-		// Map period to DateInterval code
+		// Map period to DateInterval code.
 		$interval_map = array(
 			'day'   => 'D',
 			'week'  => 'W',
@@ -441,7 +446,7 @@ class SubscriptionManager {
 		$length       = max( 1, $subscription_length );
 
 		$date_format = 'Y-m-d H:i:s';
-		if ( $subscription_length == '0' ) {
+		if ( '0' == $subscription_length ) {
 			$end_date = '';
 
 			$next_payment_date_obj = clone $start_date_obj;
@@ -679,7 +684,7 @@ class SubscriptionManager {
 					continue;
 				}
 				$membership = get_post( $membership_id );
-				if ( ! $membership || $membership->post_type !== 'ohmylms-membership' ) {
+				if ( ! $membership || 'ohmylms-membership' !== $membership->post_type ) {
 					continue;
 				}
 
@@ -716,7 +721,7 @@ class SubscriptionManager {
 		}
 
 		$payment_result = $gateway->process_recurring_payment( $original_order_id, $renewal_order_id, $amount_to_charge, $subscription_id, $student_id );
-		if ( is_wp_error( $payment_result ) || ( isset( $payment_result['result'] ) && $payment_result['result'] === 'failure' ) || ( isset( $payment_result['status'] ) && $payment_result['status'] === 'failed' ) ) {
+		if ( is_wp_error( $payment_result ) || ( isset( $payment_result['result'] ) && 'failure' === $payment_result['result'] ) || ( isset( $payment_result['status'] ) && 'failed' === $payment_result['status'] ) ) {
 			$error_message = is_wp_error( $payment_result ) ? $payment_result->get_error_message() : ( $payment_result['message'] ?? __( 'Unknown payment error.', 'ohmylms' ) );
 			self::add_subscription_note( $subscription_id, sprintf( __( 'Renewal payment failed: %s', 'ohmylms' ), esc_html( $error_message ) ) );
 			self::mark_subscription_on_hold( $subscription_id );

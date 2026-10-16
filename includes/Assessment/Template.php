@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Randomised question templates: one question, endless numbers.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\Assessment\Cas\Expression;
@@ -66,7 +71,7 @@ final class Template {
 
 	private static function eval_expression( $text, array $params ) {
 		$tree = Expression::parse( $text );
-		return $tree === null || $tree[0] === '=' ? null : Expression::evaluate( $tree, array_map( 'floatval', self::numeric( $params ) ) );
+		return null === $tree || '=' === $tree[0] ? null : Expression::evaluate( $tree, array_map( 'floatval', self::numeric( $params ) ) );
 	}
 
 	/**
@@ -82,7 +87,7 @@ final class Template {
 			$ok     = true;
 			foreach ( (array) $template['variables'] as $def ) {
 				$value = self::value( (array) $def, $params, $seed, $n );
-				if ( $value === null ) {
+				if ( null === $value ) {
 					$ok = false;
 					break; }
 				$params[ (string) $def['name'] ] = $value;
@@ -129,7 +134,7 @@ final class Template {
 				return $values ? $values[ self::draw( $seed, $n ) % count( $values ) ] : null;
 			case 'expr':
 				$value = self::eval_expression( (string) ( $def['expr'] ?? '' ), $params );
-				if ( $value === null ) {
+				if ( null === $value ) {
 					return null; }
 				return isset( $def['places'] ) ? round( $value, max( 0, min( 9, (int) $def['places'] ) ) ) : round( $value, 9 );
 		}
@@ -140,11 +145,11 @@ final class Template {
 	private static function holds( $constraint, array $params ) {
 		if ( ! preg_match( '/^(.+?)(<=|>=|!=|==|<|>|=)(.+)$/', $constraint, $m ) ) {
 			$value = self::eval_expression( $constraint, $params );
-			return $value !== null && abs( $value ) > 1e-9;
+			return null !== $value && abs( $value ) > 1e-9;
 		}
 		$left  = self::eval_expression( $m[1], $params );
 		$right = self::eval_expression( $m[3], $params );
-		if ( $left === null || $right === null ) {
+		if ( null === $left || null === $right ) {
 			return false; }
 		$diff = $left - $right;
 		switch ( $m[2] ) {
@@ -166,10 +171,10 @@ final class Template {
 	/** 3, -2.5, "0.50" with places, "+3" with a sign; never "-0" or float noise. */
 	public static function format( $value, $places = null, $sign = false ) {
 		$value = (float) $value;
-		$text  = $places === null ? rtrim( rtrim( number_format( round( $value, 9 ), 9, '.', '' ), '0' ), '.' ) : number_format( $value, (int) $places, '.', '' );
+		$text  = null === $places ? rtrim( rtrim( number_format( round( $value, 9 ), 9, '.', '' ), '0' ), '.' ) : number_format( $value, (int) $places, '.', '' );
 		if ( preg_match( '/^-0(\.0*)?$/', $text ) ) {
 			$text = ltrim( $text, '-' ); }
-		return ( $sign && $text[0] !== '-' ? '+' : '' ) . $text;
+		return ( $sign && '-' !== $text[0] ? '+' : '' ) . $text;
 	}
 
 	/** @return array{0:mixed,1:bool} value and whether it is a number */
@@ -178,14 +183,14 @@ final class Template {
 		$sign   = false;
 		if ( preg_match( '/^(.*?):(\+?)(\d{0,2})$/s', $body, $m ) ) {
 			$body   = $m[1];
-			$sign   = $m[2] === '+';
-			$places = $m[3] === '' ? null : (int) $m[3];
+			$sign   = '+' === $m[2];
+			$places = '' === $m[3] ? null : (int) $m[3];
 		}
 		$body = trim( $body );
 		if ( preg_match( self::NAME, $body ) && isset( $params[ $body ] ) && is_string( $params[ $body ] ) ) {
 			return array( $params[ $body ], false ); }
 		$value = self::eval_expression( $body, $params );
-		if ( $value === null ) {
+		if ( null === $value ) {
 			$errors[] = $body;
 			return array( null, false ); }
 		return array( array( $value, $places, $sign ), true );
@@ -215,18 +220,18 @@ final class Template {
 			return $text; }
 		if ( preg_match( '/^\{\{([^{}]+)\}\}$/', trim( $text ), $whole ) ) {
 			list( $got, $is_number ) = self::placeholder( $whole[1], $params, $errors );
-			if ( $got === null ) {
+			if ( null === $got ) {
 				return $text; }
 			if ( ! $is_number ) {
 				return $got; }
 			if ( ! $got[2] ) {
-				return $got[1] === null ? round( $got[0], 9 ) : round( $got[0], $got[1] ); }
+				return null === $got[1] ? round( $got[0], 9 ) : round( $got[0], $got[1] ); }
 		}
 		return preg_replace_callback(
 			'/\{\{([^{}]+)\}\}/',
 			static function ( $m ) use ( $params, &$errors ) {
 				list( $got, $is_number ) = self::placeholder( $m[1], $params, $errors );
-				if ( $got === null ) {
+				if ( null === $got ) {
 					return $m[0]; }
 				return $is_number ? self::format( $got[0], $got[1], $got[2] ) : (string) $got;
 			},
@@ -286,7 +291,7 @@ final class Template {
 		$settings = self::substitute_deep( $settings, $params, $errors );
 		foreach ( (array) ( $template['set'] ?? array() ) as $rule ) {
 			$value = is_array( $rule ) ? self::eval_expression( (string) ( $rule['expr'] ?? '' ), $params ) : null;
-			if ( $value === null || ! preg_match( '/^[A-Za-z0-9_.-]{1,80}$/', (string) ( $rule['path'] ?? '' ) ) ) {
+			if ( null === $value || ! preg_match( '/^[A-Za-z0-9_.-]{1,80}$/', (string) ( $rule['path'] ?? '' ) ) ) {
 				$errors[] = (string) ( $rule['expr'] ?? '' );
 				continue; }
 			$settings = self::set_path( $settings, $rule['path'], round( $value, 9 ) );
@@ -342,8 +347,8 @@ final class Template {
 	 * @return true|string
 	 */
 	public static function validate( array $settings, $title, $body, array $options, $check = null ) {
-		$template = (array) ( $settings['template'] ?? array() );
-		$names    = array();
+		$template  = (array) ( $settings['template'] ?? array() );
+		$names     = array();
 		$variables = (array) ( $template['variables'] ?? array() );
 		if ( ! $variables || count( $variables ) > 12 ) {
 			return __( 'A template needs between 1 and 12 variables.', 'ohmylms' ); }
@@ -357,9 +362,9 @@ final class Template {
 				return sprintf( /* translators: %s: variable name */ __( 'Variable %s needs a type: int, decimal, choice or expr.', 'ohmylms' ), $name ); }
 			if ( in_array( $type, array( 'int', 'decimal' ), true ) && ( ! is_numeric( $def['min'] ?? null ) || ! is_numeric( $def['max'] ?? null ) || (float) $def['max'] < (float) $def['min'] ) ) {
 				return sprintf( __( 'Variable %s needs a minimum and a maximum that are numbers, with the maximum not smaller.', 'ohmylms' ), $name ); }
-			if ( $type === 'choice' && ( ! is_array( $def['values'] ?? null ) || ! $def['values'] || count( $def['values'] ) > 50 ) ) {
+			if ( 'choice' === $type && ( ! is_array( $def['values'] ?? null ) || ! $def['values'] || count( $def['values'] ) > 50 ) ) {
 				return sprintf( __( 'Variable %s needs between 1 and 50 values to choose from.', 'ohmylms' ), $name ); }
-			if ( $type === 'expr' && Expression::parse( $def['expr'] ?? '' ) === null ) {
+			if ( 'expr' === $type && Expression::parse( $def['expr'] ?? '' ) === null ) {
 				return sprintf( __( 'Variable %s has a formula that cannot be read.', 'ohmylms' ), $name ); }
 		}
 		$constraints = (array) ( $template['constraints'] ?? array() );
@@ -379,7 +384,7 @@ final class Template {
 			$signatures[ self::signature( $r['params'] ) ] = true;
 			if ( is_callable( $check ) ) {
 				$result = call_user_func( $check, $r['settings'] );
-				if ( $result !== true ) {
+				if ( true !== $result ) {
 					return sprintf( /* translators: 1: sample number 2: reason */ __( 'Example %1$d is not a valid question: %2$s', 'ohmylms' ), $i, is_string( $result ) ? $result : __( 'invalid settings.', 'ohmylms' ) ); }
 			}
 		}
@@ -392,7 +397,7 @@ final class Template {
 	public static function expected_text( $type, array $settings, array $options ) {
 		if ( Interactive::is_interactive( $type ) ) {
 			return implode( ', ', Interactive::expected( $type, $settings ) ); }
-		if ( $type === 'numerical' ) {
+		if ( 'numerical' === $type ) {
 			return (string) ( $settings['answer'] ?? '' ); }
 		$correct = array_filter(
 			$options,

@@ -96,18 +96,33 @@ export function ChoiceAnswerFields( {
 	function changeAnswer( id, answer ) {
 		update(
 			options.map( ( option ) =>
-				option.id === id ? { ...option, answer } : option
+				option.id === id
+					? {
+							...option,
+							answer,
+						}
+					: option
 			)
 		);
 	}
 	function changeCorrect( id ) {
 		update(
 			options.map( ( option ) =>
-				type === 'single'
-					? { ...option, is_correct: option.id === id }
-					: option.id === id
-						? { ...option, is_correct: ! option.is_correct }
-						: option
+				( () => {
+					if ( type === 'single' ) {
+						return {
+							...option,
+							is_correct: option.id === id,
+						};
+					}
+					if ( option.id === id ) {
+						return {
+							...option,
+							is_correct: ! option.is_correct,
+						};
+					}
+					return option;
+				} )()
 			)
 		);
 	}

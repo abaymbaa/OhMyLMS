@@ -41,87 +41,106 @@ export function createCertificateImageField( readRuntime ) {
 			p = props.imgMaxWidth,
 			f = void 0 === p ? '100%' : p,
 			v = [ '.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg' ],
-			h = ( function ( e, t ) {
+			h = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal2, _tLocal2 ) {
+						var _nLocal =
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
-								o,
-								i,
-								l = [],
-								c = ! 0,
-								u = ! 1;
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
+							var _rLocal,
+								_aLocal,
+								_oLocal,
+								_iLocal,
+								_lLocal = [],
+								_cLocal = ! 0,
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( _oLocal = ( _nLocal =
+										_nLocal.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
-									c = ! 1;
+									_cLocal = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
+										! ( _cLocal = ( _rLocal =
+											_oLocal.call( _nLocal ) ).done ) &&
+										( _lLocal.push( _rLocal.value ),
+										_lLocal.length !== _tLocal2 );
+										_cLocal = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								_uLocal = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
-										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
-										Object( i ) !== i )
+										! _cLocal &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( _iLocal = _nLocal.return() ),
+										Object( _iLocal ) !== _iLocal )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal;
 									}
 								}
 							}
-							return l;
+							return _lLocal;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return jL( e, t );
+					} )( e, _tLocal ) ||
+					( function ( _eLocal4, _tLocal3 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return jL( _eLocal4, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal4 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? jL( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal4.constructor &&
+									( _nLocal2 = _eLocal4.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return jL( _eLocal4, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -133,26 +152,37 @@ export function createCertificateImageField( readRuntime ) {
 				( h[ 0 ],
 				h[ 1 ],
 				function ( e ) {
-					var t = wp.media( {
+					var _tLocal4 = wp.media( {
 						title: 'Select or Upload Media',
 						button: {
 							text: 'Use this media',
 						},
 						multiple: ! 1,
 					} );
-					( t.on( 'select', function () {
-						var n = t.state().get( 'selection' ).first().toJSON(),
-							a = v.some( function ( e ) {
-								return n.url.toLowerCase().endsWith( e );
+					_tLocal4.on( 'select', function () {
+						var _nLocal3 = _tLocal4
+								.state()
+								.get( 'selection' )
+								.first()
+								.toJSON(),
+							_aLocal2 = v.some( function ( _eLocal5 ) {
+								return _nLocal3.url
+									.toLowerCase()
+									.endsWith( _eLocal5 );
 							} ),
-							o =
-								( 'image' === e && 'image' === n.type ) ||
-								( 'video' === e && 'video' === n.type );
-						a && o
-							? 'image' === e && r( n )
-							: alert( 'Invalid file type or media type.' );
-					} ),
-						t.open() );
+							_oLocal2 =
+								( 'image' === e &&
+									'image' === _nLocal3.type ) ||
+								( 'video' === e && 'video' === _nLocal3.type );
+						if ( _aLocal2 && _oLocal2 ) {
+							if ( 'image' === e ) {
+								r( _nLocal3 );
+							}
+						} else {
+							alert( 'Invalid file type or media type.' );
+						}
+					} );
+					_tLocal4.open();
 				} ),
 			_ = {
 				maxWidth: f,

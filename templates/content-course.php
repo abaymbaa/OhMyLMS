@@ -23,7 +23,7 @@ if ( isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) && isset( $
 	$layout_style = get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' );
 }
 
-// Get card class from shortcode attributes if available
+// Get card class from shortcode attributes if available.
 $card_class = isset( $card_class ) ? $card_class : '';
 
 ?>

@@ -27,36 +27,43 @@ export function createQuizQuestionHeader( readRuntime ) {
 			s = ( props.fetchData, props.setData ),
 			isCorrect = props.isCorrect,
 			m = ( 0, Router.g )();
-		( m.id, m.quizId );
-		var p =
-			void 0 !== isCorrect
-				? isCorrect
-					? 'correct'
-					: 'incorrect'
-				: ( function ( e ) {
-						var t = e.given_answer,
-							n = e.questions;
-						if ( ! t || ! Array.isArray( t ) ) {
-							return 'in-review';
+		var p = ( () => {
+			if ( void 0 !== isCorrect ) {
+				if ( isCorrect ) {
+					return 'correct';
+				}
+				return 'incorrect';
+			}
+			return ( function ( e ) {
+				var _tLocal = e.given_answer,
+					_nLocal = e.questions;
+				if ( ! _tLocal || ! Array.isArray( _tLocal ) ) {
+					return 'in-review';
+				}
+				var _rLocal = _nLocal
+						.filter( function ( _eLocal ) {
+							return '1' === _eLocal.is_correct;
+						} )
+						.map( function ( _eLocal2 ) {
+							return _eLocal2.id;
+						} ),
+					_aLocal = _tLocal.every( function ( _eLocal3 ) {
+						return _rLocal.includes( _eLocal3 );
+					} );
+				return ( () => {
+					if ( 'single-choice' === e.settings.type ) {
+						if ( _aLocal && 1 === _tLocal.length ) {
+							return 'correct';
 						}
-						var r = n
-								.filter( function ( e ) {
-									return '1' === e.is_correct;
-								} )
-								.map( function ( e ) {
-									return e.id;
-								} ),
-							a = t.every( function ( e ) {
-								return r.includes( e );
-							} );
-						return 'single-choice' === e.settings.type
-							? a && 1 === t.length
-								? 'correct'
-								: 'incorrect'
-							: a && t.length === r.length
-								? 'correct'
-								: 'incorrect';
-					} )( data );
+						return 'incorrect';
+					}
+					if ( _aLocal && _tLocal.length === _rLocal.length ) {
+						return 'correct';
+					}
+					return 'incorrect';
+				} )();
+			} )( data );
+		} )();
 		return (
 			<React.Fragment>
 				<Controls.FlexWP gap={ 3 } justify={ 'space-between' }>
@@ -78,7 +85,8 @@ export function createQuizQuestionHeader( readRuntime ) {
 						>
 							{ null !==
 								( t =
-									null == data ||
+									data === null ||
+									data === void 0 ||
 									null === ( n = data.settings ) ||
 									void 0 === n
 										? void 0
@@ -120,7 +128,9 @@ export function createQuizQuestionHeader( readRuntime ) {
 													<Tooltip.A
 														title={ ( 0, I18n.__ )(
 															'This Question Marks: '.concat(
-																null == data ||
+																data === null ||
+																	data ===
+																		void 0 ||
 																	null ===
 																		( r =
 																			data.settings ) ||
@@ -148,7 +158,8 @@ export function createQuizQuestionHeader( readRuntime ) {
 													type={ 'number' }
 													min={ 0 }
 													max={ Number(
-														null == data ||
+														data === null ||
+															data === void 0 ||
 															null ===
 																( a =
 																	data.settings ) ||
@@ -162,76 +173,89 @@ export function createQuizQuestionHeader( readRuntime ) {
 													) }
 													value={
 														Number(
-															null == data
+															data === null ||
+																data === void 0
 																? void 0
 																: data.achive_mark
 														) || 0
 													}
 													onChange={ function ( e ) {
 														return ( function (
-															e
+															_eLocal4
 														) {
-															s( function ( t ) {
-																var n,
-																	r = s$(
-																		{},
-																		t
-																	),
-																	a =
-																		null ==
-																			r ||
-																		null ===
-																			( n =
-																				r.report ) ||
-																		void 0 ===
-																			n ||
-																		null ===
-																			( n =
-																				n.questions ) ||
-																		void 0 ===
-																			n
-																			? void 0
-																			: n.map(
-																					function (
-																						t
-																					) {
-																						return t.id ===
-																							( null ==
-																							data
-																								? void 0
-																								: data.id )
-																							? s$(
-																									s$(
-																										{},
-																										t
-																									),
-																									{},
-																									{
-																										achive_mark:
-																											e,
-																									}
-																								)
-																							: t;
-																					}
-																				);
-																return s$(
-																	s$( {}, r ),
-																	{},
-																	{
-																		report: s$(
+															s(
+																function (
+																	_tLocal2
+																) {
+																	var _nLocal2,
+																		_rLocal2 =
 																			s$(
 																				{},
-																				r.report
+																				_tLocal2
 																			),
+																		_aLocal2 =
+																			_rLocal2 ===
+																				null ||
+																			_rLocal2 ===
+																				void 0 ||
+																			null ===
+																				( _nLocal2 =
+																					_rLocal2.report ) ||
+																			void 0 ===
+																				_nLocal2 ||
+																			null ===
+																				( _nLocal2 =
+																					_nLocal2.questions ) ||
+																			void 0 ===
+																				_nLocal2
+																				? void 0
+																				: _nLocal2.map(
+																						function (
+																							_tLocal3
+																						) {
+																							return _tLocal3.id ===
+																								( data ===
+																									null ||
+																								data ===
+																									void 0
+																									? void 0
+																									: data.id )
+																								? s$(
+																										s$(
+																											{},
+																											_tLocal3
+																										),
+																										{},
+																										{
+																											achive_mark:
+																												_eLocal4,
+																										}
+																									)
+																								: _tLocal3;
+																						}
+																					);
+																	return s$(
+																		s$(
 																			{},
-																			{
-																				questions:
-																					a,
-																			}
+																			_rLocal2
 																		),
-																	}
-																);
-															} );
+																		{},
+																		{
+																			report: s$(
+																				s$(
+																					{},
+																					_rLocal2.report
+																				),
+																				{},
+																				{
+																					questions:
+																						_aLocal2,
+																				}
+																			),
+																		}
+																	);
+																}
+															);
 														} )( e );
 													} }
 													controls={ ! 1 }
@@ -244,7 +268,8 @@ export function createQuizQuestionHeader( readRuntime ) {
 											isBorderLess={ ! 0 }
 											variant={
 												'in-review' ===
-												( null == data
+												( data === null ||
+												data === void 0
 													? void 0
 													: data.status )
 													? 'warning'
@@ -252,7 +277,7 @@ export function createQuizQuestionHeader( readRuntime ) {
 											}
 										>
 											{ 'in-review' ===
-											( null == data
+											( data === null || data === void 0
 												? void 0
 												: data.status )
 												? ( 0, I18n.__ )(
@@ -294,8 +319,13 @@ export function createQuizQuestionHeader( readRuntime ) {
 						level={ 3 }
 						className={ 'ohmylms-question-name' }
 					>
-						{ decodeHtml( null == data ? void 0 : data.name ) }
-						{ ( null == data ||
+						{ decodeHtml(
+							data === null || data === void 0
+								? void 0
+								: data.name
+						) }
+						{ ( data === null ||
+						data === void 0 ||
 						null === ( o = data.settings ) ||
 						void 0 === o
 							? void 0
@@ -306,9 +336,15 @@ export function createQuizQuestionHeader( readRuntime ) {
 						) }
 					</Controls.HeadingWP>
 					<Controls.SpacerWP marginBottom={ 3 } />
-					{ ( null == data ? void 0 : data.image ) && (
+					{ ( data === null || data === void 0
+						? void 0
+						: data.image ) && (
 						<img
-							src={ null == data ? void 0 : data.image }
+							src={
+								data === null || data === void 0
+									? void 0
+									: data.image
+							}
 							alt={ '' }
 							style={ {
 								maxWidth: '100%',
@@ -317,7 +353,9 @@ export function createQuizQuestionHeader( readRuntime ) {
 							} }
 						/>
 					) }
-					{ ( null == data ? void 0 : data.video ) && (
+					{ ( data === null || data === void 0
+						? void 0
+						: data.video ) && (
 						<video
 							controls={ ! 0 }
 							style={ {
@@ -327,7 +365,11 @@ export function createQuizQuestionHeader( readRuntime ) {
 							} }
 						>
 							<source
-								src={ null == data ? void 0 : data.video }
+								src={
+									data === null || data === void 0
+										? void 0
+										: data.video
+								}
 								type={ 'video/mp4' }
 							/>
 						</video>

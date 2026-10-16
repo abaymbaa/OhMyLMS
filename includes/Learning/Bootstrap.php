@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +11,7 @@ final class Bootstrap {
 		add_action(
 			'admin_enqueue_scripts',
 			static function () {
-				if ( isset( $_GET['page'] ) && $_GET['page'] === 'ohmylms' ) {
+				if ( isset( $_GET['page'] ) && 'ohmylms' === $_GET['page'] ) {
 					wp_enqueue_style( 'ohmylms-learning-editor', plugins_url( 'assets/css/learning-program.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION ); }
 			}
 		);

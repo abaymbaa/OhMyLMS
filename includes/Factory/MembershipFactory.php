@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Factory;
 
@@ -62,11 +62,11 @@ class MembershipFactory {
 
 		$membership = get_post( $membership_id );
 
-		// Check if the post exists and the post type is OHMYLMS_COURSE_CPT
+		// Check if the post exists and the post type is OHMYLMS_COURSE_CPT.
 		if ( $membership && OHMYLMS_MEMBERSHIP_CPT === get_post_type( $membership_id ) ) {
-			return true;  // Post exists and is of the correct type
+			return true;  // Post exists and is of the correct type.
 		} else {
-			return false; // Either post doesn't exist or the post type doesn't match
+			return false; // Either post doesn't exist or the post type doesn't match.
 		}
 	}
 }

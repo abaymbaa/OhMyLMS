@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Indexed bank attributes of a question: bank, difficulty band, source,
+ * family (near-identical variants) and the secure (exam-only) flag.
+ * Stored as columns on qb_questions so filtering never scans JSON.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 use OhMyLMS\Assessment\Schema;
@@ -27,7 +34,7 @@ final class BankAttributes {
 		if ( isset( $bank['family_id'] ) ) {
 			$clean['family_id'] = mb_substr( sanitize_title( (string) $bank['family_id'] ), 0, 64 ); }
 		if ( isset( $bank['secure'] ) ) {
-			$clean['secure'] = ! empty( $bank['secure'] ) && $bank['secure'] !== 'false' ? 1 : 0; }
+			$clean['secure'] = ! empty( $bank['secure'] ) && 'false' !== $bank['secure'] ? 1 : 0; }
 		if ( isset( $bank['bank_id'] ) ) {
 			$bank_id = (int) $bank['bank_id'];
 			if ( $bank_id && ! Banks::can( $bank_id, 'edit' ) ) {

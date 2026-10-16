@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Explicit links from a curriculum-specific skill to a shared skill.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Skills\Taxonomy;
@@ -178,7 +183,7 @@ final class SkillMappings {
 				);
 				$existing = (int) $wpdb->insert_id;
 			}
-			if ( $ok === false ) {
+			if ( false === $ok ) {
 				return Access::error( 'ohmylms_mapping_failed', __( 'The mapping could not be saved.', 'ohmylms' ), 500 ); }
 			return self::describe( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $existing ), ARRAY_A ) );
 		} finally {

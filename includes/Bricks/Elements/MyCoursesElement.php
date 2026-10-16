@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * OhMyLMS My Courses Element for Bricks Builder
  *
@@ -494,14 +494,14 @@ class MyCoursesElement extends \Bricks\Element {
 	 * @return array
 	 */
 	private function build_shortcode_attrs( $settings ) {
-		// Content controls
+		// Content controls.
 		$attrs = array(
-			'show_header'    => ( isset( $settings['show_header'] ) && $settings['show_header'] === true ) ? 'yes' : 'no',
+			'show_header'    => ( isset( $settings['show_header'] ) && true === $settings['show_header'] ) ? 'yes' : 'no',
 			'my_profile_url' => isset( $settings['my_profile_url'] ) ? $settings['my_profile_url'] : '',
 			'my_courses_url' => isset( $settings['my_courses_url'] ) ? $settings['my_courses_url'] : '',
 		);
 
-		// Color controls — extract hex/rgb from Bricks color array format
+		// Color controls — extract hex/rgb from Bricks color array format.
 		$color_keys = array(
 			'header_bg_color',
 			'user_menu_color',
@@ -536,7 +536,7 @@ class MyCoursesElement extends \Bricks\Element {
 			}
 		}
 
-		// Number controls — pass through as plain scalars
+		// Number controls — pass through as plain scalars.
 		$number_keys = array(
 			'user_menu_font_size',
 			'user_menu_font_weight',

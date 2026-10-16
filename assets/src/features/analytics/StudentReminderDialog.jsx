@@ -24,29 +24,29 @@ export function createStudentReminderDialog( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )( function () {
 				var e,
-					t =
+					_tLocal =
 						'rtl' ===
 						( null === ( e = document.querySelector( 'html' ) ) ||
 						void 0 === e
 							? void 0
 							: e.getAttribute( 'dir' ) );
-				( wp.editor.remove( 'new-message' ),
-					wp.editor.initialize( 'new-message', {
-						tinymce: {
-							plugins:
-								'colorpicker compat3x lists tabfocus textcolor wordpress wpautoresize wpdialogs wpeditimage wpemoji wpgallery wptextpattern wpview link directionality',
-							toolbar1:
-								'bold italic underline strikethrough | bullist numlist | blockquote hr wp_more | alignleft aligncenter alignright | link unlink | ltr rtl | wp_adv',
-							toolbar2:
-								'formatselect alignjustify forecolor | fontsizeselect | fontselect |pastetext removeformat charmap | outdent indent | undo redo | wp_help',
-							branding: ! 1,
-						},
-						quicktags: ! 0,
-						mediaButtons: ! 0,
-						wpautop: ! 0,
-						directionality: ''.concat( t ? 'rtl' : 'ltr' ),
-						initialValue: p,
-					} ) );
+				wp.editor.remove( 'new-message' );
+				wp.editor.initialize( 'new-message', {
+					tinymce: {
+						plugins:
+							'colorpicker compat3x lists tabfocus textcolor wordpress wpautoresize wpdialogs wpeditimage wpemoji wpgallery wptextpattern wpview link directionality',
+						toolbar1:
+							'bold italic underline strikethrough | bullist numlist | blockquote hr wp_more | alignleft aligncenter alignright | link unlink | ltr rtl | wp_adv',
+						toolbar2:
+							'formatselect alignjustify forecolor | fontsizeselect | fontselect |pastetext removeformat charmap | outdent indent | undo redo | wp_help',
+						branding: ! 1,
+					},
+					quicktags: ! 0,
+					mediaButtons: ! 0,
+					wpautop: ! 0,
+					directionality: ''.concat( _tLocal ? 'rtl' : 'ltr' ),
+					initialValue: p,
+				} );
 			}, [] ),
 			(
 				<React.Fragment>

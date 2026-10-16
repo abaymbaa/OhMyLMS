@@ -1,4 +1,9 @@
 <?php
+/**
+ * Jobs migration.
+ *
+ * @package OhMyLMS
+ */
 
 namespace RexTheme\OhMyLMS\Databases\Migrations;
 

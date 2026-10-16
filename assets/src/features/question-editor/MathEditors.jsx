@@ -44,10 +44,17 @@ export function NumericalEditor( { value, onChange } ) {
 				) }
 				value={ numbersToList( value.answers ) }
 				onChange={ ( text ) =>
-					onChange( { answers: listToNumbers( text ) } )
+					onChange( {
+						answers: listToNumbers( text ),
+					} )
 				}
 			/>
-			<div style={ { display: 'flex', gap: 12 } }>
+			<div
+				style={ {
+					display: 'flex',
+					gap: 12,
+				} }
+			>
 				<TextControl
 					type="number"
 					min={ 0 }
@@ -76,14 +83,20 @@ export function NumericalEditor( { value, onChange } ) {
 							),
 						},
 					] }
-					onChange={ ( tolerance_type ) =>
-						onChange( { tolerance_type } )
+					onChange={ ( _toleranceType ) =>
+						onChange( {
+							tolerance_type: _toleranceType,
+						} )
 					}
 				/>
 				<TextControl
 					label={ __( 'Unit shown to learners', 'ohmylms' ) }
 					value={ value.unit || '' }
-					onChange={ ( unit ) => onChange( { unit } ) }
+					onChange={ ( unit ) =>
+						onChange( {
+							unit,
+						} )
+					}
 				/>
 			</div>
 			<CheckboxControl
@@ -92,8 +105,10 @@ export function NumericalEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ value.allow_fractions !== false }
-				onChange={ ( allow_fractions ) =>
-					onChange( { allow_fractions } )
+				onChange={ ( _allowFractions ) =>
+					onChange( {
+						allow_fractions: _allowFractions,
+					} )
 				}
 			/>
 		</div>
@@ -109,7 +124,9 @@ export function NumericalEditor( { value, onChange } ) {
 export function StructuredEditor( { value, onChange } ) {
 	const parts = value.parts || [];
 	const set = ( index, fields ) =>
-		onChange( { parts: updatePart( parts, index, fields ) } );
+		onChange( {
+			parts: updatePart( parts, index, fields ),
+		} );
 	return (
 		<div className="ohmylms-structured-editor">
 			<p>
@@ -129,15 +146,27 @@ export function StructuredEditor( { value, onChange } ) {
 				>
 					<legend>
 						{ sprintf(
-							__( 'Part %s', 'ohmylms' ),
+							/* translators: %s: question part identifier. */ __(
+								'Part %s',
+								'ohmylms'
+							),
 							part.label || part.id
 						) }
 					</legend>
-					<div style={ { display: 'flex', gap: 12 } }>
+					<div
+						style={ {
+							display: 'flex',
+							gap: 12,
+						} }
+					>
 						<TextControl
 							label={ __( 'Label', 'ohmylms' ) }
 							value={ part.label || '' }
-							onChange={ ( label ) => set( index, { label } ) }
+							onChange={ ( label ) =>
+								set( index, {
+									label,
+								} )
+							}
 						/>
 						<SelectControl
 							label={ __( 'Answer type', 'ohmylms' ) }
@@ -159,7 +188,11 @@ export function StructuredEditor( { value, onChange } ) {
 									),
 								},
 							] }
-							onChange={ ( kind ) => set( index, { kind } ) }
+							onChange={ ( kind ) =>
+								set( index, {
+									kind,
+								} )
+							}
 						/>
 						<TextControl
 							type="number"
@@ -168,7 +201,9 @@ export function StructuredEditor( { value, onChange } ) {
 							label={ __( 'Marks', 'ohmylms' ) }
 							value={ part.marks ?? 1 }
 							onChange={ ( marks ) =>
-								set( index, { marks: Number( marks ) } )
+								set( index, {
+									marks: Number( marks ),
+								} )
 							}
 						/>
 					</div>
@@ -177,10 +212,19 @@ export function StructuredEditor( { value, onChange } ) {
 						html={ false }
 						label={ __( 'Part prompt', 'ohmylms' ) }
 						value={ part.prompt || '' }
-						onChange={ ( prompt ) => set( index, { prompt } ) }
+						onChange={ ( prompt ) =>
+							set( index, {
+								prompt,
+							} )
+						}
 					/>
 					{ part.kind === 'numerical' && (
-						<div style={ { display: 'flex', gap: 12 } }>
+						<div
+							style={ {
+								display: 'flex',
+								gap: 12,
+							} }
+						>
 							<TextControl
 								type="number"
 								step="any"
@@ -210,7 +254,11 @@ export function StructuredEditor( { value, onChange } ) {
 							<TextControl
 								label={ __( 'Unit', 'ohmylms' ) }
 								value={ part.unit || '' }
-								onChange={ ( unit ) => set( index, { unit } ) }
+								onChange={ ( unit ) =>
+									set( index, {
+										unit,
+									} )
+								}
 							/>
 						</div>
 					) }
@@ -237,13 +285,19 @@ export function StructuredEditor( { value, onChange } ) {
 							'ohmylms'
 						) }
 						value={ part.rubric || '' }
-						onChange={ ( rubric ) => set( index, { rubric } ) }
+						onChange={ ( rubric ) =>
+							set( index, {
+								rubric,
+							} )
+						}
 					/>
 					<Button
 						variant="tertiary"
 						isDestructive
 						onClick={ () =>
-							onChange( { parts: removePart( parts, index ) } )
+							onChange( {
+								parts: removePart( parts, index ),
+							} )
 						}
 					>
 						{ __( 'Remove part', 'ohmylms' ) }
@@ -252,7 +306,11 @@ export function StructuredEditor( { value, onChange } ) {
 			) ) }
 			<Button
 				variant="secondary"
-				onClick={ () => onChange( { parts: addPart( parts ) } ) }
+				onClick={ () =>
+					onChange( {
+						parts: addPart( parts ),
+					} )
+				}
 			>
 				{ __( 'Add part', 'ohmylms' ) }
 			</Button>
@@ -274,7 +332,9 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 	return (
 		<details
 			className="ohmylms-practice-feedback-fields"
-			style={ { margin: '12px 0' } }
+			style={ {
+				margin: '12px 0',
+			} }
 		>
 			<summary>
 				{ __(
@@ -291,7 +351,12 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 				) }
 				value={ settings.hint || '' }
 				onChange={ ( hint ) =>
-					onChange( { settings: { ...settings, hint } } )
+					onChange( {
+						settings: {
+							...settings,
+							hint,
+						},
+					} )
 				}
 			/>
 			<RichContentControl
@@ -300,7 +365,12 @@ export function PracticeFeedbackFields( { question, onChange } ) {
 				label={ __( 'Explanation shown after answering', 'ohmylms' ) }
 				value={ settings.explanation || '' }
 				onChange={ ( explanation ) =>
-					onChange( { settings: { ...settings, explanation } } )
+					onChange( {
+						settings: {
+							...settings,
+							explanation,
+						},
+					} )
 				}
 			/>
 		</details>

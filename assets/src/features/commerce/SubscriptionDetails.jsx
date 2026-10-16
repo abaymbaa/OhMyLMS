@@ -15,8 +15,6 @@ export function createSubscriptionDetails( readRuntime ) {
 			f: Router,
 			g: ReactHooks,
 			kQ,
-			rZ,
-			tZ,
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
@@ -29,15 +27,17 @@ export function createSubscriptionDetails( readRuntime ) {
 			i = ( 0, Notifications.A )(),
 			l = i.openNotificationWithIcon,
 			c = i.contextHolder,
-			u = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			u = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			s = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			s = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			d = ( 0, WordPressData.useSelect )(
-				function ( e ) {
-					return e( StoreModule.default ).selectSingleSubscription();
+				function ( _eLocal3 ) {
+					return _eLocal3(
+						StoreModule.default
+					).selectSingleSubscription();
 				},
 				[ a ]
 			),
@@ -50,7 +50,9 @@ export function createSubscriptionDetails( readRuntime ) {
 			_[ 1 ],
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! p && u && l( s, u );
+					if ( ! p && u ) {
+						l( s, u );
+					}
 				},
 				[ u ]
 			),
@@ -161,7 +163,8 @@ export function createSubscriptionDetails( readRuntime ) {
 													) }
 													<Controls.ButtonWP
 														href={ '/wp-admin/admin.php?page=ohmylms#/order-edit/'.concat(
-															null == d
+															d === null ||
+																d === void 0
 																? void 0
 																: d.original_order_id
 														) }
@@ -172,7 +175,8 @@ export function createSubscriptionDetails( readRuntime ) {
 														} }
 													>
 														{ '#' }
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.original_order_id }
 													</Controls.ButtonWP>
@@ -216,11 +220,13 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.student_name }
 														{ ' (' }
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.student_email }
 														{ ')' }
@@ -239,7 +245,8 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.plan_name }
 													</Controls.TextWP>
@@ -257,17 +264,20 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ ( null == d
+														{ ( d === null ||
+														d === void 0
 															? void 0
 															: d.billing_period ) &&
-															( null == d
+															( d === null ||
+															d === void 0
 																? void 0
 																: d.billing_period
 																		.charAt(
 																			0
 																		)
 																		.toUpperCase() ) +
-																( null == d
+																( d === null ||
+																d === void 0
 																	? void 0
 																	: d.billing_period
 																			.slice(
@@ -289,7 +299,8 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ null == d ||
+														{ d === null ||
+														d === void 0 ||
 														null ===
 															( e =
 																d.payment_gateway ) ||
@@ -320,39 +331,46 @@ export function createSubscriptionDetails( readRuntime ) {
 													'ohmylms'
 												) }
 											</Controls.HeadingWP>
-											{ null != d &&
+											{ d !== null &&
+											d !== void 0 &&
 											d.line_items &&
-											( null == d
+											( d === null || d === void 0
 												? void 0
 												: d.line_items.length ) > 0 &&
-											null != d &&
-											d.line_items.some( function ( e ) {
-												return (
-													e.courses &&
-													e.courses.length > 0
-												);
-											} ) ? (
+											d !== null &&
+											d !== void 0 &&
+											d.line_items.some(
+												function ( _eLocal4 ) {
+													return (
+														_eLocal4.courses &&
+														_eLocal4.courses
+															.length > 0
+													);
+												}
+											) ? (
 												<Controls.FlexWP
 													direction={ 'column' }
 													gap={ 4 }
 												>
-													{ null == d
+													{ d === null || d === void 0
 														? void 0
 														: d.line_items.map(
-																function ( e ) {
-																	return e.courses &&
-																		e
+																function (
+																	_eLocal5
+																) {
+																	return _eLocal5.courses &&
+																		_eLocal5
 																			.courses
 																			.length >
 																			0
-																		? e.courses.map(
+																		? _eLocal5.courses.map(
 																				function (
-																					e
+																					_eLocal6
 																				) {
 																					return (
 																						<Controls.CardWP
 																							key={
-																								e.id
+																								_eLocal6.id
 																							}
 																							isBorderless={
 																								! 0
@@ -376,7 +394,7 @@ export function createSubscriptionDetails( readRuntime ) {
 																								}
 																							>
 																								{
-																									e.name
+																									_eLocal6.name
 																								}
 																							</Controls.TextWP>
 																						</Controls.CardWP>
@@ -399,9 +417,11 @@ export function createSubscriptionDetails( readRuntime ) {
 									</Controls.CardWP>
 									<Controls.SpacerWP marginBottom={ 3 } />
 									{ Array.isArray(
-										null == d ? void 0 : d.related_orders
+										d === null || d === void 0
+											? void 0
+											: d.related_orders
 									) &&
-										( null == d
+										( d === null || d === void 0
 											? void 0
 											: d.related_orders.length ) > 0 && (
 											<Controls.CardWP
@@ -415,7 +435,8 @@ export function createSubscriptionDetails( readRuntime ) {
 												>
 													{ React.createElement( kQ, {
 														relatedOrders:
-															null == d
+															d === null ||
+															d === void 0
 																? void 0
 																: d.related_orders,
 													} ) }
@@ -443,7 +464,7 @@ export function createSubscriptionDetails( readRuntime ) {
 											<KQ
 												subscription={ d }
 												status={
-													null == d
+													d === null || d === void 0
 														? void 0
 														: d.status.toLowerCase()
 												}
@@ -490,12 +511,13 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.schedule_start_date }
 													</Controls.TextWP>
 												</Controls.FlexWP>
-												{ ( null == d
+												{ ( d === null || d === void 0
 													? void 0
 													: d.schedule_end_date ) && (
 													<Controls.FlexWP
@@ -513,14 +535,26 @@ export function createSubscriptionDetails( readRuntime ) {
 															) }
 														</Controls.TextWP>
 														<Controls.TextWP>
-															{ '0' ===
-															( null == d
-																? void 0
-																: d.schedule_end_date )
-																? '-'
-																: null == d
-																	? void 0
-																	: d.schedule_end_date }
+															{ ( () => {
+																if (
+																	'0' ===
+																	( d ===
+																		null ||
+																	d === void 0
+																		? void 0
+																		: d.schedule_end_date )
+																) {
+																	return '-';
+																}
+																if (
+																	d ===
+																		null ||
+																	d === void 0
+																) {
+																	return void 0;
+																}
+																return d.schedule_end_date;
+															} )() }
 														</Controls.TextWP>
 													</Controls.FlexWP>
 												) }
@@ -537,14 +571,24 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ '0' ===
-														( null == d
-															? void 0
-															: d.schedule_next_payment_date )
-															? '-'
-															: null == d
-																? void 0
-																: d.schedule_next_payment_date }
+														{ ( () => {
+															if (
+																'0' ===
+																( d === null ||
+																d === void 0
+																	? void 0
+																	: d.schedule_next_payment_date )
+															) {
+																return '-';
+															}
+															if (
+																d === null ||
+																d === void 0
+															) {
+																return void 0;
+															}
+															return d.schedule_next_payment_date;
+														} )() }
 													</Controls.TextWP>
 													{
 														'                                        '
@@ -565,14 +609,15 @@ export function createSubscriptionDetails( readRuntime ) {
 													<Controls.TextWP
 														dangerouslySetInnerHTML={ {
 															__html: OQ(
-																null == d
+																d === null ||
+																	d === void 0
 																	? void 0
 																	: d.recurring_amount
 															),
 														} }
 													/>
 												</Controls.FlexWP>
-												{ ( null == d
+												{ ( d === null || d === void 0
 													? void 0
 													: d.coupon ) && (
 													<Controls.FlexWP
@@ -590,7 +635,8 @@ export function createSubscriptionDetails( readRuntime ) {
 															) }
 														</Controls.TextWP>
 														<Controls.TextWP>
-															{ null == d ||
+															{ d === null ||
+															d === void 0 ||
 															null ===
 																( t =
 																	d.coupon_lines ) ||
@@ -598,7 +644,8 @@ export function createSubscriptionDetails( readRuntime ) {
 																? void 0
 																: t.code }
 															{ ' – ' }
-															{ null == d ||
+															{ d === null ||
+															d === void 0 ||
 															null ===
 																( n =
 																	d.coupon_lines ) ||
@@ -621,7 +668,8 @@ export function createSubscriptionDetails( readRuntime ) {
 														) }
 													</Controls.TextWP>
 													<Controls.TextWP>
-														{ null == d
+														{ d === null ||
+														d === void 0
 															? void 0
 															: d.last_payment_date }
 													</Controls.TextWP>
@@ -648,26 +696,27 @@ export function createSubscriptionDetails( readRuntime ) {
 													'ohmylms'
 												) }
 											</Controls.HeadingWP>
-											{ null != d &&
+											{ d !== null &&
+											d !== void 0 &&
 											d.history &&
-											( null == d
+											( d === null || d === void 0
 												? void 0
 												: d.history.length ) > 0 ? (
 												<Controls.FlexWP
 													direction={ 'column' }
 													gap={ 3 }
 												>
-													{ null == d
+													{ d === null || d === void 0
 														? void 0
 														: d.history.map(
 																function (
-																	e,
-																	t
+																	_eLocal7,
+																	_tLocal
 																) {
 																	return (
 																		<Controls.FlexWP
 																			key={
-																				t
+																				_tLocal
 																			}
 																			gap={
 																				3
@@ -689,12 +738,12 @@ export function createSubscriptionDetails( readRuntime ) {
 																				} }
 																			>
 																				{
-																					e.date
+																					_eLocal7.date
 																				}
 																			</Controls.TextWP>
 																			<Controls.TextWP>
 																				{
-																					e.event
+																					_eLocal7.event
 																				}
 																			</Controls.TextWP>
 																		</Controls.FlexWP>
@@ -724,7 +773,7 @@ export function createSubscriptionDetails( readRuntime ) {
 										>
 											{ React.createElement( eZ, {
 												notes:
-													null == d
+													d === null || d === void 0
 														? void 0
 														: d.subscription_notes,
 												subscription: d,

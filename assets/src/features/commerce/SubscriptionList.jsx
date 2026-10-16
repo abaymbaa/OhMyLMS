@@ -10,7 +10,6 @@ export function createSubscriptionList( readRuntime ) {
 			Cm: SearchInput,
 			Ea: ContentCard,
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			VY: formatDateTime,
@@ -260,7 +259,7 @@ export function createSubscriptionList( readRuntime ) {
 			],
 			[ handleViewSubscription ]
 		);
-		const rowSelection = ReactHooks.useMemo(
+		ReactHooks.useMemo(
 			() => ( {
 				selectedRowKeys,
 				onChange: setSelectedRowKeys,

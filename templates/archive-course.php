@@ -10,7 +10,7 @@
 
 defined( 'ABSPATH' ) || exit();
 
-// Handle both shortcode attributes and regular archive page
+// Handle both shortcode attributes and regular archive page.
 if ( isset( $atts ) && is_array( $atts ) && ! empty( $atts ) ) {
 	$layout            = $atts['layout'];
 	$layout_style      = $atts['layout_style'];
@@ -23,11 +23,11 @@ if ( isset( $atts ) && is_array( $atts ) && ! empty( $atts ) ) {
 	$posts_per_page    = get_option( 'ohmylms_archive_page_per_page', 10 );
 }
 
-// Get custom classes for shortcode styling
+// Get custom classes for shortcode styling.
 $container_class = '';
 $card_class      = '';
 
-// Use shortcode attributes if available (when called from shortcode)
+// Use shortcode attributes if available (when called from shortcode).
 if ( isset( $atts ) && is_array( $atts ) ) {
 	$container_class = ! empty( $atts['container_class'] ) ? $atts['container_class'] : '';
 	$card_class      = ! empty( $atts['course_card_class'] ) ? $atts['course_card_class'] : '';
@@ -87,7 +87,7 @@ do_action( 'ohmylms_before_main_content' );
 					'grid' === $layout &&
 					( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style )
 				) {
-					// Prepare template variables for carousel
+					// Prepare template variables for carousel.
 					$template_vars = isset( $atts ) && is_array( $atts ) ? $atts : array();
 					if ( isset( $shortcode_atts ) && is_array( $shortcode_atts ) ) {
 						$template_vars['card_class'] = $card_class;
@@ -96,11 +96,11 @@ do_action( 'ohmylms_before_main_content' );
 
 				} else {
 					// Use the existing global $wp_query which is already set up properly
-					// by the shortcode or archive page
+					// by the shortcode or archive page.
 					ohmylms_course_loop_start( true, isset( $atts ) && is_array( $atts ) ? $atts : null );
 					while ( have_posts() ) {
 						the_post();
-						// Prepare template variables for course content
+						// Prepare template variables for course content.
 						$template_vars = isset( $atts ) && is_array( $atts ) ? $atts : array();
 						if ( isset( $shortcode_atts ) && is_array( $shortcode_atts ) ) {
 							$template_vars['card_class'] = $card_class;
@@ -122,7 +122,7 @@ do_action( 'ohmylms_before_main_content' );
 		<?php
 
 		if ( 'list' === $layout || 'grid-style1' == $layout_style || 'grid-style2' == $layout_style ) {
-			// pass variable to load-more template
+			// pass variable to load-more template.
 			ohmylms_get_template(
 				'loop/load-more.php',
 				array(

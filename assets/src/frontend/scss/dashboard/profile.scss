@@ -160,7 +160,7 @@
                 border-radius: 14px;
                 position: relative;
 
-                & > figure {
+                > figure {
                     width: 100%;
                     height: 100%;
                     overflow: hidden;
@@ -407,7 +407,7 @@
                                 .ohmylms-lock-icon {
                                     width: 1.5rem;
                                     height: 1.5rem;
-                                    color: white;
+                                    color: #fff;
                                 }
                             }
                         }
@@ -415,7 +415,7 @@
                         .ohmylms-badge-icon {
                             width: 2rem;
                             height: 2rem;
-                            color: white;
+                            color: #fff;
                             margin-bottom: 0.5rem;
                         }
 
@@ -423,7 +423,7 @@
                             font-size: 0.75rem;
                             font-weight: 600;
                             text-align: center;
-                            color: white;
+                            color: #fff;
                         }
 
                         &[data-tooltip]:hover::before {
@@ -433,7 +433,7 @@
                             left: 50%;
                             transform: translateX(-50%);
                             background: #1f2937;
-                            color: white;
+                            color: #fff;
                             padding: 0.5rem 0.75rem;
                             border-radius: 0.5rem;
                             font-size: 0.75rem;
@@ -764,7 +764,7 @@
 
                 &:hover {
                     background: #e74c3c;
-                    color: white;
+                    color: #fff;
                     border-color: #e74c3c;
                 }
             }

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Stores and reads the 0-100 skill mastery score (see ScoreModel for the rules).
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
@@ -139,13 +144,19 @@ final class Score {
 			if ( $step['counted'] ) {
 				$last = $rows[ $i ]['evidence_at']; }
 		}
-		$table    = XpSchema::table( 'skill_scores' );
-		$stored   = $wpdb->get_row( $wpdb->prepare( "SELECT milestones FROM $table WHERE student_id=%d AND term_id=%d", $student_id, $term_id ), ARRAY_A );
-		$reached  = array_keys( array_filter( ScoreModel::MEDALS, static function ( $name, $at ) use ( $run ) {
-			return $run['peak'] >= $at - 1e-9;
-		}, ARRAY_FILTER_USE_BOTH ) );
-		$known    = $stored && $stored['milestones'] !== '' ? array_map( 'intval', explode( ',', $stored['milestones'] ) ) : array();
-		$record   = array(
+		$table   = XpSchema::table( 'skill_scores' );
+		$stored  = $wpdb->get_row( $wpdb->prepare( "SELECT milestones FROM $table WHERE student_id=%d AND term_id=%d", $student_id, $term_id ), ARRAY_A );
+		$reached = array_keys(
+			array_filter(
+				ScoreModel::MEDALS,
+				static function ( $name, $at ) use ( $run ) {
+					return $run['peak'] >= $at - 1e-9;
+				},
+				ARRAY_FILTER_USE_BOTH
+			)
+		);
+		$known   = $stored && '' !== $stored['milestones'] ? array_map( 'intval', explode( ',', $stored['milestones'] ) ) : array();
+		$record  = array(
 			'student_id'     => (int) $student_id,
 			'term_id'        => (int) $term_id,
 			'score'          => $run['score'],
@@ -158,7 +169,14 @@ final class Score {
 			'updated_at'     => current_time( 'mysql', true ),
 		);
 		if ( $stored ) {
-			$wpdb->update( $table, $record, array( 'student_id' => (int) $student_id, 'term_id' => (int) $term_id ) );
+			$wpdb->update(
+				$table,
+				$record,
+				array(
+					'student_id' => (int) $student_id,
+					'term_id'    => (int) $term_id,
+				)
+			);
 		} else {
 			$wpdb->insert( $table, $record );
 		}
@@ -176,13 +194,18 @@ final class Score {
 	 * @return array{before:float,after:float,delta:float,medal:string,reached:int[]}
 	 */
 	public static function for_session( $student_id, $term_id, $session_id ) {
-		$rows   = self::rows( $student_id, $term_id );
-		$prior  = array_values( array_filter( $rows, static function ( $row ) use ( $session_id ) {
-			return ! ( $row['source_type'] === 'practice' && (int) $row['source_id'] === (int) $session_id );
-		} ) );
-		$config = self::config();
-		$before = ScoreModel::run( $prior, $config );
-		$after  = ScoreModel::run( $rows, $config );
+		$rows    = self::rows( $student_id, $term_id );
+		$prior   = array_values(
+			array_filter(
+				$rows,
+				static function ( $row ) use ( $session_id ) {
+					return ! ( 'practice' === $row['source_type'] && (int) $row['source_id'] === (int) $session_id );
+				}
+			)
+		);
+		$config  = self::config();
+		$before  = ScoreModel::run( $prior, $config );
+		$after   = ScoreModel::run( $rows, $config );
 		$reached = array();
 		foreach ( ScoreModel::MEDALS as $at => $name ) {
 			if ( $after['peak'] >= $at - 1e-9 && $before['peak'] < $at - 1e-9 ) {

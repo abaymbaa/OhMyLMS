@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Rest\V1;
 
@@ -47,15 +47,15 @@ class SubscriptionController extends RestController {
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
-				// Define properties for each meta field
+				// Define properties for each meta field.
 				'_student_id'                   => array(
 					'description' => __( 'Student ID associated with the subscription.', 'cx-ecommerce' ),
-					'type'        => 'integer', // Or string, depending on ID format
+					'type'        => 'integer', // Or string, depending on ID format.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_membership_id'                => array(
 					'description' => __( 'Membership ID associated with the subscription.', 'cx-ecommerce' ),
-					'type'        => 'integer', // Or string
+					'type'        => 'integer', // Or string.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_original_order_id'            => array(
@@ -81,19 +81,19 @@ class SubscriptionController extends RestController {
 				'_schedule_start_date'          => array(
 					'description' => __( 'Start date of the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
-					'format'      => 'date-time', // ISO8601
+					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_schedule_next_payment_date'   => array(
 					'description' => __( 'Next payment due date for the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
-					'format'      => 'date-time', // ISO8601
+					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_schedule_end_date'            => array(
 					'description' => __( 'End date for the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
-					'format'      => 'date-time', // ISO8601
+					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_scheduled_renewal_action_id'  => array(
@@ -104,10 +104,10 @@ class SubscriptionController extends RestController {
 				'_status'                       => array(
 					'description' => __( 'Status of the subscription.', 'cx-ecommerce' ),
 					'type'        => 'string',
-					'enum'        => array( 'active', 'pending', 'on-hold', 'cancelled', 'expired', 'failed' ), // Example statuses
+					'enum'        => array( 'active', 'pending', 'on-hold', 'cancelled', 'expired', 'failed' ), // Example statuses.
 					'context'     => array( 'view', 'edit' ),
 				),
-				// Add new fields
+				// Add new fields.
 				'_trial_end'                    => array(
 					'description' => __( 'End date of the trial period.', 'cx-ecommerce' ),
 					'type'        => 'string',
@@ -198,7 +198,7 @@ class SubscriptionController extends RestController {
 				),
 				// Note: DELETE method is not specified in the requirements.
 				// If needed, it can be added here.
-				'schema' => array( $this, 'get_public_item_schema' ), // Define schema for documentation
+				'schema' => array( $this, 'get_public_item_schema' ), // Define schema for documentation.
 			)
 		);
 	}
@@ -240,7 +240,7 @@ class SubscriptionController extends RestController {
 			'meta_query'     => array( 'relation' => 'AND' ),
 		);
 
-		// Handle 'include' and 'exclude' parameters
+		// Handle 'include' and 'exclude' parameters.
 		if ( ! empty( $request['include'] ) ) {
 			$args['post__in'] = $request['include'];
 		}
@@ -248,12 +248,12 @@ class SubscriptionController extends RestController {
 			$args['post__not_in'] = $request['exclude'];
 		}
 
-		// Handle 'offset' (note: WordPress pagination might behave unexpectedly if offset and paged are both used)
+		// Handle 'offset' (note: WordPress pagination might behave unexpectedly if offset and paged are both used).
 		if ( isset( $request['offset'] ) ) {
 			$args['offset'] = $request['offset'];
 		}
 
-		// Handle date queries ('before', 'after')
+		// Handle date queries ('before', 'after').
 		if ( isset( $request['before'] ) ) {
 			$args['date_query'][] = array(
 				'before'    => $request['before'],
@@ -297,7 +297,7 @@ class SubscriptionController extends RestController {
 		foreach ( $posts as $post ) {
 			$data = $this->prepare_item_for_response( $post, $request );
 			if ( is_wp_error( $data ) ) {
-				// Log error or handle as needed
+				// Log error or handle as needed.
 				continue;
 			}
 			$response_data[] = $this->prepare_response_for_collection( $data );
@@ -362,7 +362,7 @@ class SubscriptionController extends RestController {
 		$meta_fields = array_filter(
 			array_keys( $schema['properties'] ),
 			function ( $key ) {
-				return strpos( $key, '_' ) === 0; // Convention for meta keys
+				return strpos( $key, '_' ) === 0; // Convention for meta keys.
 			}
 		);
 
@@ -373,7 +373,7 @@ class SubscriptionController extends RestController {
 				// If 'string' with 'date-time' format, ensure it's a valid date.
 				$value = $request[ $meta_key ];
 
-				// Example sanitization (can be more specific based on schema types)
+				// Example sanitization (can be more specific based on schema types).
 				if ( ! empty( $schema['properties'][ $meta_key ]['type'] ) ) {
 					switch ( $schema['properties'][ $meta_key ]['type'] ) {
 						case 'integer':
@@ -383,21 +383,21 @@ class SubscriptionController extends RestController {
 							if ( ! empty( $schema['properties'][ $meta_key ]['format'] ) && 'date-time' === $schema['properties'][ $meta_key ]['format'] ) {
 								// Ensure it's a valid ISO8601 date or convert to one
 								// For simplicity, we'll trust validated input from schema arg validation for now.
-								// $value = sanitize_text_field( $value ); // Basic sanitization
+								// $value = sanitize_text_field( $value ); // Basic sanitization.
 							} else {
 								$value = sanitize_text_field( $value );
 							}
 							break;
 						default:
-							$value = sanitize_text_field( $value ); // Fallback
+							$value = sanitize_text_field( $value ); // Fallback.
 					}
 				} else {
-					$value = sanitize_text_field( $value ); // General fallback
+					$value = sanitize_text_field( $value ); // General fallback.
 				}
 				update_post_meta( $post_id, $meta_key, $value );
 			} elseif ( isset( $schema['properties'][ $meta_key ]['default'] ) && $request->is_creating() ) {
 				// Set default value if creating and not provided in request
-				// update_post_meta( $post_id, $meta_key, $schema['properties'][ $meta_key ]['default'] );
+				// update_post_meta( $post_id, $meta_key, $schema['properties'][ $meta_key ]['default'] );.
 			}
 		}
 	}
@@ -425,7 +425,7 @@ class SubscriptionController extends RestController {
 
 		$data = $this->prepare_item_for_response( $post, $request );
 		if ( is_wp_error( $data ) ) {
-			return $data; // The error should have status code set in prepare_item_for_response or by a filter
+			return $data; // The error should have status code set in prepare_item_for_response or by a filter.
 		}
 		$response = rest_ensure_response( $data );
 
@@ -457,7 +457,7 @@ class SubscriptionController extends RestController {
 			return new WP_Error(
 				'rest_post_type_invalid',
 				__( 'The post type for subscriptions is not registered.', 'cx-ecommerce' ),
-				array( 'status' => 500 ) // Internal server error, as this should be configured correctly
+				array( 'status' => 500 ) // Internal server error, as this should be configured correctly.
 			);
 		}
 
@@ -466,17 +466,17 @@ class SubscriptionController extends RestController {
 			return $prepared_post;
 		}
 
-		// Set default status if not provided, e.g., 'pending' or 'active'
+		// Set default status if not provided, e.g., 'pending' or 'active'.
 		if ( empty( $prepared_post->post_status ) ) {
 			// Assuming 'cx_pending' is a registered post status for this CPT.
 			// Or use a generic one like 'pending' if not using custom statuses for the CPT itself.
 			// For subscriptions, 'active' might be a common starting status if payment is confirmed.
 			// Let's assume a meta field `_status` handles the actual subscription status,
 			// and the post status is something like 'publish'.
-			$prepared_post->post_status = 'publish'; // Or a specific status for new subscriptions if registered
+			$prepared_post->post_status = 'publish'; // Or a specific status for new subscriptions if registered.
 		}
 
-		// Create the post
+		// Create the post.
 		$post_id = wp_insert_post( (array) $prepared_post, true );
 
 		if ( is_wp_error( $post_id ) ) {
@@ -488,7 +488,7 @@ class SubscriptionController extends RestController {
 			return $post_id;
 		}
 
-		// Update meta fields
+		// Update meta fields.
 		$this->update_subscription_meta( $post_id, $request );
 
 		// Set the location header.
@@ -526,9 +526,9 @@ class SubscriptionController extends RestController {
 		$this->update_additional_fields_for_object( $post, $request );
 		$response = $this->prepare_item_for_response( $post, $request );
 
-		// Get current status
+		// Get current status.
 		$get_current_status = $current_subscription ? $current_subscription->get_status() : null;
-		// If status changed, add a note
+		// If status changed, add a note.
 		if ( $get_previous_status && $get_current_status && $get_previous_status !== $get_current_status ) {
 
 			$note = sprintf(
@@ -551,14 +551,14 @@ class SubscriptionController extends RestController {
 			// ) );
 		}
 
-		// Fire actions for status transitions
-		if ( $get_previous_status !== 'active' && $get_current_status === 'active' ) {
+		// Fire actions for status transitions.
+		if ( 'active' !== $get_previous_status && 'active' === $get_current_status ) {
 			do_action( 'ohmylms_update_subscription_status_to_active', $current_subscription );
 		}
-		if ( $get_previous_status !== 'cancelled' && $get_current_status === 'cancelled' ) {
+		if ( 'cancelled' !== $get_previous_status && 'cancelled' === $get_current_status ) {
 			do_action( 'ohmylms_update_subscription_status_to_cancelled', $current_subscription );
 		}
-		if ( $get_previous_status !== 'expired' && $get_current_status === 'expired' ) {
+		if ( 'expired' !== $get_previous_status && 'expired' === $get_current_status ) {
 			do_action( 'ohmylms_update_subscription_status_to_expired', $current_subscription );
 		}
 
@@ -759,12 +759,12 @@ class SubscriptionController extends RestController {
 	 * @return array Collection parameters.
 	 */
 	public function get_collection_params() {
-		$params = parent::get_collection_params(); // Gets 'context', 'page', 'per_page', 'search', 'author', 'author_exclude', 'exclude', 'include', 'offset', 'order', 'orderby', 'slug', 'status', 'tax_relation', 'before', 'after'
+		$params = parent::get_collection_params(); // Gets 'context', 'page', 'per_page', 'search', 'author', 'author_exclude', 'exclude', 'include', 'offset', 'order', 'orderby', 'slug', 'status', 'tax_relation', 'before', 'after'.
 
-		// Remove params we don't use or want to override for subscriptions
+		// Remove params we don't use or want to override for subscriptions.
 		unset( $params['author'], $params['author_exclude'], $params['slug'], $params['status'] ); // 'status' here refers to post status, we'll use _status meta for subscription status
 
-		// Add our specific filter parameters based on meta fields
+		// Add our specific filter parameters based on meta fields.
 		$meta_fields_for_filtering = array(
 			'_student_id'                   => 'integer',
 			'_membership_id'                => 'integer',
@@ -772,7 +772,7 @@ class SubscriptionController extends RestController {
 			'_payment_gateway_id'           => 'string',
 			'_gateway_customer_id'          => 'string',
 			'_gateway_payment_method_token' => 'string',
-			'_status'                       => 'string', // For filtering by subscription status meta
+			'_status'                       => 'string', // For filtering by subscription status meta.
 			'_trial_end'                    => 'string',
 			'_last_payment_date'            => 'string',
 			'_recurring_amount'             => 'string',
@@ -784,7 +784,7 @@ class SubscriptionController extends RestController {
 			$params[ $field_name ] = array(
 				'description'       => sprintf( __( 'Filter by subscription meta field: %s.', 'cx-ecommerce' ), $field_name ),
 				'type'              => $type,
-				'sanitize_callback' => ( $type === 'integer' ) ? 'absint' : 'sanitize_text_field',
+				'sanitize_callback' => ( 'integer' === $type ) ? 'absint' : 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',
 			);
 		}
@@ -797,7 +797,7 @@ class SubscriptionController extends RestController {
 		}
 		$params['orderby']['enum'] = array_merge( $params['orderby']['enum'], array_keys( $meta_fields_for_filtering ) );
 
-		// Default 'per_page' to 10 as requested
+		// Default 'per_page' to 10 as requested.
 		$params['per_page']['default'] = 10;
 
 		return $params;

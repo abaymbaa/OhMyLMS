@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Brace answers live in the authored title; public parts contain lengths only.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 /** Brace answers live in the authored title; public parts contain lengths only. */

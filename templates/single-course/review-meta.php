@@ -19,7 +19,7 @@ $rating_percentage = ( $rating / 5 ) * 100;
 <?php if ( '0' === $comment->comment_approved ) { ?>
 	<!-- <p class="meta">
 		<em class="ohmylms-review__awaiting-approval">
-			<?php // esc_html_e( 'Your review is awaiting approval', 'ohmylms' ); ?>
+			<?php // esc_html_e( 'Your review is awaiting approval', 'ohmylms' );. ?>
 		</em>
 	</p> -->
 <?php } ?>

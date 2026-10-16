@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learning-skill catalogue. Independent of the student profile "skills" field,
+ * which stays a free-text profile attribute.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 defined( 'ABSPATH' ) || exit;
@@ -72,7 +78,7 @@ final class Taxonomy {
 		if ( ! $term_id ) {
 			return ''; }
 		$uuid = (string) get_term_meta( $term_id, '_ohmylms_skill_uuid', true );
-		if ( $uuid === '' && term_exists( $term_id, self::NAME ) ) {
+		if ( '' === $uuid && term_exists( $term_id, self::NAME ) ) {
 			$uuid = wp_generate_uuid4();
 			add_term_meta( $term_id, '_ohmylms_skill_uuid', $uuid, true ) || ( $uuid = (string) get_term_meta( $term_id, '_ohmylms_skill_uuid', true ) );
 		}

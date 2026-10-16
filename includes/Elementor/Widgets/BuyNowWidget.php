@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Elementor\Widgets;
 
@@ -6,7 +6,7 @@ use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class BuyNowWidget extends Widget_Base {
@@ -196,7 +196,7 @@ class BuyNowWidget extends Widget_Base {
 			);
 			$shortcode = '[ohmylms_buy_now';
 			foreach ( $atts as $k => $v ) {
-				if ( $v !== '' && $v !== null ) {
+				if ( '' !== $v && null !== $v ) {
 					$shortcode .= ' ' . $k . '="' . esc_attr( $v ) . '"';
 				}
 			}

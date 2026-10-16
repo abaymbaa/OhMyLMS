@@ -20,12 +20,14 @@ export function createStudentNameCell( readRuntime ) {
 				function () {
 					n(
 						'/students/'.concat(
-							null == data ? void 0 : data.user_id,
+							data === null || data === void 0
+								? void 0
+								: data.user_id,
 							'/report'
 						)
 					);
 				},
-				[ null == data ? void 0 : data.user_id, n ]
+				[ data === null || data === void 0 ? void 0 : data.user_id, n ]
 			);
 		return (
 			<UG.A
@@ -42,15 +44,21 @@ export function createStudentNameCell( readRuntime ) {
 				>
 					<v.Link
 						to={ '/students/'.concat(
-							null == data ? void 0 : data.user_id,
+							data === null || data === void 0
+								? void 0
+								: data.user_id,
 							'/report'
 						) }
 					>
-						{ null != data && data.student_img ? (
+						{ data !== null &&
+						data !== void 0 &&
+						data.student_img ? (
 							<Controls.AvatarWP
 								shape={ 'circle' }
 								alt={
-									null == data ? void 0 : data.student_name
+									data === null || data === void 0
+										? void 0
+										: data.student_name
 								}
 								src={ data.student_img }
 								size={ 40 }
@@ -65,10 +73,16 @@ export function createStudentNameCell( readRuntime ) {
 					>
 						<v.Link
 							to={ '/students/'.concat(
-								null == data ? void 0 : data.user_id,
+								data === null || data === void 0
+									? void 0
+									: data.user_id,
 								'/report'
 							) }
-							title={ null == data ? void 0 : data.student_name }
+							title={
+								data === null || data === void 0
+									? void 0
+									: data.student_name
+							}
 							style={ {
 								textDecoration: 'none',
 							} }
@@ -80,7 +94,9 @@ export function createStudentNameCell( readRuntime ) {
 								numberOfLines={ 2 }
 								truncate={ ! 0 }
 							>
-								{ null == data ? void 0 : data.student_name }
+								{ data === null || data === void 0
+									? void 0
+									: data.student_name }
 							</Controls.TextWP>
 						</v.Link>
 						<Controls.FlexWP
@@ -103,7 +119,9 @@ export function createStudentNameCell( readRuntime ) {
 								/>
 							</div>
 							<div className={ 'ohmylms-td-login-info' }>
-								{ null != data && data.last_login ? (
+								{ data !== null &&
+								data !== void 0 &&
+								data.last_login ? (
 									<Controls.BadgeWP
 										variant={ 'secondary' }
 										isBorderLess={ ! 0 }
@@ -113,7 +131,7 @@ export function createStudentNameCell( readRuntime ) {
 											'ohmylms'
 										) }{ ' ' }
 										{ aN()(
-											null == data
+											data === null || data === void 0
 												? void 0
 												: data.last_login
 										).format( 'MMMM DD, YYYY' ) || '-' }

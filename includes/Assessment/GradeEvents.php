@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Item-level grade history. Each grade or regrade is a new event; the previous
+ * current event for the same item is marked superseded. Every event also gets
+ * an evidence-outbox row in the same transaction, so skill evidence is updated
+ * exactly once per grade even if a request dies after commit.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;

@@ -13,7 +13,6 @@
 export const CURRICULUM_PATH = '/content-hub/curriculum';
 export const workspacePath = ( id ) =>
 	`${ CURRICULUM_PATH }/syllabus/${ Number( id ) }`;
-
 export const contentKey = ( id ) => `c:${ id }`;
 export const groupKey = ( id ) => `g:${ id }`;
 export const skillKey = ( groupId, termId ) => `s:${ groupId }:${ termId }`;
@@ -56,7 +55,10 @@ export function buildOutline( outline ) {
 	const contents = outline?.contents || [];
 	const index = new Map();
 	if ( ! contents.length ) {
-		return { root: null, index };
+		return {
+			root: null,
+			index,
+		};
 	}
 	const byId = new Map();
 	for ( const content of contents ) {
@@ -115,12 +117,18 @@ export function buildOutline( outline ) {
 				const number = prefix
 					? `${ prefix }.${ position + 1 }`
 					: String( position + 1 );
-				child.content = { ...child.content, outlineNumber: number };
+				child.content = {
+					...child.content,
+					outlineNumber: number,
+				};
 				numberTopics( child, number );
 			} );
 	};
 	numberTopics( root );
-	return { root, index };
+	return {
+		root,
+		index,
+	};
 }
 
 /**
@@ -197,7 +205,10 @@ export function outlineDropDestination(
 					( child ) => child.key === sourceKey
 				)
 			? null
-			: { parentKey: targetParent.key, position };
+			: {
+					parentKey: targetParent.key,
+					position,
+				};
 	}
 	if ( targetParent.kind !== 'content' ) {
 		return null;
@@ -214,7 +225,10 @@ export function outlineDropDestination(
 	return source.parentKey === targetParent.key &&
 		position === siblings.findIndex( ( child ) => child.key === sourceKey )
 		? null
-		: { parentKey: targetParent.key, position };
+		: {
+				parentKey: targetParent.key,
+				position,
+			};
 }
 
 /**
@@ -264,7 +278,11 @@ export function containerOf( tree, key ) {
  * @param node
  */
 export function nodeCounts( node ) {
-	const counts = { topics: 0, chapters: 0, skills: 0 };
+	const counts = {
+		topics: 0,
+		chapters: 0,
+		skills: 0,
+	};
 	const walk = ( current ) => {
 		for ( const child of current.children ) {
 			if ( child.kind === 'content' ) {
@@ -282,7 +300,6 @@ export function nodeCounts( node ) {
 	}
 	return counts;
 }
-
 export const topicsOf = ( node ) =>
 	( node?.children || [] ).filter( ( child ) => child.kind === 'content' );
 export const chaptersOf = ( node ) =>
@@ -417,17 +434,24 @@ export function courseState( course ) {
 	}
 	return 'draft';
 }
-
 export function displayCounts( node, settings ) {
-	const counts = { topics: 0, chapters: 0, skills: 0 };
+	const counts = {
+		topics: 0,
+		chapters: 0,
+		skills: 0,
+	};
 	const walk = ( parent ) =>
 		visibleChildren( parent, settings ).forEach( ( child ) => {
 			counts[
-				child.kind === 'content'
-					? 'topics'
-					: child.kind === 'group'
-						? 'chapters'
-						: 'skills'
+				( () => {
+					if ( child.kind === 'content' ) {
+						return 'topics';
+					}
+					if ( child.kind === 'group' ) {
+						return 'chapters';
+					}
+					return 'skills';
+				} )()
 			]++;
 			walk( child );
 		} );

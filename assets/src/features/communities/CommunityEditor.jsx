@@ -10,7 +10,6 @@ export function createCommunityEditor( readRuntime ) {
 		const {
 			React,
 			I: Controls,
-			L: Entitlements,
 			He: ProDialog,
 			T: StoreModule,
 			b: I18n,
@@ -162,17 +161,24 @@ export function createCommunityEditor( readRuntime ) {
 											}
 											loading={ saving }
 										>
-											{ activeTab === '1'
-												? I18n.__( 'Next', 'ohmylms' )
-												: saving
-													? I18n.__(
-															'Creating…',
-															'ohmylms'
-														)
-													: I18n.__(
-															'Save',
-															'ohmylms'
-														) }
+											{ ( () => {
+												if ( activeTab === '1' ) {
+													return I18n.__(
+														'Next',
+														'ohmylms'
+													);
+												}
+												if ( saving ) {
+													return I18n.__(
+														'Creating…',
+														'ohmylms'
+													);
+												}
+												return I18n.__(
+													'Save',
+													'ohmylms'
+												);
+											} )() }
 										</Controls.ButtonWP>
 									</Controls.FlexWP>
 								</Controls.SpacerWP>

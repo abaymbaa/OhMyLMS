@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Teacher skill-performance reports, kept separate from grades. Access needs an explicit
+ * scope: a course the viewer may edit, or a class they teach (Schools\Access). Grade
+ * overrides never become skill evidence.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;

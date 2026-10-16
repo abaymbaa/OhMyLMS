@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * OhMyLMS Dashboard Element for Bricks Builder
  *
@@ -345,7 +345,7 @@ class DashboardElement extends \Bricks\Element {
 
 	private function build_shortcode_attrs( $settings ) {
 		$attrs = array(
-			'show_header'    => ( isset( $settings['show_header'] ) && $settings['show_header'] === true ) ? 'yes' : 'no',
+			'show_header'    => ( isset( $settings['show_header'] ) && true === $settings['show_header'] ) ? 'yes' : 'no',
 			'my_profile_url' => isset( $settings['my_profile_url'] ) ? $settings['my_profile_url'] : '',
 			'my_courses_url' => isset( $settings['my_courses_url'] ) ? $settings['my_courses_url'] : '',
 		);

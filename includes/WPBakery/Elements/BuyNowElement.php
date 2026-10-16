@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WPBakery Buy Now Element
  *
@@ -65,7 +65,7 @@ class BuyNowElement {
 				'category'    => __( 'OhMyLMS', 'ohmylms' ),
 				'description' => __( 'Add a Buy Now button for a course', 'ohmylms' ),
 				'params'      => array(
-					// Course Selection
+					// Course Selection.
 					array(
 						'type'        => 'dropdown',
 						'heading'     => __( 'Course', 'ohmylms' ),
@@ -74,7 +74,7 @@ class BuyNowElement {
 						'description' => __( 'Select the course for the Buy Now button', 'ohmylms' ),
 						'admin_label' => true,
 					),
-					// Button Text
+					// Button Text.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Button Text', 'ohmylms' ),
@@ -82,7 +82,7 @@ class BuyNowElement {
 						'value'       => __( 'Buy Now', 'ohmylms' ),
 						'description' => __( 'Text to display on the button', 'ohmylms' ),
 					),
-					// Background Color
+					// Background Color.
 					array(
 						'type'        => 'colorpicker',
 						'heading'     => __( 'Background Color', 'ohmylms' ),
@@ -91,7 +91,7 @@ class BuyNowElement {
 						'description' => __( 'Button background color', 'ohmylms' ),
 						'group'       => __( 'Style', 'ohmylms' ),
 					),
-					// Text Color
+					// Text Color.
 					array(
 						'type'        => 'colorpicker',
 						'heading'     => __( 'Text Color', 'ohmylms' ),
@@ -100,7 +100,7 @@ class BuyNowElement {
 						'description' => __( 'Button text color', 'ohmylms' ),
 						'group'       => __( 'Style', 'ohmylms' ),
 					),
-					// Padding
+					// Padding.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Padding', 'ohmylms' ),
@@ -109,7 +109,7 @@ class BuyNowElement {
 						'description' => __( 'Button padding (e.g., 12px 24px)', 'ohmylms' ),
 						'group'       => __( 'Style', 'ohmylms' ),
 					),
-					// Border Radius
+					// Border Radius.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Border Radius', 'ohmylms' ),
@@ -118,7 +118,7 @@ class BuyNowElement {
 						'description' => __( 'Border radius (e.g., 4px)', 'ohmylms' ),
 						'group'       => __( 'Style', 'ohmylms' ),
 					),
-					// Font Size
+					// Font Size.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Font Size', 'ohmylms' ),
@@ -140,7 +140,7 @@ class BuyNowElement {
 					// 'description' => __( 'Text decoration style', 'ohmylms' ),
 					// 'group'       => __( 'Style', 'ohmylms' ),
 					// ),
-					// Line Height
+					// Line Height.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Line Height', 'ohmylms' ),
@@ -149,7 +149,7 @@ class BuyNowElement {
 						'description' => __( 'Line height (e.g., 1.5)', 'ohmylms' ),
 						'group'       => __( 'Style', 'ohmylms' ),
 					),
-					// Width
+					// Width.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Width', 'ohmylms' ),
@@ -158,7 +158,7 @@ class BuyNowElement {
 						'description' => __( 'Button width (e.g., auto, 100%, 200px)', 'ohmylms' ),
 						'group'       => __( 'Dimensions', 'ohmylms' ),
 					),
-					// Max Width
+					// Max Width.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Max Width', 'ohmylms' ),
@@ -167,7 +167,7 @@ class BuyNowElement {
 						'description' => __( 'Maximum width (e.g., 100%, 300px)', 'ohmylms' ),
 						'group'       => __( 'Dimensions', 'ohmylms' ),
 					),
-					// Min Width
+					// Min Width.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Min Width', 'ohmylms' ),
@@ -176,7 +176,7 @@ class BuyNowElement {
 						'description' => __( 'Minimum width (e.g., 100px)', 'ohmylms' ),
 						'group'       => __( 'Dimensions', 'ohmylms' ),
 					),
-					// Height
+					// Height.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Height', 'ohmylms' ),
@@ -185,7 +185,7 @@ class BuyNowElement {
 						'description' => __( 'Button height (e.g., auto, 50px)', 'ohmylms' ),
 						'group'       => __( 'Dimensions', 'ohmylms' ),
 					),
-					// Extra CSS Class
+					// Extra CSS Class.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Extra CSS Class', 'ohmylms' ),

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Profile student dashboard template.
+ *
+ * @package OhMyLMS
+ */
 defined( 'ABSPATH' ) || exit;
 if ( ! is_user_logged_in() ) {
 	return; }
@@ -59,7 +64,7 @@ $browse     = get_permalink( ohmylms_get_page_id( 'course' ) ) ?: home_url( '/' 
 						'recommendations' => __( 'Recommendations', 'ohmylms' ),
 					) as $key => $label ) {
 						?>
-																				<button type="button" role="tab" id="oml-tab-<?php echo esc_attr( $key ); ?>" aria-controls="oml-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo $key === 'continue' ? 'true' : 'false'; ?>" tabindex="<?php echo $key === 'continue' ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></button><?php } ?>
+																				<button type="button" role="tab" id="oml-tab-<?php echo esc_attr( $key ); ?>" aria-controls="oml-panel-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo 'continue' === $key ? 'true' : 'false'; ?>" tabindex="<?php echo 'continue' === $key ? '0' : '-1'; ?>"><?php echo esc_html( $label ); ?></button><?php } ?>
 				</div>
 				<div role="tabpanel" id="oml-panel-continue" aria-labelledby="oml-tab-continue" tabindex="0">
 					<?php
@@ -92,10 +97,13 @@ $browse     = get_permalink( ohmylms_get_page_id( 'course' ) ) ?: home_url( '/' 
 							$mastery = $skill['mastery'];
 							?>
 						<p class="oml-mastery-score"><strong><?php echo esc_html( (int) round( $mastery['score'] ) ); ?></strong><span>/100</span>
-							<?php if ( $mastery['medal'] ) : ?><span class="oml-mastery-medal is-<?php echo esc_attr( $mastery['medal'] ); ?>"><?php echo esc_html( ucfirst( $mastery['medal'] ) ); ?></span><?php endif; ?>
+							<?php
+							if ( $mastery['medal'] ) :
+								?>
+								<span class="oml-mastery-medal is-<?php echo esc_attr( $mastery['medal'] ); ?>"><?php echo esc_html( ucfirst( $mastery['medal'] ) ); ?></span><?php endif; ?>
 						</p>
 						<progress max="100" value="<?php echo esc_attr( (int) round( $mastery['score'] ) ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: skill name */ __( '%s mastery score', 'ohmylms' ), $skill['name'] ) ); ?>"></progress>
-						<?php
+							<?php
 						}
 						if ( ! empty( $skill['last_evidence_at'] ) ) {
 							?>

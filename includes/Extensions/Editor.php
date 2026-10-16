@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Small native authoring surface; existing course builder remains compatible.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Small native authoring surface; existing course builder remains compatible. */
@@ -44,7 +49,7 @@ final class Editor {
 		}
 		if ( isset( $_POST['ohmylms_save'] ) ) {
 			check_admin_referer( 'ohmylms_extension_settings' );
-			if ( $context === 'question' ) {
+			if ( 'question' === $context ) {
 				$settings = json_decode( wp_unslash( $_POST['settings'] ?? '' ), true );
 				$type     = Registry::get( 'question', $settings['type'] ?? '' );
 				if ( ! is_array( $settings ) || ! $type ) {
@@ -56,7 +61,7 @@ final class Editor {
 				if ( self::valid_layout( $layout, $context ) ) {
 					update_post_meta( $id, '_ohmylms_layout', $layout );
 				}
-				if ( $context === 'course' ) {
+				if ( 'course' === $context ) {
 					$defaults = array();
 					foreach ( array( 'course', 'chapter', 'lesson', 'quiz' ) as $kind ) {
 						$value = sanitize_key( $_POST['defaults'][ $kind ] ?? '' );
@@ -72,7 +77,7 @@ final class Editor {
 		echo '<h2>' . esc_html( $post->post_title ) . ' (#' . esc_html( $id ) . ')</h2><form method="post">';
 		wp_nonce_field( 'ohmylms_extension_settings' );
 		echo '<input type="hidden" name="content_id" value="' . esc_attr( $id ) . '">';
-		if ( $context === 'question' ) {
+		if ( 'question' === $context ) {
 			echo '<p>Registered question types: ' . esc_html( implode( ', ', array_keys( Registry::all( 'question' ) ) ) ) . '</p>';
 			echo '<label>Question settings (JSON)<br><textarea name="settings" rows="14" cols="90">' . esc_textarea( wp_json_encode( get_post_meta( $id, '_question_settings', true ), JSON_PRETTY_PRINT ) ) . '</textarea></label>';
 			echo '<p>Keep score and required settings. Extension-specific editor schemas are available through the extensions API.</p>';
@@ -80,7 +85,7 @@ final class Editor {
 			echo '<p>Layout: ';
 			self::select( 'layout', get_post_meta( $id, '_ohmylms_layout', true ), $context );
 			echo '</p>';
-			if ( $context === 'course' ) {
+			if ( 'course' === $context ) {
 				foreach ( array( 'course', 'chapter', 'lesson', 'quiz' ) as $kind ) {
 					$defaults = (array) get_post_meta( $id, '_ohmylms_layout_defaults', true );
 					echo '<p>' . esc_html( ucfirst( $kind ) ) . ' default: ';

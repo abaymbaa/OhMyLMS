@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Assignment.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Data;
 
@@ -85,7 +90,7 @@ class Assignment extends PostTypeData {
 			$this->set_id( absint( $assignment->ID ) );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {

@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Pure helpers for curriculum hierarchies stored as parent pointers. They take plain
+ * arrays (id => parent id, 0 = root) so the rules can be unit tested without WordPress,
+ * and they stay safe on corrupted data: every walk stops at a repeated or missing ID.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 /**
@@ -81,7 +88,7 @@ final class Tree {
 	public static function would_cycle( array $parents, $id, $new_parent ) {
 		$id         = (int) $id;
 		$new_parent = (int) $new_parent;
-		if ( $new_parent === 0 ) {
+		if ( 0 === $new_parent ) {
 			return false; }
 		if ( $new_parent === $id ) {
 			return true; }
@@ -98,7 +105,7 @@ final class Tree {
 				}
 			)
 		);
-		$index    = $position === null ? count( $siblings ) : max( 0, min( count( $siblings ), (int) $position ) );
+		$index    = null === $position ? count( $siblings ) : max( 0, min( count( $siblings ), (int) $position ) );
 		array_splice( $siblings, $index, 0, array( (int) $id ) );
 		return $siblings;
 	}

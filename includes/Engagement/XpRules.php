@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The arithmetic of XP, apart from storage, so it can be tested and tuned on its own.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 defined( 'ABSPATH' ) || exit;
@@ -19,9 +24,9 @@ final class XpRules {
 				'parts'   => array(),
 				'counted' => false,
 			); }
-		$total   = (int) ( $facts['planned_total'] ?? 0 );
-		$right   = (int) ( $facts['planned_right'] ?? 0 );
-		$parts   = array( 'lesson' => (int) $settings['lesson'] );
+		$total = (int) ( $facts['planned_total'] ?? 0 );
+		$right = (int) ( $facts['planned_right'] ?? 0 );
+		$parts = array( 'lesson' => (int) $settings['lesson'] );
 		// No mistakes: every planned question right the first time.
 		if ( $total > 0 && $right === $total ) {
 			$parts['perfect'] = (int) $settings['perfect']; }

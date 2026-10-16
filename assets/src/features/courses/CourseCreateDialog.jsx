@@ -1,4 +1,4 @@
-import { createElement, Fragment, useRef, useState } from '@wordpress/element';
+import { createElement, useRef, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { createCourse } from './api.mjs';
@@ -10,7 +10,6 @@ export function createCourseCreateDialog( readRuntime ) {
 			QG: { A: Modal },
 			JG: CourseTypes,
 			tU: BuildTypes,
-			L: Entitlements,
 			f: Router,
 		} = readRuntime();
 		const integrations = useSelect(

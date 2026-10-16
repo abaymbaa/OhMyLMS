@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Webhooks Migration Class
  *
@@ -35,16 +35,16 @@ class WebhooksMigration {
 	 */
 	public static function maybe_create_webhooks_table() {
 
-		// Check if webhooks integration is enabled
+		// Check if webhooks integration is enabled.
 		if ( ! self::is_webhooks_enabled() ) {
 			return;
 		}
-		// Check if table is already created
+		// Check if table is already created.
 		if ( self::is_webhooks_table_created() ) {
 			return;
 		}
 
-		// Create the table
+		// Create the table.
 		self::create_webhooks_table();
 	}
 
@@ -77,18 +77,18 @@ class WebhooksMigration {
 	private static function is_webhooks_table_created() {
 		global $wpdb;
 
-		// First check the option
+		// First check the option.
 		$option_exists = get_option( self::WEBHOOKS_TABLE_CREATED_OPTION, false );
 
 		if ( $option_exists ) {
 			return true;
 		}
 
-		// Double check if table actually exists in database
+		// Double check if table actually exists in database.
 		$table_name   = $wpdb->prefix . 'ohmylms_webhooks';
 		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name;
 
-		// If table exists but option not set, set the option
+		// If table exists but option not set, set the option.
 		if ( $table_exists ) {
 			update_option( self::WEBHOOKS_TABLE_CREATED_OPTION, true );
 			return true;
@@ -128,7 +128,7 @@ class WebhooksMigration {
 
 		dbDelta( $sql );
 
-		// Mark as created
+		// Mark as created.
 		update_option( self::WEBHOOKS_TABLE_CREATED_OPTION, true );
 
 		/**
@@ -150,7 +150,7 @@ class WebhooksMigration {
 		$table_name = $wpdb->prefix . 'ohmylms_webhooks';
 		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 
-		// Remove the option
+		// Remove the option.
 		delete_option( self::WEBHOOKS_TABLE_CREATED_OPTION );
 
 		/**

@@ -3,11 +3,11 @@ import {
 	Fragment,
 	useEffect,
 	useState,
+	useId,
 } from '@wordpress/element';
 import { Modal, Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { exportCsv } from '../schools/api.mjs';
-
 const t = ( text ) => __( text, 'ohmylms' );
 const percent = ( value ) =>
 	value === null || value === undefined
@@ -19,8 +19,8 @@ const cellStyle = {
 	textAlign: 'left',
 	whiteSpace: 'nowrap',
 };
-
 export function CourseGradebook( { courseId, onClose } ) {
+	const _controlId = useId();
 	const [ data, setData ] = useState( null );
 	const [ classes, setClasses ] = useState( [] );
 	const [ revision, setRevision ] = useState( 0 );
@@ -40,8 +40,12 @@ export function CourseGradebook( { courseId, onClose } ) {
 		setLoading( true );
 		setError( '' );
 		Promise.all( [
-			window.wp.apiFetch( { path } ),
-			window.wp.apiFetch( { path: `${ path }/classes` } ),
+			window.wp.apiFetch( {
+				path,
+			} ),
+			window.wp.apiFetch( {
+				path: `${ path }/classes`,
+			} ),
 		] )
 			.then(
 				( [ book, available ] ) => {
@@ -94,7 +98,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 	const studentRow = ( student, nested = false ) => (
 		<tr
 			key={ `student-${ student.id }` }
-			style={ { background: nested ? '#fafbfc' : 'white' } }
+			style={ {
+				background: nested ? '#fafbfc' : 'white',
+			} }
 		>
 			<th
 				scope="row"
@@ -105,7 +111,12 @@ export function CourseGradebook( { courseId, onClose } ) {
 				} }
 			>
 				{ student.name }
-				<small style={ { display: 'block', color: '#646970' } }>
+				<small
+					style={ {
+						display: 'block',
+						color: '#646970',
+					} }
+				>
 					{ student.email }
 				</small>
 			</th>
@@ -127,11 +138,15 @@ export function CourseGradebook( { courseId, onClose } ) {
 							}
 							aria-label={ `${ t( 'Edit grade' ) }: ${ student.name }, ${ item.title }` }
 						>
-							{ cell.score === null
-								? cell.status === 'pending'
-									? t( 'Pending' )
-									: '—'
-								: `${ Number( cell.score ) } / ${ Number( cell.max ) }` }
+							{ ( () => {
+								if ( cell.score === null ) {
+									if ( cell.status === 'pending' ) {
+										return t( 'Pending' );
+									}
+									return '—';
+								}
+								return `${ Number( cell.score ) } / ${ Number( cell.max ) }`;
+							} )() }
 							{ cell.status === 'manual' ? ' *' : '' }
 						</Button>
 					</td>
@@ -139,7 +154,11 @@ export function CourseGradebook( { courseId, onClose } ) {
 			} ) }
 			<td style={ cellStyle }>
 				<strong>{ percent( student.total.percent ) }</strong>
-				<small style={ { display: 'block' } }>
+				<small
+					style={ {
+						display: 'block',
+					} }
+				>
 					{ student.total.graded }/{ data.items.length }{ ' ' }
 					{ t( 'graded' ) }
 				</small>
@@ -226,7 +245,10 @@ export function CourseGradebook( { courseId, onClose } ) {
 								await mutate(
 									'/classes',
 									'POST',
-									{ class: Number( selected ), enroll },
+									{
+										class: Number( selected ),
+										enroll,
+									},
 									( result ) =>
 										`${ t( 'Class added' ) }. ${ result.included } ${ t( 'students grouped' ) }, ${ result.enrolled } ${ t( 'new enrollments' ) }, ${ result.skipped } ${ t( 'skipped' ) }.`
 								)
@@ -248,7 +270,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 							marginBottom: 20,
 						} }
 					>
-						<label>
+						<label htmlFor={ _controlId + '-field-1' }>
 							{ t( 'Add class to course' ) }{ ' ' }
 							<select
 								value={ selected }
@@ -257,6 +279,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 									setSelected( event.target.value )
 								}
 								required
+								id={ _controlId + '-field-1' }
 							>
 								<option value="">
 									{ t( 'Choose a class…' ) }
@@ -273,7 +296,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 									) ) }
 							</select>
 						</label>
-						<label>
+						<label htmlFor={ _controlId + '-field-2' }>
 							<input
 								type="checkbox"
 								checked={ enroll }
@@ -281,6 +304,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 								onChange={ ( event ) =>
 									setEnroll( event.target.checked )
 								}
+								id={ _controlId + '-field-2' }
 							/>{ ' ' }
 							{ t(
 								'Enroll current students who do not have course access'
@@ -307,7 +331,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 							marginBottom: 16,
 						} }
 					>
-						<label>
+						<label htmlFor={ _controlId + '-field-3' }>
 							{ t( 'Search students or classes' ) }{ ' ' }
 							<input
 								type="search"
@@ -315,6 +339,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 								onChange={ ( event ) =>
 									setSearch( event.target.value )
 								}
+								id={ _controlId + '-field-3' }
 							/>
 						</label>
 						<Button
@@ -332,7 +357,11 @@ export function CourseGradebook( { courseId, onClose } ) {
 							) }
 						</Notice>
 					) }
-					<div style={ { overflowX: 'auto' } }>
+					<div
+						style={ {
+							overflowX: 'auto',
+						} }
+					>
 						<table
 							style={ {
 								borderCollapse: 'collapse',
@@ -450,7 +479,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 																mutate(
 																	`/classes/${ group.id }`,
 																	'POST',
-																	{ enroll },
+																	{
+																		enroll,
+																	},
 																	(
 																		result
 																	) =>
@@ -584,7 +615,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 						} }
 					>
 						<p>{ editing.item.title }</p>
-						<label>
+						<label htmlFor={ _controlId + '-field-4' }>
 							{ t( 'Score' ) } / { editing.item.max }
 							<input
 								type="number"
@@ -600,10 +631,11 @@ export function CourseGradebook( { courseId, onClose } ) {
 										score: event.target.value,
 									} )
 								}
+								id={ _controlId + '-field-4' }
 							/>
 						</label>
 						<p>
-							<label>
+							<label htmlFor={ _controlId + '-field-5' }>
 								{ t( 'Grade note' ) }
 								<textarea
 									value={ editing.note }
@@ -615,6 +647,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 											note: event.target.value,
 										} )
 									}
+									id={ _controlId + '-field-5' }
 								/>
 							</label>
 						</p>

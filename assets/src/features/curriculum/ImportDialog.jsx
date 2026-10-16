@@ -1,4 +1,10 @@
-import { createElement, useEffect, useRef, useState } from '@wordpress/element';
+import {
+	createElement,
+	useEffect,
+	useRef,
+	useState,
+	useId,
+} from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import {
 	Button,
@@ -20,10 +26,8 @@ import {
 } from './csv.mjs';
 import { changesNothing, fileName, reportRows } from './syllabus.mjs';
 import { download } from './download.mjs';
-
 const MAX_BYTES = 5 * 1024 * 1024;
 const SHOWN_PROBLEMS = 12;
-
 const ROLE_LABELS = () =>
 	Object.fromEntries(
 		ROLES.map( ( role ) => [
@@ -40,13 +44,11 @@ const ROLE_LABELS = () =>
 			}[ role.id ],
 		] )
 	);
-
 const ROW_TITLES = () => ( {
 	contents: __( 'Contents', 'ohmylms' ),
 	groups: __( 'Folders', 'ohmylms' ),
 	skills: __( 'Skills', 'ohmylms' ),
 } );
-
 function Problems( { items, status } ) {
 	if ( ! items.length ) {
 		return null;
@@ -63,7 +65,10 @@ function Problems( { items, status } ) {
 					<li key={ `${ entry.line }-${ index }` }>
 						{ entry.line
 							? sprintf(
-									__( 'Row %1$d: %2$s', 'ohmylms' ),
+									/* translators: %1$d: CSV row number; %2$s: validation error message. */ __(
+										'Row %1$d: %2$s',
+										'ohmylms'
+									),
 									entry.line,
 									entry.message
 								)
@@ -74,7 +79,7 @@ function Problems( { items, status } ) {
 			{ items.length > shown.length && (
 				<p>
 					{ sprintf(
-						_n(
+						/* translators: %d: number of additional results. */ _n(
 							'…and %d more.',
 							'…and %d more.',
 							items.length - shown.length,
@@ -87,7 +92,6 @@ function Problems( { items, status } ) {
 		</Notice>
 	);
 }
-
 function ReportTable( { report } ) {
 	const titles = ROW_TITLES();
 	return (
@@ -129,6 +133,7 @@ function ReportTable( { report } ) {
  * @param root0.onImported
  */
 export function ImportDialog( { syllabus, onClose, onImported } ) {
+	const _controlId = useId();
 	const [ step, setStep ] = useState( 'pick' );
 	const [ table, setTable ] = useState( null );
 	const [ name, setName ] = useState( '' );
@@ -146,7 +151,6 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 	useEffect( () => {
 		frame.current?.focus();
 	}, [ step ] );
-
 	async function choose( event ) {
 		const file = event.target.files?.[ 0 ];
 		event.target.value = '';
@@ -186,7 +190,6 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 		);
 		setStep( 'map' );
 	}
-
 	function toggleHeader( value ) {
 		setHeader( value );
 		setRoles(
@@ -201,10 +204,8 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 				index === column ? value : role
 			)
 		);
-
 	const problems = table ? mappingProblems( roles ) : [];
 	const dataRows = table ? table.records.slice( header ? 1 : 0 ) : [];
-
 	async function check() {
 		setBusy( true );
 		setError( '' );
@@ -226,7 +227,6 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 			setBusy( false );
 		}
 	}
-
 	async function apply() {
 		setBusy( true );
 		setError( '' );
@@ -244,11 +244,13 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 			setBusy( false );
 		}
 	}
-
 	return (
 		<Modal
 			title={ sprintf(
-				__( 'Import “%s” from CSV', 'ohmylms' ),
+				/* translators: %s: curriculum item name. */ __(
+					'Import “%s” from CSV',
+					'ohmylms'
+				),
 				syllabus.name
 			) }
 			onRequestClose={ onClose }
@@ -270,7 +272,10 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 							) }
 						</p>
 						<p>
-							<label className="ohmylms-syl-file">
+							<label
+								className="ohmylms-syl-file"
+								htmlFor={ _controlId + '-field-1' }
+							>
 								<span className="screen-reader-text">
 									{ __( 'CSV file', 'ohmylms' ) }
 								</span>
@@ -278,6 +283,7 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 									type="file"
 									accept=".csv,.tsv,.txt,text/csv,text/plain"
 									onChange={ choose }
+									id={ _controlId + '-field-1' }
 								/>
 							</label>
 						</p>
@@ -305,7 +311,7 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 					<div className="ohmylms-syl-step">
 						<p>
 							{ sprintf(
-								_n(
+								/* translators: %1$s: CSV filename; %2$d: number of CSV data rows. */ _n(
 									'“%1$s” has %2$d data row. Tell us what each column holds.',
 									'“%1$s” has %2$d data rows. Tell us what each column holds.',
 									dataRows.length,
@@ -356,7 +362,7 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 												<th key={ column } scope="col">
 													<SelectControl
 														label={ sprintf(
-															__(
+															/* translators: %1$d: CSV column number; %2$s: column heading. */ __(
 																'Column %1$d: %2$s',
 																'ohmylms'
 															),
@@ -479,35 +485,41 @@ export function ImportDialog( { syllabus, onClose, onImported } ) {
 							items={ report.warnings || [] }
 							status="warning"
 						/>
-						{ report.valid ? (
-							changesNothing( report ) ? (
+						{ ( () => {
+							if ( report.valid ) {
+								if ( changesNothing( report ) ) {
+									return (
+										<p>
+											{ __(
+												'This file matches the syllabus already: there is nothing to import.',
+												'ohmylms'
+											) }
+										</p>
+									);
+								}
+								return (
+									<p>
+										{ sprintf(
+											/* translators: %d: number of CSV rows. */ _n(
+												'Ready to import %d row. This is what will change:',
+												'Ready to import %d rows. This is what will change:',
+												report.rows?.used || 0,
+												'ohmylms'
+											),
+											report.rows?.used || 0
+										) }
+									</p>
+								);
+							}
+							return (
 								<p>
 									{ __(
-										'This file matches the syllabus already: there is nothing to import.',
+										'Nothing was imported. Fix the rows above in your file, then choose it again. Nothing is saved until every row is accepted.',
 										'ohmylms'
 									) }
 								</p>
-							) : (
-								<p>
-									{ sprintf(
-										_n(
-											'Ready to import %d row. This is what will change:',
-											'Ready to import %d rows. This is what will change:',
-											report.rows?.used || 0,
-											'ohmylms'
-										),
-										report.rows?.used || 0
-									) }
-								</p>
-							)
-						) : (
-							<p>
-								{ __(
-									'Nothing was imported. Fix the rows above in your file, then choose it again. Nothing is saved until every row is accepted.',
-									'ohmylms'
-								) }
-							</p>
-						) }
+							);
+						} )() }
 						{ report.valid && <ReportTable report={ report } /> }
 						{ report.valid && (
 							<p className="ohmylms-ext-muted">

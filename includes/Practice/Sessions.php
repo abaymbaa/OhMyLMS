@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Skill practice and inline-check sessions. Both use the same frozen versions, the same
+ * grading contract and the same grade-event/evidence pipeline as formal quizzes.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\AttemptItems;
@@ -80,7 +86,7 @@ final class Sessions {
 		foreach ( $rows as &$row ) {
 			$row['option_order'] = json_decode( $row['option_order'], true ) ?: array();
 			$row['display']      = json_decode( $row['display'], true ) ?: array();
-			$row['response']     = $row['response'] === null ? null : json_decode( $row['response'], true );
+			$row['response']     = null === $row['response'] ? null : json_decode( $row['response'], true );
 		}
 		return $rows;
 	}
@@ -91,9 +97,14 @@ final class Sessions {
 		$items   = self::items( $session['id'] );
 		$policy  = is_array( $session['policy'] ) ? $session['policy'] : ( json_decode( $session['policy'], true ) ?: array() );
 		$lesson  = ( $policy['style'] ?? '' ) === 'lesson';
-		$planned = count( array_filter( $items, static function ( $item ) {
-			return empty( $item['display']['replay_of'] );
-		} ) );
+		$planned = count(
+			array_filter(
+				$items,
+				static function ( $item ) {
+					return empty( $item['display']['replay_of'] );
+				}
+			)
+		);
 		if ( $lesson && $planned >= (int) $session['item_limit'] ) {
 			// The planned questions are done: every miss comes back once (new numbers for a template).
 			$replay = self::next_replay( $items, (int) $session['item_limit'] );
@@ -102,19 +113,19 @@ final class Sessions {
 		// A skipped question is replaced, so it does not use up one of the learner's problems.
 		if ( ! $lesson && self::counted( $items ) >= (int) $session['item_limit'] ) {
 			return self::complete( $session, 'limit' ); }
-		$band   = Selector::band(
+		$band = Selector::band(
 			$policy['band'] ?? 'standard',
 			array_values(
 				array_filter(
 					$items,
 					static function ( $item ) {
 						// Replays do not move the difficulty band: they repeat a question already judged.
-						return $item['answered_at'] !== null && empty( $item['display']['replay_of'] ) && ! self::skipped( $item );
+						return null !== $item['answered_at'] && empty( $item['display']['replay_of'] ) && ! self::skipped( $item );
 					}
 				)
 			)
 		);
-		$next   = Selector::next( $session, $items, $band, $lesson ? Selector::stage_for( $planned, (int) $session['item_limit'] ) : '' );
+		$next = Selector::next( $session, $items, $band, $lesson ? Selector::stage_for( $planned, (int) $session['item_limit'] ) : '' );
 		if ( ! $next ) {
 			$replay = $lesson ? self::next_replay( $items, (int) $session['item_limit'] ) : null;
 			return $replay ? self::add_item( (int) $session['id'], (int) $replay['version_id'], count( $items ) + 1, null, array( 'replay_of' => (int) $replay['id'] ) ) : self::complete( $session, 'exhausted' ); }
@@ -152,7 +163,7 @@ final class Sessions {
 		if ( count( $replayed ) >= max( 1, (int) ceil( $planned / 2 ) ) ) {
 			return null; }
 		foreach ( $items as $item ) {
-			if ( empty( $item['display']['replay_of'] ) && $item['answered_at'] !== null && (int) $item['correct'] === 0 && ! self::skipped( $item ) && empty( $replayed[ (int) $item['id'] ] ) ) {
+			if ( empty( $item['display']['replay_of'] ) && null !== $item['answered_at'] && 0 === (int) $item['correct'] && ! self::skipped( $item ) && empty( $replayed[ (int) $item['id'] ] ) ) {
 				return $item; }
 		}
 		return null;
@@ -164,7 +175,7 @@ final class Sessions {
 		if ( ! $snapshot ) {
 			return ''; }
 		$text = \OhMyLMS\AI\Feedback::plain( $snapshot->get_description(), 110 );
-		return $text !== '' ? $text : \OhMyLMS\AI\Feedback::plain( $snapshot->get_name(), 110 );
+		return '' !== $text ? $text : \OhMyLMS\AI\Feedback::plain( $snapshot->get_name(), 110 );
 	}
 
 	/** Freeze one version into a session as the next item. */
@@ -227,7 +238,7 @@ final class Sessions {
 				'status' => 'active',
 			)
 		);
-		if ( $completed === 1 ) {
+		if ( 1 === $completed ) {
 			do_action( 'ohmylms_practice_completed', $session['uuid'] );
 			if ( ( $policy['style'] ?? '' ) === 'lesson' ) {
 				// Lets gamification (XP, streaks) react to a finished fast-feedback lesson.
@@ -267,20 +278,30 @@ final class Sessions {
 			if ( ! empty( $item['display']['replay_of'] ) ) {
 				$replay_of[ (int) $item['display']['replay_of'] ] = $item; }
 		}
-		$planned = array_values( array_filter( $items, static function ( $item ) {
-			return empty( $item['display']['replay_of'] ) && $item['answered_at'] !== null;
-		} ) );
-		$right   = count( array_filter( $planned, static function ( $item ) {
-			return (int) $item['correct'] === 1;
-		} ) );
+		$planned = array_values(
+			array_filter(
+				$items,
+				static function ( $item ) {
+					return empty( $item['display']['replay_of'] ) && null !== $item['answered_at'];
+				}
+			)
+		);
+		$right   = count(
+			array_filter(
+				$planned,
+				static function ( $item ) {
+					return 1 === (int) $item['correct'];
+				}
+			)
+		);
 		$missed  = array();
 		foreach ( $planned as $item ) {
-			if ( (int) $item['correct'] === 1 ) {
+			if ( 1 === (int) $item['correct'] ) {
 				continue; }
 			$again    = $replay_of[ (int) $item['id'] ] ?? null;
 			$missed[] = array(
 				'label' => self::label( $item ),
-				'fixed' => $again && $again['answered_at'] !== null ? (int) $again['correct'] === 1 : null,
+				'fixed' => $again && null !== $again['answered_at'] ? 1 === (int) $again['correct'] : null,
 			);
 		}
 		return array(
@@ -296,7 +317,7 @@ final class Sessions {
 		$items   = self::items( $session['id'] );
 		$current = null;
 		foreach ( $items as $item ) {
-			if ( $item['answered_at'] === null ) {
+			if ( null === $item['answered_at'] ) {
 				$current = $item;
 				break; }
 		}
@@ -304,7 +325,7 @@ final class Sessions {
 			array_filter(
 				$items,
 				static function ( $item ) {
-					return $item['answered_at'] !== null && ! self::skipped( $item );
+					return null !== $item['answered_at'] && ! self::skipped( $item );
 				}
 			)
 		);
@@ -322,7 +343,7 @@ final class Sessions {
 			// One entry per answered question, in order: right, help (right after a hint), or wrong.
 			'results'    => array_map(
 				static function ( $item ) {
-					return (int) $item['correct'] === 1 ? ( (int) $item['assisted'] === 1 ? 'help' : 'right' ) : 'wrong';
+					return 1 === (int) $item['correct'] ? ( 1 === (int) $item['assisted'] ? 'help' : 'right' ) : 'wrong';
 				},
 				$answered
 			),
@@ -331,7 +352,7 @@ final class Sessions {
 				array_filter(
 					$answered,
 					static function ( $item ) {
-						return (int) $item['correct'] === 1; }
+						return 1 === (int) $item['correct']; }
 				)
 			),
 			'current'    => $current ? self::item_view( $current ) : null,
@@ -345,22 +366,25 @@ final class Sessions {
 		// Skipping is for the standard runner only, and bounded so it cannot be used to cycle the pool.
 		$state['can_skip'] = ( $session['policy']['style'] ?? '' ) !== 'lesson' && 'active' === $session['status'] && $state['skipped'] < (int) $session['item_limit'];
 		if ( ( $session['policy']['style'] ?? '' ) === 'lesson' ) {
-			$replays          = array_filter( $items, static function ( $item ) {
-				return ! empty( $item['display']['replay_of'] );
-			} );
+			$replays          = array_filter(
+				$items,
+				static function ( $item ) {
+					return ! empty( $item['display']['replay_of'] );
+				}
+			);
 			$state['style']   = 'lesson';
 			$state['planned'] = (int) $session['item_limit'];
 			$state['replay']  = $current ? ! empty( $current['display']['replay_of'] ) : false;
 			$state['stage']   = $current && ! empty( $state['current']['settings']['type'] ) ? ( $state['replay'] ? 'replay' : Selector::stage( $state['current']['settings']['type'] ) ) : '';
 			$state['replays'] = count( $replays );
-			if ( $session['status'] === 'complete' ) {
+			if ( 'complete' === $session['status'] ) {
 				$state += self::lesson_result( $items );
 			}
 		}
-		if ( $session['status'] === 'complete' && ( $state['ended'] ?? '' ) === 'exhausted' ) {
+		if ( 'complete' === $session['status'] && ( $state['ended'] ?? '' ) === 'exhausted' ) {
 			$state['notice'] = __( 'You have answered every available practice question for this skill. Ask your teacher for more, or come back later for a review.', 'ohmylms' );
 		}
-		if ( $session['status'] === 'complete' && (int) $session['student_id'] ) {
+		if ( 'complete' === $session['status'] && (int) $session['student_id'] ) {
 			// With the Khan level rules on: what this practice did to the skill's level.
 			if ( \OhMyLMS\Skills\Khan\Settings::enabled() ) {
 				$state['levels'] = \OhMyLMS\Skills\Khan\Levels::changes( (int) $session['student_id'], 'practice', (int) $session['id'] ); }
@@ -382,7 +406,7 @@ final class Sessions {
 		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );
 		if ( is_wp_error( $access ) ) {
 			return $access; }
-		if ( $session['status'] !== 'active' ) {
+		if ( 'active' !== $session['status'] ) {
 			return new \WP_Error( 'ohmylms_practice_closed', __( 'This practice session has ended.', 'ohmylms' ), array( 'status' => 409 ) ); }
 		$item = null;
 		foreach ( self::items( $session['id'] ) as $candidate ) {
@@ -391,7 +415,7 @@ final class Sessions {
 		}
 		if ( ! $item ) {
 			return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) ); }
-		if ( $item['answered_at'] !== null ) {
+		if ( null !== $item['answered_at'] ) {
 			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
 		$graded = self::grade_item( $session, $item, $response, 'practice', null, self::retry_allowed( $session ) );
 		if ( is_wp_error( $graded ) ) {
@@ -485,7 +509,7 @@ final class Sessions {
 							(int) $item['id']
 						)
 					);
-					if ( $updated !== 1 ) {
+					if ( 1 !== $updated ) {
 						throw new \RuntimeException( 'Item already answered' ); }
 					GradeEvents::record(
 						array(
@@ -672,16 +696,16 @@ final class Sessions {
 		foreach ( self::items( $session['id'] ) as $item ) {
 			if ( (int) $item['id'] !== (int) $item_id ) {
 				continue; }
-			$answered = $item['answered_at'] !== null;
-			if ( $kind === 'hint' && $answered ) {
+			$answered = null !== $item['answered_at'];
+			if ( 'hint' === $kind && $answered ) {
 				return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
-			if ( $kind === 'explain' && ! $answered ) {
+			if ( 'explain' === $kind && ! $answered ) {
 				return new \WP_Error( 'ohmylms_practice_unanswered', __( 'Answer the question first, then the tutor can explain.', 'ohmylms' ), array( 'status' => 409 ) ); }
 			$snapshot = AttemptItems::snapshot( $item );
 			if ( ! $snapshot ) {
 				return new \WP_Error( 'ohmylms_practice_item', __( 'Question unavailable.', 'ohmylms' ), array( 'status' => 410 ) ); }
 			$reply = \OhMyLMS\AI\Feedback::help( (string) $kind, $session, $item, $snapshot );
-			if ( ! is_wp_error( $reply ) && $kind === 'hint' ) {
+			if ( ! is_wp_error( $reply ) && 'hint' === $kind ) {
 				$wpdb->update( Schema::table( 'practice_items' ), array( 'assisted' => 1 ), array( 'id' => (int) $item['id'] ) ); }
 			return $reply;
 		}
@@ -697,7 +721,7 @@ final class Sessions {
 		foreach ( self::items( $session['id'] ) as $item ) {
 			if ( (int) $item['id'] !== (int) $item_id ) {
 				continue; }
-			if ( $item['answered_at'] !== null ) {
+			if ( null !== $item['answered_at'] ) {
 				return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
 			$wpdb->update( Schema::table( 'practice_items' ), array( 'assisted' => 1 ), array( 'id' => (int) $item['id'] ) );
 			$snapshot = AttemptItems::snapshot( $item );
@@ -714,7 +738,7 @@ final class Sessions {
 				$program = \OhMyLMS\Learning\CourseProgram::for_enrollment( \OhMyLMS\Learning\CourseProgram::enrollment( $session['student_id'], $session['course_id'] ) );
 				$scoped  = array();
 				foreach ( $program['items'] as $placement ) {
-					if ( $placement['type'] !== 'lesson' || ! isset( $lessons[ $placement['content_id'] ] ) || get_post_status( $placement['content_id'] ) !== 'publish' ) {
+					if ( 'lesson' !== $placement['type'] || ! isset( $lessons[ $placement['content_id'] ] ) || get_post_status( $placement['content_id'] ) !== 'publish' ) {
 						continue; }
 					$scoped[] = array(
 						'id'    => $placement['content_id'],

@@ -6,7 +6,6 @@ export function createCertificateControls( readRuntime ) {
 			He,
 			I: Controls,
 			IL,
-			L: Entitlements,
 			ML: MemoCertificateImageField,
 			React,
 			T: StoreModule,
@@ -16,190 +15,218 @@ export function createCertificateControls( readRuntime ) {
 			kL: MemoCertificateTextField,
 			y: WordPressData,
 		} = readRuntime();
-		var e = true,
-			t = TL(
+		var t = TL(
+			( 0, ReactHooks.useState )(
+				D( 'instructor_signature_img', 'src' )
+			),
+			2
+		);
+		var n = t[ 0 ];
+		var r = t[ 1 ];
+		var a = TL(
+			( 0, ReactHooks.useState )( D( 'director_signature_img', 'src' ) ),
+			2
+		);
+		var o = a[ 0 ];
+		var i = a[ 1 ];
+		var l = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).selectCertificate();
+		}, [] );
+		var c = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var u = TL(
+			( 0, ReactHooks.useState )( D( 'title_text', 'content' ) ),
+			2
+		);
+		var s = u[ 0 ];
+		var d = u[ 1 ];
+		var m = TL(
+			( 0, ReactHooks.useState )( D( 'subtitle_text', 'content' ) ),
+			2
+		);
+		var p = m[ 0 ];
+		var f = m[ 1 ];
+		var v = TL(
+			( 0, ReactHooks.useState )( D( 'description_text', 'content' ) ),
+			2
+		);
+		var h = v[ 0 ];
+		var _ = v[ 1 ];
+		var w = TL(
+			( 0, ReactHooks.useState )( D( 'surname_text', 'content' ) ),
+			2
+		);
+		var E = w[ 0 ];
+		var S =
+			( w[ 1 ],
+			TL(
 				( 0, ReactHooks.useState )(
-					D( 'instructor_signature_img', 'src' )
+					D( 'recognition_text', 'content' )
 				),
 				2
+			) );
+		var R = S[ 0 ];
+		var x = S[ 1 ];
+		var C = TL(
+			( 0, ReactHooks.useState )(
+				D( 'director_signature_text', 'content' )
 			),
-			n = t[ 0 ],
-			r = t[ 1 ],
-			a = TL(
-				( 0, ReactHooks.useState )(
-					D( 'director_signature_img', 'src' )
-				),
-				2
+			2
+		);
+		var P = C[ 0 ];
+		var O = C[ 1 ];
+		var k = TL(
+			( 0, ReactHooks.useState )(
+				D( 'instructor_signature_text', 'content' )
 			),
-			o = a[ 0 ],
-			i = a[ 1 ],
-			l = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectCertificate();
-			}, [] ),
-			c = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			u = TL(
-				( 0, ReactHooks.useState )( D( 'title_text', 'content' ) ),
-				2
-			),
-			s = u[ 0 ],
-			d = u[ 1 ],
-			m = TL(
-				( 0, ReactHooks.useState )( D( 'subtitle_text', 'content' ) ),
-				2
-			),
-			p = m[ 0 ],
-			f = m[ 1 ],
-			v = TL(
-				( 0, ReactHooks.useState )(
-					D( 'description_text', 'content' )
-				),
-				2
-			),
-			h = v[ 0 ],
-			_ = v[ 1 ],
-			w = TL(
-				( 0, ReactHooks.useState )( D( 'surname_text', 'content' ) ),
-				2
-			),
-			E = w[ 0 ],
-			S =
-				( w[ 1 ],
-				TL(
-					( 0, ReactHooks.useState )(
-						D( 'recognition_text', 'content' )
-					),
-					2
-				) ),
-			R = S[ 0 ],
-			x = S[ 1 ],
-			C = TL(
-				( 0, ReactHooks.useState )(
-					D( 'director_signature_text', 'content' )
-				),
-				2
-			),
-			P = C[ 0 ],
-			O = C[ 1 ],
-			k = TL(
-				( 0, ReactHooks.useState )(
-					D( 'instructor_signature_text', 'content' )
-				),
-				2
-			),
-			j = k[ 0 ],
-			A = k[ 1 ],
-			M = TL( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			F = M[ 0 ],
-			N = M[ 1 ];
-		function D( e, t ) {
-			var n,
-				r =
-					arguments.length > 2 && void 0 !== arguments[ 2 ]
-						? arguments[ 2 ]
+			2
+		);
+		var j = k[ 0 ];
+		var A = k[ 1 ];
+		var M = TL( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var F = M[ 0 ];
+		var N = M[ 1 ];
+		function D( ..._args ) {
+			let [ _eLocal2, _tLocal ] = _args;
+			var _nLocal,
+				_rLocal =
+					_args.length > 2 && void 0 !== _args[ 2 ]
+						? _args[ 2 ]
 						: null,
-				a = function ( n ) {
-					if ( n ) {
-						var o,
-							i = ( function ( e ) {
-								var t =
+				_aLocal = function ( _nLocal2 ) {
+					if ( _nLocal2 ) {
+						var _oLocal,
+							_iLocal = ( function ( _eLocal3 ) {
+								var _tLocal2 =
 									( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-								if ( ! t ) {
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+								if ( ! _tLocal2 ) {
 									if (
-										Array.isArray( e ) ||
-										( t = IL( e ) )
+										Array.isArray( _eLocal3 ) ||
+										( _tLocal2 = IL( _eLocal3 ) )
 									) {
-										t && ( e = t );
-										var n = 0,
-											r = function () {};
+										if ( _tLocal2 ) {
+											_eLocal3 = _tLocal2;
+										}
+										var _nLocal3 = 0,
+											_rLocal2 = function () {};
 										return {
-											s: r,
+											s: _rLocal2,
 											n() {
-												return n >= e.length
+												return _nLocal3 >=
+													_eLocal3.length
 													? {
 															done: ! 0,
 														}
 													: {
 															done: ! 1,
-															value: e[ n++ ],
+															value: _eLocal3[
+																_nLocal3++
+															],
 														};
 											},
-											e( e ) {
-												throw e;
+											e( _eLocal4 ) {
+												throw _eLocal4;
 											},
-											f: r,
+											f: _rLocal2,
 										};
 									}
 									throw new TypeError(
 										'Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
 									);
 								}
-								var a,
-									o = ! 0,
-									i = ! 1;
+								var _aLocal2,
+									_oLocal2 = ! 0,
+									_iLocal2 = ! 1;
 								return {
 									s() {
-										t = t.call( e );
+										_tLocal2 = _tLocal2.call( _eLocal3 );
 									},
 									n() {
-										var e = t.next();
-										return ( ( o = e.done ), e );
+										var _eLocal5 = _tLocal2.next();
+										return (
+											( _oLocal2 = _eLocal5.done ),
+											_eLocal5
+										 );
 									},
-									e( e ) {
-										( ( i = ! 0 ), ( a = e ) );
+									e( _eLocal6 ) {
+										_iLocal2 = ! 0;
+										_aLocal2 = _eLocal6;
 									},
 									f() {
 										try {
-											o || null == t.return || t.return();
+											if ( ! (
+												_oLocal2 ||
+												( ( _nullableValue ) =>
+													_nullableValue === null ||
+													_nullableValue === void 0 )(
+													_tLocal2.return
+												)
+											) ) {
+												_tLocal2.return();
+											}
 										} finally {
-											if ( i ) {
-												throw a;
+											if ( _iLocal2 ) {
+												throw _aLocal2;
 											}
 										}
 									},
 								};
-							} )( n );
+							} )( _nLocal2 );
 						try {
-							for ( i.s(); ! ( o = i.n() ).done; ) {
-								var l = o.value;
-								if ( l.selector === e ) {
-									var c;
-									if ( r && 'style' === t && l[ t ] ) {
-										return null === ( c = l[ t ][ r ] ) ||
-											void 0 === c
+							for (
+								_iLocal.s();
+								! ( _oLocal = _iLocal.n() ).done;
+							) {
+								var _lLocal = _oLocal.value;
+								if ( _lLocal.selector === _eLocal2 ) {
+									var _cLocal;
+									if (
+										_rLocal &&
+										'style' === _tLocal &&
+										_lLocal[ _tLocal ]
+									) {
+										return null ===
+											( _cLocal =
+												_lLocal[ _tLocal ][
+													_rLocal
+												] ) || void 0 === _cLocal
 											? void 0
-											: c
+											: _cLocal
 													.replace( '!important', '' )
 													.trim();
 									}
-									if ( t in l ) {
-										return 'string' === typeof l[ t ]
-											? l[ t ]
+									if ( _tLocal in _lLocal ) {
+										return 'string' ===
+											typeof _lLocal[ _tLocal ]
+											? _lLocal[ _tLocal ]
 													.replace( '!important', '' )
 													.trim()
-											: l[ t ];
+											: _lLocal[ _tLocal ];
 									}
 								}
-								if ( l.children ) {
-									var u = a( l.children );
-									if ( u ) {
-										return u;
+								if ( _lLocal.children ) {
+									var _uLocal = _aLocal( _lLocal.children );
+									if ( _uLocal ) {
+										return _uLocal;
 									}
 								}
 							}
-						} catch ( e ) {
-							i.e( e );
+						} catch ( _eLocal7 ) {
+							_iLocal.e( _eLocal7 );
 						} finally {
-							i.f();
+							_iLocal.f();
 						}
 						return null;
 					}
 				};
-			return a(
-				null == l || null === ( n = l.contents ) || void 0 === n
+			return _aLocal(
+				l === null ||
+					l === void 0 ||
+					null === ( _nLocal = l.contents ) ||
+					void 0 === _nLocal
 					? void 0
-					: n.elements
+					: _nLocal.elements
 			);
 		}
 		var W = [
@@ -243,18 +270,18 @@ export function createCertificateControls( readRuntime ) {
 					],
 				},
 			],
-			z = function ( t, n, r ) {
-				var a = {
-					selector: t,
-					key: n,
-					value: r,
+			z = function ( _tLocal3, _nLocal4, _rLocal3 ) {
+				var _aLocal3 = {
+					selector: _tLocal3,
+					key: _nLocal4,
+					value: _rLocal3,
 				};
-				c.updateClassicData( a );
+				c.updateClassicData( _aLocal3 );
 			};
 		return (
 			( 0, ReactHooks.useEffect )( function () {
-				( r( D( 'instructor_signature_img', 'src' ) ),
-					i( D( 'director_signature_img', 'src' ) ) );
+				r( D( 'instructor_signature_img', 'src' ) );
+				i( D( 'director_signature_img', 'src' ) );
 			}, [] ),
 			(
 				<React.Fragment>
@@ -289,21 +316,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ s }
-											onValueChange={ function ( t ) {
-												( d( t ),
-													z(
-														'title_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal4
+											) {
+												d( _tLocal4 );
+												z(
+													'title_text',
+													'content',
+													_tLocal4
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal8
+											) {
 												return z(
 													'title_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal8,
 															' !important'
 														),
 													}
@@ -332,21 +363,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ p }
-											onValueChange={ function ( t ) {
-												( f( t ),
-													z(
-														'subtitle_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal5
+											) {
+												f( _tLocal5 );
+												z(
+													'subtitle_text',
+													'content',
+													_tLocal5
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal9
+											) {
 												return z(
 													'subtitle_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal9,
 															' !important'
 														),
 													}
@@ -375,21 +410,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ h }
-											onValueChange={ function ( t ) {
-												( _( t ),
-													z(
-														'description_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal6
+											) {
+												_( _tLocal6 );
+												z(
+													'description_text',
+													'content',
+													_tLocal6
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal0
+											) {
 												return z(
 													'description_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal0,
 															' !important'
 														),
 													}
@@ -418,13 +457,15 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ E }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal1
+											) {
 												return z(
 													'surname_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal1,
 															' !important'
 														),
 													}
@@ -454,21 +495,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ R }
-											onValueChange={ function ( t ) {
-												( x( t ),
-													z(
-														'recognition_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal7
+											) {
+												x( _tLocal7 );
+												z(
+													'recognition_text',
+													'content',
+													_tLocal7
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal10
+											) {
 												return z(
 													'recognition_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal10,
 															' !important'
 														),
 													}
@@ -497,21 +542,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ j }
-											onValueChange={ function ( t ) {
-												( A( t ),
-													z(
-														'instructor_signature_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal8
+											) {
+												A( _tLocal8 );
+												z(
+													'instructor_signature_text',
+													'content',
+													_tLocal8
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal11
+											) {
 												return z(
 													'instructor_signature_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal11,
 															' !important'
 														),
 													}
@@ -540,21 +589,25 @@ export function createCertificateControls( readRuntime ) {
 												'color'
 											) }
 											value={ P }
-											onValueChange={ function ( t ) {
-												( O( t ),
-													z(
-														'director_signature_text',
-														'content',
-														t
-													) );
+											onValueChange={ function (
+												_tLocal9
+											) {
+												O( _tLocal9 );
+												z(
+													'director_signature_text',
+													'content',
+													_tLocal9
+												);
 											} }
-											onColorChange={ function ( e ) {
+											onColorChange={ function (
+												_eLocal12
+											) {
 												return z(
 													'director_signature_text',
 													'style',
 													{
 														color: ''.concat(
-															e,
+															_eLocal12,
 															' !important'
 														),
 													}
@@ -588,24 +641,28 @@ export function createCertificateControls( readRuntime ) {
 												'ohmylms'
 											) }
 											onRemove={ function () {
-												( r( null ),
-													z(
-														'instructor_signature_img',
-														'src',
-														''
-													) );
+												r( null );
+												z(
+													'instructor_signature_img',
+													'src',
+													''
+												);
 											} }
-											onChange={ function ( e ) {
-												( r(
-													null == e ? void 0 : e.url
-												),
-													z(
-														'instructor_signature_img',
-														'src',
-														null == e
-															? void 0
-															: e.url
-													) );
+											onChange={ function ( _eLocal13 ) {
+												r(
+													_eLocal13 === null ||
+														_eLocal13 === void 0
+														? void 0
+														: _eLocal13.url
+												);
+												z(
+													'instructor_signature_img',
+													'src',
+													_eLocal13 === null ||
+														_eLocal13 === void 0
+														? void 0
+														: _eLocal13.url
+												);
 											} }
 										/>
 									) }
@@ -633,24 +690,28 @@ export function createCertificateControls( readRuntime ) {
 												'ohmylms'
 											) }
 											onRemove={ function () {
-												( i( null ),
-													z(
-														'director_signature_img',
-														'src',
-														''
-													) );
+												i( null );
+												z(
+													'director_signature_img',
+													'src',
+													''
+												);
 											} }
-											onChange={ function ( e ) {
-												( i(
-													null == e ? void 0 : e.url
-												),
-													z(
-														'director_signature_img',
-														'src',
-														null == e
-															? void 0
-															: e.url
-													) );
+											onChange={ function ( _eLocal14 ) {
+												i(
+													_eLocal14 === null ||
+														_eLocal14 === void 0
+														? void 0
+														: _eLocal14.url
+												);
+												z(
+													'director_signature_img',
+													'src',
+													_eLocal14 === null ||
+														_eLocal14 === void 0
+														? void 0
+														: _eLocal14.url
+												);
 											} }
 										/>
 									) }

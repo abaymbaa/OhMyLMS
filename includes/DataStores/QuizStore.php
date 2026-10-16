@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class QuizStore
+ * Handles CRUD operations for Quiz data.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\DataStores;
 
@@ -43,7 +49,7 @@ class QuizStore extends DataStore {
 
 		$quiz_id = wp_insert_post(
 			apply_filters(
-				'ohmylms_new_quiz_data', // Custom filter hook name
+				'ohmylms_new_quiz_data', // Custom filter hook name.
 				array(
 					'post_title'    => $quiz->get_name() ? $quiz->get_name() : __( 'Untitled', 'ohmylms' ),
 					'post_content'  => $quiz->get_description(),

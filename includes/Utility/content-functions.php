@@ -57,7 +57,7 @@ function ohmylms_get_pretty_content_permalink( $content_id ) {
 
 	$content_slug = $post->post_name;
 
-	// If permalinks are set to Plain, return a custom query URL
+	// If permalinks are set to Plain, return a custom query URL.
 	if ( ! get_option( 'permalink_structure' ) ) {
 		if ( 'ohmylms-lesson' === $post_type ) {
 			return home_url( '/?ohmylms-lesson=' . $content_slug );
@@ -179,7 +179,7 @@ function ohmylms_format_file_size( $size ) {
 
 function ohmylms_get_question_ans_by_question_id( $question_id ) {
 	global $wpdb;
-	$table_name = $wpdb->prefix . 'ohmylms_question_answers'; // Replace 'your_table_name' with the actual table name
+	$table_name = $wpdb->prefix . 'ohmylms_question_answers'; // Replace 'your_table_name' with the actual table name.
 
 	$results = $wpdb->get_results(
 		$wpdb->prepare(

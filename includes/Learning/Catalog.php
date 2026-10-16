@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Content Hub catalog. A grade, exam or subject (MATH0580, Digital SAT) is an ordinary course whose
+ * learning program says which chapters it has, which skills sit in each chapter, and which lessons,
+ * quizzes and assessments are attached to a chapter or to chosen skills.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Skills\Taxonomy;
@@ -51,7 +58,7 @@ final class Catalog {
 		$chapters = array();
 		foreach ( $ids as $id ) {
 			$post = get_post( (int) $id );
-			if ( $post && $post->post_type === OHMYLMS_CHAPTER_CPT && $post->post_status !== 'trash' ) {
+			if ( $post && $post->post_type === OHMYLMS_CHAPTER_CPT && 'trash' !== $post->post_status ) {
 				$chapters[] = array(
 					'id'   => (int) $id,
 					'name' => self::title( $id ),
@@ -67,7 +74,7 @@ final class Catalog {
 	public static function add_chapter( $course_id, $name ) {
 		global $wpdb;
 		$name = trim( wp_strip_all_tags( (string) $name ) );
-		if ( $name === '' || mb_strlen( $name ) > 200 ) {
+		if ( '' === $name || mb_strlen( $name ) > 200 ) {
 			return self::error( __( 'Give the chapter a name of up to 200 characters.', 'ohmylms' ) ); }
 		$id = wp_insert_post(
 			array(
@@ -102,7 +109,7 @@ final class Catalog {
 		if ( ! self::belongs( $course_id, $chapter_id ) ) {
 			return self::error( __( 'The chapter does not belong to this course.', 'ohmylms' ), 404 ); }
 		$name = trim( wp_strip_all_tags( (string) $name ) );
-		if ( $name === '' || mb_strlen( $name ) > 200 ) {
+		if ( '' === $name || mb_strlen( $name ) > 200 ) {
 			return self::error( __( 'Give the chapter a name of up to 200 characters.', 'ohmylms' ) ); }
 		$result = wp_update_post(
 			array(
@@ -208,7 +215,7 @@ final class Catalog {
 		$attachments = array_filter(
 			$draft['items'],
 			static function ( $item ) {
-				return $item['type'] !== 'practice';
+				return 'practice' !== $item['type'];
 			}
 		);
 		return array(
@@ -244,22 +251,22 @@ final class Catalog {
 		}
 		$attachments = array();
 		foreach ( $draft['items'] as $item ) {
-			if ( $item['type'] === 'practice' ) {
+			if ( 'practice' === $item['type'] ) {
 				continue; }
 			$post          = get_post( (int) $item['content_id'] );
-			$valid         = $post && $post->post_type === self::post_type( $item['type'] ) && $post->post_status !== 'trash';
+			$valid         = $post && $post->post_type === self::post_type( $item['type'] ) && 'trash' !== $post->post_status;
 			$attachments[] = array(
-				'id'           => $item['id'],
-				'type'         => $item['type'],
-				'content_id'   => (int) $item['content_id'],
+				'id'                => $item['id'],
+				'type'              => $item['type'],
+				'content_id'        => (int) $item['content_id'],
 				'native_editor_url' => $valid && 'lesson' === $item['type'] ? NativeLessonEditor::edit_url( $post->ID ) : '',
-				'title'        => $valid ? self::title( $post->ID ) : __( 'Unavailable content', 'ohmylms' ),
-				'status'       => $valid ? $post->post_status : 'missing',
-				'required'     => ! empty( $item['required'] ),
-				'pass_percent' => isset( $item['pass_percent'] ) ? (float) $item['pass_percent'] : null,
-				'chapter_id'   => (int) ( $item['chapter_id'] ?? 0 ),
-				'skill_ids'    => array_map( 'intval', (array) ( $item['skill_ids'] ?? array() ) ),
-				'also_in'      => $valid ? self::also_in( $post->ID, $course_id ) : array(),
+				'title'             => $valid ? self::title( $post->ID ) : __( 'Unavailable content', 'ohmylms' ),
+				'status'            => $valid ? $post->post_status : 'missing',
+				'required'          => ! empty( $item['required'] ),
+				'pass_percent'      => isset( $item['pass_percent'] ) ? (float) $item['pass_percent'] : null,
+				'chapter_id'        => (int) ( $item['chapter_id'] ?? 0 ),
+				'skill_ids'         => array_map( 'intval', (array) ( $item['skill_ids'] ?? array() ) ),
+				'also_in'           => $valid ? self::also_in( $post->ID, $course_id ) : array(),
 			);
 		}
 		$published = $editor['published'];
@@ -301,7 +308,7 @@ final class Catalog {
 			array_filter(
 				$draft['items'],
 				static function ( $item ) use ( $kept ) {
-					return $item['type'] === 'practice' && in_array( (int) $item['content_id'], $kept, true );
+					return 'practice' === $item['type'] && in_array( (int) $item['content_id'], $kept, true );
 				}
 			)
 		);
@@ -314,7 +321,7 @@ final class Catalog {
 				array_filter(
 					$draft['items'],
 					static function ( $item ) {
-						return $item['type'] !== 'practice';
+						return 'practice' !== $item['type'];
 					}
 				)
 			);
@@ -380,9 +387,9 @@ final class Catalog {
 		$placed = array();
 		if ( $course_id ) {
 			$draft  = self::draft( $course_id );
-			$placed = $type === 'skill' ? array_map( 'intval', array_column( $draft['outcomes'], 'term_id' ) ) : array_map( 'intval', array_column( $draft['items'], 'content_id' ) );
+			$placed = 'skill' === $type ? array_map( 'intval', array_column( $draft['outcomes'], 'term_id' ) ) : array_map( 'intval', array_column( $draft['items'], 'content_id' ) );
 		}
-		if ( $type === 'skill' ) {
+		if ( 'skill' === $type ) {
 			$terms = get_terms(
 				array(
 					'taxonomy'   => Taxonomy::NAME,
@@ -517,14 +524,14 @@ final class Catalog {
 			$post    = get_post( $id );
 			$lesson  = ohmylms_get_lesson( $id );
 			$items[] = array(
-				'id'       => $id,
-				'title'    => self::title( $id ),
-				'status'   => $post->post_status,
-				'type'     => $lesson ? $lesson->get_type() : 'text',
+				'id'                => $id,
+				'title'             => self::title( $id ),
+				'status'            => $post->post_status,
+				'type'              => $lesson ? $lesson->get_type() : 'text',
 				'native_editor_url' => NativeLessonEditor::edit_url( $id ),
-				'modified' => get_post_modified_time( 'c', true, $post ),
-				'skills'   => $skills[ $id ] ?? array(),
-				'courses'  => array_map(
+				'modified'          => get_post_modified_time( 'c', true, $post ),
+				'skills'            => $skills[ $id ] ?? array(),
+				'courses'           => array_map(
 					static function ( $course ) {
 						return array(
 							'id'    => (int) $course,

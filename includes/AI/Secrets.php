@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Keeps a third-party API key unreadable in the database.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI;
 
 defined( 'ABSPATH' ) || exit;
@@ -22,7 +27,7 @@ final class Secrets {
 	/** Sealed, printable text for $secret. */
 	public static function seal( $secret ) {
 		$secret = (string) $secret;
-		if ( $secret === '' ) {
+		if ( '' === $secret ) {
 			return ''; }
 		$nonce = random_bytes( SODIUM_CRYPTO_SECRETBOX_NONCEBYTES );
 		return self::PREFIX . base64_encode( $nonce . sodium_crypto_secretbox( $secret, $nonce, self::key() ) );
@@ -34,10 +39,10 @@ final class Secrets {
 		if ( strpos( $sealed, self::PREFIX ) !== 0 ) {
 			return ''; }
 		$raw = base64_decode( substr( $sealed, strlen( self::PREFIX ) ), true );
-		if ( $raw === false || strlen( $raw ) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
+		if ( false === $raw || strlen( $raw ) <= SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ) {
 			return ''; }
 		$plain = sodium_crypto_secretbox_open( substr( $raw, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), substr( $raw, 0, SODIUM_CRYPTO_SECRETBOX_NONCEBYTES ), self::key() );
-		return $plain === false ? '' : $plain;
+		return false === $plain ? '' : $plain;
 	}
 
 	/** "…a1b2": enough to recognise a key, never enough to use it. */

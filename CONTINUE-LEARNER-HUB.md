@@ -9,6 +9,13 @@ ledger; where an older note says "next step is P1/P2/P3" or "no parent/child
 implementation exists", this section wins.
 
 Latest implementation and verification: [release readiness checkpoint](docs/learner-experience/RELEASE-READINESS.md).
+The user has now requested repository-wide lint cleanup. This is **in progress**, not complete.
+Work is in the live checkout; see `docs/CODING-STANDARDS.md` for the reviewed class-path,
+public-selector and generated-stylesheet boundaries. The first cleanup test runs passed all
+425 JS tests (one existing skip), all 236 component contracts and all 1,049 assessment checks.
+438 changed PHP files passed syntax checks before the subsequent documentation-only pass.
+The build passed with its two existing size warnings. Final lint totals and acceptance checks
+must be rerun after the remaining fixes; the older debt totals below are historical snapshots.
 The requested five-part pass added scoped teacher/parent reporting, repaired the targeted checks,
 verified the disposable site, refreshed/compiled Mongolian catalogs and built reproducible assets.
 Full repository lint, translation completion and manual acceptance still have the explicit gates

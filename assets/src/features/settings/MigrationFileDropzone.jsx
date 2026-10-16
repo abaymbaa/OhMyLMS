@@ -20,29 +20,37 @@ export function createMigrationFileDropzone( readRuntime ) {
 			u = l[ 1 ],
 			s = function ( e ) {
 				if ( e ) {
-					var n =
+					var _nLocal =
 							[
 								'application/zip',
 								'application/x-zip-compressed',
 								'multipart/x-zip',
 							].includes( e.type ) ||
 							e.name.toLowerCase().endsWith( '.zip' ),
-						r =
+						_rLocal =
 							'application/json' === e.type ||
 							e.name.toLowerCase().endsWith( '.json' );
-					( n || r ) &&
-						( i( e.name ), t && t( e, n ? 'scorm' : 'json' ) );
+					if ( _nLocal || _rLocal ) {
+						{
+							i( e.name );
+							if ( t ) {
+								t( e, _nLocal ? 'scorm' : 'json' );
+							}
+						}
+					}
 				}
 			};
 		return (
 			<div
 				onDrop={ function ( e ) {
-					( e.preventDefault(), u( ! 1 ) );
-					var t = e.dataTransfer.files[ 0 ];
-					s( t );
+					e.preventDefault();
+					u( ! 1 );
+					var _tLocal = e.dataTransfer.files[ 0 ];
+					s( _tLocal );
 				} }
 				onDragOver={ function ( e ) {
-					( e.preventDefault(), u( ! 0 ) );
+					e.preventDefault();
+					u( ! 0 );
 				} }
 				onDragLeave={ function () {
 					return u( ! 1 );
@@ -71,8 +79,8 @@ export function createMigrationFileDropzone( readRuntime ) {
 					<Controls.FormFileUploadWP
 						accept={ r ? '.zip,.json' : '.zip' }
 						onChange={ function ( e ) {
-							var t = e.target.files[ 0 ];
-							s( t );
+							var _tLocal2 = e.target.files[ 0 ];
+							s( _tLocal2 );
 						} }
 						label={
 							<Controls.FlexWP

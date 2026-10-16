@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\DataStores;
 
@@ -455,7 +455,7 @@ class StudentStore extends DataStore {
 		$total_point      = $this->get_course_total_points( $student, $course_id );
 		$duration         = $course->get_duration();
 
-		if ( $completed_points == 0 ) {
+		if ( 0 == $completed_points ) {
 			$text_time = '';
 			if ( ! empty( $duration['hour'] ) ) {
 				$text_time .= $duration['hour'] . ' hr ';
@@ -475,12 +475,12 @@ class StudentStore extends DataStore {
 			return $text_time . 'left';
 		}
 
-		// Default missing values to 0
+		// Default missing values to 0.
 		$hours = isset( $duration['hour'] ) ? $duration['hour'] : 0;
 		$mins  = isset( $duration['min'] ) ? $duration['min'] : 0;
 		$secs  = isset( $duration['sec'] ) ? $duration['sec'] : 0;
 
-		// Convert duration to total hours
+		// Convert duration to total hours.
 		$total_hours = $hours + ( $mins / 60 ) + ( $secs / 3600 );
 		// $hours            = $duration['hour'] + ( $duration['min'] / 60 ) + ( $duration['sec'] / 3600 );
 		if ( ! $total_point || 0 == $total_point ) {
@@ -500,15 +500,15 @@ class StudentStore extends DataStore {
 	 * @return string The resume URL for the course.
 	 */
 	public function get_course_resume_url( $student, $course_id ) {
-		// Get all the lessons of the course
+		// Get all the lessons of the course.
 		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
-			return '#'; // Return fallback URL if course doesn't exist
+			return '#'; // Return fallback URL if course doesn't exist.
 		}
 		$completion_rate = $student->get_course_progress_percentage( $course_id );
 
 		if ( 100 <= $completion_rate ) {
-			return $course->get_course_first_lesson_url(); // Return certificate URL if course is completed
+			return $course->get_course_first_lesson_url(); // Return certificate URL if course is completed.
 		}
 
 		$chapters = $course->get_chapters();
@@ -532,14 +532,14 @@ class StudentStore extends DataStore {
 						if ( isset( $lesson_array['type'] ) && 'quiz' === $lesson_array['type'] ) {
 							$quiz = ohmylms_get_quiz( $lesson_array['id'] );
 							if ( $quiz && ! $student->maybe_completed( $quiz->get_id() ) ) {
-								return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz
+								return ohmylms_get_pretty_content_permalink( $quiz->get_id() ); // Return the URL of the first incomplete quiz.
 							}
 						}
 
 						if ( isset( $lesson_array['type'] ) && 'assignment' === $lesson_array['type'] ) {
 							$assignment = ohmylms_get_assignment( $lesson_array['id'] );
 							if ( $assignment && ! $student->maybe_completed( $assignment->get_id() ) ) {
-								return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment
+								return ohmylms_get_pretty_content_permalink( $assignment->get_id() ); // Return the URL of the first incomplete assignment.
 							}
 						}
 
@@ -548,7 +548,7 @@ class StudentStore extends DataStore {
 							continue;
 						}
 						if ( ! $student->maybe_completed( $lesson->get_id() ) ) {
-							return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson
+							return ohmylms_get_pretty_content_permalink( $lesson->get_id() ); // Return the URL of the first incomplete lesson.
 						}
 					}
 				}
@@ -565,33 +565,33 @@ class StudentStore extends DataStore {
 	 */
 	public function get_course_certificate_url( $student, $course_id ) {
 		return '#';
-		// Retrieve course and certificate
+		// Retrieve course and certificate.
 		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
-			return '#'; // Return fallback URL if course doesn't exist
+			return '#'; // Return fallback URL if course doesn't exist.
 		}
 
 		$certificate = $course->get_certificate();
 		if ( ! $certificate ) {
-			return '#'; // Return fallback URL if certificate doesn't exist
+			return '#'; // Return fallback URL if certificate doesn't exist.
 		}
 
 		$certificate_id = $certificate->get_id();
 
-		// Initialize Dompdf options
+		// Initialize Dompdf options.
 		$options = new \Dompdf\Options();
-		$options->set( 'isRemoteEnabled', true ); // Allow external resources like images
-		$options->set( 'isHtml5ParserEnabled', true ); // Enable HTML5 parsing
-		$options->set( 'isPhpEnabled', true ); // Enable PHP if needed
-		$options->set( 'dpi', 98 ); // Adjust DPI to match design resolution
+		$options->set( 'isRemoteEnabled', true ); // Allow external resources like images.
+		$options->set( 'isHtml5ParserEnabled', true ); // Enable HTML5 parsing.
+		$options->set( 'isPhpEnabled', true ); // Enable PHP if needed.
+		$options->set( 'dpi', 98 ); // Adjust DPI to match design resolution.
 
-		// Get certificate HTML contents
+		// Get certificate HTML contents.
 		$data = $certificate->get_html_contents();
 		if ( empty( $data ) ) {
-			return '#'; // Return fallback URL if certificate contents are empty
+			return '#'; // Return fallback URL if certificate contents are empty.
 		}
 
-		// Prepare HTML structure for Dompdf
+		// Prepare HTML structure for Dompdf.
 		$html  = '<html><head><style>
 			.container {
 				margin : 10px
@@ -604,38 +604,38 @@ class StudentStore extends DataStore {
 
 		// $html = ob_get_clean();
 
-		// Initialize Dompdf
+		// Initialize Dompdf.
 		$dompdf = new \Dompdf\Dompdf( $options );
 		$dompdf->loadHtml( $html );
 
 		// Set paper size and orientation
-		// $dompdf->setPaper([0, 0, 1224, 692], 'landscape'); // Set custom size to match the certificate
+		// $dompdf->setPaper([0, 0, 1224, 692], 'landscape'); // Set custom size to match the certificate.
 		$dompdf->setPaper( array( 0, 0, 2100, 2970 ), 'landscape' );
 
-		// Render the PDF
+		// Render the PDF.
 		$dompdf->render();
 
-		// Generate PDF file path
+		// Generate PDF file path.
 		$upload_dir = wp_upload_dir();
 		$pdf_dir    = $upload_dir['basedir'] . '/ohmylms/certificates/';
 
 		if ( ! file_exists( $pdf_dir ) ) {
-			// Create directory if it doesn't exist
+			// Create directory if it doesn't exist.
 			if ( ! wp_mkdir_p( $pdf_dir ) ) {
-				return '#'; // Return fallback URL if directory creation fails
+				return '#'; // Return fallback URL if directory creation fails.
 			}
 		}
 
-		// Define the file name and path
+		// Define the file name and path.
 		$file_name     = 'certificate_' . $certificate_id . '.pdf';
 		$pdf_file_path = $pdf_dir . $file_name;
 
-		// Save the PDF to the file system
+		// Save the PDF to the file system.
 		if ( file_put_contents( $pdf_file_path, $dompdf->output() ) === false ) {
-			return '#'; // Return fallback URL if saving the file fails
+			return '#'; // Return fallback URL if saving the file fails.
 		}
 
-		// Return the URL of the generated PDF
+		// Return the URL of the generated PDF.
 		return $upload_dir['baseurl'] . '/ohmylms/certificates/' . $file_name;
 	}
 
@@ -694,7 +694,7 @@ class StudentStore extends DataStore {
 	public function maybe_enrolled( $student, $course_id ) {
 		$cache_key = $student->get_id() . '_' . $course_id;
 
-		// Check if result is already cached
+		// Check if result is already cached.
 		if ( array_key_exists( $cache_key, self::$enrollment_cache ) ) {
 			return self::$enrollment_cache[ $cache_key ];
 		}
@@ -705,7 +705,7 @@ class StudentStore extends DataStore {
 		$course     = $wpdb->get_row( $query, ARRAY_A );
 		$result     = $course ? true : false;
 
-		// Cache the result
+		// Cache the result.
 		self::$enrollment_cache[ $cache_key ] = $result;
 
 		return $result;
@@ -743,7 +743,7 @@ class StudentStore extends DataStore {
 			return null;
 		}
 
-		// Check if the lesson is already completed
+		// Check if the lesson is already completed.
 		$existing_progress = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE enrollment_id = %d AND content_id = %d AND status = %s", $enrollment_id, $lesson_id, 'completed' ) );
 
 		if ( ! $existing_progress ) {
@@ -772,7 +772,7 @@ class StudentStore extends DataStore {
 
 			return $progress_id;
 		}
-		return null; // or any other value indicating no new insert was made
+		return null; // or any other value indicating no new insert was made.
 	}
 
 	public function maybe_completed( $student, $lesson_id ) {
@@ -920,7 +920,7 @@ class StudentStore extends DataStore {
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 			$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
-			if ( $enroll_data['status'] === 'enrolled' && $enroll_data['progress'] === 'running' ) {
+			if ( 'enrolled' === $enroll_data['status'] && 'running' === $enroll_data['progress'] ) {
 				$wpdb->update(
 					$table_name,
 					array(
@@ -970,17 +970,17 @@ class StudentStore extends DataStore {
 	public function delete_enrollment( $student_id, $order_id ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		// Delete the row
+		// Delete the row.
 		$delete_result = $wpdb->delete(
 			$table_name,
 			array(
 				'user_id'  => $student_id,
 				'order_id' => $order_id,
 			),
-			array( '%d', '%d' ) // Specify the format of the data (integer in this case)
+			array( '%d', '%d' ) // Specify the format of the data (integer in this case).
 		);
 
-		// Check if the deletion was successful
+		// Check if the deletion was successful.
 		if ( $delete_result ) {
 			return true;
 		} else {
@@ -992,19 +992,19 @@ class StudentStore extends DataStore {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 
-		// Update the status
+		// Update the status.
 		$update_result = $wpdb->update(
 			$table_name,
-			array( 'status' => $new_status ), // Data to update
+			array( 'status' => $new_status ), // Data to update.
 			array(
 				'user_id'  => $student_id,
 				'order_id' => $order_id,
-			), // WHERE conditions
-			array( '%s' ), // Format for updated data
-			array( '%d', '%d' ) // Format for WHERE conditions
+			), // WHERE conditions.
+			array( '%s' ), // Format for updated data.
+			array( '%d', '%d' ) // Format for WHERE conditions.
 		);
 
-		// Check if the update was successful
+		// Check if the update was successful.
 		if ( false !== $update_result ) {
 			return true;
 		} else {
@@ -1021,19 +1021,19 @@ class StudentStore extends DataStore {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
-		// Update the status
+		// Update the status.
 		$update_result = $wpdb->update(
 			$table_name,
-			array( 'status' => $new_status ), // Data to update
+			array( 'status' => $new_status ), // Data to update.
 			array(
 				'user_id'  => $student_id,
 				'order_id' => $order_id,
-			), // WHERE conditions
-			array( '%s' ), // Format for updated data
-			array( '%d', '%d' ) // Format for WHERE conditions
+			), // WHERE conditions.
+			array( '%s' ), // Format for updated data.
+			array( '%d', '%d' ) // Format for WHERE conditions.
 		);
 
-		// Check if the update was successful
+		// Check if the update was successful.
 		if ( false !== $update_result ) {
 			return true;
 		} else {
@@ -1059,7 +1059,7 @@ class StudentStore extends DataStore {
 
 		$table_name = "{$wpdb->prefix}ohmylms_assignment_attempts";
 
-		// Prepare and execute query
+		// Prepare and execute query.
 		$query   = $wpdb->prepare(
 			"SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d ORDER BY assignment_id",
 			$student->get_id(),
@@ -1067,7 +1067,7 @@ class StudentStore extends DataStore {
 		);
 		$results = $wpdb->get_results( $query, ARRAY_A );
 
-		// Return early if no results found
+		// Return early if no results found.
 		if ( ! $results ) {
 			return array();
 		}
@@ -1077,7 +1077,7 @@ class StudentStore extends DataStore {
 		foreach ( $results as $attempt ) {
 			$assignment_id = $attempt['assignment_id'];
 
-			// Initialize assignment entry if not set
+			// Initialize assignment entry if not set.
 			if ( ! isset( $grouped_attempts[ $assignment_id ] ) ) {
 				$grouped_attempts[ $assignment_id ] = array(
 					'assignment'  => ohmylms_get_assignment( $assignment_id ),
@@ -1085,12 +1085,12 @@ class StudentStore extends DataStore {
 				);
 			}
 
-			// Unserialize files if present
+			// Unserialize files if present.
 			if ( ! empty( $attempt['files'] ) ) {
 				$attempt['files'] = maybe_unserialize( $attempt['files'] );
 			}
 
-			// Append attempt to submissions
+			// Append attempt to submissions.
 			$grouped_attempts[ $assignment_id ]['submissions'][] = $attempt;
 		}
 
@@ -1099,24 +1099,24 @@ class StudentStore extends DataStore {
 
 
 	public function get_assignment_remaining_time( &$student, $content_id ) {
-		$content_id = absint( $content_id ); // Ensure content_id is an integer
-		$student_id = absint( $student->get_id() ); // Ensure student ID is an integer
+		$content_id = absint( $content_id ); // Ensure content_id is an integer.
+		$student_id = absint( $student->get_id() ); // Ensure student ID is an integer.
 
 		$existing_deadline = get_option( "_ohmylms_deadline_{$student_id}_{$content_id}_" );
 
 		if ( empty( $existing_deadline ) ) {
-			return false; // No deadline set, return 0 minutes
+			return false; // No deadline set, return 0 minutes.
 		}
 
-		$current_time       = current_time( 'timestamp' ); // Get current WordPress timestamp
-		$deadline_timestamp = strtotime( $existing_deadline ); // Convert deadline to timestamp
+		$current_time       = current_time( 'timestamp' ); // Get current WordPress timestamp.
+		$deadline_timestamp = strtotime( $existing_deadline ); // Convert deadline to timestamp.
 
 		if ( ! $deadline_timestamp || $deadline_timestamp <= $current_time ) {
-			return false; // If invalid timestamp or deadline has passed, return 0
+			return false; // If invalid timestamp or deadline has passed, return 0.
 		}
 
 		$remaining_seconds = $deadline_timestamp - $current_time;
-		return floor( $remaining_seconds / 60 ); // Convert seconds to minutes
+		return floor( $remaining_seconds / 60 ); // Convert seconds to minutes.
 	}
 
 

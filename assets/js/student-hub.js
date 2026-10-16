@@ -2,17 +2,6 @@
 ( () => {
 	const hub = document.querySelector( '.ohmylms-student-hub' );
 	if ( hub ) {
-		const openUnit = () => {
-			const hash = window.location.hash;
-			if ( /^#hub-unit-\d+$/.test( hash ) ) {
-				const unit = hub.querySelector( hash );
-				if ( unit?.matches( 'details.oml-hub-unit' ) ) {
-					unit.open = true;
-				}
-			}
-		};
-		openUnit();
-		window.addEventListener( 'hashchange', openUnit );
 		// Remember section names only; course, class and invoice IDs stay out of storage.
 		if ( hub.dataset.role === 'learner' ) {
 			const destination = new URL( window.location.href );
@@ -234,21 +223,6 @@
 			attributeFilter: [ 'data-dashboard-theme' ],
 		} );
 	}
-	document
-		.querySelectorAll( '[data-hub-expand-all]' )
-		.forEach( ( button ) => {
-			button.addEventListener( 'click', () => {
-				const units = document.querySelectorAll( '.oml-hub-unit' );
-				const open = button.dataset.open !== 'true';
-				units.forEach( ( unit ) => {
-					unit.open = open;
-				} );
-				button.dataset.open = open ? 'true' : 'false';
-				button.textContent = open
-					? button.dataset.collapse
-					: button.dataset.expand;
-			} );
-		} );
 	document.querySelectorAll( '[data-preview-size]' ).forEach( ( button ) => {
 		button.addEventListener( 'click', () => {
 			const preview = document.querySelector( '[data-hub-preview]' );

@@ -1,7 +1,6 @@
 import { createElement } from '@wordpress/element';
 import { ToggleControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
 export function FeatureSwitch( {
 	settings,
 	setSettings,
@@ -21,8 +20,11 @@ export function FeatureSwitch( {
 					settings.feature_enabled === undefined ||
 					Boolean( settings.feature_enabled )
 				}
-				onChange={ ( feature_enabled ) =>
-					setSettings( { ...settings, feature_enabled } )
+				onChange={ ( _featureEnabled ) =>
+					setSettings( {
+						...settings,
+						feature_enabled: _featureEnabled,
+					} )
 				}
 			/>
 		</section>

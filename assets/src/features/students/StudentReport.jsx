@@ -25,21 +25,21 @@ export function createStudentReport( readRuntime ) {
 		} = readRuntime();
 		var e = ( 0, Router.g )().id,
 			t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = ( function ( e, t ) {
+			n = ( function ( _eLocal, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal2 ) {
+						if ( Array.isArray( _eLocal2 ) ) {
+							return _eLocal2;
 						}
-					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					} )( _eLocal ) ||
+					( function ( _eLocal3, _tLocal2 ) {
+						var _nLocal =
+							_eLocal3 === null || _eLocal3 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
 							var r,
 								a,
 								o,
@@ -49,29 +49,37 @@ export function createStudentReport( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( _nLocal =
+										_nLocal.call( _eLocal3 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
 									c = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( r = o.call( _nLocal ) )
+											.done ) &&
+										( l.push( r.value ),
+										l.length !== _tLocal2 );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal4 ) {
+								u = ! 0;
+								a = _eLocal4;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( i = _nLocal.return() ),
 										Object( i ) !== i )
 									) {
 										return;
@@ -84,28 +92,39 @@ export function createStudentReport( readRuntime ) {
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return GZ( e, t );
+					} )( _eLocal, _tLocal ) ||
+					( function ( _eLocal5, _tLocal3 ) {
+						if ( _eLocal5 ) {
+							if ( 'string' === typeof _eLocal5 ) {
+								return GZ( _eLocal5, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal5 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? GZ( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal5.constructor &&
+									( _nLocal2 = _eLocal5.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal5 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return GZ( _eLocal5, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( _eLocal, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -115,47 +134,48 @@ export function createStudentReport( readRuntime ) {
 			} )( ( 0, ReactHooks.useState )( ! 0 ), 2 ),
 			r = n[ 0 ],
 			a = n[ 1 ],
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getStudent();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal6 ) {
+				return _eLocal6( StoreModule.default ).getStudent();
 			}, [] );
 		HG( 'ohmylms', 'students' );
 		var i = ( 0, ReactHooks.useCallback )(
 			HZ(
-				BZ().m( function n() {
-					var r;
+				BZ().m( function _nLocal3() {
+					var _rLocal;
 					return BZ().w(
-						function ( n ) {
+						function ( _nLocal4 ) {
 							for (;;) {
-								switch ( ( n.p = n.n ) ) {
+								switch ( ( _nLocal4.p = _nLocal4.n ) ) {
 									case 0:
 										return (
 											a( ! 0 ),
-											( n.p = 1 ),
-											( n.n = 2 ),
+											( _nLocal4.p = 1 ),
+											( _nLocal4.n = 2 ),
 											t.fetchSingleStudent( e )
 										 );
 									case 2:
-										n.n = 4;
+										_nLocal4.n = 4;
 										break;
 									case 3:
-										( ( n.p = 3 ),
-											( r = n.v ),
-											console.error(
-												'Error fetching student data:',
-												r
-											) );
+										_nLocal4.p = 3;
+										_rLocal = _nLocal4.v;
+										console.error(
+											'Error fetching student data:',
+											_rLocal
+										);
+									// Falls through to the shared async state cleanup.
 									case 4:
 										return (
-											( n.p = 4 ),
+											( _nLocal4.p = 4 ),
 											a( ! 1 ),
-											n.f( 4 )
+											_nLocal4.f( 4 )
 										 );
 									case 5:
-										return n.a( 2 );
+										return _nLocal4.a( 2 );
 								}
 							}
 						},
-						n,
+						_nLocal3,
 						null,
 						[ [ 1, 3, 4, 5 ] ]
 					);
@@ -166,7 +186,9 @@ export function createStudentReport( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					e && i();
+					if ( e ) {
+						i();
+					}
 				},
 				[ e ]
 			),
@@ -238,12 +260,14 @@ export function createStudentReport( readRuntime ) {
 																) }
 															</Controls.TextWP>
 															<Controls.TextWP>
-																{ null == o
+																{ o === null ||
+																o === void 0
 																	? void 0
 																	: o.student_email }
 															</Controls.TextWP>
 														</Controls.BadgeWP>
-														{ ( null == o
+														{ ( o === null ||
+														o === void 0
 															? void 0
 															: o.student_phone ) && (
 															<Controls.BadgeWP
@@ -269,7 +293,8 @@ export function createStudentReport( readRuntime ) {
 																</Controls.TextWP>
 															</Controls.BadgeWP>
 														) }
-														{ ( null == o
+														{ ( o === null ||
+														o === void 0
 															? void 0
 															: o.student_whatsapp ) && (
 															<Controls.BadgeWP
@@ -295,7 +320,8 @@ export function createStudentReport( readRuntime ) {
 																</Controls.TextWP>
 															</Controls.BadgeWP>
 														) }
-														{ ( null == o
+														{ ( o === null ||
+														o === void 0
 															? void 0
 															: o.student_timezone ) && (
 															<Controls.BadgeWP
@@ -337,7 +363,10 @@ export function createStudentReport( readRuntime ) {
 															</Controls.TextWP>
 															<Controls.TextWP>
 																{ sn()(
-																	null == o
+																	o ===
+																		null ||
+																		o ===
+																			void 0
 																		? void 0
 																		: o.enrollment_date
 																).format(
@@ -386,8 +415,10 @@ export function createStudentReport( readRuntime ) {
 																				'ohmylms'
 																			),
 																			cardNumber:
-																				( null ==
-																				o
+																				( o ===
+																					null ||
+																				o ===
+																					void 0
 																					? void 0
 																					: o.enrolled_courses ) ||
 																				'0',
@@ -412,8 +443,10 @@ export function createStudentReport( readRuntime ) {
 																				'ohmylms'
 																			),
 																			cardNumber:
-																				( null ==
-																				o
+																				( o ===
+																					null ||
+																				o ===
+																					void 0
 																					? void 0
 																					: o.in_progress_courses ) ||
 																				'0',
@@ -437,8 +470,10 @@ export function createStudentReport( readRuntime ) {
 																				'ohmylms'
 																			),
 																			cardNumber:
-																				( null ==
-																				o
+																				( o ===
+																					null ||
+																				o ===
+																					void 0
 																					? void 0
 																					: o.completed_courses ) ||
 																				'0',
@@ -462,8 +497,10 @@ export function createStudentReport( readRuntime ) {
 																				'ohmylms'
 																			),
 																			cardNumber:
-																				( null ==
-																				o
+																				( o ===
+																					null ||
+																				o ===
+																					void 0
 																					? void 0
 																					: o.total_membership ) ||
 																				'0',

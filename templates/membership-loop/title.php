@@ -9,10 +9,10 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 global $membership;
-if ( $membership == null ) {
+if ( null == $membership ) {
 	return;
 }
 ?>

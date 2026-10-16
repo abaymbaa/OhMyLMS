@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Shared manual-review writer for both legacy report endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Quiz;
 
 use OhMyLMS\Assessment\AttemptItems;
@@ -83,7 +88,7 @@ final class Review {
 								throw new \RuntimeException( 'Answer update failed' );
 							}
 							$differs = $before !== (float) $row['achive_mark'] || ! $was_reviewed;
-							if ( $item && $part_marks !== null ) {
+							if ( $item && null !== $part_marks ) {
 								$max      = (float) $row['question_marks'];
 								$fraction = $max > 0 ? min( 1, (float) $row['achive_mark'] / $max ) : 0;
 								$wpdb->update(
@@ -100,7 +105,7 @@ final class Review {
 								$weights = \OhMyLMS\Assessment\Structured::weights( json_decode( VersionPublisher::version( $item['version_id'] )['settings'], true ) ?: array() );
 								foreach ( $part_marks as $part_id => $awarded ) {
 									$current = self::current_part( $attempt_id, (int) $item['id'], $part_id );
-									if ( $current && abs( (float) $current['awarded'] - $awarded ) < 0.00005 && $current['grader'] === 'manual' ) {
+									if ( $current && abs( (float) $current['awarded'] - $awarded ) < 0.00005 && 'manual' === $current['grader'] ) {
 										continue;
 									}
 									$part_max  = $max * ( $weights[ $part_id ] ?? 0 );
@@ -131,7 +136,7 @@ final class Review {
 										'grade_event_id' => $event_id,
 									);
 								}
-							} elseif ( $item && ( $differs || $item['status'] === 'needs-review' ) ) {
+							} elseif ( $item && ( $differs || 'needs-review' === $item['status'] ) ) {
 								$max      = (float) $row['question_marks'];
 								$fraction = $max > 0 ? min( 1, (float) $row['achive_mark'] / $max ) : 0;
 								$wpdb->update(
@@ -248,7 +253,7 @@ final class Review {
 					$student->complete_lesson( $quiz_id, $course_id );
 					do_action( 'ohmylms_lesson_completed', $quiz_id, $course_id, $student_id );
 				}
-				if ( ! \OhMyLMS\Learning\CourseProgram::managed( $student_id, $course_id ) && (int) $before !== 100 && (int) $student->get_over_all_completion_rate( $course_id ) === 100 ) {
+				if ( ! \OhMyLMS\Learning\CourseProgram::managed( $student_id, $course_id ) && 100 !== (int) $before && (int) $student->get_over_all_completion_rate( $course_id ) === 100 ) {
 					$order = (int) $wpdb->get_var( $wpdb->prepare( "SELECT order_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d", $student_id, $course_id ) );
 					do_action( 'ohmylms_course_completed', $student_id, $course_id, $order );
 				}
@@ -287,7 +292,7 @@ final class Review {
 				if ( (float) $value > $max + 0.00005 ) {
 					return new \WP_Error( 'quiz_marks', 'Part marks exceed the part maximum.', array( 'status' => 400 ) );
 				}
-				$result[ $part_id ] = Scoring::manual( $value, $max, Scoring::DECIMAL ); // part marks are always decimal; the item total follows the attempt policy
+				$result[ $part_id ] = Scoring::manual( $value, $max, Scoring::DECIMAL ); // part marks are always decimal; the item total follows the attempt policy.
 			}
 			return array(
 				'parts' => $result,
@@ -297,7 +302,7 @@ final class Review {
 		$auto    = 0.0;
 		$written = array();
 		foreach ( $parts as $part ) {
-			if ( $part['kind'] === 'written' ) {
+			if ( 'written' === $part['kind'] ) {
 				$written[ $part['id'] ] = $question_marks * $weights[ $part['id'] ];
 				continue; }
 			$current = self::current_part( $attempt_id, (int) $item['id'], $part['id'] );

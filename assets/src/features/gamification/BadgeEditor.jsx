@@ -39,7 +39,11 @@ export function createBadgeEditor( readRuntime ) {
 					description: '',
 					image: null,
 					color: '#6e42d3',
-					...( streakBadge ? { award_source: 'streak' } : {} ),
+					...( streakBadge
+						? {
+								award_source: 'streak',
+							}
+						: {} ),
 					rules: streakBadge
 						? []
 						: [
@@ -69,7 +73,9 @@ export function createBadgeEditor( readRuntime ) {
 				return e( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			E = function () {
-				m || onClose( ! 1 );
+				if ( ! m ) {
+					onClose( ! 1 );
+				}
 			},
 			S = function ( e, t ) {
 				s( function ( n ) {
@@ -78,17 +84,17 @@ export function createBadgeEditor( readRuntime ) {
 			},
 			R = ( function () {
 				var e = J2(
-					Z2().m( function e() {
+					Z2().m( function _eLocal() {
 						var t;
 						return Z2().w(
-							function ( e ) {
+							function ( _eLocal2 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal2.p = 0 ),
 												p( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal2.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/badges',
 													method: 'POST',
@@ -100,72 +106,80 @@ export function createBadgeEditor( readRuntime ) {
 												} )
 											 );
 										case 1:
-											( e.v.success &&
-												( props.onCreated?.(
-													e.v.badge
-												),
-												openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Badge updated successfully!',
-														'ohmylms'
-													)
-												),
-												setItems( function ( e ) {
-													return e.map(
-														function ( e ) {
-															return e.slug ===
-																u.slug
-																? e3(
-																		e3(
-																			{},
-																			e
-																		),
-																		u
-																	)
-																: e;
+											if ( _eLocal2.v.success ) {
+												{
+													props.onCreated?.(
+														_eLocal2.v.badge
+													);
+													openNotificationWithIcon(
+														'success',
+														( 0, I18n.__ )(
+															'Badge updated successfully!',
+															'ohmylms'
+														)
+													);
+													setItems(
+														function ( _eLocal3 ) {
+															return _eLocal3.map(
+																function (
+																	_eLocal4
+																) {
+																	return _eLocal4.slug ===
+																		u.slug
+																		? e3(
+																				e3(
+																					{},
+																					_eLocal4
+																				),
+																				u
+																			)
+																		: _eLocal4;
+																}
+															);
 														}
 													);
-												} ) ),
-												( e.n = 3 ) );
+												}
+											}
+											_eLocal2.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( t = e.v ),
-												console.error( t ) );
+											_eLocal2.p = 2;
+											t = _eLocal2.v;
+											console.error( t );
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal2.p = 3 ),
 												p( ! 1 ),
-												e.f( 3 )
+												_eLocal2.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )(),
 			x = ( function () {
 				var e = J2(
-					Z2().m( function e() {
+					Z2().m( function _eLocal5() {
 						return Z2().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal6.p = 0 ),
 												p( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal6.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/badges',
 													method: 'POST',
@@ -177,70 +191,75 @@ export function createBadgeEditor( readRuntime ) {
 												} )
 											 );
 										case 1:
-											( e.v.success &&
-												( props.onCreated?.(
-													e.v.badge
-												),
-												openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Badge created successfully!',
-														'ohmylms'
-													)
-												),
-												setItems( function ( e ) {
-													return [ u ].concat(
-														Q2( e )
+											if ( _eLocal6.v.success ) {
+												{
+													props.onCreated?.(
+														_eLocal6.v.badge
 													);
-												} ) ),
-												( e.n = 3 ) );
+													openNotificationWithIcon(
+														'success',
+														( 0, I18n.__ )(
+															'Badge created successfully!',
+															'ohmylms'
+														)
+													);
+													setItems(
+														function ( _eLocal7 ) {
+															return [ u ].concat(
+																Q2( _eLocal7 )
+															);
+														}
+													);
+												}
+											}
+											_eLocal6.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												e.v,
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Something went wrong!',
-														'ohmylms'
-													)
-												) );
+											_eLocal6.p = 2;
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Something went wrong!',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal6.p = 3 ),
 												p( ! 1 ),
 												onClose( ! 1 ),
-												e.f( 3 )
+												_eLocal6.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			C = ( function () {
 				var e = J2(
-					Z2().m( function e() {
-						var n, r, o, i;
+					Z2().m( function _eLocal8() {
+						var n, r, o, _iLocal;
 						return Z2().w(
-							function ( e ) {
+							function ( _eLocal9 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal9.p = _eLocal9.n ) ) {
 										case 0:
 											if (
 												u.name &&
 												'' !== u.name.trim()
 											) {
-												e.n = 1;
+												_eLocal9.n = 1;
 												break;
 											}
 											return (
@@ -251,15 +270,16 @@ export function createBadgeEditor( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												e.a( 2 )
+												_eLocal9.a( 2 )
 											 );
 										case 1:
-											( ( n = Y2( u.rules ) ),
-												( e.p = 2 ),
-												n.s() );
+											n = Y2( u.rules );
+											_eLocal9.p = 2;
+											n.s();
+										// Falls through to the shared async state cleanup.
 										case 3:
 											if ( ( r = n.n() ).done ) {
-												e.n = 5;
+												_eLocal9.n = 5;
 												break;
 											}
 											if ( ! (
@@ -269,7 +289,7 @@ export function createBadgeEditor( readRuntime ) {
 												'' === o.compareData ||
 												o.compareData < 0
 											) ) {
-												e.n = 4;
+												_eLocal9.n = 4;
 												break;
 											}
 											return (
@@ -280,68 +300,80 @@ export function createBadgeEditor( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												e.a( 2 )
+												_eLocal9.a( 2 )
 											 );
 										case 4:
-											e.n = 3;
+											_eLocal9.n = 3;
 											break;
 										case 5:
-											e.n = 7;
+											_eLocal9.n = 7;
 											break;
 										case 6:
-											( ( e.p = 6 ),
-												( i = e.v ),
-												n.e( i ) );
+											_eLocal9.p = 6;
+											_iLocal = _eLocal9.v;
+											n.e( _iLocal );
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( e.p = 7 ),
+												( _eLocal9.p = 7 ),
 												n.f(),
-												e.f( 7 )
+												_eLocal9.f( 7 )
 											 );
 										case 8:
-											if ( null == data || ! data.slug ) {
-												e.n = 10;
+											if (
+												data === null ||
+												data === void 0 ||
+												! data.slug
+											) {
+												_eLocal9.n = 10;
 												break;
 											}
-											return ( ( e.n = 9 ), R() );
+											return ( ( _eLocal9.n = 9 ), R() );
 										case 9:
-											e.n = 11;
+											_eLocal9.n = 11;
 											break;
 										case 10:
-											return ( ( e.n = 11 ), x() );
+											return ( ( _eLocal9.n = 11 ), x() );
 										case 11:
 											fetchData();
+										// Falls through to the shared async state cleanup.
 										case 12:
-											return e.a( 2 );
+											return _eLocal9.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal8,
 							null,
 							[ [ 2, 6, 7, 8 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )();
 		if (
 			( ( 0, ReactHooks.useEffect )(
 				function () {
-					data && s( data );
+					if ( data ) {
+						s( data );
+					}
 				},
 				[ data ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! m && _ && openNotificationWithIcon( w, _ );
+					if ( ! m && _ ) {
+						openNotificationWithIcon( w, _ );
+					}
 				},
 				[ _ ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					isOpen && s( data || e3( {}, i ) );
+					if ( isOpen ) {
+						s( data || e3( {}, i ) );
+					}
 				},
 				[ data, isOpen ]
 			),
@@ -364,7 +396,7 @@ export function createBadgeEditor( readRuntime ) {
 				{ contextHolder }
 				<Controls.ModalWP
 					title={
-						null != data && data.slug
+						data !== null && data !== void 0 && data.slug
 							? ( 0, I18n.__ )(
 									'Edit Achievement Badge',
 									'ohmylms'
@@ -394,7 +426,9 @@ export function createBadgeEditor( readRuntime ) {
 									'ohmylms'
 								) }
 								inputType={ 'text' }
-								value={ null == u ? void 0 : u.name }
+								value={
+									u === null || u === void 0 ? void 0 : u.name
+								}
 								onChange={ function ( e ) {
 									return S( 'name', e );
 								} }
@@ -414,7 +448,11 @@ export function createBadgeEditor( readRuntime ) {
 									'ohmylms'
 								) }
 								inputType={ 'textarea' }
-								value={ null == u ? void 0 : u.description }
+								value={
+									u === null || u === void 0
+										? void 0
+										: u.description
+								}
 								onChange={ function ( e ) {
 									return S( 'description', e );
 								} }
@@ -439,7 +477,11 @@ export function createBadgeEditor( readRuntime ) {
 									handleRemove={ function () {
 										return S( 'image', null );
 									} }
-									brandingImg={ null == u ? void 0 : u.image }
+									brandingImg={
+										u === null || u === void 0
+											? void 0
+											: u.image
+									}
 									alertTitle={ ( 0, I18n.__ )(
 										'Remove Badge Icon',
 										'ohmylms'
@@ -466,7 +508,9 @@ export function createBadgeEditor( readRuntime ) {
 										'ohmylms'
 									) }
 									initialColor={
-										null == u ? void 0 : u.color
+										u === null || u === void 0
+											? void 0
+											: u.color
 									}
 									onChange={ function ( e ) {
 										return S( 'color', e );
@@ -487,7 +531,11 @@ export function createBadgeEditor( readRuntime ) {
 								</p>
 							) : (
 								<AchievementRules
-									rules={ null == u ? void 0 : u.rules }
+									rules={
+										u === null || u === void 0
+											? void 0
+											: u.rules
+									}
 									setRules={ function ( e ) {
 										return S( 'rules', e );
 									} }
@@ -510,7 +558,7 @@ export function createBadgeEditor( readRuntime ) {
 								onClick={ C }
 								isBusy={ m }
 							>
-								{ null != data && data.slug
+								{ data !== null && data !== void 0 && data.slug
 									? ( 0, I18n.__ )(
 											'Update Badge',
 											'ohmylms'

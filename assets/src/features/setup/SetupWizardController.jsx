@@ -30,30 +30,30 @@ export function createSetupWizardController( readRuntime ) {
 			o = r[ 1 ],
 			i = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			l =
-				( ( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getSetupWizardData();
+				( ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+					return _eLocal( StoreModule.default ).getSetupWizardData();
 				}, [] ),
 				( 0, Router.Zp )() ),
-			c = function ( e ) {
-				o( vre[ e ] || e );
+			c = function ( _eLocal2 ) {
+				o( vre[ _eLocal2 ] || _eLocal2 );
 			},
 			u = ( function () {
-				var e = mre(
-					ure().m( function e( t ) {
-						var n;
+				var _eLocal3 = mre(
+					ure().m( function _eLocal4( _tLocal ) {
+						var _nLocal;
 						return ure().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
-												( e.n = 1 ),
+												( _eLocal5.p = 0 ),
+												( _eLocal5.n = 1 ),
 												m( {
 													path: 'ohmylms/v1/setup-wizard/onboarding-skipped',
 													method: 'POST',
 													data: {
-														step: t,
+														step: _tLocal,
 													},
 													headers: {
 														nonce: window
@@ -63,30 +63,32 @@ export function createSetupWizardController( readRuntime ) {
 												} )
 											 );
 										case 1:
-											e.n = 3;
+											_eLocal5.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( n = e.v ),
-												console.error(
-													'Failed to track onboarding skipped:',
-													n
-												) );
+											_eLocal5.p = 2;
+											_nLocal = _eLocal5.v;
+											console.error(
+												'Failed to track onboarding skipped:',
+												_nLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											l( '/dashboard' );
+										// Falls through to the shared async state cleanup.
 										case 4:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal4,
 							null,
 							[ [ 0, 2 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return _eLocal3.apply( this, _args3 );
 				};
 			} )();
 		return (
@@ -97,22 +99,25 @@ export function createSetupWizardController( readRuntime ) {
 					headers: {
 						nonce: window.ohmylms_params.setup_wizard_nonce,
 					},
-				} ).catch( function ( e ) {
-					console.error( 'Failed to track onboarding started:', e );
+				} ).catch( function ( _eLocal6 ) {
+					console.error(
+						'Failed to track onboarding started:',
+						_eLocal6
+					);
 				} );
 			}, [] ),
 			( 0, ReactHooks.useEffect )( function () {
-				var e = ( function () {
-					var e = mre(
-						ure().m( function e() {
-							var t, r, a, o;
+				var _eLocal7 = ( function () {
+					var _eLocal8 = mre(
+						ure().m( function _eLocal9() {
+							var _tLocal3, _rLocal, _aLocal, _oLocal;
 							return ure().w(
-								function ( e ) {
+								function ( _eLocal0 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal0.p = _eLocal0.n ) ) {
 											case 0:
 												return (
-													( e.n = 1 ),
+													( _eLocal0.n = 1 ),
 													( 0, Nte.nb )( {
 														plugin: 'ohmylms',
 														version: '1.1.16',
@@ -188,41 +193,44 @@ export function createSetupWizardController( readRuntime ) {
 																'ohmylms'
 															),
 															verify: ( function () {
-																var e = mre(
-																	ure().m(
-																		function e() {
-																			var t;
-																			return ure().w(
-																				function (
-																					e
-																				) {
-																					for (;;) {
-																						if (
-																							0 ===
-																							e.n
-																						) {
-																							return (
-																								( t =
-																									Nte.Hi.getProgress() ),
-																								e.a(
-																									2,
-																									t &&
-																										100 ===
-																											t.percent
-																								)
-																							 );
+																var _eLocal1 =
+																	mre(
+																		ure().m(
+																			function _eLocal10() {
+																				var _tLocal4;
+																				return ure().w(
+																					function (
+																						_eLocal11
+																					) {
+																						for (;;) {
+																							if (
+																								0 ===
+																								_eLocal11.n
+																							) {
+																								return (
+																									( _tLocal4 =
+																										Nte.Hi.getProgress() ),
+																									_eLocal11.a(
+																										2,
+																										_tLocal4 &&
+																											100 ===
+																												_tLocal4.percent
+																									)
+																								 );
+																							}
 																						}
-																					}
-																				},
-																				e
-																			);
-																		}
-																	)
-																);
-																return function () {
-																	return e.apply(
+																					},
+																					_eLocal10
+																				);
+																			}
+																		)
+																	);
+																return function (
+																	..._args
+																) {
+																	return _eLocal1.apply(
 																		this,
-																		arguments
+																		_args
 																	);
 																};
 															} )(),
@@ -232,114 +240,113 @@ export function createSetupWizardController( readRuntime ) {
 														telemetry: {
 															onSetupCompleted:
 																( function () {
-																	var e = mre(
-																		ure().m(
-																			function e(
-																				t
-																			) {
-																				var n;
-																				return ure().w(
-																					function (
-																						e
-																					) {
-																						for (;;) {
-																							switch (
-																								( e.p =
-																									e.n )
-																							) {
-																								case 0:
-																									return (
-																										( e.p = 0 ),
-																										( e.n = 1 ),
-																										m(
-																											{
-																												path: 'ohmylms/v1/setup-wizard/onboarding-completed',
-																												method: 'POST',
-																												headers:
-																													{
-																														nonce: window
-																															.ohmylms_params
-																															.setup_wizard_nonce,
-																													},
-																											}
-																										)
-																									 );
-																								case 1:
-																									e.n = 3;
-																									break;
-																								case 2:
-																									( ( e.p = 2 ),
-																										( n =
-																											e.v ),
+																	var _eLocal12 =
+																		mre(
+																			ure().m(
+																				function _eLocal13() {
+																					var _nLocal2;
+																					return ure().w(
+																						function (
+																							_eLocal14
+																						) {
+																							for (;;) {
+																								switch (
+																									( _eLocal14.p =
+																										_eLocal14.n )
+																								) {
+																									case 0:
+																										return (
+																											( _eLocal14.p = 0 ),
+																											( _eLocal14.n = 1 ),
+																											m(
+																												{
+																													path: 'ohmylms/v1/setup-wizard/onboarding-completed',
+																													method: 'POST',
+																													headers:
+																														{
+																															nonce: window
+																																.ohmylms_params
+																																.setup_wizard_nonce,
+																														},
+																												}
+																											)
+																										 );
+																									case 1:
+																										_eLocal14.n = 3;
+																										break;
+																									case 2:
+																										_eLocal14.p = 2;
+																										_nLocal2 =
+																											_eLocal14.v;
 																										console.error(
 																											'Failed to track onboarding completed:',
-																											n
-																										) );
-																								case 3:
-																									return e.a(
-																										2
-																									);
+																											_nLocal2
+																										);
+																									// Falls through to the shared async state cleanup.
+																									case 3:
+																										return _eLocal14.a(
+																											2
+																										);
+																								}
 																							}
-																						}
-																					},
-																					e,
-																					null,
-																					[
+																						},
+																						_eLocal13,
+																						null,
 																						[
-																							0,
-																							2,
-																						],
-																					]
-																				);
-																			}
-																		)
-																	);
+																							[
+																								0,
+																								2,
+																							],
+																						]
+																					);
+																				}
+																			)
+																		);
 																	return function (
-																		t
+																		..._args4
 																	) {
-																		return e.apply(
+																		return _eLocal12.apply(
 																			this,
-																			arguments
+																			_args4
 																		);
 																	};
 																} )(),
 															onFirstStrikeCompleted:
 																( function () {
-																	var e = mre(
-																		ure().m(
-																			function e(
-																				t
-																			) {
-																				return ure().w(
-																					function (
-																						e
-																					) {
-																						for (;;) {
-																							switch (
-																								e.n
-																							) {
-																								case 0:
-																									l(
-																										'/dashboard'
-																									);
-																								case 1:
-																									return e.a(
-																										2
-																									);
+																	var _eLocal15 =
+																		mre(
+																			ure().m(
+																				function _eLocal16() {
+																					return ure().w(
+																						function (
+																							_eLocal17
+																						) {
+																							for (;;) {
+																								switch (
+																									_eLocal17.n
+																								) {
+																									case 0:
+																										l(
+																											'/dashboard'
+																										); // Falls through to the shared async state cleanup.
+																									case 1:
+																										return _eLocal17.a(
+																											2
+																										);
+																								}
 																							}
-																						}
-																					},
-																					e
-																				);
-																			}
-																		)
-																	);
+																						},
+																						_eLocal16
+																					);
+																				}
+																			)
+																		);
 																	return function (
-																		t
+																		..._args5
 																	) {
-																		return e.apply(
+																		return _eLocal15.apply(
 																			this,
-																			arguments
+																			_args5
 																		);
 																	};
 																} )(),
@@ -348,7 +355,7 @@ export function createSetupWizardController( readRuntime ) {
 												 );
 											case 1:
 												return (
-													( e.n = 2 ),
+													( _eLocal0.n = 2 ),
 													Nte.Hi.start()
 												 );
 											case 2:
@@ -357,25 +364,23 @@ export function createSetupWizardController( readRuntime ) {
 													Nte.Ft.on(
 														'onboarding_completed',
 														( function () {
-															var e = mre(
+															var _eLocal18 = mre(
 																ure().m(
-																	function e(
-																		t
-																	) {
-																		var n;
+																	function _eLocal19() {
+																		var _nLocal3;
 																		return ure().w(
 																			function (
-																				e
+																				_eLocal20
 																			) {
 																				for (;;) {
 																					switch (
-																						( e.p =
-																							e.n )
+																						( _eLocal20.p =
+																							_eLocal20.n )
 																					) {
 																						case 0:
 																							return (
-																								( e.p = 0 ),
-																								( e.n = 1 ),
+																								( _eLocal20.p = 0 ),
+																								( _eLocal20.n = 1 ),
 																								m(
 																									{
 																										path: 'ohmylms/v1/setup-wizard/onboarding-completed',
@@ -390,24 +395,25 @@ export function createSetupWizardController( readRuntime ) {
 																								)
 																							 );
 																						case 1:
-																							e.n = 3;
+																							_eLocal20.n = 3;
 																							break;
 																						case 2:
-																							( ( e.p = 2 ),
-																								( n =
-																									e.v ),
-																								console.error(
-																									'Failed to track onboarding completed:',
-																									n
-																								) );
+																							_eLocal20.p = 2;
+																							_nLocal3 =
+																								_eLocal20.v;
+																							console.error(
+																								'Failed to track onboarding completed:',
+																								_nLocal3
+																							);
+																						// Falls through to the shared async state cleanup.
 																						case 3:
-																							return e.a(
+																							return _eLocal20.a(
 																								2
 																							);
 																					}
 																				}
 																			},
-																			e,
+																			_eLocal19,
 																			null,
 																			[
 																				[
@@ -420,101 +426,121 @@ export function createSetupWizardController( readRuntime ) {
 																)
 															);
 															return function (
-																t
+																..._args6
 															) {
-																return e.apply(
+																return _eLocal18.apply(
 																	this,
-																	arguments
+																	_args6
 																);
 															};
 														} )()
 													),
 													i.setLoadingSetting( ! 0 ),
-													( e.p = 3 ),
-													( e.n = 4 ),
+													( _eLocal0.p = 3 ),
+													( _eLocal0.n = 4 ),
 													m( {
 														path: 'ohmylms/v1/settings/design',
 													} )
 												 );
 											case 4:
 												return (
-													( t = e.v ),
-													i.setDesignSettings( t ),
-													( e.n = 5 ),
+													( _tLocal3 = _eLocal0.v ),
+													i.setDesignSettings(
+														_tLocal3
+													),
+													( _eLocal0.n = 5 ),
 													m( {
 														path: 'ohmylms/v1/settings/currency',
 													} )
 												 );
 											case 5:
-												( ( r = e.v ),
-													i.setCurrencySettings( r ),
-													( a = {} ),
-													null == r ||
-														r.forEach(
-															function ( e ) {
-																a[
-																	null == e
-																		? void 0
-																		: e.id
-																] =
-																	null == e
-																		? void 0
-																		: e.value;
-															}
-														),
-													i.setGlobalDataViaKey(
-														'currency_settings',
-														a
-													),
-													( e.n = 7 ) );
+												_rLocal = _eLocal0.v;
+												i.setCurrencySettings(
+													_rLocal
+												);
+												_aLocal = {};
+												if ( ! (
+													_rLocal === null ||
+													_rLocal === void 0
+												) ) {
+													_rLocal.forEach(
+														function ( _eLocal21 ) {
+															_aLocal[
+																_eLocal21 ===
+																	null ||
+																_eLocal21 ===
+																	void 0
+																	? void 0
+																	: _eLocal21.id
+															] =
+																_eLocal21 ===
+																	null ||
+																_eLocal21 ===
+																	void 0
+																	? void 0
+																	: _eLocal21.value;
+														}
+													);
+												}
+												i.setGlobalDataViaKey(
+													'currency_settings',
+													_aLocal
+												);
+												_eLocal0.n = 7;
 												break;
 											case 6:
-												( ( e.p = 6 ),
-													( o = e.v ),
-													console.error(
-														'Failed to load settings:',
-														o
-													) );
+												_eLocal0.p = 6;
+												_oLocal = _eLocal0.v;
+												console.error(
+													'Failed to load settings:',
+													_oLocal
+												);
+											// Falls through to the shared async state cleanup.
 											case 7:
 												i.setLoadingSetting( ! 1 );
+											// Falls through to the shared async state cleanup.
 											case 8:
-												return e.a( 2 );
+												return _eLocal0.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal9,
 								null,
 								[ [ 3, 6 ] ]
 							);
 						} )
 					);
-					return function () {
-						return e.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _eLocal8.apply( this, _args2 );
 					};
 				} )();
-				e();
+				_eLocal7();
 			}, [] ),
 			t ? (
 				<div className={ 'linno-onboarding-wrapper' }>
 					{ ( function () {
-						var e = {
+						var _eLocal22 = {
 							onTabChange: c,
 							onWizardSkip: u,
 						};
 						switch ( a ) {
 							case 'welcome':
 							default:
-								return <MemoSetupWelcome { ...e } />;
+								return <MemoSetupWelcome { ..._eLocal22 } />;
 							case 'level-selection':
-								return <MemoSetupLevelSelection { ...e } />;
+								return (
+									<MemoSetupLevelSelection { ..._eLocal22 } />
+								);
 							case 'preferences':
-								return <MemoSetupPreferences { ...e } />;
+								return (
+									<MemoSetupPreferences { ..._eLocal22 } />
+								);
 							case 'niche':
-								return <MemoSetupNiche { ...e } />;
+								return <MemoSetupNiche { ..._eLocal22 } />;
 							case 'course-creation':
-								return <MemoCourseImport { ...e } />;
+								return <MemoCourseImport { ..._eLocal22 } />;
 							case 'completion':
-								return <MemoSetupCompletion { ...e } />;
+								return <MemoSetupCompletion { ..._eLocal22 } />;
 						}
 					} )() }
 				</div>

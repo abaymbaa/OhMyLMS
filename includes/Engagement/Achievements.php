@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Achievements Helper class.
  *
@@ -47,15 +47,15 @@ class Achievements {
 		}
 
 		if ( ! isset( $data['user_id'] ) ) {
-			return false; // User ID is required
+			return false; // User ID is required.
 		}
 		if ( isset( $data['id'] ) ) {
-			// Update existing achievement
+			// Update existing achievement.
 			$where = array( 'id' => $data['id'] );
 			return $wpdb->update( $table_name, $data, $where );
 		}
 		if ( self::achievement_exists( $data['user_id'], $data['type'], $data['course_id'] ?? null, $data['membership_id'] ?? null, $data['content_id'] ?? null, $data['badge_id'] ?? null, $data['level_id'] ?? null, $data['reason'] ?? null ) ) {
-			return false; // Achievement already exists for this user and event
+			return false; // Achievement already exists for this user and event.
 		}
 
 		$data = wp_parse_args(
@@ -86,11 +86,11 @@ class Achievements {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
-		// Base conditions that always apply
+		// Base conditions that always apply.
 		$where_clauses = array( 'user_id = %d', 'type = %s', 'status = %s' );
 		$params        = array( $user_id, $type, 'active' );
 
-		// Type-specific logic
+		// Type-specific logic.
 		switch ( $type ) {
 			case 'badge':
 				if ( ! empty( $badge_id ) ) {
@@ -112,15 +112,15 @@ class Achievements {
 
 			case 'point':
 				// For points, we need to be more specific to avoid duplicate point awards
-				// but not so specific that we miss legitimate duplicates
+				// but not so specific that we miss legitimate duplicates.
 
-				// Always include reason if provided
+				// Always include reason if provided.
 				if ( ! empty( $reason ) ) {
 					$where_clauses[] = 'reason = %s';
 					$params[]        = $reason;
 				}
 
-				// Add contextual IDs based on what's provided
+				// Add contextual IDs based on what's provided.
 				if ( $course_id ) {
 					$where_clauses[] = 'course_id = %d';
 					$params[]        = $course_id;

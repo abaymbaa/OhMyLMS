@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additive sidecars for XP and the skill mastery score. Nothing existing is rewritten and no
+ * history is invented: the score of past practice is computed on first read from the evidence
+ * that is already stored.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 defined( 'ABSPATH' ) || exit;
@@ -52,7 +59,7 @@ final class XpSchema {
 					return false; }
 			}
 			$engine = $wpdb->get_var( $wpdb->prepare( 'SELECT ENGINE FROM information_schema.TABLES WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s', self::table( $name ) ) );
-			if ( $engine !== 'InnoDB' ) {
+			if ( 'InnoDB' !== $engine ) {
 				return false; }
 		}
 		update_option( self::OPTION, self::VERSION, false );

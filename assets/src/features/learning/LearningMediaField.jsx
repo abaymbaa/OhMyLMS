@@ -5,7 +5,6 @@ export function createLearningMediaField( readRuntime ) {
 		const {
 			He,
 			I: Controls,
-			L: Entitlements,
 			M,
 			Re,
 			React,
@@ -19,261 +18,317 @@ export function createLearningMediaField( readRuntime ) {
 			gr,
 			pe,
 			ve,
-			wr,
 			y: WordPressData,
 		} = readRuntime();
-		var t = true;
 		M().noConflict();
-		var limit = props.limit,
-			r = void 0 === limit ? 1 : limit,
-			a = props.src,
-			o = void 0 === a ? '' : a,
-			videoSrc = props.videoSrc,
-			l = void 0 === videoSrc ? '' : videoSrc,
-			audioSrc = props.audioSrc,
-			u = void 0 === audioSrc ? '' : audioSrc,
-			type = props.type,
-			d = void 0 === type ? 'both' : type,
-			supportedTypes = props.supportedTypes,
-			p =
-				void 0 === supportedTypes
-					? [ '.jpg', '.jpeg', '.png', '.mp4', '.mov', '.webp' ]
-					: supportedTypes,
-			onUploadComplete = props.onUploadComplete,
-			onRemoveMedia = props.onRemoveMedia,
-			align = props.align,
-			_ = void 0 === align ? 'left' : align,
-			fileType = props.fileType,
-			E = void 0 === fileType ? 'image_video' : fileType,
-			addImgText = props.addImgText,
-			R =
-				void 0 === addImgText
-					? ( 0, I18n.__ )( 'Add Cover Image', 'ohmylms' )
-					: addImgText,
-			x =
-				( void 0 === props.addVideoText &&
-					( 0, I18n.__ )( 'Add Cover Video', 'ohmylms' ),
-				props.mediaId ),
-			onExternalUploadComplete = props.onExternalUploadComplete,
-			P =
-				void 0 === onExternalUploadComplete
-					? function () {}
-					: onExternalUploadComplete,
-			O = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			k = Sr( ( 0, ReactHooks.useState )( null ), 2 ),
-			j = k[ 0 ],
-			A = k[ 1 ],
-			F = Sr( ( 0, ReactHooks.useState )( null ), 2 ),
-			N = F[ 0 ],
-			D = F[ 1 ],
-			W = Sr( ( 0, ReactHooks.useState )( null ), 2 ),
-			z = W[ 0 ],
-			B = W[ 1 ],
-			V = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			H = V[ 0 ],
-			U = V[ 1 ],
-			q = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			Y = q[ 0 ],
-			Q = q[ 1 ],
-			Z = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			$ = Z[ 0 ],
-			K = Z[ 1 ],
-			J = Sr( ( 0, ReactHooks.useState )( null ), 2 ),
-			X = J[ 0 ],
-			ee = J[ 1 ],
-			te = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			ne = te[ 0 ],
-			re = te[ 1 ],
-			ae = ( 0, ReactHooks.useRef )( null ),
-			oe = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			ie = oe[ 0 ],
-			le = oe[ 1 ],
-			ce = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			ue = ce[ 0 ],
-			se = ce[ 1 ],
-			me = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getAllIntegrations();
-			}, [] );
-		( ( 0, ReactHooks.useEffect )(
+		var limit = props.limit;
+		var r = void 0 === limit ? 1 : limit;
+		var a = props.src;
+		var o = void 0 === a ? '' : a;
+		var videoSrc = props.videoSrc;
+		var l = void 0 === videoSrc ? '' : videoSrc;
+		var audioSrc = props.audioSrc;
+		var u = void 0 === audioSrc ? '' : audioSrc;
+		var type = props.type;
+		var d = void 0 === type ? 'both' : type;
+		var supportedTypes = props.supportedTypes;
+		var p =
+			void 0 === supportedTypes
+				? [ '.jpg', '.jpeg', '.png', '.mp4', '.mov', '.webp' ]
+				: supportedTypes;
+		var onUploadComplete = props.onUploadComplete;
+		var onRemoveMedia = props.onRemoveMedia;
+		var align = props.align;
+		var _ = void 0 === align ? 'left' : align;
+		var fileType = props.fileType;
+		var E = void 0 === fileType ? 'image_video' : fileType;
+		var addImgText = props.addImgText;
+		var R =
+			void 0 === addImgText
+				? ( 0, I18n.__ )( 'Add Cover Image', 'ohmylms' )
+				: addImgText;
+		var x =
+			( void 0 === props.addVideoText &&
+				( 0, I18n.__ )( 'Add Cover Video', 'ohmylms' ),
+			props.mediaId );
+		var onExternalUploadComplete = props.onExternalUploadComplete;
+		var P =
+			void 0 === onExternalUploadComplete
+				? function () {}
+				: onExternalUploadComplete;
+		( 0, WordPressData.useDispatch )( StoreModule.default );
+		var k = Sr( ( 0, ReactHooks.useState )( null ), 2 );
+		var j = k[ 0 ];
+		var A = k[ 1 ];
+		var F = Sr( ( 0, ReactHooks.useState )( null ), 2 );
+		var N = F[ 0 ];
+		var D = F[ 1 ];
+		var W = Sr( ( 0, ReactHooks.useState )( null ), 2 );
+		var z = W[ 0 ];
+		var B = W[ 1 ];
+		var V = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var H = V[ 0 ];
+		var U = V[ 1 ];
+		var q = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var Y = q[ 0 ];
+		var Q = q[ 1 ];
+		var Z = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var $ = Z[ 0 ];
+		var K = Z[ 1 ];
+		var J = Sr( ( 0, ReactHooks.useState )( null ), 2 );
+		var X = J[ 0 ];
+		var ee = J[ 1 ];
+		var te = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var ne = te[ 0 ];
+		var re = te[ 1 ];
+		var ae = ( 0, ReactHooks.useRef )( null );
+		var oe = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var ie = oe[ 0 ];
+		var le = oe[ 1 ];
+		var ce = Sr( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var ue = ce[ 0 ];
+		var se = ce[ 1 ];
+		( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getAllIntegrations();
+		}, [] );
+		( 0, ReactHooks.useEffect )(
 			function () {
-				o && ( A( o ), x || U( ! 0 ) );
+				if ( o ) {
+					{
+						A( o );
+						if ( ! x ) {
+							U( ! 0 );
+						}
+					}
+				}
 			},
 			[ o ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					l && ! $ && ( D( l ), K( ! 1 ), x || U( ! 0 ) );
-				},
-				[ l ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					u && ! $ && ( B( u ), K( ! 1 ), x || U( ! 0 ) );
-				},
-				[ u ]
-			) );
-		var fe = function ( e ) {
-				var t = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ],
-					n = [ 'mp4', 'mov', 'avi', 'mkv' ],
-					a = [ 'mp3', 'wav', 'aac', 'flac', 'm4a', 'ogg', 'mpeg' ],
-					o = [
-						'image/jpeg',
-						'image/png',
-						'image/gif',
-						'image/svg+xml',
-						'image/webp',
-					].join( ',' ),
-					i = [
-						'video/mp4',
-						'video/quicktime',
-						'video/x-msvideo',
-						'video/x-matroska',
-					].join( ',' ),
-					l = [
-						'audio/mp3',
-						'audio/aac',
-						'audio/flac',
-						'audio/m4a',
-						'audio/mpeg',
-						'audio/wav',
-						'audio/ogg',
-					].join( ',' ),
-					c = wp.media( {
-						title: 'Select or Upload Media',
-						button: {
-							text: 'Use this media',
-						},
-						multiple: r > 1,
-						library: {
-							type: e,
-						},
-					} );
-				( c.on( 'open', function () {
-					( c.content.mode( 'upload' ),
-						c.on( 'uploader:ready', function () {
-							document
-								.querySelectorAll(
-									'.moxie-shim-html5 input[type="file"]'
-								)
-								.forEach( function ( t ) {
-									( t.setAttribute( 'tabIndex', '-1' ),
-										t.setAttribute( 'multiple', 'false' ),
-										t.setAttribute( 'aria-hidden', 'true' ),
-										'video' === e
-											? t.setAttribute( 'accept', i )
-											: 'audio' === e
-												? t.setAttribute( 'accept', l )
-												: t.setAttribute(
-														'accept',
-														o
-													) );
-								} );
-						} ) );
-				} ),
-					c.on( 'select', function () {
-						var r = c.state().get( 'selection' ).first(),
-							o = r.get( 'filesizeInBytes' ),
-							i = r.toJSON(),
-							l = t.some( function ( e ) {
-								return i.url.toLowerCase().endsWith( e );
-							} );
-						( 'video' === e &&
-							( l = n.some( function ( e ) {
-								return i.url.toLowerCase().endsWith( e );
-							} ) ),
-							'audio' === e &&
-								( l = a.some( function ( e ) {
-									return i.url.toLowerCase().endsWith( e );
-								} ) ) );
-						var u =
-							( 'image' === e && 'image' === i.type ) ||
-							( 'video' === e && 'video' === i.type ) ||
-							( 'audio' === e && 'audio' === i.type ) ||
-							i.type === e;
-						if ( 'image' === e && o > 5242880 ) {
-							alert(
-								( 0, I18n.__ )(
-									'Image exceeds the 5MB size limit. Please choose a smaller file.',
-									'ohmylms'
-								)
-							);
-						} else if ( l && u ) {
-							var s;
-							( 'image' === e
-								? A(
-										null == i ||
-											null === ( s = i.sizes ) ||
-											void 0 === s ||
-											null === ( s = s.large ) ||
-											void 0 === s
-											? void 0
-											: s.url
-									)
-								: 'video' === e
-									? ( D( null == i ? void 0 : i.url ),
-										K( ! 1 ) )
-									: 'audio' === e &&
-										( B( null == i ? void 0 : i.url ),
-										K( ! 1 ) ),
-								onUploadComplete && onUploadComplete( i, e ) );
-						} else {
-							alert( 'Invalid file type or media type.' );
-						}
-					} ),
-					c.open() );
-			},
-			ge = function () {
-				( A( null ), onRemoveMedia && onRemoveMedia( 'image' ) );
-			},
-			he = function () {
-				( D( null ),
-					Q( ! 1 ),
-					U( ! 1 ),
-					K( ! 0 ),
-					onRemoveMedia && onRemoveMedia( 'video' ) );
-			},
-			ye = function () {
-				( B( null ),
-					U( ! 1 ),
-					K( ! 0 ),
-					onRemoveMedia && onRemoveMedia( 'audio' ) );
-			},
-			be = function ( e, t, n ) {
-				( P( e, t ),
-					U( ! n ),
-					Q( ! 1 ),
-					'audio' === t
-						? ( B( null == e ? void 0 : e.url ), K( ! 1 ) )
-						: ( D( null == e ? void 0 : e.url ), K( ! 1 ) ) );
-			},
-			_e = function ( e ) {
-				H ? Q( ! 0 ) : fe( e );
-			},
-			we = function ( e ) {
-				( onUploadComplete(
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( l && ! $ ) {
 					{
-						id: null == e ? void 0 : e.id,
-						url: null == e ? void 0 : e.source_url,
-					},
-					'image'
-				),
-					ee( null ),
-					le( ! 1 ) );
+						D( l );
+						K( ! 1 );
+						if ( ! x ) {
+							U( ! 0 );
+						}
+					}
+				}
 			},
-			Ee = function ( e ) {
-				ee( e );
-			};
+			[ l ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( u && ! $ ) {
+					{
+						B( u );
+						K( ! 1 );
+						if ( ! x ) {
+							U( ! 0 );
+						}
+					}
+				}
+			},
+			[ u ]
+		);
+		var fe = function ( e ) {
+			var _tLocal = [ 'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp' ],
+				n = [ 'mp4', 'mov', 'avi', 'mkv' ],
+				_aLocal = [ 'mp3', 'wav', 'aac', 'flac', 'm4a', 'ogg', 'mpeg' ],
+				_oLocal = [
+					'image/jpeg',
+					'image/png',
+					'image/gif',
+					'image/svg+xml',
+					'image/webp',
+				].join( ',' ),
+				i = [
+					'video/mp4',
+					'video/quicktime',
+					'video/x-msvideo',
+					'video/x-matroska',
+				].join( ',' ),
+				_lLocal = [
+					'audio/mp3',
+					'audio/aac',
+					'audio/flac',
+					'audio/m4a',
+					'audio/mpeg',
+					'audio/wav',
+					'audio/ogg',
+				].join( ',' ),
+				c = wp.media( {
+					title: 'Select or Upload Media',
+					button: {
+						text: 'Use this media',
+					},
+					multiple: r > 1,
+					library: {
+						type: e,
+					},
+				} );
+			c.on( 'open', function () {
+				c.content.mode( 'upload' );
+				c.on( 'uploader:ready', function () {
+					document
+						.querySelectorAll(
+							'.moxie-shim-html5 input[type="file"]'
+						)
+						.forEach( function ( _tLocal2 ) {
+							_tLocal2.setAttribute( 'tabIndex', '-1' );
+							_tLocal2.setAttribute( 'multiple', 'false' );
+							_tLocal2.setAttribute( 'aria-hidden', 'true' );
+							if ( 'video' === e ) {
+								_tLocal2.setAttribute( 'accept', i );
+							} else if ( 'audio' === e ) {
+								_tLocal2.setAttribute( 'accept', _lLocal );
+							} else {
+								_tLocal2.setAttribute( 'accept', _oLocal );
+							}
+						} );
+				} );
+			} );
+			c.on( 'select', function () {
+				var _rLocal = c.state().get( 'selection' ).first(),
+					_oLocal2 = _rLocal.get( 'filesizeInBytes' ),
+					_iLocal = _rLocal.toJSON(),
+					_lLocal2 = _tLocal.some( function ( _eLocal ) {
+						return _iLocal.url.toLowerCase().endsWith( _eLocal );
+					} );
+				if ( 'video' === e ) {
+					_lLocal2 = n.some( function ( _eLocal2 ) {
+						return _iLocal.url.toLowerCase().endsWith( _eLocal2 );
+					} );
+				}
+				if ( 'audio' === e ) {
+					_lLocal2 = _aLocal.some( function ( _eLocal3 ) {
+						return _iLocal.url.toLowerCase().endsWith( _eLocal3 );
+					} );
+				}
+				var _uLocal =
+					( 'image' === e && 'image' === _iLocal.type ) ||
+					( 'video' === e && 'video' === _iLocal.type ) ||
+					( 'audio' === e && 'audio' === _iLocal.type ) ||
+					_iLocal.type === e;
+				if ( 'image' === e && _oLocal2 > 5242880 ) {
+					alert(
+						( 0, I18n.__ )(
+							'Image exceeds the 5MB size limit. Please choose a smaller file.',
+							'ohmylms'
+						)
+					);
+				} else if ( _lLocal2 && _uLocal ) {
+					var s;
+					if ( 'image' === e ) {
+						A(
+							_iLocal === null ||
+								_iLocal === void 0 ||
+								null === ( s = _iLocal.sizes ) ||
+								void 0 === s ||
+								null === ( s = s.large ) ||
+								void 0 === s
+								? void 0
+								: s.url
+						);
+					} else if ( 'video' === e ) {
+						{
+							D(
+								_iLocal === null || _iLocal === void 0
+									? void 0
+									: _iLocal.url
+							);
+							K( ! 1 );
+						}
+					} else if ( 'audio' === e ) {
+						{
+							B(
+								_iLocal === null || _iLocal === void 0
+									? void 0
+									: _iLocal.url
+							);
+							K( ! 1 );
+						}
+					}
+					if ( onUploadComplete ) {
+						onUploadComplete( _iLocal, e );
+					}
+				} else {
+					alert( 'Invalid file type or media type.' );
+				}
+			} );
+			c.open();
+		};
+		var ge = function () {
+			A( null );
+			if ( onRemoveMedia ) {
+				onRemoveMedia( 'image' );
+			}
+		};
+		var he = function () {
+			D( null );
+			Q( ! 1 );
+			U( ! 1 );
+			K( ! 0 );
+			if ( onRemoveMedia ) {
+				onRemoveMedia( 'video' );
+			}
+		};
+		var ye = function () {
+			B( null );
+			U( ! 1 );
+			K( ! 0 );
+			if ( onRemoveMedia ) {
+				onRemoveMedia( 'audio' );
+			}
+		};
+		var be = function ( e, _tLocal3, n ) {
+			P( e, _tLocal3 );
+			U( ! n );
+			Q( ! 1 );
+			if ( 'audio' === _tLocal3 ) {
+				{
+					B( e === null || e === void 0 ? void 0 : e.url );
+					K( ! 1 );
+				}
+			} else {
+				{
+					D( e === null || e === void 0 ? void 0 : e.url );
+					K( ! 1 );
+				}
+			}
+		};
+		var _e = function ( e ) {
+			if ( H ) {
+				Q( ! 0 );
+			} else {
+				fe( e );
+			}
+		};
+		var Ee = function ( e ) {
+			ee( e );
+		};
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = function ( e ) {
-						! ie ||
+					var e = function ( _eLocal4 ) {
+						if ( ! (
+							! ie ||
 							! ae.current ||
-							ae.current.contains( e.target ) ||
-							e.target.closest( '.ohmylms-history-list' ) ||
-							e.target.closest( '.ohmylms-tooltip-box' ) ||
-							e.target.closest( '.ohmylms-ai-image-prompt' ) ||
-							( le( ! 1 ), Ee( null ) );
+							ae.current.contains( _eLocal4.target ) ||
+							_eLocal4.target.closest(
+								'.ohmylms-history-list'
+							) ||
+							_eLocal4.target.closest( '.ohmylms-tooltip-box' ) ||
+							_eLocal4.target.closest(
+								'.ohmylms-ai-image-prompt'
+							)
+						) ) {
+							{
+								le( ! 1 );
+								Ee( null );
+							}
+						}
 					};
 					return (
 						document.addEventListener( 'mousedown', e ),
@@ -311,7 +366,11 @@ export function createLearningMediaField( readRuntime ) {
 								'image_video' === E && (
 									<React.Fragment>
 										<img
-											src={ null != X ? X : j }
+											src={
+												X !== null && X !== void 0
+													? X
+													: j
+											}
 											alt={ 'Uploaded cover' }
 											style={ {
 												maxWidth: '100%',
@@ -332,180 +391,217 @@ export function createLearningMediaField( readRuntime ) {
 							) }
 							{ 'video' === E && (
 								<React.Fragment>
-									{ Boolean( N ) && ! Y ? (
-										H ? (
-											<_r
-												mediaUrl={ N }
-												sectionType={ 'video' }
-												className={
-													'ohmylms-external-video'
-												}
-												setMediaURL={ D }
-												handleExternalMedia={ be }
-												setIsExternalMedia={ U }
-											/>
-										) : (
-											<video
-												src={ N }
-												alt={ 'Uploaded cover' }
-												poster={ j || '' }
-												controls={ ! 0 }
-												style={ {
-													maxWidth: '100%',
-												} }
-											/>
-										)
-									) : (
-										<React.Fragment>
-											{ React.createElement( dr, {
-												type: 'video',
-												onClick: fe,
-												buttonLabel: ( 0, I18n.__ )(
-													'Select a video',
-													'ohmylms'
-												),
-												icon: React.createElement(
-													pe,
-													null
-												),
-												supportedTypes: [
-													'.mp4',
-													'.mov',
-													'.avi',
-													'.mkv',
-													'.flv',
-													'.wmv',
-													'.webm',
-												],
-												handleExternalMedia: be,
-												setShowInput: Q,
-												showInput: Y,
-												value: N,
-											} ) }
-										</React.Fragment>
-									) }
+									{ ( () => {
+										if ( Boolean( N ) && ! Y ) {
+											if ( H ) {
+												return (
+													<_r
+														mediaUrl={ N }
+														sectionType={ 'video' }
+														className={
+															'ohmylms-external-video'
+														}
+														setMediaURL={ D }
+														handleExternalMedia={
+															be
+														}
+														setIsExternalMedia={ U }
+													/>
+												);
+											}
+											return (
+												<video
+													src={ N }
+													alt={ 'Uploaded cover' }
+													poster={ j || '' }
+													controls={ ! 0 }
+													style={ {
+														maxWidth: '100%',
+													} }
+												/>
+											);
+										}
+										return (
+											<React.Fragment>
+												{ React.createElement( dr, {
+													type: 'video',
+													onClick: fe,
+													buttonLabel: ( 0, I18n.__ )(
+														'Select a video',
+														'ohmylms'
+													),
+													icon: React.createElement(
+														pe,
+														null
+													),
+													supportedTypes: [
+														'.mp4',
+														'.mov',
+														'.avi',
+														'.mkv',
+														'.flv',
+														'.wmv',
+														'.webm',
+													],
+													handleExternalMedia: be,
+													setShowInput: Q,
+													showInput: Y,
+													value: N,
+												} ) }
+											</React.Fragment>
+										);
+									} )() }
 								</React.Fragment>
 							) }
 							{ 'audio' === E && (
 								<React.Fragment>
-									{ Boolean( z ) && ! Y ? (
-										H ? (
-											<div
-												className={
-													'ohmylms-media-audio-wrapper'
-												}
-											>
-												<_r
-													mediaUrl={ z }
-													sectionType={ 'audio' }
-													setMediaURL={ B }
-													handleExternalMedia={ be }
-													setIsExternalMedia={ U }
-												/>
-												<Controls.FlexWP
-													gap={ 4 }
-													align={ 'center' }
-													justify={ 'flex-end' }
+									{ ( () => {
+										if ( Boolean( z ) && ! Y ) {
+											if ( H ) {
+												return (
+													<div
+														className={
+															'ohmylms-media-audio-wrapper'
+														}
+													>
+														<_r
+															mediaUrl={ z }
+															sectionType={
+																'audio'
+															}
+															setMediaURL={ B }
+															handleExternalMedia={
+																be
+															}
+															setIsExternalMedia={
+																U
+															}
+														/>
+														<Controls.FlexWP
+															gap={ 4 }
+															align={ 'center' }
+															justify={
+																'flex-end'
+															}
+															className={
+																'crlsm-media-controls-audio'
+															}
+														>
+															<Controls.ButtonWP
+																variant={
+																	'primary'
+																}
+																icon={ <Re /> }
+																onClick={ function () {
+																	return _e(
+																		'audio'
+																	);
+																} }
+															>
+																{ ( 0,
+																I18n.__ )(
+																	'Replace',
+																	'ohmylms'
+																) }
+															</Controls.ButtonWP>
+															{ React.createElement(
+																gr,
+																{
+																	onOK: ye,
+																	alertTitle:
+																		( 0,
+																		I18n.__ )(
+																			'Remove the audio',
+																			'ohmylms'
+																		),
+																	alertDescription:
+																		( 0,
+																		I18n.__ )(
+																			'Are you sure you want to remove this audio?',
+																			'ohmylms'
+																		),
+																	modalPosition:
+																		'top',
+																}
+															) }
+														</Controls.FlexWP>
+													</div>
+												);
+											}
+											return (
+												<div
 													className={
-														'crlsm-media-controls-audio'
+														'ohmylms-media-audio-wrapper'
 													}
 												>
-													<Controls.ButtonWP
-														variant={ 'primary' }
-														icon={ <Re /> }
-														onClick={ function () {
-															return _e(
-																'audio'
-															);
-														} }
+													<audio
+														src={ z }
+														controls={ ! 0 }
+													/>
+													<Controls.FlexWP
+														gap={ 4 }
+														align={ 'center' }
+														justify={ 'flex-end' }
 													>
-														{ ( 0, I18n.__ )(
-															'Replace',
-															'ohmylms'
+														<Controls.ButtonWP
+															variant={
+																'primary'
+															}
+															icon={ <Re /> }
+															onClick={ function () {
+																return _e(
+																	'audio'
+																);
+															} }
+														>
+															{ ( 0, I18n.__ )(
+																'Replace',
+																'ohmylms'
+															) }
+														</Controls.ButtonWP>
+														{ React.createElement(
+															gr,
+															{
+																onOK: ye,
+																alertTitle: ( 0,
+																I18n.__ )(
+																	'Remove the audio',
+																	'ohmylms'
+																),
+																alertDescription:
+																	( 0,
+																	I18n.__ )(
+																		'Are you sure you want to remove this audio?',
+																		'ohmylms'
+																	),
+															}
 														) }
-													</Controls.ButtonWP>
-													{ React.createElement( gr, {
-														onOK: ye,
-														alertTitle: ( 0,
-														I18n.__ )(
-															'Remove the audio',
-															'ohmylms'
-														),
-														alertDescription: ( 0,
-														I18n.__ )(
-															'Are you sure you want to remove this audio?',
-															'ohmylms'
-														),
-														modalPosition: 'top',
-													} ) }
-												</Controls.FlexWP>
-											</div>
-										) : (
-											<div
-												className={
-													'ohmylms-media-audio-wrapper'
-												}
-											>
-												<audio
-													src={ z }
-													controls={ ! 0 }
-												/>
-												<Controls.FlexWP
-													gap={ 4 }
-													align={ 'center' }
-													justify={ 'flex-end' }
-												>
-													<Controls.ButtonWP
-														variant={ 'primary' }
-														icon={ <Re /> }
-														onClick={ function () {
-															return _e(
-																'audio'
-															);
-														} }
-													>
-														{ ( 0, I18n.__ )(
-															'Replace',
-															'ohmylms'
-														) }
-													</Controls.ButtonWP>
-													{ React.createElement( gr, {
-														onOK: ye,
-														alertTitle: ( 0,
-														I18n.__ )(
-															'Remove the audio',
-															'ohmylms'
-														),
-														alertDescription: ( 0,
-														I18n.__ )(
-															'Are you sure you want to remove this audio?',
-															'ohmylms'
-														),
-													} ) }
-												</Controls.FlexWP>
-											</div>
-										)
-									) : (
-										<React.Fragment>
-											{ React.createElement( dr, {
-												type: 'audio',
-												onClick: fe,
-												buttonLabel: ( 0, I18n.__ )(
-													'Select an audio',
-													'ohmylms'
-												),
-												icon: React.createElement(
-													ve,
-													null
-												),
-												supportedTypes: p,
-												handleExternalMedia: be,
-												setShowInput: Q,
-												showInput: Y,
-												value: z,
-											} ) }
-										</React.Fragment>
-									) }
+													</Controls.FlexWP>
+												</div>
+											);
+										}
+										return (
+											<React.Fragment>
+												{ React.createElement( dr, {
+													type: 'audio',
+													onClick: fe,
+													buttonLabel: ( 0, I18n.__ )(
+														'Select an audio',
+														'ohmylms'
+													),
+													icon: React.createElement(
+														ve,
+														null
+													),
+													supportedTypes: p,
+													handleExternalMedia: be,
+													setShowInput: Q,
+													showInput: Y,
+													value: z,
+												} ) }
+											</React.Fragment>
+										);
+									} )() }
 								</React.Fragment>
 							) }
 							<Controls.FlexWP
@@ -617,13 +713,15 @@ export function createLearningMediaField( readRuntime ) {
 						<Controls.SpacerWP marginBottom={ 4 } />
 						<Controls.FlexWP
 							align={ 'center' }
-							justify={
-								'center' === _
-									? 'center'
-									: 'right' === _
-										? 'flex-end'
-										: 'flex-start'
-							}
+							justify={ ( () => {
+								if ( 'center' === _ ) {
+									return 'center';
+								}
+								if ( 'right' === _ ) {
+									return 'flex-end';
+								}
+								return 'flex-start';
+							} )() }
 							gap={ 0 }
 							className={ 'ohmylms-media-uploader-buttons '.concat(
 								j || N ? 'ohmylms-has-media' : ''

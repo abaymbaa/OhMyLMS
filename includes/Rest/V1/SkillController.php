@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learning-skill catalogue: skills, prerequisites (acyclic), lesson links and
+ * question skill maps. Profile "skills" on student accounts are unrelated.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -158,7 +164,7 @@ class SkillController extends RestController {
 
 	public function create( WP_REST_Request $request ) {
 		$name = sanitize_text_field( (string) $request['name'] );
-		if ( $name === '' ) {
+		if ( '' === $name ) {
 			return new WP_Error( 'ohmylms_skill_invalid', __( 'A skill name is required.', 'ohmylms' ), array( 'status' => 400 ) ); }
 		$parent = (int) $request['parent'];
 		if ( $parent && ! term_exists( $parent, Taxonomy::NAME ) ) {
@@ -292,7 +298,7 @@ class SkillController extends RestController {
 		$id = (int) $request['id'];
 		if ( ! term_exists( $id, Taxonomy::NAME ) ) {
 			return new WP_Error( 'ohmylms_skill_missing', __( 'Skill not found.', 'ohmylms' ), array( 'status' => 404 ) ); }
-		$courses   = $request['kind'] === 'courses';
+		$courses   = 'courses' === $request['kind'];
 		$post_type = $courses ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
 		$wanted    = array_values( array_unique( array_map( 'intval', (array) $request[ $courses ? 'course_ids' : 'lesson_ids' ] ) ) );
 		foreach ( $wanted as $post_id ) {
@@ -311,7 +317,7 @@ class SkillController extends RestController {
 
 	/** Lessons or courses the author may link: search results, or titles for known IDs. */
 	public function link_targets( WP_REST_Request $request ) {
-		$post_type = $request['type'] === 'course' ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
+		$post_type = 'course' === $request['type'] ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
 		$ids       = array_filter( array_map( 'intval', explode( ',', (string) $request['include'] ) ) );
 		$args      = array(
 			'post_type'   => $post_type,
@@ -328,8 +334,8 @@ class SkillController extends RestController {
 			foreach ( get_posts( $args ) as $post ) {
 				if ( current_user_can( 'edit_post', $post->ID ) ) {
 					$rows[] = array(
-						'id'    => (int) $post->ID,
-						'title' => get_the_title( $post ) ?: '#' . $post->ID,
+						'id'                => (int) $post->ID,
+						'title'             => get_the_title( $post ) ?: '#' . $post->ID,
 						'native_editor_url' => \OhMyLMS\Learning\NativeLessonEditor::edit_url( $post->ID ),
 					); }
 			}

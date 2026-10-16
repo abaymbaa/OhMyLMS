@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learner routes. A signed-in account can only read and change its own dashboard: the
+ * learner is always the current user, never a request parameter. Following a bundle is
+ * independent of enrollment and grants no access.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -83,7 +90,7 @@ class MyBundlesController extends RestController {
 	/** Progress for a published bundle, always for the current learner only. */
 	public function show( WP_REST_Request $request ) {
 		$bundle = Bundles::get( (int) $request['id'] );
-		if ( ! $bundle || $bundle['status'] !== 'published' ) {
+		if ( ! $bundle || 'published' !== $bundle['status'] ) {
 			return Bundles::missing(); }
 		\OhMyLMS\Skills\Evidence::process( 50 );
 		return rest_ensure_response( Progress::for_bundle( $bundle, get_current_user_id() ) + array( 'following' => Follows::is_following( get_current_user_id(), (int) $bundle['id'] ) ) );

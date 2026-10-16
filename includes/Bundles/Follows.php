@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A learner's choice to show a bundle on their own dashboard.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Bundles;
 
 use OhMyLMS\Curriculum\Access;
@@ -30,14 +35,14 @@ final class Follows {
 	public static function follow( $user_id, $bundle_id ) {
 		global $wpdb;
 		$bundle = Bundles::get( $bundle_id );
-		if ( ! $bundle || $bundle['status'] !== 'published' ) {
+		if ( ! $bundle || 'published' !== $bundle['status'] ) {
 			return Bundles::missing(); }
 		if ( ! self::is_following( $user_id, $bundle_id ) ) {
 			if ( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::table() . ' WHERE user_id=%d', (int) $user_id ) ) >= self::MAX_PER_USER ) {
 				return Access::error( 'ohmylms_bundle_follow_limit', sprintf( __( 'You can follow at most %d bundles. Remove one first.', 'ohmylms' ), self::MAX_PER_USER ), 409 );
 			}
 			$inserted = $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . self::table() . ' (bundle_id, user_id, followed_at) VALUES (%d, %d, %s)', (int) $bundle_id, (int) $user_id, current_time( 'mysql', true ) ) );
-			if ( $inserted === false ) {
+			if ( false === $inserted ) {
 				return Access::error( 'ohmylms_bundle_failed', __( 'The bundle could not be added to your dashboard.', 'ohmylms' ), 500 ); }
 		}
 		return true;
@@ -48,7 +53,7 @@ final class Follows {
 		$wpdb->delete(
 			self::table(),
 			array(
-				'user_id'  => (int) $user_id,
+				'user_id'   => (int) $user_id,
 				'bundle_id' => (int) $bundle_id,
 			)
 		);
@@ -72,7 +77,7 @@ final class Follows {
 		$courses = array();
 		$items   = array();
 		foreach ( Bundles::members( $bundle_id ) as $member ) {
-			if ( $member['type'] === 'course' ) {
+			if ( 'course' === $member['type'] ) {
 				$courses[] = $member['id'];
 			} else {
 				$items = array_merge( $items, Items::with_descendants( $member['id'] ) ); }

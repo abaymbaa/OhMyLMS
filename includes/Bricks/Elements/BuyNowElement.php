@@ -1,10 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Bricks\Elements;
 
 use Bricks\Element;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class BuyNowElement extends Element {
@@ -19,7 +19,7 @@ class BuyNowElement extends Element {
 	}
 
 	public function set_controls() {
-		// Content controls
+		// Content controls.
 		$this->controls['course_id'] = array(
 			'tab'     => 'content',
 			'label'   => __( 'Course', 'ohmylms' ),
@@ -35,7 +35,7 @@ class BuyNowElement extends Element {
 			'default' => __( 'Buy Now', 'ohmylms' ),
 		);
 
-		// Style controls
+		// Style controls.
 		$this->controls['background'] = array(
 			'tab'     => 'style',
 			'label'   => __( 'Background Color', 'ohmylms' ),
@@ -138,7 +138,7 @@ class BuyNowElement extends Element {
 				'tab'     => 'style',
 				'label'   => ucwords( str_replace( '_', ' ', $prop ) ),
 				'type'    => 'text',
-				'default' => $prop === 'width' ? 'auto' : ( $prop === 'height' ? 'auto' : ( $prop === 'max_width' ? '100%' : '100px' ) ),
+				'default' => 'width' === $prop ? 'auto' : ( 'height' === $prop ? 'auto' : ( 'max_width' === $prop ? '100%' : '100px' ) ),
 				'css'     => array(
 					array(
 						'selector' => '{{WRAPPER}} .add_to_cart_button',
@@ -148,7 +148,7 @@ class BuyNowElement extends Element {
 			);
 		}
 
-		// Positioning and alignment controls
+		// Positioning and alignment controls.
 		$this->controls['display'] = array(
 			'tab'     => 'style',
 			'label'   => __( 'Display', 'ohmylms' ),
@@ -341,7 +341,7 @@ class BuyNowElement extends Element {
 		if ( isset( $settings['_border'] ) ) {
 			$border = $settings['_border'];
 
-			// Width
+			// Width.
 			$width        = $border['width'] ?? array(
 				'top'    => '0',
 				'right'  => '0',
@@ -350,13 +350,13 @@ class BuyNowElement extends Element {
 			);
 			$border_width = "{$width['top']} {$width['right']} {$width['bottom']} {$width['left']}";
 
-			// Style
+			// Style.
 			$border_style = $border['style'] ?? 'solid';
 
-			// Color
+			// Color.
 			$border_color = $border['color']['hex'] ?? '#000';
 
-			// Radius
+			// Radius.
 			$radius        = $border['radius'] ?? array(
 				'top'    => 0,
 				'right'  => 0,

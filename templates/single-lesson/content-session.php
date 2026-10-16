@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 ?>
 
@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			// include(OHMYLMS_PRO_DIR . '/includes/Integrations/GoogleMeet/Templates/content-googlemeet.php');
 			// } else {
 			// echo esc_html__( 'No session platform selected.', 'ohmylms' );
-			// }
+			// }.
 		?>
 	</div>
 <?php endwhile; ?>

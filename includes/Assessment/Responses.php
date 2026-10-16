@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Durable, server-received responses for versioned attempts.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -51,7 +56,7 @@ final class Responses {
 					'received_at' => $now,
 				)
 			);
-		if ( $ok === false ) {
+		if ( false === $ok ) {
 			return new \WP_Error( 'quiz_storage', __( 'Could not save your answer. Please retry.', 'ohmylms' ), array( 'status' => 500 ) ); }
 		$wpdb->insert(
 			Schema::table( 'response_events' ),
@@ -80,7 +85,7 @@ final class Responses {
 		$result = array();
 		foreach ( $rows as $row ) {
 			$value = json_decode( $row['response'], true );
-			if ( $value !== null ) {
+			if ( null !== $value ) {
 				$result[ (int) $row['question_id'] ] = $value; }
 		}
 		return $result;

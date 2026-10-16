@@ -11,7 +11,7 @@
 
 defined( 'ABSPATH' ) || exit();
 
-// do_action( 'ohmylms_account_header' );
+// do_action( 'ohmylms_account_header' );.
 
 /**
  * Hook: ohmylms_before_checkout_form_start.
@@ -21,7 +21,7 @@ do_action( 'ohmylms_before_checkout_form_start', $checkout );
 // if ( !$checkout->is_guest_checkout_enabled() || $checkout->is_registration_enabled() ||  ! is_user_logged_in() ) {
 // echo esc_html( apply_filters( 'ohmylms_checkout_must_be_logged_in_message', __( 'You must be logged in to checkout.', 'ohmylms' ) ) );
 // return;
-// }
+// }.
 ?>
 <div class="ohmylms-checkout-form-outer">
 	<div class="ohmylms-container">

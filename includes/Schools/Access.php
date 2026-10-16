@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Every resource permission is resolved from current database relationships.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -34,7 +39,7 @@ final class Access {
 		global $wpdb;
 		$classes = Schema::table( 'classes' );
 		$class   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $classes WHERE id=%d", $id ), ARRAY_A );
-		if ( ! $class || ( $write && $class['status'] !== 'active' ) ) {
+		if ( ! $class || ( $write && 'active' !== $class['status'] ) ) {
 			return false; }
 		if ( ! (int) $class['school_id'] ) {
 			if ( self::platform() ) {

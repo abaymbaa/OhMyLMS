@@ -5,7 +5,6 @@ export function createLeaderboardSettings( readRuntime ) {
 	return function LeaderboardSettings() {
 		const {
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			_2,
@@ -19,124 +18,129 @@ export function createLeaderboardSettings( readRuntime ) {
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
-		var e = true,
-			t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = _2(
-				( 0, ReactHooks.useState )( {
-					enable: ! 1,
-					rules: 'completion_rate',
-					threshold: '',
-					students_number: '',
-				} ),
-				2
-			),
-			r = n[ 0 ],
-			a = n[ 1 ],
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
-			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
-			}, [] ),
-			c = _2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			u = c[ 0 ],
-			s = c[ 1 ],
-			d = _2( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			m = d[ 0 ],
-			p = d[ 1 ],
-			f = ( 0, Notifications.A )(),
-			openNotificationWithIcon = f.openNotificationWithIcon,
-			contextHolder = f.contextHolder,
-			_ = ( function () {
-				var t = b2(
-					p2().m( function t() {
-						var n, r;
-						return p2().w(
-							function ( t ) {
-								for (;;) {
-									switch ( ( t.p = t.n ) ) {
-										case 0:
-											{
-												t.n = 1;
-												break;
-											}
-											return t.a( 2 );
-										case 1:
-											return (
-												( t.p = 1 ),
-												s( ! 0 ),
-												( t.n = 2 ),
-												l()( {
-													path: 'ohmylms/v1/engagement/settings/leaderboard',
-												} )
-											 );
-										case 2:
-											( ( n = t.v ),
-												a( function ( e ) {
-													return g2( g2( {}, e ), n );
-												} ),
-												( t.n = 4 ) );
+		var t = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var n = _2(
+			( 0, ReactHooks.useState )( {
+				enable: ! 1,
+				rules: 'completion_rate',
+				threshold: '',
+				students_number: '',
+			} ),
+			2
+		);
+		var r = n[ 0 ];
+		var a = n[ 1 ];
+		var o = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+			return _eLocal( StoreModule.default ).getNotificationMessage();
+		}, [] );
+		var i = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+			return _eLocal2( StoreModule.default ).getNotificationStatus();
+		}, [] );
+		var c = _2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var u = c[ 0 ];
+		var s = c[ 1 ];
+		var d = _2( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var m = d[ 0 ];
+		var p = d[ 1 ];
+		var f = ( 0, Notifications.A )();
+		var openNotificationWithIcon = f.openNotificationWithIcon;
+		var contextHolder = f.contextHolder;
+		var _ = ( function () {
+			var _tLocal = b2(
+				p2().m( function _tLocal2() {
+					var _nLocal, _rLocal;
+					return p2().w(
+						function ( _tLocal3 ) {
+							for (;;) {
+								switch ( ( _tLocal3.p = _tLocal3.n ) ) {
+									case 0:
+										{
+											_tLocal3.n = 1;
 											break;
-										case 3:
-											( ( t.p = 3 ),
-												( r = t.v ),
-												console.error( r ) );
-										case 4:
-											return (
-												( t.p = 4 ),
-												s( ! 1 ),
-												t.f( 4 )
-											 );
-										case 5:
-											return t.a( 2 );
-									}
+										}
+										return _tLocal3.a( 2 );
+									case 1:
+										return (
+											( _tLocal3.p = 1 ),
+											s( ! 0 ),
+											( _tLocal3.n = 2 ),
+											l()( {
+												path: 'ohmylms/v1/engagement/settings/leaderboard',
+											} )
+										 );
+									case 2:
+										_nLocal = _tLocal3.v;
+										a( function ( _eLocal3 ) {
+											return g2(
+												g2( {}, _eLocal3 ),
+												_nLocal
+											);
+										} );
+										_tLocal3.n = 4;
+										break;
+									case 3:
+										_tLocal3.p = 3;
+										_rLocal = _tLocal3.v;
+										console.error( _rLocal );
+									// Falls through to the shared async state cleanup.
+									case 4:
+										return (
+											( _tLocal3.p = 4 ),
+											s( ! 1 ),
+											_tLocal3.f( 4 )
+										 );
+									case 5:
+										return _tLocal3.a( 2 );
 								}
-							},
-							t,
-							null,
-							[ [ 1, 3, 4, 5 ] ]
-						);
-					} )
-				);
-				return function () {
-					return t.apply( this, arguments );
-				};
-			} )();
-		( ( 0, ReactHooks.useEffect )( function () {
-			var e = ! 0;
+							}
+						},
+						_tLocal2,
+						null,
+						[ [ 1, 3, 4, 5 ] ]
+					);
+				} )
+			);
+			return function ( ..._args ) {
+				return _tLocal.apply( this, _args );
+			};
+		} )();
+		( 0, ReactHooks.useEffect )( function () {
+			var _eLocal4 = ! 0;
 			return (
-				e && _(),
+				_eLocal4 && _(),
 				function () {
-					e = ! 1;
+					_eLocal4 = ! 1;
 				}
 			 );
-		}, [] ),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					! u && o && openNotificationWithIcon( i, o );
-				},
-				[ o ]
-			) );
+		}, [] );
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( ! u && o ) {
+					openNotificationWithIcon( i, o );
+				}
+			},
+			[ o ]
+		);
 		var w = ( function () {
-				var n = b2(
-					p2().m( function n() {
-						var a;
+				var _nLocal2 = b2(
+					p2().m( function _nLocal3() {
+						var _aLocal;
 						return p2().w(
-							function ( n ) {
+							function ( _nLocal4 ) {
 								for (;;) {
-									switch ( ( n.p = n.n ) ) {
+									switch ( ( _nLocal4.p = _nLocal4.n ) ) {
 										case 0:
 											{
-												n.n = 1;
+												_nLocal4.n = 1;
 												break;
 											}
-											return n.a( 2 );
+											return _nLocal4.a( 2 );
 										case 1:
 											if (
 												'' !== r.students_number &&
 												null !== r.students_number
 											) {
-												n.n = 2;
+												_nLocal4.n = 2;
 												break;
 											}
 											return (
@@ -147,18 +151,18 @@ export function createLeaderboardSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												n.a( 2 )
+												_nLocal4.a( 2 )
 											 );
 										case 2:
 											if ( 'fastest_time' === r.rules ) {
-												n.n = 3;
+												_nLocal4.n = 3;
 												break;
 											}
 											if (
 												'' !== r.threshold &&
 												null !== r.threshold
 											) {
-												n.n = 3;
+												_nLocal4.n = 3;
 												break;
 											}
 											return (
@@ -169,14 +173,14 @@ export function createLeaderboardSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												n.a( 2 )
+												_nLocal4.a( 2 )
 											 );
 										case 3:
 											return (
 												t.setLoadingSetting( ! 0 ),
 												p( ! 0 ),
-												( n.p = 4 ),
-												( n.n = 5 ),
+												( _nLocal4.p = 4 ),
+												( _nLocal4.n = 5 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/settings/leaderboard',
 													method: 'POST',
@@ -189,7 +193,7 @@ export function createLeaderboardSettings( readRuntime ) {
 											 );
 										case 5:
 											return (
-												( a = n.v ),
+												( _aLocal = _nLocal4.v ),
 												openNotificationWithIcon(
 													'success',
 													( 0, I18n.__ )(
@@ -197,45 +201,49 @@ export function createLeaderboardSettings( readRuntime ) {
 														'ohmylms'
 													)
 												),
-												n.a( 2, a )
+												_nLocal4.a( 2, _aLocal )
 											 );
 										case 6:
-											( ( n.p = 6 ),
-												n.v,
-												p( ! 1 ),
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Something went wrong.',
-														'ohmylms'
-													)
-												) );
+											_nLocal4.p = 6;
+											p( ! 1 );
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Something went wrong.',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( n.p = 7 ),
+												( _nLocal4.p = 7 ),
 												t.setLoadingSetting( ! 1 ),
 												p( ! 1 ),
-												n.f( 7 )
+												_nLocal4.f( 7 )
 											 );
 										case 8:
-											return n.a( 2 );
+											return _nLocal4.a( 2 );
 									}
 								}
 							},
-							n,
+							_nLocal3,
 							null,
 							[ [ 4, 6, 7, 8 ] ]
 						);
 					} )
 				);
-				return function () {
-					return n.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _nLocal2.apply( this, _args2 );
 				};
 			} )(),
-			E = function ( t, n ) {
+			E = function ( _tLocal4, _nLocal5 ) {
 				{
-					var o = g2( g2( {}, r ), {}, h2( {}, t, n ) );
-					a( o );
+					var _oLocal = g2(
+						g2( {}, r ),
+						{},
+						h2( {}, _tLocal4, _nLocal5 )
+					);
+					a( _oLocal );
 				}
 			},
 			S = [
@@ -361,20 +369,23 @@ export function createLeaderboardSettings( readRuntime ) {
 																'ohmylms'
 															) }
 															onChange={ function (
-																t
+																_tLocal5
 															) {
 																{
-																	var n = g2(
+																	var _nLocal6 =
 																		g2(
+																			g2(
+																				{},
+																				r
+																			),
 																			{},
-																			r
-																		),
-																		{},
-																		{
-																			rules: t,
-																		}
+																			{
+																				rules: _tLocal5,
+																			}
+																		);
+																	a(
+																		_nLocal6
 																	);
-																	a( n );
 																}
 															} }
 															value={ r.rules }
@@ -432,29 +443,35 @@ export function createLeaderboardSettings( readRuntime ) {
 															>
 																<Controls.InputNumberWP
 																	value={
-																		null ==
-																		r
+																		r ===
+																			null ||
+																		r ===
+																			void 0
 																			? void 0
 																			: r.threshold
 																	}
 																	onChange={ function (
-																		e
+																		_eLocal5
 																	) {
 																		return E(
 																			'threshold',
-																			e
+																			_eLocal5
 																		);
 																	} }
 																	min={ 0 }
 																	suffix={
 																		'completion_rate' ===
-																			( null ==
-																			r
+																			( r ===
+																				null ||
+																			r ===
+																				void 0
 																				? void 0
 																				: r.rules ) ||
 																		'highest_quiz' ===
-																			( null ==
-																			r
+																			( r ===
+																				null ||
+																			r ===
+																				void 0
 																				? void 0
 																				: r.rules )
 																			? '%'
@@ -519,11 +536,11 @@ export function createLeaderboardSettings( readRuntime ) {
 																r.students_number
 															}
 															onChange={ function (
-																e
+																_eLocal6
 															) {
 																return E(
 																	'students_number',
-																	e
+																	_eLocal6
 																);
 															} }
 															min={ 0 }

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Webhooks;
 
@@ -34,7 +34,7 @@ class Webhooks {
 	public function init_classes() {
 		new Hooks();
 
-		// Initialize webhook migration system
+		// Initialize webhook migration system.
 		WebhooksMigration::init();
 	}
 
@@ -47,6 +47,6 @@ class Webhooks {
 	public function is_enabled() {
 		$integrations = get_option( 'ohmylms_integrations', array() );
 		return isset( $integrations[ $this->integration_key ]['is_enable'] ) &&
-				$integrations[ $this->integration_key ]['is_enable'] == 1;
+				1 == $integrations[ $this->integration_key ]['is_enable'];
 	}
 }

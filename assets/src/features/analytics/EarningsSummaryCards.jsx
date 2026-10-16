@@ -11,17 +11,23 @@ export function createEarningsSummaryCards( readRuntime ) {
 			i = void 0 === o ? 'secondary' : o;
 		return (
 			<React.Fragment>
-				{ t.map( function ( e, t ) {
-					var r,
-						o = ( null == e ? void 0 : e.iconColor ) || '#33A646';
+				{ t.map( function ( e, _tLocal ) {
+					var _rLocal,
+						_oLocal =
+							( e === null || e === void 0
+								? void 0
+								: e.iconColor ) || '#33A646';
 					return (
 						<Controls.FlexBlockWP
-							key={ e.label + t }
+							key={ e.label + _tLocal }
 							className={
 								null !==
-									( r = null == e ? void 0 : e.card_class ) &&
-								void 0 !== r
-									? r
+									( _rLocal =
+										e === null || e === void 0
+											? void 0
+											: e.card_class ) &&
+								void 0 !== _rLocal
+									? _rLocal
 									: ''
 							}
 						>
@@ -54,7 +60,7 @@ export function createEarningsSummaryCards( readRuntime ) {
 													}
 												>
 													<path
-														fill={ o }
+														fill={ _oLocal }
 														fillRule={ 'evenodd' }
 														d={
 															'M4.982 2.253c-.069-.285-.523-.285-.591 0L3.669 5.26c-.179.746-.917 1.28-1.772 1.28H1.06C.728 6.54.457 6.297.457 6c0-.298.27-.54.604-.54h.836c.285 0 .53-.177.59-.426l.722-3.007c.341-1.422 2.613-1.422 2.954 0l1.853 7.72c.068.284.522.284.59 0l.722-3.007c.18-.747.918-1.28 1.773-1.28h.835c.334 0 .604.242.604.54 0 .298-.27.54-.604.54h-.835c-.285 0-.532.177-.591.426l-.722 3.007c-.341 1.422-2.613 1.422-2.954 0l-1.852-7.72z'
@@ -113,7 +119,8 @@ export function createEarningsSummaryCards( readRuntime ) {
 													<Controls.BadgeWP
 														isBorderLess={ ! 0 }
 														variant={
-															null == e
+															e === null ||
+															e === void 0
 																? void 0
 																: e.progression_state
 														}
@@ -136,25 +143,42 @@ export function createEarningsSummaryCards( readRuntime ) {
 																		style={ {
 																			transform:
 																				'rotate('.concat(
-																					'card-refund' ===
-																						( null ==
-																						e
-																							? void 0
-																							: e.card_class )
-																						? 'success' !==
-																							( null ==
-																							e
+																					( () => {
+																						if (
+																							'card-refund' ===
+																							( e ===
+																								null ||
+																							e ===
+																								void 0
 																								? void 0
-																								: e.progression_state )
-																							? '0deg'
-																							: '180deg'
-																						: 'success' ===
-																							  ( null ==
-																							  e
+																								: e.card_class )
+																						) {
+																							if (
+																								'success' !==
+																								( e ===
+																									null ||
+																								e ===
+																									void 0
 																									? void 0
 																									: e.progression_state )
-																							? '0deg'
-																							: '180deg',
+																							) {
+																								return '0deg';
+																							}
+																							return '180deg';
+																						}
+																						if (
+																							'success' ===
+																							( e ===
+																								null ||
+																							e ===
+																								void 0
+																								? void 0
+																								: e.progression_state )
+																						) {
+																							return '0deg';
+																						}
+																						return '180deg';
+																					} )(),
 																					')'
 																				),
 																		} }

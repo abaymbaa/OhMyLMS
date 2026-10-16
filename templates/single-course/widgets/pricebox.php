@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 global $course;
@@ -35,7 +35,7 @@ if ( $maybe_enrolled ) {
 		if ( $course->is_on_sale() && $course->validate_on_sale() ) {
 			?>
 			<span class="special-deal-tag">
-				<?php echo __( 'Special Sale', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Special Sale', 'ohmylms' ); ?>
 			</span>
 		<?php } ?>
 
@@ -54,7 +54,7 @@ if ( $maybe_enrolled ) {
 
 			foreach ( $cohorts as $cohort ) {
 
-				// Check capacity for this cohort
+				// Check capacity for this cohort.
 				if ( empty( $cohort['has_capacity'] ) ||
 					( ! empty( $cohort['has_capacity'] ) && $cohort['has_capacity'] &&
 						! empty( $cohort['capacity'] ) &&
@@ -62,7 +62,7 @@ if ( $maybe_enrolled ) {
 					$has_capacity = true;
 				}
 
-				// Check enrollment deadline
+				// Check enrollment deadline.
 				if ( ! empty( $cohort['enrollment_deadline'] ) ) {
 					$enrollment_end = strtotime( $cohort['enrollment_deadline'] );
 
@@ -70,28 +70,28 @@ if ( $maybe_enrolled ) {
 						$has_active_enrollment = true;
 					}
 				} else {
-					// If enrollment deadline is not set, consider it as active enrollment
+					// If enrollment deadline is not set, consider it as active enrollment.
 					$has_active_enrollment = true;
 				}
 
-				// Check if any cohort is not expired
+				// Check if any cohort is not expired.
 				if ( ! empty( $cohort['end_date'] ) ) {
 					if ( strtotime( $cohort['end_date'] ) >= $current_time ) {
 						$all_expired = false;
 					}
 				} else {
-					// If no end date, consider not expired
+					// If no end date, consider not expired.
 					$all_expired = false;
 				}
 			}
 
-				// Determine what template to show based on conditions
+				// Determine what template to show based on conditions.
 			if ( ! $has_active_enrollment || $all_expired ) {
 				ohmylms_get_template( 'single-course/exceed-deadline.php', $args );
 			} elseif ( ! $has_capacity ) {
 				ohmylms_get_template( 'single-course/exceed-capacity.php', $args );
 			} else {
-				// All conditions are met, show add to cart
+				// All conditions are met, show add to cart.
 				ohmylms_get_template( 'single-course/add-to-cart.php', $args );
 			}
 		} elseif ( ! $course->get_has_capacity() || ( $course->get_has_capacity() && $course->get_capacity() > $course->get_total_enrolled_users() ) ) {

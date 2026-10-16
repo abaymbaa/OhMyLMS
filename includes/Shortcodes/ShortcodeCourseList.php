@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course List Shortcode.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Shortcodes;
 
@@ -22,7 +27,7 @@ class ShortcodeCourseList {
 	 * @since 1.0.0
 	 */
 	public static function output( $atts ): void {
-		// Enqueue shortcode styles
+		// Enqueue shortcode styles.
 		self::enqueue_styles();
 		self::course_list( $atts );
 	}
@@ -54,15 +59,15 @@ class ShortcodeCourseList {
 	 */
 	private static function get_default_atts() {
 		return array(
-			// Content settings
+			// Content settings.
 			'posts_per_page'                         => get_option( 'ohmylms_courses_per_page', 10 ),
 			'orderby'                                => 'date',
 			'order'                                  => 'DESC',
 			// Curriculum item and Course Bundle IDs, comma-separated (e.g. curriculum="12,14" bundle="3").
 			'curriculum'                             => '',
-			'bundle'                                  => '',
+			'bundle'                                 => '',
 
-			// Layout settings
+			// Layout settings.
 			'layout'                                 => get_option( 'ohmylms_archive_page_layout', 'grid' ),
 			'layout_style'                           => get_option( 'ohmylms_archive_page_layout_style', 'grid-style1' ),
 			'show_filter'                            => get_option( 'ohmylms_archive_page_filter_is_enabled', 'no' ),
@@ -203,7 +208,7 @@ class ShortcodeCourseList {
 			'button_hover_box_shadow'                => '',
 			'button_hover_border_color'              => '#6e42d3',
 
-			// Legacy attributes for backward compatibility
+			// Legacy attributes for backward compatibility.
 			'container_class'                        => '',
 			'course_card_class'                      => '',
 			'grid_gap'                               => '',
@@ -225,14 +230,14 @@ class ShortcodeCourseList {
 	 * @since 1.0.0
 	 */
 	private static function course_list( $atts ) {
-		// Parse attributes with defaults
+		// Parse attributes with defaults.
 		$atts = shortcode_atts( self::get_default_atts(), $atts, 'ohmylms_course_list' );
 
-		// Store attributes globally for CSS generation
+		// Store attributes globally for CSS generation.
 		global $ohmylms_course_list_attributes;
 		$ohmylms_course_list_attributes = $atts;
 
-		// Build query arguments
+		// Build query arguments.
 		$args = array(
 			'post_type'      => 'ohmylms-course',
 			'post_status'    => 'publish',
@@ -248,25 +253,25 @@ class ShortcodeCourseList {
 			\OhMyLMS\Curriculum\Placement::ids_from_list( $atts['bundle'], 'bundle' )
 		);
 
-		// Set up global query for template
+		// Set up global query for template.
 		global $wp_query;
 		$original_query = $wp_query;
 		$wp_query       = new WP_Query( $args );
 
 		ob_start();
 
-		// Inject custom styles
+		// Inject custom styles.
 		self::inject_custom_styles();
 
-		// Make shortcode attributes available to template
+		// Make shortcode attributes available to template.
 		$shortcode_atts = $atts;
-		$atts           = $atts; // Also make $atts available for template compatibility
+		$atts           = $atts; // Also make $atts available for template compatibility.
 
-		// Locate and render archive template directly
+		// Locate and render archive template directly.
 		$template_path = self::locate_course_template();
 		if ( $template_path && file_exists( $template_path ) ) {
 			// Transform shortcode attributes to match template expectations
-			// Use output buffering to safely capture template output
+			// Use output buffering to safely capture template output.
 			try {
 				include $template_path;
 			} catch ( Exception $e ) {
@@ -276,7 +281,7 @@ class ShortcodeCourseList {
 			echo '<p class="ohmylms-no-template">' . esc_html__( 'Course template not found.', 'ohmylms' ) . '</p>';
 		}
 
-		// Restore original query
+		// Restore original query.
 		$wp_query = $original_query;
 		wp_reset_postdata();
 
@@ -325,7 +330,7 @@ class ShortcodeCourseList {
 			$wrapper_styles[] = 'padding: ' . esc_attr( $attrs['wrapper_padding'] ) . ' !important';
 		}
 
-		// Legacy container styles for backward compatibility
+		// Legacy container styles for backward compatibility.
 		if ( ! empty( $attrs['container_padding'] ) ) {
 			$wrapper_styles[] = 'padding: ' . esc_attr( $attrs['container_padding'] ) . ' !important';
 		}
@@ -337,7 +342,7 @@ class ShortcodeCourseList {
 			$css .= '.ohmylms-container, .ohmylms-course-cards { ' . implode( '; ', $wrapper_styles ) . '; }' . "\n";
 		}
 
-		// Grid gap
+		// Grid gap.
 		if ( ! empty( $attrs['grid_gap'] ) ) {
 			$css .= '.ohmylms-course-cards { gap: ' . esc_attr( $attrs['grid_gap'] ) . ' !important; }' . "\n";
 		}
@@ -362,7 +367,7 @@ class ShortcodeCourseList {
 			$card_styles[] = 'box-shadow: ' . esc_attr( $attrs['card_box_shadow'] ) . ' !important';
 		}
 
-		// Legacy card styles for backward compatibility
+		// Legacy card styles for backward compatibility.
 		if ( ! empty( $attrs['card_bg_color'] ) ) {
 			$card_styles[] = 'background-color: ' . esc_attr( $attrs['card_bg_color'] ) . ' !important';
 		}
@@ -377,7 +382,7 @@ class ShortcodeCourseList {
 			$css .= '.course-card { ' . implode( '; ', $card_styles ) . '; }' . "\n";
 		}
 
-		// Card Hover Styles
+		// Card Hover Styles.
 		$card_hover_styles = array();
 		if ( ! empty( $attrs['card_hover_box_shadow'] ) ) {
 			$card_hover_styles[] = 'box-shadow: ' . esc_attr( $attrs['card_hover_box_shadow'] ) . ' !important';
@@ -406,7 +411,7 @@ class ShortcodeCourseList {
 			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link figure, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link img { ' . implode( '; ', $card_header_styles ) . '; }' . "\n";
 		}
 
-		// Card Header Image Border Radius
+		// Card Header Image Border Radius.
 		if ( ! empty( $attrs['card_header_image_border_radius'] ) ) {
 			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link figure, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-loop-course-thumbnail-link img { border-radius: ' . esc_attr( $attrs['card_header_image_border_radius'] ) . '}' . "\n";
 		}
@@ -426,7 +431,7 @@ class ShortcodeCourseList {
 			$title_styles[] = 'margin: ' . esc_attr( $attrs['title_margin'] ) . ' !important';
 		}
 
-		// Legacy title styles for backward compatibility
+		// Legacy title styles for backward compatibility.
 		if ( ! empty( $attrs['title_font_size'] ) ) {
 			$title_styles[] = 'font-size: ' . esc_attr( $attrs['title_font_size'] ) . ' !important';
 		}
@@ -481,7 +486,7 @@ class ShortcodeCourseList {
 			$css .= '.course-card .course-meta, .course-card .course-info { ' . implode( '; ', $course_meta_styles ) . '; }' . "\n";
 		}
 
-		// Course Meta Icon Size
+		// Course Meta Icon Size.
 		if ( ! empty( $attrs['course_meta_icon_size'] ) ) {
 			$css .= '.course-card .course-meta i, .course-card .course-meta .icon, .course-card .course-info i, .course-card .course-info .icon { font-size: ' . esc_attr( $attrs['course_meta_icon_size'] ) . ' !important; width: ' . esc_attr( $attrs['course_meta_icon_size'] ) . ' !important; height: ' . esc_attr( $attrs['course_meta_icon_size'] ) . ' !important; }' . "\n";
 		}
@@ -515,7 +520,7 @@ class ShortcodeCourseList {
 			$css .= '.course-card .cohort-meta, .course-card .cohort-info { ' . implode( '; ', $cohort_meta_styles ) . '; }' . "\n";
 		}
 
-		// Cohort Meta Icon Size and Spacing
+		// Cohort Meta Icon Size and Spacing.
 		if ( ! empty( $attrs['cohort_meta_icon_size'] ) ) {
 			$css .= '.course-card .cohort-meta i, .course-card .cohort-meta .icon, .course-card .cohort-info i, .course-card .cohort-info .icon { font-size: ' . esc_attr( $attrs['cohort_meta_icon_size'] ) . ' !important; width: ' . esc_attr( $attrs['cohort_meta_icon_size'] ) . ' !important; height: ' . esc_attr( $attrs['cohort_meta_icon_size'] ) . ' !important; }' . "\n";
 		}
@@ -545,7 +550,7 @@ class ShortcodeCourseList {
 			$price_styles[] = 'color: ' . esc_attr( $attrs['price_color'] ) . ' !important';
 		}
 
-		// Legacy price styles for backward compatibility
+		// Legacy price styles for backward compatibility.
 		if ( ! empty( $attrs['price_font_size'] ) ) {
 			$price_styles[] = 'font-size: ' . esc_attr( $attrs['price_font_size'] ) . ' !important';
 		}
@@ -554,7 +559,7 @@ class ShortcodeCourseList {
 			$css .= '.course-card .course-price, .course-card .price { ' . implode( '; ', $price_styles ) . '; }' . "\n";
 		}
 
-		// Regular Price Color
+		// Regular Price Color.
 		if ( ! empty( $attrs['price_regular_color'] ) ) {
 			$css .= '.course-card .course-price .regular-price, .course-card .price .regular-price, .course-card .course-price del, .course-card .price del { color: ' . esc_attr( $attrs['price_regular_color'] ) . ' !important; }' . "\n";
 		}
@@ -585,7 +590,7 @@ class ShortcodeCourseList {
 			$button_styles[] = 'box-shadow: ' . esc_attr( $attrs['button_box_shadow'] ) . ' !important';
 		}
 
-		// Legacy button styles for backward compatibility
+		// Legacy button styles for backward compatibility.
 		if ( ! empty( $attrs['button_bg_color'] ) ) {
 			$button_styles[] = 'background-color: ' . esc_attr( $attrs['button_bg_color'] ) . ' !important';
 		}
@@ -597,7 +602,7 @@ class ShortcodeCourseList {
 			$css .= '.ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-cards .course-card .ohmylms-button, .ohmylms-page.ohmylms-course-list-shortcode .ohmylms-course-loadmore-area .ohmylms-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
 		}
 
-		// Button Hover Styles
+		// Button Hover Styles.
 		$button_hover_styles = array();
 		if ( ! empty( $attrs['button_hover_background'] ) ) {
 			$button_hover_styles[] = 'background: ' . esc_attr( $attrs['button_hover_background'] ) . ' !important';
@@ -687,13 +692,13 @@ class ShortcodeCourseList {
 	 * Block render callback for Gutenberg block
 	 */
 	public static function block_render( $atts ) {
-		// Map camelCase block attributes to snake_case shortcode attributes
+		// Map camelCase block attributes to snake_case shortcode attributes.
 		$map = array(
 			'postsPerPage'                        => 'posts_per_page',
 			'orderby'                             => 'orderby',
 			'order'                               => 'order',
 			'curriculum'                          => 'curriculum',
-			'bundle'                               => 'bundle',
+			'bundle'                              => 'bundle',
 			'layout'                              => 'layout',
 			'layoutStyle'                         => 'layout_style',
 			'showFilter'                          => 'show_filter',

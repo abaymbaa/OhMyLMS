@@ -12,13 +12,41 @@
  */
 
 export const ROLES = [
-	{ id: 'content_code', label: 'Folder path code', hint: 'e.g. 1 or 11.1' },
-	{ id: 'content', label: 'Folder path', hint: 'e.g. Number' },
-	{ id: 'group_code', label: 'Skill folder code', hint: 'e.g. C1.1' },
-	{ id: 'group', label: 'Skill folder name', hint: 'e.g. Types of number' },
-	{ id: 'skill_code', label: 'Skill code', hint: 'e.g. C1.1.1' },
-	{ id: 'skill', label: 'Skill', hint: 'the learning objective' },
-	{ id: 'description', label: 'Notes', hint: 'notes or examples' },
+	{
+		id: 'content_code',
+		label: 'Folder path code',
+		hint: 'e.g. 1 or 11.1',
+	},
+	{
+		id: 'content',
+		label: 'Folder path',
+		hint: 'e.g. Number',
+	},
+	{
+		id: 'group_code',
+		label: 'Skill folder code',
+		hint: 'e.g. C1.1',
+	},
+	{
+		id: 'group',
+		label: 'Skill folder name',
+		hint: 'e.g. Types of number',
+	},
+	{
+		id: 'skill_code',
+		label: 'Skill code',
+		hint: 'e.g. C1.1.1',
+	},
+	{
+		id: 'skill',
+		label: 'Skill',
+		hint: 'the learning objective',
+	},
+	{
+		id: 'description',
+		label: 'Notes',
+		hint: 'notes or examples',
+	},
 	{
 		id: 'category',
 		label: 'Category',
@@ -128,7 +156,6 @@ const ALIASES = {
 		'skill description',
 	],
 };
-
 const normalizeHeader = ( text ) =>
 	String( text ?? '' )
 		.normalize( 'NFKC' )
@@ -143,7 +170,7 @@ const normalizeHeader = ( text ) =>
  * @param delimiter
  */
 export function parseRecords( text, delimiter ) {
-	const source = String( text ?? '' ).replace( /^﻿/, '' );
+	const source = String( text ?? '' ).replace( /^\uFEFF/, '' );
 	const records = [];
 	let record = [];
 	let cell = '';
@@ -191,7 +218,6 @@ export function parseRecords( text, delimiter ) {
 	}
 	return records;
 }
-
 const isBlankRecord = ( record ) =>
 	record.every( ( cell ) => String( cell ).trim() === '' );
 
@@ -239,7 +265,12 @@ export function parseCsv( text ) {
 		( record ) => ! isBlankRecord( record )
 	);
 	if ( ! records.length ) {
-		return { error: 'empty', delimiter, width: 0, records: [] };
+		return {
+			error: 'empty',
+			delimiter,
+			width: 0,
+			records: [],
+		};
 	}
 	const width = Math.max( ...records.map( ( record ) => record.length ) );
 	const padded = records.map( ( record ) => [
@@ -345,7 +376,6 @@ export function looksLikeHeader( record ) {
 	).length;
 	return known >= 1 || cells.every( ( cell ) => ! /\d/.test( cell ) );
 }
-
 const clean = ( value ) =>
 	String( value ?? '' )
 		.replace( /\s+/g, ' ' )
@@ -371,7 +401,9 @@ export function buildRows(
 	const rows = [];
 	let previous = {};
 	for ( let index = start; index < records.length; index++ ) {
-		const row = { line: index + 1 };
+		const row = {
+			line: index + 1,
+		};
 		roles.forEach( ( role, column ) => {
 			if ( ! role ) {
 				return;
@@ -409,7 +441,9 @@ export function buildRows(
 		}
 		if ( ROLE_IDS.some( ( role ) => row[ role ] !== '' ) ) {
 			rows.push( row );
-			previous = { ...row };
+			previous = {
+				...row,
+			};
 		}
 	}
 	return rows;
@@ -436,7 +470,6 @@ export function mappingProblems( roles ) {
 	}
 	return problems;
 }
-
 export function csvCell( value, delimiter = ',' ) {
 	const text = String( value ?? '' );
 	return /["\r\n]/.test( text ) ||
@@ -445,7 +478,6 @@ export function csvCell( value, delimiter = ',' ) {
 		? `"${ text.replace( /"/g, '""' ) }"`
 		: text;
 }
-
 export function toCsv( records, delimiter = ',' ) {
 	return (
 		records

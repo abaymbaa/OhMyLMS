@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Gemini generateContent API (ai.google.dev). The key travels in a header, not the URL, so it
+ * never appears in access logs. Thinking models share the token budget with the visible reply.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI\Providers;
 
 defined( 'ABSPATH' ) || exit;

@@ -26,14 +26,14 @@ export function createIntegrationsPage( readRuntime ) {
 		} = readRuntime();
 		HG( 'ohmylms', 'integrations' );
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getIntegrations();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getIntegrations();
 			}, [] ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			n = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			a = L7( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
 			o = a[ 0 ],
@@ -54,104 +54,108 @@ export function createIntegrationsPage( readRuntime ) {
 			S = E[ 0 ],
 			R = E[ 1 ],
 			x = ( function () {
-				var t = B7(
-					D7().m( function t() {
-						var n;
+				var _tLocal = B7(
+					D7().m( function _tLocal2() {
+						var _nLocal;
 						return D7().w(
-							function ( t ) {
+							function ( _tLocal3 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal3.p = _tLocal3.n ) ) {
 										case 0:
 											return (
-												( t.p = 0 ),
+												( _tLocal3.p = 0 ),
 												i( ! 0 ),
-												( t.n = 1 ),
+												( _tLocal3.n = 1 ),
 												e.getIntegrations()
 											 );
 										case 1:
-											t.n = 3;
+											_tLocal3.n = 3;
 											break;
 										case 2:
-											( ( t.p = 2 ),
-												( n = t.v ),
-												console.error(
-													'Error fetching integrations:',
-													n
-												) );
+											_tLocal3.p = 2;
+											_nLocal = _tLocal3.v;
+											console.error(
+												'Error fetching integrations:',
+												_nLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( t.p = 3 ),
+												( _tLocal3.p = 3 ),
 												i( ! 1 ),
-												t.f( 3 )
+												_tLocal3.f( 3 )
 											 );
 										case 4:
-											return t.a( 2 );
+											return _tLocal3.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal2,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return t.apply( this, arguments );
+				return function ( ..._args ) {
+					return _tLocal.apply( this, _args );
 				};
 			} )();
 		( 0, ReactHooks.useEffect )( function () {
-			var e = ! 0;
+			var _eLocal4 = ! 0;
 			return (
-				e && x(),
+				_eLocal4 && x(),
 				function () {
-					e = ! 1;
+					_eLocal4 = ! 1;
 				}
 			 );
 		}, [] );
-		var C = Object.entries( IntegrationManifest ).map( function ( e ) {
-				var n = L7( e, 2 ),
-					r = n[ 0 ];
-				return F7(
-					F7(
-						{
-							key: r,
-						},
-						n[ 1 ]
-					),
-					( t && t[ r ] ) || {}
-				);
-			} ),
+		var C = Object.entries( IntegrationManifest ).map(
+				function ( _eLocal5 ) {
+					var _nLocal2 = L7( _eLocal5, 2 ),
+						_rLocal = _nLocal2[ 0 ];
+					return F7(
+						F7(
+							{
+								key: _rLocal,
+							},
+							_nLocal2[ 1 ]
+						),
+						( t && t[ _rLocal ] ) || {}
+					);
+				}
+			),
 			P = Array.from(
 				new Set(
 					Object.values( IntegrationManifest ).flatMap(
-						function ( e ) {
-							return e.categories || [];
+						function ( _eLocal6 ) {
+							return _eLocal6.categories || [];
 						}
 					)
 				)
 			),
 			O = [ 'all' ].concat( P ),
 			k = ( function () {
-				var n = B7(
-					D7().m( function n( r ) {
-						var a, o, i;
+				var _nLocal3 = B7(
+					D7().m( function _nLocal4( _rLocal2 ) {
+						var _aLocal, _oLocal, _iLocal;
 						return D7().w(
-							function ( n ) {
+							function ( _nLocal5 ) {
 								for (;;) {
-									switch ( ( n.p = n.n ) ) {
+									switch ( ( _nLocal5.p = _nLocal5.n ) ) {
 										case 0:
 										case 1:
 											if (
-												'wpfusion' !== r.key ||
-												( null !== ( a = window ) &&
-													void 0 !== a &&
+												'wpfusion' !== _rLocal2.key ||
+												( null !==
+													( _aLocal = window ) &&
+													void 0 !== _aLocal &&
 													null !==
-														( a =
-															a.ohmylms_params ) &&
-													void 0 !== a &&
-													a.is_wpfusion_active )
+														( _aLocal =
+															_aLocal.ohmylms_params ) &&
+													void 0 !== _aLocal &&
+													_aLocal.is_wpfusion_active )
 											) {
-												n.n = 2;
+												_nLocal5.n = 2;
 												break;
 											}
 											return (
@@ -171,12 +175,12 @@ export function createIntegrationsPage( readRuntime ) {
 												e.updateProModalButtonText(
 													null
 												),
-												n.a( 2 )
+												_nLocal5.a( 2 )
 											 );
 										case 2:
 											return (
-												( n.p = 2 ),
-												( ( o =
+												( _nLocal5.p = 2 ),
+												( ( _oLocal =
 													t && Object.keys( t ).length
 														? F7( {}, t )
 														: Object.fromEntries(
@@ -184,79 +188,88 @@ export function createIntegrationsPage( readRuntime ) {
 																	IntegrationManifest
 																).map(
 																	function (
-																		e
+																		_eLocal7
 																	) {
-																		var t =
+																		var _tLocal4 =
 																			L7(
-																				e,
+																				_eLocal7,
 																				2
 																			);
 																		return [
-																			t[ 0 ],
+																			_tLocal4[ 0 ],
 																			{
 																				is_enable: 0,
-																				class: t[ 1 ]
+																				class: _tLocal4[ 1 ]
 																					.class,
 																			},
 																		];
 																	}
 																)
-															) )[ r.key ] = F7(
-													F7( {}, o[ r.key ] ),
+															) )[
+													_rLocal2.key
+												] = F7(
+													F7(
+														{},
+														_oLocal[ _rLocal2.key ]
+													),
 													{},
 													{
-														is_enable: r.is_enable
-															? 0
-															: 1,
+														is_enable:
+															_rLocal2.is_enable
+																? 0
+																: 1,
 													}
 												) ),
-												( n.n = 3 ),
-												e.updateIntegrations( o )
+												( _nLocal5.n = 3 ),
+												e.updateIntegrations( _oLocal )
 											 );
 										case 3:
-											n.n = 5;
+											_nLocal5.n = 5;
 											break;
 										case 4:
-											( ( n.p = 4 ),
-												( i = n.v ),
-												console.error(
-													'Error toggling integration:',
-													i
-												) );
+											_nLocal5.p = 4;
+											_iLocal = _nLocal5.v;
+											console.error(
+												'Error toggling integration:',
+												_iLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
-											return n.a( 2 );
+											return _nLocal5.a( 2 );
 									}
 								}
 							},
-							n,
+							_nLocal4,
 							null,
 							[ [ 2, 4 ] ]
 						);
 					} )
 				);
-				return function ( e ) {
-					return n.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _nLocal3.apply( this, _args2 );
 				};
 			} )(),
-			j = function ( t ) {
-				if ( t.key === 'xapi' ) {
+			j = function ( _tLocal5 ) {
+				if ( _tLocal5.key === 'xapi' ) {
 					window.location.hash = '/settings/xapi-settings';
 					return;
 				}
-				R( t );
+				R( _tLocal5 );
 			},
-			A = C.filter( function ( e ) {
+			A = C.filter( function ( _eLocal9 ) {
 				return (
 					'all' === f ||
-					( e.categories && e.categories.includes( f ) )
+					( _eLocal9.categories && _eLocal9.categories.includes( f ) )
 				);
-			} ).filter( function ( e ) {
-				return e.label.toLowerCase().includes( _.toLowerCase() );
+			} ).filter( function ( _eLocal0 ) {
+				return _eLocal0.label.toLowerCase().includes( _.toLowerCase() );
 			} );
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					n && c( r, n );
+					if ( n ) {
+						c( r, n );
+					}
 				},
 				[ n ]
 			),
@@ -296,8 +309,11 @@ export function createIntegrationsPage( readRuntime ) {
 								{ S ? (
 									<MemoIntegrationConfig
 										integration={ S }
-										onSave={ function ( e, t ) {
-											c( e, t );
+										onSave={ function (
+											_eLocal1,
+											_tLocal6
+										) {
+											c( _eLocal1, _tLocal6 );
 										} }
 										onCancel={ function () {
 											return R( null );
@@ -317,36 +333,45 @@ export function createIntegrationsPage( readRuntime ) {
 													'integrations-filter-buttons'
 												}
 											>
-												{ O.map( function ( e ) {
-													var t;
-													return (
-														<Controls.ButtonWP
-															key={ e }
-															isPrimary={
-																f === e
-															}
-															onClick={ function () {
-																return v( e );
-															} }
-														>
-															{ 'all' === e
-																? ( 0,
-																	I18n.__ )(
-																		'All',
-																		'ohmylms'
-																	)
-																: ( null ===
-																		( t =
-																			IntegrationCategories[
-																				e
-																			] ) ||
-																	void 0 === t
-																		? void 0
-																		: t.label ) ||
-																	e }
-														</Controls.ButtonWP>
-													);
-												} ) }
+												{ O.map(
+													function ( _eLocal10 ) {
+														var _tLocal7;
+														return (
+															<Controls.ButtonWP
+																key={
+																	_eLocal10
+																}
+																isPrimary={
+																	f ===
+																	_eLocal10
+																}
+																onClick={ function () {
+																	return v(
+																		_eLocal10
+																	);
+																} }
+															>
+																{ 'all' ===
+																_eLocal10
+																	? ( 0,
+																		I18n.__ )(
+																			'All',
+																			'ohmylms'
+																		)
+																	: ( null ===
+																			( _tLocal7 =
+																				IntegrationCategories[
+																					_eLocal10
+																				] ) ||
+																		void 0 ===
+																			_tLocal7
+																			? void 0
+																			: _tLocal7.label ) ||
+																		_eLocal10 }
+															</Controls.ButtonWP>
+														);
+													}
+												) }
 											</div>
 											<div
 												className={
@@ -370,16 +395,22 @@ export function createIntegrationsPage( readRuntime ) {
 												columns={ 3 }
 												gap={ 4 }
 											>
-												{ A.map( function ( e ) {
-													return (
-														<MemoIntegrationCard
-															key={ e.key }
-															integration={ e }
-															onToggle={ k }
-															onManage={ j }
-														/>
-													);
-												} ) }
+												{ A.map(
+													function ( _eLocal11 ) {
+														return (
+															<MemoIntegrationCard
+																key={
+																	_eLocal11.key
+																}
+																integration={
+																	_eLocal11
+																}
+																onToggle={ k }
+																onManage={ j }
+															/>
+														);
+													}
+												) }
 											</Controls.GridWP>
 										) : (
 											<React.Fragment>

@@ -8,7 +8,6 @@ import {
 } from '@wordpress/components';
 import { useCurriculum } from './context';
 import * as api from './api.mjs';
-
 const RELATIONS = () => [
 	{
 		value: 'equivalent',
@@ -35,7 +34,7 @@ const RELATIONS = () => [
  * @param root0.onChange
  */
 export function SkillMappings( { item, detail, onChange } ) {
-	const c = useCurriculum();
+	useCurriculum();
 	const skills = detail.links?.skill || [];
 	if ( ! skills.length ) {
 		return null;
@@ -73,7 +72,6 @@ export function SkillMappings( { item, detail, onChange } ) {
 		</section>
 	);
 }
-
 function MappingRow( { skill, mappings, onChange } ) {
 	const c = useCurriculum();
 	const [ open, setOpen ] = useState( false );
@@ -84,7 +82,6 @@ function MappingRow( { skill, mappings, onChange } ) {
 	const [ note, setNote ] = useState( '' );
 	const [ error, setError ] = useState( '' );
 	const [ saving, setSaving ] = useState( false );
-
 	useEffect( () => {
 		if ( ! open || ! search.trim() ) {
 			return setResults( [] );
@@ -108,7 +105,6 @@ function MappingRow( { skill, mappings, onChange } ) {
 			clearTimeout( timer );
 		};
 	}, [ open, search, skill.id ] );
-
 	async function save() {
 		if ( ! shared ) {
 			return;
@@ -126,7 +122,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 			c.actions.say(
 				'success',
 				sprintf(
-					__( 'Mapped %1$s to %2$s.', 'ohmylms' ),
+					/* translators: %1$s: source skill name; %2$s: shared skill name. */ __(
+						'Mapped %1$s to %2$s.',
+						'ohmylms'
+					),
 					skill.title,
 					shared.title
 				)
@@ -175,7 +174,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 				{ mappings.maps_to.length > 0 && (
 					<span className="ohmylms-cur-badge">
 						{ sprintf(
-							__( 'Mapped to %d', 'ohmylms' ),
+							/* translators: %d: shared skill identifier. */ __(
+								'Mapped to %d',
+								'ohmylms'
+							),
 							mappings.maps_to.length
 						) }
 					</span>
@@ -189,7 +191,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 			{ mappings.maps_to.map( ( mapping ) => (
 				<p key={ mapping.id } className="ohmylms-cur-mapping-line">
 					{ sprintf(
-						__( 'Maps to shared skill “%1$s” — %2$s.', 'ohmylms' ),
+						/* translators: %1$s: shared skill name; %2$s: comma-separated differences. */ __(
+							'Maps to shared skill “%1$s” — %2$s.',
+							'ohmylms'
+						),
 						mapping.shared?.name || mapping.shared_id,
 						relationLabel( mapping.relation )
 					) }
@@ -197,7 +202,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 						<em>
 							{ ' ' }
 							{ sprintf(
-								__( 'Differences: %s', 'ohmylms' ),
+								/* translators: %s: comma-separated skill differences. */ __(
+									'Differences: %s',
+									'ohmylms'
+								),
 								mapping.note
 							) }
 						</em>
@@ -206,7 +214,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 						variant="link"
 						isDestructive
 						aria-label={ sprintf(
-							__( 'Remove mapping of %1$s to %2$s', 'ohmylms' ),
+							/* translators: %1$s: source skill name; %2$s: shared skill name. */ __(
+								'Remove mapping of %1$s to %2$s',
+								'ohmylms'
+							),
 							skill.title,
 							mapping.shared?.name || mapping.shared_id
 						) }
@@ -219,7 +230,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 			{ mappings.mapped_from.length > 0 && (
 				<p className="ohmylms-cur-mapping-line">
 					{ sprintf(
-						__( 'This is the shared skill for: %s.', 'ohmylms' ),
+						/* translators: %s: comma-separated names of linked skills. */ __(
+							'This is the shared skill for: %s.',
+							'ohmylms'
+						),
 						mappings.mapped_from
 							.map(
 								( mapping ) =>
@@ -234,7 +248,10 @@ function MappingRow( { skill, mappings, onChange } ) {
 				<div className="ohmylms-cur-mapping-form">
 					<TextControl
 						label={ sprintf(
-							__( 'Find a shared skill for %s', 'ohmylms' ),
+							/* translators: %s: skill or linked content name. */ __(
+								'Find a shared skill for %s',
+								'ohmylms'
+							),
 							skill.title
 						) }
 						type="search"
@@ -257,7 +274,7 @@ function MappingRow( { skill, mappings, onChange } ) {
 										variant="secondary"
 										size="small"
 										aria-label={ sprintf(
-											__(
+											/* translators: %s: skill or linked content name. */ __(
 												'Choose %s as the shared skill',
 												'ohmylms'
 											),

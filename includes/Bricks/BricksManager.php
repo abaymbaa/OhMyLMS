@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Bricks Manager
  *
@@ -52,7 +52,7 @@ class BricksManager {
 	 */
 	public function init() {
 
-		// Define elements to register
+		// Define elements to register.
 		$elements = array(
 			array(
 				'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/CourseListElement.php',
@@ -60,7 +60,7 @@ class BricksManager {
 			),
 		);
 
-		// Buy now and offer button elements
+		// Buy now and offer button elements.
 			$elements[] = array(
 				'file'  => OHMYLMS_PATH . '/includes/Bricks/Elements/BuyNowElement.php',
 				'class' => '\OhMyLMS\Bricks\Elements\BuyNowElement',
@@ -90,9 +90,9 @@ class BricksManager {
 				'class' => '\OhMyLMS\Bricks\Elements\ProfileElement',
 			);
 
-			// Allow filtering of elements
+			// Allow filtering of elements.
 			$elements = apply_filters( 'ohmylms/bricks_elements', $elements );
-			// Register elements with Bricks
+			// Register elements with Bricks.
 			if ( class_exists( '\Bricks\Elements' ) ) {
 				foreach ( $elements as $element ) {
 					if ( file_exists( $element['file'] ) ) {
@@ -101,7 +101,7 @@ class BricksManager {
 				}
 			}
 
-			// Enqueue frontend assets
+			// Enqueue frontend assets.
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_frontend_assets' ) );
 	}
 
@@ -131,7 +131,7 @@ class BricksManager {
 		// OHMYLMS_URL . '/assets/css/bricks-elements.css',
 		// array(),
 		// OHMYLMS_VERSION
-		// );
+		// );.
 
 		// wp_enqueue_script(
 		// 'ohmylms-bricks-elements',
@@ -139,9 +139,9 @@ class BricksManager {
 		// array( 'jquery' ),
 		// OHMYLMS_VERSION,
 		// true
-		// );
+		// );.
 
-		// Localize script for AJAX
+		// Localize script for AJAX.
 		wp_localize_script(
 			'ohmylms-bricks-elements',
 			'ohMyLmsBricks',

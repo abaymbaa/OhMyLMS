@@ -9,10 +9,10 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 global $membership;
-if ( $membership == null ) {
+if ( null == $membership ) {
 	return;
 }
 
@@ -21,7 +21,7 @@ if ( empty( $description ) ) {
 	return;
 }
 
-// Character limit for truncation
+// Character limit for truncation.
 $char_limit         = 200;
 $description_length = mb_strlen( strip_tags( $description ) );
 $needs_truncation   = $description_length > $char_limit;

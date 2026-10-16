@@ -90,7 +90,9 @@ export function MathAnswerResult( {
 			<Controls.CardWP
 				isBorderless
 				variant="secondary"
-				style={ { padding: '16px' } }
+				style={ {
+					padding: '16px',
+				} }
 			>
 				{ [ 'structured', 'passage' ].includes( type ) ? (
 					<table className="widefat striped ohmylms-structured-result">
@@ -117,7 +119,10 @@ export function MathAnswerResult( {
 										{ row.prompt }{ ' ' }
 										<span>
 											{ sprintf(
-												__( '[%s marks]', 'ohmylms' ),
+												/* translators: %s: awarded marks. */ __(
+													'[%s marks]',
+													'ohmylms'
+												),
 												row.marks
 											) }
 										</span>
@@ -138,7 +143,7 @@ export function MathAnswerResult( {
 													max={ row.max }
 													step="0.25"
 													aria-label={ sprintf(
-														__(
+														/* translators: %s: question part identifier. */ __(
 															'Marks for part %s',
 															'ohmylms'
 														),
@@ -164,7 +169,9 @@ export function MathAnswerResult( {
 															)
 														)
 													}
-													style={ { width: 72 } }
+													style={ {
+														width: 72,
+													} }
 												/>{ ' ' }
 												/ { row.max }
 											</Fragment>
@@ -207,7 +214,7 @@ export function MathAnswerResult( {
 				{ data?.version && (
 					<p className="ohmylms-version-note">
 						{ sprintf(
-							__(
+							/* translators: %d: published version number. */ __(
 								'Graded against version %d of this question',
 								'ohmylms'
 							),

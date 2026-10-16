@@ -1,10 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Bricks\Elements;
 
 use Bricks\Element;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class OfferButtonElement extends Element {
@@ -19,7 +19,7 @@ class OfferButtonElement extends Element {
 	}
 
 	public function set_controls() {
-		// Content controls
+		// Content controls.
 		$this->controls['action'] = array(
 			'tab'     => 'content',
 			'label'   => __( 'Action', 'ohmylms' ),
@@ -38,7 +38,7 @@ class OfferButtonElement extends Element {
 			'default' => __( 'Accept Offer', 'ohmylms' ),
 		);
 
-		// Style controls
+		// Style controls.
 		$this->controls['background'] = array(
 			'tab'     => 'style',
 			'label'   => __( 'Background Color', 'ohmylms' ),
@@ -171,7 +171,7 @@ class OfferButtonElement extends Element {
 			),
 		);
 
-		// Positioning and alignment controls
+		// Positioning and alignment controls.
 		$this->controls['display'] = array(
 			'tab'     => 'style',
 			'label'   => __( 'Display', 'ohmylms' ),
@@ -229,7 +229,7 @@ class OfferButtonElement extends Element {
 			),
 		);
 
-		// Advanced controls
+		// Advanced controls.
 		$this->controls['id'] = array(
 			'tab'     => 'advanced',
 			'label'   => __( 'CSS ID', 'ohmylms' ),
@@ -341,7 +341,7 @@ class OfferButtonElement extends Element {
 		if ( isset( $settings['_border'] ) ) {
 			$border = $settings['_border'];
 
-			// Width
+			// Width.
 			$width        = $border['width'] ?? array(
 				'top'    => '0',
 				'right'  => '0',
@@ -350,13 +350,13 @@ class OfferButtonElement extends Element {
 			);
 			$border_width = "{$width['top']} {$width['right']} {$width['bottom']} {$width['left']}";
 
-			// Style
+			// Style.
 			$border_style = $border['style'] ?? 'solid';
 
-			// Color
+			// Color.
 			$border_color = $border['color']['hex'] ?? '#000';
 
-			// Radius
+			// Radius.
 			$radius        = $border['radius'] ?? array(
 				'top'    => 0,
 				'right'  => 0,
@@ -369,10 +369,10 @@ class OfferButtonElement extends Element {
 			$settings['border_radius'] = $border_radius;
 		}
 
-		// Generate offer action URL (similar to shortcode logic)
+		// Generate offer action URL (similar to shortcode logic).
 		$action_url = $this->get_offer_action_url( $settings['action'] );
 
-		// Build button classes
+		// Build button classes.
 		$button_classes   = array( 'ohmylms-offer-btn' );
 		$button_classes[] = 'ohmylms-offer-btn--' . sanitize_html_class( $settings['action'] );
 
@@ -381,7 +381,7 @@ class OfferButtonElement extends Element {
 			$button_classes = array_merge( $button_classes, array_map( 'sanitize_html_class', $custom_classes ) );
 		}
 
-		// Build inline styles (like Buy Now Element)
+		// Build inline styles (like Buy Now Element).
 		$style = sprintf(
 			'background:%s;color:%s;padding:%s;border-radius:%s;font-size:%s;border:none;cursor:pointer;text-decoration:%s;line-height:%s;width:%s;max-width:%s;min-width:%s;height:%s;display:%s;vertical-align:%s;margin:%s;box-sizing:%s;',
 			esc_attr( $settings['background'] ),
@@ -401,7 +401,7 @@ class OfferButtonElement extends Element {
 			esc_attr( $settings['box_sizing'] )
 		);
 
-		// Add border if set
+		// Add border if set.
 		if ( ! empty( $settings['border'] ) ) {
 			$style .= 'border:' . esc_attr( $settings['border'] ) . ';';
 		}
@@ -425,13 +425,13 @@ class OfferButtonElement extends Element {
 	 * Generate offer action URL
 	 */
 	private function get_offer_action_url( $action ) {
-		// Get funnel session data
+		// Get funnel session data.
 		if ( class_exists( '\OhMyLMS\Integrations\Funnel\Includes\FunnelManager' ) ) {
 			$funnel_data  = \OhMyLMS\Integrations\Funnel\Includes\FunnelManager::get_funnel_session();
 			$order_id     = $funnel_data['order_id'] ?? '';
 			$current_step = $funnel_data['current_step'] ?? '';
 
-			// Also check URL parameters
+			// Also check URL parameters.
 			if ( empty( $order_id ) && isset( $_GET['order_id'] ) ) {
 				$order_id = absint( $_GET['order_id'] );
 			}
@@ -452,7 +452,7 @@ class OfferButtonElement extends Element {
 				$base_url    = home_url( sprintf( '/post-checkout-funnel/order/%d/step/%s', $order_id, $step_number ) );
 				$action_url  = add_query_arg( 'action', $action, $base_url );
 
-				// Add nonce
+				// Add nonce.
 				$nonce = $_GET['funnel_nonce'] ?? wp_create_nonce( 'funnel_action_' . $order_id . '_' . $current_step );
 				return add_query_arg( '_wpnonce', $nonce, $action_url );
 			}

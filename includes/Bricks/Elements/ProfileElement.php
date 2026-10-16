@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * OhMyLMS Profile Element for Bricks Builder
  *
@@ -641,7 +641,7 @@ class ProfileElement extends \Bricks\Element {
 
 	private function build_shortcode_attrs( $settings ) {
 		$attrs = array(
-			'show_header' => ( isset( $settings['show_header'] ) && $settings['show_header'] === true ) ? 'yes' : 'no',
+			'show_header' => ( isset( $settings['show_header'] ) && true === $settings['show_header'] ) ? 'yes' : 'no',
 		);
 
 		$color_keys = array(

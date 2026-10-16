@@ -61,20 +61,25 @@ export function createAnalyticsDateFilter( readRuntime ) {
 			}, [] ),
 			f = ( 0, ReactHooks.useCallback )(
 				function ( e ) {
-					( u( e ), r && r( e ) );
+					u( e );
+					if ( r ) {
+						r( e );
+					}
 				},
 				[ r ]
 			),
 			v = ( 0, ReactHooks.useCallback )(
 				function ( e ) {
-					var t = qU( e, 2 ),
-						n = t[ 0 ],
-						r = t[ 1 ];
-					( m( {
-						startDate: n,
-						endDate: r,
-					} ),
-						i && i( e ) );
+					var _tLocal = qU( e, 2 ),
+						_nLocal = _tLocal[ 0 ],
+						_rLocal = _tLocal[ 1 ];
+					m( {
+						startDate: _nLocal,
+						endDate: _rLocal,
+					} );
+					if ( i ) {
+						i( e );
+					}
 				},
 				[ r ]
 			);
@@ -88,7 +93,7 @@ export function createAnalyticsDateFilter( readRuntime ) {
 				>
 					<Controls.FlexItemWP>
 						<Controls.SelectWP
-							value={ null != c ? c : '' }
+							value={ c !== null && c !== void 0 ? c : '' }
 							placeholder={ n }
 							onChange={ f }
 							options={ p }

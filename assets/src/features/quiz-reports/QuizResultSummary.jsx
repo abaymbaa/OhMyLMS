@@ -24,7 +24,9 @@ export function createQuizResultSummary( readRuntime ) {
 									width: 'calc(100% - 80px)',
 								} }
 							>
-								{ null == data ? void 0 : data.student_name }
+								{ data === null || data === void 0
+									? void 0
+									: data.student_name }
 							</Controls.TextWP>
 						</Controls.FlexWP>
 						<Controls.SpacerWP />
@@ -49,7 +51,9 @@ export function createQuizResultSummary( readRuntime ) {
 									wordWrap: 'break-word',
 								} }
 							>
-								{ null == data ? void 0 : data.course_name }
+								{ data === null || data === void 0
+									? void 0
+									: data.course_name }
 							</Controls.TextWP>
 						</Controls.FlexWP>
 						<Controls.SpacerWP marginBottom={ 4 } />
@@ -73,7 +77,7 @@ export function createQuizResultSummary( readRuntime ) {
 											) }
 										</strong>
 										<span>
-											{ null == data
+											{ data === null || data === void 0
 												? void 0
 												: data.score }
 										</span>
@@ -96,7 +100,7 @@ export function createQuizResultSummary( readRuntime ) {
 											) }
 										</strong>
 										<span>
-											{ null == data
+											{ data === null || data === void 0
 												? void 0
 												: data.correct }
 										</span>
@@ -114,32 +118,54 @@ export function createQuizResultSummary( readRuntime ) {
 							</Controls.TextWP>
 							<Controls.SpacerWP />
 							<Controls.FlexWP gap={ 4 }>
-								{ 'in-review' ===
-								( null == data ? void 0 : data.status ) ? (
-									<Controls.BadgeWP
-										isBorderLess={ ! 0 }
-										variant={ 'warning' }
-									>
-										{ ( 0, I18n.__ )(
-											'Pending',
-											'ohmylms'
-										) }
-									</Controls.BadgeWP>
-								) : null != data && data.isPass ? (
-									<Controls.BadgeWP
-										isBorderLess={ ! 0 }
-										variant={ 'success' }
-									>
-										{ ( 0, I18n.__ )( 'Pass', 'ohmylms' ) }
-									</Controls.BadgeWP>
-								) : (
-									<Controls.BadgeWP
-										isBorderLess={ ! 0 }
-										variant={ 'danger' }
-									>
-										{ ( 0, I18n.__ )( 'Fail', 'ohmylms' ) }
-									</Controls.BadgeWP>
-								) }
+								{ ( () => {
+									if (
+										'in-review' ===
+										( data === null || data === void 0
+											? void 0
+											: data.status )
+									) {
+										return (
+											<Controls.BadgeWP
+												isBorderLess={ ! 0 }
+												variant={ 'warning' }
+											>
+												{ ( 0, I18n.__ )(
+													'Pending',
+													'ohmylms'
+												) }
+											</Controls.BadgeWP>
+										);
+									}
+									if (
+										data !== null &&
+										data !== void 0 &&
+										data.isPass
+									) {
+										return (
+											<Controls.BadgeWP
+												isBorderLess={ ! 0 }
+												variant={ 'success' }
+											>
+												{ ( 0, I18n.__ )(
+													'Pass',
+													'ohmylms'
+												) }
+											</Controls.BadgeWP>
+										);
+									}
+									return (
+										<Controls.BadgeWP
+											isBorderLess={ ! 0 }
+											variant={ 'danger' }
+										>
+											{ ( 0, I18n.__ )(
+												'Fail',
+												'ohmylms'
+											) }
+										</Controls.BadgeWP>
+									);
+								} )() }
 							</Controls.FlexWP>
 						</div>
 					</Controls.SpacerWP>

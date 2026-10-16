@@ -16,41 +16,85 @@ function createLegacyLessonContent( readRuntime ) {
 			<React.Fragment>
 				{ props.customContent || (
 					<LearningContentForm
-						titleValue={
-							null !==
-								( t =
-									null == lesson ? void 0 : lesson.title ) &&
-							void 0 !== t
-								? t
-								: null == lesson
-									? void 0
-									: lesson.name
+						titleValue={ ( () => {
+							if (
+								null !==
+									( t =
+										lesson === null || lesson === void 0
+											? void 0
+											: lesson.title ) &&
+								void 0 !== t
+							) {
+								return t;
+							}
+							if ( lesson === null || lesson === void 0 ) {
+								return void 0;
+							}
+							return lesson.name;
+						} )() }
+						imageSrc={
+							lesson === null || lesson === void 0
+								? void 0
+								: lesson.image_src
 						}
-						imageSrc={ null == lesson ? void 0 : lesson.image_src }
-						videoSrc={
-							null != lesson && lesson.video_id
-								? null == lesson
-									? void 0
-									: lesson.video_src
-								: 'video' ===
-									  ( null == lesson ? void 0 : lesson.type )
-									? null == lesson
+						videoSrc={ ( () => {
+							if (
+								lesson !== null &&
+								lesson !== void 0 &&
+								lesson.video_id
+							) {
+								if ( lesson === null || lesson === void 0 ) {
+									return void 0;
+								}
+								return lesson.video_src;
+							}
+							return ( () => {
+								if (
+									'video' ===
+									( lesson === null || lesson === void 0
 										? void 0
-										: lesson.external_url
-									: ''
-						}
-						audioSrc={
-							null != lesson && lesson.audio_id
-								? null == lesson
-									? void 0
-									: lesson.audio_src
-								: 'audio' ===
-									  ( null == lesson ? void 0 : lesson.type )
-									? null == lesson
+										: lesson.type )
+								) {
+									if (
+										lesson === null ||
+										lesson === void 0
+									) {
+										return void 0;
+									}
+									return lesson.external_url;
+								}
+								return '';
+							} )();
+						} )() }
+						audioSrc={ ( () => {
+							if (
+								lesson !== null &&
+								lesson !== void 0 &&
+								lesson.audio_id
+							) {
+								if ( lesson === null || lesson === void 0 ) {
+									return void 0;
+								}
+								return lesson.audio_src;
+							}
+							return ( () => {
+								if (
+									'audio' ===
+									( lesson === null || lesson === void 0
 										? void 0
-										: lesson.external_url
-									: ''
-						}
+										: lesson.type )
+								) {
+									if (
+										lesson === null ||
+										lesson === void 0
+									) {
+										return void 0;
+									}
+									return lesson.external_url;
+								}
+								return '';
+							} )();
+						} )() }
 						titlePlaceholder={ ( 0, I18n.__ )(
 							'Enter lesson title',
 							'ohmylms'
@@ -60,29 +104,47 @@ function createLegacyLessonContent( readRuntime ) {
 							'Enter lesson description...',
 							'ohmylms'
 						) }
-						content={ null == lesson ? void 0 : lesson.description }
+						content={
+							lesson === null || lesson === void 0
+								? void 0
+								: lesson.description
+						}
 						onInputChange={ handleInputChange }
 						onContentChange={ handleEditorContentChange }
 						onUploadComplete={ handleUploadComplete }
 						onRemoveMedia={ handleRemoveMedia }
 						align={ 'left' }
-						mediaType={
-							'text' === ( null == lesson ? void 0 : lesson.type )
-								? 'image'
-								: null == lesson
+						mediaType={ ( () => {
+							if (
+								'text' ===
+								( lesson === null || lesson === void 0
 									? void 0
-									: lesson.type
-						}
-						mediaId={
-							'audio' ===
-							( null == lesson ? void 0 : lesson.type )
-								? null == lesson
+									: lesson.type )
+							) {
+								return 'image';
+							}
+							if ( lesson === null || lesson === void 0 ) {
+								return void 0;
+							}
+							return lesson.type;
+						} )() }
+						mediaId={ ( () => {
+							if (
+								'audio' ===
+								( lesson === null || lesson === void 0
 									? void 0
-									: lesson.audio_id
-								: null == lesson
-									? void 0
-									: lesson.video_id
-						}
+									: lesson.type )
+							) {
+								if ( lesson === null || lesson === void 0 ) {
+									return void 0;
+								}
+								return lesson.audio_id;
+							}
+							if ( lesson === null || lesson === void 0 ) {
+								return void 0;
+							}
+							return lesson.video_id;
+						} )() }
 						onExternalUploadComplete={ onExternalUploadComplete }
 						chapterId={ chapterId }
 						autofocus={ ! 1 }
@@ -94,7 +156,6 @@ function createLegacyLessonContent( readRuntime ) {
 		);
 	};
 }
-
 export function createLessonContent( readRuntime ) {
 	const LegacyLessonContent = createLegacyLessonContent( readRuntime );
 	return function LessonContent( props ) {

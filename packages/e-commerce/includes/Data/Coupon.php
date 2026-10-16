@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Data;
 
@@ -50,7 +50,7 @@ class Coupon extends Data {
 			$this->set_object_read( true );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {

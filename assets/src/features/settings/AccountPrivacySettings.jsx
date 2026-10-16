@@ -8,7 +8,6 @@ export function createAccountPrivacySettings( readRuntime ) {
 			Ge,
 			He,
 			I: Controls,
-			L: Entitlements,
 			Pf,
 			React,
 			SK: MemoSettingsActionBar,
@@ -21,7 +20,6 @@ export function createAccountPrivacySettings( readRuntime ) {
 			y: WordPressData,
 			zm,
 		} = readRuntime();
-		true;
 		var t,
 			n,
 			r,
@@ -32,87 +30,106 @@ export function createAccountPrivacySettings( readRuntime ) {
 			u = props.selectedCourses,
 			s = props.isSaving,
 			d = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			m = ( function ( e, t ) {
+			m = ( function ( e, _tLocal ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal2, _tLocal2 ) {
+						var _nLocal =
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
-								o,
-								i,
-								l = [],
-								c = ! 0,
-								u = ! 1;
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( _nLocal !== null && _nLocal !== void 0 ) {
+							var _rLocal,
+								_aLocal,
+								_oLocal,
+								_iLocal,
+								_lLocal = [],
+								_cLocal = ! 0,
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( _oLocal = ( _nLocal =
+										_nLocal.call( _eLocal2 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal ) !== _nLocal ) {
 										return;
 									}
-									c = ! 1;
+									_cLocal = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
+										! ( _cLocal = ( _rLocal =
+											_oLocal.call( _nLocal ) ).done ) &&
+										( _lLocal.push( _rLocal.value ),
+										_lLocal.length !== _tLocal2 );
+										_cLocal = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								_uLocal = ! 0;
+								_aLocal = _eLocal3;
 							} finally {
 								try {
 									if (
-										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
-										Object( i ) !== i )
+										! _cLocal &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal.return
+										) &&
+										( ( _iLocal = _nLocal.return() ),
+										Object( _iLocal ) !== _iLocal )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal;
 									}
 								}
 							}
-							return l;
+							return _lLocal;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return $K( e, t );
+					} )( e, _tLocal ) ||
+					( function ( _eLocal4, _tLocal3 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return $K( _eLocal4, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal2 = {}.toString
+								.call( _eLocal4 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? $K( e, t )
-										: void 0
+								'Object' === _nLocal2 &&
+									_eLocal4.constructor &&
+									( _nLocal2 = _eLocal4.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal2 ||
+										'Set' === _nLocal2
+									) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === _nLocal2 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal2
+										)
+									) {
+										return $K( _eLocal4, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( e, _tLocal ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -128,51 +145,71 @@ export function createAccountPrivacySettings( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )( function () {
 				var e = ( function () {
-					var e,
-						t =
-							( ( e = YK().m( function e() {
-								var t;
-								return YK().w( function ( e ) {
+					var _eLocal5,
+						_tLocal4 =
+							( ( _eLocal5 = YK().m( function _eLocal6() {
+								var _tLocal5;
+								return YK().w( function ( _eLocal7 ) {
 									for (;;) {
-										switch ( e.n ) {
+										switch ( _eLocal7.n ) {
 											case 0:
 												return (
 													d.setLoadingSetting( ! 0 ),
-													( e.n = 1 ),
+													( _eLocal7.n = 1 ),
 													l()( {
 														path: 'ohmylms/v1/settings/account-and-privacy',
 													} )
 												 );
 											case 1:
-												( ( t = e.v ),
-													d.setAccountPrivacySettings(
-														t
-													),
-													d.setLoadingSetting(
-														! 1
-													) );
+												_tLocal5 = _eLocal7.v;
+												d.setAccountPrivacySettings(
+													_tLocal5
+												);
+												d.setLoadingSetting( ! 1 ); // Falls through to the shared async state cleanup.
 											case 2:
-												return e.a( 2 );
+												return _eLocal7.a( 2 );
 										}
 									}
-								}, e );
+								}, _eLocal6 );
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										ZK( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal6 = this,
+									_nLocal3 = _args;
+								return new Promise( function (
+									_rLocal2,
+									_aLocal2
+								) {
+									var _oLocal2 = _eLocal5.apply(
+										_tLocal6,
+										_nLocal3
+									);
+									function _iLocal2( _eLocal8 ) {
+										ZK(
+											_oLocal2,
+											_rLocal2,
+											_aLocal2,
+											_iLocal2,
+											_lLocal2,
+											'next',
+											_eLocal8
+										);
 									}
-									function l( e ) {
-										ZK( o, r, a, i, l, 'throw', e );
+									function _lLocal2( _eLocal9 ) {
+										ZK(
+											_oLocal2,
+											_rLocal2,
+											_aLocal2,
+											_iLocal2,
+											_lLocal2,
+											'throw',
+											_eLocal9
+										);
 									}
-									i( void 0 );
+									_iLocal2( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal4.apply( this, _args2 );
 					};
 				} )();
 				e();
@@ -219,7 +256,8 @@ export function createAccountPrivacySettings( readRuntime ) {
 											<Controls.SwitchWP
 												checked={
 													'yes' ===
-													( null == v ||
+													( v === null ||
+													v === void 0 ||
 													null ===
 														( t =
 															v.ohmylms_allow_purchase_without_login ) ||
@@ -228,12 +266,14 @@ export function createAccountPrivacySettings( readRuntime ) {
 														: t.value )
 												}
 												onChange={ function ( e ) {
-													return ( function ( e ) {
+													return ( function (
+														_eLocal0
+													) {
 														d.updateAccountPrivacySettings(
 															{
 																ohmylms_allow_purchase_without_login:
 																	{
-																		value: e
+																		value: _eLocal0
 																			? 'yes'
 																			: 'no',
 																	},
@@ -268,7 +308,8 @@ export function createAccountPrivacySettings( readRuntime ) {
 											<Controls.SwitchWP
 												checked={
 													'yes' ===
-													( null == v ||
+													( v === null ||
+													v === void 0 ||
 													null ===
 														( n =
 															v.ohmylms_require_email_verification ) ||
@@ -277,12 +318,14 @@ export function createAccountPrivacySettings( readRuntime ) {
 														: n.value )
 												}
 												onChange={ function ( e ) {
-													return ( function ( e ) {
+													return ( function (
+														_eLocal1
+													) {
 														d.updateAccountPrivacySettings(
 															{
 																ohmylms_require_email_verification:
 																	{
-																		value: e
+																		value: _eLocal1
 																			? 'yes'
 																			: 'no',
 																	},
@@ -316,7 +359,8 @@ export function createAccountPrivacySettings( readRuntime ) {
 											},
 											<Controls.SelectWP
 												value={
-													( null == v ||
+													( v === null ||
+													v === void 0 ||
 													null ===
 														( r =
 															v.ohmylms_checkout_phone_field ) ||
@@ -349,12 +393,14 @@ export function createAccountPrivacySettings( readRuntime ) {
 													},
 												] }
 												onChange={ function ( e ) {
-													return ( function ( e ) {
+													return ( function (
+														_eLocal10
+													) {
 														d.updateAccountPrivacySettings(
 															{
 																ohmylms_checkout_phone_field:
 																	{
-																		value: e,
+																		value: _eLocal10,
 																	},
 															}
 														);
@@ -382,7 +428,8 @@ export function createAccountPrivacySettings( readRuntime ) {
 											} );
 										} }
 										value={ Ge(
-											null == v ||
+											v === null ||
+												v === void 0 ||
 												null ===
 													( a =
 														v.ohmylms_privacy_policy_message ) ||

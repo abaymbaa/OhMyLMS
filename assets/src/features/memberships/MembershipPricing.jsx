@@ -25,20 +25,26 @@ export function createMembershipPricing( readRuntime ) {
 			updateMembershipPlan = ( 0, WordPressData.useDispatch )(
 				StoreModule.default
 			).updateMembershipPlan,
-			c =
-				0 < ( null == i ? void 0 : i.length )
-					? null === ( t = i[ 0 ] ) || void 0 === t
-						? void 0
-						: t.currency
-					: null === ( n = window ) ||
-						  void 0 === n ||
-						  null === ( n = n.ohmylms_params ) ||
-						  void 0 === n
-						? void 0
-						: n.currency,
-			u = function ( e, t ) {
-				( updateMembershipPlan( e, t ),
-					validate( Z7( Z7( {}, o ), {}, $7( {}, e, t ) ) ) );
+			c = ( () => {
+				if ( 0 < ( i === null || i === void 0 ? void 0 : i.length ) ) {
+					if ( null === ( t = i[ 0 ] ) || void 0 === t ) {
+						return void 0;
+					}
+					return t.currency;
+				}
+				if (
+					null === ( n = window ) ||
+					void 0 === n ||
+					null === ( n = n.ohmylms_params ) ||
+					void 0 === n
+				) {
+					return void 0;
+				}
+				return n.currency;
+			} )(),
+			u = function ( e, _tLocal ) {
+				updateMembershipPlan( e, _tLocal );
+				validate( Z7( Z7( {}, o ), {}, $7( {}, e, _tLocal ) ) );
 			},
 			s = [
 				{
@@ -105,24 +111,35 @@ export function createMembershipPricing( readRuntime ) {
 											'ohmylms'
 										) }
 										value={
-											null == o ? void 0 : o.regular_price
+											o === null || o === void 0
+												? void 0
+												: o.regular_price
 										}
 										onChange={ function ( e ) {
-											var t = e;
-											/^\d*\.?\d*$/.test( t ) &&
-												u( 'regular_price', t );
+											var _tLocal2 = e;
+											if (
+												/^\d*\.?\d*$/.test( _tLocal2 )
+											) {
+												u( 'regular_price', _tLocal2 );
+											}
 										} }
 										onKeyDown={ function ( e ) {
-											( '-' !== e.key &&
+											if ( ! (
+												'-' !== e.key &&
 												'+' !== e.key &&
-												'e' !== e.key ) ||
+												'e' !== e.key
+											) ) {
 												e.preventDefault();
+											}
 										} }
 										onBlur={ function () {
-											( null == o
-												? void 0
-												: o.regular_price ) < 0 &&
+											if (
+												( o === null || o === void 0
+													? void 0
+													: o.regular_price ) < 0
+											) {
 												u( 'regular_price', '0' );
+											}
 										} }
 										min={ 0 }
 										max={ 99999999 }
@@ -134,7 +151,7 @@ export function createMembershipPricing( readRuntime ) {
 										) }
 										options={ s }
 										value={
-											null == o
+											o === null || o === void 0
 												? void 0
 												: o.subscription_period
 										}
@@ -149,7 +166,7 @@ export function createMembershipPricing( readRuntime ) {
 										}
 									/>
 								</Controls.FlexWP>
-								{ ( null == errors
+								{ ( errors === null || errors === void 0
 									? void 0
 									: errors.price ) && (
 									<Controls.TextWP

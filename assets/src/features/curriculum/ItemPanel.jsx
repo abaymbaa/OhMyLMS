@@ -23,7 +23,6 @@ import {
 	payloadFrom,
 	validateDraft,
 } from './model.mjs';
-
 const MESSAGES = {
 	required: () => __( 'Enter a name.', 'ohmylms' ),
 	'too-long': () => __( 'That is too long.', 'ohmylms' ),
@@ -55,10 +54,11 @@ export function ItemPanel( { id, item } ) {
 	const [ syllabusFlag, setSyllabusFlag ] = useState( null );
 	async function toggleSyllabus( value ) {
 		setSyllabusFlag( value );
-		await c.actions.update( item, { is_syllabus: value } );
+		await c.actions.update( item, {
+			is_syllabus: value,
+		} );
 		setSyllabusFlag( null );
 	}
-
 	useEffect( () => {
 		document.getElementById( `ohmylms-cur-name-${ item.id }` )?.focus();
 	}, [ item.id ] );
@@ -94,10 +94,12 @@ export function ItemPanel( { id, item } ) {
 		item.links?.bank,
 		item.links?.quiz,
 	] );
-
 	const set = ( key ) => ( value ) => {
 		setSaved( false );
-		setDraft( ( previous ) => ( { ...previous, [ key ]: value } ) );
+		setDraft( ( previous ) => ( {
+			...previous,
+			[ key ]: value,
+		} ) );
 	};
 	async function save( event ) {
 		event.preventDefault();
@@ -111,12 +113,17 @@ export function ItemPanel( { id, item } ) {
 	const targets = moveTargets( c.items, item.id, c.maxDepth );
 	const path = pathNames( c.items, item.id );
 	const listId = `ohmylms-cur-types-${ item.id }`;
-
 	return (
 		<section
 			id={ id }
 			className="ohmylms-cur-panel"
-			aria-label={ sprintf( __( 'Editing %s', 'ohmylms' ), item.name ) }
+			aria-label={ sprintf(
+				/* translators: %s: curriculum item name. */ __(
+					'Editing %s',
+					'ohmylms'
+				),
+				item.name
+			) }
 		>
 			<p className="ohmylms-ext-muted ohmylms-cur-path">
 				{ path.length ? `${ path.join( ' › ' ) } › ` : '' }
@@ -157,7 +164,7 @@ export function ItemPanel( { id, item } ) {
 						touched && errors.item_type
 							? MESSAGES[ errors.item_type ]()
 							: sprintf(
-									__(
+									/* translators: %s: curriculum item name. */ __(
 										'Saved as “%s”. Use any type that fits your structure.',
 										'ohmylms'
 									),
@@ -235,7 +242,10 @@ export function ItemPanel( { id, item } ) {
 					value={ parent }
 					onChange={ setParent }
 					options={ [
-						{ value: '0', label: __( 'Top level', 'ohmylms' ) },
+						{
+							value: '0',
+							label: __( 'Top level', 'ohmylms' ),
+						},
 						...targets.map( ( target ) => ( {
 							value: String( target.id ),
 							label: `${ '— '.repeat( target.depth ) }${ target.name }`,

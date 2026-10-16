@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Hook for Course
  *
@@ -32,7 +32,7 @@ class LeaderboardHook {
 			return $students;
 		}
 
-		// get the leaderboard rule
+		// get the leaderboard rule.
 		$rule = Leaderboard::get_leaderboard_rule();
 		if ( 'completion_rate' === $rule ) {
 			$updated_students = Leaderboard::get_students_by_completion_rate( $students );

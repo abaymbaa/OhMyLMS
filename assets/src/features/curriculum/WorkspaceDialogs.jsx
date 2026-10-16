@@ -43,14 +43,19 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 			current = false;
 		};
 	}, [ item.id ] );
-
 	const branch = info && info.children > 0 && strategy === 'delete';
 	const bundles = info
 		? ( branch ? info.bundles : info.own_bundles ) || 0
 		: 0;
 	return (
 		<Modal
-			title={ sprintf( __( 'Delete “%s”?', 'ohmylms' ), item.name ) }
+			title={ sprintf(
+				/* translators: %s: curriculum item name. */ __(
+					'Delete “%s”?',
+					'ohmylms'
+				),
+				item.name
+			) }
 			onRequestClose={ onClose }
 			className="ohmylms-content-hub-dialog"
 		>
@@ -65,7 +70,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 					{ info.children > 0 && (
 						<RadioControl
 							label={ sprintf(
-								_n(
+								/* translators: %d: number of curriculum folders. */ _n(
 									'This folder has %d folder.',
 									'This folder has %d folders.',
 									info.children,
@@ -85,7 +90,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 								{
 									value: 'delete',
 									label: sprintf(
-										_n(
+										/* translators: %d: number of curriculum folders. */ _n(
 											'Delete this folder and everything under it (%d folder in total)',
 											'Delete this folder and everything under it (%d folders in total)',
 											info.descendants + 1,
@@ -108,7 +113,7 @@ export function DeleteTopicDialog( { item, pending, onConfirm, onClose } ) {
 						{ bundles > 0 && (
 							<li>
 								{ sprintf(
-									_n(
+									/* translators: %d: number of course bundles. */ _n(
 										'It will be removed from %d course bundle.',
 										'It will be removed from %d course bundles.',
 										bundles,
@@ -157,7 +162,10 @@ export function DeleteChapterDialog( { group, pending, onConfirm, onClose } ) {
 	return (
 		<Modal
 			title={ sprintf(
-				__( 'Delete “%s”?', 'ohmylms' ),
+				/* translators: %s: curriculum item name. */ __(
+					'Delete “%s”?',
+					'ohmylms'
+				),
 				groupLabel( group )
 			) }
 			onRequestClose={ onClose }
@@ -166,7 +174,7 @@ export function DeleteChapterDialog( { group, pending, onConfirm, onClose } ) {
 			<p>
 				{ skills
 					? sprintf(
-							_n(
+							/* translators: %d: number of selected questions. */ _n(
 								'This folder holds %d skill. The skill stays in the skill library, with its lessons and questions, but leaves this syllabus and its course.',
 								'This folder holds %d skills. The skills stay in the skill library, with their lessons and questions, but leave this syllabus and its course.',
 								skills,

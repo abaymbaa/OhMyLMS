@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Skills\Evidence;
@@ -132,14 +132,14 @@ final class Frontend {
 					if ( ! LearningPath::available( $item, $student, $course_id ) ) {
 						echo '<p>' . esc_html__( 'This activity is currently unavailable.', 'ohmylms' ) . '</p>';
 						break; }
-					if ( $item['type'] === 'practice' ) {
+					if ( 'practice' === $item['type'] ) {
 						echo \OhMyLMS\Practice\Frontend::practice(
 							array(
 								'skill'  => $item['content_id'],
 								'course' => $course_id,
 							)
 						);
-					} elseif ( $item['type'] === 'lesson' ) {
+					} elseif ( 'lesson' === $item['type'] ) {
 						echo '<article class="ohmylms-learning-lesson"><h2>' . esc_html( $item['name'] ) . '</h2>';
 						$lesson = ohmylms_get_lesson( $item['content_id'] );
 						$media  = $lesson->get_type() === 'video' ? $lesson->get_video_id() : ( $lesson->get_type() === 'audio' ? $lesson->get_audio_id() : 0 );
@@ -174,10 +174,10 @@ final class Frontend {
 				<p><a class="ohmylms-button" href="<?php echo esc_url( $next['url'] ); ?>"><?php echo esc_html( sprintf( __( 'Continue with %s', 'ohmylms' ), $next['name'] ) ); ?></a></p>
 					<?php
 				}
-				if ( $program['mode'] === 'skill-based' ) {
+				if ( 'skill-based' === $program['mode'] ) {
 					self::outcomes( $program, $state['blocked'] ); }
 				?>
-				<h2><?php echo esc_html( $program['mode'] === 'blended' ? __( 'Learning path', 'ohmylms' ) : __( 'Curriculum', 'ohmylms' ) ); ?></h2>
+				<h2><?php echo esc_html( 'blended' === $program['mode'] ? __( 'Learning path', 'ohmylms' ) : __( 'Curriculum', 'ohmylms' ) ); ?></h2>
 				<ol class="ohmylms-learning-path">
 				<?php
 				$chapter = null; foreach ( $program['items'] as $item ) {
@@ -200,17 +200,17 @@ final class Frontend {
 						} else {
 							?>
 							<strong><?php echo esc_html( $item['name'] ); ?></strong><?php } ?>
-						<span><?php echo esc_html( $item['complete'] ? __( 'Complete', 'ohmylms' ) : ( ! $available ? __( 'Unavailable', 'ohmylms' ) : ( $item['type'] === 'practice' ? __( 'Uses skill target', 'ohmylms' ) : ( $item['required'] ? __( 'Required', 'ohmylms' ) : __( 'Optional', 'ohmylms' ) ) ) ) ); ?></span>
+						<span><?php echo esc_html( $item['complete'] ? __( 'Complete', 'ohmylms' ) : ( ! $available ? __( 'Unavailable', 'ohmylms' ) : ( 'practice' === $item['type'] ? __( 'Uses skill target', 'ohmylms' ) : ( $item['required'] ? __( 'Required', 'ohmylms' ) : __( 'Optional', 'ohmylms' ) ) ) ) ); ?></span>
 						<?php
-						if ( $item['type'] === 'quiz' ) {
+						if ( 'quiz' === $item['type'] ) {
 							$assessment = $state['assessments'][ $item['content_id'] ];
 							?>
-							<small><?php echo esc_html( sprintf( __( 'Score %1$s · Pass %2$s%%', 'ohmylms' ), $assessment['score'] === null ? __( 'Not graded', 'ohmylms' ) : $assessment['score'] . '%', $assessment['pass_percent'] ) ); ?></small><?php } ?>
+							<small><?php echo esc_html( sprintf( __( 'Score %1$s · Pass %2$s%%', 'ohmylms' ), null === $assessment['score'] ? __( 'Not graded', 'ohmylms' ) : $assessment['score'] . '%', $assessment['pass_percent'] ) ); ?></small><?php } ?>
 					</li>
 				<?php } ?>
 				</ol>
 				<?php
-				if ( $program['mode'] !== 'skill-based' ) {
+				if ( 'skill-based' !== $program['mode'] ) {
 					self::outcomes( $program, $state['blocked'] ); }
 			}
 			?>

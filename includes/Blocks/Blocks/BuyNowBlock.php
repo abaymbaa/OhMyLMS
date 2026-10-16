@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * BuyNowBlock
  *
@@ -98,7 +98,7 @@ class BuyNowBlock {
 		);
 		$shortcode = '[ohmylms_buy_now';
 		foreach ( $atts as $k => $v ) {
-			if ( $v !== '' && $v !== null ) {
+			if ( '' !== $v && null !== $v ) {
 				$shortcode .= ' ' . $k . '="' . esc_attr( $v ) . '"';
 			}
 		}

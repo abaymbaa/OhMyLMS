@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Hooks;
 
@@ -79,7 +79,7 @@ class OrderHooks extends HookHandler {
 	 */
 	public function rest_delete_order( $order_id ) {
 		global $wpdb;
-		// Get all order items for this order
+		// Get all order items for this order.
 		$order_items = $wpdb->get_col(
 			$wpdb->prepare(
 				"SELECT order_item_id FROM {$wpdb->prefix}ohmylms_order_items WHERE order_id = %d",
@@ -88,12 +88,12 @@ class OrderHooks extends HookHandler {
 		);
 
 		if ( ! empty( $order_items ) ) {
-			// Delete order item meta
+			// Delete order item meta.
 			$wpdb->query(
 				"DELETE FROM {$wpdb->prefix}ohmylms_order_itemmeta WHERE order_item_id IN (" . implode( ',', array_map( 'absint', $order_items ) ) . ')'
 			);
 
-			// Delete order items
+			// Delete order items.
 			$wpdb->delete(
 				$wpdb->prefix . 'ohmylms_order_items',
 				array( 'order_id' => $order_id ),

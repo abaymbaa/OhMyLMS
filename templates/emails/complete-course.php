@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails complete course template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -30,7 +35,7 @@ if ( $certificate_id && $course->get_id() && $student->get_id() ) {
 	$encryption_key = 'ohmylms-certificate-key';
 	$iv             = openssl_random_pseudo_bytes( openssl_cipher_iv_length( 'aes-128-cbc' ) );
 	$encrypted_data = openssl_encrypt( $data, 'aes-128-cbc', $encryption_key, 0, $iv );
-	$encrypted_data = base64_encode( $encrypted_data . '::' . $iv ); // Correct Base64 encoding
+	$encrypted_data = base64_encode( $encrypted_data . '::' . $iv ); // Correct Base64 encoding.
 
 	$download_url = home_url() . '?ohmylms-certificate-data=' . urlencode( $encrypted_data );
 }
@@ -62,7 +67,7 @@ if ( $certificate_id && $course->get_id() && $student->get_id() ) {
 												</div>
 												
 												<div style="color: <?php echo $email_text_color; ?>; font-size: 16px; font-weight: 500; line-height: 1; margin: 0 0 10px; ">
-													<?php echo __( 'Completion Details:', 'ohmylms' ); ?>
+													<?php echo esc_html__( 'Completion Details:', 'ohmylms' ); ?>
 												</div>
 
 												<table class="ohmylms-order-items-table" style="width: 100%; border: 0; border-collapse: separate; border-radius: 0; background: transparent; margin: 0 0 20px">
@@ -73,7 +78,7 @@ if ( $certificate_id && $course->get_id() && $student->get_id() ) {
 																	<tr>
 																		<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																			<span style="color: #7A8B9A;">
-																				<?php echo __( 'Course Name:', 'ohmylms' ); ?>
+																				<?php echo esc_html__( 'Course Name:', 'ohmylms' ); ?>
 																			</span>
 
 																			<strong style="font-weight: 500;">
@@ -85,7 +90,7 @@ if ( $certificate_id && $course->get_id() && $student->get_id() ) {
 																	<tr>
 																		<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																			<span style="color: #7A8B9A;">
-																				<?php echo __( 'Enrollment Date:', 'ohmylms' ); ?>
+																				<?php echo esc_html__( 'Enrollment Date:', 'ohmylms' ); ?>
 																			</span>
 
 																			<strong style="font-weight: 500;">
@@ -97,11 +102,11 @@ if ( $certificate_id && $course->get_id() && $student->get_id() ) {
 																		<tr>
 																			<td style="background: transparent; padding: 14px 20px; border:none; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																				<span style="color: #7A8B9A;">
-																					<?php echo __( 'Certificate:', 'ohmylms' ); ?>
+																					<?php echo esc_html__( 'Certificate:', 'ohmylms' ); ?>
 																				</span>
 																				
 																				<a href="<?php echo $download_url; ?>" target="_blank" style="color: <?php echo $base_color; ?>; font-weight: 500;">
-																					<?php echo __( 'Download Certificate', 'ohmylms' ); ?>
+																					<?php echo esc_html__( 'Download Certificate', 'ohmylms' ); ?>
 																				</a>
 																			</td>
 																		</tr>

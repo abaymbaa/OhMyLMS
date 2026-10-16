@@ -1,7 +1,8 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import { createElement } from '@wordpress/element';
+import { createElement, useId } from '@wordpress/element';
 export function createTaxSettings( readRuntime ) {
 	return function TaxSettings( props ) {
+		const _controlId = useId();
 		const {
 			D1,
 			F1,
@@ -23,7 +24,6 @@ export function createTaxSettings( readRuntime ) {
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
-		props.formatData;
 		var t,
 			n,
 			r,
@@ -43,13 +43,17 @@ export function createTaxSettings( readRuntime ) {
 			h = ( 0, Notifications.A )(),
 			_ = ( h.openNotificationWithIcon, h.contextHolder ),
 			w =
-				( null == f ||
+				( f === null ||
+				f === void 0 ||
 				null === ( t = f.ohmylms_countries ) ||
 				void 0 === t
 					? void 0
 					: t.value ) || [],
 			E =
-				( null == f || null === ( n = f.ohmylms_states ) || void 0 === n
+				( f === null ||
+				f === void 0 ||
+				null === ( n = f.ohmylms_states ) ||
+				void 0 === n
 					? void 0
 					: n.value ) || {},
 			S = N1(
@@ -68,100 +72,118 @@ export function createTaxSettings( readRuntime ) {
 			O = ( P[ 0 ], P[ 1 ], N1( ( 0, ReactHooks.useState )( [] ), 2 ) ),
 			k = O[ 0 ],
 			j = O[ 1 ],
-			A = function ( e, t ) {
+			A = function ( e, _tLocal ) {
 				v.updateTaxSettings(
 					F1( {}, e, {
-						value: t,
+						value: _tLocal,
 					} )
 				);
 			},
-			M = function ( e, t, n ) {
-				j( function ( r ) {
-					var a = r.map( function ( r ) {
-						if ( r.id === e ) {
-							var a = I1( I1( {}, r ), {}, F1( {}, t, n ) );
+			M = function ( e, _tLocal2, _nLocal ) {
+				j( function ( _rLocal ) {
+					var _aLocal = _rLocal.map( function ( _rLocal2 ) {
+						if ( _rLocal2.id === e ) {
+							var _aLocal2 = I1(
+								I1( {}, _rLocal2 ),
+								{},
+								F1( {}, _tLocal2, _nLocal )
+							);
 							return (
-								'country' === t &&
-									( ( a.state = '' ),
-									( a.countryWide = ! 0 ) ),
-								'state' === t &&
-									( a.countryWide = ! n || '' === n ),
-								'countryWide' === t &&
-									! 0 === n &&
-									( a.state = '' ),
-								a
+								'country' === _tLocal2 &&
+									( ( _aLocal2.state = '' ),
+									( _aLocal2.countryWide = ! 0 ) ),
+								'state' === _tLocal2 &&
+									( _aLocal2.countryWide =
+										! _nLocal || '' === _nLocal ),
+								'countryWide' === _tLocal2 &&
+									! 0 === _nLocal &&
+									( _aLocal2.state = '' ),
+								_aLocal2
 							 );
 						}
-						return r;
+						return _rLocal2;
 					} );
 					return (
 						v.updateTaxSettings( {
 							ohmylms_new_tax_rates: {
-								value: a,
+								value: _aLocal,
 							},
 						} ),
-						a
+						_aLocal
 					 );
 				} );
 			},
 			F = ( 0, ReactHooks.useCallback )(
 				M1(
 					k1().m( function e() {
-						var t, n, r, a;
+						var _tLocal3, _nLocal2, _rLocal3, _aLocal3;
 						return k1().w(
-							function ( e ) {
+							function ( _eLocal ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal.p = _eLocal.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal.p = 0 ),
 												v.setLoadingSetting( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal.n = 1 ),
 												l()( {
 													path: 'ohmylms/v1/settings/tax',
 												} )
 											 );
 										case 1:
-											( ( t = e.v ),
-												v.setTaxSettings( t ),
-												( n = t.find( function ( e ) {
+											_tLocal3 = _eLocal.v;
+											v.setTaxSettings( _tLocal3 );
+											_nLocal2 = _tLocal3.find(
+												function ( _eLocal2 ) {
 													return (
 														'ohmylms_existing_tax_rates' ===
-														e.id
+														_eLocal2.id
 													);
-												} ) ),
-												( r = t.find( function ( e ) {
+												}
+											);
+											_rLocal3 = _tLocal3.find(
+												function ( _eLocal3 ) {
 													return (
 														'ohmylms_new_tax_rates' ===
-														e.id
+														_eLocal3.id
 													);
-												} ) ),
-												null != n &&
-													n.value &&
-													Array.isArray( n.value ) &&
-													C( n.value ),
-												null != r &&
-													r.value &&
-													Array.isArray( r.value ) &&
-													j( r.value ),
-												v.setLoadingSetting( ! 1 ),
-												( e.n = 3 ) );
+												}
+											);
+											if (
+												_nLocal2 !== null &&
+												_nLocal2 !== void 0 &&
+												_nLocal2.value &&
+												Array.isArray( _nLocal2.value )
+											) {
+												C( _nLocal2.value );
+											}
+											if (
+												_rLocal3 !== null &&
+												_rLocal3 !== void 0 &&
+												_rLocal3.value &&
+												Array.isArray( _rLocal3.value )
+											) {
+												j( _rLocal3.value );
+											}
+											v.setLoadingSetting( ! 1 );
+											_eLocal.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( a = e.v ),
-												console.error(
-													'Error fetching tax data:',
-													a
-												) );
+											_eLocal.p = 2;
+											_aLocal3 = _eLocal.v;
+											console.error(
+												'Error fetching tax data:',
+												_aLocal3
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal.p = 3 ),
 												v.setLoadingSetting( ! 1 ),
-												e.f( 3 )
+												_eLocal.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal.a( 2 );
 									}
 								}
 							},
@@ -182,27 +204,37 @@ export function createTaxSettings( readRuntime ) {
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e, t;
-					( null != f &&
+					var e, _tLocal4;
+					if (
+						f !== null &&
+						f !== void 0 &&
 						null !== ( e = f.ohmylms_existing_tax_rates ) &&
 						void 0 !== e &&
 						e.value &&
-						Array.isArray( f.ohmylms_existing_tax_rates.value ) &&
-						C( f.ohmylms_existing_tax_rates.value ),
-						null != f &&
-							null !== ( t = f.ohmylms_new_tax_rates ) &&
-							void 0 !== t &&
-							t.value &&
-							Array.isArray( f.ohmylms_new_tax_rates.value ) &&
-							j( f.ohmylms_new_tax_rates.value ) );
+						Array.isArray( f.ohmylms_existing_tax_rates.value )
+					) {
+						C( f.ohmylms_existing_tax_rates.value );
+					}
+					if (
+						f !== null &&
+						f !== void 0 &&
+						null !== ( _tLocal4 = f.ohmylms_new_tax_rates ) &&
+						void 0 !== _tLocal4 &&
+						_tLocal4.value &&
+						Array.isArray( f.ohmylms_new_tax_rates.value )
+					) {
+						j( f.ohmylms_new_tax_rates.value );
+					}
 				},
 				[
-					null == f ||
+					f === null ||
+					f === void 0 ||
 					null === ( r = f.ohmylms_existing_tax_rates ) ||
 					void 0 === r
 						? void 0
 						: r.value,
-					null == f ||
+					f === null ||
+					f === void 0 ||
 					null === ( a = f.ohmylms_new_tax_rates ) ||
 					void 0 === a
 						? void 0
@@ -230,7 +262,8 @@ export function createTaxSettings( readRuntime ) {
 									) }
 									isChecked={
 										'yes' ===
-										( null == f ||
+										( f === null ||
+										f === void 0 ||
 										null ===
 											( o = f.ohmylms_tax_enabled ) ||
 										void 0 === o
@@ -276,7 +309,8 @@ export function createTaxSettings( readRuntime ) {
 															'ohmylms'
 														) }
 														value={
-															( null == f ||
+															( f === null ||
+															f === void 0 ||
 															null ===
 																( i =
 																	f.ohmylms_tax_label ) ||
@@ -313,7 +347,8 @@ export function createTaxSettings( readRuntime ) {
 															'ohmylms'
 														) }
 														value={
-															( null == f ||
+															( f === null ||
+															f === void 0 ||
 															null ===
 																( c =
 																	f.ohmylms_prices_include_tax ) ||
@@ -377,7 +412,8 @@ export function createTaxSettings( readRuntime ) {
 															) }
 															isChecked={
 																'yes' ===
-																( null == f ||
+																( f === null ||
+																f === void 0 ||
 																null ===
 																	( u =
 																		f.ohmylms_eu_vat_enabled ) ||
@@ -409,7 +445,8 @@ export function createTaxSettings( readRuntime ) {
 															}
 														/>
 														{ 'yes' ===
-															( null == f ||
+															( f === null ||
+															f === void 0 ||
 															null ===
 																( s =
 																	f.ohmylms_eu_vat_enabled ) ||
@@ -430,8 +467,10 @@ export function createTaxSettings( readRuntime ) {
 																	) }
 																	isChecked={
 																		'yes' ===
-																		( null ==
-																			f ||
+																		( f ===
+																			null ||
+																		f ===
+																			void 0 ||
 																		null ===
 																			( d =
 																				f.ohmylms_disable_vat_validation ) ||
@@ -475,8 +514,10 @@ export function createTaxSettings( readRuntime ) {
 																		'ohmylms'
 																	) }
 																	value={
-																		( null ==
-																			f ||
+																		( f ===
+																			null ||
+																		f ===
+																			void 0 ||
 																		null ===
 																			( m =
 																				f.ohmylms_vat_number_label ) ||
@@ -654,12 +695,12 @@ export function createTaxSettings( readRuntime ) {
 																								e.country
 																							}
 																							onChange={ function (
-																								t
+																								_tLocal5
 																							) {
 																								return M(
 																									e.id,
 																									'country',
-																									t
+																									_tLocal5
 																										.target
 																										.value
 																								);
@@ -681,19 +722,19 @@ export function createTaxSettings( readRuntime ) {
 																							</option>
 																							{ w.map(
 																								function (
-																									e
+																									_eLocal4
 																								) {
 																									return (
 																										<option
 																											key={
-																												e.value
+																												_eLocal4.value
 																											}
 																											value={
-																												e.value
+																												_eLocal4.value
 																											}
 																										>
 																											{
-																												e.label
+																												_eLocal4.label
 																											}
 																										</option>
 																									);
@@ -708,8 +749,10 @@ export function createTaxSettings( readRuntime ) {
 																					>
 																						<Controls.TooltipWP
 																							text={
-																								null !=
-																									e &&
+																								e !==
+																									null &&
+																								e !==
+																									void 0 &&
 																								e.countryWide
 																									? ( 0,
 																										I18n.__ )(
@@ -731,12 +774,12 @@ export function createTaxSettings( readRuntime ) {
 																									e.state
 																								}
 																								onChange={ function (
-																									t
+																									_tLocal6
 																								) {
 																									return M(
 																										e.id,
 																										'state',
-																										t
+																										_tLocal6
 																											.target
 																											.value
 																									);
@@ -770,19 +813,19 @@ export function createTaxSettings( readRuntime ) {
 																											.country
 																									].map(
 																										function (
-																											e
+																											_eLocal5
 																										) {
 																											return (
 																												<option
 																													key={
-																														e.value
+																														_eLocal5.value
 																													}
 																													value={
-																														e.value
+																														_eLocal5.value
 																													}
 																												>
 																													{
-																														e.label
+																														_eLocal5.label
 																													}
 																												</option>
 																											);
@@ -800,6 +843,12 @@ export function createTaxSettings( readRuntime ) {
 																							className={
 																								'tax-rate-checkbox-label tax-country-wide'
 																							}
+																							htmlFor={
+																								_controlId +
+																								'-field-1' +
+																								'-' +
+																								e.id
+																							}
 																						>
 																							<input
 																								type={
@@ -809,26 +858,35 @@ export function createTaxSettings( readRuntime ) {
 																									e.countryWide
 																								}
 																								onChange={ function (
-																									t
+																									_tLocal7
 																								) {
-																									( M(
+																									M(
 																										e.id,
 																										'countryWide',
-																										t
+																										_tLocal7
 																											.target
 																											.checked
-																									),
-																										t
+																									);
+																									if (
+																										_tLocal7
 																											.target
-																											.checked &&
-																											M(
-																												e.id,
-																												'state',
-																												''
-																											) );
+																											.checked
+																									) {
+																										M(
+																											e.id,
+																											'state',
+																											''
+																										);
+																									}
 																								} }
 																								disabled={
 																									! e.country
+																								}
+																								id={
+																									_controlId +
+																									'-field-1' +
+																									'-' +
+																									e.id
 																								}
 																							/>
 																							<span
@@ -856,32 +914,43 @@ export function createTaxSettings( readRuntime ) {
 																								e.rate
 																							}
 																							onChange={ function (
-																								t
+																								_tLocal8
 																							) {
 																								M(
 																									e.id,
 																									'rate',
-																									0 >
-																										t
-																										? 0
-																										: 100 >=
-																											  t
-																											? t
-																											: 100
+																									( () => {
+																										if (
+																											0 >
+																											_tLocal8
+																										) {
+																											return 0;
+																										}
+																										if (
+																											100 >=
+																											_tLocal8
+																										) {
+																											return _tLocal8;
+																										}
+																										return 100;
+																									} )()
 																								);
 																							} }
 																							onKeyDown={ function (
-																								e
+																								_eLocal6
 																							) {
-																								( '-' !==
-																									e.key &&
+																								if ( ! (
+																									'-' !==
+																										_eLocal6.key &&
 																									'+' !==
-																										e.key &&
+																										_eLocal6.key &&
 																									'e' !==
-																										e.key &&
+																										_eLocal6.key &&
 																									'E' !==
-																										e.key ) ||
-																									e.preventDefault();
+																										_eLocal6.key
+																								) ) {
+																									_eLocal6.preventDefault();
+																								}
 																							} }
 																							placeholder={
 																								'0.00'
@@ -922,20 +991,20 @@ export function createTaxSettings( readRuntime ) {
 																								}
 																								onClick={ function () {
 																									return (
-																										( t =
+																										( _tLocal9 =
 																											e.id ),
 																										void j(
 																											function (
-																												e
+																												_eLocal7
 																											) {
-																												var n =
-																													e.filter(
+																												var _nLocal3 =
+																													_eLocal7.filter(
 																														function (
-																															e
+																															_eLocal8
 																														) {
 																															return (
-																																e.id !==
-																																t
+																																_eLocal8.id !==
+																																_tLocal9
 																															);
 																														}
 																													);
@@ -944,16 +1013,16 @@ export function createTaxSettings( readRuntime ) {
 																														{
 																															ohmylms_new_tax_rates:
 																																{
-																																	value: n,
+																																	value: _nLocal3,
 																																},
 																														}
 																													),
-																													n
+																													_nLocal3
 																												 );
 																											}
 																										)
 																									 );
-																									var t;
+																									var _tLocal9;
 																								} }
 																								className={
 																									'tax-rate-remove-btn'
@@ -1048,31 +1117,31 @@ export function createTaxSettings( readRuntime ) {
 																					}
 																				>
 																					{
-																						( ( t =
+																						( ( _tLocal0 =
 																							e.country ),
-																						( n =
+																						( _nLocal4 =
 																							w.find(
 																								function (
-																									e
+																									_eLocal9
 																								) {
 																									return (
-																										e.value ===
-																										t
+																										_eLocal9.value ===
+																										_tLocal0
 																									);
 																								}
 																							) )
-																							? n.label
-																							: t )
+																							? _nLocal4.label
+																							: _tLocal0 )
 																					}
 																				</div>
 																				<div>
 																					{ ( function (
-																						e,
+																						_eLocal0,
 																						t
 																					) {
 																						var n =
 																							E[
-																								e
+																								_eLocal0
 																							];
 																						if (
 																							! n ||
@@ -1083,19 +1152,19 @@ export function createTaxSettings( readRuntime ) {
 																								'——'
 																							);
 																						}
-																						var r =
+																						var _rLocal4 =
 																							n.find(
 																								function (
-																									e
+																									_eLocal1
 																								) {
 																									return (
-																										e.value ===
+																										_eLocal1.value ===
 																										t
 																									);
 																								}
 																							);
-																						return r
-																							? r.label
+																						return _rLocal4
+																							? _rLocal4.label
 																							: t;
 																					} )(
 																						e.country,
@@ -1148,15 +1217,15 @@ export function createTaxSettings( readRuntime ) {
 																								e.id ),
 																							void C(
 																								function (
-																									e
+																									_eLocal10
 																								) {
 																									var n =
-																										e.filter(
+																										_eLocal10.filter(
 																											function (
-																												e
+																												_eLocal11
 																											) {
 																												return (
-																													e.id !==
+																													_eLocal11.id !==
 																													t
 																												);
 																											}
@@ -1209,8 +1278,8 @@ export function createTaxSettings( readRuntime ) {
 																				</Controls.ButtonWP>
 																			</div>
 																		);
-																		var t,
-																			n;
+																		var _tLocal0,
+																			_nLocal4;
 																	}
 																) }
 															</div>
@@ -1238,54 +1307,68 @@ export function createTaxSettings( readRuntime ) {
 																	};
 																	j(
 																		function (
-																			t
+																			_tLocal1
 																		) {
-																			var n =
+																			var _nLocal5 =
 																				[].concat(
 																					( function (
-																						e
+																						_eLocal12
 																					) {
 																						return (
 																							( function (
-																								e
+																								_eLocal13
 																							) {
 																								if (
 																									Array.isArray(
-																										e
+																										_eLocal13
 																									)
 																								) {
 																									return W1(
-																										e
+																										_eLocal13
 																									);
 																								}
 																							} )(
-																								e
+																								_eLocal12
 																							) ||
 																							( function (
-																								e
+																								_eLocal14
 																							) {
 																								if (
 																									( 'undefined' !==
 																										typeof Symbol &&
-																										null !=
-																											e[
+																										( (
+																											_nullableValue
+																										) =>
+																											_nullableValue !==
+																												null &&
+																											_nullableValue !==
+																												void 0 )(
+																											_eLocal14[
 																												Symbol
 																													.iterator
-																											] ) ||
-																									null !=
-																										e[
+																											]
+																										) ) ||
+																									( (
+																										_nullableValue2
+																									) =>
+																										_nullableValue2 !==
+																											null &&
+																										_nullableValue2 !==
+																											void 0 )(
+																										_eLocal14[
 																											'@@iterator'
 																										]
+																									)
 																								) {
 																									return Array.from(
-																										e
+																										_eLocal14
 																									);
 																								}
 																							} )(
-																								e
+																								_eLocal12
 																							) ||
 																							D1(
-																								e
+																								_eLocal12
 																							) ||
 																							( function () {
 																								throw new TypeError(
@@ -1294,7 +1377,7 @@ export function createTaxSettings( readRuntime ) {
 																							} )()
 																						);
 																					} )(
-																						t
+																						_tLocal1
 																					),
 																					[
 																						e,
@@ -1305,11 +1388,11 @@ export function createTaxSettings( readRuntime ) {
 																					{
 																						ohmylms_new_tax_rates:
 																							{
-																								value: n,
+																								value: _nLocal5,
 																							},
 																					}
 																				),
-																				n
+																				_nLocal5
 																			 );
 																		}
 																	);
@@ -1349,8 +1432,10 @@ export function createTaxSettings( readRuntime ) {
 																	'number'
 																}
 																value={
-																	( null ==
-																		f ||
+																	( f ===
+																		null ||
+																	f ===
+																		void 0 ||
 																	null ===
 																		( p =
 																			f.ohmylms_fallback_tax_rate ) ||

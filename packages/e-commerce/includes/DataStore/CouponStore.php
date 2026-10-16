@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\DataStore;
 
@@ -147,7 +147,7 @@ class CouponStore extends DataStore {
 	 * Update post meta data for the given coupon.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Coupon $coupon The coupon object to update.
-	 * @param bool                           $force Whether to force the update.
+	 * @param bool                          $force Whether to force the update.
 	 *
 	 * @since 1.0.0
 	 */

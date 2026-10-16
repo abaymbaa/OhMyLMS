@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Learner endpoints for an in-progress versioned attempt: resume state and per-item autosave.
+ * Only the attempt's own learner can use them; nothing here reveals correctness.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -105,7 +111,7 @@ class AttemptController extends RestController {
 	public function save( WP_REST_Request $request ) {
 		$attempt_id = (int) $request['id'];
 		$attempt    = $this->attempt( $attempt_id );
-		if ( $attempt['status'] !== 'in-progress' ) {
+		if ( 'in-progress' !== $attempt['status'] ) {
 			return new WP_Error( 'quiz_attempt', __( 'This attempt has already been submitted.', 'ohmylms' ), array( 'status' => 409 ) );
 		}
 		$context = AttemptItems::context( $attempt_id );
@@ -121,7 +127,7 @@ class AttemptController extends RestController {
 		if ( ! $item ) {
 			return new WP_Error( 'quiz_question', __( 'That question is not part of this attempt.', 'ohmylms' ), array( 'status' => 400 ) ); }
 		$response = $request['response'];
-		if ( $response === null ) {
+		if ( null === $response ) {
 			$response = array(); }
 		if ( ! is_array( $response ) && ! is_scalar( $response ) ) {
 			return new WP_Error( 'quiz_answer', __( 'Invalid answer format.', 'ohmylms' ), array( 'status' => 400 ) ); }

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails email footer template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

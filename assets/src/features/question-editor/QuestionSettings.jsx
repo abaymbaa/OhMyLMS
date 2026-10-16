@@ -16,7 +16,8 @@ export function createQuestionSettings( readRuntime ) {
 			}, [] );
 		return (
 			<React.Fragment>
-				{ null != question &&
+				{ question !== null &&
+				question !== void 0 &&
 				null !== ( t = question.settings ) &&
 				void 0 !== t &&
 				t.type ? (

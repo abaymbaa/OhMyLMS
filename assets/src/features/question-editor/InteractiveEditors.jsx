@@ -1,6 +1,6 @@
 /** @jsx createElement */
 import { RichContentControl } from '../math/RichContentControl';
-import { createElement, Fragment, useState } from '@wordpress/element';
+import { createElement, Fragment, useState, useId } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import {
 	Button,
@@ -28,7 +28,6 @@ import {
 	syncSlots,
 	tilesFromText,
 } from './interactiveModel.mjs';
-
 const VISUAL_TYPES = [
 	'number-line',
 	'shade-model',
@@ -77,7 +76,6 @@ function ParsedField( {
 		/>
 	);
 }
-
 const csv = ( text ) =>
 	String( text )
 		.split( ',' )
@@ -98,16 +96,31 @@ function PartialCredit( { value, onChange } ) {
 				'ohmylms'
 			) }
 			checked={ !! value.partial_credit }
-			onChange={ ( partial_credit ) => onChange( { partial_credit } ) }
+			onChange={ ( _partialCredit ) =>
+				onChange( {
+					partial_credit: _partialCredit,
+				} )
+			}
 		/>
 	);
 }
-
 const formOptions = () => [
-	{ value: 'any', label: __( 'Any equivalent form', 'ohmylms' ) },
-	{ value: 'expanded', label: __( 'Must be expanded', 'ohmylms' ) },
-	{ value: 'factored', label: __( 'Must be factored', 'ohmylms' ) },
-	{ value: 'simplified', label: __( 'Must be simplified', 'ohmylms' ) },
+	{
+		value: 'any',
+		label: __( 'Any equivalent form', 'ohmylms' ),
+	},
+	{
+		value: 'expanded',
+		label: __( 'Must be expanded', 'ohmylms' ),
+	},
+	{
+		value: 'factored',
+		label: __( 'Must be factored', 'ohmylms' ),
+	},
+	{
+		value: 'simplified',
+		label: __( 'Must be simplified', 'ohmylms' ),
+	},
 ];
 
 /**
@@ -143,15 +156,23 @@ export function ExpressionEditor( { value, onChange } ) {
 			<MathInput
 				label={ __( 'Correct answer', 'ohmylms' ) }
 				help={ __(
-					'Write it as you would type it: 2(x+3), x^2-1, 3/4, sqrt(x), sin(x). Equations such as 2x+5=11 are also supported.',
+					'Write it as you would type it: 2(x+3), x^2–1, 3/4, sqrt(x), sin(x). Equations such as 2x+5=11 are also supported.',
 					'ohmylms'
 				) }
 				value={ value.answer || '' }
-				onChange={ ( answer ) => onChange( { answer } ) }
+				onChange={ ( answer ) =>
+					onChange( {
+						answer,
+					} )
+				}
 			/>
 			<FormSelect
 				value={ value.form }
-				onChange={ ( form ) => onChange( { form } ) }
+				onChange={ ( form ) =>
+					onChange( {
+						form,
+					} )
+				}
 			/>
 			{ ( value.alternatives || [] ).map( ( answer, index ) => (
 				<div key={ index }>
@@ -212,7 +233,12 @@ export function DropdownBlanksEditor( {
 			dropdownSettings(
 				value,
 				slots.map( ( slot ) =>
-					slot.id === id ? { ...slot, ...patch } : slot
+					slot.id === id
+						? {
+								...slot,
+								...patch,
+							}
+						: slot
 				)
 			)
 		);
@@ -236,7 +262,10 @@ export function DropdownBlanksEditor( {
 					) }
 					value={ value.text || '' }
 					onChange={ ( text ) =>
-						onChange( { text, slots: syncSlots( text, slots ) } )
+						onChange( {
+							text,
+							slots: syncSlots( text, slots ),
+						} )
 					}
 				/>
 			) }
@@ -389,7 +418,9 @@ export function DropdownBlanksEditor( {
 								},
 							] }
 							onChange={ ( grading ) =>
-								setSlot( slot.id, { grading } )
+								setSlot( slot.id, {
+									grading,
+								} )
 							}
 						/>
 					) }
@@ -421,13 +452,23 @@ export function CategorizeEditor( { value, onChange } ) {
 	const setBucket = ( id, patch ) =>
 		onChange( {
 			buckets: buckets.map( ( bucket ) =>
-				bucket.id === id ? { ...bucket, ...patch } : bucket
+				bucket.id === id
+					? {
+							...bucket,
+							...patch,
+						}
+					: bucket
 			),
 		} );
 	const setItem = ( id, patch ) =>
 		onChange( {
 			items: items.map( ( item ) =>
-				item.id === id ? { ...item, ...patch } : item
+				item.id === id
+					? {
+							...item,
+							...patch,
+						}
+					: item
 			),
 		} );
 	return (
@@ -439,12 +480,17 @@ export function CategorizeEditor( { value, onChange } ) {
 						compact
 						html={ false }
 						label={ sprintf(
-							__( 'Group %d', 'ohmylms' ),
+							/* translators: %d: group number. */ __(
+								'Group %d',
+								'ohmylms'
+							),
 							index + 1
 						) }
 						value={ bucket.label || '' }
 						onChange={ ( label ) =>
-							setBucket( bucket.id, { label } )
+							setBucket( bucket.id, {
+								label,
+							} )
 						}
 					/>
 					<Button
@@ -465,7 +511,10 @@ export function CategorizeEditor( { value, onChange } ) {
 					onChange( {
 						buckets: [
 							...buckets,
-							{ id: nextId( buckets, 'b' ), label: '' },
+							{
+								id: nextId( buckets, 'b' ),
+								label: '',
+							},
 						],
 					} )
 				}
@@ -479,30 +528,46 @@ export function CategorizeEditor( { value, onChange } ) {
 						compact
 						html={ false }
 						label={ sprintf(
-							__( 'Item %d', 'ohmylms' ),
+							/* translators: %d: item number. */ __(
+								'Item %d',
+								'ohmylms'
+							),
 							index + 1
 						) }
 						value={ item.text || '' }
-						onChange={ ( text ) => setItem( item.id, { text } ) }
+						onChange={ ( text ) =>
+							setItem( item.id, {
+								text,
+							} )
+						}
 					/>
 					<SelectControl
 						label={ __( 'Belongs to', 'ohmylms' ) }
 						value={ key[ item.id ] || '' }
 						options={ [
-							{ value: '', label: __( 'Choose …', 'ohmylms' ) },
+							{
+								value: '',
+								label: __( 'Choose …', 'ohmylms' ),
+							},
 							...buckets.map( ( bucket ) => ( {
 								value: bucket.id,
 								label:
 									bucket.label ||
 									sprintf(
-										__( 'Group %s', 'ohmylms' ),
+										/* translators: %s: answer group identifier. */ __(
+											'Group %s',
+											'ohmylms'
+										),
 										bucket.id
 									),
 							} ) ),
 						] }
 						onChange={ ( bucketId ) =>
 							onChange( {
-								key: { ...key, [ item.id ]: bucketId },
+								key: {
+									...key,
+									[ item.id ]: bucketId,
+								},
 							} )
 						}
 					/>
@@ -554,7 +619,10 @@ export function CategorizeEditor( { value, onChange } ) {
 					onChange( {
 						items: [
 							...items,
-							{ id: nextId( items, 'i' ), text: '' },
+							{
+								id: nextId( items, 'i' ),
+								text: '',
+							},
 						],
 					} )
 				}
@@ -565,7 +633,6 @@ export function CategorizeEditor( { value, onChange } ) {
 		</div>
 	);
 }
-
 const rowsText = ( rows ) =>
 	( rows || [] ).map( ( row ) => row.join( ' | ' ) ).join( '\n' );
 const parseRows = ( text ) =>
@@ -583,14 +650,23 @@ const parseRows = ( text ) =>
 export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 	const table = value.layout === 'table';
 	const apply = ( patch ) => {
-		const next = { ...value, ...patch };
-		onChange( { ...patch, blanks: syncBlanks( next ) } );
+		const next = {
+			...value,
+			...patch,
+		};
+		onChange( {
+			...patch,
+			blanks: syncBlanks( next ),
+		} );
 	};
 	const setBlank = ( id, patch ) =>
 		onChange( {
 			blanks: {
 				...value.blanks,
-				[ id ]: { ...( value.blanks?.[ id ] || {} ), ...patch },
+				[ id ]: {
+					...( value.blanks?.[ id ] || {} ),
+					...patch,
+				},
 			},
 		} );
 	return (
@@ -603,7 +679,10 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 						value: 'inline',
 						label: __( 'Sentence with blanks', 'ohmylms' ),
 					},
-					{ value: 'table', label: __( 'Table', 'ohmylms' ) },
+					{
+						value: 'table',
+						label: __( 'Table', 'ohmylms' ),
+					},
 				] }
 				onChange={ ( layout ) =>
 					apply(
@@ -616,64 +695,94 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 										[ '2', '{b}' ],
 									],
 								}
-							: { layout }
+							: {
+									layout,
+								}
 					)
 				}
 			/>
-			{ table ? (
-				<Fragment>
-					<ParsedField
-						label={ __(
-							'Column headings (comma separated)',
-							'ohmylms'
-						) }
-						value={ value.columns }
-						format={ joinCsv }
-						parse={ csv }
-						onChange={ ( columns ) => onChange( { columns } ) }
-					/>
-					<ParsedField
-						multiline
-						label={ __(
-							'Rows (one per line, cells separated by |)',
-							'ohmylms'
-						) }
+			{ ( () => {
+				if ( table ) {
+					return (
+						<Fragment>
+							<ParsedField
+								label={ __(
+									'Column headings (comma separated)',
+									'ohmylms'
+								) }
+								value={ value.columns }
+								format={ joinCsv }
+								parse={ csv }
+								onChange={ ( columns ) =>
+									onChange( {
+										columns,
+									} )
+								}
+							/>
+							<ParsedField
+								multiline
+								label={ __(
+									'Rows (one per line, cells separated by |)',
+									'ohmylms'
+								) }
+								help={ __(
+									'Write {a}, {b} … in a cell where the learner fills in a value.',
+									'ohmylms'
+								) }
+								value={ value.rows }
+								format={ rowsText }
+								parse={ parseRows }
+								onChange={ ( rows ) =>
+									apply( {
+										rows,
+									} )
+								}
+							/>
+						</Fragment>
+					);
+				}
+				if ( mainStatement ) {
+					return (
+						<p>
+							{ __(
+								'Write {a}, {b} … in the Question field where a blank should appear.',
+								'ohmylms'
+							) }
+						</p>
+					);
+				}
+				return (
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __( 'Text', 'ohmylms' ) }
 						help={ __(
-							'Write {a}, {b} … in a cell where the learner fills in a value.',
+							'Write {a}, {b} … where a blank should appear.',
 							'ohmylms'
 						) }
-						value={ value.rows }
-						format={ rowsText }
-						parse={ parseRows }
-						onChange={ ( rows ) => apply( { rows } ) }
+						value={ value.text || '' }
+						onChange={ ( text ) =>
+							apply( {
+								text,
+							} )
+						}
 					/>
-				</Fragment>
-			) : mainStatement ? (
-				<p>
-					{ __(
-						'Write {a}, {b} … in the Question field where a blank should appear.',
-						'ohmylms'
-					) }
-				</p>
-			) : (
-				<RichContentControl
-					compact
-					html={ false }
-					label={ __( 'Text', 'ohmylms' ) }
-					help={ __(
-						'Write {a}, {b} … where a blank should appear.',
-						'ohmylms'
-					) }
-					value={ value.text || '' }
-					onChange={ ( text ) => apply( { text } ) }
-				/>
-			) }
+				);
+			} )() }
 			{ blankIds( value ).map( ( id ) => {
-				const spec = value.blanks?.[ id ] || { kind: 'text' };
+				const spec = value.blanks?.[ id ] || {
+					kind: 'text',
+				};
 				return (
 					<fieldset key={ id } className="ohmylms-interactive-row">
 						<legend>
-							{ sprintf( __( 'Blank {%s}', 'ohmylms' ), id ) }
+							{ sprintf(
+								/* translators: %s: blank identifier from the question template. */ __(
+									'Blank {%s}',
+									'ohmylms'
+								),
+								id
+							) }
 						</legend>
 						<SelectControl
 							label={ __( 'Answer type', 'ohmylms' ) }
@@ -692,95 +801,124 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 									label: __( 'Math expression', 'ohmylms' ),
 								},
 							] }
-							onChange={ ( kind ) => setBlank( id, { kind } ) }
+							onChange={ ( kind ) =>
+								setBlank( id, {
+									kind,
+								} )
+							}
 						/>
-						{ spec.kind === 'numerical' ? (
-							<Fragment>
-								<TextControl
-									type="number"
-									step="any"
-									label={ __( 'Correct answer', 'ohmylms' ) }
-									value={ spec.answer ?? '' }
-									onChange={ ( answer ) =>
+						{ ( () => {
+							if ( spec.kind === 'numerical' ) {
+								return (
+									<Fragment>
+										<TextControl
+											type="number"
+											step="any"
+											label={ __(
+												'Correct answer',
+												'ohmylms'
+											) }
+											value={ spec.answer ?? '' }
+											onChange={ ( answer ) =>
+												setBlank( id, {
+													answer:
+														answer === ''
+															? undefined
+															: Number( answer ),
+												} )
+											}
+										/>
+										<TextControl
+											label={ __(
+												'Other accepted answers (comma separated)',
+												'ohmylms'
+											) }
+											value={ numbersToList(
+												spec.answers
+											) }
+											onChange={ ( text ) =>
+												setBlank( id, {
+													answers:
+														listToNumbers( text ),
+												} )
+											}
+										/>
+										<TextControl
+											type="number"
+											min={ 0 }
+											step="any"
+											label={ __(
+												'Tolerance',
+												'ohmylms'
+											) }
+											value={ spec.tolerance ?? 0 }
+											onChange={ ( tolerance ) =>
+												setBlank( id, {
+													tolerance: Math.max(
+														0,
+														Number( tolerance ) || 0
+													),
+												} )
+											}
+										/>
+										<TextControl
+											label={ __(
+												'Unit shown after the box',
+												'ohmylms'
+											) }
+											value={ spec.unit || '' }
+											onChange={ ( unit ) =>
+												setBlank( id, {
+													unit,
+												} )
+											}
+										/>
+									</Fragment>
+								);
+							}
+							if ( spec.kind === 'expression' ) {
+								return (
+									<Fragment>
+										<MathInput
+											label={ __(
+												'Correct expression',
+												'ohmylms'
+											) }
+											value={ spec.answer || '' }
+											onChange={ ( answer ) =>
+												setBlank( id, {
+													answer,
+												} )
+											}
+										/>
+										<FormSelect
+											value={ spec.form }
+											onChange={ ( form ) =>
+												setBlank( id, {
+													form,
+												} )
+											}
+										/>
+									</Fragment>
+								);
+							}
+							return (
+								<ParsedField
+									label={ __(
+										'Accepted answers (comma separated, not case-sensitive)',
+										'ohmylms'
+									) }
+									value={ spec.accepted }
+									format={ joinCsv }
+									parse={ csv }
+									onChange={ ( accepted ) =>
 										setBlank( id, {
-											answer:
-												answer === ''
-													? undefined
-													: Number( answer ),
+											accepted,
 										} )
 									}
 								/>
-								<TextControl
-									label={ __(
-										'Other accepted answers (comma separated)',
-										'ohmylms'
-									) }
-									value={ numbersToList( spec.answers ) }
-									onChange={ ( text ) =>
-										setBlank( id, {
-											answers: listToNumbers( text ),
-										} )
-									}
-								/>
-								<TextControl
-									type="number"
-									min={ 0 }
-									step="any"
-									label={ __( 'Tolerance', 'ohmylms' ) }
-									value={ spec.tolerance ?? 0 }
-									onChange={ ( tolerance ) =>
-										setBlank( id, {
-											tolerance: Math.max(
-												0,
-												Number( tolerance ) || 0
-											),
-										} )
-									}
-								/>
-								<TextControl
-									label={ __(
-										'Unit shown after the box',
-										'ohmylms'
-									) }
-									value={ spec.unit || '' }
-									onChange={ ( unit ) =>
-										setBlank( id, { unit } )
-									}
-								/>
-							</Fragment>
-						) : spec.kind === 'expression' ? (
-							<Fragment>
-								<MathInput
-									label={ __(
-										'Correct expression',
-										'ohmylms'
-									) }
-									value={ spec.answer || '' }
-									onChange={ ( answer ) =>
-										setBlank( id, { answer } )
-									}
-								/>
-								<FormSelect
-									value={ spec.form }
-									onChange={ ( form ) =>
-										setBlank( id, { form } )
-									}
-								/>
-							</Fragment>
-						) : (
-							<ParsedField
-								label={ __(
-									'Accepted answers (comma separated, not case-sensitive)',
-									'ohmylms'
-								) }
-								value={ spec.accepted }
-								format={ joinCsv }
-								parse={ csv }
-								onChange={ ( accepted ) =>
-									setBlank( id, { accepted } )
-								}
-							/>
-						) }
+							);
+						} )() }
 					</fieldset>
 				);
 			} ) }
@@ -807,7 +945,11 @@ export function BuildExpressionEditor( { value, onChange } ) {
 				value={ value.correct }
 				format={ ( list ) => ( list || [] ).join( ' ' ) }
 				parse={ tilesFromText }
-				onChange={ ( correct ) => onChange( { correct } ) }
+				onChange={ ( correct ) =>
+					onChange( {
+						correct,
+					} )
+				}
 			/>
 			<ParsedField
 				label={ __(
@@ -817,7 +959,11 @@ export function BuildExpressionEditor( { value, onChange } ) {
 				value={ value.distractors }
 				format={ ( list ) => ( list || [] ).join( ' ' ) }
 				parse={ tilesFromText }
-				onChange={ ( distractors ) => onChange( { distractors } ) }
+				onChange={ ( distractors ) =>
+					onChange( {
+						distractors,
+					} )
+				}
 			/>
 			<ParsedField
 				multiline
@@ -834,7 +980,11 @@ export function BuildExpressionEditor( { value, onChange } ) {
 					( list || [] ).map( ( s ) => s.join( ' ' ) ).join( '\n' )
 				}
 				parse={ sequencesFromText }
-				onChange={ ( alternatives ) => onChange( { alternatives } ) }
+				onChange={ ( alternatives ) =>
+					onChange( {
+						alternatives,
+					} )
+				}
 			/>
 			<CheckboxControl
 				label={ __(
@@ -842,12 +992,20 @@ export function BuildExpressionEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				checked={ !! value.equivalence }
-				onChange={ ( equivalence ) => onChange( { equivalence } ) }
+				onChange={ ( equivalence ) =>
+					onChange( {
+						equivalence,
+					} )
+				}
 			/>
 			{ value.equivalence && (
 				<FormSelect
 					value={ value.form }
-					onChange={ ( form ) => onChange( { form } ) }
+					onChange={ ( form ) =>
+						onChange( {
+							form,
+						} )
+					}
 				/>
 			) }
 		</div>
@@ -861,6 +1019,7 @@ export function BuildExpressionEditor( { value, onChange } ) {
  * @param root0.settings
  */
 export function InteractivePreview( { type, settings = {} } ) {
+	const _controlId = useId();
 	const [ picked, setPicked ] = useState( [] );
 	if ( VISUAL_TYPES.includes( type ) ) {
 		return <VisualPreview type={ type } settings={ settings } />;
@@ -890,7 +1049,10 @@ export function InteractivePreview( { type, settings = {} } ) {
 						<select
 							multiple={ !! slot.multiple }
 							aria-label={ sprintf(
-								__( 'Choice %s', 'ohmylms' ),
+								/* translators: %s: choice identifier from the question template. */ __(
+									'Choice %s',
+									'ohmylms'
+								),
 								id
 							) }
 						>
@@ -928,7 +1090,13 @@ export function InteractivePreview( { type, settings = {} } ) {
 						: undefined
 				}
 				size={ 6 }
-				aria-label={ sprintf( __( 'Blank %s', 'ohmylms' ), id ) }
+				aria-label={ sprintf(
+					/* translators: %s: blank identifier from the question template. */ __(
+						'Blank %s',
+						'ohmylms'
+					),
+					id
+				) }
 			/>
 		);
 		if ( settings.layout === 'table' ) {
@@ -963,9 +1131,13 @@ export function InteractivePreview( { type, settings = {} } ) {
 						{ item.image_url && (
 							<img src={ item.image_url } alt="" />
 						) }
-						<label>
+						<label
+							htmlFor={ _controlId + '-field-1' + '-' + item.id }
+						>
 							{ item.text }{ ' ' }
-							<select>
+							<select
+								id={ _controlId + '-field-1' + '-' + item.id }
+							>
 								<option value="">
 									{ __( 'Choose a group…', 'ohmylms' ) }
 								</option>
@@ -990,7 +1162,10 @@ export function InteractivePreview( { type, settings = {} } ) {
 		const tiles = [
 			...( settings.correct || [] ),
 			...( settings.distractors || [] ),
-		].map( ( text, index ) => ( { text, index } ) );
+		].map( ( text, index ) => ( {
+			text,
+			index,
+		} ) );
 		return (
 			<div className="ohmylms-build-expression">
 				<div

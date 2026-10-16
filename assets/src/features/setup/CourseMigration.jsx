@@ -53,10 +53,13 @@ export function createCourseMigration( readRuntime ) {
 			O = ( 0, ReactHooks.useMemo )(
 				function () {
 					var e,
-						t,
-						n = null == a ? void 0 : a.selectedPlatform,
-						r = {
-							label: n,
+						_tLocal,
+						_nLocal =
+							a === null || a === void 0
+								? void 0
+								: a.selectedPlatform,
+						_rLocal = {
+							label: _nLocal,
 							icon:
 								( null === ( e = window.ohmylms_params ) ||
 								void 0 === e
@@ -64,61 +67,72 @@ export function createCourseMigration( readRuntime ) {
 									: e.plugin_assets ) +
 								'images/creator-logo.svg',
 						},
-						o =
-							( null === ( t = window.ohmylms_params ) ||
-							void 0 === t
+						_oLocal =
+							( null === ( _tLocal = window.ohmylms_params ) ||
+							void 0 === _tLocal
 								? void 0
-								: t.plugin_assets ) + 'images/';
+								: _tLocal.plugin_assets ) + 'images/';
 					return (
-						'tutorLMS' === n
-							? ( r = {
+						'tutorLMS' === _nLocal
+							? ( _rLocal = {
 									label: 'Tutor LMS',
-									icon: o + 'tutor_icon.svg',
+									icon: _oLocal + 'tutor_icon.svg',
 								} )
-							: 'learnDash' === n
-								? ( r = {
-										label: 'LearnDash',
-										icon: o + 'learndash_icon.svg',
-									} )
-								: 'learnPress' === n
-									? ( r = {
+							: ( () => {
+									if ( 'learnDash' === _nLocal ) {
+										return ( _rLocal = {
+											label: 'LearnDash',
+											icon:
+												_oLocal + 'learndash_icon.svg',
+										} );
+									}
+									if ( 'learnPress' === _nLocal ) {
+										return ( _rLocal = {
 											label: 'LearnPress',
-											icon: o + 'learnpress_icon.svg',
-										} )
-									: 'masterStudy' === n &&
-										( r = {
+											icon:
+												_oLocal + 'learnpress_icon.svg',
+										} );
+									}
+									return (
+										'masterStudy' === _nLocal &&
+										( _rLocal = {
 											label: 'MasterStudy LMS',
-											icon: o + 'masterstudy_icon.svg',
-										} ),
-						r
+											icon:
+												_oLocal +
+												'masterstudy_icon.svg',
+										} )
+									);
+								} )(),
+						_rLocal
 					 );
 				},
-				[ null == a ? void 0 : a.selectedPlatform ]
+				[ a === null || a === void 0 ? void 0 : a.selectedPlatform ]
 			);
 		( 0, ReactHooks.useEffect )(
 			function () {
 				var e = ( function () {
-					var e = Lne(
-						Wne().m( function e() {
-							var t, n;
+					var _eLocal = Lne(
+						Wne().m( function _eLocal2() {
+							var _tLocal2, _nLocal2;
 							return Wne().w(
-								function ( e ) {
+								function ( _eLocal3 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 											case 0:
 												if (
-													null != a &&
+													a !== null &&
+													a !== void 0 &&
 													a.selectedPlatform
 												) {
-													e.n = 1;
+													_eLocal3.n = 1;
 													break;
 												}
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 											case 1:
 												return (
 													p( ! 0 ),
-													( e.p = 2 ),
-													( e.n = 3 ),
+													( _eLocal3.p = 2 ),
+													( _eLocal3.n = 3 ),
 													l()( {
 														path: '/ohmylms/v1/migrations/'.concat(
 															a.selectedPlatform,
@@ -127,80 +141,98 @@ export function createCourseMigration( readRuntime ) {
 													} )
 												 );
 											case 3:
-												( null != ( t = e.v ) &&
-													t.courses &&
-													( s( t.courses ),
-													h(
-														t.courses.map(
-															function ( e ) {
-																return e.id;
-															}
-														)
-													) ),
-													( e.n = 5 ) );
+												if (
+													( ( _nullableValue ) =>
+														_nullableValue !==
+															null &&
+														_nullableValue !==
+															void 0 )(
+														( _tLocal2 =
+															_eLocal3.v )
+													) &&
+													_tLocal2.courses
+												) {
+													{
+														s( _tLocal2.courses );
+														h(
+															_tLocal2.courses.map(
+																function (
+																	_eLocal4
+																) {
+																	return _eLocal4.id;
+																}
+															)
+														);
+													}
+												}
+												_eLocal3.n = 5;
 												break;
 											case 4:
-												( ( e.p = 4 ),
-													( n = e.v ),
-													console.error(
-														'Failed to fetch courses',
-														n
-													) );
+												_eLocal3.p = 4;
+												_nLocal2 = _eLocal3.v;
+												console.error(
+													'Failed to fetch courses',
+													_nLocal2
+												);
+											// Falls through to the shared async state cleanup.
 											case 5:
 												return (
-													( e.p = 5 ),
+													( _eLocal3.p = 5 ),
 													p( ! 1 ),
-													e.f( 5 )
+													_eLocal3.f( 5 )
 												 );
 											case 6:
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal2,
 								null,
 								[ [ 2, 4, 5, 6 ] ]
 							);
 						} )
 					);
-					return function () {
-						return e.apply( this, arguments );
+					return function ( ..._args ) {
+						return _eLocal.apply( this, _args );
 					};
 				} )();
 				e();
 			},
-			[ null == a ? void 0 : a.selectedPlatform ]
+			[ a === null || a === void 0 ? void 0 : a.selectedPlatform ]
 		);
 		var k = ( function () {
 				var e = Lne(
-					Wne().m( function e() {
-						var t, n, r;
+					Wne().m( function _eLocal5() {
+						var _tLocal3, _nLocal3, _rLocal2;
 						return Wne().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											if ( a.certificate ) {
-												e.n = 1;
+												_eLocal6.n = 1;
 												break;
 											}
-											return e.a( 2, null );
+											return _eLocal6.a( 2, null );
 										case 1:
 											if (
-												( ( e.p = 1 ),
-												( t = hB.find( function ( e ) {
-													return (
-														e.id === a.certificate
-													);
-												} ) ) )
+												( ( _eLocal6.p = 1 ),
+												( _tLocal3 = hB.find(
+													function ( _eLocal7 ) {
+														return (
+															_eLocal7.id ===
+															a.certificate
+														);
+													}
+												) ) )
 											) {
-												e.n = 2;
+												_eLocal6.n = 2;
 												break;
 											}
-											return e.a( 2, null );
+											return _eLocal6.a( 2, null );
 										case 2:
 											return (
-												( e.n = 3 ),
+												( _eLocal6.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/certificates/',
 													method: 'POST',
@@ -209,72 +241,75 @@ export function createCourseMigration( readRuntime ) {
 															a.certificate
 														),
 														status: 'publish',
-														contents: t.contents,
+														contents:
+															_tLocal3.contents,
 														template_thumbnail:
-															t.image_src,
+															_tLocal3.image_src,
 													},
 												} )
 											 );
 										case 3:
 											return (
-												( n = e.v ),
-												e.a(
+												( _nLocal3 = _eLocal6.v ),
+												_eLocal6.a(
 													2,
-													( null == n
+													( _nLocal3 === null ||
+													_nLocal3 === void 0
 														? void 0
-														: n.id ) || null
+														: _nLocal3.id ) || null
 												)
 											 );
 										case 4:
 											return (
-												( e.p = 4 ),
-												( r = e.v ),
+												( _eLocal6.p = 4 ),
+												( _rLocal2 = _eLocal6.v ),
 												console.error(
 													'Error creating certificate:',
-													r
+													_rLocal2
 												),
-												e.a( 2, null )
+												_eLocal6.a( 2, null )
 											 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 1, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			j = ( function () {
 				var e = Lne(
-					Wne().m( function e( t ) {
-						var n, a, o, i;
+					Wne().m( function _eLocal8( _tLocal4 ) {
+						var _nLocal4, _aLocal, _oLocal2, _iLocal;
 						return Wne().w(
-							function ( e ) {
+							function ( _eLocal9 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal9.p = _eLocal9.n ) ) {
 										case 0:
 											if (
-												t &&
-												'others' !== t &&
-												une[ t ]
+												_tLocal4 &&
+												'others' !== _tLocal4 &&
+												une[ _tLocal4 ]
 											) {
-												e.n = 1;
+												_eLocal9.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal9.a( 2 );
 										case 1:
 											return (
-												( e.p = 1 ),
-												( a = une[ t ].data ),
-												( e.n = 2 ),
+												( _eLocal9.p = 1 ),
+												( _aLocal =
+													une[ _tLocal4 ].data ),
+												( _eLocal9.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/setup-wizard/import-course',
 													method: 'POST',
-													data: a,
+													data: _aLocal,
 													headers: {
 														nonce: window
 															.ohmylms_params
@@ -283,69 +318,96 @@ export function createCourseMigration( readRuntime ) {
 												} )
 											 );
 										case 2:
-											( null != ( o = e.v ) &&
-												null !== ( n = o.course_ids ) &&
-												void 0 !== n &&
-												n.length &&
+											if (
+												( ( _nullableValue2 ) =>
+													_nullableValue2 !== null &&
+													_nullableValue2 !==
+														void 0 )(
+													( _oLocal2 = _eLocal9.v )
+												) &&
+												null !==
+													( _nLocal4 =
+														_oLocal2.course_ids ) &&
+												void 0 !== _nLocal4 &&
+												_nLocal4.length
+											) {
 												r.setSetupWizardData( {
 													imported_course_ids:
-														o.course_ids,
-												} ),
-												( e.n = 4 ) );
+														_oLocal2.course_ids,
+												} );
+											}
+											_eLocal9.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( i = e.v ),
-												console.error(
-													'Error importing sample course:',
-													i
-												) );
+											_eLocal9.p = 3;
+											_iLocal = _eLocal9.v;
+											console.error(
+												'Error importing sample course:',
+												_iLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
-											return e.a( 2 );
+											return _eLocal9.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal8,
 							null,
 							[ [ 1, 3 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args6 ) {
+					return e.apply( this, _args6 );
 				};
 			} )(),
 			A = ( function () {
 				var e = Lne(
-					Wne().m( function e() {
-						var t, n, l, c, u, s, d, m, p, f, v, g, h, y, b, _;
+					Wne().m( function _eLocal0() {
+						var _tLocal6,
+							_nLocal5,
+							_lLocal,
+							_cLocal,
+							_uLocal,
+							_sLocal,
+							_dLocal,
+							_mLocal,
+							_pLocal,
+							_fLocal,
+							_vLocal,
+							g,
+							_hLocal,
+							y,
+							b,
+							_Local;
 						return Wne().w(
-							function ( e ) {
+							function ( _eLocal1 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal1.p = _eLocal1.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
-												( e.n = 1 ),
+												( _eLocal1.p = 0 ),
+												( _eLocal1.n = 1 ),
 												k()
 											 );
 										case 1:
 											return (
-												( y = e.v ),
+												( y = _eLocal1.v ),
 												( b = {
 													optin: {
 														ohmylms_allow_tracking:
-															null != a &&
+															a !== null &&
+															a !== void 0 &&
 															a.isOptEnabled
 																? 'yes'
 																: 'no',
 													},
 													language:
 														null !==
-															( t =
+															( _tLocal6 =
 																a.language ) &&
-														void 0 !== t
-															? t
+														void 0 !== _tLocal6
+															? _tLocal6
 															: 'en_US',
 													certificate: a.certificate,
 													certificate_id: y,
@@ -355,189 +417,247 @@ export function createCourseMigration( readRuntime ) {
 													level: a.level,
 													design: {
 														ohmylms_archive_page_layout:
-															null !==
-																( n =
-																	a.archive_page_layout ) &&
-															void 0 !== n
-																? n
-																: null ===
-																			( l =
-																				i.ohmylms_archive_page_layout ) ||
-																	  void 0 ===
-																			l
-																	? void 0
-																	: l.value,
+															( () => {
+																if (
+																	null !==
+																		( _nLocal5 =
+																			a.archive_page_layout ) &&
+																	void 0 !==
+																		_nLocal5
+																) {
+																	return _nLocal5;
+																}
+																if (
+																	null ===
+																		( _lLocal =
+																			i.ohmylms_archive_page_layout ) ||
+																	void 0 ===
+																		_lLocal
+																) {
+																	return void 0;
+																}
+																return _lLocal.value;
+															} )(),
 														ohmylms_columns_per_row:
 															a.courses_per_row ||
 															( null ===
-																( c =
+																( _cLocal =
 																	i.ohmylms_columns_per_row ) ||
-															void 0 === c
+															void 0 === _cLocal
 																? void 0
-																: c.value ) ||
+																: _cLocal.value ) ||
 															4,
 														ohmylms_courses_per_page:
 															a.courses_per_page ||
 															( null ===
-																( u =
+																( _uLocal =
 																	i.ohmylms_courses_per_page ) ||
-															void 0 === u
+															void 0 === _uLocal
 																? void 0
-																: u.value ) ||
+																: _uLocal.value ) ||
 															10,
 													},
 													currency: {
 														ohmylms_currency:
-															null !==
-																( s =
-																	a.currency ) &&
-															void 0 !== s
-																? s
-																: null == o ||
-																	  null ===
-																			( d =
-																				o.ohmylms_currency ) ||
-																	  void 0 ===
-																			d
-																	? void 0
-																	: d.value,
+															( () => {
+																if (
+																	null !==
+																		( _sLocal =
+																			a.currency ) &&
+																	void 0 !==
+																		_sLocal
+																) {
+																	return _sLocal;
+																}
+																if (
+																	o ===
+																		null ||
+																	o ===
+																		void 0 ||
+																	null ===
+																		( _dLocal =
+																			o.ohmylms_currency ) ||
+																	void 0 ===
+																		_dLocal
+																) {
+																	return void 0;
+																}
+																return _dLocal.value;
+															} )(),
 														ohmylms_currency_pos:
-															( null == o ||
+															( o === null ||
+															o === void 0 ||
 															null ===
-																( m =
+																( _mLocal =
 																	o.ohmylms_currency_pos ) ||
-															void 0 === m
+															void 0 === _mLocal
 																? void 0
-																: m.value ) ||
+																: _mLocal.value ) ||
 															'left',
 														ohmylms_price_thousand_sep:
-															( null == o ||
+															( o === null ||
+															o === void 0 ||
 															null ===
-																( p =
+																( _pLocal =
 																	o.ohmylms_price_thousand_sep ) ||
-															void 0 === p
+															void 0 === _pLocal
 																? void 0
-																: p.value ) ||
+																: _pLocal.value ) ||
 															',',
 														ohmylms_price_decimal_sep:
-															( null == o ||
+															( o === null ||
+															o === void 0 ||
 															null ===
-																( f =
+																( _fLocal =
 																	o.ohmylms_price_decimal_sep ) ||
-															void 0 === f
+															void 0 === _fLocal
 																? void 0
-																: f.value ) ||
+																: _fLocal.value ) ||
 															'.',
 														ohmylms_price_num_decimals:
-															( null == o ||
+															( o === null ||
+															o === void 0 ||
 															null ===
-																( v =
+																( _vLocal =
 																	o.ohmylms_price_num_decimals ) ||
-															void 0 === v
+															void 0 === _vLocal
 																? void 0
-																: v.value ) ||
+																: _vLocal.value ) ||
 															'2',
 													},
 													contact: {
-														email:
-															null != a &&
-															a.isOptEnabled
-																? null ===
+														email: ( () => {
+															if (
+																a !== null &&
+																a !== void 0 &&
+																a.isOptEnabled
+															) {
+																if (
+																	null ===
 																		( g =
 																			window.ohmylms_params ) ||
 																	void 0 === g
-																	? void 0
-																	: g.admin_email
-																: '',
-														name:
-															null != a &&
-															a.isOptEnabled
-																? null ===
-																		( h =
+																) {
+																	return void 0;
+																}
+																return g.admin_email;
+															}
+															return '';
+														} )(),
+														name: ( () => {
+															if (
+																a !== null &&
+																a !== void 0 &&
+																a.isOptEnabled
+															) {
+																if (
+																	null ===
+																		( _hLocal =
 																			window.ohmylms_params ) ||
-																	void 0 === h
-																	? void 0
-																	: h.admin_name
-																: '',
+																	void 0 ===
+																		_hLocal
+																) {
+																	return void 0;
+																}
+																return _hLocal.admin_name;
+															}
+															return '';
+														} )(),
 													},
 													wizard_data: a,
 												} ),
-												( e.n = 2 ),
+												( _eLocal1.n = 2 ),
 												r.saveSetup( b )
 											 );
 										case 2:
 											return (
-												( e.n = 3 ),
+												( _eLocal1.n = 3 ),
 												j(
-													null == a ? void 0 : a.niche
+													a === null || a === void 0
+														? void 0
+														: a.niche
 												)
 											 );
 										case 3:
-											( y &&
+											if ( y ) {
 												r.setSetupWizardData( {
 													certificate_id: y,
-												} ),
-												( e.n = 5 ) );
+												} );
+											}
+											_eLocal1.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												( _ = e.v ),
-												console.error(
-													'Error saving setup wizard data:',
-													_
-												) );
+											_eLocal1.p = 4;
+											_Local = _eLocal1.v;
+											console.error(
+												'Error saving setup wizard data:',
+												_Local
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
-											return e.a( 2 );
+											return _eLocal1.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal0,
 							null,
 							[ [ 0, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )(),
 			M = ( function () {
 				var e = Lne(
-					Wne().m( function e() {
-						var n, r, o;
+					Wne().m( function _eLocal10() {
+						var _nLocal6, _rLocal3, _oLocal3;
 						return Wne().w(
-							function ( e ) {
+							function ( _eLocal11 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal11.p = _eLocal11.n ) ) {
 										case 0:
 											return (
 												E( 'migrating' ),
-												( e.n = 1 ),
-												new Promise( function ( e ) {
-													return setTimeout( e, 800 );
+												( _eLocal11.n = 1 ),
+												new Promise( function (
+													_eLocal12
+												) {
+													return setTimeout(
+														_eLocal12,
+														800
+													);
 												} )
 											 );
 										case 1:
 											return (
 												x( 1 ),
-												( e.n = 2 ),
-												new Promise( function ( e ) {
-													return setTimeout( e, 800 );
+												( _eLocal11.n = 2 ),
+												new Promise( function (
+													_eLocal13
+												) {
+													return setTimeout(
+														_eLocal13,
+														800
+													);
 												} )
 											 );
 										case 2:
-											( x( 2 ), ( n = 0 ) );
+											x( 2 );
+											_nLocal6 = 0;
+										// Falls through to the shared async state cleanup.
 										case 3:
-											if ( ! ( n < v.length ) ) {
-												e.n = 9;
+											if ( ! ( _nLocal6 < v.length ) ) {
+												_eLocal11.n = 9;
 												break;
 											}
 											return (
-												( r = v[ n ] ),
-												P( n ),
-												x( 3 + n ),
-												( e.p = 4 ),
-												( e.n = 5 ),
+												( _rLocal3 = v[ _nLocal6 ] ),
+												P( _nLocal6 ),
+												x( 3 + _nLocal6 ),
+												( _eLocal11.p = 4 ),
+												( _eLocal11.n = 5 ),
 												l()( {
 													path: '/ohmylms/v1/migrations/'.concat(
 														a.selectedPlatform
@@ -547,81 +667,97 @@ export function createCourseMigration( readRuntime ) {
 														{},
 														a.selectedPlatform,
 														{
-															course_id: r,
+															course_id: _rLocal3,
 														}
 													),
 												} )
 											 );
 										case 5:
-											e.n = 7;
+											_eLocal11.n = 7;
 											break;
 										case 6:
-											( ( e.p = 6 ),
-												( o = e.v ),
-												console.error(
-													'Failed to migrate course '.concat(
-														r,
-														':'
-													),
-													o
-												) );
+											_eLocal11.p = 6;
+											_oLocal3 = _eLocal11.v;
+											console.error(
+												'Failed to migrate course '.concat(
+													_rLocal3,
+													':'
+												),
+												_oLocal3
+											);
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( e.n = 8 ),
-												new Promise( function ( e ) {
-													return setTimeout( e, 500 );
+												( _eLocal11.n = 8 ),
+												new Promise( function (
+													_eLocal14
+												) {
+													return setTimeout(
+														_eLocal14,
+														500
+													);
 												} )
 											 );
 										case 8:
-											( n++, ( e.n = 3 ) );
+											_nLocal6++;
+											_eLocal11.n = 3;
 											break;
 										case 9:
-											return ( ( e.n = 10 ), A() );
+											return (
+												( _eLocal11.n = 10 ),
+												A()
+											 );
 										case 10:
 											return (
-												( e.n = 11 ),
-												new Promise( function ( e ) {
-													return setTimeout( e, 500 );
+												( _eLocal11.n = 11 ),
+												new Promise( function (
+													_eLocal15
+												) {
+													return setTimeout(
+														_eLocal15,
+														500
+													);
 												} )
 											 );
 										case 11:
 											t( 'wizard-completion' );
+										// Falls through to the shared async state cleanup.
 										case 12:
-											return e.a( 2 );
+											return _eLocal11.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal10,
 							null,
 							[ [ 4, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args4 ) {
+					return e.apply( this, _args4 );
 				};
 			} )(),
 			F = ( function () {
 				var e = Lne(
-					Wne().m( function e() {
-						return Wne().w( function ( e ) {
+					Wne().m( function _eLocal16() {
+						return Wne().w( function ( _eLocal17 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal17.n ) {
 									case 0:
 										return (
 											t( 'wizard-completion' ),
-											( e.n = 1 ),
+											( _eLocal17.n = 1 ),
 											A()
 										 );
 									case 1:
-										return e.a( 2 );
+										return _eLocal17.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal16 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args5 ) {
+					return e.apply( this, _args5 );
 				};
 			} )(),
 			N = u.length > 0 && v.length === u.length,
@@ -629,10 +765,12 @@ export function createCourseMigration( readRuntime ) {
 		return 'selection' === w ? (
 			<React.Fragment>
 				<Gte
-					level={ null == a ? void 0 : a.level }
+					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' == ( null == a ? void 0 : a.level ) ||
-						'intermediate' == ( null == a ? void 0 : a.level )
+						'experienced' ==
+							( a === null || a === void 0 ? void 0 : a.level ) ||
+						'intermediate' ==
+							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0
 					}
@@ -779,15 +917,15 @@ export function createCourseMigration( readRuntime ) {
 												'ohmylms-setup-wizard-checkbox'
 											}
 											onClick={ function () {
-												v.length === u.length
-													? h( [] )
-													: h(
-															u.map(
-																function ( e ) {
-																	return e.id;
-																}
-															)
-														);
+												if ( v.length === u.length ) {
+													h( [] );
+												} else {
+													h(
+														u.map( function ( e ) {
+															return e.id;
+														} )
+													);
+												}
 											} }
 											style={ {
 												position: 'relative',
@@ -801,6 +939,22 @@ export function createCourseMigration( readRuntime ) {
 												flexShrink: 0,
 												cursor: 'pointer',
 											} }
+											role="checkbox"
+											tabIndex={ 0 }
+											onKeyDown={ ( event ) => {
+												if (
+													event.key === 'Enter' ||
+													event.key === ' '
+												) {
+													event.preventDefault();
+													event.currentTarget.click();
+												}
+											} }
+											aria-checked={ N }
+											aria-label={ I18n.__(
+												'Select all courses',
+												'ohmylms'
+											) }
 										>
 											{ N && (
 												<div
@@ -888,8 +1042,10 @@ export function createCourseMigration( readRuntime ) {
 												overflowY: 'auto',
 											} }
 										>
-											{ u.map( function ( e, t ) {
-												var n = v.includes( e.id );
+											{ u.map( function ( e ) {
+												var _nLocal7 = v.includes(
+													e.id
+												);
 												return (
 													<div
 														key={ e.id }
@@ -909,19 +1065,19 @@ export function createCourseMigration( readRuntime ) {
 															}
 															onClick={ function () {
 																return (
-																	( t =
+																	( _tLocal8 =
 																		e.id ),
 																	void ( v.includes(
-																		t
+																		_tLocal8
 																	)
 																		? h(
 																				v.filter(
 																					function (
-																						e
+																						_eLocal18
 																					) {
 																						return (
-																							e !==
-																							t
+																							_eLocal18 !==
+																							_tLocal8
 																						);
 																					}
 																				)
@@ -929,49 +1085,63 @@ export function createCourseMigration( readRuntime ) {
 																		: h(
 																				[].concat(
 																					( function (
-																						e
+																						_eLocal19
 																					) {
 																						return (
 																							( function (
-																								e
+																								_eLocal20
 																							) {
 																								if (
 																									Array.isArray(
-																										e
+																										_eLocal20
 																									)
 																								) {
 																									return Gne(
-																										e
+																										_eLocal20
 																									);
 																								}
 																							} )(
-																								e
+																								_eLocal19
 																							) ||
 																							( function (
-																								e
+																								_eLocal21
 																							) {
 																								if (
 																									( 'undefined' !==
 																										typeof Symbol &&
-																										null !=
-																											e[
+																										( (
+																											_nullableValue3
+																										) =>
+																											_nullableValue3 !==
+																												null &&
+																											_nullableValue3 !==
+																												void 0 )(
+																											_eLocal21[
 																												Symbol
 																													.iterator
-																											] ) ||
-																									null !=
-																										e[
+																											]
+																										) ) ||
+																									( (
+																										_nullableValue4
+																									) =>
+																										_nullableValue4 !==
+																											null &&
+																										_nullableValue4 !==
+																											void 0 )(
+																										_eLocal21[
 																											'@@iterator'
 																										]
+																									)
 																								) {
 																									return Array.from(
-																										e
+																										_eLocal21
 																									);
 																								}
 																							} )(
-																								e
+																								_eLocal19
 																							) ||
 																							Hne(
-																								e
+																								_eLocal19
 																							) ||
 																							( function () {
 																								throw new TypeError(
@@ -983,29 +1153,52 @@ export function createCourseMigration( readRuntime ) {
 																						v
 																					),
 																					[
-																						t,
+																						_tLocal8,
 																					]
 																				)
 																			) )
 																 );
-																var t;
+																var _tLocal8;
 															} }
 															style={ {
 																position:
 																	'relative',
 																width: '16px',
 																height: '16px',
-																background: n
-																	? '#6e42d3'
-																	: 'white',
+																background:
+																	_nLocal7
+																		? '#6e42d3'
+																		: 'white',
 																border: '1px solid #6e42d3',
 																borderRadius:
 																	'4px',
 																flexShrink: 0,
 																cursor: 'pointer',
 															} }
+															role="checkbox"
+															tabIndex={ 0 }
+															onKeyDown={ (
+																event
+															) => {
+																if (
+																	event.key ===
+																		'Enter' ||
+																	event.key ===
+																		' '
+																) {
+																	event.preventDefault();
+																	event.currentTarget.click();
+																}
+															} }
+															aria-checked={
+																_nLocal7
+															}
+															aria-label={
+																e.title ||
+																e.label
+															}
 														>
-															{ n && (
+															{ _nLocal7 && (
 																<div
 																	style={ {
 																		position:
@@ -1081,6 +1274,7 @@ export function createCourseMigration( readRuntime ) {
 																			objectFit:
 																				'cover',
 																		} }
+																		alt=""
 																	/>
 																) }
 															</div>
@@ -1174,10 +1368,12 @@ export function createCourseMigration( readRuntime ) {
 		) : (
 			<React.Fragment>
 				<Gte
-					level={ null == a ? void 0 : a.level }
+					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' == ( null == a ? void 0 : a.level ) ||
-						'intermediate' == ( null == a ? void 0 : a.level )
+						'experienced' ==
+							( a === null || a === void 0 ? void 0 : a.level ) ||
+						'intermediate' ==
+							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0
 					}
@@ -1357,12 +1553,15 @@ export function createCourseMigration( readRuntime ) {
 											'Securely connecting to your account',
 											'ohmylms'
 										),
-										status:
-											R >= 1
-												? 'complete'
-												: 0 === R
-													? 'processing'
-													: 'pending',
+										status: ( () => {
+											if ( R >= 1 ) {
+												return 'complete';
+											}
+											if ( 0 === R ) {
+												return 'processing';
+											}
+											return 'pending';
+										} )(),
 									} ) }
 									{ React.createElement( qne, {
 										title: ( 0, I18n.__ )(
@@ -1378,24 +1577,29 @@ export function createCourseMigration( readRuntime ) {
 												),
 											'ohmylms'
 										),
-										status:
-											R >= 2
-												? 'complete'
-												: 1 === R
-													? 'processing'
-													: 'pending',
+										status: ( () => {
+											if ( R >= 2 ) {
+												return 'complete';
+											}
+											if ( 1 === R ) {
+												return 'processing';
+											}
+											return 'pending';
+										} )(),
 									} ) }
-									{ v.map( function ( e, t ) {
-										var n = u.find( function ( t ) {
-												return t.id === e;
-											} ),
-											r = 3 + t,
-											a = 'pending';
+									{ v.map( function ( e, _tLocal9 ) {
+										var _nLocal8 = u.find(
+												function ( _tLocal0 ) {
+													return _tLocal0.id === e;
+												}
+											),
+											_rLocal4 = 3 + _tLocal9,
+											_aLocal2 = 'pending';
 										return (
-											R > r
-												? ( a = 'complete' )
-												: R === r &&
-													( a = 'processing' ),
+											R > _rLocal4
+												? ( _aLocal2 = 'complete' )
+												: R === _rLocal4 &&
+													( _aLocal2 = 'processing' ),
 											React.createElement( qne, {
 												key: e,
 												title: ( 0, I18n.__ )(
@@ -1403,11 +1607,12 @@ export function createCourseMigration( readRuntime ) {
 													'ohmylms'
 												),
 												desc:
-													( null == n
+													( _nLocal8 === null ||
+													_nLocal8 === void 0
 														? void 0
-														: n.title ) ||
+														: _nLocal8.title ) ||
 													'Course '.concat( e ),
-												status: a,
+												status: _aLocal2,
 											} )
 										 );
 									} ) }

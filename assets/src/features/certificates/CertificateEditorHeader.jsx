@@ -20,7 +20,6 @@ export function createCertificateEditorHeader( readRuntime ) {
 			sL,
 			y: WordPressData,
 		} = readRuntime();
-		( props.saveAsPDF, props.isLoading );
 		var t = props.elementRef,
 			n = props.onClose,
 			r = props.setShowCoursesModal,
@@ -35,7 +34,8 @@ export function createCertificateEditorHeader( readRuntime ) {
 			s = c[ 1 ],
 			d = hL(
 				( 0, ReactHooks.useState )(
-					( null == l ? void 0 : l.name ) || 'Untitled Template'
+					( l === null || l === void 0 ? void 0 : l.name ) ||
+						'Untitled Template'
 				),
 				2
 			),
@@ -54,269 +54,316 @@ export function createCertificateEditorHeader( readRuntime ) {
 			k = O[ 0 ],
 			j = O[ 1 ],
 			A = function () {
-				( s( ! 1 ),
-					i.updateContent( {
-						name: m,
-					} ) );
+				s( ! 1 );
+				i.updateContent( {
+					name: m,
+				} );
 			},
 			M = ( function () {
 				var e = gL(
-					pL().m( function e() {
-						var n,
-							r,
-							a,
-							o = arguments;
+					pL().m( function _eLocal( ..._args ) {
+						var _nLocal,
+							_rLocal,
+							_aLocal,
+							_oLocal = _args;
 						return pL().w(
-							function ( e ) {
+							function ( _eLocal2 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 										case 0:
 											return (
-												( n =
-													o.length > 0 &&
-													void 0 !== o[ 0 ] &&
-													o[ 0 ] ),
-												( e.p = 1 ),
+												( _nLocal =
+													_oLocal.length > 0 &&
+													void 0 !== _oLocal[ 0 ] &&
+													_oLocal[ 0 ] ),
+												( _eLocal2.p = 1 ),
 												w( ! 0 ),
-												( e.n = 2 ),
+												( _eLocal2.n = 2 ),
 												F()
 											 );
 										case 2:
 											return (
-												null != ( r = e.v ) &&
-													r.attachment_id &&
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _rLocal = _eLocal2.v )
+												) &&
+													_rLocal.attachment_id &&
 													( l.thumbnail_id =
-														null == r
+														_rLocal === null ||
+														_rLocal === void 0
 															? void 0
-															: r.attachment_id ),
-												( e.n = 3 ),
+															: _rLocal.attachment_id ),
+												( _eLocal2.n = 3 ),
 												t.current.innerHTML
 											 );
 										case 3:
 											return (
-												( l.html_contents = e.v ),
-												( e.n = 4 ),
+												( l.html_contents =
+													_eLocal2.v ),
+												( _eLocal2.n = 4 ),
 												i.updateCertificate(
-													null == l ? void 0 : l.id,
+													l === null || l === void 0
+														? void 0
+														: l.id,
 													l,
-													n
+													_nLocal
 												)
 											 );
 										case 4:
-											e.n = 6;
+											_eLocal2.n = 6;
 											break;
 										case 5:
-											( ( e.p = 5 ),
-												( a = e.v ),
-												console.error( a ) );
+											_eLocal2.p = 5;
+											_aLocal = _eLocal2.v;
+											console.error( _aLocal );
+										// Falls through to the shared async state cleanup.
 										case 6:
 											return (
-												( e.p = 6 ),
+												( _eLocal2.p = 6 ),
 												w( ! 1 ),
-												e.f( 6 )
+												_eLocal2.f( 6 )
 											 );
 										case 7:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal,
 							null,
 							[ [ 1, 5, 6, 7 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			F = ( function () {
 				var e = gL(
-					pL().m( function e() {
-						var n, r, a, o;
+					pL().m( function _eLocal3() {
+						var _nLocal2, _rLocal2, _aLocal2, _oLocal2;
 						return pL().w(
-							function ( e ) {
+							function ( _eLocal4 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal4.p = 0 ),
 												j( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal4.n = 1 ),
 												sL( t.current )
 											 );
 										case 1:
 											if (
-												( ( r = e.v ),
+												( ( _rLocal2 = _eLocal4.v ),
 												0 ===
-													( null == l
+													( l === null || l === void 0
 														? void 0
 														: l.thumbnail_id ) )
 											) {
-												e.n = 4;
+												_eLocal4.n = 4;
 												break;
 											}
 											return (
-												( e.n = 2 ),
+												( _eLocal4.n = 2 ),
 												mL(
-													null == l
+													l === null || l === void 0
 														? void 0
 														: l.thumbnail_id
 												)
 											 );
 										case 2:
-											return ( ( e.n = 3 ), dL( r ) );
+											return (
+												( _eLocal4.n = 3 ),
+												dL( _rLocal2 )
+											 );
 										case 3:
-											( ( a = e.v ), ( e.n = 6 ) );
+											_aLocal2 = _eLocal4.v;
+											_eLocal4.n = 6;
 											break;
 										case 4:
-											return ( ( e.n = 5 ), dL( r ) );
+											return (
+												( _eLocal4.n = 5 ),
+												dL( _rLocal2 )
+											 );
 										case 5:
-											a = e.v;
+											_aLocal2 = _eLocal4.v;
+										// Falls through to the shared async state cleanup.
 										case 6:
 											if (
-												null === ( n = a ) ||
-												void 0 === n ||
-												! n.attachment_id
+												null ===
+													( _nLocal2 = _aLocal2 ) ||
+												void 0 === _nLocal2 ||
+												! _nLocal2.attachment_id
 											) {
-												e.n = 7;
+												_eLocal4.n = 7;
 												break;
 											}
 											return (
 												i.updateContent( {
 													thumbnail_id:
-														a.attachment_id,
+														_aLocal2.attachment_id,
 												} ),
-												e.a( 2, a )
+												_eLocal4.a( 2, _aLocal2 )
 											 );
 										case 7:
-											e.n = 9;
+											_eLocal4.n = 9;
 											break;
 										case 8:
-											( ( e.p = 8 ),
-												( o = e.v ),
-												console.error( o ) );
+											_eLocal4.p = 8;
+											_oLocal2 = _eLocal4.v;
+											console.error( _oLocal2 );
+										// Falls through to the shared async state cleanup.
 										case 9:
 											return (
-												( e.p = 9 ),
+												( _eLocal4.p = 9 ),
 												j( ! 1 ),
-												e.f( 9 )
+												_eLocal4.f( 9 )
 											 );
 										case 10:
-											return e.a( 2 );
+											return _eLocal4.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal3,
 							null,
 							[ [ 0, 8, 9, 10 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )(),
 			N = ( function () {
 				var e = gL(
-					pL().m( function e() {
-						var n, r, a, o;
+					pL().m( function _eLocal5() {
+						var _nLocal3, _rLocal3, _aLocal3, _oLocal3;
 						return pL().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											return (
 												R( ! 0 ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+												( _eLocal6.p = 1 ),
+												( _eLocal6.n = 2 ),
 												F()
 											 );
 										case 2:
 											return (
-												null != ( r = e.v ) &&
-													r.attachment_id &&
+												( ( _nullableValue2 ) =>
+													_nullableValue2 !== null &&
+													_nullableValue2 !==
+														void 0 )(
+													( _rLocal3 = _eLocal6.v )
+												) &&
+													_rLocal3.attachment_id &&
 													( l.thumbnail_id =
-														null == r
+														_rLocal3 === null ||
+														_rLocal3 === void 0
 															? void 0
-															: r.attachment_id ),
-												( e.n = 3 ),
-												null == t ||
-												null === ( n = t.current ) ||
-												void 0 === n
+															: _rLocal3.attachment_id ),
+												( _eLocal6.n = 3 ),
+												t === null ||
+												t === void 0 ||
+												null ===
+													( _nLocal3 = t.current ) ||
+												void 0 === _nLocal3
 													? void 0
-													: n.innerHTML
+													: _nLocal3.innerHTML
 											 );
 										case 3:
-											if ( ( a = e.v ) ) {
-												e.n = 4;
+											if ( ( _aLocal3 = _eLocal6.v ) ) {
+												_eLocal6.n = 4;
 												break;
 											}
-											a = C;
+											_aLocal3 = C;
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( l.html_contents = a ),
-												( e.n = 5 ),
+												( l.html_contents = _aLocal3 ),
+												( _eLocal6.n = 5 ),
 												i.updateCertificate(
-													null == l ? void 0 : l.id,
+													l === null || l === void 0
+														? void 0
+														: l.id,
 													l,
 													! 0
 												)
 											 );
 										case 5:
-											e.n = 7;
+											_eLocal6.n = 7;
 											break;
 										case 6:
-											( ( e.p = 6 ),
-												( o = e.v ),
-												console.error( o ) );
+											_eLocal6.p = 6;
+											_oLocal3 = _eLocal6.v;
+											console.error( _oLocal3 );
+										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
-												( e.p = 7 ),
+												( _eLocal6.p = 7 ),
 												R( ! 1 ),
-												e.f( 7 )
+												_eLocal6.f( 7 )
 											 );
 										case 8:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 1, 6, 7, 8 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args4 ) {
+					return e.apply( this, _args4 );
 				};
 			} )(),
 			D = function ( e ) {
-				( ( _ || S ) && ( e.preventDefault(), ( e.returnValue = '' ) ),
-					n && ( e.preventDefault(), ( e.returnValue = '' ), n() ) );
+				if ( _ || S ) {
+					{
+						e.preventDefault();
+						e.returnValue = '';
+					}
+				}
+				if ( n ) {
+					{
+						e.preventDefault();
+						e.returnValue = '';
+						n();
+					}
+				}
 			},
 			W = function ( e ) {
-				( e.preventDefault(),
-					_ ||
-						S ||
-						( n &&
-							( window.history.pushState(
+				e.preventDefault();
+				if ( ! ( _ || S ) ) {
+					if ( n ) {
+						{
+							window.history.pushState(
 								null,
 								null,
 								window.location.href
-							),
-							n() ) ) );
+							);
+							n();
+						}
+					}
+				}
 			},
 			z = function ( e ) {
-				( e.preventDefault(),
-					_ ||
-						S ||
-						( window.history.pushState(
+				e.preventDefault();
+				if ( ! ( _ || S ) ) {
+					{
+						window.history.pushState(
 							null,
 							null,
 							window.location.href
-						),
-						n() ) );
+						);
+						n();
+					}
+				}
 			};
 		return (
 			( 0, ReactHooks.useEffect )( function () {
@@ -347,8 +394,8 @@ export function createCertificateEditorHeader( readRuntime ) {
 							: ( window.removeEventListener( 'beforeunload', D ),
 								window.removeEventListener( 'popstate', W ) ),
 						function () {
-							( window.removeEventListener( 'beforeunload', D ),
-								window.removeEventListener( 'popstate', W ) );
+							window.removeEventListener( 'beforeunload', D );
+							window.removeEventListener( 'popstate', W );
 						}
 					 );
 				},
@@ -358,7 +405,10 @@ export function createCertificateEditorHeader( readRuntime ) {
 				function () {
 					var e;
 					P(
-						null == t || null === ( e = t.current ) || void 0 === e
+						t === null ||
+							t === void 0 ||
+							null === ( e = t.current ) ||
+							void 0 === e
 							? void 0
 							: e.innerHTML
 					);
@@ -383,7 +433,11 @@ export function createCertificateEditorHeader( readRuntime ) {
 									>
 										<Nr
 											onClick={ function () {
-												n ? n() : o( '/certificates' );
+												if ( n ) {
+													n();
+												} else {
+													o( '/certificates' );
+												}
 											} }
 											disabled={ k || _ || S }
 										/>

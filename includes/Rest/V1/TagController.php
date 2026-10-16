@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course tags were replaced by Course Bundles. GET returns bundles in the shape of the former tag terms
+ * (the bundle ID is `term_id`) for older clients; nothing can be written here any more. Bundles are
+ * managed with /bundles and a course's bundles with /courses/{id}/organization.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;

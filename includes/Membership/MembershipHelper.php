@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Responsible to handle all course related calculations.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Membership;
 
@@ -33,7 +38,7 @@ class MembershipHelper {
 		if ( is_array( $membership_plans ) ) {
 			foreach ( $membership_plans as &$plan ) {
 
-				$plan['plan_id'] = $plan['plan_id'] != null ? sanitize_text_field( $plan['plan_id'] ) : uniqid( 'plan-' );
+				$plan['plan_id'] = null != $plan['plan_id'] ? sanitize_text_field( $plan['plan_id'] ) : uniqid( 'plan-' );
 				$plan['title']   = sanitize_text_field( $plan['title'] );
 				$plan['price']   = sanitize_text_field( $plan['price'] );
 			}

@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Authorization for curriculum, bundle and mapping administration. Structure that every
+ * learner's dashboard depends on is an administrator task, matching the OhMyLMS admin menu.
+ * Learners only ever reach bundles through the /me endpoints and their own records.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\QuestionBank\AccessPolicy;

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WPFusionTriggersController class.
  *
@@ -66,7 +66,7 @@ class WPFusionTriggersController {
 	 * @return void
 	 */
 	public function register_routes() {
-		// Get all triggers
+		// Get all triggers.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base,
@@ -85,7 +85,7 @@ class WPFusionTriggersController {
 			)
 		);
 
-		// Get, update, delete single trigger
+		// Get, update, delete single trigger.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/(?P<id>[\d]+)',
@@ -109,7 +109,7 @@ class WPFusionTriggersController {
 			)
 		);
 
-		// Get available events
+		// Get available events.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/events',
@@ -122,7 +122,7 @@ class WPFusionTriggersController {
 			)
 		);
 
-		// Get available actions
+		// Get available actions.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/actions',
@@ -161,7 +161,7 @@ class WPFusionTriggersController {
 
 		$table_name = WPFusionMigration::get_table_name();
 
-		// Filter by wpfusion CRM type since this is the WP Fusion controller
+		// Filter by wpfusion CRM type since this is the WP Fusion controller.
 		$triggers = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} WHERE crm_type = %s ORDER BY created_at DESC",
@@ -170,7 +170,7 @@ class WPFusionTriggersController {
 			ARRAY_A
 		);
 
-		// Decode JSON fields
+		// Decode JSON fields.
 		foreach ( $triggers as &$trigger ) {
 			if ( isset( $trigger['action_data'] ) ) {
 				$trigger['action_data'] = json_decode( $trigger['action_data'], true );
@@ -216,7 +216,7 @@ class WPFusionTriggersController {
 			);
 		}
 
-		// Decode JSON field
+		// Decode JSON field.
 		if ( isset( $trigger['action_data'] ) ) {
 			$trigger['action_data'] = json_decode( $trigger['action_data'], true );
 		}
@@ -251,7 +251,7 @@ class WPFusionTriggersController {
 		$action_data   = $request->get_param( 'action_data' );
 		$status        = \sanitize_text_field( $request->get_param( 'status' ) );
 
-		// Default crm_type to wpfusion if not provided
+		// Default crm_type to wpfusion if not provided.
 		if ( empty( $crm_type ) ) {
 			$crm_type = 'wpfusion';
 		}
@@ -321,7 +321,7 @@ class WPFusionTriggersController {
 		$action_data   = $request->get_param( 'action_data' );
 		$status        = \sanitize_text_field( $request->get_param( 'status' ) );
 
-		// Default crm_type to wpfusion if not provided
+		// Default crm_type to wpfusion if not provided.
 		if ( empty( $crm_type ) ) {
 			$crm_type = 'wpfusion';
 		}
@@ -345,7 +345,7 @@ class WPFusionTriggersController {
 			array( '%d' )
 		);
 
-		if ( $updated === false ) {
+		if ( false === $updated ) {
 			return new \WP_REST_Response(
 				array(
 					'success' => false,

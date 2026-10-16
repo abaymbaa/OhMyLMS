@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Rest Controller base class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Abstracts;
 
@@ -50,7 +55,7 @@ abstract class RestController extends WP_REST_Controller {
 	public function check_permission(): bool {
 		return true;
         // phpcs:disable Squiz.PHP.CommentedOutCode.Found
-		// return current_user_can( 'manage_jobs' );
+		// return current_user_can( 'manage_jobs' );.
         //phpcs:enable
 	}
 }

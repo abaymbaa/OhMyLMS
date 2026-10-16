@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Shared, fail-closed achievement conditions. Points remain the spendable balance.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 /** Shared, fail-closed achievement conditions. Points remain the spendable balance. */
@@ -28,11 +33,11 @@ final class Rules {
 	}
 
 	public static function value( $field, $user ) {
-		if ( $field === 'points' ) {
+		if ( 'points' === $field ) {
 			return Point::get_total_points( $user ); }
-		if ( $field === 'completed_courses' ) {
+		if ( 'completed_courses' === $field ) {
 			return ( new \OhMyLMS\Data\Student( $user ) )->get_completed_course_count(); }
-		if ( $field === 'completed_lesson' ) {
+		if ( 'completed_lesson' === $field ) {
 			global $wpdb;
 			return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(DISTINCT p.content_id) FROM {$wpdb->prefix}ohmylms_user_progress p JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON e.id=p.enrollment_id JOIN {$wpdb->posts} lesson ON lesson.ID=p.content_id WHERE e.user_id=%d AND p.status='completed' AND lesson.post_type=%s", $user, OHMYLMS_LESSON_CPT ) );
 		}

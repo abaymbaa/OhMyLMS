@@ -75,13 +75,13 @@ export function createSubscriptionNotes( readRuntime ) {
 										maxHeight: 500,
 									} }
 								>
-									{ n.map( function ( e, t ) {
+									{ n.map( function ( e, _tLocal ) {
 										return (
-											<div key={ t }>
+											<div key={ _tLocal }>
 												<Controls.SpacerWP
 													marginBottom={ 0 }
 													marginTop={
-														0 === t ? 0 : 4
+														0 === _tLocal ? 0 : 4
 													}
 												>
 													<Controls.CardWP

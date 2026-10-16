@@ -52,7 +52,7 @@ final class SkillCatalogue {
 		$score      = array();
 		$score_args = array();
 		foreach ( $words as $word ) {
-			$like       = '%' . $wpdb->esc_like( $word ) . '%';
+			$like = '%' . $wpdb->esc_like( $word ) . '%';
 			// A skill without a code, objective or UUID has NULL there; COALESCE keeps its score from turning NULL and hiding it.
 			$score[]    = '(COALESCE(MAX(t.name LIKE %s),0)*3 + COALESCE(MAX(c.meta_value LIKE %s),0)*3 + COALESCE(MAX(o.meta_value LIKE %s),0) + COALESCE(MAX(tt.description LIKE %s),0) + COALESCE(MAX(u.meta_value=%s),0)*10)';
 			$score_args = array_merge( $score_args, array( $like, $like, $like, $like, $word ) );

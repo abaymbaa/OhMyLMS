@@ -37,20 +37,22 @@ export function createCertificateList( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			n = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationStatus();
 			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectCertificatePagination();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3(
+					StoreModule.default
+				).selectCertificatePagination();
 			}, [] ),
 			a = r.totalItems,
 			o =
 				( r.totalPages,
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).selectCertificates();
+				( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+					return _eLocal4( StoreModule.default ).selectCertificates();
 				}, [] ) ),
 			i = mte( ( 0, ReactHooks.useState )( ! 0 ), 2 ),
 			c = i[ 0 ],
@@ -91,78 +93,85 @@ export function createCertificateList( readRuntime ) {
 			K = $.openNotificationWithIcon,
 			J = $.contextHolder,
 			X = ( 0, Router.Zp )(),
-			ee = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( P( e ), E( 1 ) );
+			ee = ( 0, ReactHooks.useCallback )( function ( _eLocal5 ) {
+				P( _eLocal5 );
+				E( 1 );
 			}, [] ),
-			te = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( j( e ), E( 1 ) );
+			te = ( 0, ReactHooks.useCallback )( function ( _eLocal6 ) {
+				j( _eLocal6 );
+				E( 1 );
 			}, [] ),
-			ne = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( F( e ), E( 1 ) );
+			ne = ( 0, ReactHooks.useCallback )( function ( _eLocal7 ) {
+				F( _eLocal7 );
+				E( 1 );
 			}, [] ),
-			re = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( E( e ), m( [] ) );
+			re = ( 0, ReactHooks.useCallback )( function ( _eLocal8 ) {
+				E( _eLocal8 );
+				m( [] );
 			}, [] ),
 			ae = ( 0, ReactHooks.useCallback )(
 				dte(
-					cte().m( function t() {
-						var n,
-							r,
-							a,
-							o = arguments;
-						return cte().w( function ( t ) {
+					cte().m( function _tLocal( ..._args ) {
+						var _nLocal,
+							_rLocal,
+							_aLocal,
+							_oLocal = _args;
+						return cte().w( function ( _tLocal2 ) {
 							for (;;) {
-								switch ( t.n ) {
+								switch ( _tLocal2.n ) {
 									case 0:
-										( ( n =
-											o.length > 0 && void 0 !== o[ 0 ]
-												? o[ 0 ]
-												: 'date' ),
-											( r =
-												o.length > 1 &&
-												void 0 !== o[ 1 ]
-													? o[ 1 ]
-													: 'DESC' ),
-											u( ! 0 ),
-											( a = {
-												offset: ( w - 1 ) * R,
-												order: r,
-												page: w,
-												per_page: R,
-												search: C,
-												post_status: M,
-												orderby: n,
-												course_id: k,
-											} ),
-											e
-												.fetchCertificates( a )
-												.finally( function () {
-													u( ! 1 );
-												} ) );
+										_nLocal =
+											_oLocal.length > 0 &&
+											void 0 !== _oLocal[ 0 ]
+												? _oLocal[ 0 ]
+												: 'date';
+										_rLocal =
+											_oLocal.length > 1 &&
+											void 0 !== _oLocal[ 1 ]
+												? _oLocal[ 1 ]
+												: 'DESC';
+										u( ! 0 );
+										_aLocal = {
+											offset: ( w - 1 ) * R,
+											order: _rLocal,
+											page: w,
+											per_page: R,
+											search: C,
+											post_status: M,
+											orderby: _nLocal,
+											course_id: k,
+										};
+										e.fetchCertificates( _aLocal ).finally(
+											function () {
+												u( ! 1 );
+											}
+										); // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 1:
-										return t.a( 2 );
+										return _tLocal2.a( 2 );
 								}
 							}
-						}, t );
+						}, _tLocal );
 					} )
 				),
 				[ w, R, C, M, k ]
 			),
-			oe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( h( ! 0 ), W( e ) );
+			oe = ( 0, ReactHooks.useCallback )( function ( _eLocal9 ) {
+				h( ! 0 );
+				W( _eLocal9 );
 			}, [] ),
 			ie = ( 0, ReactHooks.useCallback )( function () {
 				h( ! 1 );
 			}, [] ),
 			le = ( 0, ReactHooks.useCallback )(
 				dte(
-					cte().m( function t() {
-						return cte().w( function ( t ) {
+					cte().m( function _tLocal3() {
+						return cte().w( function ( _tLocal4 ) {
 							for (;;) {
-								switch ( t.n ) {
+								switch ( _tLocal4.n ) {
 									case 0:
 										return (
-											( t.n = 1 ),
+											( _tLocal4.n = 1 ),
 											e.handleBulkDelete(
 												'certificates',
 												{
@@ -173,57 +182,61 @@ export function createCertificateList( readRuntime ) {
 											)
 										 );
 									case 1:
-										( ae(),
-											m( [] ),
-											E( 1 ),
-											W( null ),
-											h( ! 1 ) );
+										ae();
+										m( [] );
+										E( 1 );
+										W( null );
+										h( ! 1 ); // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return t.a( 2 );
+										return _tLocal4.a( 2 );
 								}
 							}
-						}, t );
+						}, _tLocal3 );
 					} )
 				),
 				[ d, D, ae ]
 			),
 			ce = ( 0, ReactHooks.useCallback )(
-				function ( e, t, n ) {
-					var r =
+				function ( _eLocal0, _tLocal5, _nLocal2 ) {
+					var _rLocal2 =
 							{
 								date_created: 'date',
 								name: 'title',
-							}[ n.field ] || n.field,
-						a =
+							}[ _nLocal2.field ] || _nLocal2.field,
+						_aLocal2 =
 							{
 								ascend: 'ASC',
 								descend: 'DESC',
-							}[ n.order ] || n.order;
-					( E( 1 ), ae( r, a ) );
+							}[ _nLocal2.order ] || _nLocal2.order;
+					E( 1 );
+					ae( _rLocal2, _aLocal2 );
 				},
 				[ ae, E ]
 			),
 			ue = ( 0, ReactHooks.useCallback )(
 				dte(
-					cte().m( function e() {
-						var t;
-						return cte().w( function ( e ) {
+					cte().m( function _eLocal1() {
+						var _tLocal6;
+						return cte().w( function ( _eLocal10 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal10.n ) {
 									case 0:
 										return (
-											( e.n = 1 ),
+											( _eLocal10.n = 1 ),
 											l()( {
 												path: '/ohmylms/v1/courses',
 											} )
 										 );
 									case 1:
-										( ( t = e.v ), U( t ) );
+										_tLocal6 = _eLocal10.v;
+										U( _tLocal6 ); // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal10.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal1 );
 					} )
 				),
 				[]
@@ -236,23 +249,31 @@ export function createCertificateList( readRuntime ) {
 							value: '',
 						},
 					].concat(
-						( function ( e ) {
+						( function ( _eLocal11 ) {
 							return (
-								( function ( e ) {
-									if ( Array.isArray( e ) ) {
-										return fte( e );
+								( function ( _eLocal12 ) {
+									if ( Array.isArray( _eLocal12 ) ) {
+										return fte( _eLocal12 );
 									}
-								} )( e ) ||
-								( function ( e ) {
+								} )( _eLocal11 ) ||
+								( function ( _eLocal13 ) {
 									if (
 										( 'undefined' !== typeof Symbol &&
-											null != e[ Symbol.iterator ] ) ||
-										null != e[ '@@iterator' ]
+											( ( _nullableValue ) =>
+												_nullableValue !== null &&
+												_nullableValue !== void 0 )(
+												_eLocal13[ Symbol.iterator ]
+											) ) ||
+										( ( _nullableValue2 ) =>
+											_nullableValue2 !== null &&
+											_nullableValue2 !== void 0 )(
+											_eLocal13[ '@@iterator' ]
+										)
 									) {
-										return Array.from( e );
+										return Array.from( _eLocal13 );
 									}
-								} )( e ) ||
-								pte( e ) ||
+								} )( _eLocal11 ) ||
+								pte( _eLocal11 ) ||
 								( function () {
 									throw new TypeError(
 										'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -260,10 +281,19 @@ export function createCertificateList( readRuntime ) {
 								} )()
 							);
 						} )(
-							G.map( function ( e ) {
+							G.map( function ( _eLocal14 ) {
 								return {
-									label: Ge( null == e ? void 0 : e.name ),
-									value: null == e ? void 0 : e.id,
+									label: Ge(
+										_eLocal14 === null ||
+											_eLocal14 === void 0
+											? void 0
+											: _eLocal14.name
+									),
+									value:
+										_eLocal14 === null ||
+										_eLocal14 === void 0
+											? void 0
+											: _eLocal14.id,
 								};
 							} )
 						)
@@ -325,12 +355,12 @@ export function createCertificateList( readRuntime ) {
 					key: 'name',
 					sorter: ! 0,
 					width: '340px',
-					render( e, t ) {
-						var n = L === t.id;
+					render( _eLocal15, _tLocal7 ) {
+						var _nLocal3 = L === _tLocal7.id;
 						return (
 							<MemoCertificateNameCell
-								record={ t }
-								isHover={ n }
+								record={ _tLocal7 }
+								isHover={ _nLocal3 }
 							/>
 						);
 					},
@@ -340,15 +370,17 @@ export function createCertificateList( readRuntime ) {
 					dataIndex: 'date_created',
 					key: 'date_created',
 					sorter: ! 0,
-					render( e ) {
+					render( _eLocal16 ) {
 						return (
 							<Controls.BadgeWP
 								isBorderLess={ ! 0 }
 								variant={ 'secondary' }
 							>
-								{ sn()( null == e ? void 0 : e.date ).format(
-									'MMMM DD, YYYY'
-								) || '-' }
+								{ sn()(
+									_eLocal16 === null || _eLocal16 === void 0
+										? void 0
+										: _eLocal16.date
+								).format( 'MMMM DD, YYYY' ) || '-' }
 							</Controls.BadgeWP>
 						);
 					},
@@ -357,15 +389,18 @@ export function createCertificateList( readRuntime ) {
 					title: 'Course name',
 					dataIndex: 'courses',
 					key: 'courses',
-					render( e, t ) {
-						var n =
-							( null == e
+					render( _eLocal17 ) {
+						var _nLocal4 =
+							( _eLocal17 === null || _eLocal17 === void 0
 								? void 0
-								: e.map( function ( e ) {
-										return null == e ? void 0 : e.name;
+								: _eLocal17.map( function ( _eLocal18 ) {
+										return _eLocal18 === null ||
+											_eLocal18 === void 0
+											? void 0
+											: _eLocal18.name;
 									} ) ) || [];
 						return React.createElement( pZ, {
-							items: n,
+							items: _nLocal4,
 							showAllOnHover: ! 0,
 							maxVisible: 3,
 						} );
@@ -375,25 +410,34 @@ export function createCertificateList( readRuntime ) {
 					title: 'Status',
 					dataIndex: 'status',
 					key: 'status',
-					render( e, t ) {
+					render( _eLocal19 ) {
 						return (
 							<Controls.BadgeWP
 								isBorderLess={ ! 0 }
 								variant={
-									'publish' === e ? 'success' : 'secondary'
+									'publish' === _eLocal19
+										? 'success'
+										: 'secondary'
 								}
 								style={ {
 									textTransform: 'capitalize',
 								} }
 							>
-								{ 'publish' === e
-									? ( 0, I18n.__ )( 'Published', 'ohmylms' )
-									: 'future' === e
-										? ( 0, I18n.__ )(
-												'Scheduled',
-												'ohmylms'
-											)
-										: ( 0, I18n.__ )( 'Draft', 'ohmylms' ) }
+								{ ( () => {
+									if ( 'publish' === _eLocal19 ) {
+										return ( 0, I18n.__ )(
+											'Published',
+											'ohmylms'
+										);
+									}
+									if ( 'future' === _eLocal19 ) {
+										return ( 0, I18n.__ )(
+											'Scheduled',
+											'ohmylms'
+										);
+									}
+									return ( 0, I18n.__ )( 'Draft', 'ohmylms' );
+								} )() }
 							</Controls.BadgeWP>
 						);
 					},
@@ -402,7 +446,7 @@ export function createCertificateList( readRuntime ) {
 					title: 'Action',
 					dataIndex: 'action',
 					key: 'action',
-					render( e, t ) {
+					render( _eLocal20, _tLocal0 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -415,7 +459,10 @@ export function createCertificateList( readRuntime ) {
 										onClick() {
 											return X(
 												'/certificate-edit/'.concat(
-													null == t ? void 0 : t.id
+													_tLocal0 === null ||
+														_tLocal0 === void 0
+														? void 0
+														: _tLocal0.id
 												)
 											);
 										},
@@ -433,7 +480,10 @@ export function createCertificateList( readRuntime ) {
 										key: 'delete',
 										onClick() {
 											return oe(
-												null == t ? void 0 : t.id
+												_tLocal0 === null ||
+													_tLocal0 === void 0
+													? void 0
+													: _tLocal0.id
 											);
 										},
 										icon: <We />,
@@ -448,28 +498,30 @@ export function createCertificateList( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = ! 0;
+					var _eLocal21 = ! 0;
 					return (
-						e && ae(),
+						_eLocal21 && ae(),
 						function () {
-							e = ! 1;
+							_eLocal21 = ! 1;
 						}
 					 );
 				},
 				[ w, R, C, e, M, k ]
 			),
 			( 0, ReactHooks.useEffect )( function () {
-				var e = ! 0;
+				var _eLocal22 = ! 0;
 				return (
-					e && ue(),
+					_eLocal22 && ue(),
 					function () {
-						e = ! 1;
+						_eLocal22 = ! 1;
 					}
 				 );
 			}, [] ),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! c && t && K( n, t );
+					if ( ! c && t ) {
+						K( n, t );
+					}
 				},
 				[ t ]
 			),
@@ -529,8 +581,13 @@ export function createCertificateList( readRuntime ) {
 									pagination={ ! 1 }
 									loading={ c }
 									onChange={ ce }
-									onRowMouseEnter={ function ( e ) {
-										return V( null == e ? void 0 : e.id );
+									onRowMouseEnter={ function ( _eLocal23 ) {
+										return V(
+											_eLocal23 === null ||
+												_eLocal23 === void 0
+												? void 0
+												: _eLocal23.id
+										);
 									} }
 									onRowMouseLeave={ function () {
 										return V( null );

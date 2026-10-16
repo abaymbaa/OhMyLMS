@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 import { ListTableFrame } from '../students/ListTableFrame';
 import { AddModal, EditModal, addLabel } from './AddModal';
 import { ViewAsModal, canViewAs } from './ViewAsModal';
-
 const labels = {
 	teachers: 'Teachers',
 	parents: 'Parents',
@@ -11,7 +10,6 @@ const labels = {
 	classes: 'Classes',
 	schools: 'Schools',
 };
-
 export function PeopleDirectory( { tab, readRuntime } ) {
 	const {
 		I: Controls,
@@ -46,12 +44,15 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 			const result = [];
 			// These existing endpoints return batches of 50, without a total header.
 			for ( let batch = 1; ; batch++ ) {
-				const role =
-					tab === 'teachers'
-						? 'teacher'
-						: tab === 'parents'
-							? 'parent'
-							: '';
+				const role = ( () => {
+					if ( tab === 'teachers' ) {
+						return 'teacher';
+					}
+					if ( tab === 'parents' ) {
+						return 'parent';
+					}
+					return '';
+				} )();
 				const data = await window.wp.apiFetch( {
 					path: `/ohmylms/v1/school/${ accounts ? 'users' : tab }?page=${ batch }&role=${ role }`,
 				} );
@@ -123,11 +124,15 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 	const columns = [
 		{
 			title: __(
-				accounts
-					? 'Name'
-					: tab === 'classes'
-						? 'Class Name'
-						: 'School Name',
+				( () => {
+					if ( accounts ) {
+						return 'Name';
+					}
+					if ( tab === 'classes' ) {
+						return 'Class Name';
+					}
+					return 'School Name';
+				} )(),
 				'ohmylms'
 			),
 			key: 'name',
@@ -141,7 +146,10 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 								alt=""
 								width={ 40 }
 								height={ 40 }
-								style={ { borderRadius: '50%', flexShrink: 0 } }
+								style={ {
+									borderRadius: '50%',
+									flexShrink: 0,
+								} }
 								onError={ () =>
 									setFailedAvatars( ( previous ) => [
 										...previous,
@@ -167,7 +175,9 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 			),
 		},
 		{
-			title: __( accounts ? 'Reg. Date' : 'Created Date', 'ohmylms' ),
+			title: accounts
+				? __( 'Reg. Date', 'ohmylms' )
+				: __( 'Created Date', 'ohmylms' ),
 			key: 'created',
 			render: ( _, row ) =>
 				badge(
@@ -176,8 +186,9 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 						: '-'
 				),
 		},
-		...( accounts
-			? [
+		...( () => {
+			if ( accounts ) {
+				return [
 					{
 						title: __( 'Email', 'ohmylms' ),
 						dataIndex: 'email',
@@ -196,55 +207,63 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 						key: 'roles',
 						render: ( value ) => badge( value ),
 					},
-				]
-			: tab === 'classes'
-				? [
-						{
-							title: __( 'School', 'ohmylms' ),
-							dataIndex: 'school_name',
-							key: 'school_name',
-							render: ( value ) =>
-								badge(
-									value || __( 'Independent', 'ohmylms' )
-								),
-						},
-
-						{
-							title: __( 'Subject', 'ohmylms' ),
-							dataIndex: 'subject',
-							key: 'subject',
-							render: ( value ) => badge( value || '-' ),
-						},
-						{
-							title: __( 'Grade', 'ohmylms' ),
-							dataIndex: 'grade',
-							key: 'grade',
-							render: ( value ) => badge( value || '-' ),
-						},
-					]
-				: [
-						{
-							title: __( 'Timezone', 'ohmylms' ),
-							dataIndex: 'timezone',
-							key: 'timezone',
-							render: ( value ) => badge( value ),
-						},
-					] ),
+				];
+			}
+			if ( tab === 'classes' ) {
+				return [
+					{
+						title: __( 'School', 'ohmylms' ),
+						dataIndex: 'school_name',
+						key: 'school_name',
+						render: ( value ) =>
+							badge( value || __( 'Independent', 'ohmylms' ) ),
+					},
+					{
+						title: __( 'Subject', 'ohmylms' ),
+						dataIndex: 'subject',
+						key: 'subject',
+						render: ( value ) => badge( value || '-' ),
+					},
+					{
+						title: __( 'Grade', 'ohmylms' ),
+						dataIndex: 'grade',
+						key: 'grade',
+						render: ( value ) => badge( value || '-' ),
+					},
+				];
+			}
+			return [
+				{
+					title: __( 'Timezone', 'ohmylms' ),
+					dataIndex: 'timezone',
+					key: 'timezone',
+					render: ( value ) => badge( value ),
+				},
+			];
+		} )(),
 		{
 			title: __( 'Status', 'ohmylms' ),
 			key: 'status',
 			render: ( _, row ) =>
 				badge(
-					row.status === 'archived'
-						? __( 'Archived', 'ohmylms' )
-						: row.is_banned
-							? __( 'Blocked', 'ohmylms' )
-							: __( 'Active', 'ohmylms' ),
-					row.is_banned
-						? 'danger'
-						: row.status === 'archived'
-							? 'secondary'
-							: 'success'
+					( () => {
+						if ( row.status === 'archived' ) {
+							return __( 'Archived', 'ohmylms' );
+						}
+						if ( row.is_banned ) {
+							return __( 'Blocked', 'ohmylms' );
+						}
+						return __( 'Active', 'ohmylms' );
+					} )(),
+					( () => {
+						if ( row.is_banned ) {
+							return 'danger';
+						}
+						if ( row.status === 'archived' ) {
+							return 'secondary';
+						}
+						return 'success';
+					} )()
 				),
 		},
 		{
@@ -258,12 +277,16 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 						[ 'teachers', 'parents' ].includes( tab )
 							? [
 									{
-										title: __(
+										title:
 											tab === 'teachers'
-												? 'View as teacher'
-												: 'View as parent',
-											'ohmylms'
-										),
+												? __(
+														'View as teacher',
+														'ohmylms'
+													)
+												: __(
+														'View as parent',
+														'ohmylms'
+													),
 										key: 'view-as',
 										onClick: () =>
 											setViewAs( {
@@ -281,12 +304,13 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 							: [] ),
 						...( canViewAs() && tab === 'classes'
 							? [ 'student', 'instructor' ].map( ( role ) => ( {
-									title: __(
+									title:
 										role === 'student'
-											? 'View as student'
-											: 'View as instructor',
-										'ohmylms'
-									),
+											? __( 'View as student', 'ohmylms' )
+											: __(
+													'View as instructor',
+													'ohmylms'
+												),
 									key: `view-as-${ role }`,
 									onClick: () =>
 										setViewAs( {
@@ -464,7 +488,11 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 					/>
 				}
 			>
-				<div style={ { marginBottom: 16 } }>
+				<div
+					style={ {
+						marginBottom: 16,
+					} }
+				>
 					<Controls.ButtonWP
 						variant="secondary"
 						onClick={ () => setCreating( true ) }

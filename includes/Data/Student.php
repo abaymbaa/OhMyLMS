@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Student class.
  *
@@ -276,7 +276,7 @@ class Student extends Data {
 	 */
 	public function set_skills( $value ) {
 		if ( is_array( $value ) ) {
-			// Sanitize each skill and remove empty ones
+			// Sanitize each skill and remove empty ones.
 			$sanitized_skills = array_filter( array_map( 'sanitize_text_field', $value ) );
 			$this->set_prop( 'skills', wp_json_encode( array_values( $sanitized_skills ) ) );
 		} else {
@@ -294,14 +294,14 @@ class Student extends Data {
 	public function set_social_links( $social_links, $urls = null ) {
 		$links = array();
 
-		// Handle empty string or null (set empty)
-		if ( empty( $social_links ) || $social_links === '' ) {
+		// Handle empty string or null (set empty).
+		if ( empty( $social_links ) || '' === $social_links ) {
 			$this->set_prop( 'social_links', '' );
 			return;
 		}
 
-		// Handle new format: array of objects with 'label' and 'url' keys
-		if ( is_array( $social_links ) && $urls === null ) {
+		// Handle new format: array of objects with 'label' and 'url' keys.
+		if ( is_array( $social_links ) && null === $urls ) {
 			foreach ( $social_links as $link ) {
 				if ( is_array( $link ) && isset( $link['label'] ) && isset( $link['url'] ) ) {
 					$label = sanitize_text_field( $link['label'] );
@@ -316,7 +316,7 @@ class Student extends Data {
 				}
 			}
 		}
-		// Handle old format: separate arrays for labels and URLs
+		// Handle old format: separate arrays for labels and URLs.
 		elseif ( is_array( $social_links ) && is_array( $urls ) ) {
 			$count = min( count( $social_links ), count( $urls ) );
 
@@ -324,7 +324,7 @@ class Student extends Data {
 				$label = sanitize_text_field( $social_links[ $i ] );
 				$url   = esc_url_raw( $urls[ $i ] );
 
-				// Only add if both label and URL are not empty
+				// Only add if both label and URL are not empty.
 				if ( ! empty( $label ) && ! empty( $url ) ) {
 					$links[] = array(
 						'label' => $label,

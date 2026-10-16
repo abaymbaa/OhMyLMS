@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class CourseExporter.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Exporters;
 
@@ -51,7 +56,7 @@ class CourseExporter {
 		$json_data = wp_json_encode( $export_data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES );
 
 		if ( ! $json_data ) {
-			wp_die( __( 'Error encoding course data to JSON.', 'ohmylms' ) );
+			wp_die( esc_html__( 'Error encoding course data to JSON.', 'ohmylms' ) );
 		}
 
 		// Set headers for JSON file download.
@@ -117,22 +122,22 @@ class CourseExporter {
 
 		// Prepare the data for export.
 		return array(
-			'id'              => $course_post->ID,
-			'title'           => $course_post->post_title,
-			'thumbnail'       => array(
+			'id'               => $course_post->ID,
+			'title'            => $course_post->post_title,
+			'thumbnail'        => array(
 				'id'  => $thumbnail_id,
 				'url' => $thumbnail_url,
 			),
-			'type'            => $course_post->post_type,
-			'slug'            => $course_post->post_name,
-			'content'         => $course_post->post_content,
-			'excerpt'         => $course_post->post_excerpt,
-			'status'          => $course_post->post_status,
-			'date_created'    => $course_post->post_date,
-			'date_modified'   => $course_post->post_modified,
-			'meta'            => $course_meta,
-			'terms'           => $course_terms,
-			'curriculum'      => $this->get_curriculum_paths( $course_id ),
+			'type'             => $course_post->post_type,
+			'slug'             => $course_post->post_name,
+			'content'          => $course_post->post_content,
+			'excerpt'          => $course_post->post_excerpt,
+			'status'           => $course_post->post_status,
+			'date_created'     => $course_post->post_date,
+			'date_modified'    => $course_post->post_modified,
+			'meta'             => $course_meta,
+			'terms'            => $course_terms,
+			'curriculum'       => $this->get_curriculum_paths( $course_id ),
 			'learning_bundles' => array_values(
 				array_map(
 					static function ( $bundle ) {
@@ -141,7 +146,7 @@ class CourseExporter {
 					\OhMyLMS\Curriculum\Placement::bundles( $course_id )
 				)
 			),
-			'contents'        => $contents, // Include all chapters and their associated contents.
+			'contents'         => $contents, // Include all chapters and their associated contents.
 		);
 	}
 
@@ -222,7 +227,7 @@ class CourseExporter {
 					}
 
 					$quiz_questions = array();
-					if ( $content_post->post_type === 'ohmylms-quiz' ) {
+					if ( 'ohmylms-quiz' === $content_post->post_type ) {
 						// Fetch questions for the quiz.
 						$questions_query = $wpdb->prepare(
 							"

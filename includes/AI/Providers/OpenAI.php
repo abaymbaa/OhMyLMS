@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * OpenAI Responses API (platform.openai.com). Reasoning models spend part of the token
+ * budget thinking; if a reply comes back empty for that reason the error says so.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI\Providers;
 
 defined( 'ABSPATH' ) || exit;

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Notices notice template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

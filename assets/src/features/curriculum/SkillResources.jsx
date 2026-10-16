@@ -22,7 +22,6 @@ import { KindIcon, Tag } from './WorkspaceParts';
 
 /** The name of the extension slot a future module (practice games, for one) fills to add its own section. */
 export const RESOURCE_SLOT = 'syllabus.skill.resources';
-
 const STATUS = {
 	approved: () => __( 'Approved', 'ohmylms' ),
 	draft: () => __( 'Draft', 'ohmylms' ),
@@ -48,7 +47,6 @@ function LessonPicker( { skill, tagged, onChoose, onCreated, onClose, mode } ) {
 	const [ retrying, setRetrying ] = useState( false );
 	const creator = useRef( null );
 	const latest = useRef( 0 );
-
 	useEffect( () => {
 		if ( mode !== 'bank' ) {
 			return;
@@ -56,7 +54,9 @@ function LessonPicker( { skill, tagged, onChoose, onCreated, onClose, mode } ) {
 		const id = ++latest.current;
 		const timer = setTimeout(
 			() => {
-				api.lessonTargets( { search } )
+				api.lessonTargets( {
+					search,
+				} )
 					.then(
 						( rows ) =>
 							id === latest.current && setResults( rows || [] )
@@ -76,7 +76,6 @@ function LessonPicker( { skill, tagged, onChoose, onCreated, onClose, mode } ) {
 		);
 		return () => clearTimeout( timer );
 	}, [ search, mode ] );
-
 	async function create( event ) {
 		event.preventDefault();
 		if ( ! title.trim() || busy ) {
@@ -176,7 +175,10 @@ function LessonPicker( { skill, tagged, onChoose, onCreated, onClose, mode } ) {
 									size="small"
 									disabled={ busy }
 									aria-label={ sprintf(
-										__( 'Add %s to this skill', 'ohmylms' ),
+										/* translators: %s: skill or linked content name. */ __(
+											'Add %s to this skill',
+											'ohmylms'
+										),
 										row.title
 									) }
 									onClick={ () => choose( row ) }
@@ -251,7 +253,6 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 	const quizDraft = useRef( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ version, setVersion ] = useState( 0 );
-
 	useEffect( () => {
 		let current = true;
 		setLessons( null );
@@ -261,10 +262,15 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 			.then( async ( data ) => {
 				const ids = data.lessons || [];
 				const rows = ids.length
-					? await api.lessonTargets( { include: ids } )
+					? await api.lessonTargets( {
+							include: ids,
+						} )
 					: [];
 				if ( current ) {
-					setLessons( { ids, rows } );
+					setLessons( {
+						ids,
+						rows,
+					} );
 				}
 			} )
 			.catch(
@@ -345,8 +351,13 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 						status: 'draft',
 					},
 				],
-				{ chapterId: 0, skillIds: [ skill.term_id ] },
-				{ required: false }
+				{
+					chapterId: 0,
+					skillIds: [ skill.term_id ],
+				},
+				{
+					required: false,
+				}
 			);
 			if ( ! linked ) {
 				throw new Error(
@@ -365,7 +376,6 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 			setBusy( false );
 		}
 	}
-
 	return (
 		<section
 			className="ohmylms-ws-owns"
@@ -429,7 +439,7 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 									isDestructive
 									disabled={ busy }
 									aria-label={ sprintf(
-										__(
+										/* translators: %s: skill or linked content name. */ __(
 											'Take %s off this skill',
 											'ohmylms'
 										),
@@ -494,7 +504,10 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 									<span className="ohmylms-ws-owned-title">
 										{ item.name ||
 											sprintf(
-												__( 'Question %d', 'ohmylms' ),
+												/* translators: %d: question number. */ __(
+													'Question %d',
+													'ohmylms'
+												),
 												item.id
 											) }
 									</span>
@@ -515,7 +528,7 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 						</ul>
 						<p className="ohmylms-ext-muted">
 							{ sprintf(
-								_n(
+								/* translators: %1$d: number of mapped questions; %2$d: number of approved questions shown. */ _n(
 									'%1$d question is mapped to this skill (%2$d of those shown approved).',
 									'%1$d questions are mapped to this skill (%2$d of those shown approved).',
 									total,
@@ -552,7 +565,12 @@ export function SkillResources( { skill, syllabus, returnTo } ) {
 			</div>
 
 			<div className="ohmylms-ws-owns-extra">
-				{ slot ? slot( RESOURCE_SLOT, { skill, syllabus } ) : null }
+				{ slot
+					? slot( RESOURCE_SLOT, {
+							skill,
+							syllabus,
+						} )
+					: null }
 			</div>
 
 			{ picking && (

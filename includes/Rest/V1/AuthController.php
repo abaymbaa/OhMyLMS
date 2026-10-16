@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Auth Controller
  *
@@ -144,7 +144,7 @@ class AuthController extends RestController {
 			\OhMyLMS\Commerce\ecommerce()->session->init_session_cookie();
 		}
 
-		wp_safe_redirect( $redirect_to !== '' ? $redirect_to : $this->dashboard_url() );
+		wp_safe_redirect( '' !== $redirect_to ? $redirect_to : $this->dashboard_url() );
 		exit;
 	}
 

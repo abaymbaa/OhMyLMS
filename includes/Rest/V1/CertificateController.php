@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling certificate REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -144,12 +149,12 @@ class CertificateController extends RestController {
 			'meta_query'          => array(),
 		);
 
-		// Correct post_status
+		// Correct post_status.
 		if ( 'any' === $args['post_status'] || ! in_array( $args['post_status'], array( 'draft', 'publish', 'future' ), true ) ) {
 			$args['post_status'] = array( 'draft', 'publish', 'future' );
 		}
 
-		// Date query
+		// Date query.
 		if ( isset( $request['before'] ) || isset( $request['after'] ) ) {
 			$date_query = array();
 			if ( isset( $request['before'] ) ) {
@@ -161,7 +166,7 @@ class CertificateController extends RestController {
 			$args['date_query'][] = $date_query;
 		}
 
-		// Meta query
+		// Meta query.
 		if ( isset( $request['meta_key'], $request['meta_value'] ) ) {
 			$args['meta_query'][] = array(
 				'key'     => sanitize_text_field( $request['meta_key'] ),
@@ -172,7 +177,7 @@ class CertificateController extends RestController {
 
 		// Filter by course_id if passed
 		// if ( ! empty( $request['course_id'] ) ) {
-		// $course_id = intval( $request['course_id'] );
+		// $course_id = intval( $request['course_id'] );.
 
 		// $args['meta_query'][] = array(
 		// 'key'     => 'course_ids', // Adjust the meta key if needed
@@ -181,7 +186,7 @@ class CertificateController extends RestController {
 		// );
 		// }
 
-		// Allow further filters
+		// Allow further filters.
 		$args       = apply_filters( 'ohmylms_rest_ohmylms_certificate_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
@@ -323,15 +328,15 @@ class CertificateController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function delete_item( $request ) {
-		// Get certificate id
+		// Get certificate id.
 		$certificate_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 
-		// Check the certificate id exist or not
+		// Check the certificate id exist or not.
 		if ( ! $certificate_id ) {
 			return new WP_Error( 'ohmylms_rest_certificate_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing certificate by certificate id
+		// Get existing certificate by certificate id.
 		$certificate = ohmylms_get_certificate( $certificate_id );
 
 		// Check the certificate exist or not.
@@ -339,7 +344,7 @@ class CertificateController extends RestController {
 			return new WP_Error( 'ohmylms_rest_certificate_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Delete the certificate
+		// Delete the certificate.
 		$certificate->delete();
 
 		/**
@@ -405,7 +410,7 @@ class CertificateController extends RestController {
 			$certificate->set_courses( $request['courses'] );
 		}
 
-		// Handle template thumbnail from setup wizard
+		// Handle template thumbnail from setup wizard.
 		if ( isset( $request['template_thumbnail'] ) && ! empty( $request['template_thumbnail'] ) ) {
 			$thumbnail_id = $this->upload_template_thumbnail( $request['template_thumbnail'], $certificate->get_id() );
 			if ( $thumbnail_id ) {
@@ -424,40 +429,40 @@ class CertificateController extends RestController {
 	 * @return int|false The attachment ID or false on failure
 	 */
 	private function upload_template_thumbnail( $image_url, $post_id ) {
-		// Load required WordPress admin files
+		// Load required WordPress admin files.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		// Check if image URL is valid
+		// Check if image URL is valid.
 		if ( empty( $image_url ) ) {
 			return false;
 		}
 
-		// Convert relative URL to absolute if needed
+		// Convert relative URL to absolute if needed.
 		if ( strpos( $image_url, 'http' ) !== 0 ) {
 			$image_url = site_url( $image_url );
 		}
 
-		// Get the file name from URL
+		// Get the file name from URL.
 		$filename = basename( $image_url );
 
-		// Download the image
+		// Download the image.
 		$tmp = download_url( $image_url );
 		if ( is_wp_error( $tmp ) ) {
 			return false;
 		}
 
-		// Set up the array of supported file types
+		// Set up the array of supported file types.
 		$file_array = array(
 			'name'     => $filename,
 			'tmp_name' => $tmp,
 		);
 
-		// Do the validation and storage
+		// Do the validation and storage.
 		$attachment_id = media_handle_sideload( $file_array, $post_id );
 
-		// If error storing permanently, unlink
+		// If error storing permanently, unlink.
 		if ( is_wp_error( $attachment_id ) ) {
 			@unlink( $file_array['tmp_name'] );
 			return false;

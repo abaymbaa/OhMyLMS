@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Pseudonymous guest practice and the one-time claim that attaches it to an account.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\Schema;
@@ -62,7 +67,7 @@ final class Guests {
 		$user_id = (int) $user_id;
 		if ( ! $user_id ) {
 			return new \WP_Error( 'ohmylms_login_required', __( 'Please log in first.', 'ohmylms' ), array( 'status' => 401 ) ); }
-		if ( ! is_string( $token ) || $token === '' ) {
+		if ( ! is_string( $token ) || '' === $token ) {
 			return new \WP_Error( 'ohmylms_guest_invalid', __( 'Nothing to save from this device.', 'ohmylms' ), array( 'status' => 400 ) ); }
 		$table = Schema::table( 'guest_sessions' );
 		try {

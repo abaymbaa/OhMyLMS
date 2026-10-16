@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 global $course;
@@ -29,7 +29,7 @@ if ( method_exists( $course, 'get_type' ) && 'cohort-based' === $course->get_typ
 	$cohorts = $course->get_cohort();
 
 	if ( ! empty( $cohorts ) ) {
-		// Find the next or current cohort
+		// Find the next or current cohort.
 		$now             = current_time( 'timestamp' );
 		$selected_cohort = null;
 		foreach ( $cohorts as $cohort ) {
@@ -44,7 +44,7 @@ if ( method_exists( $course, 'get_type' ) && 'cohort-based' === $course->get_typ
 			}
 		}
 		if ( ! $selected_cohort ) {
-			// fallback: show the last cohort
+			// fallback: show the last cohort.
 			$selected_cohort = end( $cohorts );
 		}
 
@@ -54,7 +54,7 @@ if ( method_exists( $course, 'get_type' ) && 'cohort-based' === $course->get_typ
 			$enroll_deadline = $selected_cohort['enrollment_deadline'];
 			$has_capacity    = $selected_cohort['has_capacity'];
 			$capacity        = $selected_cohort['capacity'];
-			// Format dates
+			// Format dates.
 			$start_fmt          = $start_date ? date_i18n( get_option( 'date_format' ), strtotime( $start_date ) ) : '';
 			$end_fmt            = $end_date ? date_i18n( get_option( 'date_format' ), strtotime( $end_date ) ) : '';
 			$enroll_deadline_ts = ! empty( $enroll_deadline ) ? strtotime( $enroll_deadline ) : false;
@@ -107,7 +107,7 @@ if ( method_exists( $course, 'get_type' ) && 'cohort-based' === $course->get_typ
 						} elseif ( $hours_left > 0 ) {
 								printf( esc_html__( 'Enrollment Open – %d hours left', 'ohmylms' ), $hours_left );
 						} else {
-							// Less than an hour left
+							// Less than an hour left.
 							$minutes_left = ceil( $time_left / MINUTE_IN_SECONDS );
 							printf( esc_html__( 'Enrollment Open – %d minutes left', 'ohmylms' ), $minutes_left );
 						}

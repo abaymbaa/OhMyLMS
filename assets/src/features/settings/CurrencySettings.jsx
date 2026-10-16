@@ -18,7 +18,6 @@ export function createCurrencySettings( readRuntime ) {
 			y: WordPressData,
 			z: Notifications,
 		} = readRuntime();
-		props.formatData;
 		var t,
 			n,
 			r,
@@ -37,114 +36,132 @@ export function createCurrencySettings( readRuntime ) {
 			v = ( f.openNotificationWithIcon, f.contextHolder );
 		function h( e ) {
 			return e
-				? Object.entries( e ).map( function ( e ) {
-						var t = R1( e, 2 ),
-							n = t[ 0 ],
-							r = t[ 1 ];
+				? Object.entries( e ).map( function ( _eLocal ) {
+						var _tLocal = R1( _eLocal, 2 ),
+							_nLocal = _tLocal[ 0 ],
+							_rLocal = _tLocal[ 1 ];
 						return {
 							label: (
 								<span
 									dangerouslySetInnerHTML={ {
-										__html: r,
+										__html: _rLocal,
 									} }
 								/>
 							),
-							value: n,
+							value: _nLocal,
 						};
 					} )
 				: [];
 		}
-		var _ = function ( e, t ) {
+		var _ = function ( e, _tLocal2 ) {
 				p.updateCurrencySettings(
-					( function ( e, t, n ) {
+					( function ( _eLocal2, _tLocal3, _nLocal2 ) {
 						return (
-							( t = ( function ( e ) {
-								var t = ( function ( e ) {
-									if ( 'object' != b1( e ) || ! e ) {
-										return e;
+							( _tLocal3 = ( function ( _eLocal3 ) {
+								var _tLocal4 = ( function ( _eLocal4 ) {
+									if (
+										'object' != b1( _eLocal4 ) ||
+										! _eLocal4
+									) {
+										return _eLocal4;
 									}
-									var t = e[ Symbol.toPrimitive ];
-									if ( void 0 !== t ) {
-										var n = t.call( e, 'string' );
-										if ( 'object' != b1( n ) ) {
-											return n;
+									var _tLocal5 =
+										_eLocal4[ Symbol.toPrimitive ];
+									if ( void 0 !== _tLocal5 ) {
+										var _nLocal3 = _tLocal5.call(
+											_eLocal4,
+											'string'
+										);
+										if ( 'object' != b1( _nLocal3 ) ) {
+											return _nLocal3;
 										}
 										throw new TypeError(
 											'@@toPrimitive must return a primitive value.'
 										);
 									}
-									return String( e );
-								} )( e );
-								return 'symbol' == b1( t ) ? t : t + '';
-							} )( t ) ) in e
-								? Object.defineProperty( e, t, {
-										value: n,
+									return String( _eLocal4 );
+								} )( _eLocal3 );
+								return 'symbol' == b1( _tLocal4 )
+									? _tLocal4
+									: _tLocal4 + '';
+							} )( _tLocal3 ) ) in _eLocal2
+								? Object.defineProperty( _eLocal2, _tLocal3, {
+										value: _nLocal2,
 										enumerable: ! 0,
 										configurable: ! 0,
 										writable: ! 0,
 									} )
-								: ( e[ t ] = n ),
-							e
+								: ( _eLocal2[ _tLocal3 ] = _nLocal2 ),
+							_eLocal2
 						 );
 					} )( {}, e, {
-						value: t,
+						value: _tLocal2,
 					} )
 				);
 			},
 			w = ( 0, ReactHooks.useCallback )(
 				S1(
 					_1().m( function e() {
-						var t, n, r;
+						var _tLocal6, _nLocal4, _rLocal2;
 						return _1().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal5.p = 0 ),
 												p.setLoadingSetting( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal5.n = 1 ),
 												l()( {
 													path: 'ohmylms/v1/settings/currency',
 												} )
 											 );
 										case 1:
-											( ( t = e.v ),
-												p.setCurrencySettings( t ),
-												( n = {} ),
-												null == t ||
-													t.forEach( function ( e ) {
-														n[
-															null == e
+											_tLocal6 = _eLocal5.v;
+											p.setCurrencySettings( _tLocal6 );
+											_nLocal4 = {};
+											if ( ! (
+												_tLocal6 === null ||
+												_tLocal6 === void 0
+											) ) {
+												_tLocal6.forEach(
+													function ( _eLocal6 ) {
+														_nLocal4[
+															_eLocal6 === null ||
+															_eLocal6 === void 0
 																? void 0
-																: e.id
+																: _eLocal6.id
 														] =
-															null == e
+															_eLocal6 === null ||
+															_eLocal6 === void 0
 																? void 0
-																: e.value;
-													} ),
-												p.setGlobalDataViaKey(
-													'currency_settings',
-													n
-												),
-												p.setLoadingSetting( ! 1 ),
-												( e.n = 3 ) );
+																: _eLocal6.value;
+													}
+												);
+											}
+											p.setGlobalDataViaKey(
+												'currency_settings',
+												_nLocal4
+											);
+											p.setLoadingSetting( ! 1 );
+											_eLocal5.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( r = e.v ),
-												console.error(
-													'Error fetching currency data:',
-													r
-												) );
+											_eLocal5.p = 2;
+											_rLocal2 = _eLocal5.v;
+											console.error(
+												'Error fetching currency data:',
+												_rLocal2
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal5.p = 3 ),
 												p.setLoadingSetting( ! 1 ),
-												e.f( 3 )
+												_eLocal5.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},
@@ -158,54 +175,61 @@ export function createCurrencySettings( readRuntime ) {
 			),
 			E = ( function () {
 				var e = S1(
-					_1().m( function e( t ) {
-						var n, r, a, o;
-						return _1().w( function ( e ) {
+					_1().m( function _eLocal7( _tLocal7 ) {
+						var _nLocal5, _rLocal3, _aLocal, _oLocal;
+						return _1().w( function ( _eLocal8 ) {
 							for (;;) {
-								if ( 0 === e.n ) {
+								if ( 0 === _eLocal8.n ) {
 									return (
-										( r = Object.entries(
-											null == m ||
+										( _rLocal3 = Object.entries(
+											m === null ||
+												m === void 0 ||
 												null ===
-													( n =
+													( _nLocal5 =
 														m.ohmylms_currency ) ||
-												void 0 === n
+												void 0 === _nLocal5
 												? void 0
-												: n.options
-										).map( function ( e ) {
-											var t = R1( e, 2 ),
-												n = t[ 0 ];
+												: _nLocal5.options
+										).map( function ( _eLocal9 ) {
+											var _tLocal8 = R1( _eLocal9, 2 ),
+												_nLocal6 = _tLocal8[ 0 ];
 											return {
-												label: t[ 1 ],
-												value: n,
+												label: _tLocal8[ 1 ],
+												value: _nLocal6,
 											};
 										} ) ),
-										( a = r.filter( function ( e ) {
-											return e.label
-												.toLowerCase()
-												.includes( t.toLowerCase() );
-										} ) ),
-										( o = a.map( function ( e ) {
-											return {
-												label: (
-													<span
-														dangerouslySetInnerHTML={ {
-															__html: e.label,
-														} }
-													/>
-												),
-												value: e.value,
-											};
-										} ) ),
-										e.a( 2, o )
+										( _aLocal = _rLocal3.filter(
+											function ( _eLocal0 ) {
+												return _eLocal0.label
+													.toLowerCase()
+													.includes(
+														_tLocal7.toLowerCase()
+													);
+											}
+										) ),
+										( _oLocal = _aLocal.map(
+											function ( _eLocal1 ) {
+												return {
+													label: (
+														<span
+															dangerouslySetInnerHTML={ {
+																__html: _eLocal1.label,
+															} }
+														/>
+													),
+													value: _eLocal1.value,
+												};
+											}
+										) ),
+										_eLocal8.a( 2, _oLocal )
 									 );
 								}
 							}
-						}, e );
+						}, _eLocal7 );
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )();
 		return (
@@ -236,7 +260,8 @@ export function createCurrencySettings( readRuntime ) {
 									'ohmylms'
 								) }
 								data={ h(
-									null == m ||
+									m === null ||
+										m === void 0 ||
 										null === ( t = m.ohmylms_currency ) ||
 										void 0 === t
 										? void 0
@@ -256,14 +281,18 @@ export function createCurrencySettings( readRuntime ) {
 											<span
 												dangerouslySetInnerHTML={ {
 													__html:
-														null == m ||
+														m === null ||
+														m === void 0 ||
 														null ===
 															( n =
 																m.ohmylms_currency ) ||
 														void 0 === n
 															? void 0
 															: n.options[
-																	null == m ||
+																	m ===
+																		null ||
+																	m ===
+																		void 0 ||
 																	null ===
 																		( r =
 																			m.ohmylms_currency ) ||
@@ -275,7 +304,8 @@ export function createCurrencySettings( readRuntime ) {
 											/>
 										),
 										value:
-											null == m ||
+											m === null ||
+											m === void 0 ||
 											null ===
 												( a = m.ohmylms_currency ) ||
 											void 0 === a
@@ -284,7 +314,8 @@ export function createCurrencySettings( readRuntime ) {
 									},
 								] }
 								defaultOptions={ h(
-									null == m ||
+									m === null ||
+										m === void 0 ||
 										null === ( o = m.ohmylms_currency ) ||
 										void 0 === o
 										? void 0
@@ -311,7 +342,8 @@ export function createCurrencySettings( readRuntime ) {
 									'ohmylms'
 								) }
 								data={ h(
-									null == m ||
+									m === null ||
+										m === void 0 ||
 										null ===
 											( i = m.ohmylms_currency_pos ) ||
 										void 0 === i
@@ -327,7 +359,8 @@ export function createCurrencySettings( readRuntime ) {
 									return _( 'ohmylms_currency_pos', e );
 								} }
 								value={
-									null == m ||
+									m === null ||
+									m === void 0 ||
 									null === ( c = m.ohmylms_currency_pos ) ||
 									void 0 === c
 										? void 0
@@ -352,7 +385,8 @@ export function createCurrencySettings( readRuntime ) {
 									'ohmylms'
 								) }
 								value={
-									( null == m ||
+									( m === null ||
+									m === void 0 ||
 									null ===
 										( u = m.ohmylms_price_thousand_sep ) ||
 									void 0 === u
@@ -382,7 +416,8 @@ export function createCurrencySettings( readRuntime ) {
 								) }
 								inputType={ 'text' }
 								value={
-									( null == m ||
+									( m === null ||
+									m === void 0 ||
 									null ===
 										( s = m.ohmylms_price_decimal_sep ) ||
 									void 0 === s
@@ -411,7 +446,8 @@ export function createCurrencySettings( readRuntime ) {
 								inputType={ 'number' }
 								showDivider={ ! 1 }
 								value={
-									( null == m ||
+									( m === null ||
+									m === void 0 ||
 									null ===
 										( d = m.ohmylms_price_num_decimals ) ||
 									void 0 === d

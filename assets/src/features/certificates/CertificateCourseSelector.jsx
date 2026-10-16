@@ -17,7 +17,6 @@ export function createCertificateCourseSelector( readRuntime ) {
 			tn,
 			y: WordPressData,
 		} = readRuntime();
-		props.isOpen;
 		var t = props.onClose,
 			n = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			r = ( 0, WordPressData.useSelect )( function ( e ) {
@@ -39,64 +38,69 @@ export function createCertificateCourseSelector( readRuntime ) {
 			s = c[ 1 ],
 			d = ( function () {
 				var e = tV(
-					ZL().m( function e() {
-						var a;
-						return ZL().w( function ( e ) {
+					ZL().m( function _eLocal() {
+						var _aLocal;
+						return ZL().w( function ( _eLocal2 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal2.n ) {
 									case 0:
 										return (
-											( a = JL(
+											( _aLocal = JL(
 												JL( {}, r ),
 												{},
 												{
 													courses: o.map(
-														function ( e ) {
+														function ( _eLocal3 ) {
 															return {
 																id:
-																	null == e
+																	_eLocal3 ===
+																		null ||
+																	_eLocal3 ===
+																		void 0
 																		? void 0
-																		: e.value,
+																		: _eLocal3.value,
 															};
 														}
 													),
 													course_count: o.length,
 												}
 											) ),
-											( e.n = 1 ),
+											( _eLocal2.n = 1 ),
 											n.updateCertificate(
-												null == r ? void 0 : r.id,
-												a
+												r === null || r === void 0
+													? void 0
+													: r.id,
+												_aLocal
 											)
 										 );
 									case 1:
-										t();
+										t(); // Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal2.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )(),
 			m = ( function () {
 				var e = tV(
-					ZL().m( function e( t ) {
-						var n, r, a;
+					ZL().m( function _eLocal4( _tLocal ) {
+						var _nLocal, _rLocal, _aLocal2;
 						return ZL().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
-												( e.n = 1 ),
+												( _eLocal5.p = 0 ),
+												( _eLocal5.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/courses?search='.concat(
-														t
+														_tLocal
 													),
 													method: 'GET',
 													headers: {
@@ -107,56 +111,71 @@ export function createCertificateCourseSelector( readRuntime ) {
 											 );
 										case 1:
 											return (
-												( n = e.v ),
-												( r = n.map( function ( e ) {
-													return {
-														value:
-															null == e
-																? void 0
-																: e.id,
-														label:
-															null == e
-																? void 0
-																: e.name,
-													};
-												} ) ),
-												e.a( 2, r )
+												( _nLocal = _eLocal5.v ),
+												( _rLocal = _nLocal.map(
+													function ( _eLocal6 ) {
+														return {
+															value:
+																_eLocal6 ===
+																	null ||
+																_eLocal6 ===
+																	void 0
+																	? void 0
+																	: _eLocal6.id,
+															label:
+																_eLocal6 ===
+																	null ||
+																_eLocal6 ===
+																	void 0
+																	? void 0
+																	: _eLocal6.name,
+														};
+													}
+												) ),
+												_eLocal5.a( 2, _rLocal )
 											 );
 										case 2:
-											( ( e.p = 2 ),
-												( a = e.v ),
-												console.error( a ) );
+											_eLocal5.p = 2;
+											_aLocal2 = _eLocal5.v;
+											console.error( _aLocal2 );
+										// Falls through to the shared async state cleanup.
 										case 3:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal4,
 							null,
 							[ [ 0, 2 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			p = ( function () {
 				var e = tV(
-					ZL().m( function e( t ) {
-						var n, r;
-						return ZL().w( function ( e ) {
+					ZL().m( function _eLocal7( _tLocal3 ) {
+						var _nLocal2, _rLocal2;
+						return ZL().w( function ( _eLocal8 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal8.n ) {
 									case 0:
-										if ( ! ( t.length >= 3 ) ) {
-											e.n = 4;
+										if ( ! ( _tLocal3.length >= 3 ) ) {
+											_eLocal8.n = 4;
 											break;
 										}
-										return ( ( e.n = 1 ), m( t ) );
+										return (
+											( _eLocal8.n = 1 ),
+											m( _tLocal3 )
+										 );
 									case 1:
-										if ( 0 !== ( n = e.v ).length ) {
-											e.n = 2;
+										if (
+											0 !==
+											( _nLocal2 = _eLocal8.v ).length
+										) {
+											_eLocal8.n = 2;
 											break;
 										}
 										return (
@@ -166,7 +185,7 @@ export function createCertificateCourseSelector( readRuntime ) {
 													'ohmylms'
 												)
 											),
-											e.a( 2, [] )
+											_eLocal8.a( 2, [] )
 										 );
 									case 2:
 										return (
@@ -176,38 +195,49 @@ export function createCertificateCourseSelector( readRuntime ) {
 													'ohmylms'
 												)
 											),
-											( r =
-												null == n
+											( _rLocal2 =
+												_nLocal2 === null ||
+												_nLocal2 === void 0
 													? void 0
-													: n.map( function ( e ) {
-															return {
-																label: Ge(
-																	null == e
-																		? void 0
-																		: e.label
-																),
-																value:
-																	null == e
-																		? void 0
-																		: e.value,
-															};
-														} ) ),
-											e.a( 2, r )
+													: _nLocal2.map(
+															function (
+																_eLocal9
+															) {
+																return {
+																	label: Ge(
+																		_eLocal9 ===
+																			null ||
+																			_eLocal9 ===
+																				void 0
+																			? void 0
+																			: _eLocal9.label
+																	),
+																	value:
+																		_eLocal9 ===
+																			null ||
+																		_eLocal9 ===
+																			void 0
+																			? void 0
+																			: _eLocal9.value,
+																};
+															}
+														) ),
+											_eLocal8.a( 2, _rLocal2 )
 										 );
 									case 3:
-										e.n = 5;
+										_eLocal8.n = 5;
 										break;
 									case 4:
-										return e.a( 2, [] );
+										return _eLocal8.a( 2, [] );
 									case 5:
-										return e.a( 2 );
+										return _eLocal8.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal7 );
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )();
 		return (
@@ -215,25 +245,26 @@ export function createCertificateCourseSelector( readRuntime ) {
 				function () {
 					var e;
 					if (
-						null != r &&
+						r !== null &&
+						r !== void 0 &&
 						null !== ( e = r.courses ) &&
 						void 0 !== e &&
 						e.length
 					) {
-						var t = r.courses
-							.filter( function ( e ) {
-								return e && e.id && e.name;
+						var _tLocal5 = r.courses
+							.filter( function ( _eLocal0 ) {
+								return _eLocal0 && _eLocal0.id && _eLocal0.name;
 							} )
-							.map( function ( e ) {
+							.map( function ( _eLocal1 ) {
 								return {
-									label: Ge( e.name ).trim(),
-									value: e.id,
+									label: Ge( _eLocal1.name ).trim(),
+									value: _eLocal1.id,
 								};
 							} )
-							.filter( function ( e ) {
-								return e.label && e.value;
+							.filter( function ( _eLocal10 ) {
+								return _eLocal10.label && _eLocal10.value;
 							} );
-						i( t );
+						i( _tLocal5 );
 					}
 				},
 				[ r ]
@@ -255,25 +286,29 @@ export function createCertificateCourseSelector( readRuntime ) {
 							value: o,
 							onChange( e ) {
 								return (
-									( t = e.filter( Boolean ) ),
+									( _tLocal6 = e.filter( Boolean ) ),
 									n.updateContent( {
-										courses: t.map( function ( e ) {
-											return {
-												id:
-													null == e
-														? void 0
-														: e.value,
-												name:
-													null == e
-														? void 0
-														: e.label,
-											};
-										} ),
-										course_count: t.length,
+										courses: _tLocal6.map(
+											function ( _eLocal11 ) {
+												return {
+													id:
+														_eLocal11 === null ||
+														_eLocal11 === void 0
+															? void 0
+															: _eLocal11.value,
+													name:
+														_eLocal11 === null ||
+														_eLocal11 === void 0
+															? void 0
+															: _eLocal11.label,
+												};
+											}
+										),
+										course_count: _tLocal6.length,
 									} ),
-									void i( t )
+									void i( _tLocal6 )
 								 );
-								var t;
+								var _tLocal6;
 							},
 							loadOptions: p,
 							noOptionsMessage() {

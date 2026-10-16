@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * TokenService class.
  *
@@ -27,12 +27,12 @@ class TokenService {
 		$access_token = \get_user_meta( $user_id, 'ohmylms_googlemeet_access_token', true );
 		$expires_at   = \get_user_meta( $user_id, 'ohmylms_googlemeet_token_expires', true );
 
-		// If token exists and not expired, return it
+		// If token exists and not expired, return it.
 		if ( $access_token && $expires_at && time() < $expires_at - 300 ) { // 5 min buffer
 			return $access_token;
 		}
 
-		// Try to refresh the token
+		// Try to refresh the token.
 		return $this->refresh_access_token();
 	}
 
@@ -134,7 +134,7 @@ class TokenService {
 			)
 		);
 
-		// Clear stored tokens
+		// Clear stored tokens.
 		\delete_user_meta( $user_id, 'ohmylms_googlemeet_access_token' );
 		\delete_user_meta( $user_id, 'ohmylms_googlemeet_refresh_token' );
 		\delete_user_meta( $user_id, 'ohmylms_googlemeet_token_expires' );

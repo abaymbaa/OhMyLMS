@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course Bundle administration: create, describe, edit members, publish and delete.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -91,7 +96,7 @@ class BundleController extends RestController {
 	private function detail( $bundle_id ) {
 		$bundle = Bundles::get( $bundle_id );
 		return $bundle ? array(
-			'bundle'   => Bundles::describe( $bundle ),
+			'bundle'  => Bundles::describe( $bundle ),
 			'members' => Bundles::describe_members( $bundle_id ),
 		) : null;
 	}
@@ -100,9 +105,9 @@ class BundleController extends RestController {
 		return rest_ensure_response(
 			array(
 				'bundles' => array_map( array( Bundles::class, 'describe' ), Bundles::all() ),
-				'limits' => array(
+				'limits'  => array(
 					'max_members' => Bundles::MAX_MEMBERS,
-					'max_bundles'  => Bundles::MAX_BUNDLES,
+					'max_bundles' => Bundles::MAX_BUNDLES,
 				),
 			)
 		);
@@ -124,7 +129,7 @@ class BundleController extends RestController {
 
 	public function update( WP_REST_Request $request ) {
 		$params = $request->get_params();
-		$bundle  = Bundles::update( (int) $request['id'], array_intersect_key( $params, array_flip( array( 'title', 'description' ) ) ), $params['expected_updated_at'] ?? null );
+		$bundle = Bundles::update( (int) $request['id'], array_intersect_key( $params, array_flip( array( 'title', 'description' ) ) ), $params['expected_updated_at'] ?? null );
 		return is_wp_error( $bundle ) ? $bundle : rest_ensure_response( $this->detail( (int) $bundle['id'] ) );
 	}
 
@@ -138,7 +143,7 @@ class BundleController extends RestController {
 
 	public function publish( WP_REST_Request $request ) {
 		$published = $request->has_param( 'published' ) ? rest_sanitize_boolean( $request->get_param( 'published' ) ) : true;
-		$bundle     = Bundles::set_status( (int) $request['id'], $published );
+		$bundle    = Bundles::set_status( (int) $request['id'], $published );
 		return is_wp_error( $bundle ) ? $bundle : rest_ensure_response( $this->detail( (int) $bundle['id'] ) );
 	}
 
@@ -152,9 +157,9 @@ class BundleController extends RestController {
 		global $wpdb;
 		$type   = (string) $request->get_param( 'type' );
 		$search = sanitize_text_field( (string) $request->get_param( 'search' ) );
-		if ( $type === 'course' ) {
+		if ( 'course' === $type ) {
 			return rest_ensure_response( Links::targets( 'course', $search ) ); }
-		if ( $type !== 'curriculum' ) {
+		if ( 'curriculum' !== $type ) {
 			return Access::error( 'ohmylms_bundle_invalid', __( 'Choose courses or curriculum items.', 'ohmylms' ) ); }
 		$like = '%' . $wpdb->esc_like( $search ) . '%';
 		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Items::table() . ' WHERE name LIKE %s OR code LIKE %s ORDER BY name LIMIT 20', $like, $like ), ARRAY_A ) ?: array();

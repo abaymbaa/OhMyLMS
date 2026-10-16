@@ -7,7 +7,6 @@ export function createDashboard( readRuntime ) {
 			GG,
 			HG,
 			I: Controls,
-			L: Entitlements,
 			NG: DashboardOverview,
 			React,
 			T: StoreModule,
@@ -29,11 +28,11 @@ export function createDashboard( readRuntime ) {
 			n = t.openNotificationWithIcon,
 			r = t.contextHolder,
 			a = true,
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			i = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			l = mU( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
 			c = l[ 0 ],
@@ -61,99 +60,121 @@ export function createDashboard( readRuntime ) {
 					[ a ]
 				),
 				( function () {
-					var t = dU(
-						cU().m( function t( n ) {
-							var r, a;
+					var _tLocal = dU(
+						cU().m( function _tLocal2( _nLocal ) {
+							var _rLocal, _aLocal;
 							return cU().w(
-								function ( t ) {
+								function ( _tLocal3 ) {
 									for (;;) {
-										switch ( ( t.p = t.n ) ) {
+										switch ( ( _tLocal3.p = _tLocal3.n ) ) {
 											case 0:
-												if ( n ) {
-													t.n = 1;
+												if ( _nLocal ) {
+													_tLocal3.n = 1;
 													break;
 												}
-												return t.a( 2 );
+												return _tLocal3.a( 2 );
 											case 1:
 												return (
-													( t.p = 1 ),
+													( _tLocal3.p = 1 ),
 													m( ! 0 ),
-													( t.n = 2 ),
-													e.importCourse( n )
+													( _tLocal3.n = 2 ),
+													e.importCourse( _nLocal )
 												 );
 											case 2:
-												( null != ( r = t.v ) &&
-													r.success &&
-													u( ! 1 ),
-													( t.n = 4 ) );
+												if (
+													( ( _nullableValue ) =>
+														_nullableValue !==
+															null &&
+														_nullableValue !==
+															void 0 )(
+														( _rLocal = _tLocal3.v )
+													) &&
+													_rLocal.success
+												) {
+													u( ! 1 );
+												}
+												_tLocal3.n = 4;
 												break;
 											case 3:
-												( ( t.p = 3 ),
-													( a = t.v ),
-													console.error(
-														'Error exporting course:',
-														a
-													) );
+												_tLocal3.p = 3;
+												_aLocal = _tLocal3.v;
+												console.error(
+													'Error exporting course:',
+													_aLocal
+												);
+											// Falls through to the shared async state cleanup.
 											case 4:
 												return (
-													( t.p = 4 ),
+													( _tLocal3.p = 4 ),
 													m( ! 1 ),
-													t.f( 4 )
+													_tLocal3.f( 4 )
 												 );
 											case 5:
-												return t.a( 2 );
+												return _tLocal3.a( 2 );
 										}
 									}
 								},
-								t,
+								_tLocal2,
 								null,
 								[ [ 1, 3, 4, 5 ] ]
 							);
 						} )
 					);
-					return function ( e ) {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal.apply( this, _args2 );
 					};
 				} )() ),
 			k = ( function () {
-				var e = dU(
-					cU().m( function e() {
-						return cU().w( function ( e ) {
+				var _eLocal4 = dU(
+					cU().m( function _eLocal5() {
+						return cU().w( function ( _eLocal6 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal6.n ) {
 									case 0:
-										S( ! 0 );
+										S( ! 0 ); // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 1:
-										return e.a( 2 );
+										return _eLocal6.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal5 );
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal4.apply( this, _args );
 				};
 			} )();
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					o && n( i, o );
+					if ( o ) {
+						n( i, o );
+					}
 				},
 				[ o ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = function ( e ) {
-						R.current &&
-							! R.current.contains( e.target ) &&
+					var _eLocal7 = function ( _eLocal8 ) {
+						if (
+							R.current &&
+							! R.current.contains( _eLocal8.target )
+						) {
 							P( ! 1 );
+						}
 					};
 					return (
 						C
-							? document.addEventListener( 'mousedown', e )
-							: document.removeEventListener( 'mousedown', e ),
+							? document.addEventListener( 'mousedown', _eLocal7 )
+							: document.removeEventListener(
+									'mousedown',
+									_eLocal7
+								),
 						function () {
-							document.removeEventListener( 'mousedown', e );
+							document.removeEventListener(
+								'mousedown',
+								_eLocal7
+							);
 						}
 					 );
 				},
@@ -207,7 +228,8 @@ export function createDashboard( readRuntime ) {
 								<React.Fragment>
 									<CourseImportDialog
 										onClose={ function () {
-											( u( ! 1 ), m( ! 1 ) );
+											u( ! 1 );
+											m( ! 1 );
 										} }
 										onAction={ O }
 										isOpen={ c }

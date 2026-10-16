@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\PostTypes;
 
@@ -113,7 +113,7 @@ class CoursePostType extends PostType {
 	public function register_taxonomy() {
 		$permalinks = ohmylms_get_permalink_structure();
 
-		// register category
+		// register category.
 		$labels = array(
 			'name'                       => __( 'Course Categories', 'ohmylms' ),
 			'singular_name'              => __( 'Category', 'ohmylms' ),
@@ -154,7 +154,7 @@ class CoursePostType extends PostType {
 			$args
 		);
 
-		// register tags
+		// register tags.
 		$labels = array(
 			'name'                       => __( 'Course Tags', 'ohmylms' ),
 			'singular_name'              => __( 'Tag', 'ohmylms' ),
@@ -213,7 +213,7 @@ class CoursePostType extends PostType {
 		$max_retake_allowed   = get_post_meta( $post->ID, 'ohmylms_course_max_retake_allowed', true );
 		$passing_grade        = get_post_meta( $post->ID, 'ohmylms_course_passing_grade', true );
 
-		// Nonce field for security
+		// Nonce field for security.
 		wp_nonce_field( 'ohmylms_course_nonce', 'nonce' );
 		?>
 		<div class="ohmylms-course-meta-box">

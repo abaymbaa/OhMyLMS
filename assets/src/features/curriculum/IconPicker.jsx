@@ -2,7 +2,6 @@ import { createElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Dashicon, Dropdown } from '@wordpress/components';
 import icons from './icons.json';
-
 export function IconPicker( {
 	kind,
 	value = '',
@@ -34,7 +33,13 @@ export function IconPicker( {
 				>
 					<Dashicon
 						icon={ value || fallback }
-						style={ color ? { color } : undefined }
+						style={
+							color
+								? {
+										color,
+									}
+								: undefined
+						}
 						aria-hidden="true"
 					/>
 					{ __( 'Icon', 'ohmylms' ) }
@@ -54,7 +59,10 @@ export function IconPicker( {
 								variant="tertiary"
 								disabled={ disabled }
 								aria-label={ sprintf(
-									__( 'Choose %s icon', 'ohmylms' ),
+									/* translators: %s: category or icon name. */ __(
+										'Choose %s icon',
+										'ohmylms'
+									),
 									title
 								) }
 								title={ title }

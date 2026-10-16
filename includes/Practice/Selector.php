@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Chooses the next practice question for a skill.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\Schema;
@@ -63,7 +68,7 @@ final class Selector {
 			array_filter(
 				$available,
 				static function ( $row ) use ( $used_families ) {
-					return $row['family_id'] === '' || ! in_array( $row['family_id'], $used_families, true );
+					return '' === $row['family_id'] || ! in_array( $row['family_id'], $used_families, true );
 				}
 			)
 		);
@@ -79,13 +84,22 @@ final class Selector {
 		);
 		if ( $never ) {
 			$candidates = $never; }
-		if ( $stage !== '' ) {
+		if ( '' !== $stage ) {
 			// Prefer the lesson's current stage, then the nearest stage that has questions.
-			$order  = array( 'recognize' => array( 'recognize', 'guided', 'produce' ), 'guided' => array( 'guided', 'recognize', 'produce' ), 'produce' => array( 'produce', 'guided', 'recognize' ) )[ $stage ] ?? array();
+			$order = array(
+				'recognize' => array( 'recognize', 'guided', 'produce' ),
+				'guided'    => array( 'guided', 'recognize', 'produce' ),
+				'produce'   => array( 'produce', 'guided', 'recognize' ),
+			)[ $stage ] ?? array();
 			foreach ( $order as $wanted ) {
-				$staged = array_values( array_filter( $candidates, static function ( $row ) use ( $wanted ) {
-					return self::stage( $row['type'] ?? '' ) === $wanted;
-				} ) );
+				$staged = array_values(
+					array_filter(
+						$candidates,
+						static function ( $row ) use ( $wanted ) {
+							return self::stage( $row['type'] ?? '' ) === $wanted;
+						}
+					)
+				);
 				if ( $staged ) {
 					$candidates = $staged;
 					break; }
@@ -93,7 +107,7 @@ final class Selector {
 		}
 		// Nearest band first: the target band, then the adjacent ones.
 		$target = array_search( $band, self::BANDS, true );
-		$target = $target === false ? 1 : $target;
+		$target = false === $target ? 1 : $target;
 		usort(
 			$candidates,
 			static function ( $left, $right ) use ( $target ) {
@@ -146,7 +160,7 @@ final class Selector {
 						// Structured questions with teacher-marked parts cannot give immediate practice feedback.
 						if ( in_array( $row['type'], array( 'structured', 'passage' ), true ) ) {
 							foreach ( \OhMyLMS\Assessment\Structured::parts( json_decode( $row['settings'], true ) ?: array() ) as $part ) {
-								if ( $part['kind'] === 'written' ) {
+								if ( 'written' === $part['kind'] ) {
 										return null; }
 							}
 						}
@@ -163,20 +177,20 @@ final class Selector {
 	/** Adjust the band from the most recent answers in the session. */
 	public static function band( $band, array $answered ) {
 		$index = array_search( $band, self::BANDS, true );
-		$index = $index === false ? 1 : $index;
+		$index = false === $index ? 1 : $index;
 		$last  = array_slice( $answered, -2 );
 		if ( count( $last ) === 2 ) {
 			$correct = count(
 				array_filter(
 					$last,
 					static function ( $item ) {
-						return (int) $item['correct'] === 1;
+						return 1 === (int) $item['correct'];
 					}
 				)
 			);
-			if ( $correct === 2 ) {
+			if ( 2 === $correct ) {
 				$index = min( 2, $index + 1 ); }
-			if ( $correct === 0 ) {
+			if ( 0 === $correct ) {
 				$index = max( 0, $index - 1 ); }
 		}
 		return self::BANDS[ $index ];

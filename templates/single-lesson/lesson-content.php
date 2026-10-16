@@ -9,7 +9,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 $current_post_type = get_post_type();
 ohmylms_enqueue_interactivity_module( 'ohmylms/ui' );

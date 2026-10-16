@@ -2248,10 +2248,10 @@ function ohmylms_get_nav_link_url( $link_type ) {
 		}
 	}
 
-	// Fallback to default pages
-	if ( $link_type === 'profile' ) {
+	// Fallback to default pages.
+	if ( 'profile' === $link_type ) {
 		return ohmylms_get_account_endpoint_url( 'profile' );
-	} elseif ( $link_type === 'courses' ) {
+	} elseif ( 'courses' === $link_type ) {
 		return ohmylms_get_account_endpoint_url( 'my-courses' );
 	}
 

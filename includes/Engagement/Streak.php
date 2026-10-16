@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * One overall learning streak per learner, independent of spendable points/mastery.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Utility\Transaction;
@@ -29,7 +34,7 @@ final class Streak {
 		);
 	}
 	private static function require_write( $result ) {
-		if ( $result === false ) {
+		if ( false === $result ) {
 			throw new \RuntimeException( 'Streak persistence failed.' ); }
 		return $result;
 	}
@@ -122,7 +127,7 @@ final class Streak {
 				return array( $state, true );
 			}
 		);
-		if ( $result === true ) {
+		if ( true === $result ) {
 			self::deliver( $user );
 			do_action( 'ohmylms_streak_day_completed', (int) $user ); }
 		return $result;
@@ -180,7 +185,7 @@ final class Streak {
 		$result['today_complete'] = (bool) array_filter(
 			$history,
 			static function ( $day ) use ( $result ) {
-				return $day['local_date'] === $result['today'] && $day['status'] === 'practiced';
+				return $day['local_date'] === $result['today'] && 'practiced' === $day['status'];
 			}
 		);
 		return $result;

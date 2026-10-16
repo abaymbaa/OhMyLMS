@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Schema-validated, namespaced extension settings for LMS content.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Schema-validated, namespaced extension settings for LMS content. */
@@ -104,7 +109,7 @@ final class Settings {
 		)[ $match[1] ] ?? $match[1];
 	}
 	public static function before_content( $response, $handler, $request ) {
-		if ( $response !== null || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) || ! $request->has_param( 'extension_settings' ) ) {
+		if ( null !== $response || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) || ! $request->has_param( 'extension_settings' ) ) {
 			return $response; }
 		$type = self::content_type( $request );
 		if ( ! $type ) {

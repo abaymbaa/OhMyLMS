@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Integrations\Zoom\Includes;
 
@@ -31,10 +31,10 @@ class Hooks {
 		$meeting_api     = new MeetingApi( $api_client );
 		$meeting_service = new MeetingService( $meeting_api );
 
-		// Prepare Zoom Data
+		// Prepare Zoom Data.
 		$meeting_duration = ! empty( $request['duration'] ) ? intval( $request['duration'] ) : 60;
 		$duration_unit    = ! empty( $request['duration_unit'] ) ? $request['duration_unit'] : 'min';
-		$duration         = ( $duration_unit == 'hr' ) ? $meeting_duration * 60 : $meeting_duration;
+		$duration         = ( 'hr' == $duration_unit ) ? $meeting_duration * 60 : $meeting_duration;
 		$start_date       = $request['date'];
 		$time_zone        = $request['timezone'];
 		$password         = ! empty( $request['password'] ) ? sanitize_text_field( $request['password'] ) : '';
@@ -78,16 +78,16 @@ class Hooks {
 			} else {
 				$response = $meeting_service->create_meeting( $zoom_user_id, $meeting_details );
 			}
-			if ( ( isset( $response['code'] ) && $response['code'] == 400 ) || ( isset( $response['success'], $response['code'] ) && ! $response['success'] && $response['code'] !== 204 ) ) {
+			if ( ( isset( $response['code'] ) && 400 == $response['code'] ) || ( isset( $response['success'], $response['code'] ) && ! $response['success'] && 204 !== $response['code'] ) ) {
 				update_post_meta( $session_id, '_is_zoom_session_created', 'no' );
 				delete_post_meta( $session_id, '_zoom_meeting_data' );
-				// remove user token meta for invalid token
+				// remove user token meta for invalid token.
 				delete_user_meta( get_current_user_id(), 'clms_zoom_access_token' );
 				delete_user_meta( get_current_user_id(), 'clms_zoom_token_expires' );
 				return;
 			}
 
-			if ( isset( $response['code'] ) && $response['code'] == 204 ) {
+			if ( isset( $response['code'] ) && 204 == $response['code'] ) {
 				$response = $meeting_service->get_meeting( $meeting_data['id'] );
 			}
 

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WPBakery Checkout Element
  *
@@ -21,7 +21,7 @@ class CheckoutElement {
 	public function __construct() {
 		$this->register_element();
 
-		// Disable WPBakery shortcode caching for real-time preview updates
+		// Disable WPBakery shortcode caching for real-time preview updates.
 		add_filter( 'vc_shortcode_content_filter_after', array( $this, 'disable_cache_for_preview' ), 10, 2 );
 	}
 
@@ -34,7 +34,7 @@ class CheckoutElement {
 	 */
 	public function disable_cache_for_preview( $output, $shortcode ) {
 		if ( 'ohmylms_checkout' === $shortcode ) {
-			// Add a timestamp to force cache bypass in editor
+			// Add a timestamp to force cache bypass in editor.
 			if ( function_exists( 'vc_is_inline' ) && vc_is_inline() ) {
 				$output .= '<!-- vc-no-cache:' . time() . ' -->';
 			}
@@ -312,7 +312,7 @@ class CheckoutElement {
 						'description' => __( 'e.g., 14px', 'ohmylms' ),
 					),
 
-					// Advanced
+					// Advanced.
 					array(
 						'type'        => 'textfield',
 						'heading'     => __( 'Extra CSS Class', 'ohmylms' ),

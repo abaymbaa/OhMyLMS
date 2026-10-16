@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Calendar policy has no WordPress dependencies and never uses 86400-second days.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 /** Calendar policy has no WordPress dependencies and never uses 86400-second days. */

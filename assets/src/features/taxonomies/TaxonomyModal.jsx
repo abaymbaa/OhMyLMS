@@ -40,7 +40,7 @@ export function createTaxonomyModal( readRuntime ) {
 			_ = h[ 1 ];
 		( 0, ReactHooks.useEffect )(
 			function () {
-				( v(
+				v(
 					c
 						? {
 								name: c.name || '',
@@ -50,22 +50,25 @@ export function createTaxonomyModal( readRuntime ) {
 								name: '',
 								parent: 0,
 							}
-				),
-					_( {} ) );
+				);
+				_( {} );
 			},
 			[ c, t ]
 		);
-		var w = function ( e, t ) {
-				( v( function ( n ) {
-					return _Y( _Y( {}, n ), {}, wY( {}, e, t ) );
-				} ),
-					y[ e ] &&
-						_( function ( t ) {
-							return _Y( _Y( {}, t ), {}, wY( {}, e, '' ) );
-						} ) );
+		var w = function ( e, _tLocal ) {
+				v( function ( _nLocal ) {
+					return _Y( _Y( {}, _nLocal ), {}, wY( {}, e, _tLocal ) );
+				} );
+				if ( y[ e ] ) {
+					_( function ( _tLocal2 ) {
+						return _Y( _Y( {}, _tLocal2 ), {}, wY( {}, e, '' ) );
+					} );
+				}
 			},
 			E = function () {
-				m || n();
+				if ( ! m ) {
+					n();
+				}
 			},
 			S = [
 				{
@@ -75,18 +78,26 @@ export function createTaxonomyModal( readRuntime ) {
 			].concat(
 				( function ( e ) {
 					return (
-						( function ( e ) {
-							if ( Array.isArray( e ) ) {
-								return RY( e );
+						( function ( _eLocal ) {
+							if ( Array.isArray( _eLocal ) ) {
+								return RY( _eLocal );
 							}
 						} )( e ) ||
-						( function ( e ) {
+						( function ( _eLocal2 ) {
 							if (
 								( 'undefined' !== typeof Symbol &&
-									null != e[ Symbol.iterator ] ) ||
-								null != e[ '@@iterator' ]
+									( ( _nullableValue ) =>
+										_nullableValue !== null &&
+										_nullableValue !== void 0 )(
+										_eLocal2[ Symbol.iterator ]
+									) ) ||
+								( ( _nullableValue2 ) =>
+									_nullableValue2 !== null &&
+									_nullableValue2 !== void 0 )(
+									_eLocal2[ '@@iterator' ]
+								)
 							) {
-								return Array.from( e );
+								return Array.from( _eLocal2 );
 							}
 						} )( e ) ||
 						SY( e ) ||
@@ -221,22 +232,31 @@ export function createTaxonomyModal( readRuntime ) {
 							disabled={ R }
 							onClick={ function () {
 								var e;
-								m ||
-									( ( e = {} ),
-									f.name.trim() ||
-										( e.name = ( 0, I18n.__ )(
-											'Name is required',
-											'ohmylms'
-										) ),
-									'category' === i &&
-										c &&
-										f.parent === c.term_id &&
-										( e.parent = ( 0, I18n.__ )(
-											'A category cannot be its own parent',
-											'ohmylms'
-										) ),
-									_( e ),
-									0 === Object.keys( e ).length && r( f ) );
+								if ( ! m ) {
+									{
+										e = {};
+										if ( ! f.name.trim() ) {
+											e.name = ( 0, I18n.__ )(
+												'Name is required',
+												'ohmylms'
+											);
+										}
+										if (
+											'category' === i &&
+											c &&
+											f.parent === c.term_id
+										) {
+											e.parent = ( 0, I18n.__ )(
+												'A category cannot be its own parent',
+												'ohmylms'
+											);
+										}
+										_( e );
+										if ( 0 === Object.keys( e ).length ) {
+											r( f );
+										}
+									}
+								}
 							} }
 							isBusy={ m }
 						>

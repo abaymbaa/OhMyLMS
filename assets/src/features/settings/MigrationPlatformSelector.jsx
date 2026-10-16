@@ -22,13 +22,13 @@ export function createMigrationPlatformSelector( readRuntime ) {
 		} = readRuntime();
 		var e = H4(
 				( 0, ReactHooks.useState )( function () {
-					var e, t;
+					var _eLocal, t;
 					return null !==
-						( e =
+						( _eLocal =
 							null === ( t = _6[ 0 ] ) || void 0 === t
 								? void 0
-								: t.value ) && void 0 !== e
-						? e
+								: t.value ) && void 0 !== _eLocal
+						? _eLocal
 						: null;
 				} ),
 				2
@@ -45,8 +45,8 @@ export function createMigrationPlatformSelector( readRuntime ) {
 			d = s[ 0 ],
 			m = s[ 1 ],
 			p = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			f = _6.find( function ( e ) {
-				return e.value === t;
+			f = _6.find( function ( _eLocal2 ) {
+				return _eLocal2.value === t;
 			} );
 		return (
 			( 0, ReactHooks.useEffect )(
@@ -54,20 +54,22 @@ export function createMigrationPlatformSelector( readRuntime ) {
 					if ( ! t ) {
 						return ( o( [] ), void u( [] ) );
 					}
-					var e = ( function () {
-						var e,
-							n =
-								( ( e = B4().m( function e() {
-									var n, r;
+					var _eLocal3 = ( function () {
+						var _eLocal4,
+							_nLocal =
+								( ( _eLocal4 = B4().m( function _eLocal5() {
+									var _nLocal2, _rLocal;
 									return B4().w(
-										function ( e ) {
+										function ( _eLocal6 ) {
 											for (;;) {
-												switch ( ( e.p = e.n ) ) {
+												switch (
+													( _eLocal6.p = _eLocal6.n )
+												) {
 													case 0:
 														return (
 															m( ! 0 ),
-															( e.p = 1 ),
-															( e.n = 2 ),
+															( _eLocal6.p = 1 ),
+															( _eLocal6.n = 2 ),
 															l()( {
 																path: '/ohmylms/v1/migrations/'.concat(
 																	t,
@@ -76,62 +78,101 @@ export function createMigrationPlatformSelector( readRuntime ) {
 															} )
 														 );
 													case 2:
-														( null != ( n = e.v ) &&
-															n.courses &&
-															( o( n.courses ),
-															u(
-																n.courses.map(
-																	function (
-																		e
-																	) {
-																		return e.id;
-																	}
-																)
-															) ),
-															( e.n = 4 ) );
+														if (
+															( (
+																_nullableValue
+															) =>
+																_nullableValue !==
+																	null &&
+																_nullableValue !==
+																	void 0 )(
+																( _nLocal2 =
+																	_eLocal6.v )
+															) &&
+															_nLocal2.courses
+														) {
+															{
+																o(
+																	_nLocal2.courses
+																);
+																u(
+																	_nLocal2.courses.map(
+																		function (
+																			_eLocal7
+																		) {
+																			return _eLocal7.id;
+																		}
+																	)
+																);
+															}
+														}
+														_eLocal6.n = 4;
 														break;
 													case 3:
-														( ( e.p = 3 ),
-															( r = e.v ),
-															console.error(
-																'Failed to fetch migration courses',
-																r
-															) );
+														_eLocal6.p = 3;
+														_rLocal = _eLocal6.v;
+														console.error(
+															'Failed to fetch migration courses',
+															_rLocal
+														);
+													// Falls through to the shared async state cleanup.
 													case 4:
 														return (
-															( e.p = 4 ),
+															( _eLocal6.p = 4 ),
 															m( ! 1 ),
-															e.f( 4 )
+															_eLocal6.f( 4 )
 														 );
 													case 5:
-														return e.a( 2 );
+														return _eLocal6.a( 2 );
 												}
 											}
 										},
-										e,
+										_eLocal5,
 										null,
 										[ [ 1, 3, 4, 5 ] ]
 									);
 								} ) ),
-								function () {
-									var t = this,
-										n = arguments;
-									return new Promise( function ( r, a ) {
-										var o = e.apply( t, n );
-										function i( e ) {
-											V4( o, r, a, i, l, 'next', e );
+								function ( ..._args ) {
+									var _tLocal = this,
+										_nLocal3 = _args;
+									return new Promise( function (
+										_rLocal2,
+										_aLocal
+									) {
+										var _oLocal = _eLocal4.apply(
+											_tLocal,
+											_nLocal3
+										);
+										function _iLocal( _eLocal8 ) {
+											V4(
+												_oLocal,
+												_rLocal2,
+												_aLocal,
+												_iLocal,
+												_lLocal,
+												'next',
+												_eLocal8
+											);
 										}
-										function l( e ) {
-											V4( o, r, a, i, l, 'throw', e );
+										function _lLocal( _eLocal9 ) {
+											V4(
+												_oLocal,
+												_rLocal2,
+												_aLocal,
+												_iLocal,
+												_lLocal,
+												'throw',
+												_eLocal9
+											);
 										}
-										i( void 0 );
+										_iLocal( void 0 );
 									} );
 								} );
-						return function () {
-							return n.apply( this, arguments );
+						return function ( ..._args2 ) {
+							return _nLocal.apply( this, _args2 );
 						};
 					} )();
-					e();
+					_eLocal3();
 				},
 				[ t ]
 			),
@@ -161,12 +202,12 @@ export function createMigrationPlatformSelector( readRuntime ) {
 								justify={ 'flex-start' }
 								align={ 'stretch' }
 							>
-								{ _6.map( function ( e ) {
+								{ _6.map( function ( _eLocal0 ) {
 									return (
 										<$4
-											key={ e.value }
-											lms={ e }
-											isSelected={ t === e.value }
+											key={ _eLocal0.value }
+											lms={ _eLocal0 }
+											isSelected={ t === _eLocal0.value }
 											onSelect={ n }
 										/>
 									);
@@ -178,54 +219,77 @@ export function createMigrationPlatformSelector( readRuntime ) {
 								lms={ f }
 								courses={ a }
 								selectedIds={ c }
-								onToggle={ function ( e ) {
-									u( function ( t ) {
-										return t.includes( e )
-											? t.filter( function ( t ) {
-													return t !== e;
-												} )
-											: [].concat(
-													( function ( e ) {
+								onToggle={ function ( _eLocal1 ) {
+									u( function ( _tLocal2 ) {
+										return _tLocal2.includes( _eLocal1 )
+											? _tLocal2.filter(
+													function ( _tLocal3 ) {
 														return (
-															( function ( e ) {
+															_tLocal3 !==
+															_eLocal1
+														);
+													}
+												)
+											: [].concat(
+													( function ( _eLocal10 ) {
+														return (
+															( function (
+																_eLocal11
+															) {
 																if (
 																	Array.isArray(
-																		e
+																		_eLocal11
 																	)
 																) {
 																	return U4(
-																		e
+																		_eLocal11
 																	);
 																}
-															} )( e ) ||
-															( function ( e ) {
+															} )( _eLocal10 ) ||
+															( function (
+																_eLocal12
+															) {
 																if (
 																	( 'undefined' !==
 																		typeof Symbol &&
-																		null !=
-																			e[
+																		( (
+																			_nullableValue2
+																		) =>
+																			_nullableValue2 !==
+																				null &&
+																			_nullableValue2 !==
+																				void 0 )(
+																			_eLocal12[
 																				Symbol
 																					.iterator
-																			] ) ||
-																	null !=
-																		e[
+																			]
+																		) ) ||
+																	( (
+																		_nullableValue3
+																	) =>
+																		_nullableValue3 !==
+																			null &&
+																		_nullableValue3 !==
+																			void 0 )(
+																		_eLocal12[
 																			'@@iterator'
 																		]
+																	)
 																) {
 																	return Array.from(
-																		e
+																		_eLocal12
 																	);
 																}
-															} )( e ) ||
-															G4( e ) ||
+															} )( _eLocal10 ) ||
+															G4( _eLocal10 ) ||
 															( function () {
 																throw new TypeError(
 																	'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
 																);
 															} )()
 														);
-													} )( t ),
-													[ e ]
+													} )( _tLocal2 ),
+													[ _eLocal1 ]
 												);
 									} );
 								} }
@@ -233,8 +297,8 @@ export function createMigrationPlatformSelector( readRuntime ) {
 									u(
 										c.length === a.length
 											? []
-											: a.map( function ( e ) {
-													return e.id;
+											: a.map( function ( _eLocal13 ) {
+													return _eLocal13.id;
 												} )
 									);
 								} }
@@ -253,22 +317,29 @@ export function createMigrationPlatformSelector( readRuntime ) {
 								size={ 'md' }
 								onClick={ function () {
 									if ( t && 0 !== c.length ) {
-										var e = a.filter( function ( e ) {
-											return c.includes( e.id );
-										} );
-										( p.setMigrationTool( t ),
-											p.setMigrationToolCourses(
-												e.map( function ( e ) {
+										var _eLocal14 = a.filter(
+											function ( _eLocal15 ) {
+												return c.includes(
+													_eLocal15.id
+												);
+											}
+										);
+										p.setMigrationTool( t );
+										p.setMigrationToolCourses(
+											_eLocal14.map(
+												function ( _eLocal16 ) {
 													return {
-														value: e.id,
+														value: _eLocal16.id,
 														label:
-															e.title || e.label,
+															_eLocal16.title ||
+															_eLocal16.label,
 													};
-												} )
-											),
-											p.setMigrationCourses( c ),
-											p.setMigrationStatus( 'migrating' ),
-											p.setMigrationModalOpen( ! 0 ) );
+												}
+											)
+										);
+										p.setMigrationCourses( c );
+										p.setMigrationStatus( 'migrating' );
+										p.setMigrationModalOpen( ! 0 );
 									}
 								} }
 								disabled={ ! t || 0 === c.length }

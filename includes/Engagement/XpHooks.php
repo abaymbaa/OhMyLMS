@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Wires XP and the mastery score into practice, and exposes the learner's own totals.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Skills\Score;

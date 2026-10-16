@@ -25,7 +25,6 @@ import {
 export function createActions( { ws, syllabusId, tree, items, select } ) {
 	const { run } = ws;
 	const done = ( response ) => Boolean( response );
-
 	return {
 		async deleteSyllabus() {
 			return done(
@@ -189,10 +188,15 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					} ),
 				( result ) =>
 					sprintf(
-						__( 'Added folder “%s”.', 'ohmylms' ),
+						/* translators: %s: curriculum item name. */ __(
+							'Added folder “%s”.',
+							'ohmylms'
+						),
 						result.item.name
 					),
-				{ refresh: true }
+				{
+					refresh: true,
+				}
 			);
 			if ( open && response?.item ) {
 				select( contentKey( response.item.id ) );
@@ -208,7 +212,9 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 							expected_updated_at: item.updated_at,
 						} ),
 					null,
-					{ refresh: true }
+					{
+						refresh: true,
+					}
 				)
 			);
 		},
@@ -228,7 +234,9 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					direction < 0
 						? __( 'Moved up.', 'ohmylms' )
 						: __( 'Moved down.', 'ohmylms' ),
-					{ refresh: true }
+					{
+						refresh: true,
+					}
 				)
 			);
 		},
@@ -236,8 +244,16 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 			return done(
 				await run(
 					() => api.moveItem( item.id, parentId ),
-					sprintf( __( 'Moved “%s”.', 'ohmylms' ), item.name ),
-					{ refresh: true }
+					sprintf(
+						/* translators: %s: curriculum item name. */ __(
+							'Moved “%s”.',
+							'ohmylms'
+						),
+						item.name
+					),
+					{
+						refresh: true,
+					}
 				)
 			);
 		},
@@ -247,7 +263,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					() => api.deleteItem( item.id, options ),
 					( result ) =>
 						sprintf(
-							_n(
+							/* translators: %1$s: deleted curriculum item name; %2$d: number of deleted descendants. */ _n(
 								'Deleted “%1$s” and %2$d folder under it.',
 								'Deleted “%1$s” and %2$d folders under it.',
 								Math.max(
@@ -259,16 +275,21 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 							item.name,
 							Math.max( 0, ( result.deleted || [] ).length - 1 )
 						),
-					{ refresh: true }
+					{
+						refresh: true,
+					}
 				)
 			);
 		},
-
 		// ---- Chapters: the skill groups, and the chapters of the course ----
 		async addChapter( itemId, { name, code }, { open = true } = {} ) {
 			const response = await run(
 				() =>
-					api.addGroup( syllabusId, { name, code, item_id: itemId } ),
+					api.addGroup( syllabusId, {
+						name,
+						code,
+						item_id: itemId,
+					} ),
 				__( 'Folder added.', 'ohmylms' )
 			);
 			if ( open && response?.group_id ) {
@@ -327,7 +348,6 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 				)
 			);
 		},
-
 		// ---- Skills ----
 		async addSkill( groupId, data ) {
 			return done(
@@ -394,8 +414,8 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 					() =>
 						api.setCourseSkills(
 							syllabusId,
-							termIds.map( ( term_id ) => ( {
-								term_id,
+							termIds.map( ( _termId ) => ( {
+								term_id: _termId,
 								...patch,
 							} ) )
 						),

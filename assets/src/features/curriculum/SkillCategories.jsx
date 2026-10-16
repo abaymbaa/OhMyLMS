@@ -1,10 +1,10 @@
-import { createElement, useEffect, useState } from '@wordpress/element';
+import { createElement, useEffect, useState, useId } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button } from '@wordpress/components';
 import { IconPicker } from './IconPicker';
 import { useWorkspace } from './context';
-
 function CategoryAppearance( { category, style, pending, onSave } ) {
+	const _controlId = useId();
 	const savedColor = style.color || '#6e42d3';
 	const [ color, setColor ] = useState( savedColor );
 	useEffect( () => setColor( savedColor ), [ savedColor ] );
@@ -14,15 +14,23 @@ function CategoryAppearance( { category, style, pending, onSave } ) {
 			<IconPicker
 				kind="skill"
 				label={ sprintf(
-					__( '%s category icon', 'ohmylms' ),
+					/* translators: %s: category or icon name. */ __(
+						'%s category icon',
+						'ohmylms'
+					),
 					category
 				) }
 				value={ style.icon || 'awards' }
 				color={ color }
 				disabled={ pending }
-				onChange={ ( icon ) => onSave( { ...style, icon } ) }
+				onChange={ ( icon ) =>
+					onSave( {
+						...style,
+						icon,
+					} )
+				}
 			/>
-			<label>
+			<label htmlFor={ _controlId + '-field-1' }>
 				<span>{ __( 'Icon color', 'ohmylms' ) }</span>
 				<input
 					type="color"
@@ -30,15 +38,24 @@ function CategoryAppearance( { category, style, pending, onSave } ) {
 					disabled={ pending }
 					onChange={ ( event ) => setColor( event.target.value ) }
 					aria-label={ sprintf(
-						__( '%s icon color', 'ohmylms' ),
+						/* translators: %s: category or icon name. */ __(
+							'%s icon color',
+							'ohmylms'
+						),
 						category
 					) }
+					id={ _controlId + '-field-1' }
 				/>
 			</label>
 			<Button
 				variant="secondary"
 				disabled={ pending || color === savedColor }
-				onClick={ () => onSave( { ...style, color } ) }
+				onClick={ () =>
+					onSave( {
+						...style,
+						color,
+					} )
+				}
 			>
 				{ __( 'Save color', 'ohmylms' ) }
 			</Button>
@@ -72,7 +89,9 @@ export function SkillCategories() {
 			return;
 		}
 		if (
-			await w.saveSettings( { categories: [ ...categories, category ] } )
+			await w.saveSettings( {
+				categories: [ ...categories, category ],
+			} )
 		) {
 			setText( '' );
 			setError( '' );
@@ -94,7 +113,10 @@ export function SkillCategories() {
 							type="button"
 							disabled={ w.pending }
 							aria-label={ sprintf(
-								__( 'Remove %s category', 'ohmylms' ),
+								/* translators: %s: category or icon name. */ __(
+									'Remove %s category',
+									'ohmylms'
+								),
 								category
 							) }
 							onClick={ () =>

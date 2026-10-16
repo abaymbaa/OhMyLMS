@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * WebhookController class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Rest\V1;
 
@@ -39,7 +44,7 @@ class WebhookController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function register_routes() {
-		// Get all webhooks
+		// Get all webhooks.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base,
@@ -59,7 +64,7 @@ class WebhookController extends RestController {
 			)
 		);
 
-		// Get, update, delete specific webhook
+		// Get, update, delete specific webhook.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/(?P<id>[\d]+)',
@@ -89,7 +94,7 @@ class WebhookController extends RestController {
 			)
 		);
 
-		// Bulk actions
+		// Bulk actions.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/bulk',
@@ -114,7 +119,7 @@ class WebhookController extends RestController {
 			)
 		);
 
-		// Get webhook triggers
+		// Get webhook triggers.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/triggers',

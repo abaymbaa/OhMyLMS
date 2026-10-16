@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * MeetingService class.
  *
@@ -43,9 +43,9 @@ class MeetingService {
 	 * @return array The API response.
 	 */
 	public function create_meeting( $meeting_data ) {
-		$calendar_id = 'primary'; // Use primary calendar
+		$calendar_id = 'primary'; // Use primary calendar.
 
-		// Prepare event data for Google Calendar API
+		// Prepare event data for Google Calendar API.
 		$event_data = array(
 			'summary'        => $meeting_data['topic'],
 			'description'    => $meeting_data['agenda'],
@@ -67,12 +67,12 @@ class MeetingService {
 			),
 		);
 
-		// Add optional settings
+		// Add optional settings.
 		if ( ! empty( $meeting_data['attendees'] ) ) {
 			$event_data['attendees'] = $this->format_attendees( $meeting_data['attendees'] );
 		}
 
-		// Create event with conference data
+		// Create event with conference data.
 		$response = $this->api_client->post(
 			"calendars/{$calendar_id}/events?conferenceDataVersion=1",
 			$event_data
@@ -81,11 +81,11 @@ class MeetingService {
 		if ( $response['success'] && isset( $response['data']['id'] ) ) {
 			$event_data = $response['data'];
 
-			// Extract Google Meet link
+			// Extract Google Meet link.
 			$meet_link = '';
 			if ( isset( $event_data['conferenceData']['entryPoints'] ) ) {
 				foreach ( $event_data['conferenceData']['entryPoints'] as $entry ) {
-					if ( $entry['entryPointType'] === 'video' ) {
+					if ( 'video' === $entry['entryPointType'] ) {
 						$meet_link = $entry['uri'];
 						break;
 					}

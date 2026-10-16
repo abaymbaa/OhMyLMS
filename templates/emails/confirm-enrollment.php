@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails confirm enrollment template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -57,7 +62,7 @@ $cta_btn_position    = $email_settings['ohmylms_email_button_possition'] ?? 'cen
 																	<tr>
 																		<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																			<span style="color: #7A8B9A;">
-																				<?php echo __( 'Course Name:', 'ohmylms' ); ?>
+																				<?php echo esc_html__( 'Course Name:', 'ohmylms' ); ?>
 																			</span>
 
 																			<?php echo $course->get_name(); ?>
@@ -67,7 +72,7 @@ $cta_btn_position    = $email_settings['ohmylms_email_button_possition'] ?? 'cen
 																	<tr>
 																		<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																			<span style="color: #7A8B9A;">
-																				<?php echo __( 'Enrollment Date:', 'ohmylms' ); ?>
+																				<?php echo esc_html__( 'Enrollment Date:', 'ohmylms' ); ?>
 																			</span>
 
 																			<?php echo $enroll_data['start_date']; ?>
@@ -77,7 +82,7 @@ $cta_btn_position    = $email_settings['ohmylms_email_button_possition'] ?? 'cen
 																	<tr>
 																		<td style="background: transparent; padding: 14px 20px; border:none; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 																			<span style="color: #7A8B9A;">
-																				<?php echo __( 'Access Duration:', 'ohmylms' ); ?>
+																				<?php echo esc_html__( 'Access Duration:', 'ohmylms' ); ?>
 																			</span>
 																			
 																			[Lifetime]

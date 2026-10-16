@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Design tokens: one place that turns the Design settings into CSS custom properties.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Design;
 
 defined( 'ABSPATH' ) || exit;
@@ -98,7 +103,7 @@ final class Tokens {
 	/** A saved font choice: one of FONTS, 'system' or (learner site only) 'inherit'. */
 	public static function font( $option ) {
 		$value   = get_option( $option, '' );
-		$allowed = array_merge( self::FONTS, array( 'system' ), $option === 'ohmylms_font_family' ? array( 'inherit' ) : array() );
+		$allowed = array_merge( self::FONTS, array( 'system' ), 'ohmylms_font_family' === $option ? array( 'inherit' ) : array() );
 		return is_string( $value ) && in_array( $value, $allowed, true ) ? $value : self::DEFAULTS[ $option ];
 	}
 
@@ -123,9 +128,9 @@ final class Tokens {
 
 	/** CSS font-family value for a choice. */
 	public static function stack( $font ) {
-		if ( $font === 'inherit' ) {
+		if ( 'inherit' === $font ) {
 			return 'inherit'; }
-		if ( $font === 'system' ) {
+		if ( 'system' === $font ) {
 			return self::SYSTEM_STACK; }
 		return '"' . $font . '", ' . self::SYSTEM_STACK;
 	}
@@ -151,9 +156,9 @@ final class Tokens {
 			. '--ohmylms-progressbar-color:' . self::color( 'ohmylms_body_progress_color_scheme' ) . ';'
 			. '--ohmylms-outline-color:var(--ohmylms-primary-color);'
 			// Left undefined for "Theme font" so var(--ohmylms-font-family, fallback) keeps each page's own font.
-			. ( $font !== 'inherit' ? '--ohmylms-font-family:' . self::stack( $font ) . ';' : '' )
+			. ( 'inherit' !== $font ? '--ohmylms-font-family:' . self::stack( $font ) . ';' : '' )
 			. '}';
-		if ( $font !== 'inherit' ) {
+		if ( 'inherit' !== $font ) {
 			$css .= '.ohmylms-page,.ohmylms-schools,.ohmylms-practice,.ohmylms-inline-check,.ohmylms-skill-progress,.ohmylms-quiz{font-family:var(--ohmylms-font-family)}';
 		}
 		return $css . self::quiz_css();
@@ -212,7 +217,7 @@ final class Tokens {
 		foreach ( $scale as $step => [$toward, $amount] ) {
 			$css .= '--primary-' . $step . ':' . self::rgb( self::mix( $primary, $toward, $amount ) ) . ';'; }
 		$css .= '}';
-		if ( $font !== 'system' ) {
+		if ( 'system' !== $font ) {
 			$css .= '#wpbody .ohmylms-admin-page :is(h1,h2,h3,h4,h5,h6,p,span,div,a,button,input,select,textarea,label,td,th,li,legend,strong,small)'
 				. ':not(.dashicons):not([class*="dashicons-"]):not(.iconfont){font-family:var(--ohmylms-admin-font)}';
 		}
@@ -221,7 +226,7 @@ final class Tokens {
 
 	public static function is_admin_app_screen() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
-		return $screen && $screen->id === 'toplevel_page_ohmylms';
+		return $screen && 'toplevel_page_ohmylms' === $screen->id;
 	}
 
 	public static function enqueue_admin() {

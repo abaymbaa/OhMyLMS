@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Hooks;
 
@@ -50,7 +50,7 @@ class CommonHook extends HookHandler {
 		add_filter( 'admin_body_class', array( $this, 'add_ohmylms_admin_body_class' ), 10, 1 );
 		// if ( is_ohmylms() ) {
 		// add_action( 'the_password_form', array( $this, 'ohmylms_password_protected_form_class' ));
-		// }
+		// }.
 
 		add_filter( 'admin_footer_text', array( $this, 'review_text_in_footer' ), 1 );
 
@@ -98,37 +98,37 @@ class CommonHook extends HookHandler {
 	 */
 	public function add_edit_course_menu( \WP_Admin_Bar $admin_bar ) {
 		if ( current_user_can( 'edit_posts' ) ) {
-			// Modify the "New Course" link in the admin bar
-			$node = $admin_bar->get_node( 'new-ohmylms-course' ); // This targets the "New Course" button in the admin bar
+			// Modify the "New Course" link in the admin bar.
+			$node = $admin_bar->get_node( 'new-ohmylms-course' ); // This targets the "New Course" button in the admin bar.
 			if ( $node ) {
-				// Update the URL with your custom link (e.g., redirecting to a different page)
+				// Update the URL with your custom link (e.g., redirecting to a different page).
 				$new_url = admin_url( 'admin.php?page=ohmylms#/courses' );
-				// Add the updated node back to the admin bar with the new URL
+				// Add the updated node back to the admin bar with the new URL.
 				$admin_bar->add_node(
 					array(
-						'id'    => 'new-ohmylms-course',  // Keep the same ID to modify the existing node
-						'title' => $node->title,        // Keep the same title
-						'href'  => $new_url,            // New URL
-						'meta'  => array( 'class' => 'custom-class' ), // Optional: custom class
+						'id'    => 'new-ohmylms-course',  // Keep the same ID to modify the existing node.
+						'title' => $node->title,        // Keep the same title.
+						'href'  => $new_url,            // New URL.
+						'meta'  => array( 'class' => 'custom-class' ), // Optional: custom class.
 					)
 				);
 			}
 
 			if ( ohmylms_is_single_course_page() ) {
 
-				// Get the ID of the current course
+				// Get the ID of the current course.
 				global $post;
-				if ( $post && $post->post_type === 'ohmylms-course' ) {
+				if ( $post && 'ohmylms-course' === $post->post_type ) {
 					// Find the "Edit" menu item
-					// Modify the URL of the "Edit Course" link
+					// Modify the URL of the "Edit Course" link.
 					$new_url = admin_url( "admin.php?page=ohmylms#/course-edit/{$post->ID}" );
 
-					// Update the existing "Edit" node with the new URL
+					// Update the existing "Edit" node with the new URL.
 					$admin_bar->add_node(
 						array(
-							'id'    => 'edit-course', // Use the same ID to modify the existing one
+							'id'    => 'edit-course', // Use the same ID to modify the existing one.
 							'title' => '<span class="ab-icon dashicons dashicons-edit"></span>' . esc_html__( 'Edit Course', 'wpfnl' ),
-							'href'  => $new_url, // New link for the "Edit Course"
+							'href'  => $new_url, // New link for the "Edit Course".
 						)
 					);
 				}
@@ -156,12 +156,12 @@ class CommonHook extends HookHandler {
 	 * @param WP_Query $query The WP_Query object.
 	 */
 	public function modify_posts_per_page_for_course_archive( $query ) {
-		// Ensure we're modifying the main query and not in the admin area
+		// Ensure we're modifying the main query and not in the admin area.
 		if ( ! is_admin() && $query->is_main_query() ) {
-			// Check if the post type is 'ohmylms-course'
+			// Check if the post type is 'ohmylms-course'.
 			if ( $query->is_post_type_archive( OHMYLMS_COURSE_CPT ) ) {
-				// Modify the number of posts per page
-				$query->set( 'posts_per_page', get_option( 'ohmylms_courses_per_page', 10 ) ); // Set to your desired number
+				// Modify the number of posts per page.
+				$query->set( 'posts_per_page', get_option( 'ohmylms_courses_per_page', 10 ) ); // Set to your desired number.
 			}
 		}
 	}
@@ -184,10 +184,10 @@ class CommonHook extends HookHandler {
 				'ohmylms_restricted_content_post_types',
 				array( 'ohmylms-lesson', 'ohmylms-assignment', 'ohmylms-quiz', 'ohmylms-session' )
 			);
-			// Check if the current post type is in the restricted list
+			// Check if the current post type is in the restricted list.
 			if ( in_array( $post->post_type, $restrict_post_types, true ) ) {
 
-				// Check if the user is logged in and is the author of the post
+				// Check if the user is logged in and is the author of the post.
 				if ( ! is_user_logged_in() || get_current_user_id() !== (int) $post->post_author ) {
 
 					// Block access for logged-in users who haven't verified their email yet.
@@ -526,7 +526,7 @@ class CommonHook extends HookHandler {
 						$prerequisites  = $assignment_obj->get_prerequisites();
 					}
 
-					// Check prerequisites settings
+					// Check prerequisites settings.
 					if ( is_array( $prerequisites ) && ! empty( $prerequisites ) && ! empty( $prerequisites['enable'] ) && ! empty( $prerequisites['data'] ) && $prerequisites['enable'] ) {
 						$prerequisites_met      = true;
 						$incomplete_course_name = '';
@@ -724,13 +724,13 @@ class CommonHook extends HookHandler {
 	 */
 	public function delete_enrollment( $course_id ) {
 		global $wpdb;
-		// Ensure course_id is sanitized
+		// Ensure course_id is sanitized.
 		$course_id = intval( $course_id );
-		// Delete rows where course_id matches
+		// Delete rows where course_id matches.
 		$deleted = $wpdb->delete(
-			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name
-			array( 'course_id' => $course_id ),           // Where condition
-			array( '%d' )                                 // Data type for the condition
+			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name.
+			array( 'course_id' => $course_id ),           // Where condition.
+			array( '%d' )                                 // Data type for the condition.
 		);
 	}
 
@@ -740,24 +740,24 @@ class CommonHook extends HookHandler {
 	 */
 	public function delete_enrollment_after_delete_order( $order_id ) {
 		global $wpdb;
-		// Ensure order_id is sanitized
+		// Ensure order_id is sanitized.
 		$order_id        = intval( $order_id );
 		$parent_order_id = wp_get_post_parent_id( $order_id );
 		if ( $parent_order_id ) {
 			$order_id = $parent_order_id;
 		}
-		// Delete rows where order_id matches
+		// Delete rows where order_id matches.
 		$deleted = $wpdb->delete(
-			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name
-			array( 'order_id' => $order_id ),           // Where condition
-			array( '%d' )                                 // Data type for the condition
+			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name.
+			array( 'order_id' => $order_id ),           // Where condition.
+			array( '%d' )                                 // Data type for the condition.
 		);
 		if ( ohmylms_is_pro() ) {
-			// Delete rows where order_id matches
+			// Delete rows where order_id matches.
 			$deleted = $wpdb->delete(
-				"{$wpdb->prefix}ohmylms_user_membership", // Table name
-				array( 'order_id' => $order_id ),           // Where condition
-				array( '%d' )                                 // Data type for the condition
+				"{$wpdb->prefix}ohmylms_user_membership", // Table name.
+				array( 'order_id' => $order_id ),           // Where condition.
+				array( '%d' )                                 // Data type for the condition.
 			);
 		}
 	}
@@ -767,7 +767,7 @@ class CommonHook extends HookHandler {
 	 */
 	public function delete_membership( $membership_id ) {
 		global $wpdb;
-		// Ensure course_id is sanitized
+		// Ensure course_id is sanitized.
 		$membership_id = intval( $membership_id );
 		$order_id      = null;
 		if ( ohmylms_is_pro() ) {
@@ -779,21 +779,21 @@ class CommonHook extends HookHandler {
 			);
 		}
 
-		// Check if an order_id was found
+		// Check if an order_id was found.
 		if ( $order_id ) {
-			// Delete rows from ohmylms_user_enrollment where order_id matches
+			// Delete rows from ohmylms_user_enrollment where order_id matches.
 			$wpdb->delete(
-				"{$wpdb->prefix}ohmylms_user_enrollment", // Table name
-				array( 'order_id' => $order_id ),       // Where condition
-				array( '%d' )                           // Data type for the condition
+				"{$wpdb->prefix}ohmylms_user_enrollment", // Table name.
+				array( 'order_id' => $order_id ),       // Where condition.
+				array( '%d' )                           // Data type for the condition.
 			);
 		}
 		if ( ohmylms_is_pro() ) {
-			// Delete rows where course_id matches
+			// Delete rows where course_id matches.
 			$deleted = $wpdb->delete(
-				"{$wpdb->prefix}ohmylms_user_membership", // Table name
-				array( 'membership_id' => $membership_id ),           // Where condition
-				array( '%d' )                                 // Data type for the condition
+				"{$wpdb->prefix}ohmylms_user_membership", // Table name.
+				array( 'membership_id' => $membership_id ),           // Where condition.
+				array( '%d' )                                 // Data type for the condition.
 			);
 		}
 	}
@@ -804,16 +804,16 @@ class CommonHook extends HookHandler {
 
 		if ( ohmylms_is_pro() ) {
 			$wpdb->delete(
-				"{$wpdb->prefix}ohmylms_user_membership", // Table name
-				array( 'user_id' => $id ),           // Where condition
-				array( '%d' )                                 // Data type for the condition
+				"{$wpdb->prefix}ohmylms_user_membership", // Table name.
+				array( 'user_id' => $id ),           // Where condition.
+				array( '%d' )                                 // Data type for the condition.
 			);
 		}
 
 		$wpdb->delete(
-			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name
-			array( 'user_id' => $id ),       // Where condition
-			array( '%d' )                           // Data type for the condition
+			"{$wpdb->prefix}ohmylms_user_enrollment", // Table name.
+			array( 'user_id' => $id ),       // Where condition.
+			array( '%d' )                           // Data type for the condition.
 		);
 	}
 
@@ -839,7 +839,7 @@ class CommonHook extends HookHandler {
 			}
 		}
 
-		// Dashboard page template
+		// Dashboard page template.
 		if ( get_page_template_slug() === 'ohmylms-dashboard' ) {
 			$plugin_template = OHMYLMS_PATH . '/templates/page-template/ohmylms-dashboard.php';
 			if ( file_exists( $plugin_template ) ) {
@@ -847,7 +847,7 @@ class CommonHook extends HookHandler {
 			}
 		}
 
-		// My Courses page template
+		// My Courses page template.
 		if ( get_page_template_slug() === 'ohmylms-my-courses' ) {
 			$plugin_template = OHMYLMS_PATH . '/templates/page-template/ohmylms-my-courses.php';
 			if ( file_exists( $plugin_template ) ) {
@@ -859,7 +859,7 @@ class CommonHook extends HookHandler {
 			return $template;
 		}
 
-		// Thank you page without header
+		// Thank you page without header.
 		if ( is_ohmylms_order_received_page() ) {
 			$plugin_template = OHMYLMS_PATH . '/templates/page-template/ohmylms-thankyou.php';
 			if ( file_exists( $plugin_template ) ) {
@@ -867,14 +867,14 @@ class CommonHook extends HookHandler {
 			}
 		}
 
-		// Checkout page layout type
+		// Checkout page layout type.
 		$checkout_page_layout_type = get_option( 'ohmylms_checkout_page_layout_type' );
 
-		// Check if current post has a checkout block with layoutType attribute
+		// Check if current post has a checkout block with layoutType attribute.
 		if ( is_ohmylms_checkout() ) {
 			$post = get_post();
 			if ( $post ) {
-				// First check for Elementor widgets
+				// First check for Elementor widgets.
 				$elementor_data = get_post_meta( $post->ID, '_elementor_data', true );
 				if ( ! empty( $elementor_data ) ) {
 					$layout_type_from_elementor = $this->find_layout_type_in_elementor_data( $elementor_data, $checkout_page_layout_type );
@@ -883,7 +883,7 @@ class CommonHook extends HookHandler {
 					}
 				}
 
-				// Then check for Bricks elements
+				// Then check for Bricks elements.
 				$bricks_data = get_post_meta( $post->ID, '_bricks_page_content_2', true );
 				if ( ! empty( $bricks_data ) ) {
 					$layout_type_from_bricks = $this->find_layout_type_in_bricks_data( $bricks_data, $checkout_page_layout_type );
@@ -892,13 +892,13 @@ class CommonHook extends HookHandler {
 					}
 				}
 
-				// Then check for Gutenberg blocks
+				// Then check for Gutenberg blocks.
 				if ( $post->post_content && has_blocks( $post->post_content ) ) {
 					$blocks                    = parse_blocks( $post->post_content );
 					$checkout_page_layout_type = $this->find_layout_type_in_blocks( $blocks, $checkout_page_layout_type );
 				}
 
-				// Finally check for shortcode (for other page builders)
+				// Finally check for shortcode (for other page builders).
 				if ( $post->post_content && has_shortcode( $post->post_content, 'ohmylms_checkout' ) ) {
 					preg_match( '/\[ohmylms_checkout[^\]]*layout_type=["\']?([^"\'\s\]]+)["\']?[^\]]*\]/', $post->post_content, $matches );
 					if ( ! empty( $matches[1] ) ) {
@@ -928,14 +928,14 @@ class CommonHook extends HookHandler {
 	 */
 	private function find_layout_type_in_blocks( $blocks, $default_value ) {
 		foreach ( $blocks as $block ) {
-			// Check if this is the checkout block
+			// Check if this is the checkout block.
 			if ( 'ohmylms/checkout' === $block['blockName'] ) {
 				if ( ! empty( $block['attrs']['layoutType'] ) ) {
 					return $block['attrs']['layoutType'];
 				}
 			}
 
-			// Recursively check inner blocks
+			// Recursively check inner blocks.
 			if ( ! empty( $block['innerBlocks'] ) ) {
 				$found = $this->find_layout_type_in_blocks( $block['innerBlocks'], $default_value );
 				if ( $found !== $default_value ) {
@@ -974,14 +974,14 @@ class CommonHook extends HookHandler {
 	 */
 	private function find_layout_type_in_elementor_elements( $elements, $default_value ) {
 		foreach ( $elements as $element ) {
-			// Check if this is the checkout widget
+			// Check if this is the checkout widget.
 			if ( isset( $element['widgetType'] ) && 'ohmylms-checkout' === $element['widgetType'] ) {
 				if ( ! empty( $element['settings']['layout_type'] ) ) {
 					return $element['settings']['layout_type'];
 				}
 			}
 
-			// Recursively check child elements
+			// Recursively check child elements.
 			if ( ! empty( $element['elements'] ) ) {
 				$found = $this->find_layout_type_in_elementor_elements( $element['elements'], $default_value );
 				if ( $found !== $default_value ) {
@@ -1017,14 +1017,14 @@ class CommonHook extends HookHandler {
 	 */
 	private function find_layout_type_in_bricks_elements( $elements, $default_value ) {
 		foreach ( $elements as $element ) {
-			// Check if this is the checkout element
+			// Check if this is the checkout element.
 			if ( isset( $element['name'] ) && 'ohmylms-checkout-2' === $element['name'] ) {
 				if ( ! empty( $element['settings']['layout_type'] ) ) {
 					return $element['settings']['layout_type'];
 				}
 			}
 
-			// Recursively check child elements
+			// Recursively check child elements.
 			if ( ! empty( $element['elements'] ) ) {
 				$found = $this->find_layout_type_in_bricks_elements( $element['elements'], $default_value );
 				if ( $found !== $default_value ) {
@@ -1061,17 +1061,17 @@ class CommonHook extends HookHandler {
 	 */
 	public function register_custom_template( $templates ) {
 
-		$templates['ohmylms-profile'] = 'OhMyLMS My Profile'; // Template name as it appears in the editor
+		$templates['ohmylms-profile'] = 'OhMyLMS My Profile'; // Template name as it appears in the editor.
 
-		$templates['ohmylms-checkout'] = 'OhMyLMS Checkout'; // Template name as it appears in the editor
+		$templates['ohmylms-checkout'] = 'OhMyLMS Checkout'; // Template name as it appears in the editor.
 
-		$templates['ohmylms-thankyou'] = 'OhMyLMS Thank You'; // Template name as it appears in the editor
+		$templates['ohmylms-thankyou'] = 'OhMyLMS Thank You'; // Template name as it appears in the editor.
 
 		$templates['ohmylms-certificate'] = 'Certificate template';
 
-		$templates['ohmylms-dashboard'] = 'OhMyLMS Dashboard'; // Template name as it appears in the editor
+		$templates['ohmylms-dashboard'] = 'OhMyLMS Dashboard'; // Template name as it appears in the editor.
 
-		$templates['ohmylms-my-courses'] = 'OhMyLMS My Courses'; // Template name as it appears in the editor
+		$templates['ohmylms-my-courses'] = 'OhMyLMS My Courses'; // Template name as it appears in the editor.
 
 		return $templates;
 	}
@@ -1230,7 +1230,7 @@ class CommonHook extends HookHandler {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_earning';
 		$query      = $wpdb->prepare( "SELECT order_id FROM $table_name WHERE order_id = %d", $order->get_id() );
-		// Execute the query and return the result
+		// Execute the query and return the result.
 		$result        = $wpdb->get_row( $query, ARRAY_A );
 		$membership_id = null;
 		$course_id     = null;
@@ -1247,18 +1247,18 @@ class CommonHook extends HookHandler {
 			}
 		}
 		if ( ! empty( $result ) ) {
-			// Update the membership status in the database
+			// Update the membership status in the database.
 			$result = $wpdb->update(
 				$table_name,
-				array( 'status' => $order->get_status() ), // Data to update
+				array( 'status' => $order->get_status() ), // Data to update.
 				array(
 					'order_id' => $order->get_id(),
-				), // Where conditions
-				array( '%s' ), // Format for the updated data
-				array( '%d' ) // Format for the where conditions
+				), // Where conditions.
+				array( '%s' ), // Format for the updated data.
+				array( '%d' ) // Format for the where conditions.
 			);
 		} else {
-			// Insert a new record
+			// Insert a new record.
 			$insert_result = $wpdb->insert(
 				$table_name,
 				array(
@@ -1267,9 +1267,9 @@ class CommonHook extends HookHandler {
 					'course_id'     => $course_id,
 					'status'        => $status,
 					'total'         => $total,
-					'created_at'    => current_time( 'mysql' ), // Optional timestamp
+					'created_at'    => current_time( 'mysql' ), // Optional timestamp.
 				),
-				array( '%d', '%d', '%d', '%s', '%f', '%s' ) // Format for the inserted data
+				array( '%d', '%d', '%d', '%s', '%f', '%s' ) // Format for the inserted data.
 			);
 		}
 	}
@@ -1293,11 +1293,11 @@ class CommonHook extends HookHandler {
 
 		$userAgent         = $_SERVER['HTTP_USER_AGENT'] ?? '';
 		$allowedUserAgents = array(
-			'Mozilla', // Covers Firefox
-			'Chrome',  // Covers Chrome
-			'Safari',  // Covers Safari
-			'Opera',   // Covers Opera
-			'Edge',    // Covers Edge
+			'Mozilla', // Covers Firefox.
+			'Chrome',  // Covers Chrome.
+			'Safari',  // Covers Safari.
+			'Opera',   // Covers Opera.
+			'Edge',    // Covers Edge.
 			'WordPress',
 		);
 
@@ -1385,9 +1385,9 @@ class CommonHook extends HookHandler {
 	public function modify_comments_query( $query ) {
 		global $pagenow;
 
-		// Only run in admin "Comments" screen
-		if ( is_admin() && $pagenow === 'edit-comments.php' ) {
-			// Exclude WooCommerce order notes from the list
+		// Only run in admin "Comments" screen.
+		if ( is_admin() && 'edit-comments.php' === $pagenow ) {
+			// Exclude WooCommerce order notes from the list.
 			$query->query_vars['type__not_in'] = array( 'order_note', 'subscription_note' );
 		}
 	}
@@ -1435,7 +1435,7 @@ class CommonHook extends HookHandler {
 	 * @since 1.0.0
 	 */
 	public function add_ohmylms_admin_body_class( $classes ) {
-		// Check for UI Express plugin
+		// Check for UI Express plugin.
 		if ( defined( 'uixpress_plugin_version' ) ) {
 			$classes .= ' ohmylms-ui-express-active';
 		}
@@ -1451,7 +1451,7 @@ class CommonHook extends HookHandler {
 	 */
 	public function review_text_in_footer( $text ) {
 		global $pagenow;
-		// if ( apply_filters( 'ohmylms_display_admin_footer_text', ( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'ohmylms' === $_GET['page'] ) ) ) {
+		// if ( apply_filters( 'ohmylms_display_admin_footer_text', ( 'admin.php' === $pagenow && isset( $_GET['page'] ) && 'ohmylms' === $_GET['page'] ) ) ) {.
 		if ( apply_filters( 'ohmylms_display_admin_footer_text', $this->is_ohmylms_page() ) ) {
 			$text = sprintf(
 				/* translators: %s: plugin name */
@@ -1476,7 +1476,7 @@ class CommonHook extends HookHandler {
 			return false;
 		}
 
-		// Check if we're on any OhMyLMS admin page
+		// Check if we're on any OhMyLMS admin page.
 		$ohmylms_pages = array(
 			'toplevel_page_ohmylms',
 			'ohmylms_page_ohmylms-courses',
@@ -1487,7 +1487,7 @@ class CommonHook extends HookHandler {
 			'ohmylms_page_ohmylms-settings',
 		);
 
-		// Also check if screen ID starts with 'ohmylms'
+		// Also check if screen ID starts with 'ohmylms'.
 		if ( in_array( $screen->id, $ohmylms_pages, true ) || strpos( $screen->id, 'ohmylms' ) === 0 ) {
 			return true;
 		}
@@ -1663,7 +1663,7 @@ class CommonHook extends HookHandler {
 
 		$dashboard_url = ohmylms_get_dashboard_url() ?: home_url( '/' );
 
-		if ( $result['status'] === 'verified' ) {
+		if ( 'verified' === $result['status'] ) {
 			// Auto-login the user if not already logged in.
 			if ( ! is_user_logged_in() && $result['user_id'] ) {
 				wp_set_current_user( $result['user_id'] );
@@ -1683,7 +1683,7 @@ class CommonHook extends HookHandler {
 			exit;
 		}
 
-		if ( $result['status'] === 'expired' ) {
+		if ( 'expired' === $result['status'] ) {
 			wp_safe_redirect( add_query_arg( 'ohmylms_verify_error', 'expired', $dashboard_url ) );
 			exit;
 		}
@@ -1888,31 +1888,31 @@ class CommonHook extends HookHandler {
 				'ohmylms_restricted_content_post_types',
 				array( 'ohmylms-lesson', 'ohmylms-assignment', 'ohmylms-quiz', 'ohmylms-session' )
 			);
-			// Check if the current post type is in the restricted list
+			// Check if the current post type is in the restricted list.
 			if ( in_array( $post->post_type, $restrict_post_types, true ) ) {
-				// Implement drip functionality
+				// Implement drip functionality.
 				if ( 'ohmylms-lesson' === $post->post_type ) {
 					$student    = new \OhMyLMS\Data\Student( get_current_user_id() );
 					$lesson_obj = ohmylms_get_lesson( $post->ID );
 					if ( $lesson_obj ) {
 						$drip_feed = method_exists( $lesson_obj, 'get_drip_feed' ) ? $lesson_obj->get_drip_feed() : '';
 						$drip_feed = ! $drip_feed && method_exists( $lesson_obj, 'get_drip_settings' ) ? $lesson_obj->get_drip_settings() : '';
-						// Check drip feed settings
+						// Check drip feed settings.
 						if ( is_array( $drip_feed ) && ! empty( $drip_feed['enable'] ) ) {
 							if ( 'specific-date' === $drip_feed['type'] ) {
 
-								// Get current WordPress date and time in UTC
+								// Get current WordPress date and time in UTC.
 								$current_time      = new \DateTime( 'now', new \DateTimeZone( wp_timezone_string() ) );
 								$current_date      = $current_time->format( 'Y-m-d' );
 								$current_time_only = $current_time->format( 'H:i:s' );
 
-								// Parse drip feed date and time
+								// Parse drip feed date and time.
 								$drip_date = ( new \DateTime( $drip_feed['date'], new \DateTimeZone( wp_timezone_string() ) ) )->format( 'Y-m-d' );
 								$drip_time = ( new \DateTime( $drip_feed['time'], new \DateTimeZone( wp_timezone_string() ) ) )->format( 'H:i:s' );
 
-								// Compare date
+								// Compare date.
 								if ( $current_date === $drip_date ) {
-									// If date matches, compare time
+									// If date matches, compare time.
 									if ( $current_time_only < $drip_time ) {
 
 										ob_start();
@@ -2009,7 +2009,7 @@ class CommonHook extends HookHandler {
 										wp_die( $content, 'Access Denied', array( 'response' => 403 ) );
 									}
 								} elseif ( $current_date < $drip_date ) {
-									// If current date is earlier than the drip feed date
+									// If current date is earlier than the drip feed date.
 
 									ob_start();
 									?>
@@ -2107,7 +2107,7 @@ class CommonHook extends HookHandler {
 							} elseif ( 'enrollment-from-x-days' === $drip_feed['type'] ) {
 								$days = ! empty( $drip_feed['enrollment_from_x_days'] ) ? $drip_feed['enrollment_from_x_days'] : 0;
 								global $wpdb;
-								$user_id    = get_current_user_id(); // Change this as needed
+								$user_id    = get_current_user_id(); // Change this as needed.
 								$course_id  = $post->post_parent;
 								$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 								$start_date = $wpdb->get_var(
@@ -2125,7 +2125,7 @@ class CommonHook extends HookHandler {
 									$interval        = $start_date_time->diff( $current_date_time );
 									$days_difference = $interval->days;
 									if ( (int) $days > (int) $days_difference ) {
-										// Calculate the exact date when content will be available
+										// Calculate the exact date when content will be available.
 										$available_date = clone $start_date_time;
 										$available_date->modify( "+$days days" );
 
@@ -2227,7 +2227,7 @@ class CommonHook extends HookHandler {
 								$prev_content = ohmylms_get_prev_content( $post->ID );
 								if ( $prev_content && isset( $prev_content['id'] ) ) {
 									if ( ! $student->maybe_completed( $prev_content['id'] ) ) {
-										// Get the previous content title for better user experience
+										// Get the previous content title for better user experience.
 										$prev_content_title     = get_the_title( $prev_content['id'] );
 										$incomplete_course_link = get_permalink( $prev_content['id'] );
 
@@ -2355,7 +2355,7 @@ class CommonHook extends HookHandler {
 				'logo_url'         => '',
 			);
 
-			// Admin Name & Email Finding Starts
+			// Admin Name & Email Finding Starts.
 			$admin_email = get_option( 'admin_email' );
 			$admin_user  = get_user_by( 'email', $admin_email );
 			$admin_name  = $admin_user ? $admin_user->display_name : '';
@@ -2422,7 +2422,7 @@ class CommonHook extends HookHandler {
 				'is_mailpoet_active'             => HelperFunctions::is_mailpoet_active(),
 			);
 
-			// Merge new data into localized data
+			// Merge new data into localized data.
 			$localized_data = array_merge( $localized_data, $new_data );
 		}
 		return $localized_data;

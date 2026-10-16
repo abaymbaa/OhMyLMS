@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -152,9 +152,9 @@ class Checkout {
 	 * @since 1.0.0
 	 */
 	public function get_billing_fields() {
-		// Get default country based on site language/locale
+		// Get default country based on site language/locale.
 		$site_locale = get_locale();
-		// e.g., 'en_US', 'es_ES', 'de_DE'
+		// e.g., 'en_US', 'es_ES', 'de_DE'.
 		$locale_parts    = explode( '_', $site_locale );
 		$default_country = isset( $locale_parts[1] ) ? $locale_parts[1] : 'US';
 
@@ -239,7 +239,7 @@ class Checkout {
 			$fields['phone']['required'] = true;
 		}
 
-		// Only add VAT number field if tax is enabled
+		// Only add VAT number field if tax is enabled.
 		if ( \OhMyLMS\Commerce\Includes\Tax\TaxService::get_instance()->is_tax_enabled() ) {
 			$vat_label = get_option( 'ohmylms_vat_number_label', __( 'VAT Number', 'ohmylms' ) );
 
@@ -324,11 +324,11 @@ class Checkout {
 		try {
 			$errors = new \WP_Error();
 
-			// Get user IP and user agent
+			// Get user IP and user agent.
 			$user_ip    = $this->get_ip_address();
 			$user_agent = $this->get_user_agent();
 
-			// Check if there is an active logged-in user
+			// Check if there is an active logged-in user.
 			if ( ! is_user_logged_in() && ! $this->is_allow_purchase_without_login() ) {
 				$message = __( 'Please log in to purchase.', 'ohmylms' );
 				ohmylmse_add_notice( $message, 'error', array() );
@@ -459,7 +459,7 @@ class Checkout {
 					$message = __( 'Failed to process order due to payment.', 'ohmylms' );
 					ohmylmse_add_notice( $result->get_error_message() ?: $message, 'error', array() );
 					wp_trash_post( $order_id );
-					// Clean up failed order
+					// Clean up failed order.
 					$this->send_ajax_failure_response();
 				}
 
@@ -467,12 +467,12 @@ class Checkout {
 					$message = __( 'Failed to process order due to payment.', 'ohmylms' );
 					ohmylmse_add_notice( $result['message'] ?? $message, 'error', array() );
 					wp_trash_post( $order_id );
-					// Clean up failed order
+					// Clean up failed order.
 					$this->send_ajax_failure_response();
 				}
 
 				// If we have a valid result with redirect, proceed regardless of error notices
-				// This ensures payment gateway redirects work even if other plugins add notices
+				// This ensures payment gateway redirects work even if other plugins add notices.
 				$has_valid_result = is_array( $result ) && (
 					( isset( $result['result'] ) && 'success' === $result['result'] ) ||
 					( isset( $result['success'] ) && true === $result['success'] ) ||
@@ -485,13 +485,13 @@ class Checkout {
 				}
 
 				// Only trigger order creation hook after confirmed payment or for free orders
-				// Check if payment requires external redirect ( like PayPal, etc. )
+				// Check if payment requires external redirect ( like PayPal, etc. ).
 				$has_redirect = is_array( $result ) && ! empty( $result['redirect'] );
 
 				// Payment is confirmed if:
 				// 1. Order doesn't need payment (free order)
 				// 2. Order status is completed or processing (immediate payment confirmed)
-				// 3. Result indicates success without redirect (direct payment)
+				// 3. Result indicates success without redirect (direct payment).
 				$order_status      = $order->get_status();
 				$payment_confirmed = ! $order->needs_payment()
 					|| in_array( $order_status, array( 'completed', 'processing' ), true )
@@ -509,7 +509,7 @@ class Checkout {
 				}
 
 				// If payment was successful, and it's a membership, create the subscription
-				// Only for confirmed payments, not for pending/awaiting redirects
+				// Only for confirmed payments, not for pending/awaiting redirects.
 				if ( $payment_confirmed ) {
 					if ( ! empty( $posted_data['membership_id'] ) && class_exists( 'OhMyLMS\Commerce\SubscriptionManager' ) ) {
 						$membership = ohmylms_get_membership( $posted_data['membership_id'] );
@@ -543,7 +543,7 @@ class Checkout {
 					);
 				}
 
-				// Check for funnel processing after successful payment
+				// Check for funnel processing after successful payment.
 				$funnel_result = $payment_pending ? array() : $this->maybe_process_funnel( $order_id, $posted_data, $result );
 
 				if ( isset( $funnel_result['result'] ) && 'success' === $funnel_result['result'] ) {
@@ -561,13 +561,13 @@ class Checkout {
 				}
 
 				// Send JSON response if we have a valid result ( success or redirect )
-				// This ensures payment gateway redirects work even if error notices were added
+				// This ensures payment gateway redirects work even if error notices were added.
 				if ( $has_valid_result ) {
 					wp_send_json( $result );
 				}
 			}
 
-			// Only show failure response if we don't have a valid result
+			// Only show failure response if we don't have a valid result.
 			if ( 0 !== ohmylmse_notice_count( 'error' ) || ! isset( $has_valid_result ) || ! $has_valid_result ) {
 				$this->send_ajax_failure_response();
 			}
@@ -593,7 +593,7 @@ class Checkout {
 			return false;
 		}
 		foreach ( $cart_items as $cart_item ) {
-			if ( isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point' ) {
+			if ( isset( $cart_item['purchase_by'] ) && 'point' === $cart_item['purchase_by'] ) {
 				return true;
 			}
 		}
@@ -614,7 +614,7 @@ class Checkout {
 			return $total_points;
 		}
 		foreach ( $cart_items as $cart_item ) {
-			if ( isset( $cart_item['purchase_by'] ) && $cart_item['purchase_by'] === 'point' ) {
+			if ( isset( $cart_item['purchase_by'] ) && 'point' === $cart_item['purchase_by'] ) {
 				if ( isset( $cart_item['course_id'] ) ) {
 					$course = ohmylms_get_course( $cart_item['course_id'] );
 					if ( $course && $course->get_purchase_point() ) {
@@ -657,7 +657,7 @@ class Checkout {
 	 * @since 1.0.0
 	 */
 	private function maybe_process_funnel( $order_id, $posted_data, $payment_result ) {
-		// Use our FunnelManager class if it exists
+		// Use our FunnelManager class if it exists.
 		if ( class_exists( '\OhMyLMS\Integrations\Funnel\Includes\FunnelManager' ) ) {
 			$funnel_manager = new \OhMyLMS\Integrations\Funnel\Includes\FunnelManager();
 			return $funnel_manager->maybe_process_funnel( $order_id, $posted_data, $payment_result );
@@ -732,7 +732,7 @@ class Checkout {
 
 				$response = self::attempt_course_enrollment( $course_id, $order_id );
 
-				if ( $response['status'] == 'error' ) {
+				if ( 'error' == $response['status'] ) {
 					ohmylms_add_notice( $response['message'], $response['status'] );
 					return $response;
 				}
@@ -829,8 +829,8 @@ class Checkout {
 	 * that gateway is chosen. A field the admin has hidden cannot be enforced.
 	 *
 	 * @param \OhMyLMS\Commerce\Abstracts\PaymentGateway $gateway The chosen gateway.
-	 * @param array                                       $data    Posted checkout data.
-	 * @param \WP_Error                                   $errors  Error bag.
+	 * @param array                                      $data    Posted checkout data.
+	 * @param \WP_Error                                  $errors  Error bag.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -1048,17 +1048,17 @@ class Checkout {
 			wp_set_current_user( $student_id );
 			wp_set_auth_cookie( $student_id, true );
 
-			// Log the user in
+			// Log the user in.
 			$user = get_user_by( 'ID', $student_id );
 
-			// Manually trigger WordPress login hooks
+			// Manually trigger WordPress login hooks.
 			do_action( 'wp_login', $user->user_login, $user );
 			update_user_meta( $user->ID, '_ohmylms_last_login', current_time( 'mysql' ) );
 
 			// Update session.
 			ecommerce()->session->init_session_cookie();
 
-			// Send email to student with username and password
+			// Send email to student with username and password.
 			$to           = $data['email'];
 			$subject      = __( 'Your account has been created', 'ohmylms' );
 			$profile_url  = ohmylms_get_account_endpoint_url( 'dashboard' );
@@ -1184,7 +1184,7 @@ class Checkout {
 			$this->set_data_from_cart( $order );
 			$order_id = $order->save();
 
-			// Store membership ID if this is a membership purchase
+			// Store membership ID if this is a membership purchase.
 			if ( ! empty( $data['membership_id'] ) ) {
 				update_post_meta( $order_id, '_membership_id', absint( $data['membership_id'] ) );
 			}
@@ -1249,7 +1249,7 @@ class Checkout {
 				}
 
 				if ( ohmylms_is_pro() ) {
-					// Check if the record exists
+					// Check if the record exists.
 					$existing_record = $wpdb->get_var(
 						$wpdb->prepare(
 							"SELECT COUNT(*) FROM $membership_table WHERE user_id = %d AND membership_id = %d",
@@ -1355,7 +1355,7 @@ class Checkout {
 					);
 
 					if ( $existing_record ) {
-						// Update the existing record
+						// Update the existing record.
 						$wpdb->update(
 							$enrollment_table,
 							array(
@@ -1386,7 +1386,7 @@ class Checkout {
 						$enrollment_data['subscription_id'] = get_post_meta( $order_id, '_subscription_id', true );
 						unset( $enrollment_data['course_id'] );
 
-						// Check if the record exists
+						// Check if the record exists.
 						$existing_record = $wpdb->get_var(
 							$wpdb->prepare(
 								"SELECT COUNT(*) FROM $membership_table WHERE user_id = %d AND membership_id = %d",

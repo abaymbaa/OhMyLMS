@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;
@@ -7,7 +7,7 @@ final class LearningPath {
 	public static function available( array $item, $student, $course ) {
 		if ( empty( $item['available'] ) ) {
 			return false; }
-		if ( $item['type'] === 'practice' ) {
+		if ( 'practice' === $item['type'] ) {
 			return true; }
 		return ! apply_filters( 'ohmylms_is_lesson_locked', false, $item['content_id'], $course, $student )
 			&& ! apply_filters( 'ohmylms_is_lesson_sequentially_locked', false, $item['content_id'], $course, $student );
@@ -20,7 +20,7 @@ final class LearningPath {
 		foreach ( $program['items'] as $item ) {
 			if ( ! $item['available'] ) {
 				continue; }
-			if ( $item['type'] === 'practice' ) {
+			if ( 'practice' === $item['type'] ) {
 				foreach ( $program['outcomes'] as $outcome ) {
 					if ( $outcome['term_id'] === $item['content_id'] && ! $outcome['met'] ) {
 						return array(

@@ -36,18 +36,20 @@ export function createAssignmentList( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			n = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationStatus();
 			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectAssignmentsPagination();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3(
+					StoreModule.default
+				).selectAssignmentsPagination();
 			}, [] ),
 			a = ( r.totalAssignments, r.totalPages, r.filteredAssignments ),
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectAssignments();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+				return _eLocal4( StoreModule.default ).selectAssignments();
 			}, [] ),
 			i = Ate( ( 0, ReactHooks.useState )( ! 0 ), 2 ),
 			c = i[ 0 ],
@@ -85,135 +87,145 @@ export function createAssignmentList( readRuntime ) {
 			openNotificationWithIcon = Q.openNotificationWithIcon,
 			contextHolder = Q.contextHolder,
 			K = ( 0, Router.Zp )(),
-			J = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( O( e ), S( 1 ) );
+			J = ( 0, ReactHooks.useCallback )( function ( _eLocal5 ) {
+				O( _eLocal5 );
+				S( 1 );
 			}, [] ),
-			X = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( A( e ), S( 1 ) );
+			X = ( 0, ReactHooks.useCallback )( function ( _eLocal6 ) {
+				A( _eLocal6 );
+				S( 1 );
 			}, [] ),
-			ee = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( N( e ), S( 1 ) );
+			ee = ( 0, ReactHooks.useCallback )( function ( _eLocal7 ) {
+				N( _eLocal7 );
+				S( 1 );
 			}, [] ),
-			te = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( S( e ), m( [] ) );
+			te = ( 0, ReactHooks.useCallback )( function ( _eLocal8 ) {
+				S( _eLocal8 );
+				m( [] );
 			}, [] ),
 			ne = ( 0, ReactHooks.useCallback )(
 				jte(
-					Pte().m( function t() {
-						var n,
-							r,
-							a,
-							o = arguments;
-						return Pte().w( function ( t ) {
+					Pte().m( function _tLocal( ..._args ) {
+						var _nLocal,
+							_rLocal,
+							_aLocal,
+							_oLocal = _args;
+						return Pte().w( function ( _tLocal2 ) {
 							for (;;) {
-								switch ( t.n ) {
+								switch ( _tLocal2.n ) {
 									case 0:
-										( ( n =
-											o.length > 0 && void 0 !== o[ 0 ]
-												? o[ 0 ]
-												: 'date' ),
-											( r =
-												o.length > 1 &&
-												void 0 !== o[ 1 ]
-													? o[ 1 ]
-													: 'DESC' ),
-											u( ! 0 ),
-											( a = {
-												offset: 5 * ( E - 1 ),
-												order: r,
-												page: E,
-												per_page: x,
-												search: P,
-												post_status: F,
-												orderby: n,
-												course_id: j,
-											} ),
-											e
-												.fetchAssignments( a )
-												.finally( function () {
-													u( ! 1 );
-												} ) );
+										_nLocal =
+											_oLocal.length > 0 &&
+											void 0 !== _oLocal[ 0 ]
+												? _oLocal[ 0 ]
+												: 'date';
+										_rLocal =
+											_oLocal.length > 1 &&
+											void 0 !== _oLocal[ 1 ]
+												? _oLocal[ 1 ]
+												: 'DESC';
+										u( ! 0 );
+										_aLocal = {
+											offset: 5 * ( E - 1 ),
+											order: _rLocal,
+											page: E,
+											per_page: x,
+											search: P,
+											post_status: F,
+											orderby: _nLocal,
+											course_id: j,
+										};
+										e.fetchAssignments( _aLocal ).finally(
+											function () {
+												u( ! 1 );
+											}
+										); // Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 1:
-										return t.a( 2 );
+										return _tLocal2.a( 2 );
 								}
 							}
-						}, t );
+						}, _tLocal );
 					} )
 				),
 				[ E, x, P, F, j ]
 			),
-			re = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( _( ! 0 ), B( e ) );
+			re = ( 0, ReactHooks.useCallback )( function ( _eLocal9 ) {
+				_( ! 0 );
+				B( _eLocal9 );
 			}, [] ),
 			ae = ( 0, ReactHooks.useCallback )( function () {
 				_( ! 1 );
 			}, [] ),
 			oe = ( 0, ReactHooks.useCallback )(
 				jte(
-					Pte().m( function t() {
-						return Pte().w( function ( t ) {
+					Pte().m( function _tLocal3() {
+						return Pte().w( function ( _tLocal4 ) {
 							for (;;) {
-								switch ( t.n ) {
+								switch ( _tLocal4.n ) {
 									case 0:
 										return (
-											( t.n = 1 ),
+											( _tLocal4.n = 1 ),
 											e.handleBulkDelete( 'assignment', {
 												assignment_ids: W ? [ W ] : d,
 											} )
 										 );
 									case 1:
-										( t.v,
-											ne(),
-											m( [] ),
-											S( 1 ),
-											B( null ),
-											_( ! 1 ) );
+										ne();
+										m( [] );
+										S( 1 );
+										B( null );
+										_( ! 1 );
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return t.a( 2 );
+										return _tLocal4.a( 2 );
 								}
 							}
-						}, t );
+						}, _tLocal3 );
 					} )
 				),
 				[ d, W, ne ]
 			),
 			ie = ( 0, ReactHooks.useCallback )(
-				function ( e, t, n ) {
-					var r =
+				function ( _eLocal0, _tLocal5, _nLocal2 ) {
+					var _rLocal2 =
 							{
 								number_of_submissions: 'number_of_submissions',
 								name: 'title',
-							}[ n.field ] || n.field,
-						a =
+							}[ _nLocal2.field ] || _nLocal2.field,
+						_aLocal2 =
 							{
 								ascend: 'ASC',
 								descend: 'DESC',
-							}[ n.order ] || n.order;
-					( S( 1 ), ne( r, a ) );
+							}[ _nLocal2.order ] || _nLocal2.order;
+					S( 1 );
+					ne( _rLocal2, _aLocal2 );
 				},
 				[ ne, S ]
 			),
 			le = ( 0, ReactHooks.useCallback )(
 				jte(
-					Pte().m( function e() {
-						var t;
-						return Pte().w( function ( e ) {
+					Pte().m( function _eLocal1() {
+						var _tLocal6;
+						return Pte().w( function ( _eLocal10 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal10.n ) {
 									case 0:
 										return (
-											( e.n = 1 ),
+											( _eLocal10.n = 1 ),
 											l()( {
 												path: '/ohmylms/v1/courses',
 											} )
 										 );
 									case 1:
-										( ( t = e.v ), Y( t ) );
+										_tLocal6 = _eLocal10.v;
+										Y( _tLocal6 );
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal10.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal1 );
 					} )
 				),
 				[]
@@ -226,23 +238,31 @@ export function createAssignmentList( readRuntime ) {
 							value: '',
 						},
 					].concat(
-						( function ( e ) {
+						( function ( _eLocal11 ) {
 							return (
-								( function ( e ) {
-									if ( Array.isArray( e ) ) {
-										return Tte( e );
+								( function ( _eLocal12 ) {
+									if ( Array.isArray( _eLocal12 ) ) {
+										return Tte( _eLocal12 );
 									}
-								} )( e ) ||
-								( function ( e ) {
+								} )( _eLocal11 ) ||
+								( function ( _eLocal13 ) {
 									if (
 										( 'undefined' !== typeof Symbol &&
-											null != e[ Symbol.iterator ] ) ||
-										null != e[ '@@iterator' ]
+											( ( _nullableValue ) =>
+												_nullableValue !== null &&
+												_nullableValue !== void 0 )(
+												_eLocal13[ Symbol.iterator ]
+											) ) ||
+										( ( _nullableValue2 ) =>
+											_nullableValue2 !== null &&
+											_nullableValue2 !== void 0 )(
+											_eLocal13[ '@@iterator' ]
+										)
 									) {
-										return Array.from( e );
+										return Array.from( _eLocal13 );
 									}
-								} )( e ) ||
-								Mte( e ) ||
+								} )( _eLocal11 ) ||
+								Mte( _eLocal11 ) ||
 								( function () {
 									throw new TypeError(
 										'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -250,10 +270,19 @@ export function createAssignmentList( readRuntime ) {
 								} )()
 							);
 						} )(
-							U.map( function ( e ) {
+							U.map( function ( _eLocal14 ) {
 								return {
-									label: Ge( null == e ? void 0 : e.name ),
-									value: null == e ? void 0 : e.id,
+									label: Ge(
+										_eLocal14 === null ||
+											_eLocal14 === void 0
+											? void 0
+											: _eLocal14.name
+									),
+									value:
+										_eLocal14 === null ||
+										_eLocal14 === void 0
+											? void 0
+											: _eLocal14.id,
 								};
 							} )
 						)
@@ -307,10 +336,13 @@ export function createAssignmentList( readRuntime ) {
 					key: 'name',
 					sorter: ! 0,
 					width: '340px',
-					render( e, t ) {
-						var n = V === t.id;
+					render( _eLocal15, _tLocal7 ) {
+						var _nLocal3 = V === _tLocal7.id;
 						return (
-							<AssignmentNameCell record={ t } isHover={ n } />
+							<AssignmentNameCell
+								record={ _tLocal7 }
+								isHover={ _nLocal3 }
+							/>
 						);
 					},
 				},
@@ -318,9 +350,13 @@ export function createAssignmentList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Course name', 'ohmylms' ),
 					dataIndex: 'courses',
 					key: 'courses',
-					render( e, t ) {
+					render( _eLocal16 ) {
 						return React.createElement( pZ, {
-							items: [ null == e ? void 0 : e.course_name ],
+							items: [
+								_eLocal16 === null || _eLocal16 === void 0
+									? void 0
+									: _eLocal16.course_name,
+							],
 							showAllOnHover: ! 0,
 							maxVisible: 3,
 						} );
@@ -331,7 +367,7 @@ export function createAssignmentList( readRuntime ) {
 					dataIndex: 'number_of_submissions',
 					key: 'number_of_submissions',
 					sorter: ! 0,
-					render( e, t ) {
+					render( _eLocal17, _tLocal9 ) {
 						return (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
@@ -339,10 +375,12 @@ export function createAssignmentList( readRuntime ) {
 							>
 								<v.Link
 									to={ '/assignment-report/'.concat(
-										null == t ? void 0 : t.id
+										_tLocal9 === null || _tLocal9 === void 0
+											? void 0
+											: _tLocal9.id
 									) }
 								>
-									{ e }{ ' ' }
+									{ _eLocal17 }{ ' ' }
 								</v.Link>
 							</Controls.BadgeWP>
 						);
@@ -352,25 +390,34 @@ export function createAssignmentList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Status', 'ohmylms' ),
 					dataIndex: 'status',
 					key: 'status',
-					render( e, t ) {
+					render( _eLocal18 ) {
 						return (
 							<Controls.BadgeWP
 								isBorderLess={ ! 0 }
 								variant={
-									'publish' === e ? 'success' : 'secondary'
+									'publish' === _eLocal18
+										? 'success'
+										: 'secondary'
 								}
 								style={ {
 									textTransform: 'capitalize',
 								} }
 							>
-								{ 'publish' === e
-									? ( 0, I18n.__ )( 'Published', 'ohmylms' )
-									: 'future' === e
-										? ( 0, I18n.__ )(
-												'Scheduled',
-												'ohmylms'
-											)
-										: ( 0, I18n.__ )( 'Draft', 'ohmylms' ) }
+								{ ( () => {
+									if ( 'publish' === _eLocal18 ) {
+										return ( 0, I18n.__ )(
+											'Published',
+											'ohmylms'
+										);
+									}
+									if ( 'future' === _eLocal18 ) {
+										return ( 0, I18n.__ )(
+											'Scheduled',
+											'ohmylms'
+										);
+									}
+									return ( 0, I18n.__ )( 'Draft', 'ohmylms' );
+								} )() }
 							</Controls.BadgeWP>
 						);
 					},
@@ -379,7 +426,7 @@ export function createAssignmentList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Action', 'ohmylms' ),
 					dataIndex: 'action',
 					key: 'action',
-					render( e, t ) {
+					render( _eLocal19, _tLocal1 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -392,7 +439,10 @@ export function createAssignmentList( readRuntime ) {
 										onClick() {
 											return K(
 												'/assignment-edit/'.concat(
-													null == t ? void 0 : t.id
+													_tLocal1 === null ||
+														_tLocal1 === void 0
+														? void 0
+														: _tLocal1.id
 												)
 											);
 										},
@@ -410,7 +460,10 @@ export function createAssignmentList( readRuntime ) {
 										key: 'delete',
 										onClick() {
 											return re(
-												null == t ? void 0 : t.id
+												_tLocal1 === null ||
+													_tLocal1 === void 0
+													? void 0
+													: _tLocal1.id
 											);
 										},
 										icon: <We />,
@@ -425,28 +478,30 @@ export function createAssignmentList( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = ! 0;
+					var _eLocal20 = ! 0;
 					return (
-						e && ne(),
+						_eLocal20 && ne(),
 						function () {
-							e = ! 1;
+							_eLocal20 = ! 1;
 						}
 					 );
 				},
 				[ E, x, P, e, F, j ]
 			),
 			( 0, ReactHooks.useEffect )( function () {
-				var e = ! 0;
+				var _eLocal21 = ! 0;
 				return (
-					e && le(),
+					_eLocal21 && le(),
 					function () {
-						e = ! 1;
+						_eLocal21 = ! 1;
 					}
 				 );
 			}, [] ),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! c && t && openNotificationWithIcon( n, t );
+					if ( ! c && t ) {
+						openNotificationWithIcon( n, t );
+					}
 				},
 				[ t ]
 			),
@@ -527,8 +582,13 @@ export function createAssignmentList( readRuntime ) {
 											),
 										} ),
 									} }
-									onRowMouseEnter={ function ( e ) {
-										return H( null == e ? void 0 : e.id );
+									onRowMouseEnter={ function ( _eLocal22 ) {
+										return H(
+											_eLocal22 === null ||
+												_eLocal22 === void 0
+												? void 0
+												: _eLocal22.id
+										);
 									} }
 									onRowMouseLeave={ function () {
 										return H( null );

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Handles hooks related to chapters in the OhMyLMS plugin.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Hooks;
 
@@ -13,7 +18,7 @@ use OhMyLMS\Data\Lesson;
 class ChapterHookHandler extends HookHandler {
 
 	public function register_hooks() {
-		// add_action('ohmylms_rest_insert_chapter', [$this, 'link_chapter_with_course'], 10, 2);
+		// add_action('ohmylms_rest_insert_chapter', [$this, 'link_chapter_with_course'], 10, 2);.
 		add_action( 'ohmylms_after_remove_chapter_from_course', array( $this, 'unlink_lesson_from_chapter' ), 10 );
 		add_action( 'ohmylms_rest_delete_chapter', array( $this, 'unlink_course_from_chapter' ), 10 );
 		add_action( 'ohmylms_rest_delete_chapter', array( $this, 'unlink_lesson_from_chapter' ), 10 );

@@ -1,8 +1,14 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class PaypalAPI
+ * Handles direct PayPal API interactions for token generation, vaulting, products, plans, subscriptions, orders, captures, refunds, and webhooks.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Gateways\Paypal;
 
-// Exit if accessed directly in a non-WordPress environment
+// Exit if accessed directly in a non-WordPress environment.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -104,7 +110,7 @@ class PaypalAPI {
 		$default_headers = array(
 			'Authorization'     => 'Bearer ' . $this->access_token,
 			'Content-Type'      => 'application/json',
-			'PayPal-Request-Id' => uniqid( 'paypal-', true ), // Unique request ID for idempotency
+			'PayPal-Request-Id' => uniqid( 'paypal-', true ), // Unique request ID for idempotency.
 		);
 		$headers         = array_merge( $default_headers, $headers );
 		$args            = array(

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Integration Cleanup Handler
  *
@@ -27,10 +27,10 @@ class IntegrationCleanup {
 	 * @since 1.0.0
 	 */
 	public static function init() {
-		// Hook into WordPress post deletion
+		// Hook into WordPress post deletion.
 		add_action( 'before_delete_post', array( __CLASS__, 'delete_content_integrations' ), 10, 2 );
 
-		// Also hook into trash action as a safeguard
+		// Also hook into trash action as a safeguard.
 		add_action( 'wp_trash_post', array( __CLASS__, 'maybe_delete_integrations_on_trash' ), 10, 1 );
 	}
 
@@ -42,10 +42,10 @@ class IntegrationCleanup {
 	 * @since 1.0.0
 	 */
 	public static function delete_content_integrations( $post_id, $post ) {
-		// Get post type
+		// Get post type.
 		$post_type = get_post_type( $post_id );
 
-		// Map post types to content types
+		// Map post types to content types.
 		$content_type_map = array(
 			'ohmylms-course'     => 'course',
 			'ohmylms-lesson'     => 'lesson',
@@ -53,14 +53,14 @@ class IntegrationCleanup {
 			'ohmylms-assignment' => 'assignment',
 		);
 
-		// Check if this is a OhMyLMS content type
+		// Check if this is a OhMyLMS content type.
 		if ( ! isset( $content_type_map[ $post_type ] ) ) {
 			return;
 		}
 
 		$content_type = $content_type_map[ $post_type ];
 
-		// Delete integrations for this content
+		// Delete integrations for this content.
 		self::delete_integrations_by_content( $content_type, $post_id );
 	}
 
@@ -72,7 +72,7 @@ class IntegrationCleanup {
 	 * @since 1.0.0
 	 */
 	public static function maybe_delete_integrations_on_trash( $post_id ) {
-		// Check if EMPTY_TRASH_DAYS is 0 (immediate permanent deletion)
+		// Check if EMPTY_TRASH_DAYS is 0 (immediate permanent deletion).
 		if ( defined( 'EMPTY_TRASH_DAYS' ) && EMPTY_TRASH_DAYS === 0 ) {
 			$post = get_post( $post_id );
 			if ( $post ) {
@@ -94,7 +94,7 @@ class IntegrationCleanup {
 
 		$table_name = WPFusionMigration::get_table_name();
 
-		// Get all integrations for this content
+		// Get all integrations for this content.
 		$integrations = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT id FROM {$table_name} 
@@ -110,7 +110,7 @@ class IntegrationCleanup {
 			return 0;
 		}
 
-		// Delete all integrations
+		// Delete all integrations.
 		$deleted = $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$table_name} 
@@ -121,7 +121,7 @@ class IntegrationCleanup {
 			)
 		);
 
-		// Log the deletion
+		// Log the deletion.
 		if ( $deleted > 0 ) {
 			do_action(
 				'ohmylms_integrations_deleted',
@@ -181,7 +181,7 @@ class IntegrationCleanup {
 	 */
 	public static function restore_integrations( $content_type, $content_id ) {
 		// Placeholder for future undo functionality
-		// Could store deleted integrations in a separate table with timestamp
+		// Could store deleted integrations in a separate table with timestamp.
 		do_action( 'ohmylms_integrations_restore_requested', $content_type, $content_id );
 	}
 }

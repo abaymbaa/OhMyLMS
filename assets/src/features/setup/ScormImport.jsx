@@ -29,10 +29,12 @@ export function createScormImport( readRuntime ) {
 		return (
 			<React.Fragment>
 				<Gte
-					level={ null == a ? void 0 : a.level }
+					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' == ( null == a ? void 0 : a.level ) ||
-						'intermediate' == ( null == a ? void 0 : a.level )
+						'experienced' ==
+							( a === null || a === void 0 ? void 0 : a.level ) ||
+						'intermediate' ==
+							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0
 					}
@@ -120,42 +122,56 @@ export function createScormImport( readRuntime ) {
 												<Controls.FormFileUploadWP
 													accept={ '.zip' }
 													onChange={ function ( e ) {
-														var t =
+														var _tLocal =
 															e.target.files[ 0 ];
-														if ( ! t ) {
+														if ( ! _tLocal ) {
 															return (
 																l( null ),
 																void s( null )
 															 );
 														}
-														[
-															'application/zip',
-															'application/x-zip-compressed',
-															'multipart/x-zip',
-														].includes( t.type ) ||
-														t.name
-															.toLowerCase()
-															.endsWith( '.zip' )
-															? ( l( t ),
-																s( null ) )
-															: ( l( null ),
+														if (
+															[
+																'application/zip',
+																'application/x-zip-compressed',
+																'multipart/x-zip',
+															].includes(
+																_tLocal.type
+															) ||
+															_tLocal.name
+																.toLowerCase()
+																.endsWith(
+																	'.zip'
+																)
+														) {
+															{
+																l( _tLocal );
+																s( null );
+															}
+														} else {
+															{
+																l( null );
 																s(
 																	( 0,
 																	I18n.__ )(
 																		'Invalid file format. Please upload a valid ZIP file containing a SCORM package.',
 																		'ohmylms'
 																	)
-																) );
+																);
+															}
+														}
 													} }
 													render={ function ( e ) {
-														var t =
+														var _tLocal2 =
 															e.openFileDialog;
 														return (
 															<Controls.ButtonWP
 																variant={
 																	'white'
 																}
-																onClick={ t }
+																onClick={
+																	_tLocal2
+																}
 																style={ {
 																	border: '1px solid #E0E0E0',
 																	boxShadow:

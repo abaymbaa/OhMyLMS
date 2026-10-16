@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * Class CLMS_Order_Loader
+ * Handles loading and instantiation of order-related classes.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Commerce;
 

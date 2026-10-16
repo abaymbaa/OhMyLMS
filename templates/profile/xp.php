@@ -12,7 +12,7 @@ if ( ! \OhMyLMS\Engagement\Xp::enabled() ) {
 	return;
 }
 $xp_data = \OhMyLMS\Engagement\Xp::summary( $xp_user, 7 );
-$xp_max = 1;
+$xp_max  = 1;
 foreach ( $xp_data['days'] as $xp_day ) {
 	$xp_max = max( $xp_max, (int) $xp_day['xp'] );
 }

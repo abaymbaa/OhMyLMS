@@ -37,115 +37,137 @@ export function createDeleteLearningItem( readRuntime ) {
 						)
 					: alertDescription,
 			m = ( function ( e, t ) {
-				if ( null == e ) {
+				if ( e === null || e === void 0 ) {
 					return {};
 				}
-				var n,
+				var _nLocal,
 					r,
-					a = ( function ( e, t ) {
-						if ( null == e ) {
+					_aLocal = ( function ( _eLocal, _tLocal ) {
+						if ( _eLocal === null || _eLocal === void 0 ) {
 							return {};
 						}
-						var n = {};
-						for ( var r in e ) {
-							if ( {}.hasOwnProperty.call( e, r ) ) {
-								if ( -1 !== t.indexOf( r ) ) {
+						var _nLocal2 = {};
+						for ( var _rLocal in _eLocal ) {
+							if ( {}.hasOwnProperty.call( _eLocal, _rLocal ) ) {
+								if ( -1 !== _tLocal.indexOf( _rLocal ) ) {
 									continue;
 								}
-								n[ r ] = e[ r ];
+								_nLocal2[ _rLocal ] = _eLocal[ _rLocal ];
 							}
 						}
-						return n;
+						return _nLocal2;
 					} )( e, t );
 				if ( Object.getOwnPropertySymbols ) {
 					var o = Object.getOwnPropertySymbols( e );
 					for ( r = 0; r < o.length; r++ ) {
-						( ( n = o[ r ] ),
-							-1 === t.indexOf( n ) &&
-								{}.propertyIsEnumerable.call( e, n ) &&
-								( a[ n ] = e[ n ] ) );
+						_nLocal = o[ r ];
+						if (
+							-1 === t.indexOf( _nLocal ) &&
+							{}.propertyIsEnumerable.call( e, _nLocal )
+						) {
+							_aLocal[ _nLocal ] = e[ _nLocal ];
+						}
 					}
 				}
-				return a;
+				return _aLocal;
 			} )( props, Bn ),
 			p = ( function ( e, t ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal2 ) {
+						if ( Array.isArray( _eLocal2 ) ) {
+							return _eLocal2;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
+					( function ( _eLocal3, _tLocal2 ) {
+						var _nLocal3 =
+							_eLocal3 === null || _eLocal3 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+						if ( _nLocal3 !== null && _nLocal3 !== void 0 ) {
 							var r,
-								a,
+								_aLocal2,
 								o,
 								i,
 								l = [],
 								c = ! 0,
-								u = ! 1;
+								_uLocal = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( _nLocal3 =
+										_nLocal3.call( _eLocal3 ) ).next ),
+									0 === _tLocal2 )
 								) {
-									if ( Object( n ) !== n ) {
+									if ( Object( _nLocal3 ) !== _nLocal3 ) {
 										return;
 									}
 									c = ! 1;
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( r = o.call( _nLocal3 ) )
+											.done ) &&
+										( l.push( r.value ),
+										l.length !== _tLocal2 );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal4 ) {
+								_uLocal = ! 0;
+								_aLocal2 = _eLocal4;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											_nLocal3.return
+										) &&
+										( ( i = _nLocal3.return() ),
 										Object( i ) !== i )
 									) {
 										return;
 									}
 								} finally {
-									if ( u ) {
-										throw a;
+									if ( _uLocal ) {
+										throw _aLocal2;
 									}
 								}
 							}
 							return l;
 						}
 					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return Vn( e, t );
+					( function ( _eLocal5, _tLocal3 ) {
+						if ( _eLocal5 ) {
+							if ( 'string' === typeof _eLocal5 ) {
+								return Vn( _eLocal5, _tLocal3 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var _nLocal4 = {}.toString
+								.call( _eLocal5 )
+								.slice( 8, -1 );
 							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? Vn( e, t )
-										: void 0
+								'Object' === _nLocal4 &&
+									_eLocal5.constructor &&
+									( _nLocal4 = _eLocal5.constructor.name ),
+								( () => {
+									if (
+										'Map' === _nLocal4 ||
+										'Set' === _nLocal4
+									) {
+										return Array.from( _eLocal5 );
+									}
+									if (
+										'Arguments' === _nLocal4 ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											_nLocal4
+										)
+									) {
+										return Vn( _eLocal5, _tLocal3 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
 					} )( e, t ) ||
@@ -160,19 +182,28 @@ export function createDeleteLearningItem( readRuntime ) {
 			v = p[ 1 ],
 			y = ( 0, ReactHooks.useCallback )(
 				function () {
-					( v( ! 0 ), onClick && onClick() );
+					v( ! 0 );
+					if ( onClick ) {
+						onClick();
+					}
 				},
 				[ onClick ]
 			),
 			_ = ( 0, ReactHooks.useCallback )(
 				function () {
-					( v( ! 1 ), onDelete && onDelete() );
+					v( ! 1 );
+					if ( onDelete ) {
+						onDelete();
+					}
 				},
 				[ onDelete ]
 			),
 			w = ( 0, ReactHooks.useCallback )(
 				function () {
-					( v( ! 1 ), onCancel && onCancel() );
+					v( ! 1 );
+					if ( onCancel ) {
+						onCancel();
+					}
 				},
 				[ onCancel ]
 			);

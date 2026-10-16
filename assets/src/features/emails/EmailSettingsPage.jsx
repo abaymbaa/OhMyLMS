@@ -17,21 +17,21 @@ export function createEmailSettingsPage( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		HG( 'ohmylms', 'emails' );
-		var e = ( function ( e, t ) {
+		var e = ( function ( _eLocal, t ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal2 ) {
+						if ( Array.isArray( _eLocal2 ) ) {
+							return _eLocal2;
 						}
-					} )( e ) ||
-					( function ( e, t ) {
+					} )( _eLocal ) ||
+					( function ( _eLocal3, _tLocal ) {
 						var n =
-							null == e
+							_eLocal3 === null || _eLocal3 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
+										_eLocal3[ Symbol.iterator ] ) ||
+									_eLocal3[ '@@iterator' ];
+						if ( n !== null && n !== void 0 ) {
 							var r,
 								a,
 								o,
@@ -41,8 +41,8 @@ export function createEmailSettingsPage( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( n = n.call( _eLocal3 ) ).next ),
+									0 === _tLocal )
 								) {
 									if ( Object( n ) !== n ) {
 										return;
@@ -52,17 +52,23 @@ export function createEmailSettingsPage( readRuntime ) {
 									for (
 										;
 										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										( l.push( r.value ),
+										l.length !== _tLocal );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal4 ) {
+								u = ! 0;
+								a = _eLocal4;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											n.return
+										) &&
 										( ( i = n.return() ),
 										Object( i ) !== i )
 									) {
@@ -76,28 +82,34 @@ export function createEmailSettingsPage( readRuntime ) {
 							}
 							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return x4( e, t );
+					} )( _eLocal, t ) ||
+					( function ( _eLocal5, _tLocal2 ) {
+						if ( _eLocal5 ) {
+							if ( 'string' === typeof _eLocal5 ) {
+								return x4( _eLocal5, _tLocal2 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var n = {}.toString.call( _eLocal5 ).slice( 8, -1 );
 							return (
 								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? x4( e, t )
-										: void 0
+									_eLocal5.constructor &&
+									( n = _eLocal5.constructor.name ),
+								( () => {
+									if ( 'Map' === n || 'Set' === n ) {
+										return Array.from( _eLocal5 );
+									}
+									if (
+										'Arguments' === n ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											n
+										)
+									) {
+										return x4( _eLocal5, _tLocal2 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
-					} )( e, t ) ||
+					} )( _eLocal, t ) ||
 					( function () {
 						throw new TypeError(
 							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'

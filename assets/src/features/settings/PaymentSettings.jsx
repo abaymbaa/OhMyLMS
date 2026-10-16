@@ -24,23 +24,23 @@ export function createPaymentSettings( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).isSettingsLoading();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).isSettingsLoading();
 			}, [] ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getPaymentSettings();
+			n = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getPaymentSettings();
 			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getCurrencySettings();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3( StoreModule.default ).getCurrencySettings();
 			}, [] ),
-			a = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getTaxSettings();
+			a = ( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+				return _eLocal4( StoreModule.default ).getTaxSettings();
 			}, [] ),
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal5 ) {
+				return _eLocal5( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			i = ( 0, WordPressData.useSelect )( function ( _eLocal6 ) {
+				return _eLocal6( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			c = ( 0, Notifications.A )(),
 			u = c.openNotificationWithIcon,
@@ -54,52 +54,65 @@ export function createPaymentSettings( readRuntime ) {
 			w = Z1( ( 0, ReactHooks.useState )( 'payments' ), 2 ),
 			E = w[ 0 ],
 			S = w[ 1 ];
-		function R( e ) {
-			var t = {};
-			for ( var n in e ) {
-				e.hasOwnProperty( n ) && ( t[ n ] = e[ n ] );
-			}
-			return t;
-		}
-		function x( e ) {
-			var t = {};
-			function n( e ) {
-				for ( ; 'object' === Q1( e ) && null !== e && 'value' in e; ) {
-					e = e.value;
+		function R( _eLocal7 ) {
+			var _tLocal = {};
+			for ( var _nLocal in _eLocal7 ) {
+				if ( _eLocal7.hasOwnProperty( _nLocal ) ) {
+					_tLocal[ _nLocal ] = _eLocal7[ _nLocal ];
 				}
-				return e;
 			}
-			for ( var r in e ) {
-				e.hasOwnProperty( r ) && ( t[ r ] = n( e[ r ].value ) );
+			return _tLocal;
+		}
+		function x( _eLocal8 ) {
+			var _tLocal2 = {};
+			function _nLocal2( _eLocal9 ) {
+				for (
+					;
+					'object' === Q1( _eLocal9 ) &&
+					null !== _eLocal9 &&
+					'value' in _eLocal9;
+				) {
+					_eLocal9 = _eLocal9.value;
+				}
+				return _eLocal9;
 			}
-			return t;
+			for ( var _rLocal in _eLocal8 ) {
+				if ( _eLocal8.hasOwnProperty( _rLocal ) ) {
+					_tLocal2[ _rLocal ] = _nLocal2( _eLocal8[ _rLocal ].value );
+				}
+			}
+			return _tLocal2;
 		}
 		var C = ( function () {
-				var e = Y1(
-					G1().m( function e( t ) {
-						var r, a, o;
+				var _eLocal0 = Y1(
+					G1().m( function _eLocal1( _tLocal3 ) {
+						var _rLocal2, _aLocal, _oLocal;
 						return G1().w(
-							function ( e ) {
+							function ( _eLocal10 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal10.p = _eLocal10.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal10.p = 0 ),
 												_( ! 0 ),
-												( r = R( n ) ),
-												null != t &&
-													t.key &&
-													null != t &&
-													t.value &&
-													( r[
-														null == t
+												( _rLocal2 = R( n ) ),
+												_tLocal3 !== null &&
+													_tLocal3 !== void 0 &&
+													_tLocal3.key &&
+													_tLocal3 !== null &&
+													_tLocal3 !== void 0 &&
+													_tLocal3.value &&
+													( _rLocal2[
+														_tLocal3 === null ||
+														_tLocal3 === void 0
 															? void 0
-															: t.key
+															: _tLocal3.key
 													] =
-														null == t
+														_tLocal3 === null ||
+														_tLocal3 === void 0
 															? void 0
-															: t.value ),
-												( e.n = 1 ),
+															: _tLocal3.value ),
+												( _eLocal10.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/settings/payment-gateway',
 													method: 'POST',
@@ -107,62 +120,69 @@ export function createPaymentSettings( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( r ),
+													body: JSON.stringify(
+														_rLocal2
+													),
 												} )
 											 );
 										case 1:
 											return (
-												null != ( a = e.v ) &&
-													a.success &&
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _aLocal = _eLocal10.v )
+												) &&
+													_aLocal.success &&
 													u(
 														'success',
 														'Payment Settings Saved Successfully.'
 													),
-												e.a( 2, a )
+												_eLocal10.a( 2, _aLocal )
 											 );
 										case 2:
-											( ( e.p = 2 ),
-												( o = e.v ),
-												console.error( o ),
-												u(
-													'error',
-													'Failed to update settings. Please try again.'
-												) );
+											_eLocal10.p = 2;
+											_oLocal = _eLocal10.v;
+											console.error( _oLocal );
+											u(
+												'error',
+												'Failed to update settings. Please try again.'
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal10.p = 3 ),
 												_( ! 1 ),
-												e.f( 3 )
+												_eLocal10.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal10.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal1,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function ( t ) {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal0.apply( this, _args );
 				};
 			} )(),
 			P = ( 0, ReactHooks.useCallback )(
 				Y1(
-					G1().m( function t() {
-						var n, a, o;
+					G1().m( function _tLocal5() {
+						var _nLocal3, _aLocal2, _oLocal2;
 						return G1().w(
-							function ( t ) {
+							function ( _tLocal6 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal6.p = _tLocal6.n ) ) {
 										case 0:
 											return (
-												( t.p = 0 ),
+												( _tLocal6.p = 0 ),
 												_( ! 0 ),
-												( n = x( r ) ),
-												( t.n = 1 ),
+												( _nLocal3 = x( r ) ),
+												( _tLocal6.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/settings/currency',
 													method: 'POST',
@@ -170,42 +190,55 @@ export function createPaymentSettings( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( n ),
+													body: JSON.stringify(
+														_nLocal3
+													),
 												} )
 											 );
 										case 1:
-											( null != ( a = t.v ) &&
-												a.success &&
-												( e.setGlobalDataViaKey(
-													'currency_settings',
-													n
-												),
-												u(
-													'success',
-													'Currency settings updated successfully.'
-												) ),
-												( t.n = 3 ) );
+											if (
+												( ( _nullableValue2 ) =>
+													_nullableValue2 !== null &&
+													_nullableValue2 !==
+														void 0 )(
+													( _aLocal2 = _tLocal6.v )
+												) &&
+												_aLocal2.success
+											) {
+												{
+													e.setGlobalDataViaKey(
+														'currency_settings',
+														_nLocal3
+													);
+													u(
+														'success',
+														'Currency settings updated successfully.'
+													);
+												}
+											}
+											_tLocal6.n = 3;
 											break;
 										case 2:
-											( ( t.p = 2 ),
-												( o = t.v ),
-												console.error( o ),
-												u(
-													'error',
-													'Failed to update settings. Please try again.'
-												) );
+											_tLocal6.p = 2;
+											_oLocal2 = _tLocal6.v;
+											console.error( _oLocal2 );
+											u(
+												'error',
+												'Failed to update settings. Please try again.'
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( t.p = 3 ),
+												( _tLocal6.p = 3 ),
 												_( ! 1 ),
-												t.f( 3 )
+												_tLocal6.f( 3 )
 											 );
 										case 4:
-											return t.a( 2 );
+											return _tLocal6.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal5,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
@@ -215,111 +248,142 @@ export function createPaymentSettings( readRuntime ) {
 			),
 			O = ( 0, ReactHooks.useCallback )(
 				Y1(
-					G1().m( function t() {
-						var n, r, o, i, c, s, d, m, p;
+					G1().m( function _tLocal7() {
+						var _nLocal4,
+							_rLocal3,
+							_oLocal3,
+							_iLocal,
+							_cLocal,
+							_sLocal,
+							_dLocal,
+							_mLocal,
+							_pLocal;
 						return G1().w(
-							function ( t ) {
+							function ( _tLocal8 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal8.p = _tLocal8.n ) ) {
 										case 0:
 											return (
-												( t.p = 0 ),
+												( _tLocal8.p = 0 ),
 												_( ! 0 ),
-												( o = x( a ) ),
-												( i =
-													( null == a ||
+												( _oLocal3 = x( a ) ),
+												( _iLocal =
+													( a === null ||
+													a === void 0 ||
 													null ===
-														( n =
+														( _nLocal4 =
 															a.ohmylms_existing_tax_rates ) ||
-													void 0 === n
+													void 0 === _nLocal4
 														? void 0
-														: n.value ) || [] ),
-												( c =
-													( null == a ||
+														: _nLocal4.value ) ||
+													[] ),
+												( _cLocal =
+													( a === null ||
+													a === void 0 ||
 													null ===
-														( r =
+														( _rLocal3 =
 															a.ohmylms_new_tax_rates ) ||
-													void 0 === r
+													void 0 === _rLocal3
 														? void 0
-														: r.value ) || [] ),
-												( s = [] ),
-												i.forEach( function ( e ) {
-													e.country &&
-														void 0 !== e.rate &&
-														'' !== e.rate &&
-														s.push( {
-															id:
-																e.id ||
-																Date.now() +
-																	Math.random(),
-															country: e.country,
-															state:
-																e.state || '',
-															countryWide:
-																e.countryWide ||
-																! 1,
-															rate:
-																parseFloat(
-																	e.rate
-																) || 0,
-														} );
-												} ),
-												c.forEach( function ( e ) {
-													e.country &&
-														e.rate &&
-														parseFloat( e.rate ) >=
-															0 &&
-														parseFloat( e.rate ) <=
-															100 &&
-														s.push( {
-															id:
-																e.id ||
-																Date.now() +
-																	Math.random(),
-															country: e.country,
-															state:
-																e.state || '',
-															countryWide:
-																e.countryWide ||
-																! 1,
-															rate: parseFloat(
-																e.rate
-															),
-														} );
-												} ),
-												( d = V1(
+														: _rLocal3.value ) ||
+													[] ),
+												( _sLocal = [] ),
+												_iLocal.forEach(
+													function ( _eLocal11 ) {
+														if (
+															_eLocal11.country &&
+															void 0 !==
+																_eLocal11.rate &&
+															'' !==
+																_eLocal11.rate
+														) {
+															_sLocal.push( {
+																id:
+																	_eLocal11.id ||
+																	Date.now() +
+																		Math.random(),
+																country:
+																	_eLocal11.country,
+																state:
+																	_eLocal11.state ||
+																	'',
+																countryWide:
+																	_eLocal11.countryWide ||
+																	! 1,
+																rate:
+																	parseFloat(
+																		_eLocal11.rate
+																	) || 0,
+															} );
+														}
+													}
+												),
+												_cLocal.forEach(
+													function ( _eLocal12 ) {
+														if (
+															_eLocal12.country &&
+															_eLocal12.rate &&
+															parseFloat(
+																_eLocal12.rate
+															) >= 0 &&
+															parseFloat(
+																_eLocal12.rate
+															) <= 100
+														) {
+															_sLocal.push( {
+																id:
+																	_eLocal12.id ||
+																	Date.now() +
+																		Math.random(),
+																country:
+																	_eLocal12.country,
+																state:
+																	_eLocal12.state ||
+																	'',
+																countryWide:
+																	_eLocal12.countryWide ||
+																	! 1,
+																rate: parseFloat(
+																	_eLocal12.rate
+																),
+															} );
+														}
+													}
+												),
+												( _dLocal = V1(
 													V1(
 														{
 															ohmylms_tax_enabled:
-																o.ohmylms_tax_enabled ||
+																_oLocal3.ohmylms_tax_enabled ||
 																'no',
 															ohmylms_tax_label:
-																o.ohmylms_tax_label ||
+																_oLocal3.ohmylms_tax_label ||
 																'Tax',
 															ohmylms_prices_include_tax:
-																o.ohmylms_prices_include_tax ||
+																_oLocal3.ohmylms_prices_include_tax ||
 																'no',
 															ohmylms_eu_vat_enabled:
-																o.ohmylms_eu_vat_enabled ||
+																_oLocal3.ohmylms_eu_vat_enabled ||
 																'no',
 															ohmylms_disable_vat_validation:
-																o.ohmylms_disable_vat_validation ||
+																_oLocal3.ohmylms_disable_vat_validation ||
 																'no',
 															ohmylms_vat_number_label:
-																o.ohmylms_vat_number_label ||
+																_oLocal3.ohmylms_vat_number_label ||
 																'VAT Number',
 															ohmylms_fallback_tax_rate:
-																o.ohmylms_fallback_tax_rate ||
+																_oLocal3.ohmylms_fallback_tax_rate ||
 																'0.00',
 														},
-														o
+														_oLocal3
 													),
 													{},
 													{
-														ohmylms_tax_rates: s,
+														ohmylms_tax_rates:
+															_sLocal,
 													}
 												) ),
-												( t.n = 1 ),
+												( _tLocal8.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/settings/tax',
 													method: 'POST',
@@ -327,13 +391,20 @@ export function createPaymentSettings( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( d ),
+													body: JSON.stringify(
+														_dLocal
+													),
 												} )
 											 );
 										case 1:
 											return (
-												null != ( m = t.v ) &&
-													m.success &&
+												( ( _nullableValue3 ) =>
+													_nullableValue3 !== null &&
+													_nullableValue3 !==
+														void 0 )(
+													( _mLocal = _tLocal8.v )
+												) &&
+													_mLocal.success &&
 													( u(
 														'success',
 														'Tax settings updated successfully.'
@@ -343,28 +414,29 @@ export function createPaymentSettings( readRuntime ) {
 															value: [],
 														},
 													} ) ),
-												t.a( 2, m )
+												_tLocal8.a( 2, _mLocal )
 											 );
 										case 2:
-											( ( t.p = 2 ),
-												( p = t.v ),
-												console.error( p ),
-												u(
-													'error',
-													'Failed to update settings. Please try again.'
-												) );
+											_tLocal8.p = 2;
+											_pLocal = _tLocal8.v;
+											console.error( _pLocal );
+											u(
+												'error',
+												'Failed to update settings. Please try again.'
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( t.p = 3 ),
+												( _tLocal8.p = 3 ),
 												_( ! 1 ),
-												t.f( 3 )
+												_tLocal8.f( 3 )
 											 );
 										case 4:
-											return t.a( 2 );
+											return _tLocal8.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal7,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
@@ -410,7 +482,9 @@ export function createPaymentSettings( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! t && o && u( i, o );
+					if ( ! t && o ) {
+						u( i, o );
+					}
 				},
 				[ o ]
 			),
@@ -431,13 +505,13 @@ export function createPaymentSettings( readRuntime ) {
 							<ep.A
 								items={ k }
 								className={ 'ohmylms-monetization-tabs' }
-								onChange={ function ( e ) {
-									( S( e ),
-										d(
-											'/settings/'
-												.concat( p, '/' )
-												.concat( e )
-										) );
+								onChange={ function ( _eLocal13 ) {
+									S( _eLocal13 );
+									d(
+										'/settings/'
+											.concat( p, '/' )
+											.concat( _eLocal13 )
+									);
 								} }
 								activekey={ E }
 							/>
@@ -447,13 +521,15 @@ export function createPaymentSettings( readRuntime ) {
 							>
 								<MemoSettingsActionBar
 									activeTab={ E }
-									handleSave={
-										'currency' === E
-											? P
-											: 'tax' === E
-												? O
-												: C
-									}
+									handleSave={ ( () => {
+										if ( 'currency' === E ) {
+											return P;
+										}
+										if ( 'tax' === E ) {
+											return O;
+										}
+										return C;
+									} )() }
 									isSaving={ h }
 								/>
 							</Controls.SpacerWP>

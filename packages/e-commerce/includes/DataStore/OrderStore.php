@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\DataStore;
 
@@ -22,7 +22,7 @@ class OrderStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function create( &$order ) {
-		// Hook before order creation
+		// Hook before order creation.
 		do_action( 'ohmylms_before_order_create', $order );
 
 		if ( '' === $order->get_order_key() ) {
@@ -55,7 +55,7 @@ class OrderStore extends DataStore {
 			$this->update_post_meta( $order );
 		}
 
-		// Hook after order creation
+		// Hook after order creation.
 		do_action( 'ohmylms_after_order_create', $order->get_id(), $order );
 		do_action( 'ohmylms_new_order', $order->get_id(), $order );
 	}
@@ -70,7 +70,7 @@ class OrderStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	public function read( &$order ) {
-		// Hook before order read
+		// Hook before order read.
 		do_action( 'ohmylms_before_order_read', $order );
 
 		$post_object = get_post( $order->get_id() );
@@ -88,7 +88,7 @@ class OrderStore extends DataStore {
 		);
 		$this->read_order_data( $order, $post_object );
 
-		// Hook after order read
+		// Hook after order read.
 		do_action( 'ohmylms_after_order_read', $order );
 	}
 
@@ -102,7 +102,7 @@ class OrderStore extends DataStore {
 	public function update( &$order ) {
 		$old_status = $order->get_status( 'edit' );
 
-		// Hook before order update
+		// Hook before order update.
 		do_action( 'ohmylms_before_order_update', $order, $old_status );
 
 		if ( null === $order->get_date_created( 'edit' ) ) {
@@ -123,7 +123,7 @@ class OrderStore extends DataStore {
 
 		$this->update_post_meta( $order );
 
-		// Hook after order update
+		// Hook after order update.
 		do_action( 'ohmylms_after_order_update', $order, $old_status );
 	}
 
@@ -133,13 +133,13 @@ class OrderStore extends DataStore {
 	 * @inheritDoc
 	 */
 	public function delete( &$data, $args = array() ) {
-		// Hook before order deletion
+		// Hook before order deletion.
 		do_action( 'ohmylms_before_order_delete', $data, $args );
 
 		// Perform the actual deletion logic here
-		// This is a placeholder for the actual deletion implementation
+		// This is a placeholder for the actual deletion implementation.
 
-		// Hook after order deletion
+		// Hook after order deletion.
 		do_action( 'ohmylms_after_order_delete', $data, $args );
 	}
 
@@ -186,7 +186,7 @@ class OrderStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$order ) {
-		// Hook before post meta update
+		// Hook before post meta update.
 		do_action( 'ohmylms_before_order_meta_update', $order );
 
 		$updated_props     = array();
@@ -233,7 +233,7 @@ class OrderStore extends DataStore {
 			}
 		}
 
-		// Hook after post meta update
+		// Hook after post meta update.
 		do_action( 'ohmylms_after_order_meta_update', $order, $updated_props );
 	}
 
@@ -299,7 +299,7 @@ class OrderStore extends DataStore {
 	 * Read items of a specific type from the order.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read items from.
-	 * @param string                        $type The type of items to read.
+	 * @param string                       $type The type of items to read.
 	 * @return array The items of the specified type.
 	 *
 	 * @since 1.0.0
@@ -503,8 +503,8 @@ class OrderStore extends DataStore {
 	 * This method provides a dedicated way to update order status with proper hooks.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order|int $order The order object or ID.
-	 * @param string                            $new_status The new status to set.
-	 * @param string                            $note Optional note for the status change.
+	 * @param string                           $new_status The new status to set.
+	 * @param string                           $note Optional note for the status change.
 	 * @since 1.0.0
 	 */
 	public function update_order_status( $order, $new_status, $note = '' ) {
@@ -518,17 +518,17 @@ class OrderStore extends DataStore {
 
 		$old_status = $order->get_status();
 
-		// Hook before status change
+		// Hook before status change.
 		do_action( 'ohmylms_before_order_status_change', $order->get_id(), $old_status, $new_status, $order );
 
-		// Update the status
+		// Update the status.
 		$order->set_status( $new_status );
 
-		// Hook after status change
+		// Hook after status change.
 		do_action( 'ohmylms_after_order_status_change', $order->get_id(), $old_status, $new_status, $order );
 		do_action( 'ohmylms_order_status_changed', $order->get_id(), $old_status, $new_status, $order );
 
-		// Save the order
+		// Save the order.
 		$order->save();
 
 		return true;

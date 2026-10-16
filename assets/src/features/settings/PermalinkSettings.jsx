@@ -34,21 +34,23 @@ export function createPermalinkSettings( readRuntime ) {
 			h = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getPermalinkSettings();
 			}, [] ),
-			_ = function ( e, t ) {
-				var n;
+			_ = function ( e, _tLocal ) {
+				var _nLocal;
 				v.updatePermalinkSettings( {
 					ohmylms_permalink: {
 						value: aJ(
 							aJ(
 								{},
-								null == h ||
-									null === ( n = h.ohmylms_permalink ) ||
-									void 0 === n
+								h === null ||
+									h === void 0 ||
+									null ===
+										( _nLocal = h.ohmylms_permalink ) ||
+									void 0 === _nLocal
 									? void 0
-									: n.value
+									: _nLocal.value
 							),
 							{},
-							oJ( {}, t, e )
+							oJ( {}, _tLocal, e )
 						),
 					},
 				} );
@@ -64,49 +66,71 @@ export function createPermalinkSettings( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )( function () {
 				var e = ( function () {
-					var e,
-						t =
-							( ( e = eJ().m( function e() {
-								var t;
-								return eJ().w( function ( e ) {
+					var _eLocal,
+						_tLocal2 =
+							( ( _eLocal = eJ().m( function _eLocal2() {
+								var _tLocal3;
+								return eJ().w( function ( _eLocal3 ) {
 									for (;;) {
-										switch ( e.n ) {
+										switch ( _eLocal3.n ) {
 											case 0:
 												return (
 													v.setLoadingSetting( ! 0 ),
-													( e.n = 1 ),
+													( _eLocal3.n = 1 ),
 													l()( {
 														path: 'ohmylms/v1/settings/permalink',
 													} )
 												 );
 											case 1:
-												( ( t = e.v ),
-													v.setPermalinkSettings( t ),
-													v.setLoadingSetting(
-														! 1
-													) );
+												_tLocal3 = _eLocal3.v;
+												v.setPermalinkSettings(
+													_tLocal3
+												);
+												v.setLoadingSetting( ! 1 ); // Falls through to the shared async state cleanup.
 											case 2:
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 										}
 									}
-								}, e );
+								}, _eLocal2 );
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										nJ( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal4 = this,
+									_nLocal2 = _args;
+								return new Promise( function (
+									_rLocal,
+									_aLocal
+								) {
+									var _oLocal = _eLocal.apply(
+										_tLocal4,
+										_nLocal2
+									);
+									function _iLocal( _eLocal4 ) {
+										nJ(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'next',
+											_eLocal4
+										);
 									}
-									function l( e ) {
-										nJ( o, r, a, i, l, 'throw', e );
+									function _lLocal( _eLocal5 ) {
+										nJ(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'throw',
+											_eLocal5
+										);
 									}
-									i( void 0 );
+									_iLocal( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal2.apply( this, _args2 );
 					};
 				} )();
 				e();
@@ -136,7 +160,8 @@ export function createPermalinkSettings( readRuntime ) {
 											'ohmylms'
 										) }
 										description={ 'https://yoursite.com/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
-											null == h ||
+											h === null ||
+												h === void 0 ||
 												null ===
 													( t =
 														h.ohmylms_permalink ) ||
@@ -149,7 +174,8 @@ export function createPermalinkSettings( readRuntime ) {
 										) }
 										inputType={ 'text' }
 										value={
-											( null == h ||
+											( h === null ||
+											h === void 0 ||
 											null ===
 												( n = h.ohmylms_permalink ) ||
 											void 0 === n ||
@@ -179,7 +205,8 @@ export function createPermalinkSettings( readRuntime ) {
 											'ohmylms'
 										) }
 										description={ 'https://yoursite.com/courses/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
-											null == h ||
+											h === null ||
+												h === void 0 ||
 												null ===
 													( r =
 														h.ohmylms_permalink ) ||
@@ -192,7 +219,8 @@ export function createPermalinkSettings( readRuntime ) {
 										) }
 										inputType={ 'text' }
 										value={
-											( null == h ||
+											( h === null ||
+											h === void 0 ||
 											null ===
 												( a = h.ohmylms_permalink ) ||
 											void 0 === a ||
@@ -222,7 +250,8 @@ export function createPermalinkSettings( readRuntime ) {
 											'ohmylms'
 										) }
 										description={ 'https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
-											null == h ||
+											h === null ||
+												h === void 0 ||
 												null ===
 													( o =
 														h.ohmylms_permalink ) ||
@@ -235,7 +264,8 @@ export function createPermalinkSettings( readRuntime ) {
 										) }
 										inputType={ 'text' }
 										value={
-											( null == h ||
+											( h === null ||
+											h === void 0 ||
 											null ===
 												( i = h.ohmylms_permalink ) ||
 											void 0 === i ||
@@ -265,7 +295,8 @@ export function createPermalinkSettings( readRuntime ) {
 											'ohmylms'
 										) }
 										description={ ' https://yoursite.com/courses/sample-course/<code style="background: #27BDFE4D; font-style: italic;">{'.concat(
-											null == h ||
+											h === null ||
+												h === void 0 ||
 												null ===
 													( c =
 														h.ohmylms_permalink ) ||
@@ -278,7 +309,8 @@ export function createPermalinkSettings( readRuntime ) {
 										) }
 										inputType={ 'text' }
 										value={
-											( null == h ||
+											( h === null ||
+											h === void 0 ||
 											null ===
 												( u = h.ohmylms_permalink ) ||
 											void 0 === u ||

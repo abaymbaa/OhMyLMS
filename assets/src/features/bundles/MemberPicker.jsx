@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, SelectControl, TextControl } from '@wordpress/components';
 import * as api from './api.mjs';
 import { memberKey, MAX_MEMBERS } from './model.mjs';
-
 const STATUS = {
 	draft: () => __( 'Draft', 'ohmylms' ),
 	pending: () => __( 'Pending', 'ohmylms' ),
@@ -26,7 +25,6 @@ export function MemberPicker( { members, onAdd, disabled } ) {
 	const [ error, setError ] = useState( '' );
 	const keys = new Set( members.map( memberKey ) );
 	const full = members.length >= MAX_MEMBERS;
-
 	useEffect( () => {
 		let current = true;
 		const timer = setTimeout(
@@ -54,7 +52,6 @@ export function MemberPicker( { members, onAdd, disabled } ) {
 			clearTimeout( timer );
 		};
 	}, [ type, search ] );
-
 	const candidates = results.filter(
 		( row ) => ! keys.has( `${ type }:${ row.id }` )
 	);
@@ -64,7 +61,10 @@ export function MemberPicker( { members, onAdd, disabled } ) {
 				label={ __( 'Add from', 'ohmylms' ) }
 				value={ type }
 				options={ [
-					{ value: 'course', label: __( 'Courses', 'ohmylms' ) },
+					{
+						value: 'course',
+						label: __( 'Courses', 'ohmylms' ),
+					},
 					{
 						value: 'curriculum',
 						label: __(
@@ -93,7 +93,7 @@ export function MemberPicker( { members, onAdd, disabled } ) {
 			{ full && (
 				<p role="note">
 					{ sprintf(
-						__(
+						/* translators: %d: number of bundle members. */ __(
 							'A bundle can have at most %d members.',
 							'ohmylms'
 						),
@@ -132,7 +132,10 @@ export function MemberPicker( { members, onAdd, disabled } ) {
 							size="small"
 							disabled={ disabled || full }
 							aria-label={ sprintf(
-								__( 'Add %s to the bundle', 'ohmylms' ),
+								/* translators: %s: course bundle or member title. */ __(
+									'Add %s to the bundle',
+									'ohmylms'
+								),
 								row.title
 							) }
 							onClick={ () =>

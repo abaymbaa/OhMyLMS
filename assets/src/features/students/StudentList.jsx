@@ -3,6 +3,7 @@ import {
 	Fragment,
 	useEffect,
 	useState,
+	useId,
 } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PeopleTabs } from '../schools/PeopleTabs';
@@ -11,7 +12,6 @@ import { ListTableFrame } from './ListTableFrame';
 import { PeopleDirectory } from '../schools/PeopleDirectory';
 import { AddModal } from '../schools/AddModal';
 import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
-
 export function createStudentList( readRuntime ) {
 	function StudentTable() {
 		const {
@@ -181,7 +181,10 @@ export function createStudentList( readRuntime ) {
 			}
 		}
 		function sort( field ) {
-			const fields = { student_name: 'name', student_email: 'email' };
+			const fields = {
+				student_name: 'name',
+				student_email: 'email',
+			};
 			const orderby = fields[ field ] || field;
 			setSelected( [] );
 			students.updateQuery( {
@@ -260,7 +263,9 @@ export function createStudentList( readRuntime ) {
 							<Filters
 								handleSearch={ ( search ) => {
 									setSelected( [] );
-									students.updateQuery( { search } );
+									students.updateQuery( {
+										search,
+									} );
 								} }
 								searchPlaceholder={ __(
 									'Search Students',
@@ -324,7 +329,9 @@ export function createStudentList( readRuntime ) {
 								perPage={ students.query.perPage }
 								onPageChange={ ( page ) => {
 									setSelected( [] );
-									students.updateQuery( { page } );
+									students.updateQuery( {
+										page,
+									} );
 								} }
 							/>
 						) }
@@ -366,6 +373,7 @@ export function createStudentList( readRuntime ) {
 		);
 	}
 	return function StudentList() {
+		const _controlId = useId();
 		const { I: Controls, YG: Header } = readRuntime();
 		const currentTab = () => {
 			const value = new URLSearchParams(
@@ -401,14 +409,19 @@ export function createStudentList( readRuntime ) {
 					showAddButton={ false }
 				/>
 				{ canViewAs() && (
-					<div style={ { marginBottom: 16 } }>
-						<label>
+					<div
+						style={ {
+							marginBottom: 16,
+						} }
+					>
+						<label htmlFor={ _controlId + '-field-1' }>
 							{ __( 'View as', 'ohmylms' ) }{ ' ' }
 							<select
 								value=""
 								onChange={ ( event ) =>
 									setViewRole( event.target.value )
 								}
+								id={ _controlId + '-field-1' }
 							>
 								<option value="">
 									{ __( 'Choose a role…', 'ohmylms' ) }
@@ -446,7 +459,11 @@ export function createStudentList( readRuntime ) {
 				/>
 				{ tab === 'students' ? (
 					<>
-						<div style={ { marginBottom: 16 } }>
+						<div
+							style={ {
+								marginBottom: 16,
+							} }
+						>
 							<Controls.ButtonWP
 								variant="secondary"
 								onClick={ () => setAdding( true ) }

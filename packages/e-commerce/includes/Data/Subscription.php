@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Commerce\Data;
 
 use OhMyLMS\Commerce\Abstracts\Data;
@@ -43,7 +43,7 @@ class Subscription extends Data {
 			// No set_object_read method in parent, so do nothing here.
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {
@@ -51,7 +51,7 @@ class Subscription extends Data {
 		}
 	}
 
-	// Getters
+	// Getters.
 	public function get_student_id( $context = 'view' ) {
 		return $this->get_prop( 'student_id', $context );
 	}
@@ -124,7 +124,7 @@ class Subscription extends Data {
 		return $this->data_store->get_related_orders( $this->get_id() );
 	}
 
-	// Setters
+	// Setters.
 	public function set_student_id( $student_id ) {
 		$this->set_prop( 'student_id', $student_id );
 	}

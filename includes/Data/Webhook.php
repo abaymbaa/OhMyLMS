@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Webhook.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Data;
 
@@ -331,7 +336,7 @@ class Webhook extends Data {
 			'headers' => array(),
 		);
 
-		// Set content type based on data type
+		// Set content type based on data type.
 		switch ( $this->get_data_type() ) {
 			case 'json':
 				$args['headers']['Content-Type'] = 'application/json';
@@ -347,7 +352,7 @@ class Webhook extends Data {
 				break;
 		}
 
-		// Add webhook signature for security
+		// Add webhook signature for security.
 		$args['headers']['X-OhMyLMS-Signature'] = hash_hmac( 'sha256', $args['body'], wp_hash( 'ohmylms_webhook_' . $this->get_id() ) );
 		$args['headers']['X-OhMyLMS-Event']     = $this->get_trigger_event();
 

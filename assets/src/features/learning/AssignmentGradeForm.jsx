@@ -40,7 +40,9 @@ export function createAssignmentGradeForm( readRuntime ) {
 								width: 'calc(100% - 80px)',
 							} }
 						>
-							{ null == student ? void 0 : student.display_name }
+							{ student === null || student === void 0
+								? void 0
+								: student.display_name }
 						</Controls.TextWP>
 					</Controls.FlexWP>
 					<Controls.SpacerWP />
@@ -65,7 +67,7 @@ export function createAssignmentGradeForm( readRuntime ) {
 							} }
 						>
 							{ Ge(
-								null == additionData
+								additionData === null || additionData === void 0
 									? void 0
 									: additionData.course_name
 							) }
@@ -81,7 +83,8 @@ export function createAssignmentGradeForm( readRuntime ) {
 							</Controls.TextWP>
 							<Controls.TextWP size={ '15' } variant={ 'muted' }>
 								{ ( 0, I18n.__ )( 'Grade out of ' ) }
-								{ null == additionData
+								{ additionData === null ||
+								additionData === void 0
 									? void 0
 									: additionData.total_marks }
 							</Controls.TextWP>
@@ -90,23 +93,29 @@ export function createAssignmentGradeForm( readRuntime ) {
 								type={ 'number' }
 								value={ score }
 								onChange={ function ( e ) {
-									e >
-										Number(
-											null == additionData
-												? void 0
-												: additionData.total_marks
-										) ||
-										0 > e ||
+									if ( ! (
+										e >
+											Number(
+												additionData === null ||
+													additionData === void 0
+													? void 0
+													: additionData.total_marks
+											) || 0 > e
+									) ) {
 										setScore( e );
+									}
 								} }
 								min={ 0 }
 								max={
-									null == additionData
+									additionData === null ||
+									additionData === void 0
 										? void 0
 										: additionData.total_marks
 								}
 								onBlur={ function ( e ) {
-									'' === e.target.value && setScore( 0 );
+									if ( '' === e.target.value ) {
+										setScore( 0 );
+									}
 								} }
 							/>
 						</Controls.SpacerWP>
@@ -129,7 +138,8 @@ export function createAssignmentGradeForm( readRuntime ) {
 							align={ 'center' }
 						>
 							{ 'submitted' ==
-							( null == student ||
+							( student === null ||
+							student === void 0 ||
 							null === ( t = student.submissions[ 0 ] ) ||
 							void 0 === t
 								? void 0
@@ -149,7 +159,8 @@ export function createAssignmentGradeForm( readRuntime ) {
 										isBorderLess={ ! 0 }
 										variant={
 											'passed' ===
-											( null == student ||
+											( student === null ||
+											student === void 0 ||
 											null ===
 												( n =
 													student
@@ -162,7 +173,7 @@ export function createAssignmentGradeForm( readRuntime ) {
 										}
 									>
 										{ ( 0, I18n.__ )( 'Pass', 'ohmylms' ) }
-										{ null == student
+										{ student === null || student === void 0
 											? void 0
 											: student.status }
 									</Controls.BadgeWP>
@@ -170,7 +181,8 @@ export function createAssignmentGradeForm( readRuntime ) {
 										isBorderLess={ ! 0 }
 										variant={
 											'passed' ===
-											( null == student ||
+											( student === null ||
+											student === void 0 ||
 											null ===
 												( r =
 													student

@@ -1,11 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
 final class Layouts {
 	private static $rendering = array();
 	public static function resolve( $context, $id, $course_id = 0 ) {
 		$selected = get_post_meta( $id, '_ohmylms_layout', true );
-		if ( $selected === 'default' ) {
+		if ( 'default' === $selected ) {
 			return null;
 		}
 		$defaults = (array) get_post_meta( $course_id ?: $id, '_ohmylms_layout_defaults', true );

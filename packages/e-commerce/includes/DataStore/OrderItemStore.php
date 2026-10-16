@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\DataStore;
 
@@ -117,7 +117,7 @@ class OrderItemStore extends DataStore {
 		global $wpdb;
 		$table_name_meta = $wpdb->prefix . 'ohmylms_order_itemmeta';
 
-		// Check if the meta key exists for the custom item
+		// Check if the meta key exists for the custom item.
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT meta_id FROM $table_name_meta WHERE order_item_id = %d AND meta_key = %s",
@@ -127,7 +127,7 @@ class OrderItemStore extends DataStore {
 		);
 
 		if ( $exists ) {
-			// Update the existing meta value
+			// Update the existing meta value.
 			$wpdb->update(
 				$table_name_meta,
 				array( 'meta_value' => maybe_serialize( $meta_value ) ),
@@ -139,7 +139,7 @@ class OrderItemStore extends DataStore {
 				array( '%d', '%s' )
 			);
 		} else {
-			// Insert new meta value
+			// Insert new meta value.
 			$wpdb->insert(
 				$table_name_meta,
 				array(

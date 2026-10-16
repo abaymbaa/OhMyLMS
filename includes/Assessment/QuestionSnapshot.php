@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Read-only question object built from an immutable version row.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -169,13 +174,13 @@ class QuestionSnapshot {
 		$definition = \OhMyLMS\Extensions\Registry::get( 'question', $type );
 		$public     = array_merge( array( 'type', 'required', 'score', 'randomize' ), (array) ( $definition['public_settings'] ?? array() ) );
 		$settings   = array_intersect_key( $this->get_settings(), array_flip( $public ) );
-		if ( $type === 'structured' ) {
+		if ( 'structured' === $type ) {
 			$settings['parts'] = Structured::public_parts( $this->get_settings() ); }
 		// A type with private keys inside public structures builds its own learner view.
 		if ( is_callable( $definition['public_view'] ?? null ) ) {
 			$settings = array_merge( $settings, (array) call_user_func( $definition['public_view'], $this->get_settings(), $this->get_id() . '|' . $this->get_version_id() ) ); }
 		$body = $this->get_description();
-		if ( $type === 'fill-in-the-blank' && ! empty( $this->get_settings()['question_code'] ) ) {
+		if ( 'fill-in-the-blank' === $type && ! empty( $this->get_settings()['question_code'] ) ) {
 			$body = ''; }
 		if ( function_exists( 'has_blocks' ) && has_blocks( $body ) ) {
 			$body = apply_filters( 'the_content', $body ); }

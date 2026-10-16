@@ -9,10 +9,10 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-// Randomize the questions array
+// Randomize the questions array.
 $options = $question['questions'];
 if ( empty( $question['frozen'] ) ) {
 	shuffle( $options );

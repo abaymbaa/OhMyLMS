@@ -19,20 +19,22 @@ export function createAssignmentSubmission( readRuntime ) {
 				<Controls.SpacerWP padding={ 4 } marginBottom={ 0 }>
 					<Controls.HeadingWP level={ 2 }>
 						{ Ge(
-							null == additionData
+							additionData === null || additionData === void 0
 								? void 0
 								: additionData.assignment_name
 						) }
 					</Controls.HeadingWP>
 					<Controls.DividerWP marginStart={ 4 } marginEnd={ 4 } />
 					<Controls.TextWP>
-						{ ( null == submission
+						{ ( submission === null || submission === void 0
 							? void 0
 							: submission.content ) ||
 							( 0, I18n.__ )( 'No content added', 'ohmylms' ) }
 					</Controls.TextWP>
 					<Controls.DividerWP marginStart={ 4 } marginEnd={ 4 } />
-					{ ( null == submission ? void 0 : submission.files ) && (
+					{ ( submission === null || submission === void 0
+						? void 0
+						: submission.files ) && (
 						<Controls.CardWP
 							isBorderless={ ! 0 }
 							variant={ 'secondary' }
@@ -54,7 +56,8 @@ export function createAssignmentSubmission( readRuntime ) {
 											align={ 'center' }
 										>
 											<Controls.TextWP as={ 'span' }>
-												{ ( null == submission ||
+												{ ( submission === null ||
+												submission === void 0 ||
 												null ===
 													( t = submission.files ) ||
 												void 0 === t
@@ -69,7 +72,8 @@ export function createAssignmentSubmission( readRuntime ) {
 												as={ 'span' }
 												variant={ 'muted' }
 											>
-												{ ( null == submission ||
+												{ ( submission === null ||
+												submission === void 0 ||
 												null ===
 													( n = submission.files ) ||
 												void 0 === n
@@ -80,7 +84,8 @@ export function createAssignmentSubmission( readRuntime ) {
 									</Controls.FlexWP>
 									<a
 										href={
-											null == submission ||
+											submission === null ||
+											submission === void 0 ||
 											null === ( r = submission.files ) ||
 											void 0 === r
 												? void 0

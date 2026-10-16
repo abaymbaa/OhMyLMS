@@ -45,23 +45,32 @@ export function createDashboardOverview( readRuntime ) {
 			}, [] ),
 			S = 'YYYY/MM/DD',
 			R = UH(
-				null == _ ? void 0 : _.currency,
-				null == _ ? void 0 : _.currency_pos,
-				( null == _ || null === ( t = _.earning ) || void 0 === t
+				_ === null || _ === void 0 ? void 0 : _.currency,
+				_ === null || _ === void 0 ? void 0 : _.currency_pos,
+				( _ === null ||
+				_ === void 0 ||
+				null === ( t = _.earning ) ||
+				void 0 === t
 					? void 0
 					: t.total_earning ) || '0'
 			),
 			x = UH(
-				null == _ ? void 0 : _.currency,
-				null == _ ? void 0 : _.currency_pos,
-				( null == _ || null === ( n = _.earning ) || void 0 === n
+				_ === null || _ === void 0 ? void 0 : _.currency,
+				_ === null || _ === void 0 ? void 0 : _.currency_pos,
+				( _ === null ||
+				_ === void 0 ||
+				null === ( n = _.earning ) ||
+				void 0 === n
 					? void 0
 					: n.refund ) || '0'
 			),
 			C = UH(
-				null == _ ? void 0 : _.currency,
-				null == _ ? void 0 : _.currency_pos,
-				( null == _ || null === ( r = _.earning ) || void 0 === r
+				_ === null || _ === void 0 ? void 0 : _.currency,
+				_ === null || _ === void 0 ? void 0 : _.currency_pos,
+				( _ === null ||
+				_ === void 0 ||
+				null === ( r = _.earning ) ||
+				void 0 === r
 					? void 0
 					: r.net_income ) || '0'
 			),
@@ -76,7 +85,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_percent:
 						Math.abs(
 							Number(
-								null == _ ||
+								_ === null ||
+									_ === void 0 ||
 									null === ( a = _.earning ) ||
 									void 0 === a ||
 									null === ( a = a.growth ) ||
@@ -92,7 +102,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_delay: ( 0, I18n.__ )( '30 days', 'ohmylms' ),
 					progression_state:
 						Number(
-							null == _ ||
+							_ === null ||
+								_ === void 0 ||
 								null === ( o = _.earning ) ||
 								void 0 === o ||
 								null === ( o = o.growth ) ||
@@ -115,7 +126,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_percent:
 						Math.abs(
 							Number(
-								null == _ ||
+								_ === null ||
+									_ === void 0 ||
 									null === ( i = _.earning ) ||
 									void 0 === i ||
 									null === ( i = i.growth ) ||
@@ -128,7 +140,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_delay: '30day',
 					progression_state:
 						Number(
-							null == _ ||
+							_ === null ||
+								_ === void 0 ||
 								null === ( c = _.earning ) ||
 								void 0 === c ||
 								null === ( c = c.growth ) ||
@@ -151,7 +164,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_percent:
 						Math.abs(
 							Number(
-								null == _ ||
+								_ === null ||
+									_ === void 0 ||
 									null === ( u = _.earning ) ||
 									void 0 === u ||
 									null === ( u = u.growth ) ||
@@ -164,7 +178,8 @@ export function createDashboardOverview( readRuntime ) {
 					progression_delay: '10day',
 					progression_state:
 						Number(
-							null == _ ||
+							_ === null ||
+								_ === void 0 ||
 								null === ( s = _.earning ) ||
 								void 0 === s ||
 								null === ( s = s.growth ) ||
@@ -272,9 +287,15 @@ export function createDashboardOverview( readRuntime ) {
 								className={ 'ohmylms-overview-right-cards' }
 							>
 								<TopCoursePerformance
-									data={ null == _ ? void 0 : _.top_course }
+									data={
+										_ === null || _ === void 0
+											? void 0
+											: _.top_course
+									}
 									totalCourses={
-										null == _ ? void 0 : _.total_course
+										_ === null || _ === void 0
+											? void 0
+											: _.total_course
 									}
 									dataLoading={ v }
 									handleAddCourse={ m }
@@ -305,7 +326,8 @@ export function createDashboardOverview( readRuntime ) {
 												weight={ '400' }
 											>
 												{ '(' }
-												{ null == _ ||
+												{ _ === null ||
+												_ === void 0 ||
 												null ===
 													( d = _.recent_courses ) ||
 												void 0 === d

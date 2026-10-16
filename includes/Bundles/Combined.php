@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Pooling of skill evidence for a shared skill and the curriculum-specific skills explicitly
+ * mapped to it as equivalent.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Bundles;
 
 use OhMyLMS\Skills\Mastery;

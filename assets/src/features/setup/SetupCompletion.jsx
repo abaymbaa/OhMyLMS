@@ -16,122 +16,137 @@ export function createSetupCompletion( readRuntime ) {
 			v,
 			y: WordPressData,
 		} = readRuntime();
-		( props.onTabChange,
-			( 0, WordPressData.useDispatch )( StoreModule.default ) );
+		( 0, WordPressData.useDispatch )( StoreModule.default );
 		var t,
 			n = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).getSetupWizardData();
 			}, [] ),
 			r = ( 0, Router.Zp )();
-		( ( 0, ReactHooks.useEffect )( function () {
+		( 0, ReactHooks.useEffect )( function () {
 			var e = ( function () {
-				var e,
-					t =
-						( ( e = Ane().m( function e() {
-							return Ane().w( function ( e ) {
+				var _eLocal,
+					_tLocal =
+						( ( _eLocal = Ane().m( function _eLocal2() {
+							return Ane().w( function ( _eLocal3 ) {
 								for (;;) {
-									switch ( e.n ) {
+									switch ( _eLocal3.n ) {
 										case 0:
-											( Nte.Hi.completeStep(),
-												Nte.Ft.emit( 'step_completed', {
-													stepId: 'completion',
+											Nte.Hi.completeStep();
+											Nte.Ft.emit( 'step_completed', {
+												stepId: 'completion',
+												plugin: 'ohmylms',
+											} );
+											Nte.Ft.emit(
+												'onboarding_completed',
+												{
 													plugin: 'ohmylms',
-												} ),
-												Nte.Ft.emit(
-													'onboarding_completed',
-													{
-														plugin: 'ohmylms',
-														version: '1.1.16',
-													}
-												) );
+													version: '1.1.16',
+												}
+											); // Falls through to the shared async state cleanup.
 										case 1:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
-							}, e );
+							}, _eLocal2 );
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									Tne( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal2 = this,
+								_nLocal = _args;
+							return new Promise( function ( _rLocal, a ) {
+								var o = _eLocal.apply( _tLocal2, _nLocal );
+								function i( _eLocal4 ) {
+									Tne(
+										o,
+										_rLocal,
+										a,
+										i,
+										l,
+										'next',
+										_eLocal4
+									);
 								}
-								function l( e ) {
-									Tne( o, r, a, i, l, 'throw', e );
+								function l( _eLocal5 ) {
+									Tne(
+										o,
+										_rLocal,
+										a,
+										i,
+										l,
+										'throw',
+										_eLocal5
+									);
 								}
 								i( void 0 );
 							} );
 						} );
-				return function () {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _tLocal.apply( this, _args2 );
 				};
 			} )();
 			e();
-		}, [] ),
-			( 0, ReactHooks.useEffect )( function () {
-				var e = document.createElement( 'style' );
-				return (
-					( e.textContent =
-						'\n            @keyframes confettiFall {\n                0% {\n                    transform: translateY(0) rotate(0deg);\n                    opacity: 1;\n                }\n                100% {\n                    transform: translateY(100vh) rotate(720deg);\n                    opacity: 0;\n                }\n            }\n        ' ),
-					document.head.appendChild( e ),
-					( function () {
-						for (
-							var e = [
-									'#FF4955',
-									'#6E42D3',
-									'#42ACD3',
-									'#FFD700',
-									'#FF69B4',
-									'#00CED1',
-								],
-								t = [],
-								n = 0;
-							n < 80;
-							n++
-						) {
-							var r = document.createElement( 'div' ),
-								a = 10 * Math.random() + 5,
-								o = 100 * Math.random(),
-								i = 3 * Math.random() + 2,
-								l = 0.5 * Math.random(),
-								c = 360 * Math.random();
-							( ( r.style.position = 'fixed' ),
-								( r.style.width = ''.concat( a, 'px' ) ),
-								( r.style.height = ''.concat( a, 'px' ) ),
-								( r.style.backgroundColor =
-									e[
-										Math.floor( Math.random() * e.length )
-									] ),
-								( r.style.left = ''.concat( o, '%' ) ),
-								( r.style.top = '-10px' ),
-								( r.style.opacity = '0.8' ),
-								( r.style.borderRadius =
-									Math.random() > 0.5 ? '50%' : '0' ),
-								( r.style.pointerEvents = 'none' ),
-								( r.style.zIndex = '9999' ),
-								( r.style.transform = 'rotate('.concat(
-									c,
-									'deg)'
-								) ),
-								( r.style.animation = 'confettiFall '
-									.concat( i, 's linear ' )
-									.concat( l, 's forwards' ) ),
-								document.body.appendChild( r ),
-								t.push( r ) );
-						}
-						setTimeout( function () {
-							t.forEach( function ( e ) {
-								return e.remove();
-							} );
-						}, 5500 );
-					} )(),
-					function () {
-						e.remove();
+		}, [] );
+		( 0, ReactHooks.useEffect )( function () {
+			var e = document.createElement( 'style' );
+			return (
+				( e.textContent =
+					'\n            @keyframes confettiFall {\n                0% {\n                    transform: translateY(0) rotate(0deg);\n                    opacity: 1;\n                }\n                100% {\n                    transform: translateY(100vh) rotate(720deg);\n                    opacity: 0;\n                }\n            }\n        ' ),
+				document.head.appendChild( e ),
+				( function () {
+					for (
+						var _eLocal6 = [
+								'#FF4955',
+								'#6E42D3',
+								'#42ACD3',
+								'#FFD700',
+								'#FF69B4',
+								'#00CED1',
+							],
+							_tLocal3 = [],
+							_nLocal2 = 0;
+						_nLocal2 < 80;
+						_nLocal2++
+					) {
+						var _rLocal2 = document.createElement( 'div' ),
+							a = 10 * Math.random() + 5,
+							o = 100 * Math.random(),
+							i = 3 * Math.random() + 2,
+							l = 0.5 * Math.random(),
+							c = 360 * Math.random();
+						_rLocal2.style.position = 'fixed';
+						_rLocal2.style.width = ''.concat( a, 'px' );
+						_rLocal2.style.height = ''.concat( a, 'px' );
+						_rLocal2.style.backgroundColor =
+							_eLocal6[
+								Math.floor( Math.random() * _eLocal6.length )
+							];
+						_rLocal2.style.left = ''.concat( o, '%' );
+						_rLocal2.style.top = '-10px';
+						_rLocal2.style.opacity = '0.8';
+						_rLocal2.style.borderRadius =
+							Math.random() > 0.5 ? '50%' : '0';
+						_rLocal2.style.pointerEvents = 'none';
+						_rLocal2.style.zIndex = '9999';
+						_rLocal2.style.transform = 'rotate('.concat(
+							c,
+							'deg)'
+						);
+						_rLocal2.style.animation = 'confettiFall '
+							.concat( i, 's linear ' )
+							.concat( l, 's forwards' );
+						document.body.appendChild( _rLocal2 );
+						_tLocal3.push( _rLocal2 );
 					}
-				 );
-			}, [] ) );
+					setTimeout( function () {
+						_tLocal3.forEach( function ( _eLocal7 ) {
+							return _eLocal7.remove();
+						} );
+					}, 5500 );
+				} )(),
+				function () {
+					e.remove();
+				}
+			 );
+		}, [] );
 		var a = function () {
 				r( '/dashboard' );
 			},
@@ -140,21 +155,25 @@ export function createSetupCompletion( readRuntime ) {
 			},
 			i = function () {
 				var e,
-					t =
-						null == n ||
+					_tLocal4 =
+						n === null ||
+						n === void 0 ||
 						null === ( e = n.imported_course_ids ) ||
 						void 0 === e
 							? void 0
 							: e[ 0 ];
-				r( '/course-edit/'.concat( t ) );
+				r( '/course-edit/'.concat( _tLocal4 ) );
 			},
 			l =
-				( null == n ||
+				( n === null ||
+				n === void 0 ||
 				null === ( t = n.imported_course_ids ) ||
 				void 0 === t
 					? void 0
 					: t.length ) > 0,
-			c = ! 0 === ( null == n ? void 0 : n.migrate_courses ),
+			c =
+				! 0 ===
+				( n === null || n === void 0 ? void 0 : n.migrate_courses ),
 			u = [
 				{
 					icon: (
@@ -310,20 +329,24 @@ export function createSetupCompletion( readRuntime ) {
 												margin: '0 auto',
 											} }
 										>
-											{ l
-												? ( 0, I18n.__ )(
+											{ ( () => {
+												if ( l ) {
+													return ( 0, I18n.__ )(
 														"We've completed the initial platform setup and added a sample course so you can explore how the course builder works.",
 														'ohmylms'
-													)
-												: c
-													? ( 0, I18n.__ )(
-															"We've completed the initial platform setup and migrated your courses so you can continue where you left off.",
-															'ohmylms'
-														)
-													: ( 0, I18n.__ )(
-															"Your OhMyLMS is ready. Let's build your first course 🚀",
-															'ohmylms'
-														) }
+													);
+												}
+												if ( c ) {
+													return ( 0, I18n.__ )(
+														"We've completed the initial platform setup and migrated your courses so you can continue where you left off.",
+														'ohmylms'
+													);
+												}
+												return ( 0, I18n.__ )(
+													"Your OhMyLMS is ready. Let's build your first course 🚀",
+													'ohmylms'
+												);
+											} )() }
 										</Controls.TextWP>
 									</Controls.FlexWP>
 								</Controls.SpacerWP>
@@ -333,7 +356,9 @@ export function createSetupCompletion( readRuntime ) {
 									gap={ 3 }
 								>
 									{ 'beginner' ===
-										( null == n ? void 0 : n.level ) && (
+										( n === null || n === void 0
+											? void 0
+											: n.level ) && (
 										<React.Fragment>
 											<Controls.ButtonWP
 												variant={ 'secondary' }
@@ -368,7 +393,9 @@ export function createSetupCompletion( readRuntime ) {
 										</React.Fragment>
 									) }
 									{ 'intermediate' ===
-										( null == n ? void 0 : n.level ) && (
+										( n === null || n === void 0
+											? void 0
+											: n.level ) && (
 										<React.Fragment>
 											<Controls.ButtonWP
 												variant={ 'secondary' }
@@ -403,7 +430,9 @@ export function createSetupCompletion( readRuntime ) {
 										</React.Fragment>
 									) }
 									{ 'experienced' ===
-										( null == n ? void 0 : n.level ) && (
+										( n === null || n === void 0
+											? void 0
+											: n.level ) && (
 										<React.Fragment>
 											<Controls.ButtonWP
 												variant={ 'secondary' }
@@ -414,39 +443,53 @@ export function createSetupCompletion( readRuntime ) {
 													'ohmylms'
 												) }
 											</Controls.ButtonWP>
-											{ l && ! c ? (
-												<Controls.ButtonWP
-													variant={ 'primary' }
-													onClick={ i }
-												>
-													{ ( 0, I18n.__ )(
-														'Edit Your Course',
-														'ohmylms'
-													) }
-												</Controls.ButtonWP>
-											) : c ? (
-												<Controls.ButtonWP
-													variant={ 'primary' }
-													onClick={ function () {
-														return r( '/courses' );
-													} }
-												>
-													{ ( 0, I18n.__ )(
-														'Go to My Courses',
-														'ohmylms'
-													) }
-												</Controls.ButtonWP>
-											) : (
-												<Controls.ButtonWP
-													variant={ 'primary' }
-													onClick={ o }
-												>
-													{ ( 0, I18n.__ )(
-														'Create Course',
-														'ohmylms'
-													) }
-												</Controls.ButtonWP>
-											) }
+											{ ( () => {
+												if ( l && ! c ) {
+													return (
+														<Controls.ButtonWP
+															variant={
+																'primary'
+															}
+															onClick={ i }
+														>
+															{ ( 0, I18n.__ )(
+																'Edit Your Course',
+																'ohmylms'
+															) }
+														</Controls.ButtonWP>
+													);
+												}
+												if ( c ) {
+													return (
+														<Controls.ButtonWP
+															variant={
+																'primary'
+															}
+															onClick={ function () {
+																return r(
+																	'/courses'
+																);
+															} }
+														>
+															{ ( 0, I18n.__ )(
+																'Go to My Courses',
+																'ohmylms'
+															) }
+														</Controls.ButtonWP>
+													);
+												}
+												return (
+													<Controls.ButtonWP
+														variant={ 'primary' }
+														onClick={ o }
+													>
+														{ ( 0, I18n.__ )(
+															'Create Course',
+															'ohmylms'
+														) }
+													</Controls.ButtonWP>
+												);
+											} )() }
 										</React.Fragment>
 									) }
 								</Controls.FlexWP>
@@ -506,11 +549,11 @@ export function createSetupCompletion( readRuntime ) {
 											justify={ 'space-between' }
 											gap={ 3 }
 										>
-											{ u.map( function ( e, t ) {
+											{ u.map( function ( e, _tLocal5 ) {
 												return (
 													<v.Link
 														to={ e.url }
-														key={ t }
+														key={ _tLocal5 }
 														target={ '_blank' }
 														rel={
 															'noopener noreferrer'
@@ -520,7 +563,7 @@ export function createSetupCompletion( readRuntime ) {
 																'none',
 															flex: 1,
 															marginLeft:
-																0 !== t
+																0 !== _tLocal5
 																	? '12px'
 																	: '0',
 														} }

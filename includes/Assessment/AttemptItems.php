@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Creates and reads the frozen delivery of a versioned attempt: which question
+ * versions were issued, in which order, with which option order and marks.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -141,7 +147,7 @@ final class AttemptItems {
 		foreach ( $rows as &$row ) {
 			$row['option_order'] = json_decode( $row['option_order'], true ) ?: array();
 			$row['display']      = json_decode( $row['display'], true ) ?: array();
-			$row['response']     = $row['response'] === null ? null : json_decode( $row['response'], true );
+			$row['response']     = null === $row['response'] ? null : json_decode( $row['response'], true );
 		}
 		return $rows;
 	}
@@ -152,7 +158,7 @@ final class AttemptItems {
 	 */
 	public static function token( $scope, $option_id, $kind = 'o' ) {
 		// $scope is the attempt ID, or a practice/inline scope string such as "p42".
-		$kind = $kind === 'd' ? 'd' : 'o';
+		$kind = 'd' === $kind ? 'd' : 'o';
 		return $kind . substr( hash_hmac( 'sha256', $kind . ':' . (string) $scope . ':' . (int) $option_id, wp_salt( 'nonce' ) ), 0, 15 );
 	}
 
@@ -252,7 +258,7 @@ final class AttemptItems {
 				return $value; }
 			if ( isset( $map[ (string) $value ] ) ) {
 				return (string) $map[ (string) $value ]; }
-			return $strict && (string) $value !== '' ? 'invalid:' . (string) $value : $value;
+			return $strict && '' !== (string) $value ? 'invalid:' . (string) $value : $value;
 		};
 		$result         = array();
 		foreach ( $answer as $key => $value ) {

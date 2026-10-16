@@ -51,13 +51,16 @@ export function normalizeQuizReport( attempt ) {
 		},
 	};
 }
-
 const list = ( values ) =>
-	Array.isArray( values )
-		? values
-		: values === undefined || values === null
-			? []
-			: [ values ];
+	( () => {
+		if ( Array.isArray( values ) ) {
+			return values;
+		}
+		if ( values === undefined || values === null ) {
+			return [];
+		}
+		return [ values ];
+	} )();
 
 /**
  * Teacher-facing description of the expected answer for numerical and other types.
@@ -103,7 +106,6 @@ function describeVisualExpected( s ) {
 			return null;
 	}
 }
-
 export function describeExpected( question ) {
 	const settings = question?.settings || {};
 	if ( settings.type === 'graphing' ) {
@@ -191,13 +193,7 @@ export function describeExpected( question ) {
 			Object.entries( settings.blanks || {} )
 				.map(
 					( [ id, spec ] ) =>
-						`{${ id }} = ${
-							spec.kind === 'numerical'
-								? ( spec.answer ??
-									( spec.answers || [] )[ 0 ] ??
-									'' )
-								: ( spec.accepted || [] ).join( ' / ' )
-						}`
+						`{${ id }} = ${ spec.kind === 'numerical' ? ( spec.answer ?? ( spec.answers || [] )[ 0 ] ?? '' ) : ( spec.accepted || [] ).join( ' / ' ) }`
 				)
 				.join( ', ' ) || '—'
 		);
@@ -290,5 +286,11 @@ export function setPartMark( attempt, questionId, partId, value ) {
 			};
 		}
 	);
-	return { ...attempt, report: { ...attempt.report, questions } };
+	return {
+		...attempt,
+		report: {
+			...attempt.report,
+			questions,
+		},
+	};
 }

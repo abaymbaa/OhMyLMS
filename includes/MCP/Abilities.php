@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * LMS operations registered in WordPress's native Abilities API.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\MCP;
 
 defined( 'ABSPATH' ) || exit;
@@ -86,13 +91,13 @@ final class Abilities {
 	private static function execute( $name, $tool, $input ) {
 		$args = (array) $input;
 		foreach ( $args as $key => $value ) {
-			if ( ! isset( $tool['properties'][ $key ] ) || ( $tool['properties'][ $key ]['type'] === 'integer' && ! is_int( $value ) )
-				|| ( $tool['properties'][ $key ]['type'] === 'string' && ! is_string( $value ) ) ) {
+			if ( ! isset( $tool['properties'][ $key ] ) || ( 'integer' === $tool['properties'][ $key ]['type'] && ! is_int( $value ) )
+				|| ( 'string' === $tool['properties'][ $key ]['type'] && ! is_string( $value ) ) ) {
 				return new \WP_Error( 'ohmylms_ability_invalid_input', 'Invalid argument type.' );
 			}
 		}
 		$method  = $tool['method'] ?? 'GET';
-		$route = str_replace( array( '{id}', '{student_id}' ), array( (string) ( $args['id'] ?? '' ), (string) ( $args['student_id'] ?? '' ) ), $tool['route'] );
+		$route   = str_replace( array( '{id}', '{student_id}' ), array( (string) ( $args['id'] ?? '' ), (string) ( $args['student_id'] ?? '' ) ), $tool['route'] );
 		$request = new \WP_REST_Request( $method, '/ohmylms/v1' . $route );
 		if ( 'GET' !== $method ) {
 			$request->set_header( 'Content-Type', 'application/json' );
@@ -125,7 +130,7 @@ final class Abilities {
 					$result['total_pages'] = (int) $headers['X-WP-TotalPages'];
 				}
 				$encoded = wp_json_encode( $result );
-				if ( $encoded === false || strlen( $encoded ) > 262144 ) {
+				if ( false === $encoded || strlen( $encoded ) > 262144 ) {
 					$result = new \WP_Error( 'ohmylms_ability_result_too_large', 'Result is too large. Reduce per_page or retrieve an individual item.' );
 				}
 			}

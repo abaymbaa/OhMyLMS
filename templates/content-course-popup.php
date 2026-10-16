@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit();
 if ( isset( $atts ) && is_array( $atts ) && isset( $atts['course_rows'] ) ) {
 	$data = ! empty( $atts['course_rows'] ) ? $atts['course_rows'] : get_option( 'ohmylms_archive_page_row', array() );
 } else {
-	// Fallback to default option if shortcode attributes are not set
+	// Fallback to default option if shortcode attributes are not set.
 	$data = get_option( 'ohmylms_archive_page_row', array() );
 }
 
@@ -24,14 +24,14 @@ global $category;
 
 foreach ( $data as $row ) {
 
-	// Validate required row fields
+	// Validate required row fields.
 	if ( empty( $row['row_heading'] ) || empty( $row['row_display_criteria'] ) ) {
 		continue;
 	}
 
 	$function = "get_{$row['row_display_criteria']}_course_ids";
 
-	// Skip if the function does not exist and criteria is not 'all'
+	// Skip if the function does not exist and criteria is not 'all'.
 	if ( ! function_exists( $function ) && 'all' !== $row['row_display_criteria'] ) {
 		continue;
 	}
@@ -41,7 +41,7 @@ foreach ( $data as $row ) {
 		$args = array(
 			'post_type'      => OHMYLMS_COURSE_CPT,
 			'post_status'    => 'publish',
-			'posts_per_page' => -1,  // Adjust as needed
+			'posts_per_page' => -1,  // Adjust as needed.
 		);
 
 		// The selected curriculum item (with everything below it) or Course Bundle.
@@ -54,7 +54,7 @@ foreach ( $data as $row ) {
 		if ( $query->have_posts() ) {
 			while ( $query->have_posts() ) {
 				$query->the_post();
-				ohmylms_get_template_part( 'course', 'popup-content', isset( $atts ) && is_array( $atts ) ? $atts : null ); // calling course-popup-content.php
+				ohmylms_get_template_part( 'course', 'popup-content', isset( $atts ) && is_array( $atts ) ? $atts : null ); // calling course-popup-content.php.
 			}
 			wp_reset_postdata();
 		}
@@ -63,13 +63,13 @@ foreach ( $data as $row ) {
 		$course_ids = $function( $category );
 
 		if ( ! empty( $course_ids ) ) {
-			// Create a WP_Query with the course IDs
+			// Create a WP_Query with the course IDs.
 			$query = new \WP_Query(
 				array(
 					'post_type'      => 'ohmylms-course',
 					'post__in'       => $course_ids,
-					'orderby'        => 'post__in', // Maintain the order of IDs
-					'posts_per_page' => -1,  // Adjust as needed
+					'orderby'        => 'post__in', // Maintain the order of IDs.
+					'posts_per_page' => -1,  // Adjust as needed.
 					'post_status'    => 'publish',
 				)
 			);
@@ -77,7 +77,7 @@ foreach ( $data as $row ) {
 			if ( $query->have_posts() ) {
 				while ( $query->have_posts() ) {
 					$query->the_post();
-					ohmylms_get_template_part( 'course', 'popup-content', isset( $atts ) && is_array( $atts ) ? $atts : null ); // calling course-popup-content.php
+					ohmylms_get_template_part( 'course', 'popup-content', isset( $atts ) && is_array( $atts ) ? $atts : null ); // calling course-popup-content.php.
 				}
 				wp_reset_postdata();
 			}

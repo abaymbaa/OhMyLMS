@@ -65,15 +65,26 @@ export function createTopCoursePerformance( readRuntime ) {
 									<React.Fragment>
 										<PG>
 											<img
-												src={
-													null != n && n.image_src
-														? null == n
-															? void 0
-															: n.image_src
-														: c
-												}
+												src={ ( () => {
+													if (
+														n !== null &&
+														n !== void 0 &&
+														n.image_src
+													) {
+														if (
+															n === null ||
+															n === void 0
+														) {
+															return void 0;
+														}
+														return n.image_src;
+													}
+													return c;
+												} )() }
 												alt={
-													null == n ? void 0 : n.title
+													n === null || n === void 0
+														? void 0
+														: n.title
 												}
 												style={ {
 													width: '100%',
@@ -86,12 +97,18 @@ export function createTopCoursePerformance( readRuntime ) {
 										<Controls.TextWP
 											as={ 'a' }
 											size={ 16 }
-											href={ null == n ? void 0 : n.url }
+											href={
+												n === null || n === void 0
+													? void 0
+													: n.url
+											}
 											target={ '_blank' }
 											weight={ '700' }
 										>
 											{ Ge(
-												null == n ? void 0 : n.title
+												n === null || n === void 0
+													? void 0
+													: n.title
 											) || 'Untitled' }
 										</Controls.TextWP>
 										<Controls.SpacerWP
@@ -125,7 +142,8 @@ export function createTopCoursePerformance( readRuntime ) {
 														size={ '12' }
 														weight={ '700' }
 													>
-														{ null == n
+														{ n === null ||
+														n === void 0
 															? void 0
 															: n.ratings }
 													</Controls.TextWP>
@@ -242,7 +260,8 @@ export function createTopCoursePerformance( readRuntime ) {
 														as={ 'span' }
 														size={ '14' }
 													>
-														{ ( null == n
+														{ ( n === null ||
+														n === void 0
 															? void 0
 															: n.total_students ) ||
 															0 }
@@ -296,7 +315,8 @@ export function createTopCoursePerformance( readRuntime ) {
 														as={ 'span' }
 														size={ '14' }
 													>
-														{ ( null == n
+														{ ( n === null ||
+														n === void 0
 															? void 0
 															: n.total_completed ) ||
 															0 }
@@ -317,7 +337,8 @@ export function createTopCoursePerformance( readRuntime ) {
 												onClick={ function () {
 													i(
 														'/course/'.concat(
-															null == n
+															n === null ||
+																n === void 0
 																? void 0
 																: n.id,
 															'/report'

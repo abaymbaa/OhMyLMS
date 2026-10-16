@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class ScormImporter.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Importers;
 
@@ -176,7 +181,7 @@ class ScormImporter {
 		$file_type     = $this->file['type'];
 		$file_ext      = strtolower( pathinfo( $this->file['name'], PATHINFO_EXTENSION ) );
 
-		if ( ! in_array( $file_type, $allowed_types ) && $file_ext !== 'zip' ) {
+		if ( ! in_array( $file_type, $allowed_types ) && 'zip' !== $file_ext ) {
 			throw new \Exception( __( 'Invalid file type. Please upload a ZIP file containing a SCORM package.', 'ohmylms' ) );
 		}
 
@@ -198,7 +203,7 @@ class ScormImporter {
 		$zip    = new \ZipArchive();
 		$result = $zip->open( $this->file['tmp_name'] );
 
-		if ( $result !== true ) {
+		if ( true !== $result ) {
 			throw new \Exception( __( 'Failed to open SCORM package. The ZIP file may be corrupted.', 'ohmylms' ) );
 		}
 
@@ -223,14 +228,14 @@ class ScormImporter {
 		libxml_use_internal_errors( true );
 		$xml = simplexml_load_file( $manifest_path );
 
-		if ( $xml === false ) {
+		if ( false === $xml ) {
 			libxml_clear_errors();
 			throw new \Exception( __( 'Failed to parse imsmanifest.xml. The file may be corrupted or invalid.', 'ohmylms' ) );
 		}
 
 		$namespaces = $xml->getNamespaces( true );
 		foreach ( $namespaces as $prefix => $namespace ) {
-			if ( $prefix === '' ) {
+			if ( '' === $prefix ) {
 				$xml->registerXPathNamespace( 'default', $namespace );
 			}
 		}
@@ -418,11 +423,11 @@ class ScormImporter {
 					if ( strpos( $keyword_text, 'content-type:' ) === 0 ) {
 						$item_data['content_type'] = str_replace( 'content-type:', '', $keyword_text );
 
-						if ( $item_data['content_type'] === 'ohmylms-assignment' ) {
+						if ( 'ohmylms-assignment' === $item_data['content_type'] ) {
 							$item_data['type'] = 'assignment';
-						} elseif ( $item_data['content_type'] === 'ohmylms-quiz' ) {
+						} elseif ( 'ohmylms-quiz' === $item_data['content_type'] ) {
 							$item_data['type'] = 'quiz';
-						} elseif ( $item_data['content_type'] === 'ohmylms-lesson' ) {
+						} elseif ( 'ohmylms-lesson' === $item_data['content_type'] ) {
 							$item_data['type'] = 'lesson';
 						}
 						break;
@@ -476,7 +481,7 @@ class ScormImporter {
 		if ( $identifierref && isset( $this->manifest_data['resources'][ $identifierref ] ) ) {
 			$resource = $this->manifest_data['resources'][ $identifierref ];
 
-			if ( isset( $resource['adlcp:scormtype'] ) && $resource['adlcp:scormtype'] === 'assessment' ) {
+			if ( isset( $resource['adlcp:scormtype'] ) && 'assessment' === $resource['adlcp:scormtype'] ) {
 				return 'quiz';
 			}
 
@@ -598,7 +603,7 @@ class ScormImporter {
 	private function import_course_structure( $course_id, $organization ) {
 		$has_chapters = false;
 		foreach ( $organization['items'] as $item ) {
-			if ( $item['type'] === 'chapter' || ! empty( $item['children'] ) ) {
+			if ( 'chapter' === $item['type'] || ! empty( $item['children'] ) ) {
 				$has_chapters = true;
 				break;
 			}
@@ -671,7 +676,7 @@ class ScormImporter {
 	 * @param int      $order             Order number.
 	 */
 	private function import_item( $item, $course_id, $parent_chapter_id, $order ) {
-		if ( $item['type'] === 'chapter' ) {
+		if ( 'chapter' === $item['type'] ) {
 			$this->import_chapter( $item, $course_id, $order );
 		} else {
 			if ( ! $parent_chapter_id ) {
@@ -747,9 +752,9 @@ class ScormImporter {
 			return;
 		}
 
-		if ( $item['type'] === 'quiz' ) {
+		if ( 'quiz' === $item['type'] ) {
 			$this->import_quiz( $item, $resource, $course_id, $chapter_id, $order );
-		} elseif ( $item['type'] === 'assignment' ) {
+		} elseif ( 'assignment' === $item['type'] ) {
 			$this->import_assignment( $item, $resource, $course_id, $chapter_id, $order );
 		} else {
 			$this->import_lesson( $item, $resource, $course_id, $chapter_id, $order );
@@ -810,11 +815,11 @@ class ScormImporter {
 
 		update_post_meta( $lesson_id, '_type', $lesson_type_info['type'] );
 
-		if ( $lesson_type_info['type'] === 'video' && ! empty( $lesson_type_info['video_id'] ) ) {
+		if ( 'video' === $lesson_type_info['type'] && ! empty( $lesson_type_info['video_id'] ) ) {
 			update_post_meta( $lesson_id, '_video_id', $lesson_type_info['video_id'] );
-		} elseif ( $lesson_type_info['type'] === 'video' && ! empty( $lesson_type_info['external_url'] ) ) {
+		} elseif ( 'video' === $lesson_type_info['type'] && ! empty( $lesson_type_info['external_url'] ) ) {
 			update_post_meta( $lesson_id, '_external_url', $lesson_type_info['external_url'] );
-		} elseif ( $lesson_type_info['type'] === 'audio' && ! empty( $lesson_type_info['audio_id'] ) ) {
+		} elseif ( 'audio' === $lesson_type_info['type'] && ! empty( $lesson_type_info['audio_id'] ) ) {
 			update_post_meta( $lesson_id, '_audio_id', $lesson_type_info['audio_id'] );
 		}
 
@@ -830,7 +835,7 @@ class ScormImporter {
 			array( '%d', '%d', '%s', '%d' )
 		);
 
-		if ( $result === false ) {
+		if ( false === $result ) {
 			$error_msg                       = $wpdb->last_error ? $wpdb->last_error : 'Unknown database error';
 			$this->import_report['errors'][] = sprintf(
 				__( 'Failed to link lesson to chapter: %1$s - %2$s', 'ohmylms' ),
@@ -1042,7 +1047,7 @@ class ScormImporter {
 			array( '%d', '%d', '%s', '%d' )
 		);
 
-		if ( $result === false ) {
+		if ( false === $result ) {
 			$error_msg                       = $wpdb->last_error ? $wpdb->last_error : 'Unknown database error';
 			$this->import_report['errors'][] = sprintf(
 				__( 'Failed to link quiz to chapter: %1$s - %2$s', 'ohmylms' ),
@@ -1169,7 +1174,7 @@ class ScormImporter {
 		if ( $description_elements->length > 0 ) {
 			$description_text = '';
 			foreach ( $description_elements as $elem ) {
-				if ( $elem->nodeName === 'form' ||
+				if ( 'form' === $elem->nodeName ||
 					strpos( $elem->getAttribute( 'class' ), 'question' ) !== false ) {
 					break;
 				}
@@ -1289,9 +1294,9 @@ class ScormImporter {
 				continue;
 			}
 
-			if ( $text_inputs->length === 0 && $inputs->length === 0 ) {
+			if ( 0 === $text_inputs->length && 0 === $inputs->length ) {
 				$parsed_statement = $this->parse_text_question( $container, $xpath );
-				if ( $parsed_statement && $parsed_statement['type'] === 'statement' ) {
+				if ( $parsed_statement && 'statement' === $parsed_statement['type'] ) {
 					$questions[]             = $parsed_statement;
 					$processed_identifiers[] = 'statement_' . count( $questions );
 				}
@@ -1313,7 +1318,7 @@ class ScormImporter {
 			foreach ( $grouped_by_name as $name => $radios ) {
 				if ( count( $radios ) > 0 ) {
 					$parent = $radios[0]->parentNode;
-					while ( $parent && $parent->nodeName !== 'form' && $parent->nodeName !== 'div' ) {
+					while ( $parent && 'form' !== $parent->nodeName && 'div' !== $parent->nodeName ) {
 						$parent = $parent->parentNode;
 					}
 
@@ -1357,11 +1362,11 @@ class ScormImporter {
 			return null;
 		}
 
-		if ( $inputs === null ) {
+		if ( null === $inputs ) {
 			$inputs = $xpath->query( './/input[@type="radio"] | .//input[@type="checkbox"]', $element );
 		}
 
-		if ( $inputs->length === 0 ) {
+		if ( 0 === $inputs->length ) {
 			return null;
 		}
 
@@ -1390,7 +1395,7 @@ class ScormImporter {
 		$input_type    = $first_input->getAttribute( 'type' );
 		$is_true_false = false;
 
-		if ( count( $main_group ) === 2 && $input_type === 'radio' ) {
+		if ( count( $main_group ) === 2 && 'radio' === $input_type ) {
 			$answers_text = array();
 			foreach ( $main_group as $input ) {
 				$answers_text[] = strtolower( trim( $this->get_input_label( $input, $xpath ) ) );
@@ -1405,7 +1410,7 @@ class ScormImporter {
 
 		if ( $is_true_false ) {
 			$question_type = 'true-false';
-		} elseif ( $input_type === 'checkbox' ) {
+		} elseif ( 'checkbox' === $input_type ) {
 			$question_type = 'multiple-choice';
 		} else {
 			$question_type = 'single-choice';
@@ -1462,7 +1467,7 @@ class ScormImporter {
 		$text_inputs = $xpath->query( './/input[@type="text"]', $element );
 		$textareas   = $xpath->query( './/textarea', $element );
 
-		if ( $text_inputs->length === 0 && $textareas->length === 0 ) {
+		if ( 0 === $text_inputs->length && 0 === $textareas->length ) {
 			$lower_text = strtolower( $question_text );
 			if ( strpos( $lower_text, 'note:' ) !== false ||
 				strpos( $lower_text, 'information:' ) !== false ||
@@ -1744,7 +1749,7 @@ class ScormImporter {
 
 		if ( empty( $raw_label_text ) ) {
 			$parent = $input->parentNode;
-			if ( $parent && $parent->nodeName === 'label' ) {
+			if ( $parent && 'label' === $parent->nodeName ) {
 				$raw_label_text = $parent->textContent;
 			}
 		}
@@ -1847,7 +1852,7 @@ class ScormImporter {
 		}
 
 		$parent = $input->parentNode;
-		if ( $parent && $parent->nodeName === 'label' ) {
+		if ( $parent && 'label' === $parent->nodeName ) {
 			return trim( $this->get_text_without_input( $parent ) );
 		}
 
@@ -1856,7 +1861,7 @@ class ScormImporter {
 			if ( $next->nodeType === XML_TEXT_NODE && trim( $next->textContent ) ) {
 				return trim( $next->textContent );
 			}
-			if ( $next->nodeType === XML_ELEMENT_NODE && $next->nodeName !== 'input' ) {
+			if ( $next->nodeType === XML_ELEMENT_NODE && 'input' !== $next->nodeName ) {
 				return trim( $next->textContent );
 			}
 			$next = $next->nextSibling;
@@ -1867,7 +1872,7 @@ class ScormImporter {
 			if ( $prev->nodeType === XML_TEXT_NODE && trim( $prev->textContent ) ) {
 				return trim( $prev->textContent );
 			}
-			if ( $prev->nodeType === XML_ELEMENT_NODE && $prev->nodeName !== 'input' ) {
+			if ( $prev->nodeType === XML_ELEMENT_NODE && 'input' !== $prev->nodeName ) {
 				return trim( $prev->textContent );
 			}
 			$prev = $prev->previousSibling;
@@ -1887,7 +1892,7 @@ class ScormImporter {
 		foreach ( $element->childNodes as $node ) {
 			if ( $node->nodeType === XML_TEXT_NODE ) {
 				$text .= $node->textContent;
-			} elseif ( $node->nodeType === XML_ELEMENT_NODE && $node->nodeName !== 'input' ) {
+			} elseif ( $node->nodeType === XML_ELEMENT_NODE && 'input' !== $node->nodeName ) {
 				$text .= $node->textContent;
 			}
 		}

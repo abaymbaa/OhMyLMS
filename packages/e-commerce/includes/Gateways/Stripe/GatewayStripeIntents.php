@@ -1,4 +1,9 @@
 <?php
+/**
+ * Stripe Payment Intents Gateway.
+ *
+ * @package OhMyLMS
+ */
 
 
 use OhMyLMS\Commerce\Abstracts\PaymentGateway;
@@ -63,10 +68,10 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 		$this->secret_key           = 'yes' === $this->testmode ? $this->get_setting( 'sandbox_secret_key', '' ) : $this->get_setting( 'secret_key', '' );
 		$this->subscription_support = true;
 
-		// Set the secret key for the API handler class
+		// Set the secret key for the API handler class.
 		StripeApi::set_secret_key( $this->secret_key );
 
-		// Actions & Filters
+		// Actions & Filters.
 		add_action( 'wp_enqueue_scripts', array( $this, 'payment_scripts' ) );
 		add_action( 'wp', array( $this, 'handle_stripe_return' ) );
 	}
@@ -181,7 +186,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 					'option_name'         => 'payment_method_' . $method['key'],
 					'value'               => $this->get_setting( 'payment_method_' . $method['key'], $method['defaultSelected'] ? 'yes' : 'no' ),
 					'payment_method_key'  => $method['key'],
-					'payment_method_data' => $method, // Pass the full method data for React
+					'payment_method_data' => $method, // Pass the full method data for React.
 				);
 			}
 		}
@@ -307,15 +312,15 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			return;
 		}
 
-		wp_register_script( 'stripe-v3', 'https://js.stripe.com/v3/', array(), null, true ); // Version is handled by Stripe
+		wp_register_script( 'stripe-v3', 'https://js.stripe.com/v3/', array(), null, true ); // Version is handled by Stripe.
 
-		// Determine JS file URL and version (assuming constants are defined in the main plugin)
+		// Determine JS file URL and version (assuming constants are defined in the main plugin).
 		$js_file_url = defined( 'OHMYLMS_URL' ) ? OHMYLMS_URL . '/packages/e-commerce/assets/js/stripe-intents.js' : plugins_url( '../../../../assets/js/stripe-intents.js', __FILE__ );
-		$js_version  = defined( 'OHMYLMS_VERSION' ) ? OHMYLMS_VERSION : time(); // Use time for cache busting during dev
+		$js_version  = defined( 'OHMYLMS_VERSION' ) ? OHMYLMS_VERSION : time(); // Use time for cache busting during dev.
 
 		wp_register_script( 'ohmylms-stripe-intents', $js_file_url, array( 'jquery', 'stripe-v3' ), $js_version, true );
 
-		// Prepare parameters to pass to the frontend script
+		// Prepare parameters to pass to the frontend script.
 		$current_order_id = 0;
 
 		$is_subscription_purchase = false;
@@ -332,7 +337,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			'handle_success_nonce'  => wp_create_nonce( 'ohmylms_stripe_intents_handle_success_nonce' ),
 			'create_intent_action'  => 'ohmylms_stripe_intents_create_payment_intent',
 			'handle_success_action' => 'ohmylms_stripe_intents_handle_payment_success',
-			'order_id'              => $current_order_id, // Pass current order ID if available
+			'order_id'              => $current_order_id, // Pass current order ID if available.
 			'currency'              => strtolower( function_exists( 'get_ohmylms_currency' ) ? get_ohmylms_currency() : 'usd' ),
 			'error_prefix'          => __( 'Payment error: ', 'ohmylms' ),
 			'return_url'            => $this->get_return_url(),
@@ -368,11 +373,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 
 		$order      = ohmylms_ecommerce_get_order( $order_id );
 		$validation = $this->validate_order_data( $order );
-		if ( $validation !== true ) {
+		if ( true !== $validation ) {
 			return $validation;
 		}
 
-		if ( isset( $_GET['redirect_status'] ) && $_GET['redirect_status'] === 'failed' ) {
+		if ( isset( $_GET['redirect_status'] ) && 'failed' === $_GET['redirect_status'] ) {
 			$order->add_order_note( __( 'Payment was not completed. Customer returned from payment page with failed status.', 'ohmylms' ) );
 			return array(
 				'result'  => 'failure',
@@ -409,10 +414,10 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			// Attach payment method BEFORE PaymentIntent.
 			try {
 				$payment_method_object = StripeApi::get_payment_method( $payment_method_id );
-				if ( $payment_method_object->customer === null || $payment_method_object->customer !== $customer ) {
+				if ( null === $payment_method_object->customer || $payment_method_object->customer !== $customer ) {
 					$result = StripeApi::attach_payment_method( $payment_method_id, $customer );
 				}
-				// Update the default payment method for the customer
+				// Update the default payment method for the customer.
 				StripeApi::update_customer_default_payment_method( $customer, $payment_method_id );
 			} catch ( \Exception $e ) {
 				$order->add_order_note( sprintf( __( 'Stripe PaymentMethod attachment failed: %s', 'ohmylms' ), $e->getMessage() ) );
@@ -439,11 +444,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				}
 			}
 
-			if ( $intent && ( $intent->status === 'succeeded' || $intent->status === 'processing' ) ) {
+			if ( $intent && ( 'succeeded' === $intent->status || 'processing' === $intent->status ) ) {
 				return $this->handle_successful_intent( $intent, $order_id, $order );
-			} elseif ( $intent && $intent->status === 'requires_action' ) {
+			} elseif ( $intent && 'requires_action' === $intent->status ) {
 				return $this->handle_intent_requires_action( $intent, $order_id, $order );
-			} elseif ( $intent && $intent->status === 'requires_payment_method' ) {
+			} elseif ( $intent && 'requires_payment_method' === $intent->status ) {
 				$error_message = isset( $intent->last_payment_error->message )
 					? $intent->last_payment_error->message
 					: __( 'Payment failed. Please try another payment method.', 'ohmylms' );
@@ -475,11 +480,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 */
 	public function handle_stripe_return() {
 
-		// Check if we're on the thank you page
+		// Check if we're on the thank you page.
 		if ( isset( $_GET['ohmylms-order-received'] ) || ( isset( $_SERVER['REQUEST_URI'] ) && strpos( $_SERVER['REQUEST_URI'], 'ohmylms-order-received' ) !== false ) ) {
 			$order_id = isset( $_GET['ohmylms-order-received'] ) ? absint( wp_unslash( $_GET['ohmylms-order-received'] ) ) : 0;
 
-			// If order ID is not in GET, try to get it from the URL
+			// If order ID is not in GET, try to get it from the URL.
 			if ( ! $order_id && isset( $_SERVER['REQUEST_URI'] ) ) {
 				preg_match( '/ohmylms-order-received\/(\d+)/', $_SERVER['REQUEST_URI'], $matches );
 				if ( ! empty( $matches[1] ) ) {
@@ -490,20 +495,20 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			if ( $order_id ) {
 				$order = ohmylms_ecommerce_get_order( $order_id );
 				if ( $order ) {
-					// Check for failed redirect status
-					if ( isset( $_GET['redirect_status'] ) && $_GET['redirect_status'] === 'failed' ) {
-						// Update order status
+					// Check for failed redirect status.
+					if ( isset( $_GET['redirect_status'] ) && 'failed' === $_GET['redirect_status'] ) {
+						// Update order status.
 						if ( method_exists( $order, 'update_status' ) ) {
 							$order->update_status( 'failed', __( 'Payment was not completed.', 'ohmylms' ) );
 						}
-						// Add order note
+						// Add order note.
 						$order->add_order_note( __( 'Payment was not completed. Customer returned from payment page with failed status.', 'ohmylms' ) );
-						// Store the failed status in session or transient for the frontend
+						// Store the failed status in session or transient for the frontend.
 						set_transient( 'stripe_payment_failed_' . $order_id, true, 5 * MINUTE_IN_SECONDS );
 						return;
 					}
 
-					// Handle successful payment
+					// Handle successful payment.
 					if ( isset( $_GET['payment_intent'] ) && isset( $_GET['payment_intent_client_secret'] ) ) {
 						try {
 							$intent = StripeApi::request(
@@ -511,7 +516,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 								'payment_intents/' . sanitize_text_field( wp_unslash( $_GET['payment_intent'] ) )
 							);
 
-							if ( $intent && $intent->status === 'succeeded' ) {
+							if ( $intent && 'succeeded' === $intent->status ) {
 								if ( ! empty( $intent->charges ) && ! empty( $intent->charges->data[0] ) ) {
 									$charge    = $intent->charges->data[0];
 									$charge_id = $charge->id;
@@ -533,7 +538,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 										update_post_meta( $order_id, '_payment_method', 'stripe' );
 									}
 
-									// Save transaction ID using charge ID
+									// Save transaction ID using charge ID.
 									if ( $charge_id ) {
 										$order->payment_complete( $charge_id ? $charge_id : $payment_intent->id );
 										$order->add_order_note(
@@ -758,14 +763,14 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			if ( isset( $response->balance_transaction ) ) {
 				$balanceTransaction = StripeApi::request( null, 'balance_transactions/' . sanitize_text_field( $response->balance_transaction ), 'GET' );
 				$stripe_net         = Helper::format_balance_fee( $balanceTransaction, 'net' );
-				// Get existing values
+				// Get existing values.
 				$existing_net = (float) get_post_meta( $order_id, '_stripe_net', true );
 				$stripe_net   = abs( $stripe_net );
-				// Subtract refunded fee/net from existing
+				// Subtract refunded fee/net from existing.
 				update_post_meta( $order_id, '_stripe_net', $existing_net - $stripe_net );
 			}
 
-			// Add order note about the refund
+			// Add order note about the refund.
 			$order->add_order_note(
 				sprintf(
 					__( 'Refund processed via Stripe.Reason: %s', 'ohmylms' ),
@@ -899,7 +904,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				$option_name = 'payment_method_' . $method['key'];
 				$is_enabled  = $this->get_setting( $option_name, $method['defaultSelected'] ? 'yes' : 'no' );
 
-				if ( $is_enabled === 'yes' ) {
+				if ( 'yes' === $is_enabled ) {
 					$selected_methods[] = $method['key'];
 				}
 			}
@@ -1026,7 +1031,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 
 			if ( ! empty( $payment_intent->error ) ) {
 				$error_message = $payment_intent->error->message;
-				if ( isset( $payment_intent->error->code ) && $payment_intent->error->code === 'authentication_required' ) {
+				if ( isset( $payment_intent->error->code ) && 'authentication_required' === $payment_intent->error->code ) {
 					$error_message = __( 'Payment requires authentication. Please update your payment method.', 'ohmylms' );
 				}
 				return array(
@@ -1034,7 +1039,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 					'message' => $error_message,
 				);
 			}
-			if ( 'succeeded' === $payment_intent->status || $payment_intent->status === 'processing' ) {
+			if ( 'succeeded' === $payment_intent->status || 'processing' === $payment_intent->status ) {
 				return $this->handle_successful_intent( $payment_intent, $renewal_order_id, $renewal_order, true );
 			} elseif ( 'requires_action' === $payment_intent->status || 'requires_source_action' === $payment_intent->status ) {
 				return $this->handle_intent_requires_action( $payment_intent, $renewal_order_id, $renewal_order );
@@ -1096,7 +1101,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				return $payment_method;
 			}
 
-			// Use existing gateway's StripeApi class to create payment intent
+			// Use existing gateway's StripeApi class to create payment intent.
 			$currency        = strtolower( $original_order->get_currency() );
 			$amount_in_cents = Helper::get_stripe_amount( $amount, $currency );
 
@@ -1118,7 +1123,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				),
 			);
 
-			// Create and confirm payment intent using existing gateway API
+			// Create and confirm payment intent using existing gateway API.
 			$upsell_step_id  = $step_data['step_id'] ?? uniqid( 'upsell_', true );
 			$idempotency_key = 'ohmylms-' . $original_order->get_id() . '-' . $upsell_step_id;
 
@@ -1134,15 +1139,15 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				return new \WP_Error( 'payment_failed', $payment_intent->error->message );
 			}
 
-			if ( $payment_intent && ( $payment_intent->status === 'succeeded' || $payment_intent->status === 'processing' ) ) {
-				// Store payment details in order meta
+			if ( $payment_intent && ( 'succeeded' === $payment_intent->status || 'processing' === $payment_intent->status ) ) {
+				// Store payment details in order meta.
 				update_post_meta( $original_order->get_id(), '_upsell_order_id', $payment_intent->id );
 
 				if ( ! empty( $payment_intent->charges ) && ! empty( $payment_intent->charges->data[0] ) ) {
 					$charge = $payment_intent->charges->data[0];
 					update_post_meta( $original_order->get_id(), '_upsell_charge_id', $charge->id );
 
-					// Store fee and net amounts like the main gateway does
+					// Store fee and net amounts like the main gateway does.
 					if ( isset( $charge->balance_transaction ) ) {
 						$balance_transaction = StripeApi::request(
 							null,
@@ -1151,11 +1156,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 						);
 						$stripe_fee          = Helper::format_balance_fee( $balance_transaction, 'fee' );
 						$stripe_net          = Helper::format_balance_fee( $balance_transaction, 'net' );
-						// Get existing values
+						// Get existing values.
 						$existing_fee = (float) get_post_meta( $original_order->get_id(), '_stripe_fee', true );
 						$existing_net = (float) get_post_meta( $original_order->get_id(), '_stripe_net', true );
 
-						// Add and update
+						// Add and update.
 						update_post_meta( $original_order->get_id(), '_stripe_fee', $existing_fee + $stripe_fee );
 						update_post_meta( $original_order->get_id(), '_stripe_net', $existing_net + $stripe_net );
 					}
@@ -1196,12 +1201,12 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			return new \WP_Error( 'fetch_failed', $payment_method->error->message );
 		}
 
-		// If already attached to the correct customer, return the same ID
+		// If already attached to the correct customer, return the same ID.
 		if ( isset( $payment_method->customer ) && $payment_method->customer === $customer_id ) {
 			return $payment_method_id;
 		}
 
-		// Otherwise, try attaching it
+		// Otherwise, try attaching it.
 		$attach = StripeApi::request(
 			array( 'customer' => $customer_id ),
 			'payment_methods/' . $payment_method_id . '/attach',

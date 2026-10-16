@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -173,7 +173,7 @@ final class Service {
 		Access::require_access( $school ? Access::school( $school ) : Access::teacher() );
 		$year = $school ? self::row( 'academic_years', absint( $data['academic_year_id'] ?? 0 ) ) : array( 'id' => 0 );
 		if ( $school ) {
-			self::need( $year && (int) $year['school_id'] === $school && $year['status'] === 'active', 'Select an active academic year in this school.' ); }
+			self::need( $year && (int) $year['school_id'] === $school && 'active' === $year['status'], 'Select an active academic year in this school.' ); }
 		$name = self::text( $data['name'] ?? '' );
 		self::need( $name, 'A class name is required.' );
 		return self::transaction(
@@ -234,7 +234,7 @@ final class Service {
 		$user = absint( $data['user_id'] ?? 0 );
 		$role = $data['role'] ?? 'student';
 		self::need( in_array( $role, array( 'student', 'teacher' ), true ), 'Invalid class role.' );
-		if ( $role === 'teacher' ) {
+		if ( 'teacher' === $role ) {
 			Access::require_access( Access::school( $record['school_id'] ) ); }
 		// Staff can use only the master school roster, never arbitrary site users.
 		Access::require_access( Access::school( $record['school_id'], array( $role ), $user ) );
@@ -273,7 +273,7 @@ final class Service {
 				$c = Schema::table( 'classes' );
 				$m = Schema::table( 'class_memberships' );
 				$wpdb->query( $wpdb->prepare( "UPDATE $m m JOIN $c c ON c.id=m.class_id SET m.status='inactive' WHERE c.school_id=%d AND m.user_id=%d AND m.role=%s", $school, $record['user_id'], $record['role'] ) );
-				if ( $record['role'] === 'student' ) {
+				if ( 'student' === $record['role'] ) {
 					self::update(
 						'guardian_links',
 						array( 'status' => 'inactive' ),
@@ -346,10 +346,10 @@ final class Service {
 		$student = absint( $data['student_user_id'] ?? 0 );
 		$class   = absint( $data['class_id'] ?? 0 );
 		self::need( in_array( $role, array( 'school_admin', 'teacher', 'student', 'guardian', 'activation' ), true ), 'Invalid invitation type.' );
-		self::need( $role === 'activation' || is_email( $email ), 'A valid recipient email is required.' );
-		if ( $role === 'activation' || $role === 'guardian' ) {
+		self::need( 'activation' === $role || is_email( $email ), 'A valid recipient email is required.' );
+		if ( 'activation' === $role || 'guardian' === $role ) {
 			Access::require_access( Access::student( $school, $student ) ); }
-		if ( $role === 'activation' ) {
+		if ( 'activation' === $role ) {
 			Access::require_access( Lifecycle::managed_student( $school, $student ) ); }
 		if ( $class ) {
 			$record = Access::classroom( $class, true );
@@ -372,7 +372,7 @@ final class Service {
 		);
 		$url   = \OhMyLMS\Student\Hub::invitation_url( $token, $role );
 		// Return the link to the authorized staff member. Mail is sent only on an explicit UI action.
-		if ( ! empty( $data['send_email'] ) && $role !== 'activation' ) {
+		if ( ! empty( $data['send_email'] ) && 'activation' !== $role ) {
 			$sent = wp_mail( $email, __( 'Your OhMyLMS invitation', 'ohmylms' ), sprintf( __( 'Open this invitation within 48 hours: %s', 'ohmylms' ), $url ) );
 		}
 		self::audit( $school, 'invitation_created', $id );
@@ -424,15 +424,15 @@ final class Service {
 				}
 				$invite = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE token_hash=%s FOR UPDATE", hash( 'sha256', $token ) ), ARRAY_A );
 				self::need( $invite && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This invitation has expired or has already been used.' );
-				$school     = (int) $invite['school_id'];
+				$school = (int) $invite['school_id'];
 				if ( 0 === $school ) {
 					return ClassManagement::accept( $invite );
 				}
 				$school_row = self::row( 'schools', $school );
-				self::need( $school_row && $school_row['status'] === 'active', 'This school is inactive.' );
+				self::need( $school_row && 'active' === $school_row['status'], 'This school is inactive.' );
 				$issuer = get_userdata( $invite['invited_by'] );
 				self::need( $issuer && ( user_can( $issuer, 'manage_options' ) || Access::school( $school, array( 'school_admin' ), $issuer->ID ) ), 'The invitation issuer no longer has permission.' );
-				if ( $invite['role'] === 'activation' ) {
+				if ( 'activation' === $invite['role'] ) {
 					$user_id = (int) $invite['student_user_id'];
 					Access::require_access( Lifecycle::managed_student( $school, $user_id ) );
 					self::need( strlen( $password ) >= 12 && strlen( $password ) <= 128, 'Choose a password between 12 and 128 characters.' );
@@ -447,7 +447,7 @@ final class Service {
 					Access::require_access( $user_id && strtolower( $user->user_email ) === strtolower( $invite['email'] ) );
 					// Possession of a single-use token sent to this address proves mailbox access.
 					update_user_meta( $user_id, \OhMyLMS\Services\EmailVerificationService::META_VERIFIED, 'yes' );
-					if ( $invite['role'] === 'guardian' ) {
+					if ( 'guardian' === $invite['role'] ) {
 						Access::require_access( Access::student( $school, $invite['student_user_id'] ) );
 						$links  = Schema::table( 'guardian_links' );
 						$link   = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $links WHERE school_id=%d AND guardian_user_id=%d AND student_user_id=%d", $school, $user_id, $invite['student_user_id'] ) );
@@ -487,7 +487,7 @@ final class Service {
 						$user->add_role( $role_map[ $invite['role'] ] );
 						if ( $invite['class_id'] ) {
 							$class = self::row( 'classes', $invite['class_id'] );
-							self::need( $class && $class['status'] === 'active' && (int) $class['school_id'] === $school, 'This class is no longer active.' );
+							self::need( $class && 'active' === $class['status'] && (int) $class['school_id'] === $school, 'This class is no longer active.' );
 							self::membership(
 								'class_memberships',
 								array(
@@ -503,7 +503,7 @@ final class Service {
 				self::audit( $school, 'invitation_accepted', $invite['id'] );
 				return array(
 					'success'  => true,
-					'username' => $invite['role'] === 'activation' ? get_userdata( $user_id )->user_login : '',
+					'username' => 'activation' === $invite['role'] ? get_userdata( $user_id )->user_login : '',
 					'message'  => 'Invitation accepted. You can now sign in or open your dashboard.',
 				);
 			}
@@ -537,7 +537,7 @@ final class Service {
 		$course_id = absint( $data['course_id'] ?? 0 );
 		$content   = absint( $data['content_id'] ?? 0 );
 		$course    = get_post( $course_id );
-		self::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && $course->post_status === 'publish', 'Select a published course.' );
+		self::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && 'publish' === $course->post_status, 'Select a published course.' );
 		// Content distribution does not grant access or change purchases/enrollments.
 		if ( $content ) {
 			$rel      = Schema::table( 'content_relationship' );
@@ -653,7 +653,7 @@ final class Service {
 	/** Limit grading to an explicitly distributed activity, current roster, and its submission. */
 	public static function submission_scope( $learning_id, $attempt_id ) {
 		$learning = self::row( 'learning_assignments', $learning_id );
-		Access::require_access( $learning && $learning['status'] === 'active' && Access::classroom( $learning['class_id'], true ) );
+		Access::require_access( $learning && 'active' === $learning['status'] && Access::classroom( $learning['class_id'], true ) );
 		$attempt = self::row( 'assignment_attempts', $attempt_id );
 		Access::require_access( $attempt && (int) $attempt['assignment_id'] === (int) $learning['content_id'] && (int) $attempt['course_id'] === (int) $learning['course_id'] );
 		global $wpdb;
@@ -677,7 +677,7 @@ final class Service {
 		$class_row = Access::classroom( $class, true );
 		Access::require_access( $class_row );
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Current relationship-scoped candidates; each result is authorized again below.
-		$rows = $wpdb->get_results(
+		$rows     = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT a.id AS learning_id,t.id FROM %i a JOIN %i r ON r.assignment_id=a.id
 				JOIN %i t ON t.assignment_id=a.content_id AND t.course_id=a.course_id AND t.user_id=r.student_user_id
@@ -772,7 +772,7 @@ final class Service {
 		Access::require_access( Access::school( $school ) );
 		$from = self::row( 'academic_years', absint( $data['from_year'] ?? 0 ) );
 		$to   = self::row( 'academic_years', absint( $data['to_year'] ?? 0 ) );
-		self::need( $from && $to && $from['id'] !== $to['id'] && (int) $from['school_id'] === $school && (int) $to['school_id'] === $school && $from['status'] === 'active' && $to['status'] === 'active', 'Select two different active years in this school.' );
+		self::need( $from && $to && $from['id'] !== $to['id'] && (int) $from['school_id'] === $school && (int) $to['school_id'] === $school && 'active' === $from['status'] && 'active' === $to['status'], 'Select two different active years in this school.' );
 		return self::transaction(
 			function () use ( $school, $from, $to, $wpdb, $data ) {
 				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Lock both years in ID order to serialize concurrent rollovers and class creation.
@@ -783,7 +783,7 @@ final class Service {
 				$years = Schema::table( 'academic_years' );
 				// Serialize rollover; repeated requests must never duplicate classes.
 				$status = $wpdb->get_var( $wpdb->prepare( "SELECT status FROM $years WHERE id=%d FOR UPDATE", $from['id'] ) );
-				self::need( $status === 'active', 'This year has already been archived.' );
+				self::need( 'active' === $status, 'This year has already been archived.' );
 				$c       = Schema::table( 'classes' );
 				$classes = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $c WHERE academic_year_id=%d AND school_id=%d AND status='active' ORDER BY id FOR UPDATE", $from['id'], $school ), ARRAY_A );
 				if ( isset( $data['preview_hash'] ) ) {

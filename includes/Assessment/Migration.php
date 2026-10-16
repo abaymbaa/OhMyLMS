@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Resumable backfill of question UUIDs and initial versions.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -37,7 +42,7 @@ final class Migration {
 
 	public static function done() {
 		$state = self::state();
-		return $state['status'] === 'done' && (int) ( $state['version'] ?? 0 ) >= self::VERSION;
+		return 'done' === $state['status'] && (int) ( $state['version'] ?? 0 ) >= self::VERSION;
 	}
 
 	/** Counts used to compare before and after rollout, including orphaned legacy rows. */
@@ -83,7 +88,7 @@ final class Migration {
 			return self::state(); }
 		try {
 			$state = self::state();
-			if ( $state['status'] === 'done' && (int) ( $state['version'] ?? 0 ) >= self::VERSION ) {
+			if ( 'done' === $state['status'] && (int) ( $state['version'] ?? 0 ) >= self::VERSION ) {
 				return $state; }
 			$state['status']     = 'running';
 			$state['started_at'] = $state['started_at'] ?? current_time( 'mysql', true );

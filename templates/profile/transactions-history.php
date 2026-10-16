@@ -15,34 +15,34 @@ defined( 'ABSPATH' ) || exit();
 
 <div class="ohmylms-student-profile-tab-content student-transaction-history">
 	<h4 class="profile-tab-title">
-		<?php echo __( 'Your Orders', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Your Orders', 'ohmylms' ); ?>
 	</h4>
 
 	<div class="ohmylms-dashboard-table">
 		<div class="dashboard-table-head">
 			<div class="dashboard-table-tr">
 				<div class="dashboard-table-td order-id">
-					<?php echo __( 'Order ID', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Order ID', 'ohmylms' ); ?>
 				</div>
 
 				<div class="dashboard-table-td bold-td course-name">
-					<?php echo __( 'Item Name', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Item Name', 'ohmylms' ); ?>
 				</div>
 
 				<div class="dashboard-table-td purchase-method">
-					<?php echo __( 'Purchase Method', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Purchase Method', 'ohmylms' ); ?>
 				</div>
 
 				<div class="dashboard-table-td price">
-					<?php echo __( 'Total', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Total', 'ohmylms' ); ?>
 				</div>
 
 				<div class="dashboard-table-td date">
-					<?php echo __( 'Date', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Date', 'ohmylms' ); ?>
 				</div>
 
 				<div class="dashboard-table-td status">
-					<?php echo __( 'Status', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Status', 'ohmylms' ); ?>
 				</div>
 			</div>
 		</div>
@@ -145,7 +145,7 @@ defined( 'ABSPATH' ) || exit();
 					<div class="no-course-data">
 					<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 						<p>
-						<?php echo __( 'No Order Found.', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'No Order Found.', 'ohmylms' ); ?>
 						</p>
 					</div>
 					<?php

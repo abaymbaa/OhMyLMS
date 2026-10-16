@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Admin;
 
 class Ajax {
@@ -15,13 +15,13 @@ class Ajax {
 	public function install_sample_data() {
 		check_ajax_referer( 'admin_tools', 'nonce' );
 
-		// create sample course here
+		// create sample course here.
 	}
 
 	public function delete_sample_data() {
 		check_ajax_referer( 'admin_tools', 'nonce' );
 
-		// create sample course here
+		// create sample course here.
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Ajax {
 	 * @return void
 	 */
 	public function delete_transient_cache() {
-		// Verify nonce
+		// Verify nonce.
 		if ( ! isset( $_POST['nonce'] ) || ! wp_verify_nonce( $_POST['nonce'], 'ohmylms_delete_cache_nonce' ) ) {
 			wp_send_json_error( array( 'message' => __( 'Security check failed', 'ohmylms' ) ) );
 		}
@@ -64,7 +64,7 @@ class Ajax {
 
 		global $wpdb;
 
-		// Delete all OhMyLMS related transients
+		// Delete all OhMyLMS related transients.
 		$count = $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
@@ -75,7 +75,7 @@ class Ajax {
 			)
 		);
 
-		// Also delete transients with 'ohmylms' and 'ohmylms' prefix
+		// Also delete transients with 'ohmylms' and 'ohmylms' prefix.
 		$count += $wpdb->query(
 			$wpdb->prepare(
 				"DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s OR option_name LIKE %s",
@@ -91,7 +91,7 @@ class Ajax {
 			)
 		);
 
-		// For multisite, also delete from sitemeta
+		// For multisite, also delete from sitemeta.
 		if ( is_multisite() ) {
 			$count += $wpdb->query(
 				$wpdb->prepare(

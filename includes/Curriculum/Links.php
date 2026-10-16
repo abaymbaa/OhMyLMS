@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Curriculum membership of existing content. A link only says "this content belongs under
+ * this curriculum item": it never copies content, changes access, or sets a learning mode.
+ * Content can sit under several items, in the same or different curricula.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
@@ -27,7 +34,7 @@ final class Links {
 		return in_array( $type, self::TYPES, true ); }
 
 	private static function post_type( $type ) {
-		return $type === 'course' ? OHMYLMS_COURSE_CPT : ( $type === 'quiz' ? OHMYLMS_QUIZ_CPT : '' );
+		return 'course' === $type ? OHMYLMS_COURSE_CPT : ( 'quiz' === $type ? OHMYLMS_QUIZ_CPT : '' );
 	}
 
 	/** Does a link target of this type and ID exist (and is it not in the trash)? */
@@ -35,13 +42,13 @@ final class Links {
 		$id = (int) $id;
 		if ( $id <= 0 ) {
 			return false; }
-		if ( $type === 'course' || $type === 'quiz' ) {
+		if ( 'course' === $type || 'quiz' === $type ) {
 			$status = get_post_status( $id );
 			return get_post_type( $id ) === self::post_type( $type ) && $status && ! in_array( $status, array( 'trash', 'auto-draft' ), true );
 		}
-		if ( $type === 'skill' ) {
+		if ( 'skill' === $type ) {
 			return (bool) term_exists( $id, Taxonomy::NAME ); }
-		if ( $type === 'bank' ) {
+		if ( 'bank' === $type ) {
 			return AssessmentSchema::ready() && Banks::get( $id ) !== null; }
 		return false;
 	}
@@ -59,9 +66,9 @@ final class Links {
 		if ( $count >= self::MAX_PER_ITEM ) {
 			return Access::error( 'ohmylms_link_limit', sprintf( __( 'A curriculum item can link to at most %d pieces of content.', 'ohmylms' ), self::MAX_PER_ITEM ), 409 ); }
 		$ok = $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . self::table() . ' (item_id, object_type, object_id, created_by, created_at) VALUES (%d, %s, %d, %d, %s)', (int) $item_id, $type, (int) $object_id, get_current_user_id(), current_time( 'mysql', true ) ) );
-		if ( $ok === false ) {
+		if ( false === $ok ) {
 			return Access::error( 'ohmylms_link_failed', __( 'The link could not be saved.', 'ohmylms' ), 500 ); }
-		if ( $type === 'course' ) {
+		if ( 'course' === $type ) {
 			Placement::changed(); }
 		return true;
 	}
@@ -81,7 +88,7 @@ final class Links {
 				'object_id'   => (int) $object_id,
 			)
 		);
-		if ( $type === 'course' ) {
+		if ( 'course' === $type ) {
 			Placement::changed(); }
 		return true;
 	}
@@ -91,14 +98,14 @@ final class Links {
 		$ids    = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
 		$labels = array();
 		foreach ( $ids as $id ) {
-			if ( $type === 'course' || $type === 'quiz' ) {
+			if ( 'course' === $type || 'quiz' === $type ) {
 				$post          = get_post( $id );
-				$valid         = $post && $post->post_type === self::post_type( $type ) && $post->post_status !== 'trash';
+				$valid         = $post && $post->post_type === self::post_type( $type ) && 'trash' !== $post->post_status;
 				$labels[ $id ] = array(
 					'title'  => $valid ? ( get_the_title( $post ) ?: '#' . $id ) : '',
 					'status' => $valid ? $post->post_status : 'missing',
 				);
-			} elseif ( $type === 'skill' ) {
+			} elseif ( 'skill' === $type ) {
 				$term          = get_term( $id, Taxonomy::NAME );
 				$valid         = $term && ! is_wp_error( $term );
 				$labels[ $id ] = array(
@@ -106,7 +113,7 @@ final class Links {
 					'status' => $valid ? 'active' : 'missing',
 					'code'   => $valid ? (string) get_term_meta( $id, '_ohmylms_skill_code', true ) : '',
 				);
-			} elseif ( $type === 'bank' ) {
+			} elseif ( 'bank' === $type ) {
 				$bank          = AssessmentSchema::ready() ? Banks::get( $id ) : null;
 				$labels[ $id ] = array(
 					'title'  => $bank ? $bank['name'] : '',
@@ -147,7 +154,7 @@ final class Links {
 		global $wpdb;
 		$include = array_values( array_filter( array_map( 'intval', $include ) ) );
 		$rows    = array();
-		if ( $type === 'course' || $type === 'quiz' ) {
+		if ( 'course' === $type || 'quiz' === $type ) {
 			$args = array(
 				'post_type'        => self::post_type( $type ),
 				'post_status'      => self::POST_STATUSES,
@@ -167,7 +174,7 @@ final class Links {
 					'title'  => get_the_title( $post ) ?: '#' . $post->ID,
 					'status' => $post->post_status,
 				); }
-		} elseif ( $type === 'skill' ) {
+		} elseif ( 'skill' === $type ) {
 			$args = array(
 				'taxonomy'   => Taxonomy::NAME,
 				'hide_empty' => false,
@@ -185,7 +192,7 @@ final class Links {
 					'status' => 'active',
 					'code'   => (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ),
 				); }
-		} elseif ( $type === 'bank' && AssessmentSchema::ready() ) {
+		} elseif ( 'bank' === $type && AssessmentSchema::ready() ) {
 			$table = AssessmentSchema::table( 'qb_banks' );
 			if ( $include ) {
 				$placeholders = implode( ',', array_fill( 0, count( $include ), '%d' ) );
@@ -208,7 +215,7 @@ final class Links {
 		global $wpdb;
 		$ids = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT item_id FROM ' . self::table() . ' WHERE object_type=%s AND object_id=%d ORDER BY item_id', $type, (int) $object_id ) ) );
 		// A skill placed in a syllabus's skill group belongs to the item that group sits under.
-		if ( $type === 'skill' ) {
+		if ( 'skill' === $type ) {
 			$ids = array_values( array_unique( array_merge( $ids, Syllabus::item_ids_for_skill( $object_id ) ) ) );
 			sort( $ids ); }
 		$result = array();
@@ -229,7 +236,7 @@ final class Links {
 		$placeholders = implode( ',', array_fill( 0, count( $item_ids ), '%d' ) );
 		$ids          = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT object_id FROM ' . self::table() . " WHERE object_type=%s AND item_id IN ($placeholders) ORDER BY object_id", array_merge( array( $type ), $item_ids ) ) ) );
 		// Skills placed in the skill groups of a syllabus count as that syllabus's skills too.
-		if ( $type === 'skill' ) {
+		if ( 'skill' === $type ) {
 			$ids = array_values( array_unique( array_merge( $ids, Syllabus::skill_ids( $item_ids ) ) ) );
 			sort( $ids ); }
 		return $ids;
@@ -247,7 +254,7 @@ final class Links {
 				'object_id'   => (int) $object_id,
 			)
 		);
-		if ( $type === 'course' ) {
+		if ( 'course' === $type ) {
 			Placement::changed(); }
 	}
 }

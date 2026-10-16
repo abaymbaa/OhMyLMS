@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Student Profile Shortcode
  *
@@ -47,28 +47,28 @@ class ShortCodeProfile {
 	private static function profile( $atts ) {
 		$args = shortcode_atts(
 			array(
-				// Header visibility and configuration
+				// Header visibility and configuration.
 				'show_header'                       => 'yes',
-				// Header styling
+				// Header styling.
 				'header_bg_color'                   => '#000D2C',
-				// User menu styling
+				// User menu styling.
 				'user_menu_color'                   => '#7A8B9A',
 				'user_menu_bg_color'                => '#FFFFFF',
 				'user_menu_font_size'               => 14,
 				'user_menu_font_weight'             => 400,
-				// User menu hover styling
+				// User menu hover styling.
 				'user_menu_hover_color'             => '#000D25',
 				'user_menu_hover_bg_color'          => '#f5f5f5',
-				// User menu icon styling
+				// User menu icon styling.
 				'user_menu_icon_color'              => '#7A8B9A',
 				'user_menu_icon_hover_color'        => '#4361EE',
-				// Section background
+				// Section background.
 				'section_bg_color'                  => '#F9FAFD',
-				// Profile wrapper styling
+				// Profile wrapper styling.
 				'wrapper_border'                    => '#EBECEF',
 				'wrapper_bg_color'                  => '#F8F8F8',
 				'wrapper_shadow'                    => '0px 2px 8px 0px #ECECEC',
-				// Sidebar items styling
+				// Sidebar items styling.
 				'sidebar_item_color'                => '#1E1E1E',
 				'sidebar_item_font_size'            => 14,
 				'sidebar_item_font_weight'          => 400,
@@ -77,21 +77,21 @@ class ShortCodeProfile {
 				'sidebar_item_active_font_size'     => 14,
 				'sidebar_item_active_font_weight'   => 400,
 				'sidebar_item_active_bg_color'      => '#FFFFFF',
-				// Sidebar content styling
+				// Sidebar content styling.
 				'sidebar_content_bg_color'          => '#FFFFFF',
 				'sidebar_content_shadow'            => '0px 1px 2px 0px #DBDDE1',
 				'sidebar_content_padding'           => 40,
 				'sidebar_content_title_color'       => '#1E1E1E',
 				'sidebar_content_title_font_size'   => 24,
 				'sidebar_content_title_font_weight' => 600,
-				// Profile info styling
+				// Profile info styling.
 				'profile_name_color'                => '#1E1E1E',
 				'profile_name_font_size'            => 20,
 				'profile_name_font_weight'          => 700,
 				'profile_bio_color'                 => '#52525B',
 				'profile_bio_font_size'             => 15,
 				'profile_bio_font_weight'           => 400,
-				// Profile edit button styling
+				// Profile edit button styling.
 				'profile_edit_color'                => '#1E1E1E',
 				'profile_edit_bg_color'             => '#FFFFFF',
 				'profile_edit_border'               => '#EBEBEF',
@@ -99,14 +99,14 @@ class ShortCodeProfile {
 				'profile_edit_font_weight'          => 500,
 				'profile_edit_hover_color'          => '#1E1E1E',
 				'profile_edit_hover_bg_color'       => '#f6f6f6',
-				// Basic info section styling
+				// Basic info section styling.
 				'basic_info_bg_color'               => '#FFFFFF',
 				'basic_info_shadow'                 => '0px 1px 4px 0px #D3D6DD',
 				'basic_info_padding'                => 21,
 				'basic_info_title_color'            => '#1E1E1E',
 				'basic_info_title_font_size'        => 18,
 				'basic_info_title_font_weight'      => 600,
-				// Input styling
+				// Input styling.
 				'input_bg_color'                    => '#FFFFFF',
 				'input_border'                      => '#c8d2e980',
 				'input_text_color'                  => '#52525B',
@@ -114,11 +114,11 @@ class ShortCodeProfile {
 				'input_font_size'                   => 14,
 				'input_padding'                     => 13,
 				'input_border_radius'               => 8,
-				// Label styling
+				// Label styling.
 				'label_color'                       => '#1E1E1E',
 				'label_font_size'                   => 14,
 				'label_font_weight'                 => 500,
-				// Button styling
+				// Button styling.
 				'button_bg_color'                   => '#4361EE',
 				'button_text_color'                 => '#FFFFFF',
 				'button_font_size'                  => 15,
@@ -136,9 +136,9 @@ class ShortCodeProfile {
 
 		// Check current view mode.
 		$current_view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : 'profile';
-		$is_edit_mode = isset( $_GET['edit'] ) && $_GET['edit'] === 'true';
+		$is_edit_mode = isset( $_GET['edit'] ) && 'true' === $_GET['edit'];
 
-		// Generate custom styles
+		// Generate custom styles.
 		self::generate_custom_styles( $args );
 
 		// Display header with navigation if enabled.
@@ -175,11 +175,11 @@ class ShortCodeProfile {
 		echo '<div class="ohmylms-student-profile-sidebar-content">';
 
 		// Display content based on view and mode.
-		if ( $current_view === 'transactions-history' ) {
+		if ( 'transactions-history' === $current_view ) {
 			self::render_transactions_history();
-		} elseif ( $current_view === 'membership' && ohmylms_is_pro() ) {
+		} elseif ( 'membership' === $current_view && ohmylms_is_pro() ) {
 			self::render_membership();
-		} elseif ( $current_view === 'invoice-details' ) {
+		} elseif ( 'invoice-details' === $current_view ) {
 			self::render_invoice_details();
 		} elseif ( $is_edit_mode ) {
 			// Profile edit content.
@@ -221,7 +221,7 @@ class ShortCodeProfile {
 		?>
 		<aside class="ohmylms-student-profile-sidebar">
 			<ul class="ohmylms-student-profile-tab">
-				<li class="item-profile <?php echo ( $current_view === 'profile' ) ? 'active' : ''; ?>">
+				<li class="item-profile <?php echo ( 'profile' === $current_view ) ? 'active' : ''; ?>">
 					<a href="<?php echo esc_url( add_query_arg( 'view', 'profile', $current_url ) ); ?>" data-view="profile">
 						<span class="icon icon-regular">
 							<?php include OHMYLMS_DIR . '/assets/images/icon/profile-icon.php'; ?>
@@ -229,11 +229,11 @@ class ShortCodeProfile {
 						<span class="icon icon-active">
 							<?php include OHMYLMS_DIR . '/assets/images/icon/profile-active-icon.php'; ?>
 						</span>
-						<?php echo __( 'Profile', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Profile', 'ohmylms' ); ?>
 					</a>
 				</li>
 
-				<li class="item-transaction-history <?php echo ( $current_view === 'transactions-history' ) ? 'active' : ''; ?>">
+				<li class="item-transaction-history <?php echo ( 'transactions-history' === $current_view ) ? 'active' : ''; ?>">
 					<a href="<?php echo esc_url( add_query_arg( 'view', 'transactions-history', $current_url ) ); ?>" data-view="transactions-history">
 						<span class="icon icon-regular">
 							<?php include OHMYLMS_DIR . '/assets/images/icon/cart-icon.php'; ?>
@@ -241,12 +241,12 @@ class ShortCodeProfile {
 						<span class="icon icon-active">
 							<?php include OHMYLMS_DIR . '/assets/images/icon/cart-active-icon.php'; ?>
 						</span>
-						<?php echo __( 'Transaction History', 'ohmylms' ); ?>
+						<?php echo esc_html__( 'Transaction History', 'ohmylms' ); ?>
 					</a>
 				</li>
 
 				<?php if ( ohmylms_is_pro() ) : ?>
-					<li class="item-membership <?php echo ( $current_view === 'membership' ) ? 'active' : ''; ?>">
+					<li class="item-membership <?php echo ( 'membership' === $current_view ) ? 'active' : ''; ?>">
 						<a href="<?php echo esc_url( add_query_arg( 'view', 'membership', $current_url ) ); ?>" data-view="membership">
 							<span class="icon icon-regular">
 								<?php include OHMYLMS_DIR . '/assets/images/icon/membership-icon.php'; ?>
@@ -254,7 +254,7 @@ class ShortCodeProfile {
 							<span class="icon icon-active">
 								<?php include OHMYLMS_DIR . '/assets/images/icon/membership-active-icon.php'; ?>
 							</span>
-							<?php echo __( 'Membership', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Membership', 'ohmylms' ); ?>
 						</a>
 					</li>
 				<?php endif; ?>
@@ -411,7 +411,7 @@ class ShortCodeProfile {
 	 * @since 1.2.5
 	 */
 	private static function generate_custom_styles( $args ) {
-		// Sanitize values
+		// Sanitize values.
 		$header_bg_color                   = sanitize_hex_color( $args['header_bg_color'] );
 		$user_menu_color                   = sanitize_hex_color( $args['user_menu_color'] );
 		$user_menu_bg_color                = sanitize_hex_color( $args['user_menu_bg_color'] );
@@ -477,7 +477,7 @@ class ShortCodeProfile {
 		$button_hover_text_color           = sanitize_hex_color( $args['button_hover_text_color'] );
 		$button_hover_border               = sanitize_text_field( $args['button_hover_border'] );
 
-		// Generate CSS
+		// Generate CSS.
 		?>
 		<style id="ohmylms-profile-custom-styles">
 			/* Header Background */

@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The learner's bundle dashboard: followed bundles with per-course and per-syllabus progress,
+ * skill strengths and gaps, next practice and combined skill views, plus suggested bundles to
+ * add. Rendered on the server (all output escaped); an Interactivity API module (ohmylms/bundles) only calls the
+ * follow and unfollow endpoints and swaps in the section they return.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Bundles;
 
 use OhMyLMS\Curriculum\Schema;
@@ -147,10 +155,10 @@ final class Frontend {
 			</div>
 			<?php if ( ! $course['enrolled'] ) { ?>
 				<p class="ohmylms-bundle-muted"><?php esc_html_e( 'You are not enrolled in this course. Enrollment and access follow the course\'s normal rules.', 'ohmylms' ); ?></p>
-			<?php } elseif ( $course['progress'] === null ) { ?>
+			<?php } elseif ( null === $course['progress'] ) { ?>
 				<p class="ohmylms-bundle-muted"><?php esc_html_e( 'Progress is not available for this course right now.', 'ohmylms' ); ?></p>
 				<?php
-			} elseif ( $course['progress']['kind'] === 'program' ) {
+			} elseif ( 'program' === $course['progress']['kind'] ) {
 				$labels = array(
 					'activities'  => __( 'Activities', 'ohmylms' ),
 					'outcomes'    => __( 'Skill targets', 'ohmylms' ),
@@ -190,7 +198,7 @@ final class Frontend {
 	}
 
 	private static function bundle( array $view ) {
-		$bundle   = $view['bundle'];
+		$bundle  = $view['bundle'];
 		$heading = 'ohmylms-bundle-' . (int) $bundle['id'] . '-title';
 		?>
 		<article class="ohmylms-bundle" aria-labelledby="<?php echo esc_attr( $heading ); ?>" data-bundle="<?php echo esc_attr( (int) $bundle['id'] ); ?>">
@@ -199,7 +207,7 @@ final class Frontend {
 				<button type="button" class="ohmylms-button ohmylms-button-secondary" data-bundle-unfollow="<?php echo esc_attr( (int) $bundle['id'] ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Remove %s from my dashboard', 'ohmylms' ), $bundle['title'] ) ); ?>"><?php esc_html_e( 'Remove from dashboard', 'ohmylms' ); ?></button>
 			</header>
 			<?php
-			if ( $bundle['description'] !== '' ) {
+			if ( '' !== $bundle['description'] ) {
 				?>
 				<p><?php echo esc_html( $bundle['description'] ); ?></p><?php } ?>
 			<?php if ( ! $view['members'] ) { ?>
@@ -209,7 +217,7 @@ final class Frontend {
 				<ul class="ohmylms-bundle-members">
 					<?php
 					foreach ( $view['members'] as $member ) {
-						if ( $member['type'] === 'course' ) {
+						if ( 'course' === $member['type'] ) {
 							self::course( $member );
 							continue;
 						}
@@ -219,11 +227,11 @@ final class Frontend {
 								<strong><?php echo esc_html( $member['name'] ); ?></strong>
 								<span class="ohmylms-bundle-badge"><?php echo esc_html( ucfirst( str_replace( array( '-', '_' ), ' ', $member['item_type'] ) ) ); ?></span>
 								<?php
-								if ( $member['code'] !== '' ) {
+								if ( '' !== $member['code'] ) {
 									?>
 									<span class="ohmylms-bundle-badge"><?php echo esc_html( $member['code'] ); ?></span><?php } ?>
 								<?php
-								if ( $member['version'] !== '' ) {
+								if ( '' !== $member['version'] ) {
 									?>
 									<span class="ohmylms-bundle-badge"><?php echo esc_html( sprintf( __( 'Version %s', 'ohmylms' ), $member['version'] ) ); ?></span><?php } ?>
 							</div>
@@ -293,7 +301,7 @@ final class Frontend {
 							?>
 							<a href="<?php echo esc_url( $skill['practice_url'] ); ?>"><?php esc_html_e( 'Practice', 'ohmylms' ); ?></a>
 							<?php
-						} elseif ( $skill['classification'] === 'strength' && ! $skill['review_due'] ) {
+						} elseif ( 'strength' === $skill['classification'] && ! $skill['review_due'] ) {
 										esc_html_e( '—', 'ohmylms' );
 						} else {
 							esc_html_e( 'None available yet', 'ohmylms' ); }
@@ -327,12 +335,12 @@ final class Frontend {
 					<?php foreach ( $group['sources'] as $source ) { ?>
 						<li>
 							<?php echo esc_html( $source['name'] ); ?> — <?php echo self::level_badge( $source['level'], $source['level_label'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
-							<span class="ohmylms-bundle-badge"><?php echo esc_html( $source['relation'] === 'equivalent' ? __( 'Counts toward shared level', 'ohmylms' ) : __( 'Related only', 'ohmylms' ) ); ?></span>
+							<span class="ohmylms-bundle-badge"><?php echo esc_html( 'equivalent' === $source['relation'] ? __( 'Counts toward shared level', 'ohmylms' ) : __( 'Related only', 'ohmylms' ) ); ?></span>
 							<?php foreach ( $source['context'] as $context ) { ?>
-								<small><?php echo esc_html( implode( ' › ', array_merge( $context['path'], array( $context['name'] ) ) ) . ( $context['code'] !== '' ? ' (' . $context['code'] . ( $context['version'] !== '' ? ', ' . $context['version'] : '' ) . ')' : ( $context['version'] !== '' ? ' (' . $context['version'] . ')' : '' ) ) ); ?></small>
+								<small><?php echo esc_html( implode( ' › ', array_merge( $context['path'], array( $context['name'] ) ) ) . ( '' !== $context['code'] ? ' (' . $context['code'] . ( '' !== $context['version'] ? ', ' . $context['version'] : '' ) . ')' : ( '' !== $context['version'] ? ' (' . $context['version'] . ')' : '' ) ) ); ?></small>
 							<?php } ?>
 							<?php
-							if ( $source['note'] !== '' ) {
+							if ( '' !== $source['note'] ) {
 								?>
 								<small><?php echo esc_html( sprintf( __( 'Differences: %s', 'ohmylms' ), $source['note'] ) ); ?></small><?php } ?>
 						</li>

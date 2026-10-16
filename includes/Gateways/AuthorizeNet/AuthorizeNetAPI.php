@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Authorize.Net API Handler Class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Gateways\AuthorizeNet;
 
@@ -82,7 +87,7 @@ class AuthorizeNetAPI {
 		$body_to_encode = array();
 
 		if ( ! empty( $request_body_wrapper ) ) {
-			$request_key = key( $request_body_wrapper ); // e.g., 'createTransactionRequest'
+			$request_key = key( $request_body_wrapper ); // e.g., 'createTransactionRequest'.
 			if ( $request_key ) {
 				$body_to_encode = array(
 					$request_key => array_merge(
@@ -98,7 +103,7 @@ class AuthorizeNetAPI {
 			}
 		} elseif ( 'POST' === $request_type || 'PUT' === $request_type ) {
 			// Some POST/PUT requests might not have a specific wrapper but still need merchant auth if body is expected
-			// For now, assume $request_body_wrapper is always provided for POST/PUT that need auth
+			// For now, assume $request_body_wrapper is always provided for POST/PUT that need auth.
 		}
 
 		$args = array(
@@ -123,7 +128,7 @@ class AuthorizeNetAPI {
 
 		$body = wp_remote_retrieve_body( $response );
 
-		// Strip UTF-8 BOM if present, as it can break json_decode
+		// Strip UTF-8 BOM if present, as it can break json_decode.
 		if ( 0 === strpos( bin2hex( $body ), 'efbbbf' ) ) {
 			$body = substr( $body, 3 );
 		}
@@ -131,7 +136,7 @@ class AuthorizeNetAPI {
 		$decoded_body = json_decode( $body, true );
 
 		if ( json_last_error() !== JSON_ERROR_NONE ) {
-			// Optionally log the error: error_log( 'Authorize.Net API JSON Decode Error: ' . json_last_error_msg() . ' | Body: ' . $body );
+			// Optionally log the error: error_log( 'Authorize.Net API JSON Decode Error: ' . json_last_error_msg() . ' | Body: ' . $body );.
 			return new \WP_Error( 'json_decode_error', __( 'Failed to decode API response.', 'ohmylms' ), array( 'status' => wp_remote_retrieve_response_code( $response ) ) );
 		}
 
@@ -146,10 +151,10 @@ class AuthorizeNetAPI {
 	 * @return array|WP_Error The API response.
 	 */
 	public function createTransaction( array $transaction_request_content, $timeout = 60 ) {
-		// Automatically increase timeout for refund transactions
+		// Automatically increase timeout for refund transactions.
 		if ( isset( $transaction_request_content['transactionType'] ) &&
-			$transaction_request_content['transactionType'] === 'refundTransaction' ) {
-			$timeout = max( $timeout, 120 ); // Use at least 120 seconds for refunds
+			'refundTransaction' === $transaction_request_content['transactionType'] ) {
+			$timeout = max( $timeout, 120 ); // Use at least 120 seconds for refunds.
 		}
 
 		$payload = array(
@@ -181,7 +186,7 @@ class AuthorizeNetAPI {
 	 */
 	public function createSubscription( array $subscription_details_content ) {
 		$payload = array(
-			'createSubscriptionRequest' => array( // Assuming REST equivalent of ARBCreateSubscriptionRequest
+			'createSubscriptionRequest' => array( // Assuming REST equivalent of ARBCreateSubscriptionRequest.
 				'subscription' => $subscription_details_content,
 			),
 		);
@@ -213,12 +218,12 @@ class AuthorizeNetAPI {
 		// or a DELETE that implicitly handles auth (less likely for AuthNet style).
 		// Reverting to a common pattern: POST to cancel, or use a specific cancelSubscriptionRequest.
 		$payload = array(
-			'cancelSubscriptionRequest' => array( // Assuming REST equivalent of ARBCancelSubscriptionRequest
+			'cancelSubscriptionRequest' => array( // Assuming REST equivalent of ARBCancelSubscriptionRequest.
 				'subscriptionId' => $subscription_id,
 			),
 		);
 		// This might be a POST to 'subscriptions/{id}/cancel' or similar, or to a general 'subscriptions' endpoint
 		// with an action specified in the payload. Using 'subscriptions' for now.
-		return $this->make_api_request( 'subscriptions', $payload, 'POST' ); // Changed to POST for consistency with AuthNet patterns
+		return $this->make_api_request( 'subscriptions', $payload, 'POST' ); // Changed to POST for consistency with AuthNet patterns.
 	}
 }

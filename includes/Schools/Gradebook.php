@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course gradebooks group real enrollments without creating shared user accounts.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
@@ -29,31 +34,31 @@ final class Gradebook {
 		try {
 			$course = absint( $r['course_id'] );
 			$post   = get_post( $course );
-			Service::need( $post && $post->post_type === OHMYLMS_COURSE_CPT && $post->post_status !== 'trash', 'Course not found.' );
+			Service::need( $post && $post->post_type === OHMYLMS_COURSE_CPT && 'trash' !== $post->post_status, 'Course not found.' );
 			$route  = $r->get_route();
 			$method = $r->get_method();
 			if ( substr( $route, -7 ) === '/grades' ) {
-				$data = self::grade( $course, $r, $method === 'DELETE' ); } elseif ( $r['class_id'] ) {
-				$data = $method === 'DELETE' ? self::detach( $course, absint( $r['class_id'] ) ) : self::attach( $course, absint( $r['class_id'] ), rest_sanitize_boolean( $r['enroll'] ) ); } elseif ( substr( $route, -8 ) === '/classes' ) {
-					$data = $method === 'GET' ? self::classes( $course ) : self::attach( $course, absint( $r['class'] ), rest_sanitize_boolean( $r['enroll'] ) ); } else {
+				$data = self::grade( $course, $r, 'DELETE' === $method ); } elseif ( $r['class_id'] ) {
+				$data = 'DELETE' === $method ? self::detach( $course, absint( $r['class_id'] ) ) : self::attach( $course, absint( $r['class_id'] ), rest_sanitize_boolean( $r['enroll'] ) ); } elseif ( substr( $route, -8 ) === '/classes' ) {
+					$data = 'GET' === $method ? self::classes( $course ) : self::attach( $course, absint( $r['class'] ), rest_sanitize_boolean( $r['enroll'] ) ); } else {
 					$data = self::read( $course ); }
 					$response = rest_ensure_response( $data );
 					$response->header( 'Cache-Control', 'private, no-store' );
 					return $response;
 		} catch ( \Throwable $e ) {
 			$status = in_array( $e->getCode(), array( 400, 403, 404, 409 ), true ) ? $e->getCode() : 500;
-			if ( $status === 500 ) {
+			if ( 500 === $status ) {
 				error_log( '[OhMyLMS gradebook] ' . $e->getMessage() ); }
-			return new \WP_Error( 'gradebook_error', $status === 500 ? 'Unable to update the gradebook. Please try again.' : $e->getMessage(), array( 'status' => $status ) );
+			return new \WP_Error( 'gradebook_error', 500 === $status ? 'Unable to update the gradebook. Please try again.' : $e->getMessage(), array( 'status' => $status ) );
 		}
 	}
 	public static function roster( $class ) {
 		global $wpdb;
 		$c = Service::row( 'classes', $class );
-		Service::need( $c && $c['status'] === 'active', 'Select an active class.' );
+		Service::need( $c && 'active' === $c['status'], 'Select an active class.' );
 		if ( (int) $c['school_id'] ) {
 			$school = Service::row( 'schools', (int) $c['school_id'] );
-			Service::need( $school && $school['status'] === 'active', 'The school is archived.' ); }
+			Service::need( $school && 'active' === $school['status'], 'The school is archived.' ); }
 		$m     = Schema::table( 'class_memberships' );
 		$s     = Schema::table( 'school_memberships' );
 		$scope = (int) $c['school_id'] ? $wpdb->prepare( " AND EXISTS (SELECT 1 FROM $s s WHERE s.school_id=%d AND s.user_id=m.user_id AND s.role='student' AND s.status='active')", $c['school_id'] ) : '';
@@ -107,7 +112,7 @@ final class Gradebook {
 						$new[]    = $user;
 						$existing = array( 'status' => 'enrolled' );
 					}
-					if ( ! $existing || $existing['status'] !== 'enrolled' ) {
+					if ( ! $existing || 'enrolled' !== $existing['status'] ) {
 						$skipped++;
 						continue; }
 					if ( ! $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $members WHERE course_id=%d AND class_id=%d AND user_id=%d", $course, $class, $user ) ) ) {
@@ -270,7 +275,7 @@ final class Gradebook {
 					array_map(
 						function ( $u ) use ( $item ) {
 							$cell = $u['cells'][ $item['id'] ];
-							return $cell['score'] !== null && $cell['max'] > 0 ? 100 * $cell['score'] / $cell['max'] : null;
+							return null !== $cell['score'] && $cell['max'] > 0 ? 100 * $cell['score'] / $cell['max'] : null;
 						},
 						$class['students']
 					)
@@ -343,7 +348,7 @@ final class Gradebook {
 				)
 			);
 			}
-			if ( $saved === false ) {
+			if ( false === $saved ) {
 				throw new \RuntimeException( 'Unable to save this grade.' ); }
 			Service::audit( 0, $reset ? 'gradebook_grade_reset' : 'gradebook_grade_saved', $content );
 			return array( 'success' => true );

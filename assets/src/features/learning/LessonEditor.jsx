@@ -24,7 +24,6 @@ export function createLessonEditor( readRuntime ) {
 		);
 	};
 }
-
 function createLegacyLessonEditor( readRuntime ) {
 	return function LegacyLessonEditor( props ) {
 		const {
@@ -88,135 +87,173 @@ function createLegacyLessonEditor( readRuntime ) {
 			),
 			x = R[ 0 ],
 			C = R[ 1 ];
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
-				! E && d && openNotificationWithIcon( m, d );
+				if ( ! E && d ) {
+					openNotificationWithIcon( m, d );
+				}
 			},
 			[ d ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					c.setSelectedLessonId( a );
-				},
-				[ a ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e = ( function () {
-						var e,
-							t =
-								( ( e = Yr().m( function e() {
-									var t;
-									return Yr().w(
-										function ( e ) {
-											for (;;) {
-												switch ( ( e.p = e.n ) ) {
-													case 0:
-														if (
-															( ( e.p = 0 ), s )
-														) {
-															e.n = 1;
-															break;
-														}
-														return e.a( 2 );
-													case 1:
-														return (
-															S( ! 0 ),
-															( e.n = 2 ),
-															getLesson( s )
-														 );
-													case 2:
-														e.n = 4;
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				c.setSelectedLessonId( a );
+			},
+			[ a ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e = ( function () {
+					var _eLocal,
+						_tLocal =
+							( ( _eLocal = Yr().m( function _eLocal2() {
+								var _tLocal2;
+								return Yr().w(
+									function ( _eLocal3 ) {
+										for (;;) {
+											switch (
+												( _eLocal3.p = _eLocal3.n )
+											) {
+												case 0:
+													if (
+														( ( _eLocal3.p = 0 ),
+														s )
+													) {
+														_eLocal3.n = 1;
 														break;
-													case 3:
-														( ( e.p = 3 ),
-															( t = e.v ),
-															console.error(
-																'Error fetching course data:',
-																t
-															) );
-													case 4:
-														return (
-															( e.p = 4 ),
-															S( ! 1 ),
-															e.f( 4 )
-														 );
-													case 5:
-														return e.a( 2 );
-												}
+													}
+													return _eLocal3.a( 2 );
+												case 1:
+													return (
+														S( ! 0 ),
+														( _eLocal3.n = 2 ),
+														getLesson( s )
+													 );
+												case 2:
+													_eLocal3.n = 4;
+													break;
+												case 3:
+													_eLocal3.p = 3;
+													_tLocal2 = _eLocal3.v;
+													console.error(
+														'Error fetching course data:',
+														_tLocal2
+													);
+												// Falls through to the shared async state cleanup.
+												case 4:
+													return (
+														( _eLocal3.p = 4 ),
+														S( ! 1 ),
+														_eLocal3.f( 4 )
+													 );
+												case 5:
+													return _eLocal3.a( 2 );
 											}
-										},
-										e,
-										null,
-										[ [ 0, 3, 4, 5 ] ]
-									);
-								} ) ),
-								function () {
-									var t = this,
-										n = arguments;
-									return new Promise( function ( r, a ) {
-										var o = e.apply( t, n );
-										function i( e ) {
-											Zr( o, r, a, i, l, 'next', e );
 										}
-										function l( e ) {
-											Zr( o, r, a, i, l, 'throw', e );
-										}
-										i( void 0 );
-									} );
+									},
+									_eLocal2,
+									null,
+									[ [ 0, 3, 4, 5 ] ]
+								);
+							} ) ),
+							function ( ..._args ) {
+								var _tLocal3 = this,
+									n = _args;
+								return new Promise( function ( r, _aLocal ) {
+									var o = _eLocal.apply( _tLocal3, n );
+									function i( _eLocal4 ) {
+										Zr(
+											o,
+											r,
+											_aLocal,
+											i,
+											l,
+											'next',
+											_eLocal4
+										);
+									}
+									function l( _eLocal5 ) {
+										Zr(
+											o,
+											r,
+											_aLocal,
+											i,
+											l,
+											'throw',
+											_eLocal5
+										);
+									}
+									i( void 0 );
 								} );
-						return function () {
-							return t.apply( this, arguments );
-						};
-					} )();
-					return (
-						e(),
-						function () {
-							resetLessonState();
-						}
-					 );
-				},
-				[ s ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					u &&
-						C( {
-							description:
-								( null == x ? void 0 : x.description ) ||
-								u.description ||
-								'',
-						} );
-				},
-				[ u ]
-			),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					setLocalData && setLocalData( x );
-				},
-				[ x ]
-			) );
+							} );
+					return function ( ..._args2 ) {
+						return _tLocal.apply( this, _args2 );
+					};
+				} )();
+				return (
+					e(),
+					function () {
+						resetLessonState();
+					}
+				 );
+			},
+			[ s ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( u ) {
+					C( {
+						description:
+							( x === null || x === void 0
+								? void 0
+								: x.description ) ||
+							u.description ||
+							'',
+					} );
+				}
+			},
+			[ u ]
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				if ( setLocalData ) {
+					setLocalData( x );
+				}
+			},
+			[ x ]
+		);
 		var P = function () {
 			if (
 				( ( u.description = x.description ),
-				c.updateLesson( null == u ? void 0 : u.id, u ),
+				c.updateLesson( u === null || u === void 0 ? void 0 : u.id, u ),
 				chapterId )
 			) {
-				var e = null == p ? void 0 : p.byId;
-				e[ null == u ? void 0 : u.id ] = u;
-				var t = Object.values( e ).filter( function ( e ) {
-					return void 0 !== ( null == e ? void 0 : e.chapterId )
-						? ( null == e ? void 0 : e.chapterId ) === chapterId
-						: ( null == e ? void 0 : e.id ) ===
-								( null == u ? void 0 : u.id );
-				} );
-				c.setContentsToChapter( chapterId, t );
+				var e = p === null || p === void 0 ? void 0 : p.byId;
+				e[ u === null || u === void 0 ? void 0 : u.id ] = u;
+				var _tLocal4 = Object.values( e ).filter(
+					function ( _eLocal6 ) {
+						return void 0 !==
+							( _eLocal6 === null || _eLocal6 === void 0
+								? void 0
+								: _eLocal6.chapterId )
+							? ( _eLocal6 === null || _eLocal6 === void 0
+									? void 0
+									: _eLocal6.chapterId ) === chapterId
+							: ( _eLocal6 === null || _eLocal6 === void 0
+									? void 0
+									: _eLocal6.id ) ===
+									( u === null || u === void 0
+										? void 0
+										: u.id );
+					}
+				);
+				c.setContentsToChapter( chapterId, _tLocal4 );
 			}
 		};
 		return (
 			<React.Fragment>
 				{ ! chapterId && contextHolder }
-				{ ! E || ( null != u && u.id ) ? (
+				{ ! E || ( u !== null && u !== void 0 && u.id ) ? (
 					<React.Fragment>
 						{ ! chapterId && (
 							<LearningEditorHeader
@@ -232,14 +269,19 @@ function createLegacyLessonEditor( readRuntime ) {
 									<React.Fragment>
 										<Controls.ButtonWP
 											onClick={ function () {
-												null != u &&
-													u.preview_url &&
+												if (
+													u !== null &&
+													u !== void 0 &&
+													u.preview_url
+												) {
 													window.open(
-														null == u
+														u === null ||
+															u === void 0
 															? void 0
 															: u.preview_url,
 														'_blank'
 													);
+												}
 											} }
 											icon={ <Br /> }
 											iconPosition={ 'right' }
@@ -297,9 +339,9 @@ function createLegacyLessonEditor( readRuntime ) {
 									} );
 								} }
 								handleEditorContentChange={ function ( e ) {
-									C( function ( t ) {
+									C( function ( _tLocal5 ) {
 										return Ur(
-											Ur( {}, t ),
+											Ur( {}, _tLocal5 ),
 											{},
 											{
 												description: e,
@@ -307,11 +349,14 @@ function createLegacyLessonEditor( readRuntime ) {
 										);
 									} );
 								} }
-								handleUploadComplete={ function ( e, t ) {
+								handleUploadComplete={ function (
+									e,
+									_tLocal6
+								) {
 									var n = {};
-									switch ( t ) {
+									switch ( _tLocal6 ) {
 										case 'video':
-											( c.setLesson(
+											c.setLesson(
 												Ur(
 													Ur( {}, u ),
 													{},
@@ -321,15 +366,15 @@ function createLegacyLessonEditor( readRuntime ) {
 														external_url: '',
 													}
 												)
-											),
-												( n = {
-													video_id: e.id,
-													video_src: e.url,
-													external_url: '',
-												} ) );
+											);
+											n = {
+												video_id: e.id,
+												video_src: e.url,
+												external_url: '',
+											};
 											break;
 										case 'audio':
-											( c.setLesson(
+											c.setLesson(
 												Ur(
 													Ur( {}, u ),
 													{},
@@ -339,15 +384,15 @@ function createLegacyLessonEditor( readRuntime ) {
 														external_url: '',
 													}
 												)
-											),
-												( n = {
-													audio_id: e.id,
-													audio_src: e.url,
-													external_url: '',
-												} ) );
+											);
+											n = {
+												audio_id: e.id,
+												audio_src: e.url,
+												external_url: '',
+											};
 											break;
 										default:
-											( c.setLesson(
+											c.setLesson(
 												Ur(
 													Ur( {}, u ),
 													{},
@@ -356,19 +401,21 @@ function createLegacyLessonEditor( readRuntime ) {
 														image_src: e.url,
 													}
 												)
-											),
-												( n = {
-													image_id: e.id,
-													image_src: e.url,
-												} ) );
+											);
+											n = {
+												image_id: e.id,
+												image_src: e.url,
+											};
 									}
 									c.updateLessonWithoutNotice(
-										null == u ? void 0 : u.id,
+										u === null || u === void 0
+											? void 0
+											: u.id,
 										Ur( Ur( {}, u ), n )
 									);
 								} }
 								handleRemoveMedia={ function ( e ) {
-									var t = Ur(
+									var _tLocal7 = Ur(
 										Ur( {}, u ),
 										{},
 										qr(
@@ -385,13 +432,13 @@ function createLegacyLessonEditor( readRuntime ) {
 											null
 										)
 									);
-									c.setLesson( t );
+									c.setLesson( _tLocal7 );
 								} }
 								setOpenModal={ setOpenModal }
 								saveLesson={ P }
 								chapterId={ chapterId }
-								onExternalUploadComplete={ function ( e, t ) {
-									( c.setLesson(
+								onExternalUploadComplete={ function ( e ) {
+									c.setLesson(
 										Ur(
 											Ur( {}, u ),
 											{},
@@ -403,21 +450,23 @@ function createLegacyLessonEditor( readRuntime ) {
 												audio_src: '',
 											}
 										)
-									),
-										c.updateLessonWithoutNotice(
-											null == u ? void 0 : u.id,
-											Ur(
-												Ur( {}, u ),
-												{},
-												{
-													external_url: e.url,
-													video_id: null,
-													video_src: '',
-													audio_id: null,
-													audio_src: '',
-												}
-											)
-										) );
+									);
+									c.updateLessonWithoutNotice(
+										u === null || u === void 0
+											? void 0
+											: u.id,
+										Ur(
+											Ur( {}, u ),
+											{},
+											{
+												external_url: e.url,
+												video_id: null,
+												video_src: '',
+												audio_id: null,
+												audio_src: '',
+											}
+										)
+									);
 								} }
 							/>
 						</div>

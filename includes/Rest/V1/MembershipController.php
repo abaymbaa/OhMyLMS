@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling membership REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -352,7 +357,7 @@ class MembershipController extends RestController {
 			 */
 			do_action( 'ohmylms_rest_insert_membership', $post, $request );
 
-			// Trigger membership created event for tracking
+			// Trigger membership created event for tracking.
 			do_action( 'ohmylms_membership_created', $membership_id, $request );
 
 			$this->update_additional_fields_for_object( $post, $request );
@@ -460,15 +465,15 @@ class MembershipController extends RestController {
 	 * @since 1.0.0
 	 */
 	public function delete_item( $request ) {
-		// Get membership id
+		// Get membership id.
 		$membership_id = isset( $request['id'] ) ? (int) $request['id'] : 0;
 
-		// Check the membership id exist or not
+		// Check the membership id exist or not.
 		if ( ! $membership_id ) {
 			return new WP_Error( 'ohmylms_rest_membership_empty_id', __( 'ID is required.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Get existing membership by membership id
+		// Get existing membership by membership id.
 		$membership = ohmylms_get_membership( $membership_id );
 
 		// Check the membership exist or not.
@@ -476,7 +481,7 @@ class MembershipController extends RestController {
 			return new WP_Error( 'ohmylms_rest_membership_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		// Delete the membership
+		// Delete the membership.
 		$membership->delete();
 
 		/**
@@ -743,7 +748,7 @@ class MembershipController extends RestController {
 			'course_categories'            => $membership->get_course_categories(),
 			'course_tags'                  => $membership->get_course_tags(),
 			'course_curriculum'            => $membership->get_course_curriculum(),
-			'course_bundles'                => $membership->get_course_bundles(),
+			'course_bundles'               => $membership->get_course_bundles(),
 			'legacy_rules'                 => $this->legacy_rules( $membership ),
 			'excluded_courses'             => $membership->get_excluded_courses(),
 			'courses'                      => count( $membership->get_products() ),
@@ -766,7 +771,7 @@ class MembershipController extends RestController {
 			'course_categories' => 'course_category',
 			'course_tags'       => 'course_tag',
 			'course_curriculum' => 'curriculum',
-			'course_bundles'     => 'bundles',
+			'course_bundles'    => 'bundles',
 			'excluded_courses'  => null,
 		);
 		foreach ( $rules as $field => $kind ) {
@@ -781,9 +786,9 @@ class MembershipController extends RestController {
 					return new WP_Error( 'membership_selection_invalid', __( 'A selected course rule or exclusion no longer exists.', 'ohmylms' ), array( 'status' => 400 ) );
 				}
 				$id = (int) $id;
-				if ( $kind === 'curriculum' ) {
+				if ( 'curriculum' === $kind ) {
 					$exists = \OhMyLMS\Curriculum\Items::get( $id ) !== null;
-				} elseif ( $kind === 'bundles' ) {
+				} elseif ( 'bundles' === $kind ) {
 					$exists = \OhMyLMS\Bundles\Bundles::get( $id ) !== null;
 				} elseif ( $kind ) {
 					$exists = (bool) term_exists( $id, $kind );
@@ -795,7 +800,7 @@ class MembershipController extends RestController {
 				}
 			}
 			if ( $membership && in_array( $kind, array( 'course_category', 'course_tag' ), true ) ) {
-				$saved = $kind === 'course_category' ? $membership->get_course_categories( 'edit' ) : $membership->get_course_tags( 'edit' );
+				$saved = 'course_category' === $kind ? $membership->get_course_categories( 'edit' ) : $membership->get_course_tags( 'edit' );
 				if ( array_diff( array_map( 'intval', $request[ $field ] ), array_map( 'intval', (array) $saved ) ) ) {
 					return new WP_Error( 'membership_legacy_rules', __( 'Category and tag rules were replaced by curriculum items and course bundles. Existing rules can only be removed.', 'ohmylms' ), array( 'status' => 400 ) );
 				}
@@ -839,7 +844,7 @@ class MembershipController extends RestController {
 			return $valid;
 		}
 		$curriculum   = $request['course_curriculum'] ?? array();
-		$bundles       = $request['course_bundles'] ?? array();
+		$bundles      = $request['course_bundles'] ?? array();
 		$courses      = \OhMyLMS\Membership\CourseSelection::resolve( $request['products'] ?? array(), $request['course_categories'] ?? array(), $request['course_tags'] ?? array(), $request['excluded_courses'] ?? array(), $curriculum, $bundles );
 		$direct       = array_column( $request['products'] ?? array(), 'id' );
 		$categories   = $request['course_categories'] ?? array();

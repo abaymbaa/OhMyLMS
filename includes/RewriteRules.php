@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS;
 
@@ -97,7 +97,7 @@ class RewriteRules {
 			);
 		}
 		if ( ! empty( $structure ) ) {
-			// Remove any double slashes except after 'https://'
+			// Remove any double slashes except after 'https://'.
 			$post_link = str_replace( home_url( '/' ), '', $structure );
 			$post_link = str_replace( '{post_type}', $post->post_type, $post_link );
 			$post_link = home_url( '/' . ltrim( $post_link, '/' ) );

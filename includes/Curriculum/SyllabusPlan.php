@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Turns normalized import rows into an ordered list of operations against what a syllabus already
+ * holds, and a report of what would change. Pure PHP (no WordPress), so a dry run and the real
+ * import share one set of rules and both can be unit tested.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 /**
@@ -61,7 +68,7 @@ final class SyllabusPlan {
 	}
 
 	private static function same( $code_a, $name_a, $code_b, $name_b ) {
-		if ( $code_a !== '' && $code_b !== '' ) {
+		if ( '' !== $code_a && '' !== $code_b ) {
 			return self::key( $code_a ) === self::key( $code_b ); }
 		return self::key( $name_a ) === self::key( $name_b );
 	}
@@ -159,7 +166,7 @@ final class SyllabusPlan {
 		}
 		$index                         = $this->updates[ $kind ][ $id ];
 		$this->ops[ $index ]['fields'] = array_merge( $this->ops[ $index ]['fields'], $fields );
-		$current                       = &$this->{$kind === 'content' ? 'contents' : ( $kind === 'group' ? 'groups' : 'skills' )}[ $id ];
+		$current                       = &$this->{'content' === $kind ? 'contents' : ( 'group' === $kind ? 'groups' : 'skills' )}[ $id ];
 		foreach ( $fields as $key => $value ) {
 			$current[ $key ] = $value; }
 	}
@@ -172,7 +179,7 @@ final class SyllabusPlan {
 				$fields = array();
 				if ( $name !== $content['name'] ) {
 					$fields['name'] = $name; }
-				if ( $code !== '' && $code !== $content['code'] ) {
+				if ( '' !== $code && $code !== $content['code'] ) {
 					$fields['code'] = $code; }
 				$this->set( 'content', $id, $fields );
 				return $id;
@@ -206,7 +213,7 @@ final class SyllabusPlan {
 				$fields = array();
 				if ( $name !== $group['name'] ) {
 					$fields['name'] = $name; }
-				if ( $code !== '' && $code !== $group['code'] ) {
+				if ( '' !== $code && $code !== $group['code'] ) {
 					$fields['code'] = $code; }
 				$this->set( 'group', $id, $fields );
 				return $id;
@@ -233,7 +240,7 @@ final class SyllabusPlan {
 	}
 
 	private function find_skill( $group, $name, $code ) {
-		if ( $code !== '' && isset( $this->by_code[ self::key( $code ) ] ) ) {
+		if ( '' !== $code && isset( $this->by_code[ self::key( $code ) ] ) ) {
 			return $this->by_code[ self::key( $code ) ]; }
 		foreach ( $this->in_group[ $group ] ?? array() as $term ) {
 			$skill = $this->skills[ $term ];
@@ -249,7 +256,7 @@ final class SyllabusPlan {
 		$description = $row['description'];
 		$category    = $row['category'] ?? '';
 		$found       = $this->find_skill( $group, $name, $code );
-		if ( $found === null ) {
+		if ( null === $found ) {
 			$ref                        = $this->ref( 's' );
 			$this->skills[ $ref ]       = array(
 				'id'          => $ref,
@@ -261,7 +268,7 @@ final class SyllabusPlan {
 				'touched'     => true,
 			);
 			$this->in_group[ $group ][] = $ref;
-			if ( $code !== '' ) {
+			if ( '' !== $code ) {
 				$this->by_code[ self::key( $code ) ] = $ref; }
 			$this->push(
 				array(
@@ -311,14 +318,14 @@ final class SyllabusPlan {
 		$fields = array();
 		if ( $name !== $skill['name'] ) {
 			$fields['name'] = $name; }
-		if ( $code !== '' && $code !== $skill['code'] ) {
+		if ( '' !== $code && $code !== $skill['code'] ) {
 			$fields['code'] = $code;
 			if ( isset( $this->by_code[ self::key( $code ) ] ) === false ) {
 				$this->by_code[ self::key( $code ) ] = $found; }
 		}
-		if ( $description !== '' && $description !== $skill['description'] ) {
+		if ( '' !== $description && $description !== $skill['description'] ) {
 			$fields['description'] = $description; }
-		if ( $category !== '' && $category !== ( $skill['category'] ?? '' ) ) {
+		if ( '' !== $category && $category !== ( $skill['category'] ?? '' ) ) {
 			$fields['category'] = $category; }
 		$this->set( 'skill', $found, $fields );
 	}
@@ -329,11 +336,11 @@ final class SyllabusPlan {
 		foreach ( $row['content_path'] as $i => $name ) {
 			$parent = $this->content( $parent, $name, $i === $last ? $row['content_code'] : '' );
 		}
-		$has_skill = $row['skill'] !== '';
+		$has_skill = '' !== $row['skill'];
 		$name      = $row['group'];
-		if ( $name === '' && ! $has_skill ) {
+		if ( '' === $name && ! $has_skill ) {
 			return; }
-		if ( $name === '' ) {
+		if ( '' === $name ) {
 			$name = (string) $this->options['default_group'];
 			if ( ! isset( $this->defaulted[ (string) $parent ] ) ) {
 				$this->defaulted[ (string) $parent ] = true;
@@ -374,7 +381,7 @@ final class SyllabusPlan {
 		$report  = array();
 		foreach ( array( 'content', 'group', 'skill' ) as $kind ) {
 			$updated = $counted( $this->updates[ $kind ], $this->ops );
-			$report[ $kind === 'content' ? 'contents' : $kind . 's' ] = array(
+			$report[ 'content' === $kind ? 'contents' : $kind . 's' ] = array(
 				'create' => $this->created[ $kind ],
 				'update' => $updated,
 			);

@@ -41,7 +41,7 @@ function ohmylms_update_121_create_video_progress_table() {
 	$charset_collate = $wpdb->get_charset_collate();
 	$table_name      = $wpdb->prefix . 'ohmylms_video_progress';
 
-	// Check if table already exists
+	// Check if table already exists.
 	if ( $wpdb->get_var( "SHOW TABLES LIKE '{$table_name}'" ) != $table_name ) {
 		$sql = "CREATE TABLE {$table_name} (
 			id bigint(20) unsigned NOT NULL auto_increment,

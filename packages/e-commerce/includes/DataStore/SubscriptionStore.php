@@ -1,11 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Commerce\DataStore;
 
 use OhMyLMS\Commerce\Abstracts\DataStore;
 
 class SubscriptionStore extends DataStore {
 	public function create( &$subscription ) {
-		// Implement create logic
+		// Implement create logic.
 	}
 
 	public function read( &$subscription ) {
@@ -114,7 +114,7 @@ class SubscriptionStore extends DataStore {
 	}
 
 	public function delete( &$subscription, $args = array() ) {
-		// Implement delete logic
+		// Implement delete logic.
 	}
 
 	/**
@@ -129,7 +129,7 @@ class SubscriptionStore extends DataStore {
 	public function get_related_orders( $subscription ) {
 		global $wpdb;
 
-		// Accept either a Subscription object or an ID
+		// Accept either a Subscription object or an ID.
 		$subscription_id = is_object( $subscription ) && method_exists( $subscription, 'get_id' )
 			? $subscription->get_id()
 			: (int) $subscription;

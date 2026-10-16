@@ -53,22 +53,24 @@ export function createCourseCapacity( readRuntime ) {
 										min={ 1 }
 										max={ 1e4 }
 										onChange={ function ( e ) {
-											/^\d*$/.test( e ) &&
+											if ( /^\d*$/.test( e ) ) {
 												handleCapacityChange(
 													Number( e )
 												);
+											}
 										} }
 										onKeyDown={ function ( e ) {
-											( [
-												'e',
-												'E',
-												'+',
-												'-',
-												'/',
-												'\\',
-												'.',
-												',',
-											].includes( e.key ) ||
+											if (
+												[
+													'e',
+													'E',
+													'+',
+													'-',
+													'/',
+													'\\',
+													'.',
+													',',
+												].includes( e.key ) ||
 												( /[a-zA-Z]/.test( e.key ) &&
 													! [
 														'Backspace',
@@ -77,12 +79,15 @@ export function createCourseCapacity( readRuntime ) {
 														'ArrowRight',
 														'Delete',
 														'Enter',
-													].includes( e.key ) ) ) &&
+													].includes( e.key ) )
+											) {
 												e.preventDefault();
+											}
 										} }
 										onBlur={ function () {
-											capacity < 1 &&
+											if ( capacity < 1 ) {
 												handleCapacityChange( 1 );
+											}
 										} }
 									/>
 								</Controls.FlexItemWP>

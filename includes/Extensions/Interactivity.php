@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Public frontend module contract. Admin editors and server-side graders remain separate.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 defined( 'ABSPATH' ) || exit;
@@ -36,7 +41,15 @@ final class Interactivity {
 			$path         = 'assets/interactivity/' . $file . '.js';
 			$dependencies = apply_filters(
 				'ohmylms_interactivity_module_dependencies',
-				$id === 'interactivity' ? array() : array_merge( array( '@wordpress/interactivity', 'ohmylms/interactivity' ), 'quiz' === $id ? array( array( 'id' => '@wordpress/interactivity-router', 'import' => 'dynamic' ) ) : array() ),
+				'interactivity' === $id ? array() : array_merge(
+					array( '@wordpress/interactivity', 'ohmylms/interactivity' ),
+					'quiz' === $id ? array(
+						array(
+							'id'     => '@wordpress/interactivity-router',
+							'import' => 'dynamic',
+						),
+					) : array()
+				),
 				'ohmylms/' . $id
 			);
 			wp_register_script_module(
@@ -82,7 +95,7 @@ final class Interactivity {
 
 	/** Accessible accordions and mobile table details, including custom template overrides. */
 	public static function disclosures( $html, $template ) {
-		if ( strpos( $template, 'emails/' ) === 0 || strpos( $template, 'quiz-loop/' ) !== false || $template === 'single-lesson/quiz-form.php' ) {
+		if ( strpos( $template, 'emails/' ) === 0 || strpos( $template, 'quiz-loop/' ) !== false || 'single-lesson/quiz-form.php' === $template ) {
 			return $html;
 		}
 		if ( strpos( $html, 'ohmylms-accordion-item' ) === false && strpos( $html, 'ohmylms-td-handle' ) === false && strpos( $html, 'table-accordion-handler' ) === false ) {
@@ -96,7 +109,7 @@ final class Interactivity {
 				return in_array( $class, $classes, true );
 			};
 			if ( ( $has( 'ohmylms-accordion-item' ) || $has( 'ohmylms-tr' ) || $has( 'dashboard-table-tr' ) ) && ! $tags->get_attribute( 'data-wp-interactive' ) ) {
-				$open = $has( 'active' ) || ( $template === 'filters/filters.php' );
+				$open = $has( 'active' ) || ( 'filters/filters.php' === $template );
 				$tags->set_attribute( 'data-wp-interactive', 'ohmylms/ui' );
 				$tags->set_attribute( 'data-wp-context', wp_json_encode( array( 'open' => $open ) ) );
 				$tags->set_attribute( 'data-wp-class--active', 'context.open' );
@@ -150,7 +163,7 @@ final class Interactivity {
 					wp_json_encode(
 						array(
 							'questionNumber' => $number,
-							'questionPage'   => $context['layout'] === 'number_of_questions_per_page' ? (int) ceil( $number / $context['perPage'] ) : $number,
+							'questionPage'   => 'number_of_questions_per_page' === $context['layout'] ? (int) ceil( $number / $context['perPage'] ) : $number,
 						)
 					)
 				);
@@ -160,6 +173,10 @@ final class Interactivity {
 				$tags->set_attribute( 'data-wp-on--click', 'actions.next' );
 				$tags->set_attribute( 'data-wp-style--display', 'state.nextDisplay' );
 				$tags->set_attribute( 'data-wp-bind--disabled', 'context.submitting' );
+			}
+			if ( $has( 'ohmylms-next-quiz-label' ) ) {
+				$tags->set_attribute( 'data-wp-text', 'state.nextLabel' );
+				$tags->set_attribute( 'data-wp-class--is-skip', 'state.isSkip' );
 			}
 			if ( $has( 'ohmylms-previous-quiz' ) || $has( 'ohmylms-previous-quiz-group' ) ) {
 				$tags->set_attribute( 'data-wp-on--click', 'actions.previous' );

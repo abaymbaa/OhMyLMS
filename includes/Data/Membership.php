@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Membership.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Data;
 
@@ -72,7 +77,7 @@ class Membership extends Data {
 		'course_categories'            => array(),
 		'course_tags'                  => array(),
 		'course_curriculum'            => array(),
-		'course_bundles'                => array(),
+		'course_bundles'               => array(),
 		'excluded_courses'             => array(),
 	);
 
@@ -93,7 +98,7 @@ class Membership extends Data {
 			$this->set_id( absint( $membership->ID ) );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {
@@ -426,11 +431,11 @@ class Membership extends Data {
 			} else {
 				$nowDate = current_time( 'Y-m-d' );
 				if ( $from_date instanceof \DateTime && $to_date instanceof \DateTime ) {
-					// Extract only the date (YYYY-MM-DD) for comparison
+					// Extract only the date (YYYY-MM-DD) for comparison.
 					$startDate = $from_date->format( 'Y-m-d' );
 					$endDate   = $to_date->format( 'Y-m-d' );
 
-					// Validate if today's date is within the sale period (ignoring time)
+					// Validate if today's date is within the sale period (ignoring time).
 					if ( $nowDate >= $startDate && $nowDate <= $endDate ) {
 						return true;
 					} else {
@@ -451,13 +456,13 @@ class Membership extends Data {
 		if ( ! $start || ! $to ) {
 			return true;
 		}
-		// Convert to DateTime if necessary
+		// Convert to DateTime if necessary.
 		if ( $start instanceof \DateTime && $to instanceof \DateTime ) {
-			// Extract only the date (YYYY-MM-DD) for comparison
+			// Extract only the date (YYYY-MM-DD) for comparison.
 			$startDate = $start->format( 'Y-m-d' );
 			$endDate   = $to->format( 'Y-m-d' );
 
-			// Validate if today's date is within the sale period (ignoring time)
+			// Validate if today's date is within the sale period (ignoring time).
 			if ( $nowDate >= $startDate && $nowDate <= $endDate ) {
 				return true;
 			} else {
@@ -527,7 +532,7 @@ class Membership extends Data {
 	 */
 	public function get_products( $context = 'view' ) {
 		$products = $this->get_prop( 'products', $context ) ?? array();
-		return $context === 'edit' ? $products : \OhMyLMS\Membership\CourseSelection::resolve( $products, $this->get_course_categories(), $this->get_course_tags(), $this->get_excluded_courses(), $this->get_course_curriculum(), $this->get_course_bundles() );
+		return 'edit' === $context ? $products : \OhMyLMS\Membership\CourseSelection::resolve( $products, $this->get_course_categories(), $this->get_course_tags(), $this->get_excluded_courses(), $this->get_course_curriculum(), $this->get_course_bundles() );
 	}
 	public function get_course_categories( $context = 'view' ) {
 		return $this->get_prop( 'course_categories', $context ) ?? array(); }

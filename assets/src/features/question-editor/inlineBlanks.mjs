@@ -10,13 +10,26 @@ export function parseInlineBlankPrompt( text ) {
 		if ( ! match[ 1 ].trim() ) {
 			continue;
 		}
-		parts.push( { text: text.slice( offset, match.index ) } );
-		parts.push( { blank: true, index: answers.length } );
-		answers.push( { id: String( answers.length ), text: match[ 1 ] } );
+		parts.push( {
+			text: text.slice( offset, match.index ),
+		} );
+		parts.push( {
+			blank: true,
+			index: answers.length,
+		} );
+		answers.push( {
+			id: String( answers.length ),
+			text: match[ 1 ],
+		} );
 		offset = match.index + match[ 0 ].length;
 	}
-	parts.push( { text: String( text || '' ).slice( offset ) } );
-	return { parts, answers };
+	parts.push( {
+		text: String( text || '' ).slice( offset ),
+	} );
+	return {
+		parts,
+		answers,
+	};
 }
 export function placeBlankToken( assignments, token, position ) {
 	if (
@@ -27,6 +40,14 @@ export function placeBlankToken( assignments, token, position ) {
 		return assignments;
 	}
 	return assignments.map( ( value, index ) =>
-		index === position ? token : value === token ? null : value
+		( () => {
+			if ( index === position ) {
+				return token;
+			}
+			if ( value === token ) {
+				return null;
+			}
+			return value;
+		} )()
 	);
 }

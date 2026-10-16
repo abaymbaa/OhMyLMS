@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WP Fusion API Client
  *
@@ -69,7 +69,7 @@ class WPFusionApiClient {
 		$body          = wp_remote_retrieve_body( $response );
 		$data          = json_decode( $body, true );
 
-		if ( $response_code === 200 ) {
+		if ( 200 === $response_code ) {
 			return array(
 				'success' => true,
 				'message' => __( 'Connected successfully', 'ohmylms' ),
@@ -114,7 +114,7 @@ class WPFusionApiClient {
 		$body          = wp_remote_retrieve_body( $response );
 		$data          = json_decode( $body, true );
 
-		if ( $response_code === 200 ) {
+		if ( 200 === $response_code ) {
 			return array(
 				'success' => true,
 				'data'    => $data,
@@ -166,7 +166,7 @@ class WPFusionApiClient {
 		$body          = wp_remote_retrieve_body( $response );
 		$data          = json_decode( $body, true );
 
-		if ( $response_code === 200 || $response_code === 201 ) {
+		if ( 200 === $response_code || 201 === $response_code ) {
 			return array(
 				'success' => true,
 				'message' => __( 'Tags applied successfully', 'ohmylms' ),
@@ -218,7 +218,7 @@ class WPFusionApiClient {
 		$body          = wp_remote_retrieve_body( $response );
 		$data          = json_decode( $body, true );
 
-		if ( $response_code === 200 || $response_code === 201 ) {
+		if ( 200 === $response_code || 201 === $response_code ) {
 			return array(
 				'success' => true,
 				'message' => __( 'Tags removed successfully', 'ohmylms' ),
@@ -270,7 +270,7 @@ class WPFusionApiClient {
 		$body          = wp_remote_retrieve_body( $response );
 		$data          = json_decode( $body, true );
 
-		if ( $response_code === 200 || $response_code === 201 ) {
+		if ( 200 === $response_code || 201 === $response_code ) {
 			return array(
 				'success' => true,
 				'message' => __( 'Fields updated successfully', 'ohmylms' ),

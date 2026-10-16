@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Bricks\Elements;
 
 use OhMyLMS\Shortcodes\ShortCodeCheckout;
@@ -6,7 +6,7 @@ use function OhMyLMS\Commerce\ecommerce;
 use Bricks\Element;
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 class CheckoutElement extends Element {
@@ -80,7 +80,7 @@ class CheckoutElement extends Element {
 	 * @return void
 	 */
 	private function set_content_controls() {
-		// Content Settings Group
+		// Content Settings Group.
 		$this->controls['content_heading'] = array(
 			'tab'   => 'content',
 			'label' => esc_html__( 'Content Settings', 'ohmylms' ),
@@ -235,7 +235,7 @@ class CheckoutElement extends Element {
 			),
 		);
 
-		// Input Label Controls
+		// Input Label Controls.
 		$this->controls['input_label_typography'] = array(
 			'group' => 'input_label',
 			'label' => esc_html__( 'Typography', 'ohmylms' ),
@@ -260,7 +260,7 @@ class CheckoutElement extends Element {
 			),
 		);
 
-		// Input Field Controls
+		// Input Field Controls.
 		$this->controls['input_color'] = array(
 			'group'   => 'input_field',
 			'label'   => esc_html__( 'Text Color', 'ohmylms' ),
@@ -347,7 +347,7 @@ class CheckoutElement extends Element {
 			),
 		);
 
-		// Input Focus States
+		// Input Focus States.
 		$this->controls['input_focus_color'] = array(
 			'group' => 'input_field',
 			'label' => esc_html__( 'Focus Border Color', 'ohmylms' ),
@@ -372,7 +372,7 @@ class CheckoutElement extends Element {
 			),
 		);
 
-		// Button Controls
+		// Button Controls.
 		$this->controls['button_background_color'] = array(
 			'group'   => 'button',
 			'label'   => esc_html__( 'Background Color', 'ohmylms' ),
@@ -635,7 +635,7 @@ class CheckoutElement extends Element {
 			$is_bricks_edit_mode = true;
 		}
 
-		// Only add the inline script in edit mode
+		// Only add the inline script in edit mode.
 		if ( ! $is_bricks_edit_mode ) {
 			return;
 		}
@@ -680,10 +680,10 @@ class CheckoutElement extends Element {
 
 	public function render() {
 		$settings = $this->settings;
-		// Convert Bricks settings to shortcode attributes
+		// Convert Bricks settings to shortcode attributes.
 		$shortcode_attrs = $this->convert_settings_to_shortcode_attrs( $settings );
 
-		// Check if we're in Bricks builder mode
+		// Check if we're in Bricks builder mode.
 		$is_bricks_edit_mode = false;
 		if ( ( function_exists( 'bricks_is_builder' ) && bricks_is_builder() ) ||
 			( function_exists( 'bricks_is_builder_main' ) && bricks_is_builder_main() ) ||
@@ -694,18 +694,18 @@ class CheckoutElement extends Element {
 
 		// Render the checkout form via shortcode
 		// Wrapping divs for styling consistency
-		// Use the same wrapper class as shortcode for consistency
+		// Use the same wrapper class as shortcode for consistency.
 		echo '<div class="ohmylms-page ohmylms-checkout">';
 		echo '<div class="ohmylms">';
 
-		// Enable preview mode for Bricks builder to show checkout form even with empty cart
+		// Enable preview mode for Bricks builder to show checkout form even with empty cart.
 		if ( $is_bricks_edit_mode ) {
 			add_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 		}
 
 		ShortCodeCheckout::output( $shortcode_attrs );
 
-		// Remove preview mode filter if it was set
+		// Remove preview mode filter if it was set.
 		if ( $is_bricks_edit_mode ) {
 			remove_filter( 'ohmylms_bricks_preview_mode', '__return_true' );
 		}
@@ -723,7 +723,7 @@ class CheckoutElement extends Element {
 	public function convert_settings_to_shortcode_attrs( $settings ) {
 		$attrs = array();
 
-		// Content settings
+		// Content settings.
 		if ( isset( $settings['show_empty_cart_message'] ) ) {
 			$attrs['show_empty_cart_message'] = $settings['show_empty_cart_message'] ? 'yes' : 'no';
 		}
@@ -744,7 +744,7 @@ class CheckoutElement extends Element {
 
 		if ( ! empty( $settings['title_typography'] ) ) {
 			$typography = $settings['title_typography'];
-			// for color also
+			// for color also.
 			if ( ! empty( $typography['color'] ) ) {
 				$attrs['title_color'] = $this->extract_color_value( $typography['color'] );
 			}
@@ -787,7 +787,7 @@ class CheckoutElement extends Element {
 			}
 		}
 
-		// Title background and border
+		// Title background and border.
 		if ( ! empty( $settings['title_background_color'] ) ) {
 			$attrs['title_background_color'] = $this->extract_color_value( $settings['title_background_color'] );
 		}
@@ -852,7 +852,7 @@ class CheckoutElement extends Element {
 			}
 		}
 
-		// Input label padding and margin
+		// Input label padding and margin.
 		if ( ! empty( $settings['input_label_margin'] ) ) {
 			$margin = $settings['input_label_margin'];
 			if ( ! empty( $margin['top'] ) ) {
@@ -925,7 +925,7 @@ class CheckoutElement extends Element {
 			$attrs['input_border_radius'] = $this->extract_dimensions_value( $settings['input_border_radius'], 'top' );
 		}
 
-		// Input padding and margin
+		// Input padding and margin.
 		if ( ! empty( $settings['input_padding'] ) ) {
 			$padding = $settings['input_padding'];
 			if ( ! empty( $padding['top'] ) ) {
@@ -958,12 +958,12 @@ class CheckoutElement extends Element {
 			}
 		}
 
-		// Input box shadow
+		// Input box shadow.
 		if ( ! empty( $settings['input_box_shadow'] ) ) {
 			$attrs['input_box_shadow'] = $this->extract_box_shadow_value( $settings['input_box_shadow'] );
 		}
 
-		// Input focus states
+		// Input focus states.
 		if ( ! empty( $settings['input_focus_color'] ) ) {
 			$attrs['input_focus_border_color'] = $this->extract_color_value( $settings['input_focus_color'] );
 		}
@@ -983,7 +983,7 @@ class CheckoutElement extends Element {
 
 		if ( ! empty( $settings['button_typography'] ) ) {
 			$typography = $settings['button_typography'];
-			// for color
+			// for color.
 			if ( ! empty( $typography['color'] ) ) {
 				$attrs['button_color'] = $this->extract_color_value( $typography['color'] );
 			}
@@ -1064,7 +1064,7 @@ class CheckoutElement extends Element {
 			$attrs['button_box_shadow'] = $this->extract_box_shadow_value( $settings['button_box_shadow'] );
 		}
 
-		// Button hover states
+		// Button hover states.
 		if ( ! empty( $settings['button_hover_color'] ) ) {
 			$attrs['button_hover_color'] = $this->extract_color_value( $settings['button_hover_color'] );
 		}
@@ -1111,7 +1111,7 @@ class CheckoutElement extends Element {
 			}
 		}
 
-		// Privacy text margin
+		// Privacy text margin.
 		if ( ! empty( $settings['privacy_text_margin'] ) ) {
 			$margin = $settings['privacy_text_margin'];
 			if ( ! empty( $margin['top'] ) ) {
@@ -1198,7 +1198,7 @@ class CheckoutElement extends Element {
 			$attrs['checkout_box_border_radius'] = $this->extract_dimensions_value( $settings['checkout_box_border_radius'], 'top' );
 		}
 
-		// Checkout box shadow
+		// Checkout box shadow.
 		if ( ! empty( $settings['checkout_box_box_shadow'] ) ) {
 			$attrs['checkout_box_box_shadow'] = $this->extract_box_shadow_value( $settings['checkout_box_box_shadow'] );
 		}
@@ -1257,7 +1257,7 @@ class CheckoutElement extends Element {
 			$attrs['order_summary_border_radius'] = $this->extract_dimensions_value( $settings['order_summary_border_radius'], 'top' );
 		}
 
-		// Order summary box shadow
+		// Order summary box shadow.
 		if ( ! empty( $settings['order_summary_box_shadow'] ) ) {
 			$attrs['order_summary_box_shadow'] = $this->extract_box_shadow_value( $settings['order_summary_box_shadow'] );
 		}
@@ -1408,7 +1408,7 @@ class CheckoutElement extends Element {
 			$attrs['error_message_border_radius'] = $this->extract_dimensions_value( $settings['error_message_border_radius'], 'top' );
 		}
 
-		// Layout type
+		// Layout type.
 		if ( isset( $settings['layout_type'] ) ) {
 			$attrs['layout_type'] = $settings['layout_type'];
 		}
@@ -1433,7 +1433,7 @@ class CheckoutElement extends Element {
 			}
 		}
 
-		// Fallback for string color values
+		// Fallback for string color values.
 		return is_string( $color ) ? $color . ' !important' : '';
 	}
 
@@ -1445,7 +1445,7 @@ class CheckoutElement extends Element {
 	 */
 	private function extract_size_value( $size ) {
 		if ( is_array( $size ) ) {
-			// Bricks size format: array with 'size' and 'unit'
+			// Bricks size format: array with 'size' and 'unit'.
 			$value     = ! empty( $size['size'] ) ? $size['size'] : '';
 			$unit      = ! empty( $size['unit'] ) ? $size['unit'] : 'px';
 			$important = '';
@@ -1453,7 +1453,7 @@ class CheckoutElement extends Element {
 			return $value . $unit . $important;
 		}
 
-		// Fallback for string size values
+		// Fallback for string size values.
 		return is_string( $size ) ? $size . 'px !important' : '';
 	}
 

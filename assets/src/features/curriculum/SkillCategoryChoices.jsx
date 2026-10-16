@@ -2,7 +2,6 @@ import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Dashicon } from '@wordpress/components';
 import { categoryAppearance } from './categoryAppearance.mjs';
-
 function textColor( color ) {
 	const rgb = color.match( /^#([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i );
 	if ( ! rgb ) {
@@ -50,7 +49,10 @@ export function SkillCategoryChoices( {
 				{ choices.map( ( category ) => {
 					const chosen = selected === category;
 					const style = categoryAppearance(
-						{ category, category_assigned: true },
+						{
+							category,
+							category_assigned: true,
+						},
 						settings
 					);
 					const color = category ? style.color : '#596273';
@@ -70,13 +72,15 @@ export function SkillCategoryChoices( {
 							} }
 						>
 							<Dashicon
-								icon={
-									chosen
-										? 'yes-alt'
-										: category
-											? style.icon
-											: 'minus'
-								}
+								icon={ ( () => {
+									if ( chosen ) {
+										return 'yes-alt';
+									}
+									if ( category ) {
+										return style.icon;
+									}
+									return 'minus';
+								} )() }
 								aria-hidden="true"
 							/>
 							{ category || __( 'No category', 'ohmylms' ) }

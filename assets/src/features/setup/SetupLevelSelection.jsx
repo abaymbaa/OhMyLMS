@@ -23,7 +23,9 @@ export function createSetupLevelSelection( readRuntime ) {
 				<Gte
 					isShowIndicator={ ! 1 }
 					onSkip={ function () {
-						return null == n ? void 0 : n( 'level-selection' );
+						return n === null || n === void 0
+							? void 0
+							: n( 'level-selection' );
 					} }
 				/>
 				<Controls.ContainerWP>
@@ -50,10 +52,16 @@ export function createSetupLevelSelection( readRuntime ) {
 							<Controls.ButtonWP
 								variant={ 'primary' }
 								onClick={ function () {
-									'beginner' ===
-									( null == r ? void 0 : r.level )
-										? t( 'wizard-niche' )
-										: t( 'wizard-preferences' );
+									if (
+										'beginner' ===
+										( r === null || r === void 0
+											? void 0
+											: r.level )
+									) {
+										t( 'wizard-niche' );
+									} else {
+										t( 'wizard-preferences' );
+									}
 								} }
 							>
 								{ ( 0, I18n.__ )( 'Continue', 'ohmylms' ) }

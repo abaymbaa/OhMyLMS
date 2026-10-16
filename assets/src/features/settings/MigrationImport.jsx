@@ -5,7 +5,6 @@ export function createMigrationImport( readRuntime ) {
 		const {
 			He,
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			a6,
@@ -34,94 +33,128 @@ export function createMigrationImport( readRuntime ) {
 			p = ( 0, Router.Zp )(),
 			v = true,
 			h = ( function () {
-				var e,
-					t =
-						( ( e = a6().m( function e() {
-							var t, r, o;
+				var _eLocal,
+					_tLocal =
+						( ( _eLocal = a6().m( function _eLocal2() {
+							var _tLocal2, _rLocal, _oLocal;
 							return a6().w(
-								function ( e ) {
+								function ( _eLocal3 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 											case 0:
 												if ( 'json' !== l || v ) {
-													e.n = 1;
+													_eLocal3.n = 1;
 													break;
 												}
-												return ( d( ! 0 ), e.a( 2 ) );
+												return (
+													d( ! 0 ),
+													_eLocal3.a( 2 )
+												 );
 											case 1:
 												if ( a ) {
-													e.n = 2;
+													_eLocal3.n = 2;
 													break;
 												}
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 											case 2:
 												if (
-													( ( e.p = 2 ),
+													( ( _eLocal3.p = 2 ),
 													n( ! 0 ),
 													'scorm' !== l )
 												) {
-													e.n = 4;
+													_eLocal3.n = 4;
 													break;
 												}
 												return (
-													( e.n = 3 ),
+													( _eLocal3.n = 3 ),
 													m.importScormCourse( a )
 												 );
 											case 3:
-												( ( r = e.v ), ( e.n = 6 ) );
+												_rLocal = _eLocal3.v;
+												_eLocal3.n = 6;
 												break;
 											case 4:
 												return (
-													( e.n = 5 ),
+													( _eLocal3.n = 5 ),
 													m.importCourse( a )
 												 );
 											case 5:
-												r = e.v;
+												_rLocal = _eLocal3.v;
+											// Falls through to the shared async state cleanup.
 											case 6:
-												( null != ( t = r ) &&
-													t.success &&
-													p( '/courses' ),
-													( e.n = 8 ) );
+												if (
+													( ( _nullableValue ) =>
+														_nullableValue !==
+															null &&
+														_nullableValue !==
+															void 0 )(
+														( _tLocal2 = _rLocal )
+													) &&
+													_tLocal2.success
+												) {
+													p( '/courses' );
+												}
+												_eLocal3.n = 8;
 												break;
 											case 7:
-												( ( e.p = 7 ),
-													( o = e.v ),
-													console.error(
-														'Error importing course:',
-														o
-													) );
+												_eLocal3.p = 7;
+												_oLocal = _eLocal3.v;
+												console.error(
+													'Error importing course:',
+													_oLocal
+												);
+											// Falls through to the shared async state cleanup.
 											case 8:
 												return (
-													( e.p = 8 ),
+													( _eLocal3.p = 8 ),
 													n( ! 1 ),
-													e.f( 8 )
+													_eLocal3.f( 8 )
 												 );
 											case 9:
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal2,
 								null,
 								[ [ 2, 7, 8, 9 ] ]
 							);
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									i6( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal3 = this,
+								_nLocal = _args;
+							return new Promise( function ( _rLocal2, _aLocal ) {
+								var _oLocal2 = _eLocal.apply(
+									_tLocal3,
+									_nLocal
+								);
+								function _iLocal( _eLocal4 ) {
+									i6(
+										_oLocal2,
+										_rLocal2,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'next',
+										_eLocal4
+									);
 								}
-								function l( e ) {
-									i6( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal5 ) {
+									i6(
+										_oLocal2,
+										_rLocal2,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'throw',
+										_eLocal5
+									);
 								}
-								i( void 0 );
+								_iLocal( void 0 );
 							} );
 						} );
-				return function () {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _tLocal.apply( this, _args2 );
 				};
 			} )();
 		return (
@@ -206,10 +239,15 @@ export function createMigrationImport( readRuntime ) {
 						</Controls.HeadingWP>
 						<Controls.SpacerWP marginBottom={ 0 } marginTop={ 6 }>
 							<MemoMigrationFileDropzone
-								onFileChange={ function ( e, t ) {
-									'json' !== t || v
-										? ( o( e ), c( t ) )
-										: d( ! 0 );
+								onFileChange={ function ( _eLocal6, _tLocal4 ) {
+									if ( 'json' !== _tLocal4 || v ) {
+										{
+											o( _eLocal6 );
+											c( _tLocal4 );
+										}
+									} else {
+										d( ! 0 );
+									}
 								} }
 								jsonImportEnabled={ v }
 							/>

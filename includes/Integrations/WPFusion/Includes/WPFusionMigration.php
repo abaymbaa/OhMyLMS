@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WP Fusion Migration Class
  *
@@ -36,12 +36,12 @@ class WPFusionMigration {
 	 */
 	public static function maybe_ohmylms_integration_table() {
 
-		// Check if table is already created
+		// Check if table is already created.
 		if ( self::is_integration_table_created() ) {
 			return;
 		}
 
-		// Create the table - always create for any integration usage
+		// Create the table - always create for any integration usage.
 		self::ohmylms_integration_table();
 	}
 
@@ -74,18 +74,18 @@ class WPFusionMigration {
 	private static function is_integration_table_created() {
 		global $wpdb;
 
-		// First check the option
+		// First check the option.
 		$option_exists = get_option( self::WPFUSION_TABLE_CREATED_OPTION, false );
 
 		if ( $option_exists ) {
 			return true;
 		}
 
-		// Double check if table actually exists in database
+		// Double check if table actually exists in database.
 		$table_name   = $wpdb->prefix . 'ohmylms_integrations';
 		$table_exists = $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) === $table_name;
 
-		// If table exists but option not set, set the option
+		// If table exists but option not set, set the option.
 		if ( $table_exists ) {
 			update_option( self::WPFUSION_TABLE_CREATED_OPTION, true );
 			return true;
@@ -128,7 +128,7 @@ class WPFusionMigration {
 
 		dbDelta( $sql );
 
-		// Mark as created
+		// Mark as created.
 		update_option( self::WPFUSION_TABLE_CREATED_OPTION, true );
 
 		/**
@@ -150,7 +150,7 @@ class WPFusionMigration {
 		$table_name = $wpdb->prefix . 'ohmylms_integrations';
 		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
 
-		// Remove the option
+		// Remove the option.
 		delete_option( self::WPFUSION_TABLE_CREATED_OPTION );
 
 		/**

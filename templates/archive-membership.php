@@ -70,7 +70,7 @@ do_action( 'ohmylms_membership_before_main_content' );
 
 			?>
 			<div class="pro-membership-message">
-				<h2><?php echo __( 'No Membership Yet', 'ohmylms' ); ?></h2>
+				<h2><?php echo esc_html__( 'No Membership Yet', 'ohmylms' ); ?></h2>
 			</div>
 			<?php
 		}

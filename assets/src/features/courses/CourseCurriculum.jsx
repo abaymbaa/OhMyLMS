@@ -100,11 +100,15 @@ export function createCourseCurriculum( readRuntime ) {
 				},
 				[ a ]
 			),
-			ue = v
-				? null === ( t = E[ p - 1 ] ) || void 0 === t
-					? void 0
-					: t.chapters
-				: ce,
+			ue = ( () => {
+				if ( v ) {
+					if ( null === ( t = E[ p - 1 ] ) || void 0 === t ) {
+						return void 0;
+					}
+					return t.chapters;
+				}
+				return ce;
+			} )(),
 			se = ( 0, WordPressData.useSelect )( function ( e ) {
 				return e( StoreModule.default ).selectCoursesLoading();
 			}, [] ),
@@ -116,25 +120,28 @@ export function createCourseCurriculum( readRuntime ) {
 			} ),
 			pe = ( function () {
 				var e,
-					t =
-						( ( e = hf().m( function e() {
-							var t;
-							return hf().w( function ( e ) {
+					_tLocal =
+						( ( e = hf().m( function _eLocal() {
+							var _tLocal2;
+							return hf().w( function ( _eLocal2 ) {
 								for (;;) {
-									switch ( e.n ) {
+									switch ( _eLocal2.n ) {
 										case 0:
 											return (
 												X( ! 0 ),
 												Object.values( ce.byId ).reduce(
-													function ( e, t ) {
+													function (
+														_eLocal3,
+														_tLocal3
+													) {
 														return Math.max(
-															e,
-															t.order_number
+															_eLocal3,
+															_tLocal3.order_number
 														);
 													},
 													0
 												),
-												( e.n = 1 ),
+												( _eLocal2.n = 1 ),
 												w.addChapter(
 													{
 														name: '',
@@ -149,173 +156,208 @@ export function createCourseCurriculum( readRuntime ) {
 												)
 											 );
 										case 1:
-											( ( t = e.v ),
-												ge( t ),
-												K( t ),
-												X( ! 1 ) );
+											_tLocal2 = _eLocal2.v;
+											ge( _tLocal2 );
+											K( _tLocal2 );
+											X( ! 1 ); // Falls through to the shared async state cleanup.
+										// Falls through to the shared async state cleanup.
 										case 2:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
-							}, e );
+							}, _eLocal );
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									bf( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal4 = this,
+								_nLocal = _args;
+							return new Promise( function ( r, _aLocal ) {
+								var o = e.apply( _tLocal4, _nLocal );
+								function i( _eLocal4 ) {
+									bf( o, r, _aLocal, i, l, 'next', _eLocal4 );
 								}
-								function l( e ) {
-									bf( o, r, a, i, l, 'throw', e );
+								function l( _eLocal5 ) {
+									bf(
+										o,
+										r,
+										_aLocal,
+										i,
+										l,
+										'throw',
+										_eLocal5
+									);
 								}
 								i( void 0 );
 							} );
 						} );
-				return function () {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _tLocal.apply( this, _args2 );
 				};
 			} )();
-		( ( 0, ReactHooks.useEffect )(
+		( 0, ReactHooks.useEffect )(
 			function () {
-				if ( null != ue && ue.byId ) {
+				if ( ue !== null && ue !== void 0 && ue.byId ) {
 					var e,
-						t = Object.values( ue.byId ).sort( function ( e, t ) {
-							return (
-								Number( null == e ? void 0 : e.order_number ) -
-								Number( null == t ? void 0 : t.order_number )
-							);
-						} );
-					( C( t ),
-						t.forEach( function ( e, t ) {
-							setTimeout( function () {
-								O( function ( t ) {
-									return [].concat( gf( t ), [ e.id ] );
-								} );
-							}, 50 * t );
-						} ),
-						$ ||
-							K(
-								null === ( e = t[ 0 ] ) || void 0 === e
-									? void 0
-									: e.id
-							) );
-				} else if ( v && ( null == E ? void 0 : E.length ) > 0 ) {
-					var n;
-					( C( E[ p - 1 ].chapters ),
-						O(
-							E[ p - 1 ].chapters.map( function ( e ) {
-								return e.id;
-							} )
-						),
+						_tLocal5 = Object.values( ue.byId ).sort(
+							function ( _eLocal6, _tLocal6 ) {
+								return (
+									Number(
+										_eLocal6 === null || _eLocal6 === void 0
+											? void 0
+											: _eLocal6.order_number
+									) -
+									Number(
+										_tLocal6 === null || _tLocal6 === void 0
+											? void 0
+											: _tLocal6.order_number
+									)
+								);
+							}
+						);
+					C( _tLocal5 );
+					_tLocal5.forEach( function ( _eLocal7, _tLocal7 ) {
+						setTimeout( function () {
+							O( function ( _tLocal8 ) {
+								return [].concat( gf( _tLocal8 ), [
+									_eLocal7.id,
+								] );
+							} );
+						}, 50 * _tLocal7 );
+					} );
+					if ( ! $ ) {
 						K(
-							null === ( n = E[ p - 1 ].chapters[ 0 ] ) ||
-								void 0 === n
+							null === ( e = _tLocal5[ 0 ] ) || void 0 === e
 								? void 0
-								: n.id
-						) );
+								: e.id
+						);
+					}
+				} else if (
+					v &&
+					( E === null || E === void 0 ? void 0 : E.length ) > 0
+				) {
+					var _nLocal2;
+					C( E[ p - 1 ].chapters );
+					O(
+						E[ p - 1 ].chapters.map( function ( _eLocal8 ) {
+							return _eLocal8.id;
+						} )
+					);
+					K(
+						null === ( _nLocal2 = E[ p - 1 ].chapters[ 0 ] ) ||
+							void 0 === _nLocal2
+							? void 0
+							: _nLocal2.id
+					);
 				}
 			},
 			[ ue ]
-		),
-			( 0, ReactHooks.useEffect )(
-				function () {
-					var e;
-					if ( x.length > 0 && ! L && ! M && G ) {
-						( V(
-							null === ( e = x[ 0 ] ) || void 0 === e
-								? void 0
-								: e.id
-						),
-							U( ! 1 ) );
-					} else if ( 1 === x.length ) {
-						var t;
-						( V(
-							null === ( t = x[ 0 ] ) || void 0 === t
-								? void 0
-								: t.id
-						),
-							U( ! 1 ) );
-					} else if ( 0 < x.length && ! L ) {
-						var n;
-						( V(
-							null === ( n = x[ 0 ] ) || void 0 === n
-								? void 0
-								: n.id
-						),
-							U( ! 1 ) );
-					}
-					return function () {
-						U( ! 1 );
-					};
-				},
-				[ x ]
-			),
-			( 0, ReactHooks.useEffect )( function () {
-				var e = re.current,
-					t = ae.current;
-				if ( e && t ) {
-					var n = function () {
-							var n = e.offsetHeight,
-								r = t.offsetHeight;
-							ie( n > r ? 'left' : r > n ? 'right' : null );
-						},
-						r = new ResizeObserver( n );
-					return (
-						r.observe( e ),
-						r.observe( t ),
-						n(),
-						function () {
-							r.disconnect();
-						}
-					 );
+		);
+		( 0, ReactHooks.useEffect )(
+			function () {
+				var e;
+				if ( x.length > 0 && ! L && ! M && G ) {
+					V(
+						null === ( e = x[ 0 ] ) || void 0 === e ? void 0 : e.id
+					);
+					U( ! 1 );
+				} else if ( 1 === x.length ) {
+					var _tLocal9;
+					V(
+						null === ( _tLocal9 = x[ 0 ] ) || void 0 === _tLocal9
+							? void 0
+							: _tLocal9.id
+					);
+					U( ! 1 );
+				} else if ( 0 < x.length && ! L ) {
+					var _nLocal3;
+					V(
+						null === ( _nLocal3 = x[ 0 ] ) || void 0 === _nLocal3
+							? void 0
+							: _nLocal3.id
+					);
+					U( ! 1 );
 				}
-			}, [] ) );
+				return function () {
+					U( ! 1 );
+				};
+			},
+			[ x ]
+		);
+		( 0, ReactHooks.useEffect )( function () {
+			var e = re.current,
+				_tLocal0 = ae.current;
+			if ( e && _tLocal0 ) {
+				var _nLocal4 = function () {
+						var _nLocal5 = e.offsetHeight,
+							r = _tLocal0.offsetHeight;
+						ie(
+							( () => {
+								if ( _nLocal5 > r ) {
+									return 'left';
+								}
+								if ( r > _nLocal5 ) {
+									return 'right';
+								}
+								return null;
+							} )()
+						);
+					},
+					r = new ResizeObserver( _nLocal4 );
+				return (
+					r.observe( e ),
+					r.observe( _tLocal0 ),
+					_nLocal4(),
+					function () {
+						r.disconnect();
+					}
+				 );
+			}
+		}, [] );
 		var fe = function ( e ) {
 				for (
-					var t = function ( e ) {
+					var _tLocal1 = function ( _eLocal9 ) {
 							return (
-								e.classList.contains(
+								_eLocal9.classList.contains(
 									'ohmylms-draggable-single-chapter'
 								) &&
-								e.hasAttribute( 'draggable' ) &&
-								'true' === e.getAttribute( 'draggable' )
+								_eLocal9.hasAttribute( 'draggable' ) &&
+								'true' === _eLocal9.getAttribute( 'draggable' )
 							);
 						},
-						n = e;
-					n;
+						_nLocal6 = e;
+					_nLocal6;
 				) {
-					if ( t( n ) ) {
+					if ( _tLocal1( _nLocal6 ) ) {
 						return ! 0;
 					}
-					n = n.parentElement;
+					_nLocal6 = _nLocal6.parentElement;
 				}
 				return ! 1;
 			},
 			ve = function ( e ) {
-				( w.setCourseLoading( ! 0 ),
-					j( function ( t ) {
-						return [].concat( gf( t ), [ e ] );
-					} ),
-					setTimeout( function () {
-						var t = x.filter( function ( t ) {
-							return t.id !== e;
+				w.setCourseLoading( ! 0 );
+				j( function ( _tLocal10 ) {
+					return [].concat( gf( _tLocal10 ), [ e ] );
+				} );
+				setTimeout( function () {
+					var _tLocal11 = x.filter( function ( _tLocal12 ) {
+						return _tLocal12.id !== e;
+					} );
+					C( _tLocal11 );
+					O( function ( _tLocal13 ) {
+						return _tLocal13.filter( function ( _tLocal14 ) {
+							return _tLocal14 !== e;
 						} );
-						( C( t ),
-							O( function ( t ) {
-								return t.filter( function ( t ) {
-									return t !== e;
-								} );
-							} ),
-							j( function ( t ) {
-								return t.filter( function ( t ) {
-									return t !== e;
-								} );
-							} ),
-							e == $ && K( t.length > 0 ? t[ 0 ].id : null ),
-							w.setCourseLoading( ! 1 ) );
-					}, 500 ) );
+					} );
+					j( function ( _tLocal15 ) {
+						return _tLocal15.filter( function ( _tLocal16 ) {
+							return _tLocal16 !== e;
+						} );
+					} );
+					if ( e == $ ) {
+						K( _tLocal11.length > 0 ? _tLocal11[ 0 ].id : null );
+					}
+					w.setCourseLoading( ! 1 );
+				}, 500 );
 			};
 		if ( ! a ) {
 			return null;
@@ -323,11 +365,11 @@ export function createCourseCurriculum( readRuntime ) {
 		var ge = function ( e ) {
 				V( e );
 			},
-			he = function ( e, t ) {
-				( w.updateChapterFields( e, {
-					name: t,
-				} ),
-					ne( ! 1 ) );
+			he = function ( e, _tLocal17 ) {
+				w.updateChapterFields( e, {
+					name: _tLocal17,
+				} );
+				ne( ! 1 );
 			};
 		return (
 			<React.Fragment>
@@ -357,11 +399,12 @@ export function createCourseCurriculum( readRuntime ) {
 									className={ 'ohmylms-chapter-nav-wrapper' }
 								>
 									{ x.length > 0 &&
-										x.map( function ( e, t ) {
+										x.map( function ( e, _tLocal18 ) {
 											return (
 												<div
 													key={
-														null == e
+														e === null ||
+														e === void 0
 															? void 0
 															: e.id
 													}
@@ -369,44 +412,52 @@ export function createCourseCurriculum( readRuntime ) {
 														! W && ! v && Y
 													}
 													onDragStart={ function (
-														t
+														_tLocal19
 													) {
 														return ( function (
-															e,
-															t
+															_eLocal0,
+															_tLocal20
 														) {
-															( e.stopPropagation(),
+															_eLocal0.stopPropagation();
+															if (
 																fe(
-																	e.target
+																	_eLocal0.target
 																) &&
-																	! W &&
-																	( ( e.dataTransfer.dropEffect =
-																		'copyMove' ),
-																	F( t ) ) );
-														} )( t, e.id );
+																! W
+															) {
+																{
+																	_eLocal0.dataTransfer.dropEffect =
+																		'copyMove';
+																	F(
+																		_tLocal20
+																	);
+																}
+															}
+														} )( _tLocal19, e.id );
 													} }
 													onDragOver={ function (
-														t
+														_tLocal21
 													) {
 														return ( function (
-															e,
-															t
+															_eLocal1,
+															_tLocal22
 														) {
 															if (
-																( e.preventDefault(),
-																M !== t &&
+																( _eLocal1.preventDefault(),
+																M !==
+																	_tLocal22 &&
 																	! W &&
 																	fe(
-																		e.target
+																		_eLocal1.target
 																	) )
 															) {
-																var n =
+																var _nLocal7 =
 																		x.findIndex(
 																			function (
-																				e
+																				_eLocal10
 																			) {
 																				return (
-																					e.id ===
+																					_eLocal10.id ===
 																					M
 																				);
 																			}
@@ -414,87 +465,91 @@ export function createCourseCurriculum( readRuntime ) {
 																	r =
 																		x.findIndex(
 																			function (
-																				e
+																				_eLocal11
 																			) {
 																				return (
-																					e.id ===
-																					t
+																					_eLocal11.id ===
+																					_tLocal22
 																				);
 																			}
 																		),
-																	a = gf( x ),
+																	_aLocal2 =
+																		gf( x ),
 																	o = _f(
-																		a.splice(
-																			n,
+																		_aLocal2.splice(
+																			_nLocal7,
 																			1
 																		),
 																		1
 																	)[ 0 ];
-																a.splice(
+																_aLocal2.splice(
 																	r,
 																	0,
 																	o
 																);
 																var i = [],
 																	l =
-																		a.filter(
+																		_aLocal2.filter(
 																			function (
-																				e
+																				_eLocal12
 																			) {
-																				var t =
+																				var _tLocal23 =
 																					i.includes(
-																						e.id
+																						_eLocal12.id
 																					);
 																				return (
-																					t ||
+																					_tLocal23 ||
 																						i.push(
-																							e.id
+																							_eLocal12.id
 																						),
-																					! t
+																					! _tLocal23
 																				 );
 																			}
 																		);
 																C( l );
 															}
-														} )( t, e.id );
+														} )( _tLocal21, e.id );
 													} }
-													onDrop={ function ( e ) {
+													onDrop={ function (
+														_eLocal13
+													) {
 														return ( function (
-															e
+															_eLocal14
 														) {
 															if (
 																fe(
-																	e.target
+																	_eLocal14.target
 																) &&
 																! W
 															) {
-																var t = x.map(
-																	function (
-																		e,
-																		t
-																	) {
-																		return ff(
-																			ff(
+																var _tLocal24 =
+																	x.map(
+																		function (
+																			_eLocal15,
+																			_tLocal25
+																		) {
+																			return ff(
+																				ff(
+																					{},
+																					_eLocal15
+																				),
 																				{},
-																				e
-																			),
-																			{},
-																			{
-																				order_number:
-																					t +
-																					1,
-																			}
-																		);
-																	}
+																				{
+																					order_number:
+																						_tLocal25 +
+																						1,
+																				}
+																			);
+																		}
+																	);
+																C( _tLocal24 );
+																F( null );
+																w.updateChapterOrdersAPI(
+																	a,
+																	_tLocal24
 																);
-																( C( t ),
-																	F( null ),
-																	w.updateChapterOrdersAPI(
-																		a,
-																		t
-																	) );
 															}
-														} )( e );
+														} )( _eLocal13 );
 													} }
 													className={
 														'ohmylms-draggable-single-chapter'
@@ -523,7 +578,7 @@ export function createCourseCurriculum( readRuntime ) {
 														}
 														activeIndex={ $ }
 														setActiveIndex={ K }
-														index={ t }
+														index={ _tLocal18 }
 														showEdit={ te }
 														setShowEdit={ ne }
 														handleSaveName={ he }
@@ -584,14 +639,15 @@ export function createCourseCurriculum( readRuntime ) {
 							>
 								<div className={ 'ohmylms-chapter-contents' }>
 									{ x.length > 0 ? (
-										x.map( function ( e, t ) {
+										x.map( function ( e ) {
 											return (
 												<React.Suspense
 													fallback={
 														<_.A active={ ! 0 } />
 													}
 													key={
-														null == e
+														e === null ||
+														e === void 0
 															? void 0
 															: e.id
 													}

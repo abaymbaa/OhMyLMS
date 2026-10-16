@@ -47,7 +47,6 @@ import {
 	QUESTION_BLOCK_TYPES,
 	questionTypePatch,
 } from '../question-editor/questionBlocks.mjs';
-
 const TYPES = QUESTION_BLOCK_TYPES.map( ( [ type ] ) => type );
 
 /** Question bank management: search, approve, archive, duplicate, metadata and sharing. */
@@ -65,7 +64,10 @@ export function QuestionBankPage() {
 		>
 			<TabPanel
 				tabs={ [
-					{ name: 'questions', title: __( 'Questions', 'ohmylms' ) },
+					{
+						name: 'questions',
+						title: __( 'Questions', 'ohmylms' ),
+					},
 					{
 						name: 'banks',
 						title: __( 'Banks & sharing', 'ohmylms' ),
@@ -79,7 +81,6 @@ export function QuestionBankPage() {
 		</AdminPage>
 	);
 }
-
 function QuestionsTab() {
 	const [ filters, setFilters ] = useState( {
 		search: '',
@@ -114,7 +115,10 @@ function QuestionsTab() {
 		let active = true;
 		setLoading( true );
 		const timer = setTimeout( () => {
-			searchBank( { ...cleanFilters( filters ), page } )
+			searchBank( {
+				...cleanFilters( filters ),
+				page,
+			} )
 				.then( ( data ) => {
 					if ( active ) {
 						setResult( data );
@@ -141,7 +145,10 @@ function QuestionsTab() {
 	);
 	const update = ( key ) => ( value ) => {
 		setPage( 1 );
-		setFilters( { ...filters, [ key ]: value } );
+		setFilters( {
+			...filters,
+			[ key ]: value,
+		} );
 	};
 	async function run( action ) {
 		try {
@@ -178,7 +185,10 @@ function QuestionsTab() {
 						label={ __( 'Type', 'ohmylms' ) }
 						value={ filters.type }
 						options={ [
-							{ value: '', label: __( 'All types', 'ohmylms' ) },
+							{
+								value: '',
+								label: __( 'All types', 'ohmylms' ),
+							},
 							...TYPES.map( ( type ) => ( {
 								value: type,
 								label: type,
@@ -190,7 +200,10 @@ function QuestionsTab() {
 						label={ __( 'Difficulty', 'ohmylms' ) }
 						value={ filters.difficulty }
 						options={ [
-							{ value: '', label: __( 'Any', 'ohmylms' ) },
+							{
+								value: '',
+								label: __( 'Any', 'ohmylms' ),
+							},
 							...DIFFICULTIES.map( ( value ) => ( {
 								value,
 								label: value,
@@ -202,7 +215,10 @@ function QuestionsTab() {
 						label={ __( 'Status', 'ohmylms' ) }
 						value={ filters.status }
 						options={ [
-							{ value: '', label: __( 'Active', 'ohmylms' ) },
+							{
+								value: '',
+								label: __( 'Active', 'ohmylms' ),
+							},
 							{
 								value: 'draft',
 								label: __( 'Not approved', 'ohmylms' ),
@@ -222,7 +238,10 @@ function QuestionsTab() {
 						label={ __( 'Skill', 'ohmylms' ) }
 						value={ filters.skill }
 						options={ [
-							{ value: '', label: __( 'Any skill', 'ohmylms' ) },
+							{
+								value: '',
+								label: __( 'Any skill', 'ohmylms' ),
+							},
 							...flattenTree( skillTree( skills ) ).map(
 								( skill ) => ( {
 									value: String( skill.id ),
@@ -254,7 +273,11 @@ function QuestionsTab() {
 						] }
 						onChange={ update( 'bank' ) }
 					/>
-					<div style={ { marginLeft: 'auto' } }>
+					<div
+						style={ {
+							marginLeft: 'auto',
+						} }
+					>
 						<Button
 							variant="primary"
 							onClick={ () => setCreating( true ) }
@@ -268,156 +291,177 @@ function QuestionsTab() {
 						{ error }
 					</Notice>
 				) }
-				{ loading ? (
-					<Spinner />
-				) : result.items.length === 0 ? (
-					<p>
-						{ __( 'No questions match these filters.', 'ohmylms' ) }
-					</p>
-				) : (
-					<div className="ohmylms-ext-table-scroll">
-						<table className="widefat striped ohmylms-bank-table">
-							<thead>
-								<tr>
-									<th>{ __( 'Question', 'ohmylms' ) }</th>
-									<th>{ __( 'Type', 'ohmylms' ) }</th>
-									<th>{ __( 'Version', 'ohmylms' ) }</th>
-									<th>{ __( 'Difficulty', 'ohmylms' ) }</th>
-									<th>{ __( 'Skills', 'ohmylms' ) }</th>
-									<th>{ __( 'Used in', 'ohmylms' ) }</th>
-									<th>{ __( 'Actions', 'ohmylms' ) }</th>
-								</tr>
-							</thead>
-							<tbody>
-								{ result.items.map( ( item ) => (
-									<tr key={ item.id }>
-										<td>
-											<Button
-												variant="link"
-												onClick={ () =>
-													setSelected( item.id )
-												}
-											>
-												{ item.name ||
-													__(
-														'(untitled)',
-														'ohmylms'
-													) }
-											</Button>
-											{ item.secure && (
-												<span className="ohmylms-badge">
-													{ __(
-														'Exam only',
-														'ohmylms'
-													) }
-												</span>
-											) }
-										</td>
-										<td>{ item.type }</td>
-										<td>{ versionLabel( item ) }</td>
-										<td>{ item.difficulty }</td>
-										<td>
-											{ item.skills
-												.map( ( id ) =>
-													skillNames.get( id )
-												)
-												.filter( Boolean )
-												.join( ', ' ) }
-										</td>
-										<td>
-											{ sprintf(
-												/* translators: 1: quizzes, 2: learner responses */
-												__(
-													'%1$d quizzes · %2$d responses',
-													'ohmylms'
-												),
-												item.usage.quizzes.length,
-												item.usage.responses
-											) }
-										</td>
-										<td style={ { whiteSpace: 'nowrap' } }>
-											{ item.can_approve &&
-												! item.approved_is_current &&
-												item.post_status !==
-													'ohmylms_archived' && (
-													<Button
-														variant="secondary"
-														size="small"
-														onClick={ () =>
-															run( () =>
-																approveQuestion(
-																	item.id
-																)
-															)
-														}
-													>
-														{ __(
-															'Approve',
-															'ohmylms'
-														) }
-													</Button>
-												) }{ ' ' }
-											<Button
-												variant="tertiary"
-												size="small"
-												onClick={ () =>
-													run( () =>
-														duplicateQuestion(
-															item.id
-														)
-													)
-												}
-											>
-												{ __( 'Duplicate', 'ohmylms' ) }
-											</Button>{ ' ' }
-											{ item.can_edit &&
-												( item.post_status ===
-												'ohmylms_archived' ? (
-													<Button
-														variant="tertiary"
-														size="small"
-														onClick={ () =>
-															run( () =>
-																restoreQuestion(
-																	item.id
-																)
-															)
-														}
-													>
-														{ __(
-															'Restore',
-															'ohmylms'
-														) }
-													</Button>
-												) : (
-													<Button
-														variant="tertiary"
-														size="small"
-														isDestructive
-														onClick={ () =>
-															run( () =>
-																archiveQuestion(
-																	item.id
-																)
-															)
-														}
-													>
-														{ __(
-															'Archive',
-															'ohmylms'
-														) }
-													</Button>
-												) ) }
-										</td>
+				{ ( () => {
+					if ( loading ) {
+						return <Spinner />;
+					}
+					if ( result.items.length === 0 ) {
+						return (
+							<p>
+								{ __(
+									'No questions match these filters.',
+									'ohmylms'
+								) }
+							</p>
+						);
+					}
+					return (
+						<div className="ohmylms-ext-table-scroll">
+							<table className="widefat striped ohmylms-bank-table">
+								<thead>
+									<tr>
+										<th>{ __( 'Question', 'ohmylms' ) }</th>
+										<th>{ __( 'Type', 'ohmylms' ) }</th>
+										<th>{ __( 'Version', 'ohmylms' ) }</th>
+										<th>
+											{ __( 'Difficulty', 'ohmylms' ) }
+										</th>
+										<th>{ __( 'Skills', 'ohmylms' ) }</th>
+										<th>{ __( 'Used in', 'ohmylms' ) }</th>
+										<th>{ __( 'Actions', 'ohmylms' ) }</th>
 									</tr>
-								) ) }
-							</tbody>
-						</table>
-					</div>
-				) }
+								</thead>
+								<tbody>
+									{ result.items.map( ( item ) => (
+										<tr key={ item.id }>
+											<td>
+												<Button
+													variant="link"
+													onClick={ () =>
+														setSelected( item.id )
+													}
+												>
+													{ item.name ||
+														__(
+															'(untitled)',
+															'ohmylms'
+														) }
+												</Button>
+												{ item.secure && (
+													<span className="ohmylms-badge">
+														{ __(
+															'Exam only',
+															'ohmylms'
+														) }
+													</span>
+												) }
+											</td>
+											<td>{ item.type }</td>
+											<td>{ versionLabel( item ) }</td>
+											<td>{ item.difficulty }</td>
+											<td>
+												{ item.skills
+													.map( ( id ) =>
+														skillNames.get( id )
+													)
+													.filter( Boolean )
+													.join( ', ' ) }
+											</td>
+											<td>
+												{ sprintf(
+													/* translators: 1: quizzes, 2: learner responses */
+													__(
+														'%1$d quizzes · %2$d responses',
+														'ohmylms'
+													),
+													item.usage.quizzes.length,
+													item.usage.responses
+												) }
+											</td>
+											<td
+												style={ {
+													whiteSpace: 'nowrap',
+												} }
+											>
+												{ item.can_approve &&
+													! item.approved_is_current &&
+													item.post_status !==
+														'ohmylms_archived' && (
+														<Button
+															variant="secondary"
+															size="small"
+															onClick={ () =>
+																run( () =>
+																	approveQuestion(
+																		item.id
+																	)
+																)
+															}
+														>
+															{ __(
+																'Approve',
+																'ohmylms'
+															) }
+														</Button>
+													) }{ ' ' }
+												<Button
+													variant="tertiary"
+													size="small"
+													onClick={ () =>
+														run( () =>
+															duplicateQuestion(
+																item.id
+															)
+														)
+													}
+												>
+													{ __(
+														'Duplicate',
+														'ohmylms'
+													) }
+												</Button>{ ' ' }
+												{ item.can_edit &&
+													( item.post_status ===
+													'ohmylms_archived' ? (
+														<Button
+															variant="tertiary"
+															size="small"
+															onClick={ () =>
+																run( () =>
+																	restoreQuestion(
+																		item.id
+																	)
+																)
+															}
+														>
+															{ __(
+																'Restore',
+																'ohmylms'
+															) }
+														</Button>
+													) : (
+														<Button
+															variant="tertiary"
+															size="small"
+															isDestructive
+															onClick={ () =>
+																run( () =>
+																	archiveQuestion(
+																		item.id
+																	)
+																)
+															}
+														>
+															{ __(
+																'Archive',
+																'ohmylms'
+															) }
+														</Button>
+													) ) }
+											</td>
+										</tr>
+									) ) }
+								</tbody>
+							</table>
+						</div>
+					);
+				} )() }
 				<div
 					className="ohmylms-bank-pagination ohmylms-ext-toolbar"
-					style={ { marginTop: 16, marginBottom: 0 } }
+					style={ {
+						marginTop: 16,
+						marginBottom: 0,
+					} }
 				>
 					<Button
 						variant="secondary"
@@ -428,7 +472,10 @@ function QuestionsTab() {
 					</Button>{ ' ' }
 					<span>
 						{ sprintf(
-							__( 'Page %1$d of %2$d', 'ohmylms' ),
+							/* translators: %1$d: current page number; %2$d: total number of pages. */ __(
+								'Page %1$d of %2$d',
+								'ohmylms'
+							),
 							page,
 							pages
 						) }
@@ -454,7 +501,6 @@ function QuestionsTab() {
 		</Fragment>
 	);
 }
-
 function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 	const [ detail, setDetail ] = useState( null );
 	const [ error, setError ] = useState( '' );
@@ -516,7 +562,13 @@ function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 		}
 	}
 	const setBank = ( key ) => ( value ) =>
-		setDraft( { ...draft, bank: { ...draft.bank, [ key ]: value } } );
+		setDraft( {
+			...draft,
+			bank: {
+				...draft.bank,
+				[ key ]: value,
+			},
+		} );
 	return (
 		<Modal
 			title={ detail?.name || __( 'Question', 'ohmylms' ) }
@@ -534,7 +586,10 @@ function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 			) : (
 				<QuestionForm
 					key={ id }
-					question={ { id, ...draft } }
+					question={ {
+						id,
+						...draft,
+					} }
 					types={ QUESTION_BLOCK_TYPES.map(
 						( [ value, label ] ) => ( {
 							value,
@@ -550,7 +605,10 @@ function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 					}
 					onChange={ ( patch ) =>
 						detail.can_edit &&
-						setDraft( ( value ) => ( { ...value, ...patch } ) )
+						setDraft( ( value ) => ( {
+							...value,
+							...patch,
+						} ) )
 					}
 					toolbarActions={
 						detail.can_edit && (
@@ -678,11 +736,18 @@ function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 								skills={ skills }
 								value={ draft.skills }
 								parts={ (
-									draft.settings?.parts || [ { id: 'p1' } ]
+									draft.settings?.parts || [
+										{
+											id: 'p1',
+										},
+									]
 								).map( ( part ) => part.id ) }
 								disabled={ ! detail.can_edit }
 								onChange={ ( skillsMap ) =>
-									setDraft( { ...draft, skills: skillsMap } )
+									setDraft( {
+										...draft,
+										skills: skillsMap,
+									} )
 								}
 							/>
 							{ detail.can_edit && (
@@ -772,7 +837,6 @@ function QuestionDetail( { id, skills, banks, onClose, onChanged } ) {
 		</Modal>
 	);
 }
-
 function BanksTab() {
 	const [ banks, setBanks ] = useState( null );
 	const [ name, setName ] = useState( '' );
@@ -788,7 +852,10 @@ function BanksTab() {
 	}, [] );
 	async function create() {
 		try {
-			await createBank( { name, visibility } );
+			await createBank( {
+				name,
+				visibility,
+			} );
 			setName( '' );
 			load();
 		} catch ( cause ) {
@@ -802,7 +869,13 @@ function BanksTab() {
 					{ error }
 				</Notice>
 			) }
-			<div style={ { display: 'flex', gap: 12, alignItems: 'end' } }>
+			<div
+				style={ {
+					display: 'flex',
+					gap: 12,
+					alignItems: 'end',
+				} }
+			>
 				<TextControl
 					label={ __( 'New bank name', 'ohmylms' ) }
 					value={ name }
@@ -812,7 +885,10 @@ function BanksTab() {
 					label={ __( 'Visibility', 'ohmylms' ) }
 					value={ visibility }
 					options={ [
-						{ value: 'private', label: __( 'Private', 'ohmylms' ) },
+						{
+							value: 'private',
+							label: __( 'Private', 'ohmylms' ),
+						},
 						{
 							value: 'shared',
 							label: __(
@@ -858,7 +934,6 @@ function BanksTab() {
 		</Fragment>
 	);
 }
-
 function GrantsModal( { bank, onClose } ) {
 	const [ grants, setGrants ] = useState( null );
 	const [ userId, setUserId ] = useState( '' );
@@ -873,7 +948,13 @@ function GrantsModal( { bank, onClose } ) {
 	}, [ bank.id ] );
 	return (
 		<Modal
-			title={ sprintf( __( 'Sharing: %s', 'ohmylms' ), bank.name ) }
+			title={ sprintf(
+				/* translators: %s: sharing mode label. */ __(
+					'Sharing: %s',
+					'ohmylms'
+				),
+				bank.name
+			) }
 			onRequestClose={ onClose }
 		>
 			{ error && (
@@ -894,7 +975,10 @@ function GrantsModal( { bank, onClose } ) {
 					{ grants.map( ( grant ) => (
 						<li key={ `${ grant.user_id }-${ grant.permission }` }>
 							{ sprintf(
-								__( 'User #%1$s: %2$s', 'ohmylms' ),
+								/* translators: %1$s: user identifier; %2$s: user sharing role. */ __(
+									'User #%1$s: %2$s',
+									'ohmylms'
+								),
 								grant.user_id,
 								grant.permission
 							) }{ ' ' }
@@ -916,7 +1000,13 @@ function GrantsModal( { bank, onClose } ) {
 					) ) }
 				</ul>
 			) }
-			<div style={ { display: 'flex', gap: 12, alignItems: 'end' } }>
+			<div
+				style={ {
+					display: 'flex',
+					gap: 12,
+					alignItems: 'end',
+				} }
+			>
 				<TextControl
 					label={ __( 'Author user ID', 'ohmylms' ) }
 					type="number"

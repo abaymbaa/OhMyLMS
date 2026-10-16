@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * One server-side submission path for HTML forms, timeout AJAX and deadline finalization.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Quiz;
 
 use OhMyLMS\Assessment\AttemptItems;
@@ -151,7 +156,7 @@ final class Submission {
 		}
 		try {
 			$attempt = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d AND quiz_id=%d AND student_id=%d AND course_id=%d", $attempt_id, $quiz_id, $student_id, $course_id ), ARRAY_A );
-			if ( ! $attempt || $attempt['status'] !== 'in-progress' ) {
+			if ( ! $attempt || 'in-progress' !== $attempt['status'] ) {
 				return new \WP_Error( 'quiz_attempt', 'Attempt unavailable or already submitted.', array( 'status' => 409 ) );
 			}
 			$context = AttemptItems::context( $attempt_id );
@@ -177,10 +182,10 @@ final class Submission {
 		$questions  = $quiz->get_questions();
 		$duration   = (int) $quiz->get_timer() * 60;
 		$expired    = $duration > 0 && current_time( 'timestamp' ) >= strtotime( $attempt['start_date'] ) + $duration;
-		if ( $reason === 'timeout' && ! $expired ) {
+		if ( 'timeout' === $reason && ! $expired ) {
 			return new \WP_Error( 'quiz_timer', 'The attempt has not reached its deadline.', array( 'status' => 400 ) );
 		}
-		if ( $reason === 'submit' && $expired ) {
+		if ( 'submit' === $reason && $expired ) {
 			$reason = 'timeout';
 		}
 		if ( array_diff( array_map( 'strval', array_keys( $answers ) ), array_map( 'strval', array_column( $questions, 'id' ) ) ) ) {
@@ -198,10 +203,10 @@ final class Submission {
 				return new \WP_Error( 'quiz_answer', 'Invalid answer format.', array( 'status' => 400 ) );
 			}
 			$present = Grader::present( $answer );
-			if ( $reason === 'submit' && ! empty( $settings['required'] ) && ( $settings['type'] ?? '' ) === 'fill-in-the-blank' && ! \OhMyLMS\Assessment\InlineBlanks::complete( $question, $answer ) ) {
+			if ( 'submit' === $reason && ! empty( $settings['required'] ) && ( $settings['type'] ?? '' ) === 'fill-in-the-blank' && ! \OhMyLMS\Assessment\InlineBlanks::complete( $question, $answer ) ) {
 				return new \WP_Error( 'quiz_required', 'Every blank in a required question must be answered.', array( 'status' => 400 ) );
 			}
-			if ( $reason === 'submit' && ! empty( $settings['required'] ) && ! $present ) {
+			if ( 'submit' === $reason && ! empty( $settings['required'] ) && ! $present ) {
 				return new \WP_Error( 'quiz_required', 'A required question is unanswered.', array( 'status' => 400 ) );
 			}
 			$grade = call_user_func( $definition['grade'], $answer, $question );
@@ -212,9 +217,9 @@ final class Submission {
 				return new \WP_Error( 'quiz_grader', 'Invalid grading result.' );
 			}
 			$marks   = ! empty( $settings['score']['enabled'] ) ? max( 0, (float) ( $settings['score']['value'] ?? 0 ) ) : 0;
-			$pending = $reason !== 'exit' && $present && ! empty( $grade['manual'] );
+			$pending = 'exit' !== $reason && $present && ! empty( $grade['manual'] );
 			// The legacy attempt total is an integer; extensions award whole points.
-			$earned = $present && ! $pending && $reason !== 'exit' ? (int) round( $marks * max( 0, min( 1, (float) $grade['fraction'] ) ) ) : 0;
+			$earned = $present && ! $pending && 'exit' !== $reason ? (int) round( $marks * max( 0, min( 1, (float) $grade['fraction'] ) ) ) : 0;
 			$manual = $manual || $pending;
 			$total += $earned;
 			$rows[] = array(
@@ -283,14 +288,14 @@ final class Submission {
 			return new \WP_Error( 'quiz_question', 'Answer contains a question outside this attempt.', array( 'status' => 400 ) );
 		}
 		$expired = Deadlines::expired( $context, $now );
-		if ( $reason === 'timeout' && ! $expired ) {
+		if ( 'timeout' === $reason && ! $expired ) {
 			return new \WP_Error( 'quiz_timer', 'The attempt has not reached its deadline.', array( 'status' => 400 ) );
 		}
-		if ( $reason === 'submit' && $expired ) {
+		if ( 'submit' === $reason && $expired ) {
 			$reason = 'timeout';
 		}
 		// After deadline + grace, only responses the server received in time count.
-		$late     = $reason !== 'exit' && Deadlines::closed( $context, $now );
+		$late     = 'exit' !== $reason && Deadlines::closed( $context, $now );
 		$saved    = Responses::saved( $attempt_id );
 		$revision = RevisionPublisher::revision( (int) $context['revision_id'] );
 		$policy   = $context['scoring'];
@@ -313,22 +318,22 @@ final class Submission {
 			if ( is_wp_error( $grade ) ) {
 				return $grade;
 			}
-			if ( $reason === 'submit' && ! empty( $item['display']['required'] ) && $snapshot->get_type() === 'fill-in-the-blank' && ! \OhMyLMS\Assessment\InlineBlanks::complete( $snapshot, $answer ) ) {
+			if ( 'submit' === $reason && ! empty( $item['display']['required'] ) && $snapshot->get_type() === 'fill-in-the-blank' && ! \OhMyLMS\Assessment\InlineBlanks::complete( $snapshot, $answer ) ) {
 				return new \WP_Error( 'quiz_required', 'Every blank in a required question must be answered.', array( 'status' => 400 ) );
 			}
-			if ( $reason === 'submit' && ! empty( $item['display']['required'] ) && ! $grade['present'] ) {
+			if ( 'submit' === $reason && ! empty( $item['display']['required'] ) && ! $grade['present'] ) {
 				return new \WP_Error( 'quiz_required', 'A required question is unanswered.', array( 'status' => 400 ) );
 			}
 			$marks   = (float) $item['marks'];
-			$pending = $reason !== 'exit' && $grade['pending'];
-			$earned  = $grade['present'] && ! $pending && $reason !== 'exit' ? Scoring::award( $marks, $grade['fraction'], $policy ) : 0.0;
+			$pending = 'exit' !== $reason && $grade['pending'];
+			$earned  = $grade['present'] && ! $pending && 'exit' !== $reason ? Scoring::award( $marks, $grade['fraction'], $policy ) : 0.0;
 			// Structured questions keep the credit of automatically marked parts while written parts await review.
-			if ( $pending && $grade['parts'] !== null ) {
+			if ( $pending && null !== $grade['parts'] ) {
 				$earned = Scoring::award( $marks, $grade['auto_fraction'], $policy );
 			}
 			$manual    = $manual || $pending;
 			$total    += $earned;
-			$correct   = $grade['present'] && $grade['correct'] && $reason !== 'exit';
+			$correct   = $grade['present'] && $grade['correct'] && 'exit' !== $reason;
 			$rows[]    = array(
 				'quiz_id'         => $quiz_id,
 				'student_id'      => $student_id,
@@ -345,12 +350,12 @@ final class Submission {
 				'answer'           => $grade['answer'],
 				'present'          => $grade['present'],
 				'pending'          => $pending,
-				'fraction'         => $pending ? null : ( $reason === 'exit' ? 0.0 : $grade['fraction'] ),
+				'fraction'         => $pending ? null : ( 'exit' === $reason ? 0.0 : $grade['fraction'] ),
 				'awarded'          => $pending ? null : $earned,
 				'correct'          => $pending ? null : ( $correct ? 1 : 0 ),
 				'marks'            => $marks,
 				'parts'            => $grade['parts'],
-				'version_settings' => $grade['parts'] !== null ? $snapshot->get_settings() : null,
+				'version_settings' => null !== $grade['parts'] ? $snapshot->get_settings() : null,
 			);
 		}
 		// Legacy-int attempts keep an integer total, exactly like the original engine.
@@ -380,14 +385,14 @@ final class Submission {
 							),
 							array( 'id' => (int) $item['id'] )
 						);
-						if ( $reason === 'exit' ) {
+						if ( 'exit' === $reason ) {
 							continue;
 						}
-						if ( $update['parts'] !== null && $update['present'] ) {
+						if ( null !== $update['parts'] && $update['present'] ) {
 							// One event per part: evidence is attributed to each part's own skill.
 							$weights = \OhMyLMS\Assessment\Structured::weights( $update['version_settings'] );
 							foreach ( $update['parts'] as $part_id => $part_fraction ) {
-								if ( $part_fraction === null ) {
+								if ( null === $part_fraction ) {
 									continue;
 								}
 								$part_max = $update['marks'] * ( $weights[ $part_id ] ?? 0 );
@@ -492,7 +497,7 @@ final class Submission {
 		foreach ( $graded['rows'] as $row ) {
 			do_action( 'ohmylms_answer_graded', $row + array( 'status' => $status ) );
 		}
-		if ( ! $manual && $reason !== 'exit' && $total >= $graded['passing'] ) {
+		if ( ! $manual && 'exit' !== $reason && $total >= $graded['passing'] ) {
 			$student      = new Student( $student_id );
 			$was_complete = $student->is_course_completed( $course_id );
 			$student->complete_lesson( $quiz_id, $course_id );
@@ -521,7 +526,7 @@ final class Submission {
 		global $wpdb;
 		$attempt = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d", $attempt_id ), ARRAY_A );
 		$context = AttemptItems::context( $attempt_id );
-		if ( ! $attempt || ! $context || $attempt['status'] !== 'in-progress' || ! Deadlines::closed( $context ) ) {
+		if ( ! $attempt || ! $context || 'in-progress' !== $attempt['status'] || ! Deadlines::closed( $context ) ) {
 			return new \WP_Error( 'quiz_attempt', 'Attempt is not eligible for finalization.', array( 'status' => 409 ) );
 		}
 		$key = self::lock( (int) $attempt['quiz_id'], (int) $attempt['student_id'] );

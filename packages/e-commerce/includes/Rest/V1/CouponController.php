@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Rest\V1;
 
@@ -93,7 +93,7 @@ class CouponController extends RestController {
 			'post_status'    => array( 'draft', 'publish' ),
 		);
 
-		// Add meta_query for title search if provided
+		// Add meta_query for title search if provided.
 		if ( ! empty( $request['search'] ) ) {
 			$args['meta_query'] = array(
 				array(
@@ -114,7 +114,7 @@ class CouponController extends RestController {
 
 		$rest_response = rest_ensure_response( $coupons );
 
-		// Add the total found posts header
+		// Add the total found posts header.
 		$rest_response->header( 'X-WP-Total', (int) $query->found_posts );
 
 		return $rest_response;
@@ -161,7 +161,7 @@ class CouponController extends RestController {
 		}
 
 		$post = get_post( $id );
-		if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+		if ( ! $post || 'ohmylms_coupon' !== $post->post_type ) {
 			return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -177,7 +177,7 @@ class CouponController extends RestController {
 			return $updated;
 		}
 
-		// Return the updated coupon data
+		// Return the updated coupon data.
 		$post     = get_post( $id );
 		$response = $this->prepare_item_for_response( $post, $request );
 		return rest_ensure_response( $response );
@@ -231,7 +231,7 @@ class CouponController extends RestController {
 		}
 
 		$post = get_post( $id );
-		if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+		if ( ! $post || 'ohmylms_coupon' !== $post->post_type ) {
 			return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -255,7 +255,7 @@ class CouponController extends RestController {
 
 		foreach ( $ids as $id ) {
 			$post = get_post( $id );
-			if ( ! $post || $post->post_type !== 'ohmylms_coupon' ) {
+			if ( ! $post || 'ohmylms_coupon' !== $post->post_type ) {
 				return new \WP_Error( 'ohmylms_rest_coupon_not_found', __( 'Coupon not found.', 'ohmylms' ), array( 'status' => 404 ) );
 			}
 
@@ -332,7 +332,7 @@ class CouponController extends RestController {
 						$coupon->set_course_id_type( esc_html( $value ) );
 						break;
 					case 'date_expires':
-						// Handle DateTime array format
+						// Handle DateTime array format.
 						if ( is_array( $value ) && isset( $value['date'] ) ) {
 							$coupon->set_date_expires( $value['date'] );
 						} else {
@@ -340,7 +340,7 @@ class CouponController extends RestController {
 						}
 						break;
 					case 'date_start':
-						// Handle DateTime array format
+						// Handle DateTime array format.
 						if ( is_array( $value ) && isset( $value['date'] ) ) {
 							$coupon->set_date_start( $value['date'] );
 						} else {

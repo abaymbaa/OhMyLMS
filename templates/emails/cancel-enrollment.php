@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails cancel enrollment template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -51,18 +56,18 @@ $cta_btn_position    = $email_settings['ohmylms_email_button_possition'] ?? 'cen
 
 												<div style="box-shadow:0px 1px 4px #D3D6DD; background-color: <?php echo $email_body_bg_color; ?>; padding: 20px; border-radius: 12px; margin: 0 0 20px;">
 													<p style="color: <?php echo $email_text_color; ?>; font-size: 16px; font-style: normal; font-weight: 500; line-height: 1; margin: 0 0 10px">
-														<?php echo __( 'Enrollment Canceled', 'ohmylms' ); ?>    
+														<?php echo esc_html__( 'Enrollment Canceled', 'ohmylms' ); ?>    
 													</p>
 
 													<ul style="padding: 0 0 0 35px;">
 														<li style="color: <?php echo $email_text_color; ?>; margin: 0 0 5px;">
-															<?php echo __( 'Order Date: ', 'ohmylms' ); ?> 
+															<?php echo esc_html__( 'Order Date: ', 'ohmylms' ); ?> 
 															<strong><?php echo $enroll_data['start_date']; ?></strong>
 														</li>
 
 														<li style="color: <?php echo $email_text_color; ?>; margin: 0 0 5px;">
-															<?php echo __( 'Status: ', 'ohmylms' ); ?> 
-															<strong style="color: #F7393C;"><?php echo __( 'Canceled', 'ohmylms' ); ?></strong>
+															<?php echo esc_html__( 'Status: ', 'ohmylms' ); ?> 
+															<strong style="color: #F7393C;"><?php echo esc_html__( 'Canceled', 'ohmylms' ); ?></strong>
 														</li>
 													</ul>
 												</div>

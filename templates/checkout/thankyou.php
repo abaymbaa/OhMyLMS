@@ -52,7 +52,7 @@ $status        = $order ? $order->get_status() : '';
 								</span>
 
 								<h1 class="ohmylms-thankyou-title">
-									<?php echo __( 'Payment Failed', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Payment Failed', 'ohmylms' ); ?>
 								</h1>
 
 								<div class="ohmylms-thankyou-text">
@@ -64,7 +64,7 @@ $status        = $order ? $order->get_status() : '';
 
 								<div class="ohmylms-btn-area">
 									<a href="<?php echo esc_url( ohmylms_get_page_permalink( 'checkout' ) ); ?>" class="ohmylms-button">
-										<?php echo __( 'Return To Checkout', 'ohmylms' ); ?>
+										<?php echo esc_html__( 'Return To Checkout', 'ohmylms' ); ?>
 									</a>
 								</div>
 							<?php else : ?>
@@ -115,16 +115,16 @@ $status        = $order ? $order->get_status() : '';
 
 							<div class="ohmylms-customer-details">
 								<h2 class="ohmylms-address-title">
-									<?php echo __( 'Student Details', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Student Details', 'ohmylms' ); ?>
 								</h2>
 
 								<p class="single-address email">
-									<strong><?php echo __( 'Email' ); ?></strong>
+									<strong><?php echo esc_html__( 'Email' ); ?></strong>
 									<?php echo $student->get_email(); ?>
 								</p>
 
 								<p class="single-address country">
-									<strong><?php echo __( 'Country' ); ?></strong>
+									<strong><?php echo esc_html__( 'Country' ); ?></strong>
 									<?php echo ohmylms_get_country_name_by_code( $student->get_country() ); ?>
 								</p>
 							</div>
@@ -143,7 +143,7 @@ $status        = $order ? $order->get_status() : '';
 						<div class="ohmylms-thankyou-content-right">
 							<div class="ohmylms-thankyou-table-wrapper order-summary">
 								<h2 class="ohmylms-order-summary-title">
-									<?php echo __( 'Order Summary', 'ohmylms' ); ?>
+									<?php echo esc_html__( 'Order Summary', 'ohmylms' ); ?>
 								</h2>
 								<?php
 									ohmylms_get_template(

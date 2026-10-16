@@ -121,7 +121,7 @@ function ohmylms_get_account_menu_items() {
 	// if ( empty( $endpoint ) ) {
 	// unset( $items[ $endpoint_id ] );
 	// }
-	// }
+	// }.
 
 	// Check if payment gateways support add new payment methods.
 	// if ( isset( $items['payment-methods'] ) ) {
@@ -136,7 +136,7 @@ function ohmylms_get_account_menu_items() {
 	// if ( ! $support_payment_methods ) {
 	// unset( $items['payment-methods'] );
 	// }
-	// }
+	// }.
 
 	return apply_filters( 'ohmylms_account_menu_items', $items, $endpoints );
 }
@@ -316,7 +316,7 @@ function ohmylms_get_initials( $firstName = '', $lastName = '' ) {
 	$firstInitial  = ! empty( $firstName ) ? strtoupper( $firstName[0] ) : '';
 	$secondInitial = ! empty( $lastName ) ? strtoupper( $lastName[0] ) : '';
 
-	// If both are missing, return a default placeholder, e.g., "NN" for "No Name"
+	// If both are missing, return a default placeholder, e.g., "NN" for "No Name".
 	if ( empty( $firstInitial ) && empty( $secondInitial ) ) {
 		return 'NN';
 	}

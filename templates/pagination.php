@@ -9,13 +9,13 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
-// Display pagination
+// Display pagination.
 global $wp_query;
 
-$big              = 999999999; // An unlikely number
+$big              = 999999999; // An unlikely number.
 $pagination_links = paginate_links(
 	array(
 		'base'      => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),

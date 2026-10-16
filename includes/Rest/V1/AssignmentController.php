@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling assignment REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -287,7 +292,7 @@ class AssignmentController extends RestController {
 			);
 		}
 
-		if ( isset( $request['orderby'] ) && $request['orderby'] === 'course_name' ) {
+		if ( isset( $request['orderby'] ) && 'course_name' === $request['orderby'] ) {
 			usort(
 				$posts,
 				function ( $a, $b ) use ( $request ) {
@@ -309,7 +314,7 @@ class AssignmentController extends RestController {
 				}
 			);
 
-			// Re-index array (optional)
+			// Re-index array (optional).
 			$posts                = array_values( $posts );
 			$total_filtered_posts = count( $posts );
 		}
@@ -776,7 +781,7 @@ class AssignmentController extends RestController {
 		$student                 = new \OhMyLMS\Data\Student( $attempt_id );
 		$maybe_course_completion = $student && $student->is_course_completed( $course_id ) ? 'yes' : 'no';
 
-		if ( $maybe_course_completion === 'yes' ) {
+		if ( 'yes' === $maybe_course_completion ) {
 			do_action( 'ohmylms_student_completed_course_after_reviewing_assignment', $attempt_id, $course_id );
 		}
 

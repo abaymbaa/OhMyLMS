@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Learning;
 
 use OhMyLMS\Assessment\Schema as AssessmentSchema;
@@ -50,14 +50,14 @@ final class PracticeAccessPolicy {
 					if ( ! $bank_id ) {
 						return $public || ( $student && (int) $row['author_id'] === $student ); }
 					$bank = Banks::get( $bank_id );
-					return $bank && ( ( $public && $bank['visibility'] === 'site' ) || ( $student && Banks::can( $bank_id, 'use', $student ) ) || ( (int) $bank['course_id'] && in_array( (int) $bank['course_id'], $courses, true ) ) );
+					return $bank && ( ( $public && 'site' === $bank['visibility'] ) || ( $student && Banks::can( $bank_id, 'use', $student ) ) || ( (int) $bank['course_id'] && in_array( (int) $bank['course_id'], $courses, true ) ) );
 				}
 			)
 		);
 	}
 
 	public static function session( array $session ) {
-		if ( $session['mode'] !== 'skill' ) {
+		if ( 'skill' !== $session['mode'] ) {
 			return true; }
 		$owner  = array(
 			'student_id' => (int) $session['student_id'],
@@ -66,11 +66,11 @@ final class PracticeAccessPolicy {
 		$access = self::check( $owner, (int) $session['term_id'], (int) $session['course_id'] );
 		if ( is_wp_error( $access ) ) {
 			return $access; }
-		if ( $session['status'] !== 'active' ) {
+		if ( 'active' !== $session['status'] ) {
 			return true; }
 		$allowed = array_map( 'intval', array_column( self::pool( \OhMyLMS\Practice\Selector::pool( (int) $session['term_id'] ), $owner, (int) $session['term_id'], (int) $session['course_id'] ), 'question_id' ) );
 		foreach ( \OhMyLMS\Practice\Sessions::items( $session['id'] ) as $item ) {
-			if ( $item['answered_at'] === null && ! in_array( (int) $item['question_id'], $allowed, true ) ) {
+			if ( null === $item['answered_at'] && ! in_array( (int) $item['question_id'], $allowed, true ) ) {
 				return CourseProgram::error( __( 'This practice question is no longer available. Start a new session.', 'ohmylms' ), 403 ); }
 		}
 		return true;

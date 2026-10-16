@@ -13,7 +13,7 @@
 
 defined( 'ABSPATH' ) || exit();
 
-// Get URLs from General Settings (global) or use defaults
+// Get URLs from General Settings (global) or use defaults.
 $my_profile_url = ohmylms_get_nav_link_url( 'profile' );
 $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 
@@ -34,23 +34,23 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 				?>
 
 <!--				<div class="search-box">-->
-<!--                    --><?php // include(OHMYLMS_DIR . '/assets/images/icon/search-icon.php'); ?>
+<!--                    --><?php // include(OHMYLMS_DIR . '/assets/images/icon/search-icon.php');. ?>
 <!--					<input type="search" name="ohmylms-search" placeholder="Search...">-->
 <!---->
 <!--                    <span class="ohmylms-search-close">-->
-<!--                        --><?php // include(OHMYLMS_DIR . '/assets/images/icon/cross-icon.php'); ?>
+<!--                        --><?php // include(OHMYLMS_DIR . '/assets/images/icon/cross-icon.php');. ?>
 <!--                    </span>-->
 <!--				</div>-->
 			</div>
 
 			<div class="ohmylms-header-right">
 <!--                <button type="button" class="ohmylms-mobile-search-btn">-->
-<!--                    --><?php // include(OHMYLMS_DIR . '/assets/images/icon/search-icon.php'); ?>
+<!--                    --><?php // include(OHMYLMS_DIR . '/assets/images/icon/search-icon.php');. ?>
 <!--                </button>-->
 <!---->
 <!--				<div class="ohmylms-notification">-->
 <!--					<a href="" title="See all notifications">-->
-<!--                        --><?php // include(OHMYLMS_DIR . '/assets/images/icon/notification-icon.php'); ?>
+<!--                        --><?php // include(OHMYLMS_DIR . '/assets/images/icon/notification-icon.php');. ?>
 <!--						<span class="notification-count">10</span>-->
 <!--					</a>-->
 <!--				</div>-->
@@ -72,28 +72,28 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 						<li>
 							<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'dashboard' ) ); ?>" class="dashboard-link asdfads">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/home-icon.php'; ?>
-								<?php echo __( 'Dashboard', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Dashboard', 'ohmylms' ); ?>
 							</a>
 						</li>
 
 						<li>
 							<a href="<?php echo $my_profile_url; ?>" class="my-profile-link">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/user-circle-outline-icon.php'; ?>
-								<?php echo __( 'My Profile', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'My Profile', 'ohmylms' ); ?>
 							</a>
 						</li>
 
 						<li>
 							<a href="<?php echo $my_courses_url; ?>" class="my-course-link">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/course-icon.php'; ?>
-								<?php echo __( 'My Courses', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'My Courses', 'ohmylms' ); ?>
 							</a>
 						</li>
 
 <!--                        <li>-->
-<!--                            <a href="--><?php // echo esc_url( ohmylms_get_account_endpoint_url( 'settings' ) ); ?><!--" class="settings-link">-->
-<!--                                --><?php // include(OHMYLMS_DIR . '/assets/images/icon/settings-icon.php'); ?>
-<!--                                --><?php // echo __( 'Settings', 'ohmylms' ); ?>
+<!--                            <a href="--><?php // echo esc_url( ohmylms_get_account_endpoint_url( 'settings' ) );. ?><!--" class="settings-link">-->
+<!--                                --><?php // include(OHMYLMS_DIR . '/assets/images/icon/settings-icon.php');. ?>
+<!--                                --><?php // echo __( 'Settings', 'ohmylms' );. ?>
 <!--                            </a>-->
 <!--                        </li>-->
 
@@ -102,7 +102,7 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 						<li>
 							<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'customer-logout' ) ); ?>" class="logout-link">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/logout-icon.php'; ?>
-								<?php echo __( 'Log Out', 'ohmylms' ); ?>
+								<?php echo esc_html__( 'Log Out', 'ohmylms' ); ?>
 							</a>
 						</li>
 					</ul>

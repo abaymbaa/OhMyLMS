@@ -46,7 +46,9 @@ export function SkillPane( { node } ) {
 			return;
 		}
 		setOverride( ( current ) => {
-			const next = { ...current };
+			const next = {
+				...current,
+			};
 			for ( const key of [ 'required', 'target' ] ) {
 				if ( key in next && next[ key ] === inCourse[ key ] ) {
 					delete next[ key ];
@@ -57,14 +59,24 @@ export function SkillPane( { node } ) {
 				: next;
 		} );
 	}, [ inCourse?.required, inCourse?.target ] );
-	const shown = inCourse ? { ...inCourse, ...override } : null;
+	const shown = inCourse
+		? {
+				...inCourse,
+				...override,
+			}
+		: null;
 	const setInCourse = async ( patch ) => {
-		setOverride( ( current ) => ( { ...current, ...patch } ) );
+		setOverride( ( current ) => ( {
+			...current,
+			...patch,
+		} ) );
 		if (
 			! ( await w.actions.setRequirements( [ skill.term_id ], patch ) )
 		) {
 			setOverride( ( current ) => {
-				const next = { ...current };
+				const next = {
+					...current,
+				};
 				for ( const key of Object.keys( patch ) ) {
 					delete next[ key ];
 				}
@@ -149,7 +161,9 @@ export function SkillPane( { node } ) {
 						value={ skill.code }
 						validate={ ( text ) => check( text, 'code' ) }
 						onSave={ ( text ) =>
-							w.actions.saveSkill( skill, { code: text.trim() } )
+							w.actions.saveSkill( skill, {
+								code: text.trim(),
+							} )
 						}
 					/>
 					<SelectControl
@@ -183,12 +197,14 @@ export function SkillPane( { node } ) {
 					selected={ appearance.category }
 					disabled={ w.pending }
 					onSelect={ ( category ) =>
-						w.actions.saveSkill( skill, { category } )
+						w.actions.saveSkill( skill, {
+							category,
+						} )
 					}
 				/>
 				<p className="ohmylms-ext-muted">
 					{ sprintf(
-						__(
+						/* translators: %s: skill or linked content name. */ __(
 							'Skills are shared. Taking “%s” out of this folder keeps it in the skill library.',
 							'ohmylms'
 						),
@@ -230,7 +246,11 @@ export function SkillPane( { node } ) {
 									value: 'mastered',
 								},
 							] }
-							onChange={ ( target ) => setInCourse( { target } ) }
+							onChange={ ( target ) =>
+								setInCourse( {
+									target,
+								} )
+							}
 							__nextHasNoMarginBottom
 						/>
 					</div>

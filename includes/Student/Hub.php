@@ -38,8 +38,9 @@ final class Hub {
 		add_action( 'admin_post_ohmylms_student_hub', array( __CLASS__, 'save' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ), 25 );
-		add_action( 'template_redirect', array( __CLASS__, 'redirect_legacy' ), 5 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'course_page_assets' ), 25 );
 		add_action( 'template_redirect', array( __CLASS__, 'redirect_course_page' ), 6 );
+		add_action( 'template_redirect', array( __CLASS__, 'redirect_legacy' ), 5 );
 		add_action( 'template_redirect', array( __CLASS__, 'private_response' ), 1 );
 		add_filter( 'template_include', array( __CLASS__, 'page_template' ) );
 		add_filter( 'query_vars', array( __CLASS__, 'query_vars' ) );
@@ -286,16 +287,16 @@ final class Hub {
 	}
 
 	/**
-	 * Signed-in learners land on the Khan-style course overview instead of the old course page.
+	 * Signed-in learners always land on the Khan-style course overview, where enrolment also happens.
 	 *
-	 * Skipped for roadmap courses (never shown to learners), when Browse subjects is off, and when the
-	 * old page is asked for explicitly with ?legacy=1. Signed-out visitors keep the public course page.
+	 * Skipped for roadmap courses (never shown to learners), when Browse subjects is off and for
+	 * ?preview links. Signed-out visitors get the same page at the course URL, as the hub needs a sign-in.
 	 */
 	public static function redirect_course_page() {
 		if ( 'GET' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) {
 			return;
 		}
-		if ( ! is_singular( OHMYLMS_COURSE_CPT ) || ! is_user_logged_in() || isset( $_GET['preview'] ) || isset( $_GET['legacy'] ) || ! in_array( 'library', self::settings()['tabs'], true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display switch.
+		if ( ! is_singular( OHMYLMS_COURSE_CPT ) || ! is_user_logged_in() || isset( $_GET['preview'] ) || ! in_array( 'library', self::settings()['tabs'], true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display switch.
 			return;
 		}
 		$course_id = get_queried_object_id();
@@ -480,6 +481,13 @@ final class Hub {
 		}
 		$archive = get_post_type_archive_link( OHMYLMS_COURSE_CPT );
 		return $archive ? $archive : home_url( '/' );
+	}
+
+	/** The course page shares the hub's Khan-style styles. */
+	public static function course_page_assets() {
+		if ( is_singular( OHMYLMS_COURSE_CPT ) ) {
+			wp_enqueue_style( 'ohmylms-student-hub', plugins_url( 'assets/css/student-hub.css', OHMYLMS_FILE ), array( 'ohmylms-frontend' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/student-hub.css' ) );
+		}
 	}
 
 	/** Load authored assets early enough for the theme head. */

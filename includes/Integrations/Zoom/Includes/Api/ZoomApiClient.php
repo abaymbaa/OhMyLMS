@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * ZoomApiClient class.
  *
@@ -135,7 +135,7 @@ class ZoomApiClient implements ZoomApiInterface {
 		$body        = \wp_remote_retrieve_body( $response );
 		$data        = json_decode( $body, true );
 
-		if ( $body === '' ) {
+		if ( '' === $body ) {
 			return array(
 				'success' => false,
 				'message' => 'Empty response from Zoom API.',

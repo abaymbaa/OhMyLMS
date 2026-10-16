@@ -48,14 +48,14 @@ export function createCertificateEditor( readRuntime ) {
 							try {
 								c( ! 0 );
 								var e = a.current;
-								( oL()
-									.then( function ( t ) {
-										t()
+								oL()
+									.then( function ( _tLocal ) {
+										_tLocal()
 											.from( e )
 											.set( {
 												margin: 10,
 												filename: ''.concat(
-													( null == o
+													( o === null || o === void 0
 														? void 0
 														: o.name ) ||
 														'Untitled Template',
@@ -77,28 +77,25 @@ export function createCertificateEditor( readRuntime ) {
 											} )
 											.save();
 									} )
-									.catch( function ( e ) {
+									.catch( function ( _eLocal ) {
 										console.error(
 											'Failed to load html2pdf:',
-											e
+											_eLocal
 										);
-									} ),
-									s(
-										'success',
-										( 0, I18n.__ )(
-											'Saved Successfully',
-											'ohmylms'
-										)
-									) );
-							} catch ( e ) {
-								( console.error( e ),
-									s(
-										'error',
-										( 0, I18n.__ )(
-											'Saved failed',
-											'ohmylms'
-										)
-									) );
+									} );
+								s(
+									'success',
+									( 0, I18n.__ )(
+										'Saved Successfully',
+										'ohmylms'
+									)
+								);
+							} catch ( _eLocal2 ) {
+								console.error( _eLocal2 );
+								s(
+									'error',
+									( 0, I18n.__ )( 'Saved failed', 'ohmylms' )
+								);
 							} finally {
 								c( ! 1 );
 							}

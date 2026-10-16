@@ -7,12 +7,10 @@ import { QUESTION_BLOCK_TYPES, questionTypePatch } from './questionBlocks.mjs';
 export function createQuestionCanvas( readRuntime ) {
 	return function QuestionCanvas( props ) {
 		const {
-			Au,
 			Eu,
 			I: Controls,
 			Ie,
 			Iu,
-			L: Entitlements,
 			Lc,
 			Pu,
 			React,
@@ -26,353 +24,379 @@ export function createQuestionCanvas( readRuntime ) {
 			ju,
 			lu,
 			nu,
-			ou,
 			tu,
-			wu,
 			y: WordPressData,
 		} = readRuntime();
 		const previewOptions = ( 0, WordPressData.useSelect )(
 			( select ) => select( StoreModule.default ).getQuestionContents(),
 			[]
 		);
-		var t,
-			n,
-			r,
-			a,
-			chapterId = props.chapterId,
-			i = true,
-			question = ( function () {
-				var e = ( 0, WordPressData.useSelect )( function ( e ) {
-						return e( StoreModule.default ).getQuizTypes();
-					}, [] ),
-					t = ( 0, WordPressData.useSelect )( function ( e ) {
-						return e(
-							StoreModule.default
-						).getInteractiveQuizTypes();
-					}, [] ),
-					n = [].concat( nu( e ), nu( t ) ),
-					r = ( 0, WordPressData.useSelect )( function ( e ) {
-						return e( StoreModule.default ).selectQuestion();
-					}, [] );
-				if ( ! r ) {
-					return {
-						edit: tu,
-						showDefault: ! 0,
-					};
-				}
-				var a = r.settings;
-				if ( null == a || ! a.type ) {
-					return {
-						edit: tu,
-						showDefault: ! 0,
-					};
-				}
-				var o = n.find( function ( e ) {
-					return (
-						( null == e ? void 0 : e.type ) ===
-						( null == a ? void 0 : a.type )
-					);
-				} );
-				return o
-					? {
-							edit: o.edit,
-							showDefault: ! 1,
-						}
-					: {
-							edit: tu,
-							showDefault: ! 0,
-						};
-			} )(),
-			edit = question.edit,
-			showDefault = question.showDefault,
-			s = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			quizId = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getSelectedQuizId();
-			}, [] ),
-			m =
-				( ( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getQuiz();
+		var t;
+		var n;
+		var r;
+		var a;
+		var chapterId = props.chapterId;
+		var question = ( function () {
+			var e = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+					return _eLocal( StoreModule.default ).getQuizTypes();
 				}, [] ),
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).selectSelectedQuestionId();
+				_tLocal = ( 0, WordPressData.useSelect )( function (
+					_eLocal2
+				) {
+					return _eLocal2(
+						StoreModule.default
+					).getInteractiveQuizTypes();
 				}, [] ),
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).selectQuestion();
-				}, [] ) ),
-			p =
-				( ( 0, WordPressData.useSelect )(
-					function ( e ) {
-						return e(
-							StoreModule.default
-						).getCourseChaptersContent();
-					},
-					[ chapterId ]
-				),
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getAllQuestions();
-				}, [] ) ),
-			Router = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getQuestionErrors();
-			}, [] ),
-			v = ( function ( e, t ) {
+				_nLocal = [].concat( nu( e ), nu( _tLocal ) ),
+				_rLocal = ( 0, WordPressData.useSelect )( function (
+					_eLocal3
+				) {
+					return _eLocal3( StoreModule.default ).selectQuestion();
+				}, [] );
+			if ( ! _rLocal ) {
+				return {
+					edit: tu,
+					showDefault: ! 0,
+				};
+			}
+			var _aLocal = _rLocal.settings;
+			if ( _aLocal === null || _aLocal === void 0 || ! _aLocal.type ) {
+				return {
+					edit: tu,
+					showDefault: ! 0,
+				};
+			}
+			var o = _nLocal.find( function ( _eLocal4 ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
-						}
-					} )( e ) ||
-					( function ( e, t ) {
-						var n =
-							null == e
-								? null
-								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
-								a,
-								o,
-								i,
-								l = [],
-								c = ! 0,
-								u = ! 1;
+					( _eLocal4 === null || _eLocal4 === void 0
+						? void 0
+						: _eLocal4.type ) ===
+					( _aLocal === null || _aLocal === void 0
+						? void 0
+						: _aLocal.type )
+				);
+			} );
+			return o
+				? {
+						edit: o.edit,
+						showDefault: ! 1,
+					}
+				: {
+						edit: tu,
+						showDefault: ! 0,
+					};
+		} )();
+		var edit = question.edit;
+		var showDefault = question.showDefault;
+		var s = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var quizId = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getSelectedQuizId();
+		}, [] );
+		var m =
+			( ( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getQuiz();
+			}, [] ),
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).selectSelectedQuestionId();
+			}, [] ),
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).selectQuestion();
+			}, [] ) );
+		var p =
+			( ( 0, WordPressData.useSelect )(
+				function ( e ) {
+					return e( StoreModule.default ).getCourseChaptersContent();
+				},
+				[ chapterId ]
+			),
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getAllQuestions();
+			}, [] ) );
+		var Router = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getQuestionErrors();
+		}, [] );
+		var v = ( function ( e, _tLocal2 ) {
+			return (
+				( function ( _eLocal5 ) {
+					if ( Array.isArray( _eLocal5 ) ) {
+						return _eLocal5;
+					}
+				} )( e ) ||
+				( function ( _eLocal6, _tLocal3 ) {
+					var _nLocal2 =
+						_eLocal6 === null || _eLocal6 === void 0
+							? null
+							: ( 'undefined' !== typeof Symbol &&
+									_eLocal6[ Symbol.iterator ] ) ||
+								_eLocal6[ '@@iterator' ];
+					if ( _nLocal2 !== null && _nLocal2 !== void 0 ) {
+						var _rLocal2,
+							_aLocal2,
+							o,
+							_iLocal,
+							l = [],
+							c = ! 0,
+							u = ! 1;
+						try {
+							if (
+								( ( o = ( _nLocal2 = _nLocal2.call( _eLocal6 ) )
+									.next ),
+								0 === _tLocal3 )
+							) {
+								if ( Object( _nLocal2 ) !== _nLocal2 ) {
+									return;
+								}
+								c = ! 1;
+							} else {
+								for (
+									;
+									! ( c = ( _rLocal2 = o.call( _nLocal2 ) )
+										.done ) &&
+									( l.push( _rLocal2.value ),
+									l.length !== _tLocal3 );
+									c = ! 0
+								) {}
+							}
+						} catch ( _eLocal7 ) {
+							u = ! 0;
+							_aLocal2 = _eLocal7;
+						} finally {
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									! c &&
+									( ( _nullableValue ) =>
+										_nullableValue !== null &&
+										_nullableValue !== void 0 )(
+										_nLocal2.return
+									) &&
+									( ( _iLocal = _nLocal2.return() ),
+									Object( _iLocal ) !== _iLocal )
 								) {
-									if ( Object( n ) !== n ) {
-										return;
-									}
-									c = ! 1;
-								} else {
-									for (
-										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
-										c = ! 0
-									) {}
+									return;
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
 							} finally {
-								try {
-									if (
-										! c &&
-										null != n.return &&
-										( ( i = n.return() ),
-										Object( i ) !== i )
-									) {
-										return;
-									}
-								} finally {
-									if ( u ) {
-										throw a;
-									}
+								if ( u ) {
+									throw _aLocal2;
 								}
 							}
-							return l;
 						}
-					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return Iu( e, t );
-							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
-							return (
-								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? Iu( e, t )
-										: void 0
-							 );
+						return l;
+					}
+				} )( e, _tLocal2 ) ||
+				( function ( _eLocal8, _tLocal4 ) {
+					if ( _eLocal8 ) {
+						if ( 'string' === typeof _eLocal8 ) {
+							return Iu( _eLocal8, _tLocal4 );
 						}
-					} )( e, t ) ||
-					( function () {
-						throw new TypeError(
-							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
-						);
-					} )()
-				);
-			} )( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			h = v[ 0 ],
-			_ = v[ 1 ],
-			w =
-				( Lc().isValidQuestion,
-				( 0, WordPressData.useSelect )( function ( e ) {
-					var t, n, r, a, o, i, l, c;
-					return {
-						question:
-							null ===
-								( t = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === t
-								? void 0
-								: t.name,
-						videoSrc:
-							null ===
-								( n = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === n
-								? void 0
-								: n.video_src,
-						imgSrc:
-							null ===
-								( r = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === r
-								? void 0
-								: r.image_src,
-						options:
-							null ===
-								( a = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === a
-								? void 0
-								: a.options,
-						correctAnswerId:
-							null ===
-								( o = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === o
-								? void 0
-								: o.correctAnswerId,
-						id:
-							null ===
-								( i = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === i
-								? void 0
-								: i.id,
-						quizType:
-							null ===
-								( l = e(
-									StoreModule.default
-								).selectQuestion() ) ||
-							void 0 === l ||
-							null === ( l = l.settings ) ||
-							void 0 === l
-								? void 0
-								: l.type,
-						description:
-							null ===
-								( c = e(
-									StoreModule.default
-								).selectQuestion() ) || void 0 === c
-								? void 0
-								: c.description,
-					};
-				}, [] ) ),
-			E = w.question,
-			videoSrc = w.videoSrc,
-			imgSrc = w.imgSrc,
-			x = ( w.options, w.correctAnswerId, w.id ),
-			quizType = w.quizType,
-			description = w.description,
-			O = fc( quizType ),
-			k =
-				( ( t = quizType ),
-				( n = ( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getQuizTypes();
-				}, [] ) ),
-				( r = ( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getInteractiveQuizTypes();
-				}, [] ) ),
-				( a = [].concat( Eu( n ), Eu( r ) ) ),
-				t
-					? a.find( function ( e ) {
-							return e.type === t;
-						} )
-					: null ),
-			j = ( function ( e ) {
-				var t = ( 0, WordPressData.useSelect )( function ( e ) {
-						return e( StoreModule.default ).getQuizTypes();
-					}, [] ),
-					n = ( 0, WordPressData.useSelect )( function ( e ) {
-						return e(
-							StoreModule.default
-						).getInteractiveQuizTypes();
-					}, [] ),
-					r = [].concat( Ru( t ), Ru( n ) );
-				if ( ! e ) {
-					return null;
-				}
-				var a = r.find( function ( t ) {
-					return t.type === e;
-				} );
-				return ( null == a ? void 0 : a.otherContent ) || null;
-			} )( quizType ),
-			A = [ 'statement', 'fill-in-the-blank' ],
-			M = ( function () {
-				var e = Tu(
-					Pu().m( function e() {
-						var t;
-						return Pu().w( function ( e ) {
-							for (;;) {
-								switch ( e.n ) {
-									case 0:
-										if ( quizId ) {
-											e.n = 1;
-											break;
-										}
-										return e.a( 2 );
-									case 1: {
-										e.n = 2;
+						var _nLocal3 = {}.toString
+							.call( _eLocal8 )
+							.slice( 8, -1 );
+						return (
+							'Object' === _nLocal3 &&
+								_eLocal8.constructor &&
+								( _nLocal3 = _eLocal8.constructor.name ),
+							( () => {
+								if (
+									'Map' === _nLocal3 ||
+									'Set' === _nLocal3
+								) {
+									return Array.from( _eLocal8 );
+								}
+								if (
+									'Arguments' === _nLocal3 ||
+									/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+										_nLocal3
+									)
+								) {
+									return Iu( _eLocal8, _tLocal4 );
+								}
+								return void 0;
+							} )()
+						 );
+					}
+				} )( e, _tLocal2 ) ||
+				( function () {
+					throw new TypeError(
+						'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
+					);
+				} )()
+			);
+		} )( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var h = v[ 0 ];
+		var _ = v[ 1 ];
+		var w =
+			( Lc().isValidQuestion,
+			( 0, WordPressData.useSelect )( function ( e ) {
+				var _tLocal5, _nLocal4, _rLocal3, _aLocal3, o, _iLocal2, l, c;
+				return {
+					question:
+						null ===
+							( _tLocal5 = e(
+								StoreModule.default
+							).selectQuestion() ) || void 0 === _tLocal5
+							? void 0
+							: _tLocal5.name,
+					videoSrc:
+						null ===
+							( _nLocal4 = e(
+								StoreModule.default
+							).selectQuestion() ) || void 0 === _nLocal4
+							? void 0
+							: _nLocal4.video_src,
+					imgSrc:
+						null ===
+							( _rLocal3 = e(
+								StoreModule.default
+							).selectQuestion() ) || void 0 === _rLocal3
+							? void 0
+							: _rLocal3.image_src,
+					options:
+						null ===
+							( _aLocal3 = e(
+								StoreModule.default
+							).selectQuestion() ) || void 0 === _aLocal3
+							? void 0
+							: _aLocal3.options,
+					correctAnswerId:
+						null ===
+							( o = e( StoreModule.default ).selectQuestion() ) ||
+						void 0 === o
+							? void 0
+							: o.correctAnswerId,
+					id:
+						null ===
+							( _iLocal2 = e(
+								StoreModule.default
+							).selectQuestion() ) || void 0 === _iLocal2
+							? void 0
+							: _iLocal2.id,
+					quizType:
+						null ===
+							( l = e( StoreModule.default ).selectQuestion() ) ||
+						void 0 === l ||
+						null === ( l = l.settings ) ||
+						void 0 === l
+							? void 0
+							: l.type,
+					description:
+						null ===
+							( c = e( StoreModule.default ).selectQuestion() ) ||
+						void 0 === c
+							? void 0
+							: c.description,
+				};
+			}, [] ) );
+		var E = w.question;
+		var videoSrc = w.videoSrc;
+		var imgSrc = w.imgSrc;
+		var x = ( w.options, w.correctAnswerId, w.id );
+		var quizType = w.quizType;
+		var description = w.description;
+		var O = fc( quizType );
+		var k =
+			( ( t = quizType ),
+			( n = ( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getQuizTypes();
+			}, [] ) ),
+			( r = ( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getInteractiveQuizTypes();
+			}, [] ) ),
+			( a = [].concat( Eu( n ), Eu( r ) ) ),
+			t
+				? a.find( function ( e ) {
+						return e.type === t;
+					} )
+				: null );
+		var j = ( function ( e ) {
+			var _tLocal6 = ( 0, WordPressData.useSelect )( function (
+					_eLocal9
+				) {
+					return _eLocal9( StoreModule.default ).getQuizTypes();
+				}, [] ),
+				_nLocal5 = ( 0, WordPressData.useSelect )( function (
+					_eLocal0
+				) {
+					return _eLocal0(
+						StoreModule.default
+					).getInteractiveQuizTypes();
+				}, [] ),
+				_rLocal4 = [].concat( Ru( _tLocal6 ), Ru( _nLocal5 ) );
+			if ( ! e ) {
+				return null;
+			}
+			var _aLocal4 = _rLocal4.find( function ( _tLocal7 ) {
+				return _tLocal7.type === e;
+			} );
+			return (
+				( _aLocal4 === null || _aLocal4 === void 0
+					? void 0
+					: _aLocal4.otherContent ) || null
+			);
+		} )( quizType );
+		var M = ( function () {
+			var e = Tu(
+				Pu().m( function _eLocal1() {
+					var _tLocal8;
+					return Pu().w( function ( _eLocal10 ) {
+						for (;;) {
+							switch ( _eLocal10.n ) {
+								case 0:
+									if ( quizId ) {
+										_eLocal10.n = 1;
 										break;
 									}
-									case 2:
-										( ( ( t = ju( {}, m ) ).order_number =
-											p.length + 1 ),
-											( t.id = new Date().getTime() ),
-											( t.temp = ! 0 ),
-											s.setQuestion( t ),
-											s.setQuestions( t ),
-											s.setSelectedQuestionId( t.id ) );
-									case 3:
-										return e.a( 2 );
+									return _eLocal10.a( 2 );
+								case 1: {
+									_eLocal10.n = 2;
+									break;
 								}
+								case 2:
+									( _tLocal8 = ju( {}, m ) ).order_number =
+										p.length + 1;
+									_tLocal8.id = new Date().getTime();
+									_tLocal8.temp = ! 0;
+									s.setQuestion( _tLocal8 );
+									s.setQuestions( _tLocal8 );
+									s.setSelectedQuestionId( _tLocal8.id ); // Falls through to the shared async state cleanup.
+								// Falls through to the shared async state cleanup.
+								case 3:
+									return _eLocal10.a( 2 );
 							}
-						}, e );
-					} )
-				);
-				return function () {
-					return e.apply( this, arguments );
-				};
-			} )(),
-			F = async function () {
-				// Deleting from the quiz editor removes the question from this quiz only;
-				// the question and its learner history stay in the question bank.
-				if ( null != m && ! m.temp ) {
-					if ( ! quizId ) {
-						await s.deleteQuestion( m.id );
-						_( ! 1 );
-						return;
-					}
-					try {
-						await removeQuestionFromQuiz( quizId, m.id );
-					} catch ( cause ) {
-						s.showNotification?.(
-							( cause && cause.message ) ||
-								( 0, I18n.__ )(
-									'Could not remove the question.',
-									'ohmylms'
-								),
-							'error'
-						);
-						_( ! 1 );
-						return;
-					}
-				}
-				s.deleteTempQuestion( null == m ? void 0 : m.id );
-				_( ! 1 );
+						}
+					}, _eLocal1 );
+				} )
+			);
+			return function ( ..._args ) {
+				return e.apply( this, _args );
 			};
+		} )();
+		var F = async function () {
+			// Deleting from the quiz editor removes the question from this quiz only;
+			// the question and its learner history stay in the question bank.
+			if ( m !== null && m !== void 0 && ! m.temp ) {
+				if ( ! quizId ) {
+					await s.deleteQuestion( m.id );
+					_( ! 1 );
+					return;
+				}
+				try {
+					await removeQuestionFromQuiz( quizId, m.id );
+				} catch ( cause ) {
+					s.showNotification?.(
+						( cause && cause.message ) ||
+							( 0, I18n.__ )(
+								'Could not remove the question.',
+								'ohmylms'
+							),
+						'error'
+					);
+					_( ! 1 );
+					return;
+				}
+			}
+			s.deleteTempQuestion( m === null || m === void 0 ? void 0 : m.id );
+			_( ! 1 );
+		};
 		const answerControls = (
 			<React.Fragment>
 				{ ! showDefault && React.createElement( edit, null ) }
@@ -430,7 +454,9 @@ export function createQuestionCanvas( readRuntime ) {
 							} );
 						}
 						if ( patch.name ) {
-							s.updateQuestionData( x, { name: patch.name } );
+							s.updateQuestionData( x, {
+								name: patch.name,
+							} );
 						}
 						if ( patch.settings ) {
 							s.updateQuestionData( x, {

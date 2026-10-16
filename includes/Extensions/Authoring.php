@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
 final class Authoring {
@@ -24,7 +24,7 @@ final class Authoring {
 		} else {
 			$result = self::check( $definition, $settings );
 		}
-		if ( $result !== true ) {
+		if ( true !== $result ) {
 			throw new \OhMyLMS\DataException( 'ohmylms_invalid_question_settings', is_string( $result ) ? $result : __( 'Invalid question settings.', 'ohmylms' ), 400 );
 		}
 	}
@@ -37,7 +37,7 @@ final class Authoring {
 	public static function check( $definition, array $settings ) {
 		if ( ! empty( $definition['validate_settings'] ) && is_callable( $definition['validate_settings'] ) ) {
 			$result = call_user_func( $definition['validate_settings'], $settings );
-			if ( $result !== true ) {
+			if ( true !== $result ) {
 				return is_string( $result ) ? $result : __( 'Invalid question settings.', 'ohmylms' );
 			}
 		}

@@ -42,8 +42,8 @@ $cerificate_id   = $certificate ? $certificate->get_id() : '';
 					</p>
 					<?php if ( $student->get_course_time_remaining( $course->get_id() ) ) : ?>
 					<!-- <p class="time-remaining">
-						<?php // include(OHMYLMS_DIR . '/assets/images/icon/clock-icon.php'); ?>
-						<?php // echo esc_html( $student->get_course_time_remaining($course->get_id()) ); ?>
+						<?php // include(OHMYLMS_DIR . '/assets/images/icon/clock-icon.php');. ?>
+						<?php // echo esc_html( $student->get_course_time_remaining($course->get_id()) );. ?>
 					</p> -->
 					<?php endif; ?>
 				</div>

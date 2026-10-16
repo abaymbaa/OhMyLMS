@@ -32,89 +32,108 @@ export function createRecentCourses( readRuntime ) {
 				( ( 0, WordPressData.useSelect )( function ( e ) {
 					return e( StoreModule.default ).selectCourses();
 				}, [] ),
-				( function ( e, t ) {
+				( function ( e, _tLocal ) {
 					return (
-						( function ( e ) {
-							if ( Array.isArray( e ) ) {
-								return e;
+						( function ( _eLocal ) {
+							if ( Array.isArray( _eLocal ) ) {
+								return _eLocal;
 							}
 						} )( e ) ||
-						( function ( e, t ) {
-							var n =
-								null == e
+						( function ( _eLocal2, _tLocal2 ) {
+							var _nLocal =
+								_eLocal2 === null || _eLocal2 === void 0
 									? null
 									: ( 'undefined' !== typeof Symbol &&
-											e[ Symbol.iterator ] ) ||
-										e[ '@@iterator' ];
-							if ( null != n ) {
-								var r,
-									a,
-									o,
-									i,
+											_eLocal2[ Symbol.iterator ] ) ||
+										_eLocal2[ '@@iterator' ];
+							if ( _nLocal !== null && _nLocal !== void 0 ) {
+								var _rLocal,
+									_aLocal,
+									_oLocal,
+									_iLocal,
 									l = [],
 									c = ! 0,
 									u = ! 1;
 								try {
 									if (
-										( ( o = ( n = n.call( e ) ).next ),
-										0 === t )
+										( ( _oLocal = ( _nLocal =
+											_nLocal.call( _eLocal2 ) ).next ),
+										0 === _tLocal2 )
 									) {
-										if ( Object( n ) !== n ) {
+										if ( Object( _nLocal ) !== _nLocal ) {
 											return;
 										}
 										c = ! 1;
 									} else {
 										for (
 											;
-											! ( c = ( r = o.call( n ) )
+											! ( c = ( _rLocal =
+												_oLocal.call( _nLocal ) )
 												.done ) &&
-											( l.push( r.value ),
-											l.length !== t );
+											( l.push( _rLocal.value ),
+											l.length !== _tLocal2 );
 											c = ! 0
 										) {}
 									}
-								} catch ( e ) {
-									( ( u = ! 0 ), ( a = e ) );
+								} catch ( _eLocal3 ) {
+									u = ! 0;
+									_aLocal = _eLocal3;
 								} finally {
 									try {
 										if (
 											! c &&
-											null != n.return &&
-											( ( i = n.return() ),
-											Object( i ) !== i )
+											( ( _nullableValue ) =>
+												_nullableValue !== null &&
+												_nullableValue !== void 0 )(
+												_nLocal.return
+											) &&
+											( ( _iLocal = _nLocal.return() ),
+											Object( _iLocal ) !== _iLocal )
 										) {
 											return;
 										}
 									} finally {
 										if ( u ) {
-											throw a;
+											throw _aLocal;
 										}
 									}
 								}
 								return l;
 							}
-						} )( e, t ) ||
-						( function ( e, t ) {
-							if ( e ) {
-								if ( 'string' === typeof e ) {
-									return bG( e, t );
+						} )( e, _tLocal ) ||
+						( function ( _eLocal4, _tLocal3 ) {
+							if ( _eLocal4 ) {
+								if ( 'string' === typeof _eLocal4 ) {
+									return bG( _eLocal4, _tLocal3 );
 								}
-								var n = {}.toString.call( e ).slice( 8, -1 );
+								var _nLocal2 = {}.toString
+									.call( _eLocal4 )
+									.slice( 8, -1 );
 								return (
-									'Object' === n &&
-										e.constructor &&
-										( n = e.constructor.name ),
-									'Map' === n || 'Set' === n
-										? Array.from( e )
-										: 'Arguments' === n ||
-											  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-													n
-											  )
-											? bG( e, t )
-											: void 0
+									'Object' === _nLocal2 &&
+										_eLocal4.constructor &&
+										( _nLocal2 =
+											_eLocal4.constructor.name ),
+									( () => {
+										if (
+											'Map' === _nLocal2 ||
+											'Set' === _nLocal2
+										) {
+											return Array.from( _eLocal4 );
+										}
+										if (
+											'Arguments' === _nLocal2 ||
+											/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+												_nLocal2
+											)
+										) {
+											return bG( _eLocal4, _tLocal3 );
+										}
+										return void 0;
+									} )()
 								 );
 							}
-						} )( e, t ) ||
+						} )( e, _tLocal ) ||
 						( function () {
 							throw new TypeError(
 								'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -131,9 +150,14 @@ export function createRecentCourses( readRuntime ) {
 					dataIndex: 'courseDetails',
 					key: 'courseDetails',
 					width: '380px',
-					render( e, t ) {
-						var n = l === t.id;
-						return <CourseListItem course={ t } isHover={ n } />;
+					render( e, _tLocal4 ) {
+						var _nLocal3 = l === _tLocal4.id;
+						return (
+							<CourseListItem
+								course={ _tLocal4 }
+								isHover={ _nLocal3 }
+							/>
+						);
 					},
 				},
 				{
@@ -166,7 +190,7 @@ export function createRecentCourses( readRuntime ) {
 					),
 					dataIndex: 'total_enrollment',
 					key: 'total_enrollment',
-					render( e, t ) {
+					render( e, _tLocal5 ) {
 						return (
 							<React.Fragment>
 								{ n && (
@@ -183,13 +207,17 @@ export function createRecentCourses( readRuntime ) {
 								>
 									<v.Link
 										to={ '/courses/'.concat(
-											null == t ? void 0 : t.id,
+											_tLocal5 === null ||
+												_tLocal5 === void 0
+												? void 0
+												: _tLocal5.id,
 											'/students'
 										) }
 									>
-										{ ( null == t
+										{ ( _tLocal5 === null ||
+										_tLocal5 === void 0
 											? void 0
-											: t.total_enrolled_students ) ||
+											: _tLocal5.total_enrolled_students ) ||
 											0 }{ ' ' }
 									</v.Link>
 								</Controls.BadgeWP>
@@ -212,7 +240,7 @@ export function createRecentCourses( readRuntime ) {
 					),
 					dataIndex: 'total_sale',
 					key: 'total_sale',
-					render( e, t ) {
+					render( e, _tLocal6 ) {
 						return (
 							<React.Fragment>
 								{ n && (
@@ -232,16 +260,19 @@ export function createRecentCourses( readRuntime ) {
 										variant={ 'secondary' }
 										isBorderLess={ ! 0 }
 									>
-										{ ( null == t
+										{ ( _tLocal6 === null ||
+										_tLocal6 === void 0
 											? void 0
-											: t.total_sales_count ) || 0 }
+											: _tLocal6.total_sales_count ) ||
+											0 }
 									</Controls.BadgeWP>
 									<span
 										className={ 'sales-increase '.concat(
 											Number(
-												null == t
+												_tLocal6 === null ||
+													_tLocal6 === void 0
 													? void 0
-													: t.sales_growth_rate
+													: _tLocal6.sales_growth_rate
 											) < 0
 												? 'decrease'
 												: ''
@@ -276,9 +307,10 @@ export function createRecentCourses( readRuntime ) {
 										</svg>
 										{ ' ' }
 										{ Math.abs(
-											null == t
+											_tLocal6 === null ||
+												_tLocal6 === void 0
 												? void 0
-												: t.sales_growth_rate
+												: _tLocal6.sales_growth_rate
 										) }
 										{ '%' }
 									</span>
@@ -291,8 +323,11 @@ export function createRecentCourses( readRuntime ) {
 					title: 'Price',
 					dataIndex: 'price',
 					key: 'price',
-					render( e, t ) {
-						return 'free' !== ( null == t ? void 0 : t.price ) ? (
+					render( e, _tLocal7 ) {
+						return 'free' !==
+							( _tLocal7 === null || _tLocal7 === void 0
+								? void 0
+								: _tLocal7.price ) ? (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
@@ -301,7 +336,10 @@ export function createRecentCourses( readRuntime ) {
 									currency={ r || '$' }
 									currency_pos={ a || 'left' }
 									price={ Number(
-										( null == t ? void 0 : t.price ) || '0'
+										( _tLocal7 === null ||
+										_tLocal7 === void 0
+											? void 0
+											: _tLocal7.price ) || '0'
 									) }
 								/>
 							</Controls.BadgeWP>
@@ -319,7 +357,7 @@ export function createRecentCourses( readRuntime ) {
 					title: 'Action',
 					dataIndex: 'action',
 					key: 'action',
-					render( e, t ) {
+					render( e, _tLocal8 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -330,7 +368,10 @@ export function createRecentCourses( readRuntime ) {
 										),
 										onClick() {
 											return window.open(
-												null == t ? void 0 : t.url,
+												_tLocal8 === null ||
+													_tLocal8 === void 0
+													? void 0
+													: _tLocal8.url,
 												'_blank'
 											);
 										},
@@ -344,7 +385,10 @@ export function createRecentCourses( readRuntime ) {
 										onClick() {
 											return u(
 												'/course-edit/'.concat(
-													null == t ? void 0 : t.id
+													_tLocal8 === null ||
+														_tLocal8 === void 0
+														? void 0
+														: _tLocal8.id
 												)
 											);
 										},
@@ -373,7 +417,7 @@ export function createRecentCourses( readRuntime ) {
 						x: 'max-content',
 					} }
 					onRowMouseEnter={ function ( e ) {
-						return c( null == e ? void 0 : e.id );
+						return c( e === null || e === void 0 ? void 0 : e.id );
 					} }
 					onRowMouseLeave={ function () {
 						return c( null );

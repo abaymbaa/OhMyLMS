@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * UTC deadlines for versioned attempts.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -21,13 +26,13 @@ final class Deadlines {
 	/** Seconds left before the deadline (null when untimed). */
 	public static function remaining( array $context, $now = null ) {
 		$deadline = self::deadline_ts( $context );
-		return $deadline === null ? null : max( 0, $deadline - ( $now ?? time() ) );
+		return null === $deadline ? null : max( 0, $deadline - ( $now ?? time() ) );
 	}
 
 	/** Past the deadline itself (the learner should stop answering). */
 	public static function expired( array $context, $now = null ) {
 		$deadline = self::deadline_ts( $context );
-		return $deadline !== null && ( $now ?? time() ) >= $deadline;
+		return null !== $deadline && ( $now ?? time() ) >= $deadline;
 	}
 
 	/**
@@ -73,6 +78,6 @@ final class Deadlines {
 	/** Past deadline + grace: new responses can no longer be accepted. */
 	public static function closed( array $context, $now = null ) {
 		$deadline = self::deadline_ts( $context );
-		return $deadline !== null && ( $now ?? time() ) > $deadline + (int) $context['grace_seconds'];
+		return null !== $deadline && ( $now ?? time() ) > $deadline + (int) $context['grace_seconds'];
 	}
 }

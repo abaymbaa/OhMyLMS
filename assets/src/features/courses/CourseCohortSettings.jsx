@@ -14,12 +14,13 @@ export function createCourseCohortSettings( readRuntime ) {
 			yH,
 		} = readRuntime();
 		var e = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getCourse();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getCourse();
 			}, [] ),
 			n =
-				Array.isArray( null == t ? void 0 : t.cohort ) &&
-				t.cohort.length > 0
+				Array.isArray(
+					t === null || t === void 0 ? void 0 : t.cohort
+				) && t.cohort.length > 0
 					? t.cohort
 					: [
 							{
@@ -31,22 +32,25 @@ export function createCourseCohortSettings( readRuntime ) {
 							},
 						],
 			r = n[ 0 ],
-			a = ( null == r ? void 0 : r.start_date ) || '',
-			o = ( null == r ? void 0 : r.end_date ) || '',
-			i = ( null == r ? void 0 : r.enrollment_deadline ) || '',
-			l = ( null == r ? void 0 : r.has_capacity ) || ! 1,
-			c = ( null == r ? void 0 : r.capacity ) || '';
+			a = ( r === null || r === void 0 ? void 0 : r.start_date ) || '',
+			o = ( r === null || r === void 0 ? void 0 : r.end_date ) || '',
+			i =
+				( r === null || r === void 0
+					? void 0
+					: r.enrollment_deadline ) || '',
+			l = ( r === null || r === void 0 ? void 0 : r.has_capacity ) || ! 1,
+			c = ( r === null || r === void 0 ? void 0 : r.capacity ) || '';
 		return (
 			<React.Fragment>
 				<Controls.SpacerWP marginBottom={ 0 } paddingY={ 6 }>
 					{ React.createElement( pH, {
-						onChange( a, o ) {
-							var i = wH(
+						onChange( _aLocal, _oLocal ) {
+							var _iLocal = wH(
 								wH( {}, r ),
 								{},
 								{
-									end_date: o,
-									start_date: a,
+									end_date: _oLocal,
+									start_date: _aLocal,
 								}
 							);
 							e.setCourse(
@@ -54,7 +58,7 @@ export function createCourseCohortSettings( readRuntime ) {
 									wH( {}, t ),
 									{},
 									{
-										cohort: [ i ].concat(
+										cohort: [ _iLocal ].concat(
 											yH( n.slice( 1 ) )
 										),
 									}
@@ -69,12 +73,12 @@ export function createCourseCohortSettings( readRuntime ) {
 						<Controls.SpacerWP marginBottom={ 0 } padding={ 5 }>
 							{ React.createElement( vH, {
 								date: i,
-								onChange( a ) {
-									var o = wH(
+								onChange( _aLocal2 ) {
+									var _oLocal2 = wH(
 										wH( {}, r ),
 										{},
 										{
-											enrollment_deadline: a,
+											enrollment_deadline: _aLocal2,
 										}
 									);
 									e.setCourse(
@@ -82,7 +86,7 @@ export function createCourseCohortSettings( readRuntime ) {
 											wH( {}, t ),
 											{},
 											{
-												cohort: [ o ].concat(
+												cohort: [ _oLocal2 ].concat(
 													yH( n.slice( 1 ) )
 												),
 											}
@@ -97,12 +101,12 @@ export function createCourseCohortSettings( readRuntime ) {
 					<Controls.CardWP isBorderless={ ! 0 }>
 						<Controls.SpacerWP marginBottom={ 0 } padding={ 5 }>
 							{ React.createElement( gH, {
-								onEnable( a ) {
-									var o = wH(
+								onEnable( _aLocal3 ) {
+									var _oLocal3 = wH(
 										wH( {}, r ),
 										{},
 										{
-											has_capacity: a,
+											has_capacity: _aLocal3,
 										}
 									);
 									e.setCourse(
@@ -110,19 +114,21 @@ export function createCourseCohortSettings( readRuntime ) {
 											wH( {}, t ),
 											{},
 											{
-												cohort: [ o ].concat(
+												cohort: [ _oLocal3 ].concat(
 													yH( n.slice( 1 ) )
 												),
 											}
 										)
 									);
 								},
-								onChange( a ) {
-									var o = wH(
+								onChange( _aLocal4 ) {
+									var _oLocal4 = wH(
 										wH( {}, r ),
 										{},
 										{
-											capacity: isNaN( a ) ? 0 : a,
+											capacity: isNaN( _aLocal4 )
+												? 0
+												: _aLocal4,
 										}
 									);
 									e.setCourse(
@@ -130,7 +136,7 @@ export function createCourseCohortSettings( readRuntime ) {
 											wH( {}, t ),
 											{},
 											{
-												cohort: [ o ].concat(
+												cohort: [ _oLocal4 ].concat(
 													yH( n.slice( 1 ) )
 												),
 											}

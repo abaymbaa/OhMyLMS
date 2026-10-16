@@ -21,25 +21,26 @@ export function createEmailTemplateList( readRuntime ) {
 			r = i4( ( 0, ReactHooks.useState )( '' ), 2 ),
 			a = r[ 0 ],
 			o = ( r[ 1 ], ( 0, Router.Zp )() ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getEmails();
+			i = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getEmails();
 			}, [] ),
-			l = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getEmailLoading();
+			l = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getEmailLoading();
 			}, [] ),
 			c = ( 0, WordPressData.useDispatch )( StoreModule.default ),
 			u = c.setEmail,
 			s = c.updateSingleEmail,
 			d = c.updateEmails,
 			m = c.searchEmails,
-			p = function ( e ) {
-				var n = i[ t ].find( function ( t ) {
-					return t.basic.id === e;
+			p = function ( _eLocal3 ) {
+				var _nLocal = i[ t ].find( function ( _tLocal ) {
+					return _tLocal.basic.id === _eLocal3;
 				} );
-				( u( n ), o( '/emails/'.concat( e ) ) );
+				u( _nLocal );
+				o( '/emails/'.concat( _eLocal3 ) );
 			},
 			v = function () {
-				var e;
+				var _eLocal4;
 				return (
 					<Controls.CardWP isBorderless={ ! 0 }>
 						<Controls.SpacerWP
@@ -47,28 +48,35 @@ export function createEmailTemplateList( readRuntime ) {
 							marginTop={ 2.5 }
 							padding={ 6 }
 						>
-							{ ( null === ( e = i[ t ] ) || void 0 === e
+							{ ( null === ( _eLocal4 = i[ t ] ) ||
+							void 0 === _eLocal4
 								? void 0
-								: e.length ) > 0 &&
-								i[ t ].map( function ( e, n ) {
-									var r, a, o, l, c;
+								: _eLocal4.length ) > 0 &&
+								i[ t ].map( function ( _eLocal5, _nLocal2 ) {
+									var _rLocal,
+										_aLocal,
+										_oLocal,
+										_lLocal,
+										_cLocal;
 									return (
 										<React.Fragment
 											key={
 												null !==
-													( r =
-														null == e ||
+													( _rLocal =
+														_eLocal5 === null ||
+														_eLocal5 === void 0 ||
 														null ===
-															( a = e.basic ) ||
-														void 0 === a
+															( _aLocal =
+																_eLocal5.basic ) ||
+														void 0 === _aLocal
 															? void 0
-															: a.id ) &&
-												void 0 !== r
-													? r
-													: n
+															: _aLocal.id ) &&
+												void 0 !== _rLocal
+													? _rLocal
+													: _nLocal2
 											}
 										>
-											{ 0 !== n && (
+											{ 0 !== _nLocal2 && (
 												<Controls.SpacerWP
 													marginTop={ 8 }
 													marginBottom={ 8 }
@@ -83,11 +91,14 @@ export function createEmailTemplateList( readRuntime ) {
 												align={ 'center' }
 												justify={ 'space-between' }
 												key={
-													null == e ||
-													null === ( o = e.basic ) ||
-													void 0 === o
+													_eLocal5 === null ||
+													_eLocal5 === void 0 ||
+													null ===
+														( _oLocal =
+															_eLocal5.basic ) ||
+													void 0 === _oLocal
 														? void 0
-														: o.id
+														: _oLocal.id
 												}
 												className={
 													'ohmylms-email-listing-card'
@@ -105,38 +116,46 @@ export function createEmailTemplateList( readRuntime ) {
 														color={ '#000D25' }
 														size={ '16px' }
 														onClick={ function () {
-															var t;
+															var _tLocal2;
 															return p(
-																null == e ||
+																_eLocal5 ===
+																	null ||
+																	_eLocal5 ===
+																		void 0 ||
 																	null ===
-																		( t =
-																			e.basic ) ||
-																	void 0 === t
+																		( _tLocal2 =
+																			_eLocal5.basic ) ||
+																	void 0 ===
+																		_tLocal2
 																	? void 0
-																	: t.id
+																	: _tLocal2.id
 															);
 														} }
 														style={ {
 															cursor: 'pointer',
 														} }
 													>
-														{ null == e ||
+														{ _eLocal5 === null ||
+														_eLocal5 === void 0 ||
 														null ===
-															( l = e.basic ) ||
-														void 0 === l
+															( _lLocal =
+																_eLocal5.basic ) ||
+														void 0 === _lLocal
 															? void 0
-															: l.title }
+															: _lLocal.title }
 													</Controls.HeadingWP>
 													<Controls.TextWP
 														color={ '#687784' }
 														size={ '14px' }
 													>
-														{ null == e ||
+														{ _eLocal5 === null ||
+														_eLocal5 === void 0 ||
 														null ===
-															( c = e.basic ) ||
-														void 0 === c
+															( _cLocal =
+																_eLocal5.basic ) ||
+														void 0 === _cLocal
 															? void 0
-															: c.tooltip }
+															: _cLocal.tooltip }
 													</Controls.TextWP>
 												</Controls.FlexWP>
 												<Controls.FlexWP
@@ -149,84 +168,98 @@ export function createEmailTemplateList( readRuntime ) {
 												>
 													<Bt.A
 														onChange={ function () {
-															var n;
+															var _nLocal3;
 															return ( function (
-																e
+																_eLocal6
 															) {
-																var n,
-																	r,
-																	a = i[
-																		t
-																	].find(
-																		function (
+																var _nLocal4,
+																	_rLocal2,
+																	_aLocal2 =
+																		i[
 																			t
-																		) {
-																			return (
-																				t
-																					.basic
-																					.id ===
-																				e
-																			);
-																		}
-																	);
-																( ( a.enable =
-																	! a.enable ),
-																	s(
-																		null ==
-																			a ||
-																			null ===
-																				( n =
-																					a.basic ) ||
-																			void 0 ===
-																				n
-																			? void 0
-																			: n.id,
-																		a
-																	),
-																	d(
-																		null ==
-																			a ||
-																			null ===
-																				( r =
-																					a.basic ) ||
-																			void 0 ===
-																				r
-																			? void 0
-																			: r.id,
-																		{
-																			enable: a.enable,
-																		},
-																		t
-																	) );
+																		].find(
+																			function (
+																				_tLocal3
+																			) {
+																				return (
+																					_tLocal3
+																						.basic
+																						.id ===
+																					_eLocal6
+																				);
+																			}
+																		);
+																_aLocal2.enable =
+																	! _aLocal2.enable;
+																s(
+																	_aLocal2 ===
+																		null ||
+																		_aLocal2 ===
+																			void 0 ||
+																		null ===
+																			( _nLocal4 =
+																				_aLocal2.basic ) ||
+																		void 0 ===
+																			_nLocal4
+																		? void 0
+																		: _nLocal4.id,
+																	_aLocal2
+																);
+																d(
+																	_aLocal2 ===
+																		null ||
+																		_aLocal2 ===
+																			void 0 ||
+																		null ===
+																			( _rLocal2 =
+																				_aLocal2.basic ) ||
+																		void 0 ===
+																			_rLocal2
+																		? void 0
+																		: _rLocal2.id,
+																	{
+																		enable: _aLocal2.enable,
+																	},
+																	t
+																);
 															} )(
-																null == e ||
+																_eLocal5 ===
+																	null ||
+																	_eLocal5 ===
+																		void 0 ||
 																	null ===
-																		( n =
-																			e.basic ) ||
-																	void 0 === n
+																		( _nLocal3 =
+																			_eLocal5.basic ) ||
+																	void 0 ===
+																		_nLocal3
 																	? void 0
-																	: n.id
+																	: _nLocal3.id
 															);
 														} }
 														checked={
-															null == e
+															_eLocal5 === null ||
+															_eLocal5 === void 0
 																? void 0
-																: e.enable
+																: _eLocal5.enable
 														}
 														isDefaultStyle={ ! 0 }
 													/>
 													<Buttons.A
 														variant={ 'text' }
 														onClick={ function () {
-															var t;
+															var _tLocal4;
 															return p(
-																null == e ||
+																_eLocal5 ===
+																	null ||
+																	_eLocal5 ===
+																		void 0 ||
 																	null ===
-																		( t =
-																			e.basic ) ||
-																	void 0 === t
+																		( _tLocal4 =
+																			_eLocal5.basic ) ||
+																	void 0 ===
+																		_tLocal4
 																	? void 0
-																	: t.id
+																	: _tLocal4.id
 															);
 														} }
 													>
@@ -303,7 +336,9 @@ export function createEmailTemplateList( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					( a.length > 2 || 0 === a.length ) && m( a, i[ t ] );
+					if ( a.length > 2 || 0 === a.length ) {
+						m( a, i[ t ] );
+					}
 				},
 				[ a ]
 			),
@@ -329,8 +364,8 @@ export function createEmailTemplateList( readRuntime ) {
 						scope="emails"
 						items={ h }
 						className={ 'ohmylms-emails-tabs' }
-						onChange={ function ( e ) {
-							n( e );
+						onChange={ function ( _eLocal7 ) {
+							n( _eLocal7 );
 						} }
 						activekey={ t }
 					/>

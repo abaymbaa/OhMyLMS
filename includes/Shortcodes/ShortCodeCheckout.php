@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Checkout Shortcode.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Shortcodes;
 
@@ -31,10 +36,10 @@ class ShortCodeCheckout {
 			return;
 		}
 
-		// Parse shortcode attributes
+		// Parse shortcode attributes.
 		$attributes = shortcode_atts(
 			array(
-				// Title styling
+				// Title styling.
 				'title_color'                    => 'var(--ohmylms-heading-color)',
 				'title_font_size'                => '22px',
 				'title_font_weight'              => '600',
@@ -44,7 +49,7 @@ class ShortCodeCheckout {
 				'title_line_height'              => '1.3',
 				'title_letter_spacing'           => '0',
 
-				// Input styling
+				// Input styling.
 				'input_label_color'              => 'var(--ohmylms-heading-color)',
 				'input_label_font_size'          => '14px',
 				'input_label_font_weight'        => '500',
@@ -59,7 +64,7 @@ class ShortCodeCheckout {
 				'input_border_style'             => 'solid',
 				'input_border_radius'            => '10px',
 
-				// Checkout Button styling
+				// Checkout Button styling.
 				'button_background_color'        => '#6e42d3',
 				'button_color'                   => '#FFF',
 				'button_font_size'               => '18px',
@@ -83,13 +88,13 @@ class ShortCodeCheckout {
 				'button_border_style'            => 'solid',
 				'button_box_shadow'              => 'none',
 
-				// Button hover states
+				// Button hover states.
 				'button_hover_background_color'  => 'transparent',
 				'button_hover_color'             => '#6e42d3',
 				'button_hover_border_color'      => '#6e42d3',
 				'button_hover_box_shadow'        => 'none',
 
-				// Privacy Text styling
+				// Privacy Text styling.
 				'privacy_text_color'             => 'var(--ohmylms-heading-color)',
 				'privacy_text_font_size'         => '14px',
 				'privacy_text_font_weight'       => '400',
@@ -99,7 +104,7 @@ class ShortCodeCheckout {
 				'privacy_text_line_height'       => '1.3',
 				'privacy_text_letter_spacing'    => '0',
 
-				// Checkout Box styling
+				// Checkout Box styling.
 				'checkout_box_background_color'  => '',
 				'checkout_box_padding_top'       => '30px',
 				'checkout_box_padding_right'     => '50px',
@@ -114,7 +119,7 @@ class ShortCodeCheckout {
 				'checkout_box_border_style'      => 'solid',
 				'checkout_box_border_radius'     => '0',
 
-				// Order Summary styling
+				// Order Summary styling.
 				'order_summary_background_color' => '',
 				'order_summary_padding_top'      => '30px',
 				'order_summary_padding_right'    => '0',
@@ -129,18 +134,18 @@ class ShortCodeCheckout {
 				'order_summary_border_style'     => '',
 				'order_summary_border_radius'    => '',
 
-				// Layout type
+				// Layout type.
 				'layout_type'                    => '',
 			),
 			$atts
 		);
 
-		// Store attributes globally for template access
+		// Store attributes globally for template access.
 		global $ohmylms_checkout_attributes;
 		$ohmylms_checkout_attributes = $attributes;
 
 		// Note: layout_type is now parsed directly from post content in CommonHook::template_include_callback
-		// No need to set global variable here
+		// No need to set global variable here.
 
 		if ( isset( $wp->query_vars['ohmylms-order-received'] ) ) {
 			self::order_received( $wp->query_vars['ohmylms-order-received'] );
@@ -156,7 +161,7 @@ class ShortCodeCheckout {
 	 * @since 1.0.0
 	 */
 	private static function checkout() {
-		// Check if we're in preview mode (Elementor, Gutenberg, Bricks, or WPBakery)
+		// Check if we're in preview mode (Elementor, Gutenberg, Bricks, or WPBakery).
 		$is_elementor_preview_mode = apply_filters( 'ohmylms_elementor_preview_mode', false );
 		$is_gutenberg_preview_mode = apply_filters( 'ohmylms_gutenberg_preview_mode', false );
 		$is_bricks_preview_mode    = apply_filters( 'ohmylms_bricks_preview_mode', false );
@@ -164,14 +169,14 @@ class ShortCodeCheckout {
 
 		$is_preview_mode = $is_elementor_preview_mode || $is_gutenberg_preview_mode || $is_bricks_preview_mode || $is_wpbakery_preview_mode;
 
-		// Auto-add random course to cart if empty (for first-time checkout)
+		// Auto-add random course to cart if empty (for first-time checkout).
 		if ( ! $is_preview_mode && ecommerce()->cart->is_empty() && ! \is_customize_preview() ) {
-			// Check if user hasn't seen this checkout before (using transient instead of session)
+			// Check if user hasn't seen this checkout before (using transient instead of session).
 			$user_id       = get_current_user_id();
 			$transient_key = 'ohmylms_checkout_auto_added_' . ( $user_id ? $user_id : wp_get_session_token() );
 
 			if ( ! get_transient( $transient_key ) ) {
-				// Get a random published course
+				// Get a random published course.
 				$random_course_args = array(
 					'post_type'      => 'ohmylms-course',
 					'post_status'    => 'publish',
@@ -185,7 +190,7 @@ class ShortCodeCheckout {
 				if ( ! empty( $random_courses ) ) {
 					$course_id = $random_courses[0];
 
-					// Add course to cart
+					// Add course to cart.
 					ecommerce()->cart->add_to_cart(
 						array(
 							'course_id' => $course_id,
@@ -194,16 +199,16 @@ class ShortCodeCheckout {
 						)
 					);
 
-					// Mark that we've auto-added a course (expires in 1 hour)
+					// Mark that we've auto-added a course (expires in 1 hour).
 					set_transient( $transient_key, true, HOUR_IN_SECONDS );
 
-					// Recalculate totals
+					// Recalculate totals.
 					ecommerce()->cart->calculate_totals();
 				}
 			}
 		}
 
-		// Check cart has contents (skip check in preview mode)
+		// Check cart has contents (skip check in preview mode).
 		if ( ! $is_preview_mode && ecommerce()->cart->is_empty() && ! \is_customize_preview() ) {
 			$archive_page_id  = \get_option( 'ohmylms_course_page_id', 0 );
 			$archive_page_url = \home_url();
@@ -215,12 +220,12 @@ class ShortCodeCheckout {
 			return;
 		}
 
-		// Calc totals (skip in preview mode)
+		// Calc totals (skip in preview mode).
 		if ( ! $is_preview_mode ) {
 			ecommerce()->cart->calculate_totals();
 		}
 
-		// Get checkout object
+		// Get checkout object.
 		$checkout                   = ecommerce()->checkout();
 		$cart_data                  = ! $is_preview_mode ? ecommerce()->cart->get_cart_contents() : array();
 		$is_course_already_enrolled = false;
@@ -249,10 +254,10 @@ class ShortCodeCheckout {
 				}
 			}
 		}
-		// Inject custom styles
+		// Inject custom styles.
 		self::inject_custom_styles();
 
-		// Inject folded input fields script
+		// Inject folded input fields script.
 		self::inject_checkout_folded_input_script();
 		ohmylms_get_template( 'checkout/form-checkout.php', array( 'checkout' => $checkout ) );
 	}
@@ -339,7 +344,7 @@ class ShortCodeCheckout {
 	private static function generate_custom_css( $attrs ) {
 
 		$css = '';
-		// Title styles
+		// Title styles.
 		$title_styles = array();
 		if ( ! empty( $attrs['title_color'] ) ) {
 			$title_styles[] = 'color: ' . esc_attr( $attrs['title_color'] );
@@ -370,7 +375,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page .ohmylms-checkout-form-wrapper .ohmylms-checkout-title { ' . implode( '; ', $title_styles ) . '; }' . "\n";
 		}
 
-		// Input label styles
+		// Input label styles.
 		$label_styles = array();
 		if ( ! empty( $attrs['input_label_color'] ) ) {
 			$label_styles[] = 'color: ' . esc_attr( $attrs['input_label_color'] );
@@ -393,7 +398,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-form-row label.ohmylms-input-label { ' . implode( '; ', $label_styles ) . '; }' . "\n";
 		}
 
-		// Input field styles
+		// Input field styles.
 		$input_styles = array();
 		if ( ! empty( $attrs['input_font_size'] ) ) {
 			$input_styles[] = 'font-size: ' . esc_attr( $attrs['input_font_size'] );
@@ -427,7 +432,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page input.ohmylms-input-text, .ohmylms-page select.ohmylms-input-select { ' . implode( '; ', $input_styles ) . '; }' . "\n";
 		}
 
-		// Checkout button styles
+		// Checkout button styles.
 		$button_styles = array();
 		if ( ! empty( $attrs['button_background_color'] ) ) {
 			$button_styles[] = 'background-color: ' . esc_attr( $attrs['button_background_color'] ) . '!important';
@@ -457,7 +462,7 @@ class ShortCodeCheckout {
 			$button_styles[] = 'letter-spacing: ' . esc_attr( $attrs['button_letter_spacing'] ) . '!important';
 		}
 
-		// Button padding
+		// Button padding.
 		$padding_parts = array();
 		if ( ! empty( $attrs['button_padding_top'] ) || ! empty( $attrs['button_padding_right'] ) ||
 			! empty( $attrs['button_padding_bottom'] ) || ! empty( $attrs['button_padding_left'] ) ) {
@@ -468,7 +473,7 @@ class ShortCodeCheckout {
 			$button_styles[] = 'padding: ' . implode( ' ', $padding_parts );
 		}
 
-		// Button margin
+		// Button margin.
 		$margin_parts = array();
 		if ( ! empty( $attrs['button_margin_top'] ) || ! empty( $attrs['button_margin_right'] ) ||
 			! empty( $attrs['button_margin_bottom'] ) || ! empty( $attrs['button_margin_left'] ) ) {
@@ -499,7 +504,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page .ohmylms-checkout-payment button.ohmylms-place-order-button { ' . implode( '; ', $button_styles ) . '; }' . "\n";
 		}
 
-		// Button hover styles
+		// Button hover styles.
 		$button_hover_styles = array();
 		if ( ! empty( $attrs['button_hover_background_color'] ) ) {
 			$button_hover_styles[] = 'background-color: ' . esc_attr( $attrs['button_hover_background_color'] ) . '!important';
@@ -518,7 +523,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page .ohmylms-checkout-payment button.ohmylms-place-order-button:hover { ' . implode( '; ', $button_hover_styles ) . '; }' . "\n";
 		}
 
-		// Privacy text styles
+		// Privacy text styles.
 		$privacy_styles = array();
 		if ( ! empty( $attrs['privacy_text_color'] ) ) {
 			$privacy_styles[] = 'color: ' . esc_attr( $attrs['privacy_text_color'] );
@@ -549,7 +554,7 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page .ohmylms-tnc-wrapper span { ' . implode( '; ', $privacy_styles ) . '; }' . "\n";
 		}
 
-		// Checkout box styles
+		// Checkout box styles.
 		$checkout_box_styles = array();
 		if ( ! empty( $attrs['checkout_box_background_color'] ) ) {
 			$checkout_box_styles[] = 'background-color: ' . esc_attr( $attrs['checkout_box_background_color'] );
@@ -557,7 +562,7 @@ class ShortCodeCheckout {
 			$css                  .= '.ohmylms-page .ohmylms-checkout-payment .ohmylms-payment-method-wrapper { background-color: ' . esc_attr( $attrs['checkout_box_background_color'] ) . '; }' . "\n";
 		}
 
-		// Checkout box padding
+		// Checkout box padding.
 		$checkout_padding_parts = array();
 		if ( ! empty( $attrs['checkout_box_padding_top'] ) || ! empty( $attrs['checkout_box_padding_right'] ) ||
 			! empty( $attrs['checkout_box_padding_bottom'] ) || ! empty( $attrs['checkout_box_padding_left'] ) ) {
@@ -568,7 +573,7 @@ class ShortCodeCheckout {
 			$checkout_box_styles[]    = 'padding: ' . implode( ' ', $checkout_padding_parts );
 		}
 
-		// Checkout box margin
+		// Checkout box margin.
 		$checkout_margin_parts = array();
 		if ( ! empty( $attrs['checkout_box_margin_top'] ) || ! empty( $attrs['checkout_box_margin_right'] ) ||
 			! empty( $attrs['checkout_box_margin_bottom'] ) || ! empty( $attrs['checkout_box_margin_left'] ) ) {
@@ -596,14 +601,14 @@ class ShortCodeCheckout {
 			$css .= '.ohmylms-page .ohmylms-checkout-form-left { ' . implode( '; ', $checkout_box_styles ) . '; }' . "\n";
 		}
 
-		// Order summary styles
+		// Order summary styles.
 		$order_summary_styles = array();
 		if ( ! empty( $attrs['order_summary_background_color'] ) ) {
 			$order_summary_styles[] = 'background-color: ' . esc_attr( $attrs['order_summary_background_color'] ) . '!important';
 			$css                   .= '.ohmylms { background-color: ' . esc_attr( $attrs['order_summary_background_color'] ) . '!important; }' . "\n";
 		}
 
-		// Order summary padding
+		// Order summary padding.
 		$summary_padding_parts = array();
 		if ( ! empty( $attrs['order_summary_padding_top'] ) || ! empty( $attrs['order_summary_padding_right'] ) ||
 			! empty( $attrs['order_summary_padding_bottom'] ) || ! empty( $attrs['order_summary_padding_left'] ) ) {
@@ -614,7 +619,7 @@ class ShortCodeCheckout {
 			$order_summary_styles[]  = 'padding: ' . implode( ' ', $summary_padding_parts );
 		}
 
-		// Order summary margin
+		// Order summary margin.
 		$summary_margin_parts = array();
 		if ( ! empty( $attrs['order_summary_margin_top'] ) || ! empty( $attrs['order_summary_margin_right'] ) ||
 			! empty( $attrs['order_summary_margin_bottom'] ) || ! empty( $attrs['order_summary_margin_left'] ) ) {

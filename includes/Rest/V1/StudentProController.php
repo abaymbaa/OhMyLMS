@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Controller for handling student REST API endpoints.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -68,7 +73,7 @@ class StudentProController extends RestController {
 	public function get_item( $request ) {
 		global $wpdb;
 
-		// Get the student ID from the request
+		// Get the student ID from the request.
 		$user_id = $request->get_param( 'id' );
 
 		if ( empty( $user_id ) || ! is_numeric( $user_id ) ) {
@@ -91,7 +96,7 @@ class StudentProController extends RestController {
 
 		$date_condition = '';
 
-		if ( $filter !== 'all' ) {
+		if ( 'all' !== $filter ) {
 			switch ( $filter ) {
 				case 'last_30_days':
 					$start_date = ( new \DateTime( '-30 days' ) )->format( 'Y-m-d' );
@@ -129,17 +134,17 @@ class StudentProController extends RestController {
 			}
 		}
 
-		// Get the student's name and email from wp_users table
+		// Get the student's name and email from wp_users table.
 		$user_info = get_user_by( 'ID', $user_id );
 		if ( ! $user_info ) {
 			return new WP_Error( 'user_not_found', 'User not found.', array( 'status' => 404 ) );
 		}
 		$student_name  = $user_info->display_name;
 		$student_email = $user_info->user_email;
-		// Get the student's avatar image URL (if available)
-		$student_avatar_url = get_avatar_url( $user_id, array( 'size' => 96 ) ); // You can adjust the size as needed
+		// Get the student's avatar image URL (if available).
+		$student_avatar_url = get_avatar_url( $user_id, array( 'size' => 96 ) ); // You can adjust the size as needed.
 
-		// Get the enrollment date from the ohmylms_user_enrollment table
+		// Get the enrollment date from the ohmylms_user_enrollment table.
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enrollment       = $wpdb->get_row(
 			$wpdb->prepare(
@@ -170,7 +175,7 @@ class StudentProController extends RestController {
 
 				$course_id = $course->get_id();
 
-				// Query the ohmylms_user_progress table for completed items for the specific course
+				// Query the ohmylms_user_progress table for completed items for the specific course.
 				$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 				$enrollment       = $wpdb->get_row(
 					$wpdb->prepare(
@@ -180,22 +185,22 @@ class StudentProController extends RestController {
 						$user_id,
 						$course_id
 					),
-					ARRAY_A // To return the result as an associative array
+					ARRAY_A // To return the result as an associative array.
 				);
 
-				// If no enrollment found, skip to the next course
+				// If no enrollment found, skip to the next course.
 				if ( empty( $enrollment ) ) {
 					continue;
 				}
 
-				if ( $filter !== 'all' && $enrollment ) {
+				if ( 'all' !== $filter && $enrollment ) {
 					$enrolled_on = ( new \DateTime( $enrollment['start_date'] ) )->format( 'Y-m-d' );
 					if ( $enrolled_on < $start_date || $enrolled_on > $end_date ) {
-						continue; // Skip course outside the date range
+						continue; // Skip course outside the date range.
 					}
 				}
 
-				// Query the progress table for completed items using the enrollment ID
+				// Query the progress table for completed items using the enrollment ID.
 				$progress_table  = $wpdb->prefix . 'ohmylms_user_progress';
 				$completed_items = $wpdb->get_results(
 					$wpdb->prepare(
@@ -208,12 +213,12 @@ class StudentProController extends RestController {
 					ARRAY_A
 				);
 
-				// Initialize completed counts for the course
+				// Initialize completed counts for the course.
 				$completed_lesson     = 0;
 				$completed_assignment = 0;
 				$completed_quiz       = 0;
 
-				// Process completed items
+				// Process completed items.
 				foreach ( $completed_items as $item ) {
 					switch ( $item['content_type'] ) {
 						case 'text':
@@ -232,7 +237,7 @@ class StudentProController extends RestController {
 
 				$course_name = $course->get_name();
 
-				// If there's a search query, skip courses that don't match the name
+				// If there's a search query, skip courses that don't match the name.
 				if ( ! empty( $search_query ) && strpos( strtolower( $course_name ), $search_query ) === false ) {
 					continue;
 				}
@@ -255,31 +260,31 @@ class StudentProController extends RestController {
 				);
 
 				if ( null !== $only_completed ) {
-					// Filter only completed course_data if requested
+					// Filter only completed course_data if requested.
 					if ( $only_completed ) {
 						$course_data = array_filter(
 							$course_data,
 							function ( $student ) {
-								return $student['is_completed'] === true;
+								return true === $student['is_completed'];
 							}
 						);
-						$course_data = array_values( $course_data ); // Reindex array
+						$course_data = array_values( $course_data ); // Reindex array.
 					}
 
 					if ( ! $only_completed ) {
 						$course_data = array_filter(
 							$course_data,
 							function ( $student ) {
-								return $student['is_completed'] === false;
+								return false === $student['is_completed'];
 							}
 						);
-						$course_data = array_values( $course_data ); // Reindex array
+						$course_data = array_values( $course_data ); // Reindex array.
 					}
 				}
 			}
 		}
 
-		// Fetch the membership data from ohmylms_user_membership table
+		// Fetch the membership data from ohmylms_user_membership table.
 		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
 		$membership_data  = $wpdb->get_results(
 			$wpdb->prepare(
@@ -313,7 +318,7 @@ class StudentProController extends RestController {
 			}
 		}
 
-		// Prepare the response
+		// Prepare the response.
 		$response = array(
 			'user_id'             => $user_id,
 			'student_name'        => $student_name,

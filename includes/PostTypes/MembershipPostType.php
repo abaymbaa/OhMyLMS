@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\PostTypes;
 
@@ -34,7 +34,7 @@ class MembershipPostType extends PostType {
 		$this->post_type = 'ohmylms-membership';
 		parent::__construct();
 
-		// add_action( 'add_meta_boxes', [$this, 'membership_add_plan_meta_box'] );
+		// add_action( 'add_meta_boxes', [$this, 'membership_add_plan_meta_box'] );.
 	}
 
 
@@ -75,14 +75,14 @@ class MembershipPostType extends PostType {
 			'items_list_navigation' => __( 'Memberships list navigation', 'ohmylms' ),
 			'filter_items_list'     => __( 'Filter Memberships list', 'ohmylms' ),
 		);
-		// Get permalink structure of OhMyLMS courses
+		// Get permalink structure of OhMyLMS courses.
 		$permalinks = ohmylms_get_permalink_structure();
 
-		// Get course archive page ID and set archive page
+		// Get course archive page ID and set archive page.
 		$membership_page_id = ohmylms_get_page_id( 'membership' );
 		$has_archive        = $membership_page_id && get_post( $membership_page_id ) ? urldecode( get_page_uri( $membership_page_id ) ) : 'membership';
 
-		// CPT supports
+		// CPT supports.
 		$supports = array( 'title', 'editor', 'excerpt' );
 
 		$this->args = array(

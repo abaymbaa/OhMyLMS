@@ -3,12 +3,10 @@ import { createElement } from '@wordpress/element';
 export function createCourseStudentsReport( readRuntime ) {
 	return function CourseStudentsReport( props ) {
 		const {
-			$U,
 			Cm,
 			D: Buttons,
 			Ge,
 			I: Controls,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			UU: StudentReminderDialog,
@@ -92,12 +90,12 @@ export function createCourseStudentsReport( readRuntime ) {
 					key: 'student-name',
 					className: 'col-student-name',
 					sorter: ! 0,
-					render( e, t ) {
-						var n = oe === t.id;
+					render( e, _tLocal ) {
+						var _nLocal = oe === _tLocal.id;
 						return (
 							<ReportStudentCell
-								studentData={ t }
-								isHover={ n }
+								studentData={ _tLocal }
+								isHover={ _nLocal }
 							/>
 						);
 					},
@@ -111,13 +109,14 @@ export function createCourseStudentsReport( readRuntime ) {
 						return (
 							<React.Fragment>
 								{ e.length > 0
-									? e.map( function ( e, t ) {
+									? e.map( function ( _eLocal, _tLocal2 ) {
 											return (
-												<kt.A key={ t }>
+												<kt.A key={ _tLocal2 }>
 													{ Ge(
-														null == e
+														_eLocal === null ||
+															_eLocal === void 0
 															? void 0
-															: e.name
+															: _eLocal.name
 													) }
 												</kt.A>
 											);
@@ -136,13 +135,14 @@ export function createCourseStudentsReport( readRuntime ) {
 						return (
 							<React.Fragment>
 								{ e.length > 0
-									? e.map( function ( e, t ) {
+									? e.map( function ( _eLocal2, _tLocal3 ) {
 											return (
-												<kt.A key={ t }>
+												<kt.A key={ _tLocal3 }>
 													{ Ge(
-														null == e
+														_eLocal2 === null ||
+															_eLocal2 === void 0
 															? void 0
-															: e.name
+															: _eLocal2.name
 													) }
 												</kt.A>
 											);
@@ -231,19 +231,25 @@ export function createCourseStudentsReport( readRuntime ) {
 					dataIndex: 'action',
 					key: 'action',
 					className: 'col-table-action',
-					render( e, t ) {
+					render( e, _tLocal4 ) {
 						return (
 							<Buttons.A
 								className={ 'send-reminder' }
 								onClick={ function () {
 									return ce(
-										null == t ? void 0 : t.email,
-										null == t ? void 0 : t.student_id
+										_tLocal4 === null || _tLocal4 === void 0
+											? void 0
+											: _tLocal4.email,
+										_tLocal4 === null || _tLocal4 === void 0
+											? void 0
+											: _tLocal4.student_id
 									);
 								} }
 								disabled={
 									100 ==
-									( null == t ? void 0 : t.completion_rate )
+									( _tLocal4 === null || _tLocal4 === void 0
+										? void 0
+										: _tLocal4.completion_rate )
 								}
 								variant={ 'secondary' }
 							>
@@ -253,20 +259,22 @@ export function createCourseStudentsReport( readRuntime ) {
 					},
 				},
 			],
-			ce = ( 0, ReactHooks.useCallback )( function ( e, n ) {
-				( V( e ), S( ! 0 ), K( n ) );
+			ce = ( 0, ReactHooks.useCallback )( function ( e, _nLocal2 ) {
+				V( e );
+				S( ! 0 );
+				K( _nLocal2 );
 			}, [] ),
 			ue = ( 0, ReactHooks.useCallback )(
 				aq(
 					tq().m( function e() {
-						var t, n;
+						var _tLocal5, _nLocal3;
 						return tq().w(
-							function ( e ) {
+							function ( _eLocal3 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 										case 0:
 											if ( r && $ && B && G ) {
-												e.n = 1;
+												_eLocal3.n = 1;
 												break;
 											}
 											return (
@@ -274,11 +282,11 @@ export function createCourseStudentsReport( readRuntime ) {
 													'error',
 													'Subject and Email are required'
 												),
-												e.a( 2 )
+												_eLocal3.a( 2 )
 											 );
 										case 1:
 											return (
-												( t = {
+												( _tLocal5 = {
 													student_id: $,
 													course_id: r,
 													email: B,
@@ -290,9 +298,9 @@ export function createCourseStudentsReport( readRuntime ) {
 															)
 															.getContent() || Y,
 												} ),
-												( e.p = 2 ),
+												( _eLocal3.p = 2 ),
 												ee( ! 0 ),
-												( e.n = 3 ),
+												( _eLocal3.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/notification/course/'
 														.concat(
@@ -305,49 +313,60 @@ export function createCourseStudentsReport( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( t ),
+													body: JSON.stringify(
+														_tLocal5
+													),
 												} )
 											 );
 										case 3:
-											( null != ( n = e.v ) && n.status
-												? a.showNotification(
-														( 0, I18n.__ )(
-															'Email sent successfully',
-															'ohmylms'
-														),
-														'success'
-													)
-												: a.showNotification(
-														( 0, I18n.__ )(
-															'Email not sent',
-															'ohmylms'
-														),
-														'error'
-													),
-												( e.n = 5 ) );
-											break;
-										case 4:
-											( ( e.p = 4 ),
-												e.v,
+											if (
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _nLocal3 = _eLocal3.v )
+												) &&
+												_nLocal3.status
+											) {
 												a.showNotification(
 													( 0, I18n.__ )(
-														'Error sending email',
+														'Email sent successfully',
+														'ohmylms'
+													),
+													'success'
+												);
+											} else {
+												a.showNotification(
+													( 0, I18n.__ )(
+														'Email not sent',
 														'ohmylms'
 													),
 													'error'
-												) );
+												);
+											}
+											_eLocal3.n = 5;
+											break;
+										case 4:
+											_eLocal3.p = 4;
+											a.showNotification(
+												( 0, I18n.__ )(
+													'Error sending email',
+													'ohmylms'
+												),
+												'error'
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal3.p = 5 ),
 												ee( ! 1 ),
 												S( ! 1 ),
 												V( '' ),
 												U( '' ),
 												Q( '' ),
-												e.f( 5 )
+												_eLocal3.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
 							},
@@ -360,7 +379,10 @@ export function createCourseStudentsReport( readRuntime ) {
 				[ B, G, Y ]
 			),
 			se = ( 0, ReactHooks.useCallback )( function () {
-				( S( ! 1 ), V( '' ), U( '' ), Q( '' ) );
+				S( ! 1 );
+				V( '' );
+				U( '' );
+				Q( '' );
 			}, [] ),
 			de = ( 0, ReactHooks.useMemo )( function () {
 				return [
@@ -379,68 +401,75 @@ export function createCourseStudentsReport( readRuntime ) {
 				];
 			}, [] ),
 			me = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( C( e ), O( 1 ), p( ! 0 ) );
+				C( e );
+				O( 1 );
+				p( ! 0 );
 			}, [] ),
 			pe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( A( e ), O( 1 ), p( ! 0 ) );
+				A( e );
+				O( 1 );
+				p( ! 0 );
 			}, [] ),
 			fe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( N( e ), O( 1 ), p( ! 0 ) );
+				N( e );
+				O( 1 );
+				p( ! 0 );
 			}, [] ),
 			ve = ( 0, ReactHooks.useCallback )(
 				aq(
-					tq().m( function e() {
-						var t,
-							n,
-							a,
-							o,
-							i,
-							c,
-							u = arguments;
+					tq().m( function e( ..._args ) {
+						var _tLocal6,
+							_nLocal4,
+							_aLocal,
+							_oLocal,
+							_iLocal,
+							_cLocal,
+							_uLocal = _args;
 						return tq().w(
-							function ( e ) {
+							function ( _eLocal4 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 										case 0:
 											return (
-												( t =
-													u.length > 0 &&
-													void 0 !== u[ 0 ]
-														? u[ 0 ]
+												( _tLocal6 =
+													_uLocal.length > 0 &&
+													void 0 !== _uLocal[ 0 ]
+														? _uLocal[ 0 ]
 														: 'date' ),
-												( n =
-													u.length > 1 &&
-													void 0 !== u[ 1 ]
-														? u[ 1 ]
+												( _nLocal4 =
+													_uLocal.length > 1 &&
+													void 0 !== _uLocal[ 1 ]
+														? _uLocal[ 1 ]
 														: 'DESC' ),
 												_( ! 0 ),
-												( e.p = 1 ),
-												( o = {
-													sort_by: n,
+												( _eLocal4.p = 1 ),
+												( _oLocal = {
+													sort_by: _nLocal4,
 													filter: j || '',
 													search: x || '',
-													order: t,
+													order: _tLocal6,
 													completion_type: F,
 													data_type: 'student',
 												} ),
 												'string' !== typeof j &&
-													( ( o.filter = 'custom' ),
-													( o.start_date = aN()(
+													( ( _oLocal.filter =
+														'custom' ),
+													( _oLocal.start_date = aN()(
 														j[ 0 ]
 													).format( 'YYYY-MM-DD' ) ),
-													( o.end_date = aN()(
+													( _oLocal.end_date = aN()(
 														j[ 1 ]
 													).format(
 														'YYYY-MM-DD'
 													) ) ),
-												( e.n = 2 ),
+												( _eLocal4.n = 2 ),
 												l()( {
 													path: ( 0,
 													lN.addQueryArgs )(
 														'/ohmylms/v1/analytics/course/'.concat(
 															r
 														),
-														o
+														_oLocal
 													),
 													method: 'GET',
 													headers: {
@@ -450,32 +479,44 @@ export function createCourseStudentsReport( readRuntime ) {
 												} )
 											 );
 										case 2:
-											( ( null != ( i = e.v ) &&
-												null !== ( a = i.students ) &&
-												void 0 !== a &&
-												a.errors ) ||
+											if ( ! (
+												( ( _nullableValue2 ) =>
+													_nullableValue2 !== null &&
+													_nullableValue2 !==
+														void 0 )(
+													( _iLocal = _eLocal4.v )
+												) &&
+												null !==
+													( _aLocal =
+														_iLocal.students ) &&
+												void 0 !== _aLocal &&
+												_aLocal.errors
+											) ) {
 												s(
-													null == i
+													_iLocal === null ||
+														_iLocal === void 0
 														? void 0
-														: i.students
-												),
-												( e.n = 4 ) );
+														: _iLocal.students
+												);
+											}
+											_eLocal4.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( c = e.v ),
-												console.error(
-													'Error fetching data:',
-													c
-												) );
+											_eLocal4.p = 3;
+											_cLocal = _eLocal4.v;
+											console.error(
+												'Error fetching data:',
+												_cLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal4.p = 4 ),
 												_( ! 1 ),
-												e.f( 4 )
+												_eLocal4.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal4.a( 2 );
 									}
 								}
 							},
@@ -502,13 +543,20 @@ export function createCourseStudentsReport( readRuntime ) {
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					n && ! m && ( s( n ), p( ! 0 ) );
+					if ( n && ! m ) {
+						{
+							s( n );
+							p( ! 0 );
+						}
+					}
 				},
 				[ n ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! h && o && ne( i, o );
+					if ( ! h && o ) {
+						ne( i, o );
+					}
 				},
 				[ o ]
 			),
@@ -540,7 +588,9 @@ export function createCourseStudentsReport( readRuntime ) {
 										'ohmylms-custom-daterange'
 									}
 									onChange={ function ( e ) {
-										'custom_range' !== e && pe( e );
+										if ( 'custom_range' !== e ) {
+											pe( e );
+										}
 									} }
 									onRangeChange={ pe }
 								/>
@@ -563,14 +613,16 @@ export function createCourseStudentsReport( readRuntime ) {
 						<TableModule.A
 							rowKey={ 'student_id' }
 							columns={ le }
-							dataSource={ null != u ? u : [] }
+							dataSource={ u !== null && u !== void 0 ? u : [] }
 							pagination={ ! 1 }
 							loading={ h }
 							scroll={ {
 								x: 'max-content',
 							} }
 							onMouseEnterOnRow={ function ( e ) {
-								return ie( null == e ? void 0 : e.id );
+								return ie(
+									e === null || e === void 0 ? void 0 : e.id
+								);
 							} }
 							onMouseLeaveOnRow={ function () {
 								return ie( null );

@@ -96,7 +96,7 @@ ok(strpos($page, 'Unit test') !== false && strpos($page, 'Course challenge') !==
 // A visitor who is not enrolled is sent to the course page, not into the test.
 as_user(make_user('subscriber'));
 $visitor = CourseOutline::get($course_id, get_current_user_id());
-ok(!$visitor['enrolled'] && strpos($visitor['units'][0]['test']['url'], 'legacy=1') !== false, 'A visitor was linked straight into the unit test');
+ok(!$visitor['enrolled'] && strpos($visitor['units'][0]['test']['url'], '#oml-course-enroll') !== false && strpos($visitor['units'][0]['test']['url'], 'legacy') === false, 'A visitor was linked straight into the unit test');
 // A draft unit test stays out of the learner's view.
 as_user($admin);
 wp_update_post(['ID' => $report['created'][1]['id'], 'post_status' => 'draft']);

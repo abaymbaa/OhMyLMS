@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails manual enrollment template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

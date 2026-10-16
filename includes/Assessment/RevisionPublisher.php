@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Publishes quiz revisions: frozen settings plus ordered slots that reference
+ * exact question versions and carry their own marks.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 use OhMyLMS\Extensions\Registry;
@@ -51,7 +57,7 @@ final class RevisionPublisher {
 			$question_settings = json_decode( $version['settings'], true ) ?: array();
 			$marks             = ! empty( $question_settings['score']['enabled'] ) ? max( 0, (float) ( $question_settings['score']['value'] ?? 0 ) ) : 0.0;
 			$slot_marks        = $sections['marks'][ (int) $link['id'] ] ?? null;
-			if ( $slot_marks !== null ) {
+			if ( null !== $slot_marks ) {
 				$marks = max( 0, (float) $slot_marks ); }
 			$slots[] = array(
 				'slot_no'         => $index + 1,
@@ -150,7 +156,7 @@ final class RevisionPublisher {
 		$revision_id = (int) $wpdb->insert_id;
 		foreach ( $slots as $slot ) {
 			$slot['revision_id'] = $revision_id;
-			$slot['pool']        = $slot['pool'] === null ? null : wp_json_encode( $slot['pool'] );
+			$slot['pool']        = null === $slot['pool'] ? null : wp_json_encode( $slot['pool'] );
 			if ( ! $wpdb->insert( Schema::table( 'quiz_revision_slots' ), $slot ) ) {
 				throw new \RuntimeException( 'Slot write failed' ); }
 		}

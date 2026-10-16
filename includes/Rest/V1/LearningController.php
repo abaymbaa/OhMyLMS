@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -87,7 +87,7 @@ class LearningController extends RestController {
 	public function show( $request ) {
 		$data = CourseProgram::editor( (int) $request['id'] );
 		foreach ( $data['draft']['items'] as &$item ) {
-			$term         = $item['type'] === 'practice' ? get_term( $item['content_id'], Taxonomy::NAME ) : null;
+			$term         = 'practice' === $item['type'] ? get_term( $item['content_id'], Taxonomy::NAME ) : null;
 			$item['name'] = $term && ! is_wp_error( $term ) ? $term->name : get_the_title( $item['content_id'] );
 		}
 		unset( $item );
@@ -136,7 +136,7 @@ class LearningController extends RestController {
 	}
 
 	public function resources( $request ) {
-		$type  = $request['type'] === 'quiz' ? OHMYLMS_QUIZ_CPT : OHMYLMS_LESSON_CPT;
+		$type  = 'quiz' === $request['type'] ? OHMYLMS_QUIZ_CPT : OHMYLMS_LESSON_CPT;
 		$query = new \WP_Query(
 			array(
 				'post_type'      => $type,
@@ -185,7 +185,7 @@ class LearningController extends RestController {
 		foreach ( $state['program']['items'] as $item ) {
 			if ( $item['id'] !== $request['placement'] ) {
 				continue; }
-			if ( $item['type'] !== 'lesson' || ! LearningPath::available( $item, $student, $course ) ) {
+			if ( 'lesson' !== $item['type'] || ! LearningPath::available( $item, $student, $course ) ) {
 				return AccessPolicy::denied( __( 'This activity cannot be marked complete here.', 'ohmylms' ) ); }
 			$table = $wpdb->prefix . 'ohmylms_user_progress';
 			$key   = 'ohmylms_activity_' . $state['enrollment_id'];

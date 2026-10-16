@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Hook for Engagement
  *
@@ -35,7 +35,7 @@ class EngagementHook {
 		add_action( 'ohmylms_after_enrolled_student', array( $this, 'after_enrolled_student' ), 10 );
 		add_action( 'ohmylms_after_checkout_process', array( $this, 'after_create_order' ), 10 );
 
-		// Adding community hooks
+		// Adding community hooks.
 		add_action( 'ohmylms_community_comment_created', array( $this, 'after_community_comment' ), 10, 2 );
 		add_action( 'ohmylms_community_reaction_created', array( $this, 'after_community_reaction' ), 10, 2 );
 		add_action( 'ohmylms_community_post_created', array( $this, 'after_community_post' ), 10, 2 );
@@ -188,12 +188,12 @@ class EngagementHook {
 	public function after_comment( $comment_id ) {
 		$comment = get_comment( $comment_id );
 		if ( ! isset( $_POST['comment_post_ID'] ) ) {
-			return; // No post ID in the comment data
+			return; // No post ID in the comment data.
 		}
 		$post_id = intval( $_POST['comment_post_ID'] );
 		$post    = get_post( $post_id );
 		if ( ! $post || 'ohmylms-course' !== $post->post_type ) {
-			return; // Not a course post type
+			return; // Not a course post type.
 		}
 
 		if ( $this->maybe_gamification_enable() && Point::maybe_met_rules( 'comment_on_course' ) ) {
@@ -364,8 +364,8 @@ class EngagementHook {
 		}
 
 		$purchased_by = get_post_meta( $order->get_id(), '_purchased_by', true );
-		if ( (float) $order->get_total() <= 0 || $purchased_by === 'point' ) {
-			return; // Only process orders with a total amount
+		if ( (float) $order->get_total() <= 0 || 'point' === $purchased_by ) {
+			return; // Only process orders with a total amount.
 		}
 		$student_id = $order->get_student_id();
 		global $wpdb;
@@ -444,13 +444,13 @@ class EngagementHook {
 		$message    = '';
 
 		if ( get_transient( 'badge_added_for_user_' . $student_id ) ) {
-			delete_transient( 'badge_added_for_user_' . $student_id ); // clear after use
+			delete_transient( 'badge_added_for_user_' . $student_id ); // clear after use.
 			$message = __( 'Congratulations! You have earned a new  badge 🏅', 'ohmylms' );
 		} elseif ( get_transient( 'level_added_for_user_' . $student_id ) ) {
-			delete_transient( 'level_added_for_user_' . $student_id ); // clear after use
+			delete_transient( 'level_added_for_user_' . $student_id ); // clear after use.
 			$message = __( 'Congratulations! You have leveled up 🎉', 'ohmylms' );
 		} elseif ( get_transient( 'points_added_for_user_' . $student_id ) ) {
-			delete_transient( 'points_added_for_user_' . $student_id ); // clear after use
+			delete_transient( 'points_added_for_user_' . $student_id ); // clear after use.
 			$message = __( 'Congratulations! You have earned points 🎉', 'ohmylms' );
 		}
 

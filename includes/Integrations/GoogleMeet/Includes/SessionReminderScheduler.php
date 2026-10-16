@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * SessionReminderScheduler class.
  *
@@ -23,10 +23,10 @@ class SessionReminderScheduler {
 	 * @return void
 	 */
 	public static function init() {
-		// Schedule reminders for upcoming sessions
+		// Schedule reminders for upcoming sessions.
 		\add_action( 'ohmylms_googlemeet_send_reminder', array( __CLASS__, 'send_session_reminder' ) );
 
-		// Check for upcoming sessions every hour
+		// Check for upcoming sessions every hour.
 		if ( ! \wp_next_scheduled( 'ohmylms_googlemeet_check_sessions' ) ) {
 			\wp_schedule_event( time(), 'hourly', 'ohmylms_googlemeet_check_sessions' );
 		}
@@ -42,7 +42,7 @@ class SessionReminderScheduler {
 	 * @return void
 	 */
 	public static function check_upcoming_sessions() {
-		// Get all GoogleMeet sessions starting in the next 24 hours
+		// Get all GoogleMeet sessions starting in the next 24 hours.
 		$args = array(
 			'post_type'      => 'lesson',
 			'posts_per_page' => -1,
@@ -68,7 +68,7 @@ class SessionReminderScheduler {
 			$start_time    = \get_post_meta( $session->ID, '_session_start_time', true );
 			$reminder_sent = \get_post_meta( $session->ID, '_googlemeet_reminder_sent', true );
 
-			// Send reminder 1 hour before session
+			// Send reminder 1 hour before session.
 			$reminder_time = $start_time - HOUR_IN_SECONDS;
 
 			if ( ! $reminder_sent && time() >= $reminder_time ) {
@@ -94,7 +94,7 @@ class SessionReminderScheduler {
 			return;
 		}
 
-		// Get enrolled students
+		// Get enrolled students.
 		$enrolled_students = self::get_enrolled_students( $course_id );
 
 		if ( empty( $enrolled_students ) ) {
@@ -112,7 +112,7 @@ class SessionReminderScheduler {
 				continue;
 			}
 
-			// Send email reminder
+			// Send email reminder.
 			$subject = sprintf( __( 'Reminder: %s starts in 1 hour', 'ohmylms' ), $session_title );
 			$message = sprintf(
 				__(

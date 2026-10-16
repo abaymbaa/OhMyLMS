@@ -55,6 +55,8 @@ module.exports = [
 			'assets/interactivity/**/*.js',
 		],
 		settings: {
+			// webpack.config.cjs compiles JSX with the WordPress createElement pragma.
+			react: { pragma: 'createElement' },
 			// These modules are supplied by WordPress/dependency extraction, not bundled from node_modules.
 			'import/core-modules': [
 				'@wordpress/api-fetch',
@@ -69,6 +71,10 @@ module.exports = [
 				'@wordpress/media-utils',
 				'ohmylms/interactivity',
 			],
+		},
+		rules: {
+			// ViewAsModal's public `role` prop selects an account type; it is not a DOM ARIA role.
+			'jsx-a11y/aria-role': [ 'error', { ignoreNonDOM: true } ],
 		},
 	},
 	{

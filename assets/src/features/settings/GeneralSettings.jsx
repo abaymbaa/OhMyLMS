@@ -35,12 +35,12 @@ export function createGeneralSettings( readRuntime ) {
 			s = c[ 1 ],
 			d = function ( e ) {
 				return e
-					? Object.entries( e ).map( function ( e ) {
-							var t = PK( e, 2 ),
-								n = t[ 0 ];
+					? Object.entries( e ).map( function ( _eLocal ) {
+							var _tLocal = PK( _eLocal, 2 ),
+								_nLocal = _tLocal[ 0 ];
 							return {
-								label: t[ 1 ],
-								value: n,
+								label: _tLocal[ 1 ],
+								value: _nLocal,
 							};
 						} )
 					: [];
@@ -48,26 +48,28 @@ export function createGeneralSettings( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )( function () {
 				var e = ( function () {
-					var e,
-						t =
-							( ( e = RK().m( function e() {
-								var t, n, r;
-								return RK().w( function ( e ) {
+					var _eLocal2,
+						_tLocal2 =
+							( ( _eLocal2 = RK().m( function _eLocal3() {
+								var _tLocal3, _nLocal2, _rLocal;
+								return RK().w( function ( _eLocal4 ) {
 									for (;;) {
-										switch ( e.n ) {
+										switch ( _eLocal4.n ) {
 											case 0:
 												return (
 													i.setLoadingSetting( ! 0 ),
-													( e.n = 1 ),
+													( _eLocal4.n = 1 ),
 													l()( {
 														path: 'ohmylms/v1/settings/general',
 													} )
 												 );
 											case 1:
 												return (
-													( t = e.v ),
-													i.setGeneralSettings( t ),
-													( e.n = 2 ),
+													( _tLocal3 = _eLocal4.v ),
+													i.setGeneralSettings(
+														_tLocal3
+													),
+													( _eLocal4.n = 2 ),
 													l()( {
 														path: '/ohmylms/v1/page/search?value=',
 														method: 'GET',
@@ -79,38 +81,58 @@ export function createGeneralSettings( readRuntime ) {
 												 );
 											case 2:
 												return (
-													( n = e.v ),
-													( e.n = 3 ),
-													d( n )
+													( _nLocal2 = _eLocal4.v ),
+													( _eLocal4.n = 3 ),
+													d( _nLocal2 )
 												 );
 											case 3:
-												( ( r = e.v ),
-													s( r ),
-													i.setLoadingSetting(
-														! 1
-													) );
+												_rLocal = _eLocal4.v;
+												s( _rLocal );
+												i.setLoadingSetting( ! 1 ); // Falls through to the shared async state cleanup.
 											case 4:
-												return e.a( 2 );
+												return _eLocal4.a( 2 );
 										}
 									}
-								}, e );
+								}, _eLocal3 );
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										CK( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal4 = this,
+									_nLocal3 = _args;
+								return new Promise( function (
+									_rLocal2,
+									_aLocal
+								) {
+									var _oLocal = _eLocal2.apply(
+										_tLocal4,
+										_nLocal3
+									);
+									function _iLocal( _eLocal5 ) {
+										CK(
+											_oLocal,
+											_rLocal2,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'next',
+											_eLocal5
+										);
 									}
-									function l( e ) {
-										CK( o, r, a, i, l, 'throw', e );
+									function _lLocal( _eLocal6 ) {
+										CK(
+											_oLocal,
+											_rLocal2,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'throw',
+											_eLocal6
+										);
 									}
-									i( void 0 );
+									_iLocal( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal2.apply( this, _args2 );
 					};
 				} )();
 				e();

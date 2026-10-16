@@ -10,7 +10,7 @@ function translate( text ) {
 		case 'Curriculum':
 			return __( 'Curriculum', 'ohmylms' );
 		case 'Curriculum: ':
-			return __( 'Curriculum: ', 'ohmylms' );
+			return __( 'Curriculum:', 'ohmylms' ) + ' ';
 		case 'Show the curriculum as tabs.':
 			return __( 'Show the curriculum as tabs.', 'ohmylms' );
 		case 'Course bundles':
@@ -18,7 +18,7 @@ function translate( text ) {
 		case 'Course bundle':
 			return __( 'Course bundle', 'ohmylms' );
 		case 'Course bundle: ':
-			return __( 'Course bundle: ', 'ohmylms' );
+			return __( 'Course bundle:', 'ohmylms' ) + ' ';
 		default:
 			return text;
 	}

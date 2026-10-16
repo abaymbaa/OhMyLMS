@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Admin;
 
@@ -132,7 +132,7 @@ class Menu {
 			// $capability,
 			// admin_url( 'admin.php?page=ohmylms#/free-vs-pro' ),
 			// null
-			// );
+			// );.
 		}
 
 		add_submenu_page(
@@ -248,11 +248,11 @@ class Menu {
 			array(
 				'id'     => 'visit-ohmylms-courses',
 				'title'  => 'Visit Courses',
-				'href'   => $archive_page_url, // Your custom page URL
-				'parent' => 'site-name', // Add under Visit Site
+				'href'   => $archive_page_url, // Your custom page URL.
+				'parent' => 'site-name', // Add under Visit Site.
 				'meta'   => array(
-					'title'  => __( 'Visit Courses', 'ohmylms' ), // Tooltip
-					'target' => '_blank', // Open in new tab
+					'title'  => __( 'Visit Courses', 'ohmylms' ), // Tooltip.
+					'target' => '_blank', // Open in new tab.
 					'class'  => 'visit-ohmylms-courses-class',
 				),
 			)
@@ -261,7 +261,7 @@ class Menu {
 		if ( ! ohmylms_is_pro() ) {
 			return;
 		}
-		// For memberships
+		// For memberships.
 		$membership_page_id = get_option( 'ohmylms_membership_page_id', 0 );
 		if ( ! $membership_page_id ) {
 			return;
@@ -274,11 +274,11 @@ class Menu {
 			array(
 				'id'     => 'visit-ohmylms-memberships',
 				'title'  => 'Visit Memberships',
-				'href'   => $membership_page_url, // Your custom page URL
-				'parent' => 'site-name', // Add under Visit Site
+				'href'   => $membership_page_url, // Your custom page URL.
+				'parent' => 'site-name', // Add under Visit Site.
 				'meta'   => array(
-					'title'  => __( 'Visit Memberships', 'ohmylms' ), // Tooltip
-					'target' => '_blank', // Open in new tab
+					'title'  => __( 'Visit Memberships', 'ohmylms' ), // Tooltip.
+					'target' => '_blank', // Open in new tab.
 					'class'  => 'visit-ohmylms-memberships-class',
 				),
 			)

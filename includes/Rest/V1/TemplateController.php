@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Author tool for randomised question templates: turns an unsaved draft into a few
+ * concrete examples, using the same engine learners get, and says what is wrong with it.
+ * Nothing is stored.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -95,8 +102,8 @@ class TemplateController extends RestController {
 		);
 		return rest_ensure_response(
 			array(
-				'valid'   => $result === true,
-				'message' => $result === true ? '' : $result,
+				'valid'   => true === $result,
+				'message' => true === $result ? '' : $result,
 				// Examples are shown even when invalid, so the author can see what is going wrong.
 				'samples' => Template::samples( (string) ( $settings['type'] ?? '' ), $title, $body, $settings, $options, (int) ( $request['count'] ?? 5 ) ),
 			)

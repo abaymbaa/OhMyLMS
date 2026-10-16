@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class CourseImporter.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Importers;
 
@@ -38,7 +43,7 @@ class CourseImporter {
 		}
 
 		// Check the file type.
-		if ( $this->file['type'] !== 'application/json' ) {
+		if ( 'application/json' !== $this->file['type'] ) {
 			return new \WP_Error( 'invalid_file', __( 'Invalid file type. Please upload a JSON file.', 'ohmylms' ) );
 		}
 
@@ -81,9 +86,9 @@ class CourseImporter {
 			}
 		}
 
-		// Trigger migration completed event for tracking
+		// Trigger migration completed event for tracking.
 		if ( ! empty( $course_ids ) ) {
-			// Get source LMS from request or file metadata if available
+			// Get source LMS from request or file metadata if available.
 			$source_lms = isset( $this->file['source_lms'] ) ? $this->file['source_lms'] : 'unknown';
 			do_action(
 				'ohmylms_import_completed',
@@ -145,7 +150,7 @@ class CourseImporter {
 		// Course categories and tags were replaced by the curriculum and Course Bundles. Files exported
 		// before that carry them as terms, so they are imported as curriculum items and bundles instead.
 		$curriculum_paths = array();
-		$bundle_titles     = array();
+		$bundle_titles    = array();
 		foreach ( (array) ( $data['curriculum'] ?? array() ) as $path ) {
 			$curriculum_paths[] = (array) $path;
 		}
@@ -166,9 +171,9 @@ class CourseImporter {
 					}
 				}
 
-				// Ensure taxonomy exists, if not, create it
+				// Ensure taxonomy exists, if not, create it.
 				if ( ! taxonomy_exists( $term_data['taxonomy'] ) ) {
-					// Register the taxonomy if it doesn't exist
+					// Register the taxonomy if it doesn't exist.
 					$taxonomy_args = array(
 						'label'              => ucfirst( str_replace( '_', ' ', $term_data['taxonomy'] ) ),
 						'labels'             => array(
@@ -185,19 +190,19 @@ class CourseImporter {
 						'show_admin_column'  => true,
 					);
 
-					// Register taxonomy for the course post type
+					// Register taxonomy for the course post type.
 					$taxonomy = register_taxonomy( $term_data['taxonomy'], OHMYLMS_COURSE_CPT, $taxonomy_args );
 
 					if ( is_wp_error( $taxonomy ) ) {
-						continue; // Skip this term if there was an error
+						continue; // Skip this term if there was an error.
 					}
 				}
 
-				// Check if the term exists in the given taxonomy
+				// Check if the term exists in the given taxonomy.
 				$term = term_exists( $term_data['term'], $term_data['taxonomy'] );
 
 				if ( ! $term ) {
-					// If term doesn't exist, create the new term
+					// If term doesn't exist, create the new term.
 					$term_args = array(
 						'slug' => isset( $term_data['slug'] ) ? $term_data['slug'] : sanitize_title( $term_data['term'] ),
 					);
@@ -205,18 +210,18 @@ class CourseImporter {
 					$term = wp_insert_term( $term_data['term'], $term_data['taxonomy'], $term_args );
 
 					if ( is_wp_error( $term ) ) {
-						continue; // Skip this term if there was an error
+						continue; // Skip this term if there was an error.
 					}
 				}
 
-				// Get the term ID for assignment
+				// Get the term ID for assignment.
 				$term_id = is_array( $term ) ? $term['term_id'] : $term;
 
 				if ( $term_id ) {
-					// Assign the term to the course
+					// Assign the term to the course.
 					$result = wp_set_object_terms( $course_id, (int) $term_id, $term_data['taxonomy'], true );
 					if ( is_wp_error( $result ) ) {
-						continue; // Skip this term if there was an error
+						continue; // Skip this term if there was an error.
 					}
 				}
 			}
@@ -391,15 +396,15 @@ class CourseImporter {
 			return null;
 		}
 
-		// Ensure WordPress file functions are available
+		// Ensure WordPress file functions are available.
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 		require_once ABSPATH . 'wp-admin/includes/media.php';
 		require_once ABSPATH . 'wp-admin/includes/image.php';
 
-		// Add SSL verification bypass for local/development environments
+		// Add SSL verification bypass for local/development environments.
 		add_filter( 'https_ssl_verify', '__return_false' );
 
-		// Set longer timeout for large files
+		// Set longer timeout for large files.
 		add_filter(
 			'http_request_timeout',
 			function () {
@@ -407,7 +412,7 @@ class CourseImporter {
 			}
 		);
 
-		// Add custom headers for potential authentication
+		// Add custom headers for potential authentication.
 		add_filter(
 			'http_request_args',
 			function ( $args ) {
@@ -421,14 +426,14 @@ class CourseImporter {
 			}
 		);
 
-		// Download the file
+		// Download the file.
 		$tmp_file = download_url( $url );
 
 		if ( is_wp_error( $tmp_file ) ) {
 			return null;
 		}
 
-		// Get file type
+		// Get file type.
 		$file_type = '';
 		if ( function_exists( 'mime_content_type' ) ) {
 			$file_type = mime_content_type( $tmp_file );
@@ -436,7 +441,7 @@ class CourseImporter {
 			$file_type = wp_get_mime_type( $tmp_file );
 		}
 
-		// Fallback to extension-based mime type
+		// Fallback to extension-based mime type.
 		if ( empty( $file_type ) ) {
 			$ext        = pathinfo( $url, PATHINFO_EXTENSION );
 			$mime_types = array(
@@ -458,7 +463,7 @@ class CourseImporter {
 			'size'     => filesize( $tmp_file ),
 		);
 
-		// Allow video uploads
+		// Allow video uploads.
 		add_filter(
 			'upload_mimes',
 			function ( $mimes ) {
@@ -468,7 +473,7 @@ class CourseImporter {
 			}
 		);
 
-		// Increase memory limit temporarily
+		// Increase memory limit temporarily.
 		wp_raise_memory_limit( 'image' );
 
 		$attachment_id = media_handle_sideload( $file, 0 );
@@ -491,7 +496,7 @@ class CourseImporter {
 		global $wpdb;
 
 		foreach ( $questions as $index => $question ) {
-			// Create the question post
+			// Create the question post.
 			$question_id = wp_insert_post(
 				array(
 					'post_title'   => $question['title'] ?? 'Question',
@@ -505,7 +510,7 @@ class CourseImporter {
 				continue; // Skip this question if there is an error.
 			}
 
-			// Save metadata for the question
+			// Save metadata for the question.
 			foreach ( $question['meta'] as $key => $value ) {
 				if ( '_video_url' == $key ) {
 					$video_id = $this->import_attachment( $value[0] );
@@ -517,10 +522,10 @@ class CourseImporter {
 				}
 			}
 
-			// Insert the question-answer relationship into `ohmylms_question_answers` table
+			// Insert the question-answer relationship into `ohmylms_question_answers` table.
 			if ( isset( $question['answers'] ) && is_array( $question['answers'] ) ) {
 				foreach ( $question['answers'] as $answer ) {
-					// Insert answer data into `ohmylms_question_answers`
+					// Insert answer data into `ohmylms_question_answers`.
 					$answer_data = array(
 						'question_id' => $question_id,
 						'answer'      => $answer['answer'],
@@ -528,9 +533,9 @@ class CourseImporter {
 					);
 
 					$wpdb->insert( "{$wpdb->prefix}ohmylms_question_answers", $answer_data );
-					$answer_id = $wpdb->insert_id; // Get the last inserted answer ID
+					$answer_id = $wpdb->insert_id; // Get the last inserted answer ID.
 
-					// Save answer metadata into `ohmylms_question_answermeta`
+					// Save answer metadata into `ohmylms_question_answermeta`.
 					foreach ( $answer['meta'] as $meta_key => $meta_value ) {
 						$meta_data = array(
 							'answer_id'  => $answer_id,
@@ -543,7 +548,7 @@ class CourseImporter {
 				}
 			}
 
-			// Insert into the quiz-question relationship table
+			// Insert into the quiz-question relationship table.
 			$wpdb->insert(
 				"{$wpdb->prefix}ohmylms_quiz_questions_relationship",
 				array(

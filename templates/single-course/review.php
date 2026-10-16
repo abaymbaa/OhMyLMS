@@ -6,7 +6,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 ?>
 
@@ -27,6 +27,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @hooked ohmylms_review_display_rating - 10
  */
-// do_action( 'ohmylms_review_before_comment_meta', $comment );
+// do_action( 'ohmylms_review_before_comment_meta', $comment );.
 
 ?>

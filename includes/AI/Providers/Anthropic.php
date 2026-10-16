@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Claude Messages API (platform.claude.com).
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI\Providers;
 
 defined( 'ABSPATH' ) || exit;

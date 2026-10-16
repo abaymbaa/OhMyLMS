@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Core modules always load, bundled modules use Add-ons switches; project modules use trusted configuration.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Extensions;
 
 /** Core modules always load, bundled modules use Add-ons switches; project modules use trusted configuration. */

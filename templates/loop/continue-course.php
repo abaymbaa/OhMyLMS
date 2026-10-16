@@ -19,5 +19,5 @@ $course_resume_url = $student->get_course_resume_url( $course->get_id() );
 ?>
 
 <a href="<?php echo esc_url( $course_resume_url ); ?>" class="ohmylms-button continue-course">
-	<?php echo __( 'Continue Course', 'ohmylms' ); ?>
+	<?php echo esc_html__( 'Continue Course', 'ohmylms' ); ?>
 </a>

@@ -124,104 +124,169 @@ export function createCourseEditor( readRuntime ) {
 						className="ohmylms-course-builder-content"
 						aria-busy={ editor.loading || editor.saving }
 					>
-						{ editor.loading || syllabusContent ? (
-							<Controls.SkeletonWP active rows={ 10 } />
-						) : course ? (
-							<Fragment>
-								{ step === 'content' ? (
+						{ ( () => {
+							if ( editor.loading || syllabusContent ) {
+								return (
+									<Controls.SkeletonWP active rows={ 10 } />
+								);
+							}
+							if ( course ) {
+								return (
 									<Fragment>
-										<Curriculum
-											objectivesPanel={
-												<CourseObjectives
-													key={ courseId }
-													courseId={ courseId }
-												/>
+										{ ( () => {
+											if ( step === 'content' ) {
+												return (
+													<Fragment>
+														<Curriculum
+															objectivesPanel={
+																<CourseObjectives
+																	key={
+																		courseId
+																	}
+																	courseId={
+																		courseId
+																	}
+																/>
+															}
+															handleAutomation={
+																dialogs.openAutomation
+															}
+															handleIntegration={
+																dialogs.openIntegration
+															}
+															courseId={
+																courseId
+															}
+															setIsSaved={ noop }
+															setAutoSave={
+																editor.setAutoSave
+															}
+															setActiveStep={
+																setActiveStep
+															}
+															activeStep={ step }
+															completedSteps={
+																editor.completedSteps
+															}
+															setCompletedSteps={
+																noop
+															}
+															onSave={
+																editor.save
+															}
+															courseDescription={
+																course.description ||
+																''
+															}
+															handleInputChange={
+																editor.updateTitle
+															}
+															onContentChange={
+																editor.updateDescription
+															}
+															handleRemoveMedia={ (
+																type
+															) =>
+																editor.actions.removeFeaturedImage(
+																	courseId,
+																	type
+																)
+															}
+															handleUploadComplete={
+																uploadMedia
+															}
+															hasMedia={ Boolean(
+																course.image_src ||
+																course.video_src
+															) }
+															loading={
+																editor.loading
+															}
+														/>
+													</Fragment>
+												);
 											}
-											handleAutomation={
-												dialogs.openAutomation
+											if ( step === 'settings' ) {
+												return (
+													<Visibility isVisible>
+														<Settings
+															setActiveStep={
+																setActiveStep
+															}
+															activeStep={ step }
+															onSave={
+																editor.save
+															}
+														/>
+													</Visibility>
+												);
 											}
-											handleIntegration={
-												dialogs.openIntegration
-											}
-											courseId={ courseId }
-											setIsSaved={ noop }
-											setAutoSave={ editor.setAutoSave }
-											setActiveStep={ setActiveStep }
-											activeStep={ step }
-											completedSteps={
-												editor.completedSteps
-											}
-											setCompletedSteps={ noop }
-											onSave={ editor.save }
-											courseDescription={
-												course.description || ''
-											}
-											handleInputChange={
-												editor.updateTitle
-											}
-											onContentChange={
-												editor.updateDescription
-											}
-											handleRemoveMedia={ ( type ) =>
-												editor.actions.removeFeaturedImage(
-													courseId,
-													type
-												)
-											}
-											handleUploadComplete={ uploadMedia }
-											hasMedia={ Boolean(
-												course.image_src ||
-												course.video_src
-											) }
-											loading={ editor.loading }
-										/>
+											return ( () => {
+												if ( step === 'community' ) {
+													return (
+														<Visibility isVisible>
+															<Community
+																isCommunityEnabled={
+																	course.has_community
+																}
+																courseId={
+																	courseId
+																}
+																course={
+																	course
+																}
+																onToggleCommunity={
+																	editor.toggleCommunity
+																}
+																onUpdateCourse={
+																	editor
+																		.actions
+																		.setCourse
+																}
+															/>
+														</Visibility>
+													);
+												}
+												if ( step === 'funnel' ) {
+													return (
+														<Visibility isVisible>
+															<Funnel
+																setActiveStep={
+																	setActiveStep
+																}
+																activeStep={
+																	step
+																}
+																onSave={
+																	editor.save
+																}
+															/>
+														</Visibility>
+													);
+												}
+												return (
+													<Visibility
+														isVisible={
+															step === 'preview'
+														}
+													>
+														<Preview
+															completedSteps={
+																editor.completedSteps
+															}
+															onSave={
+																editor.save
+															}
+														/>
+													</Visibility>
+												);
+											} )();
+										} )() }
 									</Fragment>
-								) : step === 'settings' ? (
-									<Visibility isVisible>
-										<Settings
-											setActiveStep={ setActiveStep }
-											activeStep={ step }
-											onSave={ editor.save }
-										/>
-									</Visibility>
-								) : step === 'community' ? (
-									<Visibility isVisible>
-										<Community
-											isCommunityEnabled={
-												course.has_community
-											}
-											courseId={ courseId }
-											course={ course }
-											onToggleCommunity={
-												editor.toggleCommunity
-											}
-											onUpdateCourse={
-												editor.actions.setCourse
-											}
-										/>
-									</Visibility>
-								) : step === 'funnel' ? (
-									<Visibility isVisible>
-										<Funnel
-											setActiveStep={ setActiveStep }
-											activeStep={ step }
-											onSave={ editor.save }
-										/>
-									</Visibility>
-								) : (
-									<Visibility
-										isVisible={ step === 'preview' }
-									>
-										<Preview
-											completedSteps={
-												editor.completedSteps
-											}
-											onSave={ editor.save }
-										/>
-									</Visibility>
-								) }
-							</Fragment>
-						) : null }
+								);
+							}
+							return null;
+						} )() }
 					</div>
 				</div>
 				{ dialogs.automation && (

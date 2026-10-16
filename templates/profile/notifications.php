@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit();
 ?>
 <div class="ohmylms-student-profile-tab-content student-notifications">
 	<h4 class="profile-tab-title">
-		<?php echo __( 'Notifications ', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Notifications ', 'ohmylms' ); ?>
 	</h4>
 
 	<form action="" method="post">
@@ -22,17 +22,17 @@ defined( 'ABSPATH' ) || exit();
 		<div class="ohmylms-notification-box">
 			<div class="ohmylms-notification-settings-group experience-notifications">
 				<p class="settings-group-title">
-					<?php echo __( 'Experience Notifications ', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Experience Notifications ', 'ohmylms' ); ?>
 				</p>
 
 				<div class="single-notification-settings chapter">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php echo __( 'Chapter ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Chapter ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php echo __( 'Notify me when a new Module is released. ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Notify me when a new Module is released. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -47,11 +47,11 @@ defined( 'ABSPATH' ) || exit();
 				<div class="single-notification-settings new-course-content">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php echo __( 'New course content ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'New course content ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php echo __( 'Notify me when new course content is shared. ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Notify me when new course content is shared. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -66,11 +66,11 @@ defined( 'ABSPATH' ) || exit();
 				<!-- <div class="single-notification-settings modules">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php // echo __( 'Modules ', 'ohmylms' ); ?>
+							<?php // echo __( 'Modules ', 'ohmylms' );. ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php // echo __( 'Notify me when a new Module is released. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me when a new Module is released. ', 'ohmylms' );. ?>
 						</p>
 					</div>
 
@@ -86,17 +86,17 @@ defined( 'ABSPATH' ) || exit();
 
 			<!-- <div class="ohmylms-notification-settings-group instructor-notification">
 				<p class="settings-group-title">
-					<?php // echo __( 'Instructor Notifications ', 'ohmylms' ); ?>
+					<?php // echo __( 'Instructor Notifications ', 'ohmylms' );. ?>
 				</p>
 
 				<div class="single-notification-settings registrations">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php // echo __( 'Registrations ', 'ohmylms' ); ?>
+							<?php // echo __( 'Registrations ', 'ohmylms' );. ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php // echo __( 'Notify me about new learner registrations and course applications. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me about new learner registrations and course applications. ', 'ohmylms' );. ?>
 						</p>
 					</div>
 
@@ -111,11 +111,11 @@ defined( 'ABSPATH' ) || exit();
 				<div class="single-notification-settings assignments">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php // echo __( 'Assignments ', 'ohmylms' ); ?>
+							<?php // echo __( 'Assignments ', 'ohmylms' );. ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php // echo __( 'Notify me about new assignment submissions. ', 'ohmylms' ); ?>
+							<?php // echo __( 'Notify me about new assignment submissions. ', 'ohmylms' );. ?>
 						</p>
 					</div>
 
@@ -131,17 +131,17 @@ defined( 'ABSPATH' ) || exit();
 
 			<div class="ohmylms-notification-settings-group community-notifications">
 				<p class="settings-group-title">
-					<?php echo __( 'Community Notifications ', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Community Notifications ', 'ohmylms' ); ?>
 				</p>
 
 				<div class="single-notification-settings direct-messages">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php echo __( 'Direct messages ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Direct messages ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php echo __( 'Notify me when I receive a new direct message. ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Notify me when I receive a new direct message. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 
@@ -156,11 +156,11 @@ defined( 'ABSPATH' ) || exit();
 				<div class="single-notification-settings comments-replies">
 					<div class="notification-settings-left">
 						<h6 class="settings-title">
-							<?php echo __( 'Comments, replies and mentions ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Comments, replies and mentions ', 'ohmylms' ); ?>
 						</h6>
 
 						<p class="settings-desc">
-							<?php echo __( 'Notify me about new comments, replies or when I\'m mentioned. ', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Notify me about new comments, replies or when I\'m mentioned. ', 'ohmylms' ); ?>
 						</p>
 					</div>
 

@@ -15,7 +15,7 @@
 
 <body <?php body_class(); ?>>
 	<?php
-	// Start the page content
+	// Start the page content.
 	if ( have_posts() ) :
 		while ( have_posts() ) :
 			the_post();

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Parsing and tolerance comparison for numerical answers.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -19,7 +24,7 @@ final class NumericAnswer {
 		if ( ! is_scalar( $input ) ) {
 			return null; }
 		$text = trim( str_replace( array( "\u{2212}", "\u{00A0}" ), array( '-', ' ' ), (string) $input ) );
-		if ( $text === '' || strlen( $text ) > 64 ) {
+		if ( '' === $text || strlen( $text ) > 64 ) {
 			return null; }
 		if ( strpos( $text, ',' ) !== false && strpos( $text, '.' ) === false && substr_count( $text, ',' ) === 1 ) {
 			$text = str_replace( ',', '.', $text ); }
@@ -29,10 +34,10 @@ final class NumericAnswer {
 		}
 		if ( $allow_fractions && preg_match( '/^([+-]?)(?:(\d+)\s+)?(\d+)\s*\/\s*(\d+)$/', $text, $match ) ) {
 			$denominator = (float) $match[4];
-			if ( $denominator == 0.0 ) {
+			if ( 0.0 == $denominator ) {
 				return null; }
-			$value = (float) ( $match[2] !== '' ? $match[2] : 0 ) + (float) $match[3] / $denominator;
-			$value = $match[1] === '-' ? -$value : $value;
+			$value = (float) ( '' !== $match[2] ? $match[2] : 0 ) + (float) $match[3] / $denominator;
+			$value = '-' === $match[1] ? -$value : $value;
 			return is_finite( $value ) ? $value : null;
 		}
 		return null;
@@ -44,11 +49,11 @@ final class NumericAnswer {
 	 * @param string $type 'absolute' (|v - e| <= t) or 'relative' (|v - e| <= t * |e|)
 	 */
 	public static function matches( $value, $expected, $tolerance = 0.0, $type = 'absolute' ) {
-		if ( $value === null || ! is_numeric( $expected ) || ! is_finite( (float) $expected ) ) {
+		if ( null === $value || ! is_numeric( $expected ) || ! is_finite( (float) $expected ) ) {
 			return false; }
 		$tolerance  = max( 0.0, (float) $tolerance );
 		$difference = abs( (float) $value - (float) $expected );
-		$limit      = $type === 'relative' ? $tolerance * abs( (float) $expected ) : $tolerance;
+		$limit      = 'relative' === $type ? $tolerance * abs( (float) $expected ) : $tolerance;
 		// Absorb binary floating-point noise (e.g. 0.1 + 0.2) without widening real tolerance.
 		$epsilon = 1e-9 * max( 1.0, abs( (float) $expected ) );
 		return $difference <= $limit + $epsilon;
@@ -72,7 +77,7 @@ final class NumericAnswer {
 			'correct'  => false,
 			'fraction' => 0.0,
 			'manual'   => false,
-			'valid'    => $value !== null,
+			'valid'    => null !== $value,
 		);
 	}
 }

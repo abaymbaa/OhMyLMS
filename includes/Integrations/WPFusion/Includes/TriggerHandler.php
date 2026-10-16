@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Trigger Handler
  *
@@ -39,7 +39,7 @@ class TriggerHandler {
 	 * @since 1.0.0
 	 */
 	private function register_event_listeners() {
-		// Course events
+		// Course events.
 		add_action( 'ohmylms_course_completed', array( $this, 'handle_course_completed' ), 10, 3 );
 		add_action( 'ohmylms_manual_student_enrollment', array( $this, 'handle_manual_course_enrollment' ), 10, 2 );
 
@@ -49,13 +49,13 @@ class TriggerHandler {
 
 		add_action( 'ohmylms_student_unenrolled', array( $this, 'handle_course_unenrollment' ), 10, 2 );
 
-		// Lesson events
+		// Lesson events.
 		add_action( 'ohmylms_lesson_completed', array( $this, 'handle_lesson_completed' ), 10, 3 );
 
-		// Quiz events
+		// Quiz events.
 		add_action( 'ohmylms_quiz_submission', array( $this, 'handle_quiz_submitted' ), 10, 4 );
 
-		// Assignment events
+		// Assignment events.
 		add_action( 'ohmylms_after_assignment_submitted', array( $this, 'handle_assignment_submitted' ), 10, 3 );
 
 		add_action( 'ohmylms_course_completion_rate', array( $this, 'course_completion_rate' ), 10, 3 );
@@ -406,7 +406,7 @@ class TriggerHandler {
 
 		$table_name = WPFusionMigration::get_table_name();
 
-		// Extract content type and ID from event data
+		// Extract content type and ID from event data.
 		$content_type = '';
 		$content_id   = 0;
 
@@ -427,7 +427,7 @@ class TriggerHandler {
 		// Build query to find matching triggers
 		// All events (including course events) can be stored as either:
 		// 1. Direct match: trigger_event = 'course_enrollment'
-		// 2. Multiple events: trigger_event = 'multiple' with actions array
+		// 2. Multiple events: trigger_event = 'multiple' with actions array.
 		$triggers = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT * FROM {$table_name} 
@@ -447,18 +447,18 @@ class TriggerHandler {
 			return;
 		}
 
-		// Filter triggers for 'multiple' type to ensure they have the current event configured
+		// Filter triggers for 'multiple' type to ensure they have the current event configured.
 		$valid_triggers = array();
 		foreach ( $triggers as $trigger ) {
-			if ( $trigger['trigger_event'] === 'multiple' ) {
-				// Decode action_data to check if this event is configured
+			if ( 'multiple' === $trigger['trigger_event'] ) {
+				// Decode action_data to check if this event is configured.
 				$action_data = json_decode( $trigger['action_data'], true );
 
 				if ( isset( $action_data['actions'] ) && is_array( $action_data['actions'] ) ) {
 					$has_event = false;
 					foreach ( $action_data['actions'] as $action ) {
 						// Check against the full event name (e.g., 'ohmylms_manual_student_enrollment')
-						// NOT the trigger_type (e.g., 'course_enrollment')
+						// NOT the trigger_type (e.g., 'course_enrollment').
 						if ( isset( $action['event'] ) && $action['event'] === $event_name ) {
 							$has_event = true;
 							break;
@@ -470,7 +470,7 @@ class TriggerHandler {
 					}
 				}
 			} else {
-				// Direct trigger_event match, always include
+				// Direct trigger_event match, always include.
 				$valid_triggers[] = $trigger;
 			}
 		}
@@ -479,7 +479,7 @@ class TriggerHandler {
 			return;
 		}
 
-		// Check if WP Fusion is enabled and connected
+		// Check if WP Fusion is enabled and connected.
 		if ( defined( 'WP_FUSION_VERSION' ) === false ) {
 			return;
 		}
@@ -488,11 +488,11 @@ class TriggerHandler {
 			return;
 		}
 
-		// Add trigger_type to event_data for matching in execute_trigger
+		// Add trigger_type to event_data for matching in execute_trigger.
 		$event_data['trigger_type'] = $trigger_type;
-		$event_data['event_name']   = $event_name; // Add full event name for matching
+		$event_data['event_name']   = $event_name; // Add full event name for matching.
 
-		// Queue each valid trigger for background processing
+		// Queue each valid trigger for background processing.
 		foreach ( $valid_triggers as $trigger ) {
 			$this->queue_integration_processing( $trigger, $event_data );
 		}
@@ -506,7 +506,7 @@ class TriggerHandler {
 	 * @since 1.0.0
 	 */
 	private function queue_integration_processing( $trigger, $event_data ) {
-		// Use Action Scheduler if available (comes with WooCommerce)
+		// Use Action Scheduler if available (comes with WooCommerce).
 		if ( function_exists( 'as_enqueue_async_action' ) ) {
 			as_enqueue_async_action(
 				'ohmylms_wpfusion_process_integration',
@@ -517,7 +517,7 @@ class TriggerHandler {
 				'ohmylms-integrations'
 			);
 		} else {
-			// Fallback to WordPress Cron
+			// Fallback to WordPress Cron.
 			wp_schedule_single_event(
 				time(),
 				'ohmylms_wpfusion_process_integration',
@@ -527,7 +527,7 @@ class TriggerHandler {
 				)
 			);
 
-			// Spawn WP Cron immediately in non-blocking way
+			// Spawn WP Cron immediately in non-blocking way.
 			$this->spawn_cron();
 		}
 	}
@@ -538,15 +538,15 @@ class TriggerHandler {
 	 * @since 1.0.0
 	 */
 	private function spawn_cron() {
-		// Only spawn if not already running
+		// Only spawn if not already running.
 		if ( defined( 'DOING_CRON' ) && DOING_CRON ) {
 			return;
 		}
 
-		// Get cron URL
+		// Get cron URL.
 		$cron_url = site_url( 'wp-cron.php?doing_wp_cron=' . time() );
 
-		// Spawn cron in non-blocking way
+		// Spawn cron in non-blocking way.
 		wp_remote_post(
 			$cron_url,
 			array(
@@ -565,9 +565,9 @@ class TriggerHandler {
 	 * @since 1.0.0
 	 */
 	public function process_integration_background( $trigger, $event_data ) {
-		// Check if WP Fusion is still available
+		// Check if WP Fusion is still available.
 		if ( defined( 'WP_FUSION_VERSION' ) === false || ! wp_fusion()->crm ) {
-			// Retry once after 30 seconds if WP Fusion is not available
+			// Retry once after 30 seconds if WP Fusion is not available.
 			if ( function_exists( 'as_schedule_single_action' ) ) {
 				as_schedule_single_action(
 					time() + 30,
@@ -583,7 +583,7 @@ class TriggerHandler {
 		}
 
 		try {
-			// Process the trigger
+			// Process the trigger.
 			$this->execute_trigger( $trigger, $event_data );
 		} catch ( \Exception $e ) {
 			do_action( 'ohmylms_wpfusion_integration_failed', $trigger, $event_data, $e );
@@ -608,10 +608,10 @@ class TriggerHandler {
 
 		$trigger_event = isset( $trigger['trigger_event'] ) ? $trigger['trigger_event'] : '';
 
-		// Check if action_data has the new 'actions' array structure (multiple actions in one integration)
+		// Check if action_data has the new 'actions' array structure (multiple actions in one integration).
 		if ( isset( $action_data['actions'] ) && is_array( $action_data['actions'] ) ) {
 			// New format: multiple actions with different events
-			// Get the actual event name from event_data (full WordPress hook name)
+			// Get the actual event name from event_data (full WordPress hook name).
 			$current_event = '';
 			if ( isset( $event_data['event_name'] ) ) {
 				$current_event = $event_data['event_name'];
@@ -619,9 +619,9 @@ class TriggerHandler {
 
 			foreach ( $action_data['actions'] as $action ) {
 				// Check if this action's event matches the current event being triggered
-				// Compare full event names (e.g., 'ohmylms_manual_student_enrollment')
+				// Compare full event names (e.g., 'ohmylms_manual_student_enrollment').
 				if ( isset( $action['event'] ) && $action['event'] === $current_event ) {
-					// Execute this specific action
+					// Execute this specific action.
 					switch ( $action_type ) {
 						case 'apply_tags':
 							$this->execute_apply_tags( $student_id, $action );
@@ -632,10 +632,10 @@ class TriggerHandler {
 							break;
 					}
 				}
-				// Note: Non-matching actions are silently skipped (this is expected for multiple-event integrations)
+				// Note: Non-matching actions are silently skipped (this is expected for multiple-event integrations).
 			}
 		} else {
-			// Old format: single action (backward compatibility)
+			// Old format: single action (backward compatibility).
 			switch ( $action_type ) {
 				case 'apply_tags':
 					$this->execute_apply_tags( $student_id, $action_data );
@@ -647,7 +647,7 @@ class TriggerHandler {
 			}
 		}
 
-		// Log trigger execution
+		// Log trigger execution.
 		do_action( 'ohmylms_wpfusion_trigger_executed', $trigger, $event_data );
 	}
 
@@ -663,13 +663,13 @@ class TriggerHandler {
 			return;
 		}
 
-		// Get user by student ID
+		// Get user by student ID.
 		$user = get_user_by( 'ID', $student_id );
 		if ( ! $user ) {
 			return;
 		}
 
-		// Prepare user data
+		// Prepare user data.
 		$email     = $user->user_email;
 		$firstName = get_user_meta( $student_id, 'first_name', true );
 		$lastName  = get_user_meta( $student_id, 'last_name', true );
@@ -682,7 +682,7 @@ class TriggerHandler {
 			'phone'      => $phone ? $phone : '',
 		);
 
-		// Create contact in CRM
+		// Create contact in CRM.
 		$contact_id = wp_fusion()->crm->add_contact( $contact_data );
 
 		if ( is_wp_error( $contact_id ) ) {
@@ -692,22 +692,22 @@ class TriggerHandler {
 			}
 		}
 
-		// Ensure tags is an array
+		// Ensure tags is an array.
 		$tags = is_array( $action_data['tag_ids'] ) ? $action_data['tag_ids'] : array( $action_data['tag_ids'] );
 
-		// Remove any empty values
+		// Remove any empty values.
 		$tags = array_filter( $tags );
 
 		if ( empty( $tags ) ) {
 			return;
 		}
 
-		// Apply tags to contact
+		// Apply tags to contact.
 		if ( ! is_wp_error( $contact_id ) ) {
 			wp_fusion()->crm->apply_tags( $tags, $contact_id );
 		}
 
-		// Log the action for tracking
+		// Log the action for tracking.
 		do_action( 'ohmylms_wpfusion_tags_applied', $student_id, $tags );
 	}
 
@@ -723,26 +723,26 @@ class TriggerHandler {
 			return;
 		}
 
-		// Get user by student ID
+		// Get user by student ID.
 		$user = get_user_by( 'ID', $student_id );
 		if ( ! $user ) {
 			return;
 		}
 
-		// Ensure tags is an array
+		// Ensure tags is an array.
 		$tags = is_array( $action_data['tag_ids'] ) ? $action_data['tag_ids'] : array( $action_data['tag_ids'] );
 
-		// Remove any empty values
+		// Remove any empty values.
 		$tags = array_filter( $tags );
 
 		if ( empty( $tags ) ) {
 			return;
 		}
 
-		// Remove tags using WP Fusion
+		// Remove tags using WP Fusion.
 		wp_fusion()->user->remove_tags( $tags, $student_id );
 
-		// Log the action for tracking
+		// Log the action for tracking.
 		do_action( 'ohmylms_wpfusion_tags_removed', $student_id, $tags );
 	}
 }

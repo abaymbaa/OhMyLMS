@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails email header template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

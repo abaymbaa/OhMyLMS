@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $membership;
-if ( $membership == null ) {
+if ( null == $membership ) {
 	return;
 }
 $args = array(

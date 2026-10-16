@@ -5,17 +5,17 @@ import {
 	useState,
 } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-
 export function MCPSettings() {
 	const [ settings, setSettings ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ busy, setBusy ] = useState( '' );
 	const [ issued, setIssued ] = useState( null );
 	const [ copied, setCopied ] = useState( '' );
-
 	useEffect( () => {
 		let active = true;
-		apiFetch( { path: '/ohmylms/v1/mcp/settings' } ).then(
+		apiFetch( {
+			path: '/ohmylms/v1/mcp/settings',
+		} ).then(
 			( data ) => active && setSettings( data ),
 			( failure ) =>
 				active &&
@@ -25,7 +25,6 @@ export function MCPSettings() {
 			active = false;
 		};
 	}, [] );
-
 	async function update( provider, action ) {
 		setBusy( provider.id );
 		setError( '' );
@@ -34,12 +33,17 @@ export function MCPSettings() {
 			const data = await apiFetch( {
 				path: `/ohmylms/v1/mcp/settings/${ provider.id }`,
 				method: 'POST',
-				data: { action },
+				data: {
+					action,
+				},
 			} );
 			setSettings( data );
 			setIssued(
 				data.token
-					? { provider: provider.label, token: data.token }
+					? {
+							provider: provider.label,
+							token: data.token,
+						}
 					: null
 			);
 		} catch ( failure ) {
@@ -48,7 +52,6 @@ export function MCPSettings() {
 			setBusy( '' );
 		}
 	}
-
 	async function copy( value, label ) {
 		try {
 			await navigator.clipboard.writeText( value );
@@ -59,11 +62,12 @@ export function MCPSettings() {
 			);
 		}
 	}
-
 	return (
 		<section
 			aria-labelledby="ohmylms-mcp-heading"
-			style={ { maxWidth: 900 } }
+			style={ {
+				maxWidth: 900,
+			} }
 		>
 			<h2 id="ohmylms-mcp-heading">MCP connections</h2>
 			<p>Connect OpenAI, Anthropic, and Gemini assistants to your LMS.</p>
@@ -170,11 +174,15 @@ export function MCPSettings() {
 								}
 								onClick={ () => update( provider, 'generate' ) }
 							>
-								{ busy === provider.id
-									? 'Updating…'
-									: provider.configured
-										? 'Replace token'
-										: 'Generate token' }
+								{ ( () => {
+									if ( busy === provider.id ) {
+										return 'Updating…';
+									}
+									if ( provider.configured ) {
+										return 'Replace token';
+									}
+									return 'Generate token';
+								} )() }
 							</button>{ ' ' }
 							<button
 								className="button"

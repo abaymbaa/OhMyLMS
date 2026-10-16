@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * WPFusionAuthController class.
  *
@@ -66,7 +66,7 @@ class WPFusionAuthController {
 	 * @return void
 	 */
 	public function register_routes() {
-		// Connect to WP Fusion
+		// Connect to WP Fusion.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/connect',
@@ -80,7 +80,7 @@ class WPFusionAuthController {
 			)
 		);
 
-		// Get connection status
+		// Get connection status.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/status',
@@ -93,7 +93,7 @@ class WPFusionAuthController {
 			)
 		);
 
-		// Disconnect from WP Fusion
+		// Disconnect from WP Fusion.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/disconnect',
@@ -106,7 +106,7 @@ class WPFusionAuthController {
 			)
 		);
 
-		// Get available tags
+		// Get available tags.
 		\register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/tags',
@@ -144,7 +144,7 @@ class WPFusionAuthController {
 		$api_url = \sanitize_text_field( $request->get_param( 'api_url' ) );
 		$api_key = \sanitize_text_field( $request->get_param( 'api_key' ) );
 
-		// Validate the API credentials
+		// Validate the API credentials.
 		$api_client        = new WPFusionApiClient( $api_url, $api_key );
 		$validation_result = $api_client->validate_credentials();
 
@@ -158,7 +158,7 @@ class WPFusionAuthController {
 			);
 		}
 
-		// Save the credentials
+		// Save the credentials.
 		$credentials = array(
 			'api_url'      => $api_url,
 			'api_key'      => $api_key,
@@ -194,7 +194,7 @@ class WPFusionAuthController {
 	 */
 	public function get_status( $request ) {
 		try {
-			// Check if WP Fusion integration is enabled in OhMyLMS settings
+			// Check if WP Fusion integration is enabled in OhMyLMS settings.
 			$integration_settings = get_option( 'ohmylms_integrations', array() );
 			$is_enabled           = isset( $integration_settings['wpfusion']['is_enable'] ) &&
 							1 === (int) $integration_settings['wpfusion']['is_enable'];
@@ -214,7 +214,7 @@ class WPFusionAuthController {
 				);
 			}
 
-			// Check if WP Fusion class exists
+			// Check if WP Fusion class exists.
 			if ( defined( 'WP_FUSION_VERSION' ) === false ) {
 				return new \WP_REST_Response(
 					array(
@@ -230,7 +230,7 @@ class WPFusionAuthController {
 				);
 			}
 
-			// Check if WP Fusion CRM is connected (WPFunnels pattern)
+			// Check if WP Fusion CRM is connected (WPFunnels pattern).
 			if ( ! wp_fusion()->crm || ! wp_fusion()->crm->connect( null, false ) ) {
 				return new \WP_REST_Response(
 					array(
@@ -246,7 +246,7 @@ class WPFusionAuthController {
 				);
 			}
 
-			// Get CRM name
+			// Get CRM name.
 			$crmName = wp_fusion()->crm->name ?? 'Unknown';
 
 			return new \WP_REST_Response(
@@ -309,7 +309,7 @@ class WPFusionAuthController {
 	 * @return WP_REST_Response
 	 */
 	public function get_tags( $request ) {
-		// Check if WP Fusion is available
+		// Check if WP Fusion is available.
 		if ( defined( 'WP_FUSION_VERSION' ) === false ) {
 			return new \WP_REST_Response(
 				array(
@@ -330,18 +330,18 @@ class WPFusionAuthController {
 			);
 		}
 
-		// Get tags directly from WP Fusion
+		// Get tags directly from WP Fusion.
 		$available_tags = wp_fusion()->settings->get( 'available_tags', array() );
 
 		if ( empty( $available_tags ) ) {
-			// Try to sync tags if none are cached
+			// Try to sync tags if none are cached.
 			if ( method_exists( wp_fusion()->crm, 'sync_tags' ) ) {
 				wp_fusion()->crm->sync_tags();
 				$available_tags = wp_fusion()->settings->get( 'available_tags', array() );
 			}
 		}
 
-		// Format tags for frontend
+		// Format tags for frontend.
 		$formatted_tags = array();
 		foreach ( $available_tags as $tag_id => $tag_name ) {
 			$formatted_tags[] = array(

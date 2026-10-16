@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * XP: a learner's effort ledger. Never spent, never graded, never a mastery measure.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Assessment\Schema;
@@ -85,9 +90,9 @@ final class Xp {
 				gmdate( 'Y-m-d H:i:s', $now )
 			)
 		);
-		$new    = (int) $wpdb->rows_affected === 1;
+		$new    = 1 === (int) $wpdb->rows_affected;
 		$stored = $new ? (int) $xp : (int) $wpdb->get_var( $wpdb->prepare( "SELECT xp FROM $table WHERE student_id=%d AND event_key=%s", (int) $student, (string) $key ) );
-		if ( $new && $kind !== 'goal' ) {
+		if ( $new && 'goal' !== $kind ) {
 			do_action( 'ohmylms_xp_awarded', (int) $student, $stored, $kind, $meta );
 			self::check_goal( $student ); }
 		return array(
@@ -127,12 +132,12 @@ final class Xp {
 	/** Totals and the last week, for the dashboard and the API. */
 	public static function summary( $student, $history_days = 7 ) {
 		global $wpdb;
-		$today  = self::today( $student );
-		$goal   = self::goal( $student );
+		$today                   = self::today( $student );
+		$goal                    = self::goal( $student );
 		list( $monday, $sunday ) = XpRules::week( $today );
-		$span   = max( 7, min( 90, (int) $history_days ) );
-		$from   = ( new \DateTimeImmutable( $today ) )->modify( '-' . ( $span - 1 ) . ' days' )->format( 'Y-m-d' );
-		$by_day = array();
+		$span                    = max( 7, min( 90, (int) $history_days ) );
+		$from                    = ( new \DateTimeImmutable( $today ) )->modify( '-' . ( $span - 1 ) . ' days' )->format( 'Y-m-d' );
+		$by_day                  = array();
 		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT local_date, SUM(xp) AS xp FROM ' . XpSchema::table( 'xp_events' ) . ' WHERE student_id=%d AND local_date BETWEEN %s AND %s GROUP BY local_date', (int) $student, $from, $today ), ARRAY_A ) as $row ) {
 			$by_day[ $row['local_date'] ] = (int) $row['xp']; }
 		$days = array();
@@ -172,27 +177,38 @@ final class Xp {
 		if ( ! self::enabled() || ! Schema::ready() ) {
 			return null; }
 		$session = Sessions::get( $uuid );
-		if ( ! $session || $session['status'] !== 'complete' || ! (int) $session['student_id'] || $session['mode'] !== 'skill' ) {
+		if ( ! $session || 'complete' !== $session['status'] || ! (int) $session['student_id'] || 'skill' !== $session['mode'] ) {
 			return null; }
 		$student = (int) $session['student_id'];
 		// The evidence for the last answers is written asynchronously; settle it first so the
 		// challenge zone is judged on the score each answer was actually made at.
 		Evidence::process( 100 );
-		$items    = Sessions::items( $session['id'] );
-		$lesson   = ( $session['policy']['style'] ?? '' ) === 'lesson';
-		$planned  = array_values( array_filter( $items, static function ( $item ) use ( $lesson ) {
-			return $item['answered_at'] !== null && ( ! $lesson || empty( $item['display']['replay_of'] ) );
-		} ) );
-		$answered = array_filter( $planned, static function ( $item ) {
-			return StreakCalendar::meaningful( $item['response'] );
-		} );
-		$right    = array_filter( $planned, static function ( $item ) {
-			return (int) $item['correct'] === 1;
-		} );
+		$items     = Sessions::items( $session['id'] );
+		$lesson    = ( $session['policy']['style'] ?? '' ) === 'lesson';
+		$planned   = array_values(
+			array_filter(
+				$items,
+				static function ( $item ) use ( $lesson ) {
+					return null !== $item['answered_at'] && ( ! $lesson || empty( $item['display']['replay_of'] ) );
+				}
+			)
+		);
+		$answered  = array_filter(
+			$planned,
+			static function ( $item ) {
+				return StreakCalendar::meaningful( $item['response'] );
+			}
+		);
+		$right     = array_filter(
+			$planned,
+			static function ( $item ) {
+				return 1 === (int) $item['correct'];
+			}
+		);
 		$challenge = 0;
 		if ( Score::enabled() ) {
-			$trace  = Score::trace( $student, (int) $session['term_id'] );
-			$events = $wpdb->get_results( $wpdb->prepare( 'SELECT id, item_id FROM ' . Schema::table( 'grade_events' ) . " WHERE source_type='practice' AND source_id=%d AND superseded_by=0", (int) $session['id'] ), ARRAY_A );
+			$trace   = Score::trace( $student, (int) $session['term_id'] );
+			$events  = $wpdb->get_results( $wpdb->prepare( 'SELECT id, item_id FROM ' . Schema::table( 'grade_events' ) . " WHERE source_type='practice' AND source_id=%d AND superseded_by=0", (int) $session['id'] ), ARRAY_A );
 			$by_item = array();
 			foreach ( $events as $event ) {
 				$by_item[ (int) $event['item_id'] ] = (int) $event['id']; }
@@ -231,7 +247,10 @@ final class Xp {
 			'practice',
 			(int) $session['id']
 		);
-		return $award ? $award + array( 'parts' => $result['parts'], 'capped' => $capped['capped'] ) : null;
+		return $award ? $award + array(
+			'parts'  => $result['parts'],
+			'capped' => $capped['capped'],
+		) : null;
 	}
 
 	/** What a finished session earned, as stored (for the summary the learner sees). */

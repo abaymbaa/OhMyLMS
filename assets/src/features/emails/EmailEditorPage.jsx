@@ -16,19 +16,25 @@ export function createEmailEditorPage( readRuntime ) {
 			y: WordPressData,
 		} = readRuntime();
 		var e = ( 0, Router.g )().id,
-			t = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getEmail();
+			t = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getEmail();
 			}, [] ),
 			n = ( 0, Router.Zp )();
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
 					var r;
-					( Boolean( t ) &&
-						( null == t || null === ( r = t.basic ) || void 0 === r
+					if ( ! (
+						Boolean( t ) &&
+						( t === null ||
+						t === void 0 ||
+						null === ( r = t.basic ) ||
+						void 0 === r
 							? void 0
-							: r.id ) === e ) ||
+							: r.id ) === e
+					) ) {
 						n( '/settings/emails-settings' );
+					}
 				},
 				[ e, t, n ]
 			),
@@ -58,19 +64,21 @@ export function createEmailEditorPage( readRuntime ) {
 											level={ 2 }
 											size={ 20 }
 										>
-											{ ( function ( e ) {
-												return e
+											{ ( function ( _eLocal2 ) {
+												return _eLocal2
 													.split( '_' )
-													.map( function ( e ) {
-														return (
-															e
-																.charAt( 0 )
-																.toUpperCase() +
-															e
-																.slice( 1 )
-																.toLowerCase()
-														);
-													} )
+													.map(
+														function ( _eLocal3 ) {
+															return (
+																_eLocal3
+																	.charAt( 0 )
+																	.toUpperCase() +
+																_eLocal3
+																	.slice( 1 )
+																	.toLowerCase()
+															);
+														}
+													)
 													.join( ' ' );
 											} )( e ) ||
 												( 0, I18n.__ )(

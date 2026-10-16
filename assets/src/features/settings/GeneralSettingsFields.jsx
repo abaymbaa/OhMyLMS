@@ -20,100 +20,144 @@ export function createGeneralSettingsFields( readRuntime ) {
 				return e( StoreModule.default ).getGeneralSettings();
 			}, [] ),
 			o = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			i = function ( e, t ) {
+			i = function ( e, _tLocal ) {
 				o.updateGeneralSettings(
-					( function ( e, t, n ) {
+					( function ( _eLocal, _tLocal2, _nLocal ) {
 						return (
-							( t = ( function ( e ) {
-								var t = ( function ( e ) {
-									if ( 'object' != gK( e ) || ! e ) {
-										return e;
+							( _tLocal2 = ( function ( _eLocal2 ) {
+								var _tLocal3 = ( function ( _eLocal3 ) {
+									if (
+										'object' != gK( _eLocal3 ) ||
+										! _eLocal3
+									) {
+										return _eLocal3;
 									}
-									var t = e[ Symbol.toPrimitive ];
-									if ( void 0 !== t ) {
-										var n = t.call( e, 'string' );
-										if ( 'object' != gK( n ) ) {
-											return n;
+									var _tLocal4 =
+										_eLocal3[ Symbol.toPrimitive ];
+									if ( void 0 !== _tLocal4 ) {
+										var _nLocal2 = _tLocal4.call(
+											_eLocal3,
+											'string'
+										);
+										if ( 'object' != gK( _nLocal2 ) ) {
+											return _nLocal2;
 										}
 										throw new TypeError(
 											'@@toPrimitive must return a primitive value.'
 										);
 									}
-									return String( e );
-								} )( e );
-								return 'symbol' == gK( t ) ? t : t + '';
-							} )( t ) ) in e
-								? Object.defineProperty( e, t, {
-										value: n,
+									return String( _eLocal3 );
+								} )( _eLocal2 );
+								return 'symbol' == gK( _tLocal3 )
+									? _tLocal3
+									: _tLocal3 + '';
+							} )( _tLocal2 ) ) in _eLocal
+								? Object.defineProperty( _eLocal, _tLocal2, {
+										value: _nLocal,
 										enumerable: ! 0,
 										configurable: ! 0,
 										writable: ! 0,
 									} )
-								: ( e[ t ] = n ),
-							e
+								: ( _eLocal[ _tLocal2 ] = _nLocal ),
+							_eLocal
 						 );
 					} )( {}, e, {
-						value: null == t ? void 0 : t.value,
-						meta_data: null == t ? void 0 : t.label,
+						value:
+							_tLocal === null || _tLocal === void 0
+								? void 0
+								: _tLocal.value,
+						meta_data:
+							_tLocal === null || _tLocal === void 0
+								? void 0
+								: _tLocal.label,
 					} )
 				);
 			},
 			l = ( function () {
 				var e,
-					t =
-						( ( e = hK().m( function e( t ) {
-							var r;
-							return hK().w( function ( e ) {
+					_tLocal5 =
+						( ( e = hK().m( function _eLocal4( _tLocal6 ) {
+							var _rLocal;
+							return hK().w( function ( _eLocal5 ) {
 								for (;;) {
-									if ( 0 === e.n ) {
+									if ( 0 === _eLocal5.n ) {
 										return (
-											( r = n.filter( function ( e ) {
-												return e.label
-													.toLowerCase()
-													.includes(
-														t.toLowerCase()
-													);
-											} ) ),
-											e.a( 2, r )
+											( _rLocal = n.filter(
+												function ( _eLocal6 ) {
+													return _eLocal6.label
+														.toLowerCase()
+														.includes(
+															_tLocal6.toLowerCase()
+														);
+												}
+											) ),
+											_eLocal5.a( 2, _rLocal )
 										 );
 									}
 								}
-							}, e );
+							}, _eLocal4 );
 						} ) ),
-						function () {
-							var t = this,
-								n = arguments;
-							return new Promise( function ( r, a ) {
-								var o = e.apply( t, n );
-								function i( e ) {
-									bK( o, r, a, i, l, 'next', e );
+						function ( ..._args ) {
+							var _tLocal7 = this,
+								_nLocal3 = _args;
+							return new Promise( function ( _rLocal2, _aLocal ) {
+								var _oLocal = e.apply( _tLocal7, _nLocal3 );
+								function _iLocal( _eLocal7 ) {
+									bK(
+										_oLocal,
+										_rLocal2,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'next',
+										_eLocal7
+									);
 								}
-								function l( e ) {
-									bK( o, r, a, i, l, 'throw', e );
+								function _lLocal( _eLocal8 ) {
+									bK(
+										_oLocal,
+										_rLocal2,
+										_aLocal,
+										_iLocal,
+										_lLocal,
+										'throw',
+										_eLocal8
+									);
 								}
-								i( void 0 );
+								_iLocal( void 0 );
 							} );
 						} );
-				return function ( e ) {
-					return t.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _tLocal5.apply( this, _args2 );
 				};
 			} )(),
 			c = function ( e ) {
-				var t = ( function ( e ) {
-					var t = null == a ? void 0 : a[ e ];
-					return t
-						? 'object' === gK( t ) && void 0 !== t.value
-							? t.value
-							: t
-						: null;
+				var _tLocal8 = ( function ( _eLocal0 ) {
+					var _tLocal9 =
+						a === null || a === void 0 ? void 0 : a[ _eLocal0 ];
+					return ( () => {
+						if ( _tLocal9 ) {
+							if (
+								'object' === gK( _tLocal9 ) &&
+								void 0 !== _tLocal9.value
+							) {
+								return _tLocal9.value;
+							}
+							return _tLocal9;
+						}
+						return null;
+					} )();
 				} )( e );
-				if ( ! t || '-1' === t || -1 === t ) {
+				if ( ! _tLocal8 || '-1' === _tLocal8 || -1 === _tLocal8 ) {
 					return [];
 				}
-				var r = n.find( function ( e ) {
-					return e.value === t || e.value === String( t );
+				var _rLocal3 = n.find( function ( _eLocal1 ) {
+					return (
+						_eLocal1.value === _tLocal8 ||
+						_eLocal1.value === String( _tLocal8 )
+					);
 				} );
-				return r ? [ r ] : [];
+				return _rLocal3 ? [ _rLocal3 ] : [];
 			};
 		return (
 			<React.Fragment>

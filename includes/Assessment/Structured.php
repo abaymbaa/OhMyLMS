@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Structured (multi-part) questions: one shared stem/diagram with separately scored parts.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;
@@ -71,13 +76,13 @@ final class Structured {
 		foreach ( $parts as $part ) {
 			$input   = $answer[ $part['id'] ] ?? '';
 			$present = is_scalar( $input ) && trim( (string) $input ) !== '';
-			if ( $part['kind'] === 'written' ) {
+			if ( 'written' === $part['kind'] ) {
 				$results[ $part['id'] ] = $present ? null : 0.0;
 				$manual                 = $manual || $present;
 				$all                    = false;
 				continue;
 			}
-			if ( $part['kind'] === 'numerical' ) {
+			if ( 'numerical' === $part['kind'] ) {
 				$fraction = NumericAnswer::grade( $input, $part )['fraction'];
 			} else {
 				$accepted = array_map(
@@ -122,7 +127,7 @@ final class Structured {
 				return __( 'Part kind must be numerical, text or written.', 'ohmylms' ); }
 			if ( isset( $part['marks'] ) && ( ! is_numeric( $part['marks'] ) || (float) $part['marks'] < 0 ) ) {
 				return __( 'Part marks must be zero or more.', 'ohmylms' ); }
-			if ( $part['kind'] === 'numerical' ) {
+			if ( 'numerical' === $part['kind'] ) {
 				$expected = $part['answers'] ?? array( $part['answer'] ?? null );
 				foreach ( (array) $expected as $value ) {
 					if ( ! is_numeric( $value ) || ! is_finite( (float) $value ) ) {
@@ -131,7 +136,7 @@ final class Structured {
 				if ( isset( $part['tolerance'] ) && ( ! is_numeric( $part['tolerance'] ) || (float) $part['tolerance'] < 0 ) ) {
 					return __( 'Tolerance must be zero or more.', 'ohmylms' ); }
 			}
-			if ( $part['kind'] === 'text' && ! array_filter( (array) ( $part['accepted'] ?? array() ), 'strlen' ) ) {
+			if ( 'text' === $part['kind'] && ! array_filter( (array) ( $part['accepted'] ?? array() ), 'strlen' ) ) {
 				return __( 'Text parts need at least one accepted answer.', 'ohmylms' ); }
 		}
 		return true;

@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course Bundles: administrator-curated groupings of selected courses and curriculum items
+ * (typically syllabuses) that may span curricula. A course or curriculum item can sit in any
+ * number of bundles without being copied. A bundle never grants access: following it only adds
+ * it to a learner's dashboard.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Bundles;
 
 use OhMyLMS\Curriculum\Access;
@@ -19,7 +27,7 @@ final class Bundles {
 	const STATUSES     = array( 'draft', 'published' );
 	const MEMBER_TYPES = array( 'course', 'curriculum' );
 	const MAX_MEMBERS  = 100;
-	const MAX_BUNDLES   = 200;
+	const MAX_BUNDLES  = 200;
 
 	public static function table() {
 		return Schema::table( 'bundles' ); }
@@ -38,7 +46,7 @@ final class Bundles {
 	/** @return array[] Bundles in display order, optionally only one status. */
 	public static function all( $status = null ) {
 		global $wpdb;
-		if ( $status !== null && in_array( $status, self::STATUSES, true ) ) {
+		if ( null !== $status && in_array( $status, self::STATUSES, true ) ) {
 			return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE status=%s ORDER BY position, id', $status ), ARRAY_A ) ?: array();
 		}
 		return $wpdb->get_results( 'SELECT * FROM ' . self::table() . ' ORDER BY position, id', ARRAY_A ) ?: array();
@@ -48,7 +56,7 @@ final class Bundles {
 		$fields = array();
 		if ( ! $partial || array_key_exists( 'title', $data ) ) {
 			$title = trim( sanitize_text_field( (string) ( $data['title'] ?? '' ) ) );
-			if ( $title === '' ) {
+			if ( '' === $title ) {
 				return Access::error( 'ohmylms_bundle_invalid', __( 'A bundle needs a name.', 'ohmylms' ) ); }
 			if ( mb_strlen( $title ) > 190 ) {
 				return Access::error( 'ohmylms_bundle_invalid', __( 'Bundle names can have at most 190 characters.', 'ohmylms' ) ); }
@@ -93,7 +101,7 @@ final class Bundles {
 		$fields = self::clean( $data, true );
 		if ( is_wp_error( $fields ) ) {
 			return $fields; }
-		if ( $expected_updated_at !== null && $expected_updated_at !== '' && (string) $expected_updated_at !== $bundle['updated_at'] ) {
+		if ( null !== $expected_updated_at && '' !== $expected_updated_at && (string) $expected_updated_at !== $bundle['updated_at'] ) {
 			return self::stale(); }
 		if ( $fields ) {
 			$fields['updated_at'] = current_time( 'mysql', true );
@@ -123,9 +131,9 @@ final class Bundles {
 
 	/** Is this a valid member to add? Courses may be unpublished while a bundle is being prepared. */
 	private static function valid_member( $type, $id ) {
-		if ( $type === 'course' ) {
+		if ( 'course' === $type ) {
 			return Links::target_exists( 'course', $id ); }
-		return $type === 'curriculum' && Items::get( $id ) !== null;
+		return 'curriculum' === $type && Items::get( $id ) !== null;
 	}
 
 	/**
@@ -137,7 +145,7 @@ final class Bundles {
 		$bundle = self::get( $bundle_id );
 		if ( ! $bundle ) {
 			return self::missing(); }
-		if ( $expected_updated_at !== null && $expected_updated_at !== '' && (string) $expected_updated_at !== $bundle['updated_at'] ) {
+		if ( null !== $expected_updated_at && '' !== $expected_updated_at && (string) $expected_updated_at !== $bundle['updated_at'] ) {
 			return self::stale(); }
 		if ( count( $members ) > self::MAX_MEMBERS ) {
 			return Access::error( 'ohmylms_bundle_limit', sprintf( __( 'A bundle can have at most %d members.', 'ohmylms' ), self::MAX_MEMBERS ), 409 ); }
@@ -156,7 +164,7 @@ final class Bundles {
 				'id'   => $id,
 			);
 		}
-		if ( $bundle['status'] === 'published' && ! $clean ) {
+		if ( 'published' === $bundle['status'] && ! $clean ) {
 			return Access::error( 'ohmylms_bundle_empty', __( 'A published bundle needs at least one member. Unpublish it first to empty it.', 'ohmylms' ), 409 ); }
 		try {
 			Transaction::run(
@@ -168,7 +176,7 @@ final class Bundles {
 						if ( ! $wpdb->insert(
 							self::members_table(),
 							array(
-								'bundle_id'   => (int) $bundle_id,
+								'bundle_id'  => (int) $bundle_id,
 								'item_type'  => $member['type'],
 								'item_id'    => $member['id'],
 								'position'   => $position,
@@ -207,7 +215,7 @@ final class Bundles {
 		$fields = array(
 			'status'     => $status,
 			'updated_at' => $now,
-		) + ( $published && $bundle['status'] !== 'published' ? array( 'published_at' => $now ) : array() );
+		) + ( $published && 'published' !== $bundle['status'] ? array( 'published_at' => $now ) : array() );
 		if ( $wpdb->update( self::table(), $fields, array( 'id' => (int) $bundle_id ) ) === false ) {
 			return Access::error( 'ohmylms_bundle_failed', __( 'The bundle could not be saved.', 'ohmylms' ), 500 ); }
 		return self::get( $bundle_id );
@@ -254,13 +262,13 @@ final class Bundles {
 		$is_member = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . self::members_table() . " WHERE bundle_id=%d AND item_type='course' AND item_id=%d", (int) $bundle_id, (int) $course_id ) );
 		if ( ! $is_member ) {
 			return true; }
-		if ( $bundle['status'] === 'published' && count( self::members( $bundle_id ) ) <= 1 ) {
+		if ( 'published' === $bundle['status'] && count( self::members( $bundle_id ) ) <= 1 ) {
 			return Access::error( 'ohmylms_bundle_empty', sprintf( __( '“%s” is published and this is its only member. Unpublish the bundle or add another member first.', 'ohmylms' ), $bundle['title'] ), 409 );
 		}
 		$wpdb->delete(
 			self::members_table(),
 			array(
-				'bundle_id'  => (int) $bundle_id,
+				'bundle_id' => (int) $bundle_id,
 				'item_type' => 'course',
 				'item_id'   => (int) $course_id,
 			)
@@ -344,7 +352,7 @@ final class Bundles {
 				array_filter(
 					$members,
 					static function ( $member ) {
-						return $member['type'] === 'course';
+						return 'course' === $member['type'];
 					}
 				),
 				'id'
@@ -352,7 +360,7 @@ final class Bundles {
 		);
 		return array_map(
 			static function ( $member ) use ( $courses ) {
-				if ( $member['type'] === 'course' ) {
+				if ( 'course' === $member['type'] ) {
 					$label = $courses[ $member['id'] ] ?? array(
 						'title'  => '',
 						'status' => 'missing',
@@ -360,7 +368,7 @@ final class Bundles {
 					return $member + array(
 						'title'     => $label['title'],
 						'status'    => $label['status'],
-						'available' => $label['status'] !== 'missing',
+						'available' => 'missing' !== $label['status'],
 					);
 				}
 				$item = Items::get( $member['id'] );

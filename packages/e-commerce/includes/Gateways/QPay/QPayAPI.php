@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * Merchant V2 client. Tokens are isolated by environment AND credentials.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Commerce\Gateways\QPay;
 
 defined( 'ABSPATH' ) || exit;

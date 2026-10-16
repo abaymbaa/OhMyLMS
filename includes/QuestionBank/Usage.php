@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Where a question is used, and the three distinct removal operations:
+ * remove from one quiz, archive (keeps history), and delete when nothing uses it.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 use OhMyLMS\Utility\Transaction;
@@ -92,7 +98,7 @@ final class Usage {
 			),
 			array( '%d', '%d' )
 		);
-		if ( $removed === false ) {
+		if ( false === $removed ) {
 			return new \WP_Error( 'ohmylms_question_storage', __( 'Could not remove the question.', 'ohmylms' ), array( 'status' => 500 ) ); }
 		if ( ! $removed ) {
 			return new \WP_Error( 'ohmylms_question_not_in_quiz', __( 'The question is not part of this quiz.', 'ohmylms' ), array( 'status' => 404 ) ); }

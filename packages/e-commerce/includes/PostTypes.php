@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -213,7 +213,7 @@ class PostTypes {
 			register_post_status( $order_status, $values );
 		}
 
-		// Subscription Statuses
+		// Subscription Statuses.
 		$subscription_statuses = array(
 			'ohmylms-pending'        => array(
 				'label'                     => _x( 'Pending', 'Subscription status', 'ohmylms' ),

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Handles hooks related to lessons in the OhMyLMS plugin.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Hooks;
 
@@ -62,7 +67,7 @@ class QuestionHookHandler extends HookHandler {
 		global $wpdb;
 		$table_name = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
 
-		// Check if the relationship already exists
+		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT ID FROM $table_name WHERE quiz_id = %d AND question_id = %d LIMIT 1",
@@ -71,7 +76,7 @@ class QuestionHookHandler extends HookHandler {
 			)
 		);
 
-		// If exists, update the relationship, otherwise insert a new one
+		// If exists, update the relationship, otherwise insert a new one.
 		if ( $exists ) {
 			$wpdb->update(
 				$table_name,
@@ -169,7 +174,7 @@ class QuestionHookHandler extends HookHandler {
 
 		$table = $wpdb->prefix . 'ohmylms_question_answermeta';
 
-		// Define allowed meta keys
+		// Define allowed meta keys.
 		$allowed_keys = array(
 			'thumbnail_id'  => '_thumbnail_id',
 			'image_url'     => '_image_url',
@@ -180,7 +185,7 @@ class QuestionHookHandler extends HookHandler {
 			if ( isset( $answer_data[ $key ] ) ) {
 				$meta_value = maybe_serialize( $answer_data[ $key ] );
 
-				// Check if the meta already exists
+				// Check if the meta already exists.
 				$existing = $wpdb->get_var(
 					$wpdb->prepare(
 						"SELECT meta_value FROM $table WHERE answer_id = %d AND meta_key = %s",
@@ -190,7 +195,7 @@ class QuestionHookHandler extends HookHandler {
 				);
 
 				if ( null !== $existing ) {
-					// Update existing meta
+					// Update existing meta.
 					$wpdb->update(
 						$table,
 						array( 'meta_value' => $meta_value ),
@@ -202,7 +207,7 @@ class QuestionHookHandler extends HookHandler {
 						array( '%d', '%s' )
 					);
 				} else {
-					// Insert new meta
+					// Insert new meta.
 					$wpdb->insert(
 						$table,
 						array(
@@ -232,7 +237,7 @@ class QuestionHookHandler extends HookHandler {
 
 		$value = maybe_serialize( $meta_value );
 
-		// Check if the meta key already exists for the given answer_id
+		// Check if the meta key already exists for the given answer_id.
 		$existing_meta = $wpdb->get_var( $wpdb->prepare( "SELECT meta_key FROM $table_name WHERE answer_id = %d AND meta_key = %s", $answer_id, $meta_key ) );
 
 		if ( empty( $meta_value ) ) {
@@ -251,7 +256,7 @@ class QuestionHookHandler extends HookHandler {
 		}
 
 		if ( null !== $existing_meta ) {
-			// Update existing meta
+			// Update existing meta.
 			$wpdb->update(
 				$table_name,
 				array( 'meta_value' => $value ),
@@ -263,7 +268,7 @@ class QuestionHookHandler extends HookHandler {
 				array( '%d', '%s' )
 			);
 		} else {
-			// Insert new meta
+			// Insert new meta.
 			$wpdb->insert(
 				$table_name,
 				array(

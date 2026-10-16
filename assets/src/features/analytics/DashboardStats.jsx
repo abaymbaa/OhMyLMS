@@ -2,25 +2,16 @@
 import { createElement } from '@wordpress/element';
 export function createDashboardStats( readRuntime ) {
 	return function DashboardStats( props ) {
-		const {
-			I: Controls,
-			L: Entitlements,
-			Mt,
-			React,
-			V,
-			b: I18n,
-			f: Router,
-		} = readRuntime();
-		var t,
-			n,
-			r,
-			a,
-			o,
-			i,
-			l = props.data,
-			c = props.dataLoading,
-			u = ( 0, Router.Zp )(),
-			s = true;
+		const { I: Controls, Mt, React, V, b: I18n, f: Router } = readRuntime();
+		var t;
+		var n;
+		var r;
+		var a;
+		var o;
+		var i;
+		var l = props.data;
+		var c = props.dataLoading;
+		var u = ( 0, Router.Zp )();
 		return (
 			<React.Fragment>
 				<Controls.SpacerWP marginBottom={ 0 } marginTop={ 4 }>
@@ -101,7 +92,8 @@ export function createDashboardStats( readRuntime ) {
 														<Controls.BadgeWP
 															variant={
 																0 <=
-																( null == l
+																( l === null ||
+																l === void 0
 																	? void 0
 																	: l.sales_growth_rate )
 																	? 'success'
@@ -110,7 +102,8 @@ export function createDashboardStats( readRuntime ) {
 															isBorderLess={ ! 0 }
 														>
 															{ 0 !=
-																( null == l
+																( l === null ||
+																l === void 0
 																	? void 0
 																	: l.sales_growth_rate ) && (
 																<svg
@@ -118,8 +111,10 @@ export function createDashboardStats( readRuntime ) {
 																		transform:
 																			'rotate('.concat(
 																				0 <
-																					( null ==
-																					l
+																					( l ===
+																						null ||
+																					l ===
+																						void 0
 																						? void 0
 																						: l.sales_growth_rate )
 																					? '0deg'
@@ -178,7 +173,10 @@ export function createDashboardStats( readRuntime ) {
 															) }
 															<span>
 																{ Math.abs(
-																	null == l
+																	l ===
+																		null ||
+																		l ===
+																			void 0
 																		? void 0
 																		: l.sales_growth_rate
 																) }
@@ -199,7 +197,7 @@ export function createDashboardStats( readRuntime ) {
 													'ohmylms-card-value'
 												}
 											>
-												{ null == l
+												{ l === null || l === void 0
 													? void 0
 													: l.course_sold }
 											</span>
@@ -298,7 +296,8 @@ export function createDashboardStats( readRuntime ) {
 														<Controls.BadgeWP
 															variant={
 																0 <=
-																( null == l
+																( l === null ||
+																l === void 0
 																	? void 0
 																	: l.enrollment_growth_rate )
 																	? 'success'
@@ -307,7 +306,8 @@ export function createDashboardStats( readRuntime ) {
 															isBorderLess={ ! 0 }
 														>
 															{ 0 !=
-																( null == l
+																( l === null ||
+																l === void 0
 																	? void 0
 																	: l.enrollment_growth_rate ) && (
 																<svg
@@ -315,8 +315,10 @@ export function createDashboardStats( readRuntime ) {
 																		transform:
 																			'rotate('.concat(
 																				0 <
-																					( null ==
-																					l
+																					( l ===
+																						null ||
+																					l ===
+																						void 0
 																						? void 0
 																						: l.enrollment_growth_rate )
 																					? '0deg'
@@ -375,7 +377,10 @@ export function createDashboardStats( readRuntime ) {
 															) }
 															<span>
 																{ Math.abs(
-																	null == l
+																	l ===
+																		null ||
+																		l ===
+																			void 0
 																		? void 0
 																		: l.enrollment_growth_rate
 																) }
@@ -396,7 +401,7 @@ export function createDashboardStats( readRuntime ) {
 													'ohmylms-card-value'
 												}
 											>
-												{ null == l
+												{ l === null || l === void 0
 													? void 0
 													: l.total_enrollments }
 											</span>
@@ -420,7 +425,7 @@ export function createDashboardStats( readRuntime ) {
 							</Controls.CardWP>
 						</Controls.FlexBlockWP>
 						<Controls.FlexBlockWP>
-							{ ohmylms_params.is_communities_enabled ? (
+							{ window.ohmylms_params.is_communities_enabled ? (
 								<Controls.CardWP
 									style={ {
 										height: '100%',
@@ -463,7 +468,8 @@ export function createDashboardStats( readRuntime ) {
 												>
 													{ null !==
 														( t =
-															null == l ||
+															l === null ||
+															l === void 0 ||
 															null ===
 																( n =
 																	l.communities ) ||
@@ -479,7 +485,8 @@ export function createDashboardStats( readRuntime ) {
 													variant={ 'muted' }
 													size={ '14' }
 												>
-													{ ( null == l ||
+													{ ( l === null ||
+													l === void 0 ||
 													null ===
 														( r = l.communities ) ||
 													void 0 === r
@@ -505,7 +512,8 @@ export function createDashboardStats( readRuntime ) {
 												>
 													{ null !==
 														( a =
-															null == l ||
+															l === null ||
+															l === void 0 ||
 															null ===
 																( o =
 																	l.communities ) ||
@@ -522,7 +530,8 @@ export function createDashboardStats( readRuntime ) {
 													size={ '14' }
 												>
 													{
-														( null == l ||
+														( l === null ||
+															l === void 0 ||
 															null ===
 																( i =
 																	l.communities ) ||
@@ -544,7 +553,7 @@ export function createDashboardStats( readRuntime ) {
 												return window.open(
 													null ===
 														( e =
-															ohmylms_params ) ||
+															window.ohmylms_params ) ||
 														void 0 === e ||
 														null ===
 															( e =

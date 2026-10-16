@@ -18,20 +18,30 @@ import {
 	variableDefaults,
 } from './templateModel.mjs';
 import { FormulaControl } from '../math/FormulaControl';
-
 const request = ( options ) => window.wp.apiFetch( options );
 
-/** Question text without markup, for a one-line example. */
+/**
+ * Question text without markup, for a one-line example.
+ * @param html
+ */
 const plain = ( html ) =>
 	String( html || '' )
 		.replace( /<[^>]+>/g, ' ' )
 		.replace( /\s+/g, ' ' )
 		.trim();
 
-/** The example's wording: the question text where it carries the question, else the title. */
+/**
+ * The example's wording: the question text where it carries the question, else the title.
+ * @param sample
+ */
 export const exampleText = ( sample ) => plain( sample.body ) || sample.title;
 
-/** A number field that stores a number, or nothing while empty. */
+/**
+ * A number field that stores a number, or nothing while empty.
+ * @param value
+ * @param onChange
+ * @param extra
+ */
 const number = ( value, onChange, extra = {} ) => ( {
 	type: 'number',
 	step: 'any',
@@ -94,11 +104,17 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 	const save = ( next ) =>
 		onChange( {
 			settings: next
-				? { ...settings, template: next }
+				? {
+						...settings,
+						template: next,
+					}
 				: ( ( { template: removed, ...rest } ) => rest )( settings ),
 		} );
-	const patch = ( fields ) => save( { ...template, ...fields } );
-
+	const patch = ( fields ) =>
+		save( {
+			...template,
+			...fields,
+		} );
 	if ( ! template ) {
 		return (
 			<details className="ohmylms-template-panel">
@@ -119,24 +135,32 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 			</details>
 		);
 	}
-
 	const variables = template.variables || [];
 	const setVariable = ( index, fields ) =>
 		patch( {
 			variables: variables.map( ( v, i ) =>
-				i === index ? { ...v, ...fields } : v
+				i === index
+					? {
+							...v,
+							...fields,
+						}
+					: v
 			),
 		} );
 	const rules = template.set || [];
 	const setRule = ( index, fields ) =>
 		patch( {
 			set: rules.map( ( r, i ) =>
-				i === index ? { ...r, ...fields } : r
+				i === index
+					? {
+							...r,
+							...fields,
+						}
+					: r
 			),
 		} );
 	const issues = templateIssues( template );
 	const suggestions = setPathSuggestions( settings.type );
-
 	const showExamples = async () => {
 		setBusy( true );
 		try {
@@ -164,7 +188,6 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 		}
 		setBusy( false );
 	};
-
 	return (
 		<details className="ohmylms-template-panel" open>
 			<summary>{ __( 'Randomize numbers', 'ohmylms' ) }</summary>
@@ -210,13 +233,17 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 							<TextControl
 								label={ __( 'From', 'ohmylms' ) }
 								{ ...number( variable.min, ( min ) =>
-									setVariable( index, { min } )
+									setVariable( index, {
+										min,
+									} )
 								) }
 							/>
 							<TextControl
 								label={ __( 'To', 'ohmylms' ) }
 								{ ...number( variable.max, ( max ) =>
-									setVariable( index, { max } )
+									setVariable( index, {
+										max,
+									} )
 								) }
 							/>
 						</Fragment>
@@ -227,8 +254,14 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 								label={ __( 'Step', 'ohmylms' ) }
 								{ ...number(
 									variable.step,
-									( step ) => setVariable( index, { step } ),
-									{ min: 1, step: 1 }
+									( step ) =>
+										setVariable( index, {
+											step,
+										} ),
+									{
+										min: 1,
+										step: 1,
+									}
 								) }
 							/>
 							<ParsedField
@@ -246,7 +279,9 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 										.filter( Number.isFinite )
 								}
 								onChange={ ( exclude ) =>
-									setVariable( index, { exclude } )
+									setVariable( index, {
+										exclude,
+									} )
 								}
 							/>
 						</Fragment>
@@ -256,8 +291,15 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 							label={ __( 'Decimal places', 'ohmylms' ) }
 							{ ...number(
 								variable.places,
-								( places ) => setVariable( index, { places } ),
-								{ min: 0, max: 6, step: 1 }
+								( places ) =>
+									setVariable( index, {
+										places,
+									} ),
+								{
+									min: 0,
+									max: 6,
+									step: 1,
+								}
 							) }
 						/>
 					) }
@@ -271,7 +313,9 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 							format={ ( list ) => ( list || [] ).join( ', ' ) }
 							parse={ parseValues }
 							onChange={ ( values ) =>
-								setVariable( index, { values } )
+								setVariable( index, {
+									values,
+								} )
 							}
 						/>
 					) }
@@ -285,7 +329,9 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 								) }
 								value={ variable.expr || '' }
 								onChange={ ( expr ) =>
-									setVariable( index, { expr } )
+									setVariable( index, {
+										expr,
+									} )
 								}
 							/>
 							<TextControl
@@ -293,8 +339,14 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 								{ ...number(
 									variable.places,
 									( places ) =>
-										setVariable( index, { places } ),
-									{ min: 0, max: 9, step: 1 }
+										setVariable( index, {
+											places,
+										} ),
+									{
+										min: 0,
+										max: 9,
+										step: 1,
+									}
 								) }
 							/>
 						</Fragment>
@@ -342,7 +394,11 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 				value={ template.constraints }
 				format={ ( list ) => ( list || [] ).join( '\n' ) }
 				parse={ parseLines }
-				onChange={ ( constraints ) => patch( { constraints } ) }
+				onChange={ ( constraints ) =>
+					patch( {
+						constraints,
+					} )
+				}
 			/>
 			<h4>{ __( 'Computed answers', 'ohmylms' ) }</h4>
 			<p>
@@ -357,12 +413,20 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						label={ __( 'Setting', 'ohmylms' ) }
 						list={ `ohmylms-set-paths-${ settings.type }` }
 						value={ rule.path || '' }
-						onChange={ ( path ) => setRule( index, { path } ) }
+						onChange={ ( path ) =>
+							setRule( index, {
+								path,
+							} )
+						}
 					/>
 					<FormulaControl
 						label={ __( 'Formula', 'ohmylms' ) }
 						value={ rule.expr || '' }
-						onChange={ ( expr ) => setRule( index, { expr } ) }
+						onChange={ ( expr ) =>
+							setRule( index, {
+								expr,
+							} )
+						}
 					/>
 					<Button
 						isDestructive
@@ -389,7 +453,10 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 					patch( {
 						set: [
 							...rules,
-							{ path: suggestions[ 0 ] || '', expr: '' },
+							{
+								path: suggestions[ 0 ] || '',
+								expr: '',
+							},
 						],
 					} )
 				}
@@ -458,7 +525,10 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 									<span>
 										{ ' — ' }
 										{ sprintf(
-											__( 'answer: %s', 'ohmylms' ),
+											/* translators: %s: computed expected answer. */ __(
+												'answer: %s',
+												'ohmylms'
+											),
 											sample.expected
 										) }
 									</span>
@@ -467,7 +537,7 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 									<em>
 										{ ' ' }
 										{ sprintf(
-											__(
+											/* translators: %s: math evaluation error message. */ __(
 												'(cannot work out: %s)',
 												'ohmylms'
 											),

@@ -106,7 +106,7 @@ defined( 'ABSPATH' ) || exit();
 						</span>
 
 						<span class="thankyou-copy-alert">
-							<?php echo __( 'Copied!', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Copied!', 'ohmylms' ); ?>
 						</span>
 					</td>
 

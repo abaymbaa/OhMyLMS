@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Provider failures in words an administrator can act on. The provider's own message is kept
+ * (shortened) because it usually names the real problem, such as an unknown model; the API key
+ * is never part of any message.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\AI\Providers;
 
 defined( 'ABSPATH' ) || exit;
@@ -16,10 +23,10 @@ final class Errors {
 		if ( in_array( $status, array( 401, 403 ), true ) ) {
 			$code = 'ohmylms_ai_auth';
 			$text = __( 'The AI provider rejected the API key.', 'ohmylms' );
-		} elseif ( $status === 404 ) {
+		} elseif ( 404 === $status ) {
 			$code = 'ohmylms_ai_model';
 			$text = __( 'The AI provider does not know this model. Check the model name.', 'ohmylms' );
-		} elseif ( $status === 429 ) {
+		} elseif ( 429 === $status ) {
 			$code = 'ohmylms_ai_rate';
 			$text = __( 'The AI provider is rate limiting this account or has no quota left.', 'ohmylms' );
 		} elseif ( $status >= 500 ) {
@@ -29,7 +36,7 @@ final class Errors {
 			$code = 'ohmylms_ai_request';
 			$text = __( 'The AI provider could not process the request.', 'ohmylms' );
 		}
-		return new \WP_Error( $code, $detail !== '' ? $text . ' (' . $detail . ')' : $text, array( 'status' => 502 ) );
+		return new \WP_Error( $code, '' !== $detail ? $text . ' (' . $detail . ')' : $text, array( 'status' => 502 ) );
 	}
 
 	/** A reply with no text: usually the token budget was used up before any text was written. */

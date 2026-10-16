@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * A grade/subject skill collection has its own profile, independent of commercial course settings.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Learning\Catalog;
@@ -20,7 +25,7 @@ final class SyllabusSettings {
 	}
 
 	public static function category_allowed( $category, array $categories ) {
-		return $category === '' || in_array( $category, $categories, true );
+		return '' === $category || in_array( $category, $categories, true );
 	}
 
 	public static function check_category( $syllabus_id, array $fields ) {
@@ -51,7 +56,7 @@ final class SyllabusSettings {
 				$value = sanitize_text_field( SyllabusRows::line( $category ) );
 				if ( mb_strlen( $value ) > 60 ) {
 					return Access::error( 'ohmylms_syllabus_settings_invalid', __( 'A skill category can have at most 60 characters.', 'ohmylms' ) ); }
-				if ( $value !== '' && ! in_array( $value, $clean['categories'], true ) ) {
+				if ( '' !== $value && ! in_array( $value, $clean['categories'], true ) ) {
 					$clean['categories'][] = $value; }
 			}
 		}
@@ -61,7 +66,7 @@ final class SyllabusSettings {
 			}
 			$clean['category_styles'] = array();
 			foreach ( $data['category_styles'] as $category => $style ) {
-				if ( ! is_string( $category ) || $category === '' || mb_strlen( $category ) > 60 || ! is_array( $style ) ) {
+				if ( ! is_string( $category ) || '' === $category || mb_strlen( $category ) > 60 || ! is_array( $style ) ) {
 					return Access::error( 'ohmylms_syllabus_settings_invalid', __( 'Invalid category style.', 'ohmylms' ) );
 				}
 				$icon = Icons::clean( $style['icon'] ?? '' );

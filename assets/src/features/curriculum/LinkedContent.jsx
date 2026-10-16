@@ -3,7 +3,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Button, TextControl } from '@wordpress/components';
 import { useCurriculum } from './context';
 import * as api from './api.mjs';
-
 const GROUPS = [
 	{
 		type: 'course',
@@ -63,7 +62,6 @@ export function LinkedContent( { item, detail, onChange } ) {
 		</section>
 	);
 }
-
 function LinkGroup( { group, item, linked, onChange } ) {
 	const c = useCurriculum();
 	const [ open, setOpen ] = useState( false );
@@ -71,7 +69,6 @@ function LinkGroup( { group, item, linked, onChange } ) {
 	const [ results, setResults ] = useState( [] );
 	const [ error, setError ] = useState( '' );
 	const linkedIds = new Set( linked.map( ( entry ) => entry.id ) );
-
 	useEffect( () => {
 		if ( ! open ) {
 			return undefined;
@@ -102,7 +99,6 @@ function LinkGroup( { group, item, linked, onChange } ) {
 			clearTimeout( timer );
 		};
 	}, [ open, search, group.type ] );
-
 	async function change( work, success ) {
 		const response = await c.actions.run( work, success );
 		if ( response ) {
@@ -132,7 +128,10 @@ function LinkGroup( { group, item, linked, onChange } ) {
 							<span>
 								{ entry.title ||
 									sprintf(
-										__( 'Item %d', 'ohmylms' ),
+										/* translators: %d: item number. */ __(
+											'Item %d',
+											'ohmylms'
+										),
 										entry.id
 									) }
 								{ entry.code ? ` (${ entry.code })` : '' }
@@ -147,7 +146,10 @@ function LinkGroup( { group, item, linked, onChange } ) {
 								isDestructive
 								disabled={ c.pending }
 								aria-label={ sprintf(
-									__( 'Remove %1$s from %2$s', 'ohmylms' ),
+									/* translators: %1$s: linked content title; %2$s: curriculum item name. */ __(
+										'Remove %1$s from %2$s',
+										'ohmylms'
+									),
 									entry.title || entry.id,
 									item.name
 								) }
@@ -203,7 +205,10 @@ function LinkGroup( { group, item, linked, onChange } ) {
 							size="small"
 							disabled={ c.pending }
 							aria-label={ sprintf(
-								__( 'Add %1$s to %2$s', 'ohmylms' ),
+								/* translators: %1$s: linked content title; %2$s: curriculum item name. */ __(
+									'Add %1$s to %2$s',
+									'ohmylms'
+								),
 								row.title,
 								item.name
 							) }

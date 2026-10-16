@@ -9,15 +9,15 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 
 global $course;
 
-// Check if course should show add to cart button
+// Check if course should show add to cart button.
 $should_show_add_to_cart = true;
 
-// If course is cohort-based, check enrollment deadline
+// If course is cohort-based, check enrollment deadline.
 if ( $course && $course->get_type() === 'cohort-based' ) {
 	$cohorts               = $course->get_cohort();
 	$has_active_enrollment = false;
@@ -52,7 +52,7 @@ $args = array(
 );
 
 
-// Only show add to cart button if enrollment is active
+// Only show add to cart button if enrollment is active.
 if ( $should_show_add_to_cart ) {
 	if ( $course->is_free() ) {
 		$cart_icon = '';
@@ -74,7 +74,7 @@ if ( $should_show_add_to_cart ) {
 		$btn_text
 	);
 }
-// Only show points-based purchase if enrollment is active
+// Only show points-based purchase if enrollment is active.
 if ( $should_show_add_to_cart ) {
 	$integrations = get_option( 'ohmylms_integrations', array() );
 	if ( ohmylms_is_pro() && isset( $integrations['gamification']['is_enable'] ) && $integrations['gamification']['is_enable'] && \OhMyLMS\Engagement\Reward::maybe_met_rules( 'purchase_course' ) ) {

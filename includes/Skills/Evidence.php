@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Turns grade events into skill evidence, exactly once per event.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
@@ -74,7 +79,7 @@ final class Evidence {
 		}
 		// An event that is itself already superseded contributes history only.
 		$superseded = (int) $event['superseded_by'] > 0 ? 1 : 0;
-		if ( $event['reason'] === 'unanswered' && $event['grader'] === 'auto' ) {
+		if ( 'unanswered' === $event['reason'] && 'auto' === $event['grader'] ) {
 			self::recompute( (int) $event['student_id'], array_keys( $terms ) );
 			return 'skipped';
 		}
@@ -92,14 +97,14 @@ final class Evidence {
 		}
 		$part_total  = array_sum( $parts ) ?: 1;
 		$is_template = \OhMyLMS\Assessment\Template::has( json_decode( (string) $version['settings'], true ) ?: array() );
-		$context    = self::context( $event );
-		$identity   = VersionPublisher::identity( (int) $event['question_id'], false ) ?: array();
+		$context     = self::context( $event );
+		$identity    = VersionPublisher::identity( (int) $event['question_id'], false ) ?: array();
 		foreach ( SkillMap::for_version( (int) $event['version_id'] ) as $mapping ) {
 			$part = (string) $mapping['part_id'];
 			// Part-level events attribute only to their own part; whole-question events are split by part weight.
-			if ( $event['part_id'] !== '' && $event['part_id'] !== $part ) {
+			if ( '' !== $event['part_id'] && $event['part_id'] !== $part ) {
 				continue; }
-			$share = $event['part_id'] !== '' ? 1.0 : ( ( $parts[ $part ] ?? 0 ) / $part_total );
+			$share = '' !== $event['part_id'] ? 1.0 : ( ( $parts[ $part ] ?? 0 ) / $part_total );
 			if ( $share <= 0 ) {
 				continue; }
 			$available = (float) $event['max_marks'] > 0 ? (float) $event['max_marks'] * $share : $share;
@@ -147,7 +152,7 @@ final class Evidence {
 					round( $awarded, 4 ),
 					round( $available, 4 ),
 					$context['independent'],
-					( $prior === 0 && $context['first_try'] ) ? 1 : 0,
+					( 0 === $prior && $context['first_try'] ) ? 1 : 0,
 					(string) ( $identity['difficulty'] ?? 'standard' ),
 					(string) ( $identity['family_id'] ?? '' ),
 					$event['source_type'],

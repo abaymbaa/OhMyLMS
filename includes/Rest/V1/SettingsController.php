@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * SettingsController class.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -216,7 +221,7 @@ class SettingsController extends RestController {
 
 		foreach ( $get_data as $key => $value ) {
 			if ( ! is_array( $value ) ) {
-				$value = $group_id === 'permalink' ? $value : wp_kses_post( trim( stripslashes( is_null( $value ) ? '' : $value ) ) );
+				$value = 'permalink' === $group_id ? $value : wp_kses_post( trim( stripslashes( is_null( $value ) ? '' : $value ) ) );
 			}
 
 			if ( 'payment-gateway' === $group_id && is_array( $value ) && isset( $value['value'] ) ) {
@@ -231,7 +236,7 @@ class SettingsController extends RestController {
 			flush_rewrite_rules( true );
 			do_action( "ohmylms_{$group_id}_settings_updated", $key, $value, $group_id );
 
-			// Trigger payment gateway settings event for tracking
+			// Trigger payment gateway settings event for tracking.
 			if ( 'payment-gateway' === $group_id ) {
 				do_action( 'ohmylms_payment_gateway_settings_saved', $key, $value );
 			}
@@ -446,15 +451,15 @@ class SettingsController extends RestController {
 			} else {
 				$setting['value'] = AdminSettings::get_option( $option_key, $setting['default'] );
 
-				// Special handling for student page settings to ensure they have valid default values
+				// Special handling for student page settings to ensure they have valid default values.
 				if ( in_array( $option_key, array( 'ohmylms_student_dashboard_page_id', 'ohmylms_student_profile_page_id', 'ohmylms_student_courses_page_id' ) ) ) {
-					// If the setting value is empty or -1, try to get the correct page ID
-					if ( empty( $setting['value'] ) || $setting['value'] == -1 ) {
+					// If the setting value is empty or -1, try to get the correct page ID.
+					if ( empty( $setting['value'] ) || -1 == $setting['value'] ) {
 						$page_key = str_replace( 'ohmylms_', '', str_replace( '_page_id', '', $option_key ) );
 						$page_id  = ohmylms_get_page_id( $page_key );
-						if ( $page_id && $page_id != -1 ) {
+						if ( $page_id && -1 != $page_id ) {
 							$setting['value'] = $page_id;
-							// Update the option in the database for future use
+							// Update the option in the database for future use.
 							update_option( $option_key, $page_id );
 						}
 					}

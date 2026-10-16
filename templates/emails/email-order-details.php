@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails email order details template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

@@ -86,49 +86,69 @@ export function createDesignSettings( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )( function () {
 				var e = ( function () {
-					var e,
-						t =
-							( ( e = W0().m( function e() {
-								var t;
-								return W0().w( function ( e ) {
+					var _eLocal,
+						_tLocal =
+							( ( _eLocal = W0().m( function _eLocal2() {
+								var _tLocal2;
+								return W0().w( function ( _eLocal3 ) {
 									for (;;) {
-										switch ( e.n ) {
+										switch ( _eLocal3.n ) {
 											case 0:
 												return (
 													i.setLoadingSetting( ! 0 ),
-													( e.n = 1 ),
+													( _eLocal3.n = 1 ),
 													l()( {
 														path: 'ohmylms/v1/settings/design',
 													} )
 												 );
 											case 1:
-												( ( t = e.v ),
-													i.setDesignSettings( t ),
-													i.setLoadingSetting(
-														! 1
-													) );
+												_tLocal2 = _eLocal3.v;
+												i.setDesignSettings( _tLocal2 );
+												i.setLoadingSetting( ! 1 ); // Falls through to the shared async state cleanup.
 											case 2:
-												return e.a( 2 );
+												return _eLocal3.a( 2 );
 										}
 									}
-								}, e );
+								}, _eLocal2 );
 							} ) ),
-							function () {
-								var t = this,
-									n = arguments;
-								return new Promise( function ( r, a ) {
-									var o = e.apply( t, n );
-									function i( e ) {
-										B0( o, r, a, i, l, 'next', e );
+							function ( ..._args ) {
+								var _tLocal3 = this,
+									_nLocal = _args;
+								return new Promise( function (
+									_rLocal,
+									_aLocal
+								) {
+									var _oLocal = _eLocal.apply(
+										_tLocal3,
+										_nLocal
+									);
+									function _iLocal( _eLocal4 ) {
+										B0(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'next',
+											_eLocal4
+										);
 									}
-									function l( e ) {
-										B0( o, r, a, i, l, 'throw', e );
+									function _lLocal( _eLocal5 ) {
+										B0(
+											_oLocal,
+											_rLocal,
+											_aLocal,
+											_iLocal,
+											_lLocal,
+											'throw',
+											_eLocal5
+										);
 									}
-									i( void 0 );
+									_iLocal( void 0 );
 								} );
 							} );
-					return function () {
-						return t.apply( this, arguments );
+					return function ( ..._args2 ) {
+						return _tLocal.apply( this, _args2 );
 					};
 				} )();
 				e();
@@ -149,19 +169,20 @@ export function createDesignSettings( readRuntime ) {
 							<ep.A
 								items={ p }
 								onChange={ function ( e ) {
-									var t = '/settings/'
+									var _tLocal4 = '/settings/'
 										.concat( u, '/' )
 										.concat( e );
 									m(
 										'course-details' === e
 											? ''
-													.concat( t, '/' )
+													.concat( _tLocal4, '/' )
 													.concat(
-														null != d
+														d !== null &&
+															d !== void 0
 															? d
 															: 'unenroll-view'
 													)
-											: t
+											: _tLocal4
 									);
 								} }
 								activekey={ s }

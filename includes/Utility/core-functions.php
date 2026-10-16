@@ -127,7 +127,7 @@ function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
 	$template = apply_filters( 'ohmylms_get_template_part', $template, $slug, $name );
 
 	if ( $template ) {
-		// Extract variables to make them available in the template
+		// Extract variables to make them available in the template.
 		if ( ! empty( $atts ) && is_array( $atts ) ) {
 			extract( $atts ); // @codingStandardsIgnoreLine
 		}
@@ -277,7 +277,7 @@ function get_ohmylms_currencies() {
 			apply_filters(
 				'ohmylms_currencies',
 				array(
-					// Active currencies only
+					// Active currencies only.
 					'USD' => __( 'United States (US) dollar', 'ohmylms' ),
 					'EUR' => __( 'Euro', 'ohmylms' ),
 					'GBP' => __( 'Pound sterling', 'ohmylms' ),
@@ -308,7 +308,7 @@ function get_ohmylms_currencies() {
 					'SAR' => __( 'Saudi riyal', 'ohmylms' ),
 					'AED' => __( 'United Arab Emirates dirham', 'ohmylms' ),
 
-					// Commented out currencies - can be re-enabled if needed
+					// Commented out currencies - can be re-enabled if needed.
 					'AFN' => __( 'Afghan afghani', 'ohmylms' ),
 					'ALL' => __( 'Albanian lek', 'ohmylms' ),
 					'AMD' => __( 'Armenian dram', 'ohmylms' ),
@@ -1840,7 +1840,7 @@ function ohmylms_get_country_name_by_code( $code ) {
 		}
 	}
 
-	return ''; // Return empty if not found
+	return ''; // Return empty if not found.
 }
 
 

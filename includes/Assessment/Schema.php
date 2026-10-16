@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additive, independently versioned schema for the question bank, versioned
+ * assessments, practice and skill evidence. Existing quiz tables stay the
+ * compatibility anchor: new records are sidecars keyed by existing IDs.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;

@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Course categories were replaced by the curriculum. The admin app still reads this endpoint to fill
+ * its course-list filter, so GET returns curriculum items in the shape of the former category terms
+ * (the item ID is `term_id`). Nothing can be written here any more: structure is managed with
+ * /curriculum/items and a course's placement with /courses/{id}/organization.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;

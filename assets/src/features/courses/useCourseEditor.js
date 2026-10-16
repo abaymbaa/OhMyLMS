@@ -8,7 +8,6 @@ import {
 	completedCourseSteps,
 	mergeSavedCourse,
 } from './model.mjs';
-
 export function useCourseEditor( { store, courseId, enableSpin } ) {
 	const state = useSelect(
 		( select ) => {
@@ -91,7 +90,10 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 		try {
 			const saved = await saveCourseWithChapters(
 				courseId,
-				prepareCoursePayload( state.course, { status, date } ),
+				prepareCoursePayload( state.course, {
+					status,
+					date,
+				} ),
 				orderedChapters( state.chapters )
 			);
 			if ( current !== generation.current ) {
@@ -107,30 +109,38 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 								'Course settings have been saved successfully',
 								'ohmylms'
 							)
-						: status === 'publish'
-							? state.course.status === 'publish'
-								? __(
-										'Course has been updated successfully',
-										'ohmylms'
-									)
-								: __(
-										'Course has been published successfully',
-										'ohmylms'
-									)
-							: status === 'draft'
-								? __(
-										'Course has been saved as draft successfully',
-										'ohmylms'
-									)
-								: status === 'future'
-									? __(
-											'Course has been scheduled successfully',
-											'ohmylms'
-										)
-									: __(
-											'Course has been saved successfully',
+						: ( () => {
+								if ( status === 'publish' ) {
+									if ( state.course.status === 'publish' ) {
+										return __(
+											'Course has been updated successfully',
 											'ohmylms'
 										);
+									}
+									return __(
+										'Course has been published successfully',
+										'ohmylms'
+									);
+								}
+								return ( () => {
+									if ( status === 'draft' ) {
+										return __(
+											'Course has been saved as draft successfully',
+											'ohmylms'
+										);
+									}
+									if ( status === 'future' ) {
+										return __(
+											'Course has been scheduled successfully',
+											'ohmylms'
+										);
+									}
+									return __(
+										'Course has been saved successfully',
+										'ohmylms'
+									);
+								} )();
+							} )();
 				actions.showNotification( message, 'success' );
 			}
 			return true;
@@ -151,7 +161,9 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 	}
 	useEffect( () => {
 		if ( autoSave && ! loading ) {
-			save( undefined, undefined, undefined, { silent: true } );
+			save( undefined, undefined, undefined, {
+				silent: true,
+			} );
 		}
 	}, [ autoSave, state.course, state.chapters ] );
 	async function toggleCommunity( enabled ) {
@@ -160,7 +172,9 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 				has_community: enabled ? 'yes' : 'no',
 				name: state.course.name || 'Untitled',
 			} );
-			actions.setCourse( { has_community: enabled ? 'yes' : 'no' } );
+			actions.setCourse( {
+				has_community: enabled ? 'yes' : 'no',
+			} );
 		} catch ( cause ) {
 			setError(
 				cause.message || __( 'Could not update community.', 'ohmylms' )
@@ -183,10 +197,14 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 		),
 		updateTitle: ( name ) => {
 			if ( name.length <= 150 ) {
-				actions.setCourse( { name } );
+				actions.setCourse( {
+					name,
+				} );
 			}
 		},
 		updateDescription: ( description ) =>
-			actions.setCourse( { description } ),
+			actions.setCourse( {
+				description,
+			} ),
 	};
 }

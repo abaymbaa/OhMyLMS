@@ -37,7 +37,7 @@ $anchor   = isset( $anchor ) && is_string( $anchor ) && '' !== $anchor ? sanitiz
 
 wp_enqueue_style( 'ohmylms-answer-review', plugins_url( 'assets/css/answer-review.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 
-$verdict_labels = array(
+$verdict_labels  = array(
 	'correct'    => __( 'Correct', 'ohmylms' ),
 	'partial'    => __( 'Partly correct', 'ohmylms' ),
 	'incorrect'  => __( 'Incorrect', 'ohmylms' ),
@@ -45,7 +45,7 @@ $verdict_labels = array(
 	'unanswered' => __( 'Not answered', 'ohmylms' ),
 	'ungraded'   => __( 'Not marked', 'ohmylms' ),
 );
-$headlines      = array(
+$headlines       = array(
 	'pass'   => __( 'You passed', 'ohmylms' ),
 	'fail'   => __( 'Not passed yet', 'ohmylms' ),
 	'review' => __( 'Awaiting review', 'ohmylms' ),
@@ -55,8 +55,8 @@ $attempt_results = array(
 	'fail'   => __( 'Not passed', 'ohmylms' ),
 	'review' => __( 'Awaiting review', 'ohmylms' ),
 );
-$latest_id      = $attempts ? (int) $attempts[0]['quiz_attempt_id'] : 0;
-$stamp          = static function ( $row ) {
+$latest_id       = $attempts ? (int) $attempts[0]['quiz_attempt_id'] : 0;
+$stamp           = static function ( $row ) {
 	$time = ! empty( $row['start_date'] ) ? strtotime( $row['start_date'] ) : 0;
 	return $time ? date( 'M j, Y g:i a', $time ) : '';
 };

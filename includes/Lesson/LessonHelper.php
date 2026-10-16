@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Responsible to handle all lesson related calculations.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Lesson;
 
@@ -99,7 +104,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post && $post->post_type === 'ohmylms-lesson' ) {
+		if ( $post && 'ohmylms-lesson' === $post->post_type ) {
 			wp_update_post(
 				array(
 					'ID'         => $post_id,
@@ -158,7 +163,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post->post_type !== 'ohmylms-lesson' ) {
+		if ( 'ohmylms-lesson' !== $post->post_type ) {
 			return array(
 				'status'  => 'error',
 				'message' => __( 'No lesson available. ', 'ohmylms' ),
@@ -209,7 +214,7 @@ class LessonHelper {
 
 		$post = get_post( $post_id );
 
-		if ( $post->post_type !== 'ohmylms-lesson' ) {
+		if ( 'ohmylms-lesson' !== $post->post_type ) {
 			return array(
 				'status'  => 'error',
 				'message' => __( 'No lesson available. ', 'ohmylms' ),
@@ -247,7 +252,7 @@ class LessonHelper {
 	public static function delete_lesson( int $post_id ): array {
 
 		$post = get_post( $post_id );
-		if ( ! $post || $post->post_type !== 'ohmylms-lesson' ) {
+		if ( ! $post || 'ohmylms-lesson' !== $post->post_type ) {
 
 			return array(
 				'status'  => 'error',

@@ -1,7 +1,8 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import { createElement } from '@wordpress/element';
+import { createElement, useId } from '@wordpress/element';
 export function createCourseImportDialog( readRuntime ) {
 	return function CourseImportDialog( props ) {
+		const _controlId = useId();
 		const {
 			DG,
 			I: Controls,
@@ -24,37 +25,40 @@ export function createCourseImportDialog( readRuntime ) {
 			d = void 0 !== s && s,
 			m = props.jsonImportEnabled,
 			p = void 0 === m || m,
-			f = ( function ( e, t ) {
-				if ( null == e ) {
+			f = ( function ( e, _tLocal ) {
+				if ( e === null || e === void 0 ) {
 					return {};
 				}
-				var n,
-					r,
-					a = ( function ( e, t ) {
-						if ( null == e ) {
+				var _nLocal,
+					_rLocal,
+					_aLocal = ( function ( _eLocal, _tLocal2 ) {
+						if ( _eLocal === null || _eLocal === void 0 ) {
 							return {};
 						}
-						var n = {};
-						for ( var r in e ) {
-							if ( {}.hasOwnProperty.call( e, r ) ) {
-								if ( -1 !== t.indexOf( r ) ) {
+						var _nLocal2 = {};
+						for ( var _rLocal2 in _eLocal ) {
+							if ( {}.hasOwnProperty.call( _eLocal, _rLocal2 ) ) {
+								if ( -1 !== _tLocal2.indexOf( _rLocal2 ) ) {
 									continue;
 								}
-								n[ r ] = e[ r ];
+								_nLocal2[ _rLocal2 ] = _eLocal[ _rLocal2 ];
 							}
 						}
-						return n;
-					} )( e, t );
+						return _nLocal2;
+					} )( e, _tLocal );
 				if ( Object.getOwnPropertySymbols ) {
-					var o = Object.getOwnPropertySymbols( e );
-					for ( r = 0; r < o.length; r++ ) {
-						( ( n = o[ r ] ),
-							-1 === t.indexOf( n ) &&
-								{}.propertyIsEnumerable.call( e, n ) &&
-								( a[ n ] = e[ n ] ) );
+					var _oLocal = Object.getOwnPropertySymbols( e );
+					for ( _rLocal = 0; _rLocal < _oLocal.length; _rLocal++ ) {
+						_nLocal = _oLocal[ _rLocal ];
+						if (
+							-1 === _tLocal.indexOf( _nLocal ) &&
+							{}.propertyIsEnumerable.call( e, _nLocal )
+						) {
+							_aLocal[ _nLocal ] = e[ _nLocal ];
+						}
 					}
 				}
-				return a;
+				return _aLocal;
 			} )( props, DG ),
 			v = zG( ( 0, ReactHooks.useState )( null ), 2 ),
 			y = v[ 0 ],
@@ -78,28 +82,48 @@ export function createCourseImportDialog( readRuntime ) {
 			return null;
 		}
 		var D = function ( e ) {
-				var t = e.target.files[ 0 ];
-				if ( ! t ) {
+				var _tLocal3 = e.target.files[ 0 ];
+				if ( ! _tLocal3 ) {
 					return ( C( ! 1 ), k( ! 1 ), S( '' ), void _( null ) );
 				}
-				var n = ! 1;
-				( 'json' === F
-					? ( n = 'application/json' === t.type )
-					: 'scorm' === F &&
-						( n =
-							[
-								'application/zip',
-								'application/x-zip-compressed',
-								'multipart/x-zip',
-							].includes( t.type ) ||
-							t.name.toLowerCase().endsWith( '.zip' ) ),
-					n
-						? ( S( t.name ), C( ! 0 ), k( ! 0 ), _( t ) )
-						: ( C( ! 1 ), k( ! 1 ), S( '' ), _( null ) ) );
+				var _nLocal3 = ! 1;
+				if ( 'json' === F ) {
+					_nLocal3 = 'application/json' === _tLocal3.type;
+				} else if ( 'scorm' === F ) {
+					_nLocal3 =
+						[
+							'application/zip',
+							'application/x-zip-compressed',
+							'multipart/x-zip',
+						].includes( _tLocal3.type ) ||
+						_tLocal3.name.toLowerCase().endsWith( '.zip' );
+				}
+				if ( _nLocal3 ) {
+					{
+						S( _tLocal3.name );
+						C( ! 0 );
+						k( ! 0 );
+						_( _tLocal3 );
+					}
+				} else {
+					{
+						C( ! 1 );
+						k( ! 1 );
+						S( '' );
+						_( null );
+					}
+				}
 			},
 			W = function ( e ) {
-				( 'json' !== e || p ) &&
-					( N( e ), _( null ), S( '' ), C( ! 0 ), k( ! 1 ) );
+				if ( 'json' !== e || p ) {
+					{
+						N( e );
+						_( null );
+						S( '' );
+						C( ! 0 );
+						k( ! 1 );
+					}
+				}
 			};
 		return (
 			<React.Fragment>
@@ -152,6 +176,7 @@ export function createCourseImportDialog( readRuntime ) {
 												? 'pointer'
 												: 'not-allowed',
 										} }
+										htmlFor={ _controlId + '-field-1' }
 									>
 										<input
 											type={ 'radio' }
@@ -166,6 +191,7 @@ export function createCourseImportDialog( readRuntime ) {
 													? 'pointer'
 													: 'not-allowed',
 											} }
+											id={ _controlId + '-field-1' }
 										/>
 										<span>
 											{ ( 0, I18n.__ )(
@@ -199,6 +225,7 @@ export function createCourseImportDialog( readRuntime ) {
 											gap: '8px',
 											cursor: 'pointer',
 										} }
+										htmlFor={ _controlId + '-field-2' }
 									>
 										<input
 											type={ 'radio' }
@@ -210,6 +237,7 @@ export function createCourseImportDialog( readRuntime ) {
 											style={ {
 												cursor: 'pointer',
 											} }
+											id={ _controlId + '-field-2' }
 										/>
 										<span>
 											{ ( 0, I18n.__ )(
@@ -233,19 +261,21 @@ export function createCourseImportDialog( readRuntime ) {
 								direction={ 'column' }
 								gap={ '4' }
 								onDrop={ function ( e ) {
-									( e.preventDefault(), M( ! 1 ) );
-									var t = e.dataTransfer.files;
-									if ( t.length > 0 ) {
-										var n = t[ 0 ];
+									e.preventDefault();
+									M( ! 1 );
+									var _tLocal4 = e.dataTransfer.files;
+									if ( _tLocal4.length > 0 ) {
+										var _nLocal4 = _tLocal4[ 0 ];
 										D( {
 											target: {
-												files: [ n ],
+												files: [ _nLocal4 ],
 											},
 										} );
 									}
 								} }
 								onDragOver={ function ( e ) {
-									( e.preventDefault(), M( ! 0 ) );
+									e.preventDefault();
+									M( ! 0 );
 								} }
 								onDragLeave={ function () {
 									M( ! 1 );

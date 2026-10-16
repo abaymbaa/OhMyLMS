@@ -10,7 +10,7 @@
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
-	exit; // Exit if accessed directly
+	exit; // Exit if accessed directly.
 }
 $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 ?>
@@ -24,24 +24,24 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 
 		<ul class="ohmylms-assignment-quiz-meta">
 			<li class="duratioin">
-				<strong><?php echo __( 'Questions: ', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Questions: ', 'ohmylms' ); ?></strong>
 				<?php echo $quiz->get_total_question(); ?>
 			</li>
 
 			<?php if ( $quiz->get_timer() ) : ?>
 			<li class="duratioin">
-				<strong><?php echo __( 'Duration: ', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Duration: ', 'ohmylms' ); ?></strong>
 				<?php echo $quiz->get_timer() . ' minutes'; ?>
 			</li>
 			<?php endif; ?>
 
 			<li class="total-marks">
-				<strong><?php echo __( 'Total Marks: ', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Total Marks: ', 'ohmylms' ); ?></strong>
 				<?php echo $quiz->get_total_marks(); ?>
 			</li>
 
 			<li class="pass-mark">
-				<strong><?php echo __( 'Passing Mark: ', 'ohmylms' ); ?></strong>
+				<strong><?php echo esc_html__( 'Passing Mark: ', 'ohmylms' ); ?></strong>
 				<?php echo $quiz->get_passing_grade(); ?>
 			</li>
 		</ul>
@@ -94,11 +94,11 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 
 						<div class="ohmylms-td status">
 							<?php
-							if ( ! $feedback && $attempt['status'] !== 'in-progress' ) {
+							if ( ! $feedback && 'in-progress' !== $attempt['status'] ) {
 								echo '<span class="pending">' . esc_html__( 'Submitted — results not released yet', 'ohmylms' ) . '</span>';
-							} elseif ( $attempt['status'] === 'in-review' ) {
+							} elseif ( 'in-review' === $attempt['status'] ) {
 								echo '<span class="pending">' . esc_html__( 'Awaiting review', 'ohmylms' ) . '</span>';
-							} elseif ( $attempt['status'] === 'in-progress' ) {
+							} elseif ( 'in-progress' === $attempt['status'] ) {
 									echo '<span class="pending">' . esc_html__( 'In progress', 'ohmylms' ) . '</span>';
 							} elseif ( $earned >= $basis['max'] && $basis['max'] > 0 ) {
 								echo '<span class="passed">' . esc_html__( 'Pass', 'ohmylms' ) . '</span>';
@@ -106,7 +106,7 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 								echo '<span class="passed">' . esc_html__( 'Pass', 'ohmylms' ) . '</span>';
 							} elseif ( $earned < $basis['passing'] ) {
 								echo '<span class="failed">' . esc_html__( 'Fail', 'ohmylms' ) . '</span>';
-							} elseif ( empty( $attempt['end_date'] ) && $attempt['end_date'] !== '0000-00-00 00:00:00' ) {
+							} elseif ( empty( $attempt['end_date'] ) && '0000-00-00 00:00:00' !== $attempt['end_date'] ) {
 								echo '<span class="pending">' . esc_html__( 'Pending', 'ohmylms' ) . '</span>';
 							}
 							?>
@@ -134,7 +134,7 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 				<div class="ohmylms-tr no-data">
 					<?php
 						include OHMYLMS_DIR . '/assets/images/icon/no-review-image.php';
-						echo __( 'No Data Found.', 'ohmylms' );
+						echo esc_html__( 'No Data Found.', 'ohmylms' );
 					?>
 				</div>
 				<?php

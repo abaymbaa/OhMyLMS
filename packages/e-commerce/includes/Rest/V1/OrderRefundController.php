@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
+/**
+ * Order Refund Controller class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Commerce\Rest\V1;
 
@@ -161,7 +166,7 @@ class OrderRefundController extends RestController {
 	 * Prepare links for the refund object.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
-	 * @param \WP_REST_Request                    $request The request object.
+	 * @param \WP_REST_Request                   $request The request object.
 	 * @return array Links for the given refund.
 	 */
 	protected function prepare_links( $refund, $request ) {

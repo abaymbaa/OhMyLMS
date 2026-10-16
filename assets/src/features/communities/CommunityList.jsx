@@ -82,41 +82,42 @@ export function createCommunityList( readRuntime ) {
 			w = f[ 1 ],
 			E = ( 0, ReactHooks.useCallback )(
 				B9(
-					D9().m( function t() {
-						var n;
+					D9().m( function _tLocal() {
+						var _nLocal;
 						return D9().w(
-							function ( t ) {
+							function ( _tLocal2 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal2.p = _tLocal2.n ) ) {
 										case 0:
 											return (
 												s( ! 0 ),
-												( t.p = 1 ),
-												( t.n = 2 ),
+												( _tLocal2.p = 1 ),
+												( _tLocal2.n = 2 ),
 												e.fetchCommunities( {} )
 											 );
 										case 2:
-											t.n = 4;
+											_tLocal2.n = 4;
 											break;
 										case 3:
-											( ( t.p = 3 ),
-												( n = t.v ),
-												console.error(
-													'Error in fetchData:',
-													n
-												) );
+											_tLocal2.p = 3;
+											_nLocal = _tLocal2.v;
+											console.error(
+												'Error in fetchData:',
+												_nLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( t.p = 4 ),
+												( _tLocal2.p = 4 ),
 												s( ! 1 ),
-												t.f( 4 )
+												_tLocal2.f( 4 )
 											 );
 										case 5:
-											return t.a( 2 );
+											return _tLocal2.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
@@ -124,42 +125,43 @@ export function createCommunityList( readRuntime ) {
 				),
 				[ e ]
 			),
-			S = ( 0, WordPressData.useSelect )( function ( e ) {
+			S = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
 				try {
-					var t, n;
+					var _tLocal3, _nLocal2;
 					return (
 						( null ===
-							( t = ( n = e( StoreModule.default ) )
-								.getCommunities ) || void 0 === t
+							( _tLocal3 = ( _nLocal2 = _eLocal(
+								StoreModule.default
+							) ).getCommunities ) || void 0 === _tLocal3
 							? void 0
-							: t.call( n ) ) || []
+							: _tLocal3.call( _nLocal2 ) ) || []
 					);
-				} catch ( e ) {
+				} catch ( _eLocal2 ) {
 					return [];
 				}
 			}, [] ),
 			R = ( function () {
-				var t = B9(
-					D9().m( function t( n ) {
-						var r, a;
+				var _tLocal4 = B9(
+					D9().m( function _tLocal5( _nLocal3 ) {
+						var _rLocal, _aLocal;
 						return D9().w(
-							function ( t ) {
+							function ( _tLocal6 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal6.p = _tLocal6.n ) ) {
 										case 0:
-											if ( ! v && n ) {
-												t.n = 1;
+											if ( ! v && _nLocal3 ) {
+												_tLocal6.n = 1;
 												break;
 											}
-											return t.a( 2 );
+											return _tLocal6.a( 2 );
 										case 1:
 											return (
-												( t.p = 1 ),
+												( _tLocal6.p = 1 ),
 												w( ! 0 ),
-												( t.n = 2 ),
+												( _tLocal6.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/community/spaces/'.concat(
-														n
+														_nLocal3
 													),
 													method: 'GET',
 													headers: {
@@ -169,45 +171,51 @@ export function createCommunityList( readRuntime ) {
 												} )
 											 );
 										case 2:
-											( ( r = t.v ),
-												e.setCommunity( r ),
-												( t.n = 4 ) );
+											_rLocal = _tLocal6.v;
+											e.setCommunity( _rLocal );
+											_tLocal6.n = 4;
 											break;
 										case 3:
-											( ( t.p = 3 ),
-												( a = t.v ),
-												console.error( a ) );
+											_tLocal6.p = 3;
+											_aLocal = _tLocal6.v;
+											console.error( _aLocal );
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( t.p = 4 ),
+												( _tLocal6.p = 4 ),
 												w( ! 1 ),
-												t.f( 4 )
+												_tLocal6.f( 4 )
 											 );
 										case 5:
-											return t.a( 2 );
+											return _tLocal6.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal5,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
 					} )
 				);
-				return function ( e ) {
-					return t.apply( this, arguments );
+				return function ( ..._args ) {
+					return _tLocal4.apply( this, _args );
 				};
 			} )(),
-			x = function ( e ) {
-				( p( ! 0 ), R( null == e ? void 0 : e.id ) );
+			x = function ( _eLocal4 ) {
+				p( ! 0 );
+				R(
+					_eLocal4 === null || _eLocal4 === void 0
+						? void 0
+						: _eLocal4.id
+				);
 			},
 			C = [
 				{
 					title: ( 0, I18n.__ )( 'Space Name', 'ohmylms' ),
 					dataIndex: 'name',
 					key: 'name',
-					render( e, t ) {
-						var n;
+					render( _eLocal5, _tLocal7 ) {
+						var _nLocal4;
 						return (
 							<React.Fragment>
 								<Controls.FlexWP
@@ -215,16 +223,18 @@ export function createCommunityList( readRuntime ) {
 									justify={ 'start' }
 									gap={ 4 }
 									onClick={ function () {
-										return x( t );
+										return x( _tLocal7 );
 									} }
 									style={ {
 										cursor: 'pointer',
 									} }
 								>
-									{ null != t && t.image ? (
+									{ _tLocal7 !== null &&
+									_tLocal7 !== void 0 &&
+									_tLocal7.image ? (
 										<Controls.AvatarWP
 											shape={ 'square' }
-											src={ t.image }
+											src={ _tLocal7.image }
 											size={ 100 }
 										/>
 									) : (
@@ -240,16 +250,26 @@ export function createCommunityList( readRuntime ) {
 										truncate={ ! 0 }
 									>
 										{ Ge(
-											null !==
-												( n =
-													null == t
-														? void 0
-														: t.name ) &&
-												void 0 !== n
-												? n
-												: null == t
-													? void 0
-													: t.title
+											( () => {
+												if (
+													null !==
+														( _nLocal4 =
+															_tLocal7 === null ||
+															_tLocal7 === void 0
+																? void 0
+																: _tLocal7.name ) &&
+													void 0 !== _nLocal4
+												) {
+													return _nLocal4;
+												}
+												if (
+													_tLocal7 === null ||
+													_tLocal7 === void 0
+												) {
+													return void 0;
+												}
+												return _tLocal7.title;
+											} )()
 										) }
 									</Controls.TextWP>
 								</Controls.FlexWP>
@@ -261,10 +281,12 @@ export function createCommunityList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Members', 'ohmylms' ),
 					dataIndex: 'members',
 					key: 'members',
-					render( e ) {
+					render( _eLocal6 ) {
 						return (
 							<Controls.TextWP>
-								{ null != e ? e : '-' }
+								{ _eLocal6 !== null && _eLocal6 !== void 0
+									? _eLocal6
+									: '-' }
 							</Controls.TextWP>
 						);
 					},
@@ -273,10 +295,12 @@ export function createCommunityList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Posts', 'ohmylms' ),
 					dataIndex: 'posts',
 					key: 'posts',
-					render( e ) {
+					render( _eLocal7 ) {
 						return (
 							<Controls.TextWP>
-								{ null != e ? e : '-' }
+								{ _eLocal7 !== null && _eLocal7 !== void 0
+									? _eLocal7
+									: '-' }
 							</Controls.TextWP>
 						);
 					},
@@ -285,10 +309,12 @@ export function createCommunityList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Engagement', 'ohmylms' ),
 					dataIndex: 'engagement',
 					key: 'engagement',
-					render( e ) {
+					render( _eLocal8 ) {
 						return (
 							<Controls.TextWP>
-								{ null != e ? e : '-' }
+								{ _eLocal8 !== null && _eLocal8 !== void 0
+									? _eLocal8
+									: '-' }
 							</Controls.TextWP>
 						);
 					},
@@ -297,10 +323,12 @@ export function createCommunityList( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Last Activity', 'ohmylms' ),
 					dataIndex: 'last_activity',
 					key: 'last_activity',
-					render( e ) {
+					render( _eLocal9 ) {
 						return (
 							<Controls.TextWP>
-								{ null != e ? e : '-' }
+								{ _eLocal9 !== null && _eLocal9 !== void 0
+									? _eLocal9
+									: '-' }
 							</Controls.TextWP>
 						);
 					},
@@ -308,7 +336,7 @@ export function createCommunityList( readRuntime ) {
 				{
 					title: ( 0, I18n.__ )( 'Actions', 'ohmylms' ),
 					key: 'actions',
-					render( e, t ) {
+					render( _eLocal0, _tLocal8 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -319,13 +347,17 @@ export function createCommunityList( readRuntime ) {
 										),
 										onClick() {
 											return (
-												( e =
-													null == t
+												( _eLocal1 =
+													_tLocal8 === null ||
+													_tLocal8 === void 0
 														? void 0
-														: t.url ),
-												void window.open( e, '_blank' )
+														: _tLocal8.url ),
+												void window.open(
+													_eLocal1,
+													'_blank'
+												)
 											 );
-											var e;
+											var _eLocal1;
 										},
 										icon: <Br />,
 									},
@@ -335,7 +367,7 @@ export function createCommunityList( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return x( t );
+											return x( _tLocal8 );
 										},
 										icon: <Rt width={ '16' } />,
 									},
@@ -351,9 +383,9 @@ export function createCommunityList( readRuntime ) {
 				l()( {
 					path: '/ohmylms/v1/communities/analytics',
 					method: 'GET',
-				} ).then( function ( e ) {
-					var t, n, a, o, l, c;
-					( r( [
+				} ).then( function ( _eLocal10 ) {
+					var _tLocal9, _nLocal5, _aLocal2, _oLocal, _lLocal, _cLocal;
+					r( [
 						{
 							label: ( 0, I18n.__ )( 'Total members', 'ohmylms' ),
 							tooltip: ( 0, I18n.__ )(
@@ -362,12 +394,14 @@ export function createCommunityList( readRuntime ) {
 							),
 							value:
 								null !==
-									( t =
-										null === ( n = e.members ) ||
-										void 0 === n
+									( _tLocal9 =
+										null ===
+											( _nLocal5 = _eLocal10.members ) ||
+										void 0 === _nLocal5
 											? void 0
-											: n.total ) && void 0 !== t
-									? t
+											: _nLocal5.total ) &&
+								void 0 !== _tLocal9
+									? _tLocal9
 									: '-',
 							progression_percent: '',
 							progression_text: '',
@@ -384,11 +418,14 @@ export function createCommunityList( readRuntime ) {
 							),
 							value:
 								null !==
-									( a =
-										null === ( o = e.posts ) || void 0 === o
+									( _aLocal2 =
+										null ===
+											( _oLocal = _eLocal10.posts ) ||
+										void 0 === _oLocal
 											? void 0
-											: o.total ) && void 0 !== a
-									? a
+											: _oLocal.total ) &&
+								void 0 !== _aLocal2
+									? _aLocal2
 									: '-',
 							progression_percent: '',
 							progression_text: '',
@@ -408,12 +445,15 @@ export function createCommunityList( readRuntime ) {
 							),
 							value:
 								null !==
-									( l =
-										null === ( c = e.engagement ) ||
-										void 0 === c
+									( _lLocal =
+										null ===
+											( _cLocal =
+												_eLocal10.engagement ) ||
+										void 0 === _cLocal
 											? void 0
-											: c.total ) && void 0 !== l
-									? l
+											: _cLocal.total ) &&
+								void 0 !== _lLocal
+									? _lLocal
 									: '-',
 							progression_percent: '',
 							progression_text: '',
@@ -422,16 +462,16 @@ export function createCommunityList( readRuntime ) {
 							card_class: 'card-net-income',
 							iconColor: '',
 						},
-					] ),
-						i( ! 1 ) );
+					] );
+					i( ! 1 );
 				} );
 			}, [] ),
 			( 0, ReactHooks.useEffect )( function () {
-				var e = ! 0;
+				var _eLocal11 = ! 0;
 				return (
-					e && E(),
+					_eLocal11 && E(),
 					function () {
-						e = ! 1;
+						_eLocal11 = ! 1;
 					}
 				 );
 			}, [] ),
@@ -481,20 +521,22 @@ export function createCommunityList( readRuntime ) {
 														>
 															{ n.map(
 																function (
-																	e,
-																	t
+																	_eLocal12,
+																	_tLocal0
 																) {
-																	var n =
-																		( null ==
-																		e
+																	var _nLocal6 =
+																		( _eLocal12 ===
+																			null ||
+																		_eLocal12 ===
+																			void 0
 																			? void 0
-																			: e.iconColor ) ||
+																			: _eLocal12.iconColor ) ||
 																		'#33A646';
 																	return (
 																		<Controls.FlexBlockWP
 																			key={
-																				e.label +
-																				t
+																				_eLocal12.label +
+																				_tLocal0
 																			}
 																		>
 																			<Controls.CardWP
@@ -505,7 +547,7 @@ export function createCommunityList( readRuntime ) {
 																					'secondary'
 																				}
 																				key={
-																					e.label
+																					_eLocal12.label
 																				}
 																			>
 																				<Controls.SpacerWP
@@ -560,7 +602,7 @@ export function createCommunityList( readRuntime ) {
 																								>
 																									<path
 																										fill={
-																											n
+																											_nLocal6
 																										}
 																										fillRule={
 																											'evenodd'
@@ -613,13 +655,13 @@ export function createCommunityList( readRuntime ) {
 																										}
 																									>
 																										{
-																											e.label
+																											_eLocal12.label
 																										}
 																									</Controls.TextWP>
-																									{ e.tooltip && (
+																									{ _eLocal12.tooltip && (
 																										<V.A
 																											text={
-																												e.tooltip
+																												_eLocal12.tooltip
 																											}
 																											className={
 																												'ohmylms-tooltip'
@@ -644,7 +686,7 @@ export function createCommunityList( readRuntime ) {
 																									} }
 																								>
 																									{
-																										e.value
+																										_eLocal12.value
 																									}
 																								</span>
 																							</Controls.FlexWP>

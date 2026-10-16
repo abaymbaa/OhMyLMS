@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Hooks Class for WP Fusion Integration
  *
@@ -69,11 +69,11 @@ class Hooks {
 	 * @since 1.0.0
 	 */
 	public function on_integration_updated( $old_value, $new_value ) {
-		// Check if WP Fusion was just enabled
+		// Check if WP Fusion was just enabled.
 		$old_wpfusion_enabled = isset( $old_value['wpfusion']['is_enable'] ) && 1 === (int) $old_value['wpfusion']['is_enable'];
 		$new_wpfusion_enabled = isset( $new_value['wpfusion']['is_enable'] ) && 1 === (int) $new_value['wpfusion']['is_enable'];
 
-		// If WP Fusion just got enabled, trigger table creation
+		// If WP Fusion just got enabled, trigger table creation.
 		if ( ! $old_wpfusion_enabled && $new_wpfusion_enabled ) {
 			WPFusionMigration::maybe_ohmylms_integration_table();
 		}

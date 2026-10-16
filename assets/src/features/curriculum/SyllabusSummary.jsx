@@ -12,8 +12,24 @@ import { workspacePath } from './workspace.mjs';
 export function SyllabusSummary( { item } ) {
 	const { groups = 0, skills = 0 } = item.syllabus || {};
 	const size = [
-		sprintf( _n( '%d folder', '%d folders', groups, 'ohmylms' ), groups ),
-		sprintf( _n( '%d skill', '%d skills', skills, 'ohmylms' ), skills ),
+		sprintf(
+			/* translators: %d: number of curriculum folders. */ _n(
+				'%d folder',
+				'%d folders',
+				groups,
+				'ohmylms'
+			),
+			groups
+		),
+		sprintf(
+			/* translators: %d: number of skills. */ _n(
+				'%d skill',
+				'%d skills',
+				skills,
+				'ohmylms'
+			),
+			skills
+		),
 		item.course_id ? __( 'also a course', 'ohmylms' ) : '',
 	]
 		.filter( Boolean )

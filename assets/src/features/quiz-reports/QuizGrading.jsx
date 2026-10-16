@@ -37,18 +37,18 @@ export function createQuizGrading( readRuntime ) {
 			quizId = params.id,
 			attemptId = params.quizId,
 			fetchReport = ( function () {
-				var e = B$(
-					D$().m( function e() {
-						var t, n;
+				var _eLocal = B$(
+					D$().m( function _eLocal2() {
+						var _tLocal, _nLocal;
 						return D$().w(
-							function ( e ) {
+							function ( _eLocal3 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal3.p = 0 ),
 												setLoading( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal3.n = 1 ),
 												ApiFetchModule()( {
 													path: '/ohmylms/v1/quiz/'
 														.concat(
@@ -64,40 +64,42 @@ export function createQuizGrading( readRuntime ) {
 												} )
 											 );
 										case 1:
-											if ( ( t = e.v ) ) {
-												e.n = 2;
+											if ( ( _tLocal = _eLocal3.v ) ) {
+												_eLocal3.n = 2;
 												break;
 											}
-											t = [];
+											_tLocal = [];
+										// Falls through to the shared async state cleanup.
 										case 2:
-											( setAttempt(
-												normalizeQuizReport( t )
-											),
-												( e.n = 4 ) );
+											setAttempt(
+												normalizeQuizReport( _tLocal )
+											);
+											_eLocal3.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( n = e.v ),
-												console.error( n ) );
+											_eLocal3.p = 3;
+											_nLocal = _eLocal3.v;
+											console.error( _nLocal );
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal3.p = 4 ),
 												setLoading( ! 1 ),
-												e.f( 4 )
+												_eLocal3.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal2,
 							null,
 							[ [ 0, 3, 4, 5 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal.apply( this, _args );
 				};
 			} )();
 		( 0, ReactHooks.useEffect )( function () {
@@ -106,17 +108,17 @@ export function createQuizGrading( readRuntime ) {
 		var P,
 			O,
 			saveGrade = ( function () {
-				var e = B$(
-					D$().m( function e() {
-						var t, n;
+				var _eLocal4 = B$(
+					D$().m( function _eLocal5() {
+						var _tLocal2, _nLocal2;
 						return D$().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
-												( e.n = 1 ),
+												( _eLocal6.p = 0 ),
+												( _eLocal6.n = 1 ),
 												ApiFetchModule()( {
 													path: '/ohmylms/v1/quiz/'
 														.concat(
@@ -135,30 +137,38 @@ export function createQuizGrading( readRuntime ) {
 												} )
 											 );
 										case 1:
-											( 'success' ===
-												( null == ( t = e.v )
+											if (
+												'success' ===
+												( ( ( _nullableValue ) =>
+													_nullableValue === null ||
+													_nullableValue === void 0 )(
+													( _tLocal2 = _eLocal6.v )
+												)
 													? void 0
-													: t.status ) &&
-												window.location.reload(),
-												( e.n = 3 ) );
+													: _tLocal2.status )
+											) {
+												window.location.reload();
+											}
+											_eLocal6.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( n = e.v ),
-												console.error( n ) );
+											_eLocal6.p = 2;
+											_nLocal2 = _eLocal6.v;
+											console.error( _nLocal2 );
+										// Falls through to the shared async state cleanup.
 										case 3:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 0, 2 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal4.apply( this, _args2 );
 				};
 			} )();
 		return (
@@ -226,7 +236,9 @@ export function createQuizGrading( readRuntime ) {
 												</RouterLinks.Link>
 												<Controls.TextWP size={ 15 }>
 													{ decodeHtml(
-														null == attempt ||
+														attempt === null ||
+															attempt ===
+																void 0 ||
 															null ===
 																( e =
 																	attempt.student ) ||
@@ -245,7 +257,7 @@ export function createQuizGrading( readRuntime ) {
 									gap={ 4 }
 									justify={ 'flex-start' }
 								>
-									{ ( null == attempt
+									{ ( attempt === null || attempt === void 0
 										? void 0
 										: attempt.end_date ) && (
 										<Controls.FlexItemWP>
@@ -266,7 +278,8 @@ export function createQuizGrading( readRuntime ) {
 													) }
 													{ ': ' }
 													{ DateLibrary()(
-														null == attempt
+														attempt === null ||
+															attempt === void 0
 															? void 0
 															: attempt.end_date
 													).format(
@@ -276,7 +289,8 @@ export function createQuizGrading( readRuntime ) {
 											</Controls.FlexWP>
 										</Controls.FlexItemWP>
 									) }
-									{ ( null == attempt ||
+									{ ( attempt === null ||
+									attempt === void 0 ||
 									null === ( t = attempt.report ) ||
 									void 0 === t
 										? void 0
@@ -287,44 +301,62 @@ export function createQuizGrading( readRuntime ) {
 													textTransform: 'capitalize',
 												} }
 												isBorderLess={ ! 0 }
-												variant={
-													'in-review' ===
-													( null == attempt ||
-													null ===
-														( n =
-															attempt.report ) ||
-													void 0 === n
-														? void 0
-														: n.status )
-														? 'warning'
-														: 'completed' ===
-															  ( null ==
-																	attempt ||
-															  null ===
-																	( r =
-																		attempt.report ) ||
-															  void 0 === r
-																	? void 0
-																	: r.status )
-															? 'success'
-															: 'danger'
-												}
+												variant={ ( () => {
+													if (
+														'in-review' ===
+														( attempt === null ||
+														attempt === void 0 ||
+														null ===
+															( n =
+																attempt.report ) ||
+														void 0 === n
+															? void 0
+															: n.status )
+													) {
+														return 'warning';
+													}
+													if (
+														'completed' ===
+														( attempt === null ||
+														attempt === void 0 ||
+														null ===
+															( r =
+																attempt.report ) ||
+														void 0 === r
+															? void 0
+															: r.status )
+													) {
+														return 'success';
+													}
+													return 'danger';
+												} )() }
 											>
-												{ 'in-review' ===
-												( null == attempt ||
-												null ===
-													( a = attempt.report ) ||
-												void 0 === a
-													? void 0
-													: a.status )
-													? 'Pending'
-													: null == attempt ||
-														  null ===
-																( o =
-																	attempt.report ) ||
-														  void 0 === o
-														? void 0
-														: o.status }
+												{ ( () => {
+													if (
+														'in-review' ===
+														( attempt === null ||
+														attempt === void 0 ||
+														null ===
+															( a =
+																attempt.report ) ||
+														void 0 === a
+															? void 0
+															: a.status )
+													) {
+														return 'Pending';
+													}
+													if (
+														attempt === null ||
+														attempt === void 0 ||
+														null ===
+															( o =
+																attempt.report ) ||
+														void 0 === o
+													) {
+														return void 0;
+													}
+													return o.status;
+												} )() }
 											</Controls.BadgeWP>
 										</Controls.FlexItemWP>
 									) }
@@ -361,7 +393,8 @@ export function createQuizGrading( readRuntime ) {
 											<QuizQuestionResults
 												setData={ setAttempt }
 												data={
-													null == attempt ||
+													attempt === null ||
+													attempt === void 0 ||
 													null ===
 														( i =
 															attempt.report ) ||
@@ -380,15 +413,18 @@ export function createQuizGrading( readRuntime ) {
 											<QuizResultSummary
 												data={ {
 													score:
-														( null == attempt
+														( attempt === null ||
+														attempt === void 0
 															? void 0
 															: attempt.score ) ||
 														0,
 													correct: ''
 														.concat(
 															( ( P =
-																null ==
-																	attempt ||
+																attempt ===
+																	null ||
+																attempt ===
+																	void 0 ||
 																null ===
 																	( c =
 																		attempt.report ) ||
@@ -399,151 +435,179 @@ export function createQuizGrading( readRuntime ) {
 															P && P.length
 																? ( P.forEach(
 																		function (
-																			e
+																			_eLocal7
 																		) {
-																			'correct' ===
+																			if (
+																				'correct' ===
 																				( function (
-																					e
+																					_eLocal8
 																				) {
-																					var t,
-																						n =
-																							e.given_answer,
-																						r =
-																							e.questions,
-																						a =
-																							null ==
-																								e ||
+																					var _tLocal3,
+																						_nLocal3 =
+																							_eLocal8.given_answer,
+																						_rLocal =
+																							_eLocal8.questions,
+																						_aLocal =
+																							_eLocal8 ===
+																								null ||
+																							_eLocal8 ===
+																								void 0 ||
 																							null ===
-																								( t =
-																									e.settings ) ||
+																								( _tLocal3 =
+																									_eLocal8.settings ) ||
 																							void 0 ===
-																								t
+																								_tLocal3
 																								? void 0
-																								: t.type;
+																								: _tLocal3.type;
 																					// Versioned reports carry the server's grading verdict.
 																					if (
 																						'boolean' ===
-																						typeof ( null ==
-																						e
+																						typeof ( _eLocal8 ===
+																							null ||
+																						_eLocal8 ===
+																							void 0
 																							? void 0
-																							: e.correct )
+																							: _eLocal8.correct )
 																					) {
-																						return e.correct
+																						return _eLocal8.correct
 																							? 'correct'
 																							: 'incorrect';
 																					}
 																					if (
 																						'true-false' ===
-																							a ||
+																							_aLocal ||
 																						'short-text' ===
-																							a ||
+																							_aLocal ||
 																						'long-text' ===
-																							a ||
+																							_aLocal ||
 																						'fill-in-the-blank' ===
-																							a ||
+																							_aLocal ||
 																						'statement' ===
-																							a
+																							_aLocal
 																					) {
-																						return ( null ==
-																						e
+																						return ( _eLocal8 ===
+																							null ||
+																						_eLocal8 ===
+																							void 0
 																							? void 0
-																							: e.achive_mark ) >
+																							: _eLocal8.achive_mark ) >
 																							0
 																							? 'correct'
 																							: 'incorrect';
 																					}
 																					if (
 																						'reorder' ===
-																						a
+																						_aLocal
 																					) {
 																						return R$(
-																							n,
-																							r
+																							_nLocal3,
+																							_rLocal
 																						)
 																							? 'correct'
 																							: 'incorrect';
 																					}
 																					if (
 																						'matching' ===
-																						a
+																						_aLocal
 																					) {
 																						return j$(
-																							n
+																							_nLocal3
 																						)
 																							? 'correct'
 																							: 'incorrect';
 																					}
 																					if (
-																						! n ||
+																						! _nLocal3 ||
 																						! Array.isArray(
-																							n
+																							_nLocal3
 																						)
 																					) {
 																						return 'incorrect';
 																					}
-																					var o =
-																							r
+																					var _oLocal =
+																							_rLocal
 																								.filter(
 																									function (
-																										e
+																										_eLocal9
 																									) {
 																										return (
 																											'1' ===
-																											e.is_correct
+																											_eLocal9.is_correct
 																										);
 																									}
 																								)
 																								.map(
 																									function (
-																										e
+																										_eLocal0
 																									) {
-																										return e.id;
+																										return _eLocal0.id;
 																									}
 																								),
-																						i =
-																							n.every(
+																						_iLocal =
+																							_nLocal3.every(
 																								function (
-																									e
+																									_eLocal1
 																								) {
-																									return o.includes(
-																										e
+																									return _oLocal.includes(
+																										_eLocal1
 																									);
 																								}
 																							);
-																					return 'single-choice' ===
-																						e
-																							.settings
-																							.type
-																						? i &&
-																							1 ===
-																								n.length &&
-																							o.includes(
-																								n[ 0 ]
-																							)
-																							? 'correct'
-																							: 'incorrect'
-																						: 'multiple-choice' ===
-																							  e
+																					return ( () => {
+																						if (
+																							'single-choice' ===
+																							_eLocal8
+																								.settings
+																								.type
+																						) {
+																							if (
+																								_iLocal &&
+																								1 ===
+																									_nLocal3.length &&
+																								_oLocal.includes(
+																									_nLocal3[ 0 ]
+																								)
+																							) {
+																								return 'correct';
+																							}
+																							return 'incorrect';
+																						}
+																						return ( () => {
+																							if (
+																								'multiple-choice' ===
+																								_eLocal8
 																									.settings
 																									.type
-																							? i &&
-																								n.length ===
-																									o.length
-																								? 'correct'
-																								: 'incorrect'
-																							: 'statement' ===
-																										e
-																											.settings
-																											.type &&
-																								  i &&
-																								  n.length ===
-																										o.length
-																								? 'correct'
-																								: 'incorrect';
+																							) {
+																								if (
+																									_iLocal &&
+																									_nLocal3.length ===
+																										_oLocal.length
+																								) {
+																									return 'correct';
+																								}
+																								return 'incorrect';
+																							}
+																							if (
+																								'statement' ===
+																									_eLocal8
+																										.settings
+																										.type &&
+																								_iLocal &&
+																								_nLocal3.length ===
+																									_oLocal.length
+																							) {
+																								return 'correct';
+																							}
+																							return 'incorrect';
+																						} )();
+																					} )();
 																				} )(
-																					e
-																				) &&
+																					_eLocal7
+																				)
+																			) {
 																				O++;
+																			}
 																		}
 																	),
 																	O )
@@ -551,23 +615,30 @@ export function createQuizGrading( readRuntime ) {
 															'/'
 														)
 														.concat(
-															null == attempt
+															attempt === null ||
+																attempt ===
+																	void 0
 																? void 0
 																: attempt.total_question
 														),
 													isPass:
 														Number(
-															null == attempt
+															attempt === null ||
+																attempt ===
+																	void 0
 																? void 0
 																: attempt.score
 														) >=
 														Number(
-															null == attempt
+															attempt === null ||
+																attempt ===
+																	void 0
 																? void 0
 																: attempt.passing_mark
 														),
 													status:
-														null == attempt ||
+														attempt === null ||
+														attempt === void 0 ||
 														null ===
 															( u =
 																attempt.report ) ||
@@ -575,7 +646,9 @@ export function createQuizGrading( readRuntime ) {
 															? void 0
 															: u.status,
 													student_name: decodeHtml(
-														null == attempt ||
+														attempt === null ||
+															attempt ===
+																void 0 ||
 															null ===
 																( s =
 																	attempt.student ) ||
@@ -584,7 +657,9 @@ export function createQuizGrading( readRuntime ) {
 															: s.name
 													),
 													course_name: decodeHtml(
-														null == attempt ||
+														attempt === null ||
+															attempt ===
+																void 0 ||
 															null ===
 																( d =
 																	attempt.course ) ||

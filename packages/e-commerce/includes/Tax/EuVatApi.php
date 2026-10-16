@@ -70,9 +70,9 @@ class OhMyLMS_EU_VAT_API {
 	 * Makes a request to the VIES API
 	 *
 	 * @param OhMyLMS_EU_VAT_API_Response $result
-	 * @param string           $vat_number
-	 * @param string           $country_code
-	 * @param string           $vat_prefix_for_country
+	 * @param string                      $vat_number
+	 * @param string                      $country_code
+	 * @param string                      $vat_prefix_for_country
 	 *
 	 * @return OhMyLMS_EU_VAT_API_Response
 	 */
@@ -97,7 +97,7 @@ class OhMyLMS_EU_VAT_API {
 				// Fetch response.
 				$response = $client->checkVat( $parameters );
 
-				// Save response for a day
+				// Save response for a day.
 				set_transient( $cache_key, $response, DAY_IN_SECONDS );
 			}
 
@@ -111,7 +111,7 @@ class OhMyLMS_EU_VAT_API {
 			if ( $response->address && '---' !== $response->address ) {
 				$address = explode( "\n", $response->address );
 
-				// Add country code to address
+				// Add country code to address.
 				$address[] = $country_code;
 
 				$result->address = implode( ', ', array_filter( $address ) );
@@ -144,11 +144,11 @@ class OhMyLMS_EU_VAT_API {
 			case 'GR':
 				$vat_prefix = 'EL';
 				break;
-			// makes monaco use france's tax rate
+			// makes monaco use france's tax rate.
 			case 'MC':
 				$vat_prefix = 'FR';
 				break;
-			// makes UK use Northern ireland's tax rate
+			// makes UK use Northern ireland's tax rate.
 			case 'GB':
 				$vat_prefix = 'XI';
 				break;

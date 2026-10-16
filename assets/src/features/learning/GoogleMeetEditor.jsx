@@ -6,7 +6,6 @@ export function createGoogleMeetEditor( readRuntime ) {
 			Bl,
 			Fl,
 			Il,
-			L: Entitlements,
 			Ll,
 			M,
 			Nl,
@@ -62,7 +61,7 @@ export function createGoogleMeetEditor( readRuntime ) {
 			x = S[ 1 ],
 			C = Ll(
 				( 0, ReactHooks.useState )(
-					( null == u ? void 0 : u.timezone ) ||
+					( u === null || u === void 0 ? void 0 : u.timezone ) ||
 						sn().tz.guess() ||
 						'UTC'
 				),
@@ -80,27 +79,32 @@ export function createGoogleMeetEditor( readRuntime ) {
 					n =
 						null === ( t = Object.values( e ) ) || void 0 === t
 							? void 0
-							: t.map( function ( e ) {
-									var t;
+							: t.map( function ( _eLocal ) {
+									var _tLocal;
 									return parseInt(
 										null !==
-											( t =
-												null == e
+											( _tLocal =
+												_eLocal === null ||
+												_eLocal === void 0
 													? void 0
-													: e.order_number ) &&
-											void 0 !== t
-											? t
+													: _eLocal.order_number ) &&
+											void 0 !== _tLocal
+											? _tLocal
 											: 0,
 										10
 									);
 								} );
-				return n.length ? Math.max.apply( Math, Bl( n ) ) : 0;
+				return n.length ? Math.max( ...Bl( n ) ) : 0;
 			},
 			D = function () {
 				var e =
-						( null == u ? void 0 : u.rawDate ) ||
-						( null == u ? void 0 : u.date ),
-					t = parseInt( null == u ? void 0 : u.duration, 10 ) || 60;
+						( u === null || u === void 0 ? void 0 : u.rawDate ) ||
+						( u === null || u === void 0 ? void 0 : u.date ),
+					t =
+						parseInt(
+							u === null || u === void 0 ? void 0 : u.duration,
+							10
+						) || 60;
 				return e
 					? sn()( e )
 							.add( t, 'minute' )
@@ -109,58 +113,65 @@ export function createGoogleMeetEditor( readRuntime ) {
 			},
 			W = ( function () {
 				var e = zl(
-					Nl().m( function e() {
-						var t, n, o, i, l;
+					Nl().m( function _eLocal2() {
+						var t, n, _oLocal, _iLocal, _lLocal;
 						return Nl().w(
-							function ( e ) {
+							function ( _eLocal3 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal3.p = _eLocal3.n ) ) {
 										case 0:
 											{
-												e.n = 1;
+												_eLocal3.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 										case 1:
 											return (
-												( e.p = 1 ),
+												( _eLocal3.p = 1 ),
 												E( ! 0 ),
 												( n = N( s.byId ) ),
-												( o = n + 1 ),
-												( e.n = 2 ),
+												( _oLocal = n + 1 ),
+												( _eLocal3.n = 2 ),
 												c.addGoogleMeetClass(
 													{
 														topic:
-															null == u
+															u === null ||
+															u === void 0
 																? void 0
 																: u.topic,
 														agenda:
-															null == u
+															u === null ||
+															u === void 0
 																? void 0
 																: u.agenda,
 														date:
-															( null == u
+															( u === null ||
+															u === void 0
 																? void 0
 																: u.rawDate ) ||
-															( null == u
+															( u === null ||
+															u === void 0
 																? void 0
 																: u.date ),
 														endDate: D(),
 														duration:
 															parseInt(
-																null == u
+																u === null ||
+																	u === void 0
 																	? void 0
 																	: u.duration,
 																10
 															) || 60,
 														timezone: P,
-														order: o,
+														order: _oLocal,
 														content_type: 'session',
 														platform: 'googlemeet',
 														attachments:
 															null !==
 																( t =
-																	null == u
+																	u ===
+																		null ||
+																	u === void 0
 																		? void 0
 																		: u.attachments ) &&
 															void 0 !== t
@@ -173,66 +184,67 @@ export function createGoogleMeetEditor( readRuntime ) {
 											 );
 										case 2:
 											if (
-												( ( i = e.v ),
-												h( i ),
+												( ( _iLocal = _eLocal3.v ),
+												h( _iLocal ),
 												! chapterId )
 											) {
-												e.n = 3;
+												_eLocal3.n = 3;
 												break;
 											}
 											return (
-												( e.n = 3 ),
+												( _eLocal3.n = 3 ),
 												c.getLessonByChapterId(
 													chapterId
 												)
 											 );
 										case 3:
-											e.n = 5;
+											_eLocal3.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												( l = e.v ),
-												console.error( l ) );
+											_eLocal3.p = 4;
+											_lLocal = _eLocal3.v;
+											console.error( _lLocal );
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal3.p = 5 ),
 												E( ! 1 ),
-												e.f( 5 )
+												_eLocal3.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal3.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal2,
 							null,
 							[ [ 1, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return e.apply( this, _args );
 				};
 			} )(),
 			B = ( function () {
 				var e = zl(
-					Nl().m( function e() {
+					Nl().m( function _eLocal4() {
 						var t;
 						return Nl().w(
-							function ( e ) {
+							function ( _eLocal5 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal5.p = _eLocal5.n ) ) {
 										case 0:
 											{
-												e.n = 1;
+												_eLocal5.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 										case 1:
 											return (
-												( e.p = 1 ),
+												( _eLocal5.p = 1 ),
 												E( ! 0 ),
-												( e.n = 2 ),
+												( _eLocal5.n = 2 ),
 												c.updateGoogleMeetClass(
 													v,
 													Il(
@@ -244,16 +256,21 @@ export function createGoogleMeetEditor( readRuntime ) {
 															platform:
 																'googlemeet',
 															date:
-																( null == u
+																( u === null ||
+																u === void 0
 																	? void 0
 																	: u.rawDate ) ||
-																( null == u
+																( u === null ||
+																u === void 0
 																	? void 0
 																	: u.date ),
 															endDate: D(),
 															duration:
 																parseInt(
-																	null == u
+																	u ===
+																		null ||
+																		u ===
+																			void 0
 																		? void 0
 																		: u.duration,
 																	10
@@ -266,70 +283,77 @@ export function createGoogleMeetEditor( readRuntime ) {
 											 );
 										case 2:
 											if ( ! chapterId ) {
-												e.n = 3;
+												_eLocal5.n = 3;
 												break;
 											}
 											return (
-												( e.n = 3 ),
+												( _eLocal5.n = 3 ),
 												c.getLessonByChapterId(
 													chapterId
 												)
 											 );
 										case 3:
-											e.n = 5;
+											_eLocal5.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												( t = e.v ),
-												console.error( t ) );
+											_eLocal5.p = 4;
+											t = _eLocal5.v;
+											console.error( t );
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal5.p = 5 ),
 												E( ! 1 ),
-												e.f( 5 )
+												_eLocal5.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal5.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal4,
 							null,
 							[ [ 1, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return e.apply( this, _args2 );
 				};
 			} )(),
 			V = ( 0, ReactHooks.useCallback )(
 				function ( e, t ) {
-					'timezone' === e
-						? ( O( t ),
-							c.setLesson(
-								Il(
-									Il( {}, u ),
-									{},
-									{
-										timezone: t,
-									}
-								)
-							) )
-						: 'date' === e
-							? c.setLesson(
+					( () => {
+						if ( 'timezone' === e ) {
+							return (
+								O( t ),
+								c.setLesson(
 									Il(
 										Il( {}, u ),
 										{},
 										{
-											date: t,
-											rawDate: t,
+											timezone: t,
 										}
 									)
 								)
-							: c.setLesson(
-									Il( Il( {}, u ), {}, Fl( {}, e, t ) )
-								);
+							 );
+						}
+						if ( 'date' === e ) {
+							return c.setLesson(
+								Il(
+									Il( {}, u ),
+									{},
+									{
+										date: t,
+										rawDate: t,
+									}
+								)
+							);
+						}
+						return c.setLesson(
+							Il( Il( {}, u ), {}, Fl( {}, e, t ) )
+						);
+					} )();
 				},
 				[ u ]
 			),
@@ -340,11 +364,15 @@ export function createGoogleMeetEditor( readRuntime ) {
 				[ u ]
 			),
 			G = si( {
-				title: null == u ? void 0 : u.topic,
+				title: u === null || u === void 0 ? void 0 : u.topic,
 				initialState:
-					( null == u ? void 0 : u.recording_state ) || 'empty',
+					( u === null || u === void 0
+						? void 0
+						: u.recording_state ) || 'empty',
 				initialSource:
-					( null == u ? void 0 : u.recording_source ) || void 0,
+					( u === null || u === void 0
+						? void 0
+						: u.recording_source ) || void 0,
 				onAttach( e ) {
 					var t = e.source,
 						n = e.url;
@@ -371,12 +399,24 @@ export function createGoogleMeetEditor( readRuntime ) {
 							),
 							onSelect( t ) {
 								return e( {
-									id: null == t ? void 0 : t.id,
-									url: null == t ? void 0 : t.url,
+									id:
+										t === null || t === void 0
+											? void 0
+											: t.id,
+									url:
+										t === null || t === void 0
+											? void 0
+											: t.url,
 									fileName:
-										( null == t ? void 0 : t.filename ) ||
-										( null == t ? void 0 : t.title ) ||
-										( null == t ? void 0 : t.name ),
+										( t === null || t === void 0
+											? void 0
+											: t.filename ) ||
+										( t === null || t === void 0
+											? void 0
+											: t.title ) ||
+										( t === null || t === void 0
+											? void 0
+											: t.name ),
 								} );
 							},
 							onClose() {
@@ -388,53 +428,54 @@ export function createGoogleMeetEditor( readRuntime ) {
 			} ),
 			U = ( function () {
 				var e = zl(
-					Nl().m( function e() {
+					Nl().m( function _eLocal6() {
 						var t;
 						return Nl().w(
-							function ( e ) {
+							function ( _eLocal7 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal7.p = _eLocal7.n ) ) {
 										case 0:
-											if ( ( ( e.p = 0 ), d ) ) {
-												e.n = 1;
+											if ( ( ( _eLocal7.p = 0 ), d ) ) {
+												_eLocal7.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal7.a( 2 );
 										case 1:
 											return (
 												x( ! 0 ),
-												( e.n = 2 ),
+												( _eLocal7.n = 2 ),
 												c.getGoogleMeetClass( d )
 											 );
 										case 2:
-											e.n = 4;
+											_eLocal7.n = 4;
 											break;
 										case 3:
-											( ( e.p = 3 ),
-												( t = e.v ),
-												console.error(
-													'Error fetching course data:',
-													t
-												) );
+											_eLocal7.p = 3;
+											t = _eLocal7.v;
+											console.error(
+												'Error fetching course data:',
+												t
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( e.p = 4 ),
+												( _eLocal7.p = 4 ),
 												x( ! 1 ),
-												e.f( 4 )
+												_eLocal7.f( 4 )
 											 );
 										case 5:
-											return e.a( 2 );
+											return _eLocal7.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal6,
 							null,
 							[ [ 0, 3, 4, 5 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args3 ) {
+					return e.apply( this, _args3 );
 				};
 			} )();
 		return (
@@ -444,7 +485,8 @@ export function createGoogleMeetEditor( readRuntime ) {
 					return (
 						e && U(),
 						function () {
-							( ( e = ! 1 ), c.resetLessonState() );
+							e = ! 1;
+							c.resetLessonState();
 						}
 					 );
 				},
@@ -452,7 +494,9 @@ export function createGoogleMeetEditor( readRuntime ) {
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! R && m && openNotificationWithIcon( p, m );
+					if ( ! R && m ) {
+						openNotificationWithIcon( p, m );
+					}
 				},
 				[ m ]
 			),
@@ -464,15 +508,21 @@ export function createGoogleMeetEditor( readRuntime ) {
 						loading: R,
 						saving: w,
 						onClose() {
-							w || R || onClose();
+							if ( ! ( w || R ) ) {
+								onClose();
+							}
 						},
 						onSave() {
-							v ? B() : W();
+							if ( v ) {
+								B();
+							} else {
+								W();
+							}
 						},
 						onPreview() {
-							null != u &&
-								u.preview_url &&
+							if ( u !== null && u !== void 0 && u.preview_url ) {
 								window.open( u.preview_url, '_blank' );
+							}
 						},
 						title: ( 0, I18n.__ )(
 							'Live Session (Google Meet)',
@@ -483,21 +533,29 @@ export function createGoogleMeetEditor( readRuntime ) {
 							: ( 0, I18n.__ )( 'Create Meeting', 'ohmylms' ),
 						saveDisabled:
 							( ( l =
-								( null == u ? void 0 : u.rawDate ) ||
-								( null == u ? void 0 : u.date ) ),
+								( u === null || u === void 0
+									? void 0
+									: u.rawDate ) ||
+								( u === null || u === void 0
+									? void 0
+									: u.date ) ),
 							! (
-								null != u &&
+								u !== null &&
+								u !== void 0 &&
 								null !== ( o = u.topic ) &&
 								void 0 !== o &&
 								o.trim() &&
-								null != u &&
+								u !== null &&
+								u !== void 0 &&
 								null !== ( i = u.agenda ) &&
 								void 0 !== i &&
 								i.trim() &&
 								P &&
 								l &&
 								parseInt(
-									null == u ? void 0 : u.duration,
+									u === null || u === void 0
+										? void 0
+										: u.duration,
 									10
 								) > 0
 							) ||
@@ -505,8 +563,10 @@ export function createGoogleMeetEditor( readRuntime ) {
 								! I ),
 						SettingsPanel: ul,
 						editor: {
-							topic: null == u ? void 0 : u.topic,
-							agenda: null == u ? void 0 : u.agenda,
+							topic:
+								u === null || u === void 0 ? void 0 : u.topic,
+							agenda:
+								u === null || u === void 0 ? void 0 : u.agenda,
 							onChange: V,
 							disabled: ! I,
 						},
@@ -514,19 +574,28 @@ export function createGoogleMeetEditor( readRuntime ) {
 							timezone: P,
 							timezoneOptions: co,
 							date:
-								( null == u ? void 0 : u.rawDate ) ||
-								( null == u ? void 0 : u.date ),
-							duration: null == u ? void 0 : u.duration,
+								( u === null || u === void 0
+									? void 0
+									: u.rawDate ) ||
+								( u === null || u === void 0
+									? void 0
+									: u.date ),
+							duration:
+								u === null || u === void 0
+									? void 0
+									: u.duration,
 							recordingBlockProps: G.blockProps,
 							showRecordingBlock: !! v,
 							onChange: V,
 							attachments:
-								( null == u ? void 0 : u.attachments ) || [],
+								( u === null || u === void 0
+									? void 0
+									: u.attachments ) || [],
 							onAddFiles( e ) {
 								return H( {
 									attachments: [].concat(
 										Bl(
-											( null == u
+											( u === null || u === void 0
 												? void 0
 												: u.attachments ) || []
 										),
@@ -537,7 +606,7 @@ export function createGoogleMeetEditor( readRuntime ) {
 							onRemoveFile( e ) {
 								return H( {
 									attachments: (
-										( null == u
+										( u === null || u === void 0
 											? void 0
 											: u.attachments ) || []
 									).filter( function ( t ) {

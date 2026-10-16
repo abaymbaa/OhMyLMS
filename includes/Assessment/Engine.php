@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Release switches. Each defaults on and can be turned off with a constant
+ * (wp-config.php) or filter. Turning the engine off stops new versioned
+ * launches only; attempts already started on it keep their reader/writer.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Assessment;
 
 defined( 'ABSPATH' ) || exit;

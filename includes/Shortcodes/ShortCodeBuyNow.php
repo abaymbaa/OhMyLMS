@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * ShortCodeBuyNow
  *
@@ -55,7 +55,7 @@ class ShortCodeBuyNow {
 			return;
 		}
 
-		// Set default class and attributes as in add-to-cart.php
+		// Set default class and attributes as in add-to-cart.php.
 		$default_class = $course->is_purchasable() && $course->is_in_stock() ? 'add_to_cart_button enroll-button ohmylms-button' : 'ohmylms-button enroll-button';
 		$defaults      = array(
 			'quantity'   => 1,
@@ -111,7 +111,7 @@ class ShortCodeBuyNow {
 				esc_attr( $atts['min_width'] ),
 				esc_attr( $atts['height'] )
 			);
-			// Build HTML attributes string
+			// Build HTML attributes string.
 			$html_attributes = '';
 			foreach ( $defaults['attributes'] as $attr_key => $attr_val ) {
 				$html_attributes .= sprintf( ' %s="%s"', esc_attr( $attr_key ), esc_attr( $attr_val ) );

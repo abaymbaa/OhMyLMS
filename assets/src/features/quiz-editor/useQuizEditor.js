@@ -19,7 +19,6 @@ import {
 	promptText,
 	questionPrompt,
 } from '../question-editor/questionPrompt.mjs';
-
 export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 	const state = useSelect(
 		( select ) => {
@@ -185,7 +184,11 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			const selectedNow = now.question?.id;
 			const target =
 				questions.find( ( question ) => question.id === selectedNow ) ||
-				( index >= 0 && saved.saved_ids?.[ index ] != null
+				( index >= 0 &&
+				( ( _nullableValue ) =>
+					_nullableValue !== null && _nullableValue !== void 0 )(
+					saved.saved_ids?.[ index ]
+				)
 					? questions.find(
 							( question ) =>
 								Number( question.id ) ===
@@ -245,7 +248,10 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			return;
 		}
 		const timer = setTimeout(
-			() => saveLatest.current( { automatic: true } ),
+			() =>
+				saveLatest.current( {
+					automatic: true,
+				} ),
 			1200
 		);
 		return () => clearTimeout( timer );
@@ -261,7 +267,7 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			);
 			setSavedNotice(
 				sprintf(
-					__(
+					/* translators: %d: published version number. */ __(
 						'Published revision %d. New attempts use it.',
 						'ohmylms'
 					),
@@ -293,11 +299,19 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 	}
 	function patchQuestion( id, fields ) {
 		const questions = latest.current.questions.map( ( question ) =>
-			question.id === id ? { ...question, ...fields } : question
+			question.id === id
+				? {
+						...question,
+						...fields,
+					}
+				: question
 		);
 		actions.setAllQuestions( questions );
 		if ( latest.current.question?.id === id ) {
-			actions.setQuestion( { ...latest.current.question, ...fields } );
+			actions.setQuestion( {
+				...latest.current.question,
+				...fields,
+			} );
 		}
 	}
 	function addQuestion( source ) {
@@ -322,7 +336,10 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			}
 			const questions = latest.current.questions
 				.filter( ( q ) => q.id !== question.id )
-				.map( ( q, index ) => ( { ...q, order_number: index + 1 } ) );
+				.map( ( q, index ) => ( {
+					...q,
+					order_number: index + 1,
+				} ) );
 			actions.setAllQuestions( questions );
 			if ( latest.current.question?.id === question.id ) {
 				selectQuestion( questions[ 0 ] );
@@ -355,11 +372,15 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			),
 		autosaveStatus: saving
 			? __( 'Saving…', 'ohmylms' )
-			: error
-				? __( 'Changes not saved', 'ohmylms' )
-				: editSnapshot === savedSnapshot.current
-					? __( 'All changes saved', 'ohmylms' )
-					: __( 'Waiting for complete question', 'ohmylms' ),
+			: ( () => {
+					if ( error ) {
+						return __( 'Changes not saved', 'ohmylms' );
+					}
+					if ( editSnapshot === savedSnapshot.current ) {
+						return __( 'All changes saved', 'ohmylms' );
+					}
+					return __( 'Waiting for complete question', 'ohmylms' );
+				} )(),
 		save,
 		publish,
 		appendQuestions,
@@ -371,6 +392,8 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		moveQuestion,
 		validateCurrentQuestion,
 		updateField: ( field, value ) =>
-			actions.setQuiz( { [ field ]: value } ),
+			actions.setQuiz( {
+				[ field ]: value,
+			} ),
 	};
 }

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Lesson.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Data;
 
@@ -82,7 +87,7 @@ class Lesson extends PostTypeData {
 			$this->set_id( absint( $lesson->ID ) );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 		if ( $this->get_id() > 0 ) {
 			$this->data_store->read( $this );
@@ -360,7 +365,7 @@ class Lesson extends PostTypeData {
 	public function get_video_settings( $context = 'view' ) {
 		$settings = $this->get_prop( 'video_settings', $context );
 
-		// Return default settings if none are set
+		// Return default settings if none are set.
 		if ( empty( $settings ) || ! is_array( $settings ) ) {
 			return array(
 				'platform'            => 'self-hosted',

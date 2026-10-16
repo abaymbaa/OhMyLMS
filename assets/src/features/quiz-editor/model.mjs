@@ -17,7 +17,9 @@ import {
  */
 export function prepareQuizPayload( quiz, questions ) {
 	const clean = ( item ) => {
-		const copy = { ...item };
+		const copy = {
+			...item,
+		};
 		if ( copy.temp ) {
 			delete copy.temp;
 			delete copy.id;
@@ -87,14 +89,23 @@ export function newQuestionCard( source = {}, id = Date.now() ) {
 		settings: structuredClone(
 			source.settings || {
 				type: 'single-choice',
-				score: { enabled: true, value: 1 },
+				score: {
+					enabled: true,
+					value: 1,
+				},
 				required: false,
 			}
 		),
 		questions: (
 			source.questions || [
-				{ answer: '', is_correct: true },
-				{ answer: '', is_correct: false },
+				{
+					answer: '',
+					is_correct: true,
+				},
+				{
+					answer: '',
+					is_correct: false,
+				},
 			]
 		).map( ( option, index ) => {
 			const copy = structuredClone( option );
@@ -108,12 +119,18 @@ export function newQuestionCard( source = {}, id = Date.now() ) {
 			};
 		} ),
 		...( source.image_src
-			? { image_src: source.image_src, thumbnail_id: source.thumbnail_id }
+			? {
+					image_src: source.image_src,
+					thumbnail_id: source.thumbnail_id,
+				}
 			: {} ),
-		...( source.video_src ? { video_src: source.video_src } : {} ),
+		...( source.video_src
+			? {
+					video_src: source.video_src,
+				}
+			: {} ),
 	};
 }
-
 const same = ( left, right ) =>
 	JSON.stringify( left ) === JSON.stringify( right );
 
@@ -136,12 +153,12 @@ export function quizEditSnapshot( quiz, questions ) {
 				.map( ( key ) => [ key, stable( value[ key ] ) ] )
 		);
 	};
-	const { content, modified, saved_ids, ...fields } = quiz || {};
+	const { content, modified, saved_ids: _savedIds, ...fields } = quiz || {};
 	return JSON.stringify(
 		stable( {
 			quiz: fields,
 			questions: questions.map(
-				( { modified, usage, ...question } ) => question
+				( { modified: _modifiedLocal, usage, ...question } ) => question
 			),
 		} )
 	);
@@ -154,7 +171,9 @@ export function quizEditSnapshot( quiz, questions ) {
  * @param current
  */
 export function mergeSavedQuiz( saved, submitted, current ) {
-	const result = { ...saved };
+	const result = {
+		...saved,
+	};
 	delete result.content;
 	delete result.saved_ids;
 	for ( const key of Object.keys( current || {} ) ) {
@@ -184,7 +203,12 @@ export function mergeSavedQuestions(
 ) {
 	const realId = new Map();
 	submitted.forEach( ( question, index ) => {
-		if ( savedIds[ index ] != null ) {
+		if (
+			( ( _nullableValue ) =>
+				_nullableValue !== null && _nullableValue !== void 0 )(
+				savedIds[ index ]
+			)
+		) {
 			realId.set( question.id, Number( savedIds[ index ] ) );
 		}
 	} );
@@ -196,12 +220,16 @@ export function mergeSavedQuestions(
 	);
 	const result = [];
 	for ( const question of current || [] ) {
-		const id = realId.has( question.id )
-			? realId.get( question.id )
-			: question.temp
-				? null
-				: Number( question.id );
-		const fresh = id != null ? byId.get( id ) : undefined;
+		const id = ( () => {
+			if ( realId.has( question.id ) ) {
+				return realId.get( question.id );
+			}
+			if ( question.temp ) {
+				return null;
+			}
+			return Number( question.id );
+		} )();
+		const fresh = id !== null && id !== void 0 ? byId.get( id ) : undefined;
 		const before = submitted.find( ( item ) => item.id === question.id );
 		if ( ! fresh ) {
 			// Added after the save began, or not returned: keep the local edit.

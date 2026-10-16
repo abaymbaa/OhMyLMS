@@ -1,4 +1,11 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Curriculum administration: the item tree, moves, deletion and links to courses, skills,
+ * question banks and quizzes/exams. Every route needs an administrator; the server validates
+ * every parent, type and target again regardless of what the editor sends.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -177,7 +184,7 @@ class CurriculumController extends RestController {
 	public function move( WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$before = Syllabus::owner( (int) $request['id'] );
-		$item   = Items::move( (int) $request['id'], (int) ( $params['parent_id'] ?? 0 ), isset( $params['position'] ) && $params['position'] !== '' ? (int) $params['position'] : null );
+		$item   = Items::move( (int) $request['id'], (int) ( $params['parent_id'] ?? 0 ), isset( $params['position'] ) && '' !== $params['position'] ? (int) $params['position'] : null );
 		if ( is_wp_error( $item ) ) {
 			return $item; }
 		// Moving an item can move the skill groups under it between syllabuses, or change the order of the chapters.

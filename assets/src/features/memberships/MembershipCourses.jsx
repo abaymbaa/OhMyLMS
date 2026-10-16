@@ -43,7 +43,13 @@ export function createMembershipCourses( readRuntime ) {
 			const root = window.ohmylms_params?.api_url;
 			return apiFetch()( {
 				...settings,
-				...( root ? { url: restUrl( root, path ) } : { path } ),
+				...( root
+					? {
+							url: restUrl( root, path ),
+						}
+					: {
+							path,
+						} ),
 			} );
 		};
 		const options = ( rows ) =>
@@ -75,7 +81,9 @@ export function createMembershipCourses( readRuntime ) {
 		);
 		Hooks.useEffect( () => {
 			let active = true;
-			request( { path: '/ohmylms/v1/curriculum/outline?courses=1' } )
+			request( {
+				path: '/ohmylms/v1/curriculum/outline?courses=1',
+			} )
 				.then( ( outline ) => {
 					if ( active ) {
 						setItems(
@@ -107,7 +115,9 @@ export function createMembershipCourses( readRuntime ) {
 						);
 					}
 				} );
-			request( { path: '/ohmylms/v1/bundles/outline' } )
+			request( {
+				path: '/ohmylms/v1/bundles/outline',
+			} )
 				.then( ( outline ) => {
 					if ( active ) {
 						setBundles(
@@ -231,8 +241,8 @@ export function createMembershipCourses( readRuntime ) {
 				clearTimeout( timer );
 			};
 		}, [ selectionKey ] );
-		const selected = ( ids, choices ) =>
-			ids.map(
+		const selected = ( _idsLocal, choices ) =>
+			_idsLocal.map(
 				( id ) =>
 					choices.find( ( item ) => item.value === Number( id ) ) || {
 						value: Number( id ),
@@ -262,7 +272,11 @@ export function createMembershipCourses( readRuntime ) {
 			onChange,
 			searchable = false
 		) => (
-			<div style={ { marginBottom: 20 } }>
+			<div
+				style={ {
+					marginBottom: 20,
+				} }
+			>
 				<Controls.HeadingWP level={ 4 }>{ label }</Controls.HeadingWP>
 				<Controls.AdvancedSelectWP
 					isMulti
@@ -339,22 +353,27 @@ export function createMembershipCourses( readRuntime ) {
 						<CurriculumMindmap
 							items={ items }
 							selected={ selection.course_curriculum }
-							onChange={ ( ids ) =>
-								updateMembershipPlan( 'course_curriculum', ids )
+							onChange={ ( _idsLocal2 ) =>
+								updateMembershipPlan(
+									'course_curriculum',
+									_idsLocal2
+								)
 							}
-							emptyMessage={
-								itemStatus === 'loading'
-									? I18n.__(
-											'Loading the curriculum…',
-											'ohmylms'
-										)
-									: itemStatus === 'error'
-										? I18n.__(
-												'The curriculum could not be loaded. Please reload this page to try again.',
-												'ohmylms'
-											)
-										: undefined
-							}
+							emptyMessage={ ( () => {
+								if ( itemStatus === 'loading' ) {
+									return I18n.__(
+										'Loading the curriculum…',
+										'ohmylms'
+									);
+								}
+								if ( itemStatus === 'error' ) {
+									return I18n.__(
+										'The curriculum could not be loaded. Please reload this page to try again.',
+										'ohmylms'
+									);
+								}
+								return undefined;
+							} )() }
 						/>
 						{ field(
 							I18n.__( 'Course bundles', 'ohmylms' ),

@@ -46,11 +46,11 @@ export function createBadgeList( readRuntime ) {
 			E = ( 0, Notifications.A )(),
 			openNotificationWithIcon = E.openNotificationWithIcon,
 			contextHolder = E.contextHolder,
-			x = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			x = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			C = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			C = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2( StoreModule.default ).getNotificationStatus();
 			}, [] ),
 			P = d3( ( 0, ReactHooks.useState )( null ), 2 ),
 			O = P[ 0 ],
@@ -62,7 +62,7 @@ export function createBadgeList( readRuntime ) {
 					key: 'name',
 					sorter: ! 0,
 					width: '90%',
-					render( e, t ) {
+					render( _eLocal3, _tLocal ) {
 						return (
 							<Controls.FlexWP
 								gap={ 4 }
@@ -71,7 +71,7 @@ export function createBadgeList( readRuntime ) {
 							>
 								<Controls.AvatarWP
 									shape={ 'square' }
-									src={ t.image }
+									src={ _tLocal.image }
 									size={ 80 }
 								/>
 								<Controls.FlexItemWP>
@@ -82,18 +82,21 @@ export function createBadgeList( readRuntime ) {
 										numberOfLines={ 2 }
 										truncate={ ! 0 }
 										onClick={ function () {
-											return A( t );
+											return A( _tLocal );
 										} }
 										style={ {
 											cursor: 'pointer',
 										} }
 									>
-										{ Ge( t.name ) }
+										{ Ge( _tLocal.name ) }
 									</Controls.TextWP>
-									{ O === ( null == t ? void 0 : t.slug ) && (
+									{ O ===
+										( _tLocal === null || _tLocal === void 0
+											? void 0
+											: _tLocal.slug ) && (
 										<Controls.ButtonWP
 											onClick={ function () {
-												return A( t );
+												return A( _tLocal );
 											} }
 											label={ ( 0, I18n.__ )(
 												'Edit',
@@ -117,7 +120,7 @@ export function createBadgeList( readRuntime ) {
 					dataIndex: 'action',
 					key: 'action',
 					width: null,
-					render( e, t ) {
+					render( _eLocal4, _tLocal2 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -127,7 +130,7 @@ export function createBadgeList( readRuntime ) {
 											'ohmylms'
 										),
 										onClick() {
-											return A( t );
+											return A( _tLocal2 );
 										},
 										icon: (
 											<span>
@@ -142,7 +145,10 @@ export function createBadgeList( readRuntime ) {
 										),
 										onClick() {
 											return M(
-												null == t ? void 0 : t.slug
+												_tLocal2 === null ||
+													_tLocal2 === void 0
+													? void 0
+													: _tLocal2.slug
 											);
 										},
 										icon: <We />,
@@ -154,28 +160,34 @@ export function createBadgeList( readRuntime ) {
 					},
 				},
 			],
-			A = function ( e ) {
-				( m( e ), u( ! 0 ) );
+			A = function ( _eLocal5 ) {
+				m( _eLocal5 );
+				u( ! 0 );
 			},
-			M = function ( e ) {
-				( w( ! 0 ), v( e ) );
+			M = function ( _eLocal6 ) {
+				w( ! 0 );
+				v( _eLocal6 );
 			},
 			F = ( function () {
-				var e = s3(
-					l3().m( function e() {
-						var n, r, a;
+				var _eLocal7 = s3(
+					l3().m( function _eLocal8() {
+						var _nLocal, _rLocal, _aLocal;
 						return l3().w(
-							function ( e ) {
+							function ( _eLocal9 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal9.p = _eLocal9.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal9.p = 0 ),
 												o( ! 0 ),
-												( n = t.filter( function ( e ) {
-													return e.slug !== f;
-												} ) ),
-												( e.n = 1 ),
+												( _nLocal = t.filter(
+													function ( _eLocal0 ) {
+														return (
+															_eLocal0.slug !== f
+														);
+													}
+												) ),
+												( _eLocal9.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/engagement/badges',
 													method: 'DELETE',
@@ -183,117 +195,137 @@ export function createBadgeList( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( n ),
+													body: JSON.stringify(
+														_nLocal
+													),
 												} )
 											 );
 										case 1:
-											( null != ( r = e.v ) &&
-												r.success &&
-												( N(),
-												w( ! 1 ),
-												openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Badge deleted successfully!',
-														'ohmylms'
-													)
-												) ),
-												( e.n = 3 ) );
+											if (
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _rLocal = _eLocal9.v )
+												) &&
+												_rLocal.success
+											) {
+												{
+													N();
+													w( ! 1 );
+													openNotificationWithIcon(
+														'success',
+														( 0, I18n.__ )(
+															'Badge deleted successfully!',
+															'ohmylms'
+														)
+													);
+												}
+											}
+											_eLocal9.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( a = e.v ),
-												console.error(
-													'Error deleting badge:',
-													a
-												) );
+											_eLocal9.p = 2;
+											_aLocal = _eLocal9.v;
+											console.error(
+												'Error deleting badge:',
+												_aLocal
+											);
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal9.p = 3 ),
 												o( ! 1 ),
-												e.f( 3 )
+												_eLocal9.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal9.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal8,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args ) {
+					return _eLocal7.apply( this, _args );
 				};
 			} )(),
 			N = ( function () {
-				var e = s3(
-					l3().m( function e() {
-						var t, r;
+				var _eLocal1 = s3(
+					l3().m( function _eLocal10() {
+						var _tLocal3, _rLocal2;
 						return l3().w(
-							function ( e ) {
+							function ( _eLocal11 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal11.p = _eLocal11.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
+												( _eLocal11.p = 0 ),
 												o( ! 0 ),
-												( e.n = 1 ),
+												( _eLocal11.n = 1 ),
 												l()( {
 													path: 'ohmylms/v1/engagement/badges',
 												} )
 											 );
 										case 1:
-											( ( t = e.v ),
-												n( t ),
-												( e.n = 3 ) );
+											_tLocal3 = _eLocal11.v;
+											n( _tLocal3 );
+											_eLocal11.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( r = e.v ),
-												console.error( r ) );
+											_eLocal11.p = 2;
+											_rLocal2 = _eLocal11.v;
+											console.error( _rLocal2 );
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal11.p = 3 ),
 												o( ! 1 ),
-												e.f( 3 )
+												_eLocal11.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal11.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal10,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal1.apply( this, _args2 );
 				};
 			} )();
 		return (
 			( 0, ReactHooks.useEffect )( function () {
-				var e = ! 0;
+				var _eLocal12 = ! 0;
 				return (
-					e && N(),
+					_eLocal12 && N(),
 					function () {
-						e = ! 1;
+						_eLocal12 = ! 1;
 					}
 				 );
 			}, [] ),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! a && x && openNotificationWithIcon( C, x );
+					if ( ! a && x ) {
+						openNotificationWithIcon( C, x );
+					}
 				},
 				[ x ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					c || ( m( null ), v( null ) );
+					if ( ! c ) {
+						{
+							m( null );
+							v( null );
+						}
+					}
 				},
 				[ c ]
 			),
@@ -326,8 +358,13 @@ export function createBadgeList( readRuntime ) {
 								scroll={ {
 									x: 'max-content',
 								} }
-								onMouseEnterOnRow={ function ( e ) {
-									return k( null == e ? void 0 : e.slug );
+								onMouseEnterOnRow={ function ( _eLocal13 ) {
+									return k(
+										_eLocal13 === null ||
+											_eLocal13 === void 0
+											? void 0
+											: _eLocal13.slug
+									);
 								} }
 								onMouseLeaveOnRow={ function () {
 									return k( null );

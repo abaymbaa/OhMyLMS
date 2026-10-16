@@ -26,17 +26,19 @@ export function createSessionList( readRuntime ) {
 		var e,
 			t,
 			n = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectSessions();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).selectSessions();
 			}, [] ),
-			a = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectSessionsPagination();
+			a = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2(
+					StoreModule.default
+				).selectSessionsPagination();
 			}, [] ),
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getLoading();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3( StoreModule.default ).getLoading();
 			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getError();
+			i = ( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+				return _eLocal4( StoreModule.default ).getError();
 			}, [] ),
 			l = xZ( ( 0, ReactHooks.useState )( 1 ), 2 ),
 			c = l[ 0 ],
@@ -54,39 +56,47 @@ export function createSessionList( readRuntime ) {
 			S = w[ 1 ],
 			R = ( 0, ReactHooks.useCallback )(
 				function () {
-					var e = {
+					var _eLocal5 = {
 						page: c,
 						per_page: d,
 						search: p,
 					};
-					n.fetchSessions( e );
+					n.fetchSessions( _eLocal5 );
 				},
 				[ n, c, d, p ]
 			),
 			x =
-				( ( 0, ReactHooks.useCallback )( function ( e ) {
-					( f( e ), u( 1 ) );
+				( ( 0, ReactHooks.useCallback )( function ( _eLocal6 ) {
+					f( _eLocal6 );
+					u( 1 );
 				}, [] ),
-				( 0, ReactHooks.useCallback )( function ( e ) {
-					u( e );
+				( 0, ReactHooks.useCallback )( function ( _eLocal7 ) {
+					u( _eLocal7 );
 				}, [] ) ),
 			C = ( 0, ReactHooks.useCallback )(
-				function ( e ) {
-					( n.setSelectedLessonId( e.id ), S( e ), _( ! 0 ) );
+				function ( _eLocal8 ) {
+					n.setSelectedLessonId( _eLocal8.id );
+					S( _eLocal8 );
+					_( ! 0 );
 				},
 				[ n ]
 			),
-			P = ( 0, ReactHooks.useCallback )( function ( e, t ) {
-				e[ t ] && window.open( e[ t ], '_blank' );
+			P = ( 0, ReactHooks.useCallback )( function ( _eLocal9, _tLocal ) {
+				if ( _eLocal9[ _tLocal ] ) {
+					window.open( _eLocal9[ _tLocal ], '_blank' );
+				}
 			}, [] ),
 			O = ( 0, ReactHooks.useCallback )(
 				function () {
-					( _( ! 1 ), S( null ), n.setSelectedLessonId( null ), R() );
+					_( ! 1 );
+					S( null );
+					n.setSelectedLessonId( null );
+					R();
 				},
 				[ n, R ]
 			),
-			k = ( 0, ReactHooks.useCallback )( function ( e ) {
-				var t = {
+			k = ( 0, ReactHooks.useCallback )( function ( _eLocal0 ) {
+				var _tLocal2 = {
 					upcoming: {
 						variant: 'primary',
 						label: ( 0, I18n.__ )( 'Upcoming', 'ohmylms' ),
@@ -99,16 +109,20 @@ export function createSessionList( readRuntime ) {
 						variant: 'secondary',
 						label: ( 0, I18n.__ )( 'Expired', 'ohmylms' ),
 					},
-				}[ null == e ? void 0 : e.toLowerCase() ] || {
+				}[
+					_eLocal0 === null || _eLocal0 === void 0
+						? void 0
+						: _eLocal0.toLowerCase()
+				] || {
 					variant: 'secondary',
-					label: e,
+					label: _eLocal0,
 				};
 				return (
 					<Controls.BadgeWP
-						variant={ t.variant }
+						variant={ _tLocal2.variant }
 						isBorderLess={ ! 0 }
 					>
-						{ t.label }
+						{ _tLocal2.label }
 					</Controls.BadgeWP>
 				);
 			}, [] ),
@@ -120,7 +134,7 @@ export function createSessionList( readRuntime ) {
 							dataIndex: 'topic',
 							key: 'topic',
 							width: '250px',
-							render( e, t ) {
+							render( _eLocal1, _tLocal3 ) {
 								return (
 									<div>
 										<div
@@ -129,7 +143,7 @@ export function createSessionList( readRuntime ) {
 												marginBottom: '4px',
 											} }
 										>
-											{ e }
+											{ _eLocal1 }
 										</div>
 										<div
 											style={ {
@@ -137,9 +151,9 @@ export function createSessionList( readRuntime ) {
 												color: '#666',
 											} }
 										>
-											{ t.course_title
+											{ _tLocal3.course_title
 												? 'Course: '.concat(
-														t.course_title
+														_tLocal3.course_title
 													)
 												: '-' }
 										</div>
@@ -152,19 +166,23 @@ export function createSessionList( readRuntime ) {
 							dataIndex: 'platform',
 							key: 'platform',
 							width: '120px',
-							render( e ) {
-								var t =
+							render( _eLocal10 ) {
+								var _tLocal4 =
 									{
 										zoom: 'Zoom',
 										googlemeet: 'Google Meet',
-									}[ null == e ? void 0 : e.toLowerCase() ] ||
-									e;
+									}[
+										_eLocal10 === null ||
+										_eLocal10 === void 0
+											? void 0
+											: _eLocal10.toLowerCase()
+									] || _eLocal10;
 								return (
 									<Controls.BadgeWP
 										variant={ 'secondary' }
 										isBorderLess={ ! 0 }
 									>
-										{ t }
+										{ _tLocal4 }
 									</Controls.BadgeWP>
 								);
 							},
@@ -174,8 +192,8 @@ export function createSessionList( readRuntime ) {
 							dataIndex: 'password',
 							key: 'password',
 							width: '120px',
-							render( e ) {
-								return <span>{ e || '-' }</span>;
+							render( _eLocal11 ) {
+								return <span>{ _eLocal11 || '-' }</span>;
 							},
 						},
 						{
@@ -185,20 +203,26 @@ export function createSessionList( readRuntime ) {
 							),
 							key: 'start_time_duration',
 							width: '200px',
-							render( e, t ) {
-								var n = '-';
-								if ( t.duration ) {
-									var r = parseInt( t.duration, 10 ),
-										a = Math.floor( r / 60 ),
-										o = r % 60;
-									n =
-										a > 0 && o > 0
-											? ''
-													.concat( a, 'h ' )
-													.concat( o, 'm' )
-											: a > 0
-												? ''.concat( a, 'h' )
-												: ''.concat( o, 'm' );
+							render( _eLocal12, _tLocal5 ) {
+								var _nLocal = '-';
+								if ( _tLocal5.duration ) {
+									var _rLocal = parseInt(
+											_tLocal5.duration,
+											10
+										),
+										_aLocal = Math.floor( _rLocal / 60 ),
+										_oLocal = _rLocal % 60;
+									_nLocal = ( () => {
+										if ( _aLocal > 0 && _oLocal > 0 ) {
+											return ''
+												.concat( _aLocal, 'h ' )
+												.concat( _oLocal, 'm' );
+										}
+										if ( _aLocal > 0 ) {
+											return ''.concat( _aLocal, 'h' );
+										}
+										return ''.concat( _oLocal, 'm' );
+									} )();
 								}
 								return (
 									<div>
@@ -208,7 +232,7 @@ export function createSessionList( readRuntime ) {
 												marginBottom: '4px',
 											} }
 										>
-											{ t.date }
+											{ _tLocal5.date }
 										</div>
 										<div
 											style={ {
@@ -216,7 +240,7 @@ export function createSessionList( readRuntime ) {
 												color: '#666',
 											} }
 										>
-											{ n }
+											{ _nLocal }
 										</div>
 									</div>
 								);
@@ -227,63 +251,72 @@ export function createSessionList( readRuntime ) {
 							dataIndex: 'status',
 							key: 'status',
 							width: '120px',
-							render( e ) {
-								return k( e );
+							render( _eLocal13 ) {
+								return k( _eLocal13 );
 							},
 						},
 						{
 							title: ( 0, I18n.__ )( 'Actions', 'ohmylms' ),
 							key: 'actions',
 							width: '150px',
-							render( e, t ) {
-								var n,
-									r,
-									a =
-										null === ( n = t.status ) ||
-										void 0 === n
+							render( _eLocal14, _tLocal6 ) {
+								var _nLocal2,
+									_rLocal2,
+									_aLocal2 =
+										null ===
+											( _nLocal2 = _tLocal6.status ) ||
+										void 0 === _nLocal2
 											? void 0
-											: n.toLowerCase(),
-									o =
-										( null === ( r = t.platform ) ||
-											void 0 === r ||
-											r.toLowerCase(),
+											: _nLocal2.toLowerCase(),
+									_oLocal2 =
+										( null ===
+											( _rLocal2 = _tLocal6.platform ) ||
+											void 0 === _rLocal2 ||
+											_rLocal2.toLowerCase(),
 										[] );
 								return (
-									'upcoming' === a && t.start_url
-										? o.push( {
+									'upcoming' === _aLocal2 &&
+									_tLocal6.start_url
+										? _oLocal2.push( {
 												title: ( 0, I18n.__ )(
 													'Start Meeting',
 													'ohmylms'
 												),
 												onClick() {
-													return P( t, 'start_url' );
+													return P(
+														_tLocal6,
+														'start_url'
+													);
 												},
 												icon: <Gp />,
 											} )
-										: 'running' === a &&
-											t.start_url &&
-											o.push( {
+										: 'running' === _aLocal2 &&
+											_tLocal6.start_url &&
+											_oLocal2.push( {
 												title: ( 0, I18n.__ )(
 													'Join Meeting',
 													'ohmylms'
 												),
 												onClick() {
-													return P( t, 'start_url' );
+													return P(
+														_tLocal6,
+														'start_url'
+													);
 												},
 												icon: <Gp />,
 											} ),
-									o.push( {
+									_oLocal2.push( {
 										title: ( 0, I18n.__ )(
 											'Edit Meeting',
 											'ohmylms'
 										),
 										onClick() {
-											return C( t );
+											return C( _tLocal6 );
 										},
 										icon: <pG.A />,
 									} ),
-									'expired' === a &&
-										o.push( {
+									'expired' === _aLocal2 &&
+										_oLocal2.push( {
 											title: ( 0, I18n.__ )(
 												'Start Meeting',
 												'ohmylms'
@@ -293,7 +326,7 @@ export function createSessionList( readRuntime ) {
 										} ),
 									(
 										<Controls.DropdownMenuWP
-											controls={ o }
+											controls={ _oLocal2 }
 											icon={ <q.Icon icon={ Ne.A } /> }
 										/>
 									 )
@@ -354,8 +387,9 @@ export function createSessionList( readRuntime ) {
 										} ),
 									} }
 								/>
-								{ ( null == a ? void 0 : a.totalSessions ) >
-									d &&
+								{ ( a === null || a === void 0
+									? void 0
+									: a.totalSessions ) > d &&
 									React.createElement( fN, {
 										total: a.totalSessions,
 										currentPage: c,

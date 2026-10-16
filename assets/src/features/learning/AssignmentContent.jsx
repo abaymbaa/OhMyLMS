@@ -20,39 +20,81 @@ export function createAssignmentContent( readRuntime ) {
 				<Controls.SpacerWP padding={ 4 }>
 					<LearningContentForm
 						titleValue={
-							null == assignment ? void 0 : assignment.name
+							assignment === null || assignment === void 0
+								? void 0
+								: assignment.name
 						}
 						imageSrc={
-							null == assignment ? void 0 : assignment.image_src
+							assignment === null || assignment === void 0
+								? void 0
+								: assignment.image_src
 						}
-						videoSrc={
-							null != assignment && assignment.video_id
-								? null == assignment
-									? void 0
-									: assignment.video_src
-								: 'video' ==
-									  ( null == assignment
-											? void 0
-											: assignment.type )
-									? null == assignment
+						videoSrc={ ( () => {
+							if (
+								assignment !== null &&
+								assignment !== void 0 &&
+								assignment.video_id
+							) {
+								if (
+									assignment === null ||
+									assignment === void 0
+								) {
+									return void 0;
+								}
+								return assignment.video_src;
+							}
+							return ( () => {
+								if (
+									'video' ==
+									( assignment === null ||
+									assignment === void 0
 										? void 0
-										: assignment.external_url
-									: ''
-						}
-						audioSrc={
-							null != assignment && assignment.audio_id
-								? null == assignment
-									? void 0
-									: assignment.audio_src
-								: 'audio' ==
-									  ( null == assignment
-											? void 0
-											: assignment.type )
-									? null == assignment
+										: assignment.type )
+								) {
+									if (
+										assignment === null ||
+										assignment === void 0
+									) {
+										return void 0;
+									}
+									return assignment.external_url;
+								}
+								return '';
+							} )();
+						} )() }
+						audioSrc={ ( () => {
+							if (
+								assignment !== null &&
+								assignment !== void 0 &&
+								assignment.audio_id
+							) {
+								if (
+									assignment === null ||
+									assignment === void 0
+								) {
+									return void 0;
+								}
+								return assignment.audio_src;
+							}
+							return ( () => {
+								if (
+									'audio' ==
+									( assignment === null ||
+									assignment === void 0
 										? void 0
-										: assignment.external_url
-									: ''
-						}
+										: assignment.type )
+								) {
+									if (
+										assignment === null ||
+										assignment === void 0
+									) {
+										return void 0;
+									}
+									return assignment.external_url;
+								}
+								return '';
+							} )();
+						} )() }
 						titlePlaceholder={ ( 0, I18n.__ )(
 							'Enter assignment title',
 							'ohmylms'
@@ -63,31 +105,55 @@ export function createAssignmentContent( readRuntime ) {
 							'ohmylms'
 						) }
 						content={
-							null == assignment ? void 0 : assignment.description
+							assignment === null || assignment === void 0
+								? void 0
+								: assignment.description
 						}
 						onInputChange={ handleInputChange }
 						onContentChange={ handleEditorContentChange }
 						onUploadComplete={ handleUploadComplete }
 						onRemoveMedia={ handleRemoveMedia }
 						align={ 'left' }
-						mediaType={
-							'text' ==
-							( null == assignment ? void 0 : assignment.type )
-								? 'image_video'
-								: null == assignment
+						mediaType={ ( () => {
+							if (
+								'text' ==
+								( assignment === null || assignment === void 0
 									? void 0
-									: assignment.type
-						}
-						mediaId={
-							'audio' ==
-							( null == assignment ? void 0 : assignment.type )
-								? null == assignment
+									: assignment.type )
+							) {
+								return 'image_video';
+							}
+							if (
+								assignment === null ||
+								assignment === void 0
+							) {
+								return void 0;
+							}
+							return assignment.type;
+						} )() }
+						mediaId={ ( () => {
+							if (
+								'audio' ==
+								( assignment === null || assignment === void 0
 									? void 0
-									: assignment.audio_id
-								: null == assignment
-									? void 0
-									: assignment.video_id
-						}
+									: assignment.type )
+							) {
+								if (
+									assignment === null ||
+									assignment === void 0
+								) {
+									return void 0;
+								}
+								return assignment.audio_id;
+							}
+							if (
+								assignment === null ||
+								assignment === void 0
+							) {
+								return void 0;
+							}
+							return assignment.video_id;
+						} )() }
 						onExternalUploadComplete={ onExternalUploadComplete }
 						chapterId={ chapterId }
 						autofocus={ ! 1 }

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Handles hooks related to lessons in the OhMyLMS plugin.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Hooks;
 
@@ -58,7 +63,7 @@ class AssignmentHookHandler extends HookHandler {
 		global $wpdb;
 		$table_name = $wpdb->prefix . OHMYLMS_CONTENT_RELATIONSHIP;
 
-		// Check if the relationship already exists
+		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
 			$wpdb->prepare(
 				"SELECT ID FROM $table_name WHERE chapter_id = %d AND content_id = %d LIMIT 1",
@@ -67,7 +72,7 @@ class AssignmentHookHandler extends HookHandler {
 			)
 		);
 
-		// If exists, update the relationship, otherwise insert a new one
+		// If exists, update the relationship, otherwise insert a new one.
 		if ( $exists ) {
 			$wpdb->update(
 				$table_name,

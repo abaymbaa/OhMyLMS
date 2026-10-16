@@ -16,5 +16,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <a href="<?php echo esc_url( '#' ); ?>" class="ohmylms-button ohmylms-button-disabled">
-	<?php echo __( 'Enrollment Closed', 'ohmylms' ); ?>
+	<?php echo esc_html__( 'Enrollment Closed', 'ohmylms' ); ?>
 </a>

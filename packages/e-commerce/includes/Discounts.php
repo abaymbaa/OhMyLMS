@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce;
 
@@ -33,7 +33,7 @@ class Discounts {
 				continue;
 			}
 
-			// Additional check to ensure the course object has the get_price method
+			// Additional check to ensure the course object has the get_price method.
 			if ( ! method_exists( $cart_item['data'], 'get_price' ) ) {
 				continue;
 			}
@@ -182,17 +182,17 @@ class Discounts {
 
 		$date_expires = $coupon->get_date_expires();
 		if ( $date_expires ) {
-			// Get current time in the coupon's timezone
+			// Get current time in the coupon's timezone.
 			$current_time = new \DateTime( 'now', $date_expires->getTimezone() );
 			if ( $current_time > $date_expires ) {
-				// Coupon is expired
+				// Coupon is expired.
 				return false;
 			}
 		}
 
 		$date_start = $coupon->get_date_start();
 		if ( $date_start ) {
-			// Get current time in the coupon's timezone
+			// Get current time in the coupon's timezone.
 			$current_time = new \DateTime( 'now', $date_start->getTimezone() );
 			if ( $current_time < $date_start ) {
 				return false;
@@ -202,7 +202,7 @@ class Discounts {
 		$uses_count = $coupon->get_usage_count();
 		$uses_limit = $coupon->get_usage_limit();
 
-		// Check uses limit
+		// Check uses limit.
 		if ( $uses_limit && $uses_limit <= $uses_count ) {
 			return false;
 		}

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Video Progress Tracker
  *
@@ -38,10 +38,10 @@ class VideoProgressTracker {
 		global $wpdb;
 		$this->table_name = $wpdb->prefix . 'ohmylms_video_progress';
 
-		// Get threshold from settings, default to 90
+		// Get threshold from settings, default to 90.
 		$threshold = (int) get_option( 'ohmylms_video_completion_threshold', 90 );
 
-		// Ensure threshold is within valid range
+		// Ensure threshold is within valid range.
 		$threshold = max( 1, min( 100, $threshold ) );
 
 		$this->completion_threshold = apply_filters( 'ohmylms_video_completion_threshold', $threshold );
@@ -61,31 +61,31 @@ class VideoProgressTracker {
 	 */
 	public function save_progress( $user_id, $lesson_id, $course_id, $watched_duration, $total_duration, $last_position ) {
 		global $wpdb;
-		// Validate inputs
+		// Validate inputs.
 		if ( ! $this->validate_inputs( $user_id, $lesson_id, $course_id ) ) {
 			return false;
 		}
 
 		// SECURITY: Validate and clamp duration values from client to prevent manipulation
-		// Reject invalid total_duration (must be positive)
+		// Reject invalid total_duration (must be positive).
 		if ( $total_duration <= 0 ) {
 			return false;
 		}
 
-		// Clamp all duration values to valid ranges
+		// Clamp all duration values to valid ranges.
 		$watched_duration = max( 0, min( $watched_duration, $total_duration ) );
 		$last_position    = max( 0, min( $last_position, $total_duration ) );
 		$total_duration   = max( 0, $total_duration );
 
-		// Calculate watch percentage
+		// Calculate watch percentage.
 		$watch_percentage = $total_duration > 0 ? ( $watched_duration / $total_duration ) * 100 : 0;
-		$watch_percentage = min( $watch_percentage, 100 ); // Cap at 100%
+		$watch_percentage = min( $watch_percentage, 100 ); // Cap at 100%.
 
-		// Determine if video is completed
+		// Determine if video is completed.
 		$is_completed   = $watch_percentage >= $this->completion_threshold;
 		$completed_date = $is_completed ? current_time( 'mysql' ) : null;
 
-		// Check if record exists
+		// Check if record exists.
 		$existing = $this->get_progress( $user_id, $lesson_id );
 
 		$data = array(
@@ -96,25 +96,25 @@ class VideoProgressTracker {
 			'is_completed'     => $is_completed ? 1 : 0,
 		);
 
-		// Only update completed_date if newly completed
+		// Only update completed_date if newly completed.
 		if ( $is_completed && ( ! $existing || ! $existing->is_completed ) ) {
 			$data['completed_date'] = $completed_date;
 		}
 
 		if ( $existing ) {
 			// Update existing record
-			// Build format array dynamically to match $data keys
+			// Build format array dynamically to match $data keys.
 			$formats = array(
-				'%f', // watched_duration
-				'%f', // total_duration
-				'%f', // watch_percentage
-				'%f', // last_position
-				'%d', // is_completed
+				'%f', // watched_duration.
+				'%f', // total_duration.
+				'%f', // watch_percentage.
+				'%f', // last_position.
+				'%d', // is_completed.
 			);
 
-			// Add format for completed_date if it exists in $data
+			// Add format for completed_date if it exists in $data.
 			if ( isset( $data['completed_date'] ) ) {
-				$formats[] = '%s'; // completed_date is a datetime string
+				$formats[] = '%s'; // completed_date is a datetime string.
 			}
 
 			$result = $wpdb->update(
@@ -128,28 +128,28 @@ class VideoProgressTracker {
 				array( '%d', '%d' )
 			);
 
-			return $result !== false ? $existing->id : false;
+			return false !== $result ? $existing->id : false;
 		} else {
-			// Insert new record
+			// Insert new record.
 			$data['user_id']   = $user_id;
 			$data['lesson_id'] = $lesson_id;
 			$data['course_id'] = $course_id;
 
-			// Build format array dynamically to match $data keys
+			// Build format array dynamically to match $data keys.
 			$formats = array(
-				'%d', // user_id
-				'%d', // lesson_id
-				'%d', // course_id
-				'%f', // watched_duration
-				'%f', // total_duration
-				'%f', // watch_percentage
-				'%f', // last_position
-				'%d', // is_completed
+				'%d', // user_id.
+				'%d', // lesson_id.
+				'%d', // course_id.
+				'%f', // watched_duration.
+				'%f', // total_duration.
+				'%f', // watch_percentage.
+				'%f', // last_position.
+				'%d', // is_completed.
 			);
 
-			// Add format for completed_date if it exists in $data
+			// Add format for completed_date if it exists in $data.
 			if ( isset( $data['completed_date'] ) ) {
-				$formats[] = '%s'; // completed_date is a datetime string
+				$formats[] = '%s'; // completed_date is a datetime string.
 			}
 
 			$result = $wpdb->insert(
@@ -250,7 +250,7 @@ class VideoProgressTracker {
 			return false;
 		}
 
-		// Use existing lesson completion logic
+		// Use existing lesson completion logic.
 		$student = new \OhMyLMS\Data\Student( $user_id );
 		$result  = $student->complete_lesson( $lesson_id, $course_id );
 
@@ -329,22 +329,22 @@ class VideoProgressTracker {
 	 * @return bool True if valid, false otherwise.
 	 */
 	private function validate_inputs( $user_id, $lesson_id, $course_id, $check_enrollment = true ) {
-		// Validate user
+		// Validate user.
 		if ( $user_id <= 0 || ! get_userdata( $user_id ) ) {
 			return false;
 		}
 
-		// Validate lesson if provided
+		// Validate lesson if provided.
 		if ( $lesson_id > 0 && ! get_post( $lesson_id ) ) {
 			return false;
 		}
 
-		// Validate course if provided
+		// Validate course if provided.
 		if ( $course_id > 0 && ! get_post( $course_id ) ) {
 			return false;
 		}
 
-		// Check enrollment if required
+		// Check enrollment if required.
 		if ( $check_enrollment && $course_id > 0 && ! $this->is_user_enrolled( $user_id, $course_id ) ) {
 			return false;
 		}

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Additive, independently versioned school schema. Existing learning tables stay intact.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;

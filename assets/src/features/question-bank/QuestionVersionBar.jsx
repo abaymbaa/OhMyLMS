@@ -49,7 +49,10 @@ export function QuestionVersionBar( {
 			{ question.version > 0 && (
 				<span className="ohmylms-badge">
 					{ sprintf(
-						__( 'Version %d', 'ohmylms' ),
+						/* translators: %d: published version number. */ __(
+							'Version %d',
+							'ohmylms'
+						),
 						question.version
 					) }
 				</span>
@@ -57,7 +60,10 @@ export function QuestionVersionBar( {
 			{ question.usage_count > 1 && (
 				<span className="ohmylms-badge">
 					{ sprintf(
-						__( 'Used in %d quizzes', 'ohmylms' ),
+						/* translators: %d: number of quizzes. */ __(
+							'Used in %d quizzes',
+							'ohmylms'
+						),
 						question.usage_count
 					) }
 				</span>

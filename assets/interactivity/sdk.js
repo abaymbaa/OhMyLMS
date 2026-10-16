@@ -2,7 +2,6 @@
 export const apiVersion = 1;
 const validators = new Map();
 const questionMounts = new Map();
-
 function register( registry, type, callback ) {
 	if (
 		! /^[a-z][a-z0-9_-]*$/.test( type ) ||
@@ -22,12 +21,10 @@ function register( registry, type, callback ) {
 		}
 	};
 }
-
 export const registerAnswerValidator = ( type, callback ) =>
 	register( validators, type, callback );
 export const registerQuestionMount = ( type, callback ) =>
 	register( questionMounts, type, callback );
-
 export function isAnswered( root, type ) {
 	if ( validators.has( type ) ) {
 		return Boolean( validators.get( type )( root ) );
@@ -57,13 +54,15 @@ export function isAnswered( root, type ) {
 		fields.every( ( field ) => field.value.trim() !== '' )
 	);
 }
-
 export function emit( root, name, detail = {}, cancelable = false ) {
 	return root.dispatchEvent(
 		new CustomEvent( `ohmylms:${ name }`, {
 			bubbles: true,
 			cancelable,
-			detail: { apiVersion, ...detail },
+			detail: {
+				apiVersion,
+				...detail,
+			},
 		} )
 	);
 }
@@ -80,7 +79,7 @@ export function mountQuestion( root, type, detail ) {
 		return null;
 	}
 	const cleanup = callback( root, detail );
-	if ( cleanup == null ) {
+	if ( cleanup === null || cleanup === void 0 ) {
 		return () => {};
 	}
 	if ( typeof cleanup !== 'function' ) {

@@ -13,7 +13,6 @@ import {
 import { groupLabel, skillLabel } from './syllabus.mjs';
 import { skillText } from './skillTranslations.mjs';
 import { categoryAppearance } from './categoryAppearance.mjs';
-
 function label( node, language ) {
 	if ( node.kind === 'content' ) {
 		return topicLabel( node.content );
@@ -40,9 +39,11 @@ function label( node, language ) {
 function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 	const isOpen = open.has( node.key );
 	const nested = visibleChildren( node, drag.settings ).length > 0;
-	const kind = { content: 'topic', group: 'chapter', skill: 'skill' }[
-		node.kind
-	];
+	const kind = {
+		content: 'topic',
+		group: 'chapter',
+		skill: 'skill',
+	}[ node.kind ];
 	const total = node.kind === 'group' ? node.children.length : 0;
 	const appearance =
 		node.kind === 'skill'
@@ -77,7 +78,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 					draggable={ ! drag.pending }
 					disabled={ drag.pending }
 					aria-label={ sprintf(
-						__(
+						/* translators: %s: curriculum item name. */ __(
 							'Reorder %s. Use Alt and arrow keys to move.',
 							'ohmylms'
 						),
@@ -98,12 +99,21 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 						type="button"
 						className="ohmylms-ws-toggle"
 						aria-expanded={ isOpen }
-						aria-label={ sprintf(
+						aria-label={
 							isOpen
-								? __( 'Collapse %s', 'ohmylms' )
-								: __( 'Expand %s', 'ohmylms' ),
-							label( node, drag.language )
-						) }
+								? sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Collapse %s', 'ohmylms' ),
+										label( node, drag.language )
+									)
+								: sprintf(
+										/* translators: %s: curriculum item name. */
+										/* translators: %s: curriculum item name. */
+										__( 'Expand %s', 'ohmylms' ),
+										label( node, drag.language )
+									)
+						}
 						onClick={ () => onToggle( node.key ) }
 					>
 						<Dashicon
@@ -143,7 +153,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 						<span className="ohmylms-ws-node-count">
 							{ [
 								sprintf(
-									_n(
+									/* translators: %d: number of skills. */ _n(
 										'%d skill',
 										'%d skills',
 										counts.skills,
@@ -152,7 +162,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 									counts.skills
 								),
 								sprintf(
-									_n(
+									/* translators: %d: number of curriculum folders. */ _n(
 										'%d folder',
 										'%d folders',
 										counts.topics + counts.chapters,
@@ -167,7 +177,12 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 						<span
 							className="ohmylms-ws-node-count"
 							aria-label={ sprintf(
-								_n( '%d skill', '%d skills', total, 'ohmylms' ),
+								/* translators: %d: number of skills. */ _n(
+									'%d skill',
+									'%d skills',
+									total,
+									'ohmylms'
+								),
 								total
 							) }
 						>
@@ -283,7 +298,10 @@ export function WorkspaceSidebar( {
 			event.preventDefault();
 			event.stopPropagation();
 			event.dataTransfer.dropEffect = 'move';
-			setTarget( { key: node.key, after } );
+			setTarget( {
+				key: node.key,
+				after,
+			} );
 		},
 		drop( event, node ) {
 			event.preventDefault();
@@ -429,7 +447,7 @@ export function WorkspaceSidebar( {
 					<span>
 						<span>
 							{ sprintf(
-								_n(
+								/* translators: %d: number of curriculum folders. */ _n(
 									'%d Folder',
 									'%d Folders',
 									counts.topics + counts.chapters,
@@ -440,7 +458,7 @@ export function WorkspaceSidebar( {
 						</span>
 						<span>
 							{ sprintf(
-								_n(
+								/* translators: %d: number of skills. */ _n(
 									'%d Skill',
 									'%d Skills',
 									counts.skills,
@@ -515,10 +533,12 @@ export function WorkspaceSidebar( {
 									? __( 'Add folder', 'ohmylms' )
 									: __( 'Add skill', 'ohmylms' )
 							}
-
 							pending={ pending }
 							help={ sprintf(
-								__( 'Goes into %s.', 'ohmylms' ),
+								/* translators: %s: curriculum item name. */ __(
+									'Goes into %s.',
+									'ohmylms'
+								),
 								into
 							) }
 							onAdd={ ( data ) =>

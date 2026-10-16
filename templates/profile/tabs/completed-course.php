@@ -36,7 +36,7 @@ $get_courses = $student->get_completed_course();
 	<div class="no-course-data">
 		<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 		<p>
-			<?php echo __( 'No Completed Courses.', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'No Completed Courses.', 'ohmylms' ); ?>
 		</p>
 	</div>
 <?php } ?>

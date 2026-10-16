@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Assets;
 
@@ -61,7 +61,7 @@ class AdminAssets extends Assets {
 	public function get_styles() {
 		$suffix = '';
 		$styles = array(
-			'ohmylms-skill-studio' => array(
+			'ohmylms-skill-studio'        => array(
 				'src'     => self::get_asset_url( 'assets/css/skill-studio.css' ),
 				'deps'    => array( 'wp-components' ),
 				'version' => OHMYLMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/css/skill-studio.css' ),
@@ -70,14 +70,14 @@ class AdminAssets extends Assets {
 				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
 			'ohmylms-syllabus-comparison' => array(
-				'src' => self::get_asset_url( 'assets/css/syllabus-comparison.css' ),
-				'deps' => '',
+				'src'     => self::get_asset_url( 'assets/css/syllabus-comparison.css' ),
+				'deps'    => '',
 				'version' => OHMYLMS_VERSION,
-				'media' => 'all',
+				'media'   => 'all',
 				'has_rtl' => false,
 				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-main'     => array(
+			'ohmylms-main'                => array(
 				'src'     => self::get_asset_url( 'assets/dist/css/admin/ohmylms.css' ),
 				'deps'    => '',
 				'version' => OHMYLMS_VERSION,
@@ -85,7 +85,7 @@ class AdminAssets extends Assets {
 				'has_rtl' => false,
 				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-rtl'      => array(
+			'ohmylms-rtl'                 => array(
 				'src'     => self::get_asset_url( 'assets/dist/css/admin/ohmylms-rtl.css' ),
 				'deps'    => '',
 				'version' => OHMYLMS_VERSION,
@@ -93,7 +93,7 @@ class AdminAssets extends Assets {
 				'has_rtl' => false,
 				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-tailwind' => array(
+			'ohmylms-tailwind'            => array(
 				'src'     => self::get_asset_url( 'assets/css/tailwind.css' ),
 				'deps'    => '',
 				'version' => OHMYLMS_VERSION,
@@ -101,7 +101,7 @@ class AdminAssets extends Assets {
 				'has_rtl' => false,
 				'screens' => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-global'   => array(
+			'ohmylms-global'              => array(
 				'src'     => self::get_asset_url( 'assets/css/global.css' ),
 				'deps'    => '',
 				'version' => OHMYLMS_VERSION,
@@ -257,8 +257,8 @@ class AdminAssets extends Assets {
 				continue;
 			}
 
-			// Skip RTL styles if not in RTL mode
-			if ( $handle === 'ohmylms-rtl' && ! is_rtl() ) {
+			// Skip RTL styles if not in RTL mode.
+			if ( 'ohmylms-rtl' === $handle && ! is_rtl() ) {
 				continue;
 			}
 

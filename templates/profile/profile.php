@@ -40,7 +40,7 @@ if ( $engagement_visible ) {
 
 <div class="ohmylms-student-profile-tab-content student-profile">
 	<h4 class="profile-tab-title">
-		<?php echo __( 'Profile', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Profile', 'ohmylms' ); ?>
 	</h4>
 
 	<div class="ohmylms-profile-cover-area">
@@ -66,7 +66,7 @@ if ( $engagement_visible ) {
 		<div class="ohmylms-profile-actions">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'profile-edit' ) ); ?>" class="profile-edit">
 				<?php require OHMYLMS_DIR . '/assets/images/icon/edit-icon.php'; ?>
-				<?php echo __( 'Edit', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Edit', 'ohmylms' ); ?>
 			</a>
 		</div>
 
@@ -86,7 +86,7 @@ if ( $engagement_visible ) {
 						<span class="ohmylms-xp-value">
 							<?php echo esc_html( $current_point ); ?>
 						</span>
-						<span class="ohmylms-xp-label"><?php echo __( 'Total Bonus Points', 'ohmylms' ); ?></span>
+						<span class="ohmylms-xp-label"><?php echo esc_html__( 'Total Bonus Points', 'ohmylms' ); ?></span>
 					</div>
 				<?php endif; ?>
 			</div>
@@ -111,19 +111,19 @@ if ( $engagement_visible ) {
 				<div class="profile-contact-details">
 					<?php if ( ! empty( $student->get_phone() ) ) : ?>
 						<span class="profile-contact-item">
-							<strong><?php echo __( 'Phone:', 'ohmylms' ); ?></strong>
+							<strong><?php echo esc_html__( 'Phone:', 'ohmylms' ); ?></strong>
 							<?php echo esc_html( $student->get_phone() ); ?>
 						</span>
 					<?php endif; ?>
 					<?php if ( ! empty( $student->get_whatsapp() ) ) : ?>
 						<span class="profile-contact-item">
-							<strong><?php echo __( 'WhatsApp:', 'ohmylms' ); ?></strong>
+							<strong><?php echo esc_html__( 'WhatsApp:', 'ohmylms' ); ?></strong>
 							<?php echo esc_html( $student->get_whatsapp() ); ?>
 						</span>
 					<?php endif; ?>
 					<?php if ( ! empty( $student->get_country() ) ) : ?>
 						<span class="profile-contact-item">
-							<strong><?php echo __( 'Country:', 'ohmylms' ); ?></strong>
+							<strong><?php echo esc_html__( 'Country:', 'ohmylms' ); ?></strong>
 							<?php echo esc_html( $student->get_country() ); ?>
 						</span>
 					<?php endif; ?>
@@ -135,7 +135,7 @@ if ( $engagement_visible ) {
 			if ( ! empty( $skills ) && is_array( $skills ) ) :
 				?>
 				<div class="profile-skills">
-					<h5 class="profile-section-title"><?php echo __( 'Skills', 'ohmylms' ); ?></h5>
+					<h5 class="profile-section-title"><?php echo esc_html__( 'Skills', 'ohmylms' ); ?></h5>
 					<div class="skills-list">
 						<?php foreach ( $skills as $skill ) : ?>
 							<?php if ( ! empty( $skill ) ) : ?>
@@ -151,7 +151,7 @@ if ( $engagement_visible ) {
 			if ( ! empty( $social_links ) && is_array( $social_links ) ) :
 				?>
 				<div class="profile-social-links">
-					<h5 class="profile-section-title"><?php echo __( 'Social Links', 'ohmylms' ); ?></h5>
+					<h5 class="profile-section-title"><?php echo esc_html__( 'Social Links', 'ohmylms' ); ?></h5>
 					<div class="social-links-list">
 						<?php foreach ( $social_links as $link ) : ?>
 							<?php if ( ! empty( $link['label'] ) && ! empty( $link['url'] ) ) : ?>
@@ -186,7 +186,7 @@ if ( $engagement_visible ) {
 					<div class="ohmylms-progress-fill" style="--fill-width: <?php echo esc_html( $progress_percent ); ?>%"></div>
 				</div>
 				<?php if ( $point_needed > 0 ) : ?>
-					<div class="ohmylms-progress-remaining"><?php echo esc_html( $point_needed ); ?> <?php echo __( 'bonus points until next level', 'ohmylms' ); ?></div>
+					<div class="ohmylms-progress-remaining"><?php echo esc_html( $point_needed ); ?> <?php echo esc_html__( 'bonus points until next level', 'ohmylms' ); ?></div>
 				<?php endif; ?>
 			</div>
 		<?php endif; ?>
@@ -207,7 +207,7 @@ if ( $engagement_visible ) {
 				<svg class="ohmylms-trophy-icon" viewBox="0 0 24 24" fill="currentColor">
 					<path d="M7 4V2C7 1.45 7.45 1 8 1H16C16.55 1 17 1.45 17 2V4H20C20.55 4 21 4.45 21 5S20.55 6 20 6H19V7C19 10.31 16.31 13 13 13H11C7.69 13 5 10.31 5 7V6H4C3.45 6 3 5.55 3 5S3.45 4 4 4H7Z"></path>
 				</svg>
-				<?php echo __( 'Badges', 'ohmylms' ); ?>
+				<?php echo esc_html__( 'Badges', 'ohmylms' ); ?>
 			</h3>
 
 			<div class="ohmylms-badges-grid">

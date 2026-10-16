@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * EngagementController class.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
@@ -19,13 +24,13 @@ class EngagementController extends RestController {
 	}
 
 	private function validate_settings( $group, $settings ) {
-		if ( $group === 'xp' ) {
+		if ( 'xp' === $group ) {
 			return \OhMyLMS\Engagement\XpSettings::validate( $settings ); }
-		if ( $group === 'score' ) {
+		if ( 'score' === $group ) {
 			return \OhMyLMS\Skills\Score::validate( $settings ); }
-		if ( $group === 'mastery' ) {
+		if ( 'mastery' === $group ) {
 			return \OhMyLMS\Skills\Khan\Settings::validate( $settings ); }
-		if ( $group === 'streak' ) {
+		if ( 'streak' === $group ) {
 			$validated = \OhMyLMS\Engagement\StreakSettings::validate( $settings );
 			if ( is_wp_error( $validated ) ) {
 				return $validated; }
@@ -58,7 +63,7 @@ class EngagementController extends RestController {
 				}
 			}
 		}
-		if ( $group === 'level' && isset( $settings['levels'] ) ) {
+		if ( 'level' === $group && isset( $settings['levels'] ) ) {
 			if ( ! is_array( $settings['levels'] ) ) {
 				return $error; }
 			foreach ( $settings['levels'] as $level ) {
@@ -66,12 +71,12 @@ class EngagementController extends RestController {
 					return $error; }
 			}
 		}
-		if ( $group === 'leaderboard' ) {
+		if ( 'leaderboard' === $group ) {
 			if ( isset( $settings['rules'] ) && ! in_array( $settings['rules'], array( 'completion_rate', 'highest_quiz', 'fastest_time' ), true ) ) {
 				return $error; }
-			if ( isset( $settings['threshold'] ) && $settings['threshold'] !== '' && ( ! is_numeric( $settings['threshold'] ) || $settings['threshold'] < 0 || $settings['threshold'] > 100 ) ) {
+			if ( isset( $settings['threshold'] ) && '' !== $settings['threshold'] && ( ! is_numeric( $settings['threshold'] ) || $settings['threshold'] < 0 || $settings['threshold'] > 100 ) ) {
 				return $error; }
-			if ( isset( $settings['students_number'] ) && $settings['students_number'] !== '' && ( ! is_numeric( $settings['students_number'] ) || $settings['students_number'] < 1 || $settings['students_number'] > 100 ) ) {
+			if ( isset( $settings['students_number'] ) && '' !== $settings['students_number'] && ( ! is_numeric( $settings['students_number'] ) || $settings['students_number'] < 1 || $settings['students_number'] > 100 ) ) {
 				return $error; }
 		}
 		return $settings;
@@ -170,13 +175,13 @@ class EngagementController extends RestController {
 		$group_id = $request['group_id'];
 		if ( ! $this->valid_group( $group_id ) ) {
 			return new WP_Error( 'rest_invalid_group_id', __( 'Invalid group ID.', 'ohmylms' ), array( 'status' => 400 ) ); }
-		if ( $group_id === 'streak' ) {
+		if ( 'streak' === $group_id ) {
 			return rest_ensure_response( \OhMyLMS\Engagement\StreakSettings::get() ); }
-		if ( $group_id === 'xp' ) {
+		if ( 'xp' === $group_id ) {
 			return rest_ensure_response( \OhMyLMS\Engagement\XpSettings::get() ); }
-		if ( $group_id === 'score' ) {
+		if ( 'score' === $group_id ) {
 			return rest_ensure_response( \OhMyLMS\Skills\Score::get() ); }
-		if ( $group_id === 'mastery' ) {
+		if ( 'mastery' === $group_id ) {
 			return rest_ensure_response( \OhMyLMS\Skills\Khan\Settings::get() ); }
 		$function_name = 'get_' . $group_id . '_default_settings';
 		$settings      = get_option( 'ohmylms_' . $group_id . '_settings' );
@@ -207,7 +212,7 @@ class EngagementController extends RestController {
 		$settings = $this->validate_settings( $group_id, $settings );
 		if ( is_wp_error( $settings ) ) {
 			return $settings; }
-		if ( $group_id === 'streak' && $settings['enable'] && ! \OhMyLMS\Engagement\StreakSchema::install() ) {
+		if ( 'streak' === $group_id && $settings['enable'] && ! \OhMyLMS\Engagement\StreakSchema::install() ) {
 			return new WP_Error( 'streak_schema', __( 'Could not install streak storage.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
 		if ( in_array( $group_id, array( 'xp', 'score' ), true ) && $settings['enable'] && ! \OhMyLMS\Engagement\XpSchema::install() ) {
@@ -299,19 +304,19 @@ class EngagementController extends RestController {
 	}
 
 	public function generate_slug( $string ) {
-		// Convert to lowercase
+		// Convert to lowercase.
 		$slug = strtolower( $string );
 
-		// Replace spaces and underscores with hyphens
+		// Replace spaces and underscores with hyphens.
 		$slug = preg_replace( '/[\s_]+/', '-', $slug );
 
-		// Remove non-alphanumeric characters (except hyphens)
+		// Remove non-alphanumeric characters (except hyphens).
 		$slug = preg_replace( '/[^a-z0-9\-]/', '', $slug );
 
-		// Remove multiple hyphens
+		// Remove multiple hyphens.
 		$slug = preg_replace( '/-+/', '-', $slug );
 
-		// Trim hyphens from both ends
+		// Trim hyphens from both ends.
 		$slug = trim( $slug, '-' );
 
 		return $slug;

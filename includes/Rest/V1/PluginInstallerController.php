@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * API PluginInstallerController class.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Rest\V1;
 
@@ -55,7 +60,7 @@ class PluginInstallerController extends RestController {
 			)
 		);
 
-		// Activate plugin endpoint
+		// Activate plugin endpoint.
 		register_rest_route(
 			$this->namespace,
 			'/' . $this->base . '/activate',
@@ -89,18 +94,18 @@ class PluginInstallerController extends RestController {
 		// require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		// require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		// require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
-		// require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		// require_once ABSPATH . 'wp-admin/includes/plugin-install.php';.
 
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 		require_once ABSPATH . 'wp-admin/includes/class-plugin-upgrader.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php'; // Add this line to include filesystem functions
+		require_once ABSPATH . 'wp-admin/includes/file.php'; // Add this line to include filesystem functions.
 
 		$plugin_slug = sanitize_text_field( $request->get_param( 'slug' ) );
 		$installed   = false;
 
-		// Check if plugin is already installed
+		// Check if plugin is already installed.
 		$all_plugins = get_plugins();
 		foreach ( $all_plugins as $plugin_path => $plugin ) {
 			if ( strpos( $plugin_path, $plugin_slug . '/' ) === 0 ) {
@@ -118,7 +123,7 @@ class PluginInstallerController extends RestController {
 			);
 		}
 
-		// Get plugin info from WordPress.org
+		// Get plugin info from WordPress.org.
 		$api = plugins_api(
 			'plugin_information',
 			array(
@@ -148,7 +153,7 @@ class PluginInstallerController extends RestController {
 			);
 		}
 
-		// Initialize WP_Filesystem before plugin installation
+		// Initialize WP_Filesystem before plugin installation.
 		WP_Filesystem();
 
 		$upgrader = new \Plugin_Upgrader( new \Automatic_Upgrader_Skin() );
@@ -182,7 +187,7 @@ class PluginInstallerController extends RestController {
 		$plugin_slug     = sanitize_text_field( $request->get_param( 'slug' ) );
 		$plugin_basename = '';
 
-		// Find the plugin basename
+		// Find the plugin basename.
 		$all_plugins = get_plugins();
 		foreach ( $all_plugins as $plugin_path => $plugin ) {
 			if ( strpos( $plugin_path, $plugin_slug . '/' ) === 0 ) {
@@ -207,7 +212,7 @@ class PluginInstallerController extends RestController {
 			);
 		}
 		if ( 'mail-mint/mail-mint.php' === $plugin_basename ) {
-			// Get plugin version
+			// Get plugin version.
 			if ( ! function_exists( 'get_plugin_data' ) ) {
 				require_once ABSPATH . 'wp-admin/includes/plugin.php';
 			}

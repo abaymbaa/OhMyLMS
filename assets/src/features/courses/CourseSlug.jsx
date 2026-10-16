@@ -13,20 +13,20 @@ export function createCourseSlug( readRuntime ) {
 			handleSlugChange = props.handleSlugChange,
 			r = ( function ( e, t ) {
 				return (
-					( function ( e ) {
-						if ( Array.isArray( e ) ) {
-							return e;
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return _eLocal;
 						}
 					} )( e ) ||
-					( function ( e, t ) {
+					( function ( _eLocal2, _tLocal ) {
 						var n =
-							null == e
+							_eLocal2 === null || _eLocal2 === void 0
 								? null
 								: ( 'undefined' !== typeof Symbol &&
-										e[ Symbol.iterator ] ) ||
-									e[ '@@iterator' ];
-						if ( null != n ) {
-							var r,
+										_eLocal2[ Symbol.iterator ] ) ||
+									_eLocal2[ '@@iterator' ];
+						if ( n !== null && n !== void 0 ) {
+							var _rLocal,
 								a,
 								o,
 								i,
@@ -35,8 +35,8 @@ export function createCourseSlug( readRuntime ) {
 								u = ! 1;
 							try {
 								if (
-									( ( o = ( n = n.call( e ) ).next ),
-									0 === t )
+									( ( o = ( n = n.call( _eLocal2 ) ).next ),
+									0 === _tLocal )
 								) {
 									if ( Object( n ) !== n ) {
 										return;
@@ -45,18 +45,25 @@ export function createCourseSlug( readRuntime ) {
 								} else {
 									for (
 										;
-										! ( c = ( r = o.call( n ) ).done ) &&
-										( l.push( r.value ), l.length !== t );
+										! ( c = ( _rLocal = o.call( n ) )
+											.done ) &&
+										( l.push( _rLocal.value ),
+										l.length !== _tLocal );
 										c = ! 0
 									) {}
 								}
-							} catch ( e ) {
-								( ( u = ! 0 ), ( a = e ) );
+							} catch ( _eLocal3 ) {
+								u = ! 0;
+								a = _eLocal3;
 							} finally {
 								try {
 									if (
 										! c &&
-										null != n.return &&
+										( ( _nullableValue ) =>
+											_nullableValue !== null &&
+											_nullableValue !== void 0 )(
+											n.return
+										) &&
 										( ( i = n.return() ),
 										Object( i ) !== i )
 									) {
@@ -71,24 +78,30 @@ export function createCourseSlug( readRuntime ) {
 							return l;
 						}
 					} )( e, t ) ||
-					( function ( e, t ) {
-						if ( e ) {
-							if ( 'string' === typeof e ) {
-								return Mz( e, t );
+					( function ( _eLocal4, _tLocal2 ) {
+						if ( _eLocal4 ) {
+							if ( 'string' === typeof _eLocal4 ) {
+								return Mz( _eLocal4, _tLocal2 );
 							}
-							var n = {}.toString.call( e ).slice( 8, -1 );
+							var n = {}.toString.call( _eLocal4 ).slice( 8, -1 );
 							return (
 								'Object' === n &&
-									e.constructor &&
-									( n = e.constructor.name ),
-								'Map' === n || 'Set' === n
-									? Array.from( e )
-									: 'Arguments' === n ||
-										  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-												n
-										  )
-										? Mz( e, t )
-										: void 0
+									_eLocal4.constructor &&
+									( n = _eLocal4.constructor.name ),
+								( () => {
+									if ( 'Map' === n || 'Set' === n ) {
+										return Array.from( _eLocal4 );
+									}
+									if (
+										'Arguments' === n ||
+										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+											n
+										)
+									) {
+										return Mz( _eLocal4, _tLocal2 );
+									}
+									return void 0;
+								} )()
 							 );
 						}
 					} )( e, t ) ||
@@ -132,16 +145,18 @@ export function createCourseSlug( readRuntime ) {
 							className={ 'ohmylms-course-settings-slug-input' }
 							defaultValue={ slug }
 							onChange={ function ( e ) {
-								! ( function ( e ) {
-									( e.trim()
-										? o( '' )
-										: o(
-												( 0, I18n.__ )(
-													'Course slug cannot be empty',
-													'ohmylms'
-												)
-											),
-										handleSlugChange( e ) );
+								( function ( _eLocal5 ) {
+									if ( _eLocal5.trim() ) {
+										o( '' );
+									} else {
+										o(
+											( 0, I18n.__ )(
+												'Course slug cannot be empty',
+												'ohmylms'
+											)
+										);
+									}
+									handleSlugChange( _eLocal5 );
 								} )( e.replace( /[^a-zA-Z0-9-]/g, '' ) );
 							} }
 							placeholder={ ( 0, I18n.__ )(
@@ -151,7 +166,9 @@ export function createCourseSlug( readRuntime ) {
 							status={ a ? 'error' : '' }
 							maxLength={ 200 }
 							onKeyDown={ function ( e ) {
-								' ' === e.key && e.preventDefault();
+								if ( ' ' === e.key ) {
+									e.preventDefault();
+								}
 							} }
 						/>
 						{ a && (

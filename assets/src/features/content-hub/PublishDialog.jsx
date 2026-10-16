@@ -23,8 +23,8 @@ export function PublishDialog( { catalog, errors, busy, onPublish, onClose } ) {
 		>
 			<p>
 				{ sprintf(
-					__(
-						'This publishes version %d of “%s”. Later edits stay in the draft until you publish again.',
+					/* translators: %1$d: published revision number; %2$s: course title. */ __(
+						'This publishes version %1$d of \u201C%2$s\u201D. Later edits stay in the draft until you publish again.',
 						'ohmylms'
 					),
 					catalog.published_version + 1,

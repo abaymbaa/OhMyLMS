@@ -10,7 +10,6 @@ export function createCourseStudents( readRuntime ) {
 			I: Controls,
 			Ie,
 			JU,
-			L: Entitlements,
 			React,
 			T: StoreModule,
 			b: I18n,
@@ -120,14 +119,19 @@ export function createCourseStudents( readRuntime ) {
 					title: ( 0, I18n.__ )( 'Student Name', 'ohmylms' ),
 					dataIndex: 'student_name',
 					className: 'student-name',
-					render( e, t ) {
+					render( _eLocal, _tLocal ) {
 						return (
 							<Controls.FlexWP gap={ 4 } justify={ 'flex-start' }>
-								{ null != t && t.student_img ? (
+								{ _tLocal !== null &&
+								_tLocal !== void 0 &&
+								_tLocal.student_img ? (
 									<gG.A
 										size={ 40 }
 										src={
-											null == t ? void 0 : t.student_img
+											_tLocal === null ||
+											_tLocal === void 0
+												? void 0
+												: _tLocal.student_img
 										}
 									/>
 								) : (
@@ -136,7 +140,9 @@ export function createCourseStudents( readRuntime ) {
 									</span>
 								) }
 								<span className={ 'ohmylms-title-text' }>
-									{ null == t ? void 0 : t.student_name }
+									{ _tLocal === null || _tLocal === void 0
+										? void 0
+										: _tLocal.student_name }
 								</span>
 							</Controls.FlexWP>
 						);
@@ -154,10 +160,10 @@ export function createCourseStudents( readRuntime ) {
 					dataIndex: 'registration_date',
 					className: 'reg-date',
 					isExpandable: ! 0,
-					render( e ) {
+					render( _eLocal2 ) {
 						return (
 							<React.Fragment>
-								{ sn()( e ).format( 'DD MMMM, YYYY' ) }
+								{ sn()( _eLocal2 ).format( 'DD MMMM, YYYY' ) }
 							</React.Fragment>
 						);
 					},
@@ -167,7 +173,7 @@ export function createCourseStudents( readRuntime ) {
 					title: 'Action',
 					dataIndex: 'action',
 					className: 'action',
-					render( e, t ) {
+					render( _eLocal3, _tLocal2 ) {
 						return (
 							<React.Fragment>
 								<Controls.ButtonWP
@@ -176,7 +182,10 @@ export function createCourseStudents( readRuntime ) {
 									className={ 'ohmylms-delete-btn' }
 									onClick={ function () {
 										return ie(
-											null == t ? void 0 : t.user_id
+											_tLocal2 === null ||
+												_tLocal2 === void 0
+												? void 0
+												: _tLocal2.user_id
 										);
 									} }
 								/>
@@ -185,24 +194,25 @@ export function createCourseStudents( readRuntime ) {
 					},
 				},
 			],
-			ie = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( K( ! 0 ), ee( [ e ] ) );
+			ie = ( 0, ReactHooks.useCallback )( function ( _eLocal4 ) {
+				K( ! 0 );
+				ee( [ _eLocal4 ] );
 			}, [] ),
 			le = ( 0, ReactHooks.useCallback )( function () {
 				K( ! 1 );
 			}, [] ),
 			ce = ( 0, ReactHooks.useCallback )(
 				fee(
-					dee().m( function e() {
-						var t, n;
+					dee().m( function _eLocal5() {
+						var _tLocal3, _nLocal;
 						return dee().w(
-							function ( e ) {
+							function ( _eLocal6 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal6.p = _eLocal6.n ) ) {
 										case 0:
 											return (
-												( e.p = 0 ),
-												( e.n = 1 ),
+												( _eLocal6.p = 0 ),
+												( _eLocal6.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/courses/'
 														.concat( i, '/enroll/' )
@@ -211,42 +221,52 @@ export function createCourseStudents( readRuntime ) {
 												} )
 											 );
 										case 1:
-											( null != ( t = e.v ) && t.success
-												? w(
-														( 0, I18n.__ )(
-															'Unenrolled Successfully',
-															'ohmylms'
-														)
+											if (
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _tLocal3 = _eLocal6.v )
+												) &&
+												_tLocal3.success
+											) {
+												w(
+													( 0, I18n.__ )(
+														'Unenrolled Successfully',
+														'ohmylms'
 													)
-												: w(
-														( 0, I18n.__ )(
-															'Failed to unenroll',
-															'ohmylms'
-														)
-													),
-												( e.n = 3 ) );
+												);
+											} else {
+												w(
+													( 0, I18n.__ )(
+														'Failed to unenroll',
+														'ohmylms'
+													)
+												);
+											}
+											_eLocal6.n = 3;
 											break;
 										case 2:
-											( ( e.p = 2 ),
-												( n = e.v ),
-												console.error( n ),
-												w( n.message ) );
+											_eLocal6.p = 2;
+											_nLocal = _eLocal6.v;
+											console.error( _nLocal );
+											w( _nLocal.message );
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( e.p = 3 ),
+												( _eLocal6.p = 3 ),
 												K( ! 1 ),
 												de( {
 													page: 1,
 												} ),
 												R( 1 ),
-												e.f( 3 )
+												_eLocal6.f( 3 )
 											 );
 										case 4:
-											return e.a( 2 );
+											return _eLocal6.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal5,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
@@ -261,15 +281,15 @@ export function createCourseStudents( readRuntime ) {
 							total: C,
 							current: S,
 							perPage: k,
-							onChange( e ) {
-								return R( e );
+							onChange( _eLocal7 ) {
+								return R( _eLocal7 );
 							},
 						};
 					},
 					[ C, S, k ]
 				),
-				( 0, ReactHooks.useCallback )( function ( e ) {
-					U( e );
+				( 0, ReactHooks.useCallback )( function ( _eLocal8 ) {
+					U( _eLocal8 );
 				}, [] ) ),
 			se = ( 0, ReactHooks.useCallback )(
 				function () {
@@ -278,33 +298,33 @@ export function createCourseStudents( readRuntime ) {
 				[ o, e ]
 			),
 			de = ( function () {
-				var e = fee(
-					dee().m( function e() {
-						var t,
-							n,
+				var _eLocal9 = fee(
+					dee().m( function _eLocal0( ..._args ) {
+						var _tLocal4,
+							_nLocal2,
 							r,
 							a,
-							o,
-							c,
-							u,
-							d,
+							_oLocal,
+							_cLocal,
+							_uLocal,
+							_dLocal,
 							f,
-							v,
-							g = arguments;
+							_vLocal,
+							g = _args;
 						return dee().w(
-							function ( e ) {
+							function ( _eLocal1 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal1.p = _eLocal1.n ) ) {
 										case 0:
 											return (
-												( t =
+												( _tLocal4 =
 													g.length > 0 &&
 													void 0 !== g[ 0 ]
 														? g[ 0 ]
 														: {} ),
-												( e.p = 1 ),
+												( _eLocal1.p = 1 ),
 												0 ===
-												( null == m
+												( m === null || m === void 0
 													? void 0
 													: m.length )
 													? s( ! 0 )
@@ -322,9 +342,9 @@ export function createCourseStudents( readRuntime ) {
 															'_'
 														)[ 1 ],
 													},
-													t
+													_tLocal4
 												) ),
-												( e.n = 2 ),
+												( _eLocal1.n = 2 ),
 												l()( {
 													path: ( 0,
 													lN.addQueryArgs )(
@@ -340,85 +360,97 @@ export function createCourseStudents( readRuntime ) {
 												} )
 											 );
 										case 2:
-											if ( ( f = e.v ) ) {
-												e.n = 3;
+											if ( ( f = _eLocal1.v ) ) {
+												_eLocal1.n = 3;
 												break;
 											}
 											f = [];
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( o = f ),
-												( e.n = 4 ),
-												o.json()
+												( _oLocal = f ),
+												( _eLocal1.n = 4 ),
+												_oLocal.json()
 											 );
 										case 4:
-											( ( c = e.v ),
-												( u =
-													null == o ||
-													null ===
-														( n = o.headers ) ||
-													void 0 === n
-														? void 0
-														: n.get(
-																'X-WP-Total'
-															) ),
-												( d =
-													null == o ||
-													null ===
-														( r = o.headers ) ||
-													void 0 === r
-														? void 0
-														: r.get(
-																'X-WP-Course-Name'
-															) ),
-												M( d ),
-												P( u ),
-												p( c || [] ),
-												( e.n = 6 ) );
+											_cLocal = _eLocal1.v;
+											_uLocal =
+												_oLocal === null ||
+												_oLocal === void 0 ||
+												null ===
+													( _nLocal2 =
+														_oLocal.headers ) ||
+												void 0 === _nLocal2
+													? void 0
+													: _nLocal2.get(
+															'X-WP-Total'
+														);
+											_dLocal =
+												_oLocal === null ||
+												_oLocal === void 0 ||
+												null ===
+													( r = _oLocal.headers ) ||
+												void 0 === r
+													? void 0
+													: r.get(
+															'X-WP-Course-Name'
+														);
+											M( _dLocal );
+											P( _uLocal );
+											p( _cLocal || [] );
+											_eLocal1.n = 6;
 											break;
 										case 5:
-											( ( e.p = 5 ),
-												( v = e.v ),
-												console.error( v ) );
+											_eLocal1.p = 5;
+											_vLocal = _eLocal1.v;
+											console.error( _vLocal );
+										// Falls through to the shared async state cleanup.
 										case 6:
 											return (
-												( e.p = 6 ),
+												( _eLocal1.p = 6 ),
 												s( ! 1 ),
 												Q( ! 1 ),
-												e.f( 6 )
+												_eLocal1.f( 6 )
 											 );
 										case 7:
-											return e.a( 2 );
+											return _eLocal1.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal0,
 							null,
 							[ [ 1, 5, 6, 7 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args2 ) {
+					return _eLocal9.apply( this, _args2 );
 				};
 			} )(),
-			me = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( V( e ), R( 1 ) );
+			me = ( 0, ReactHooks.useCallback )( function ( _eLocal10 ) {
+				V( _eLocal10 );
+				R( 1 );
 			}, [] );
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					i ? de() : t( '/courses' );
+					if ( i ) {
+						de();
+					} else {
+						t( '/courses' );
+					}
 				},
 				[ i, S, k, B, G ]
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! u &&
-						_ &&
-						( _.includes( 'wrong' )
-							? openNotificationWithIcon( 'error', _ )
-							: openNotificationWithIcon( 'success', _ ) );
+					if ( ! u && _ ) {
+						if ( _.includes( 'wrong' ) ) {
+							openNotificationWithIcon( 'error', _ );
+						} else {
+							openNotificationWithIcon( 'success', _ );
+						}
+					}
 				},
 				[ _ ]
 			),
@@ -571,8 +603,8 @@ export function createCourseStudents( readRuntime ) {
 										React.createElement( fN, {
 											total: C,
 											currentPage: S,
-											onPageChange( e ) {
-												return R( e );
+											onPageChange( _eLocal11 ) {
+												return R( _eLocal11 );
 											},
 											perPage: k,
 										} ) }

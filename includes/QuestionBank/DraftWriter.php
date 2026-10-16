@@ -1,4 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The single writer for editable (draft) question content: post fields, settings,
+ * media and answer options, plus quiz placement.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\QuestionBank;
 
 use OhMyLMS\Data\Question;
@@ -120,7 +126,7 @@ final class DraftWriter {
 
 	/** Normalize, authorize and validate one payload. No writes. */
 	public static function prepare( array $data, $quiz_id = 0 ) {
-		$id = isset( $data['id'] ) && $data['id'] !== '' ? (int) $data['id'] : 0;
+		$id = isset( $data['id'] ) && '' !== $data['id'] ? (int) $data['id'] : 0;
 		if ( $id && get_post_type( $id ) !== OHMYLMS_QUESTION_CPT ) {
 			return new \WP_Error( 'ohmylms_rest_question_invalid_id', __( 'Question ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
@@ -175,7 +181,7 @@ final class DraftWriter {
 				if ( ! is_scalar( $data[ $field ] ) ) {
 					return self::invalid( sprintf( __( '%s must be text.', 'ohmylms' ), $field ) ); }
 				$value                    = (string) $data[ $field ];
-				$plan['fields'][ $field ] = $field === 'slug' ? sanitize_title( $value ) : ( $unfiltered ? $value : wp_kses_post( $value ) );
+				$plan['fields'][ $field ] = 'slug' === $field ? sanitize_title( $value ) : ( $unfiltered ? $value : wp_kses_post( $value ) );
 			}
 		}
 		if ( isset( $data['status'] ) ) {
@@ -185,7 +191,7 @@ final class DraftWriter {
 			if ( ! is_array( $data['settings'] ) ) {
 				return self::invalid( __( 'Question settings must be an object.', 'ohmylms' ) ); }
 			$type = (string) ( $data['settings']['type'] ?? '' );
-			if ( $type !== '' && ! Registry::get( 'question', $type ) ) {
+			if ( '' !== $type && ! Registry::get( 'question', $type ) ) {
 				return new \WP_Error( 'ohmylms_question_type_missing', sprintf( __( 'Question type "%s" is not available. Enable its extension before saving.', 'ohmylms' ), $type ), array( 'status' => 400 ) );
 			}
 			$probe = new Question();
@@ -198,9 +204,9 @@ final class DraftWriter {
 		}
 		foreach ( array( 'thumbnail_id', 'video_id' ) as $field ) {
 			if ( isset( $data[ $field ] ) ) {
-				if ( $data[ $field ] !== '' && ! is_numeric( $data[ $field ] ) ) {
+				if ( '' !== $data[ $field ] && ! is_numeric( $data[ $field ] ) ) {
 					return self::invalid( sprintf( __( '%s must be a media ID.', 'ohmylms' ), $field ) ); }
-				$plan['fields'][ $field ] = $data[ $field ] === '' ? '' : (int) $data[ $field ];
+				$plan['fields'][ $field ] = '' === $data[ $field ] ? '' : (int) $data[ $field ];
 			}
 		}
 		if ( isset( $data['order_number'] ) ) {
@@ -230,7 +236,7 @@ final class DraftWriter {
 
 	/** Option rows must belong to the question they are saved with. */
 	private static function prepare_options( $options, $question_id ) {
-		if ( $options === null || $options === '' ) {
+		if ( null === $options || '' === $options ) {
 			return null; }
 		if ( ! is_array( $options ) ) {
 			return self::invalid( __( 'Answer options must be a list.', 'ohmylms' ) ); }
@@ -246,7 +252,7 @@ final class DraftWriter {
 		foreach ( array_values( $options ) as $position => $option ) {
 			if ( ! is_array( $option ) ) {
 				return self::invalid( __( 'Each answer option must be an object.', 'ohmylms' ) ); }
-			$option_id = isset( $option['id'] ) && $option['id'] !== '' && empty( $option['temp'] ) ? $option['id'] : 0;
+			$option_id = isset( $option['id'] ) && '' !== $option['id'] && empty( $option['temp'] ) ? $option['id'] : 0;
 			if ( $option_id && ( ! is_numeric( $option_id ) || ! isset( $owned[ (int) $option_id ] ) ) ) {
 				return new \WP_Error(
 					'ohmylms_option_foreign',
@@ -262,14 +268,14 @@ final class DraftWriter {
 				return self::invalid( __( 'An answer option appears twice.', 'ohmylms' ) ); }
 			$seen[ $option_id ] = true;
 			$answer             = $option['answer'] ?? '';
-			if ( ! is_scalar( $answer ) && $answer !== null ) {
+			if ( ! is_scalar( $answer ) && null !== $answer ) {
 				return self::invalid( __( 'Answer text must be text.', 'ohmylms' ) ); }
 			$answer = (string) $answer;
 			$row    = array(
 				'id'           => $option_id,
 				'answer'       => $unfiltered ? $answer : wp_kses_post( $answer ),
 				'order_number' => isset( $option['order_number'] ) ? (int) $option['order_number'] : $position + 1,
-				'is_correct'   => ! empty( $option['is_correct'] ) && $option['is_correct'] !== 'false' ? 1 : 0,
+				'is_correct'   => ! empty( $option['is_correct'] ) && 'false' !== $option['is_correct'] ? 1 : 0,
 				'meta'         => array(),
 			);
 			foreach ( self::OPTION_META as $key => $meta_key ) {
@@ -320,7 +326,7 @@ final class DraftWriter {
 		foreach ( $value as $key => $item ) {
 			if ( is_array( $item ) ) {
 				$value[ $key ] = self::canonical( $item ); } elseif ( is_bool( $item ) ) {
-				$value[ $key ] = $item ? '1' : ''; } elseif ( $item === null ) {
+				$value[ $key ] = $item ? '1' : ''; } elseif ( null === $item ) {
 					$value[ $key ] = ''; } else {
 					$value[ $key ] = (string) $item; }
 		}
@@ -350,16 +356,16 @@ final class DraftWriter {
 		$id = (int) $question->save();
 		if ( ! $id || get_post_type( $id ) !== OHMYLMS_QUESTION_CPT ) {
 			throw new \RuntimeException( 'Question write failed' ); }
-		if ( $plan['options'] !== null ) {
+		if ( null !== $plan['options'] ) {
 			self::write_options( $id, $plan['options'] ); }
-		if ( $plan['skills'] !== null ) {
+		if ( null !== $plan['skills'] ) {
 			SkillMap::save( $id, $plan['skills'] ); }
 		if ( $plan['quiz_id'] ) {
 			self::link( $plan['quiz_id'], $id, $plan['order_number'] ); }
 		$version = null;
 		if ( \OhMyLMS\Assessment\Schema::ready() ) {
 			VersionPublisher::identity( $id );
-			if ( $plan['bank'] !== null ) {
+			if ( null !== $plan['bank'] ) {
 				BankAttributes::write( $id, $plan['bank'] ); }
 			// Every saved state is an immutable version; unchanged content reuses the latest one.
 			$version = VersionPublisher::capture( $id );
@@ -421,7 +427,7 @@ final class DraftWriter {
 						),
 						array( '%d', '%s', '%s' )
 					);
-				if ( $ok === false ) {
+				if ( false === $ok ) {
 					throw new \RuntimeException( 'Option meta write failed' ); }
 			}
 		}
@@ -445,11 +451,11 @@ final class DraftWriter {
 		$table    = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
 		$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE quiz_id=%d AND question_id=%d LIMIT 1", $quiz_id, $question_id ) );
 		if ( $existing ) {
-			if ( $order_number !== null && $wpdb->update( $table, array( 'order_number' => (int) $order_number ), array( 'id' => (int) $existing ), array( '%d' ), array( '%d' ) ) === false ) {
+			if ( null !== $order_number && $wpdb->update( $table, array( 'order_number' => (int) $order_number ), array( 'id' => (int) $existing ), array( '%d' ), array( '%d' ) ) === false ) {
 				throw new \RuntimeException( 'Link update failed' ); }
 			return;
 		}
-		if ( $order_number === null ) {
+		if ( null === $order_number ) {
 			$order_number = 1 + (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(order_number) FROM $table WHERE quiz_id=%d", $quiz_id ) );
 		}
 		if ( ! $wpdb->insert(

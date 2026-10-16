@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Course.
+ *
+ * @package OhMyLMS
+ */
 
 namespace OhMyLMS\Data;
 
@@ -102,7 +107,7 @@ class Course extends Data {
 			$this->set_id( absint( $course->ID ) );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {
@@ -505,7 +510,7 @@ class Course extends Data {
 	public function add_to_cart_text() {
 		$price_type = $this->get_price_type();
 
-		if ( $price_type === 'free' ) {
+		if ( 'free' === $price_type ) {
 			$text = apply_filters( 'ohmylms_free_course_add_to_cart_text', __( 'Enroll Now', 'ohmylms' ) );
 		} elseif ( $this->is_purchasable() && $this->is_in_stock() ) {
 			if ( $this->validate_on_sale() && $this->is_on_sale() ) {
@@ -861,13 +866,13 @@ class Course extends Data {
 		if ( ! $start || ! $to ) {
 			return true;
 		}
-		// Convert to DateTime if necessary
+		// Convert to DateTime if necessary.
 		if ( $start instanceof \DateTime && $to instanceof \DateTime ) {
-			// Extract only the date (YYYY-MM-DD) for comparison
+			// Extract only the date (YYYY-MM-DD) for comparison.
 			$startDate = $start->format( 'Y-m-d' );
 			$endDate   = $to->format( 'Y-m-d' );
 
-			// Validate if today's date is within the sale period (ignoring time)
+			// Validate if today's date is within the sale period (ignoring time).
 			if ( $nowDate >= $startDate && $nowDate <= $endDate ) {
 				return true;
 			} else {

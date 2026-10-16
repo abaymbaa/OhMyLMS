@@ -1,4 +1,12 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * The curriculum hierarchy: items of any type at any depth, each with a stable ID and UUID,
+ * a parent, an item type, an order among its siblings and optional description, syllabus
+ * code and version. Learning mode (traditional, skill-based, blended) lives with each
+ * course's learning program and is deliberately not stored here.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Curriculum;
 
 use OhMyLMS\Utility\Transaction;
@@ -103,7 +111,7 @@ final class Items {
 		}
 		if ( ! $partial || array_key_exists( 'name', $data ) ) {
 			$name = trim( sanitize_text_field( (string) ( $data['name'] ?? '' ) ) );
-			if ( $name === '' ) {
+			if ( '' === $name ) {
 				return Access::error( 'ohmylms_curriculum_invalid', __( 'A name is required.', 'ohmylms' ) ); }
 			if ( mb_strlen( $name ) > 190 ) {
 				return Access::error( 'ohmylms_curriculum_invalid', __( 'Names can have at most 190 characters.', 'ohmylms' ) ); }
@@ -111,7 +119,7 @@ final class Items {
 		}
 		if ( ! $partial || array_key_exists( 'item_type', $data ) ) {
 			$type = sanitize_key( (string) ( $data['item_type'] ?? '' ) );
-			if ( $type === '' ) {
+			if ( '' === $type ) {
 				$type = 'custom'; }
 			if ( ! preg_match( '/^[a-z][a-z0-9_-]{0,39}$/', $type ) ) {
 				return Access::error( 'ohmylms_curriculum_invalid', __( 'An item type must start with a letter and use only lowercase letters, numbers, hyphens or underscores.', 'ohmylms' ) ); }
@@ -179,7 +187,7 @@ final class Items {
 		if ( is_wp_error( $fields ) ) {
 			return $fields; }
 		$parent_id = (int) ( $data['parent_id'] ?? 0 );
-		$position  = array_key_exists( 'position', $data ) && $data['position'] !== null && $data['position'] !== '' ? (int) $data['position'] : null;
+		$position  = array_key_exists( 'position', $data ) && null !== $data['position'] && '' !== $data['position'] ? (int) $data['position'] : null;
 		$result    = self::exclusive(
 			static function () use ( $fields, $parent_id, $position ) {
 				return self::insert_locked( $fields, $parent_id, $position );
@@ -243,7 +251,7 @@ final class Items {
 				$item = self::get( $id );
 				if ( ! $item ) {
 					return self::missing(); }
-				if ( $expected_updated_at !== null && $expected_updated_at !== '' && (string) $expected_updated_at !== $item['updated_at'] ) {
+				if ( null !== $expected_updated_at && '' !== $expected_updated_at && (string) $expected_updated_at !== $item['updated_at'] ) {
 					return Access::error( 'ohmylms_curriculum_stale', __( 'Someone else changed this item. Reload the curriculum and try again.', 'ohmylms' ), 409 );
 				}
 				// A syllabus that still has skill groups cannot quietly stop being one: its groups would be hidden.
@@ -307,7 +315,7 @@ final class Items {
 		global $wpdb;
 		$ids          = self::with_descendants( $id );
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
-		$bundles       = static function ( array $in ) use ( $wpdb ) {
+		$bundles      = static function ( array $in ) use ( $wpdb ) {
 			$in_placeholders = implode( ',', array_fill( 0, count( $in ), '%d' ) );
 			return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(DISTINCT bundle_id) FROM ' . Schema::table( 'bundle_items' ) . " WHERE item_type='curriculum' AND item_id IN ($in_placeholders)", $in ) );
 		};
@@ -316,8 +324,8 @@ final class Items {
 			'descendants' => count( $ids ) - 1,
 			'links'       => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'curriculum_links' ) . " WHERE item_id IN ($placeholders)", $ids ) ),
 			'own_links'   => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'curriculum_links' ) . ' WHERE item_id=%d', (int) $id ) ),
-			'bundles'      => $bundles( $ids ),
-			'own_bundles'  => $bundles( array( (int) $id ) ),
+			'bundles'     => $bundles( $ids ),
+			'own_bundles' => $bundles( array( (int) $id ) ),
 			// Skill groups go with the item they sit under; the skills in them stay in the skill library.
 			'groups'      => Syllabus::group_count( $ids ),
 			'own_groups'  => Syllabus::group_count( array( (int) $id ) ),
@@ -338,13 +346,13 @@ final class Items {
 			return self::missing(); }
 		$strategy   = in_array( $strategy, array( 'promote', 'delete' ), true ) ? $strategy : '';
 		$dependents = self::dependents( $id );
-		if ( $dependents['children'] && $strategy === '' ) {
+		if ( $dependents['children'] && '' === $strategy ) {
 			return Access::error( 'ohmylms_curriculum_has_children', __( 'This item has children. Choose whether to move them up a level or delete the whole branch.', 'ohmylms' ), 409, array( 'dependents' => $dependents ) );
 		}
-		$branch          = $strategy === 'delete';
-		$affected_links  = $branch ? $dependents['links'] : $dependents['own_links'];
+		$branch           = 'delete' === $strategy;
+		$affected_links   = $branch ? $dependents['links'] : $dependents['own_links'];
 		$affected_bundles = $branch ? $dependents['bundles'] : $dependents['own_bundles'];
-		$affected_groups = $branch ? $dependents['groups'] : $dependents['own_groups'];
+		$affected_groups  = $branch ? $dependents['groups'] : $dependents['own_groups'];
 		if ( ! $confirm && ( $dependents['children'] || $affected_links || $affected_bundles || $affected_groups ) ) {
 			return Access::error( 'ohmylms_curriculum_needs_confirmation', __( 'Deleting this item removes its structure links and skill groups. Confirm to continue; linked courses, skills, banks and exams, and the skills inside skill groups, are not deleted.', 'ohmylms' ), 409, array( 'dependents' => $dependents ) );
 		}
@@ -354,11 +362,11 @@ final class Items {
 				if ( ! isset( $parents[ (int) $id ] ) ) {
 					return self::missing(); }
 				$parent_id = (int) $item['parent_id'];
-				if ( $strategy === 'promote' ) {
+				if ( 'promote' === $strategy ) {
 					$children = self::child_ids( $id );
 					$siblings = self::child_ids_except( $parent_id, $id );
 					$index    = array_search( (int) $id, self::child_ids( $parent_id ), true );
-					array_splice( $siblings, $index === false ? count( $siblings ) : $index, 0, $children );
+					array_splice( $siblings, false === $index ? count( $siblings ) : $index, 0, $children );
 					foreach ( $children as $child ) {
 						if ( $wpdb->update(
 							self::table(),
@@ -396,13 +404,13 @@ final class Items {
 		$links        = $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Schema::table( 'curriculum_links' ) . " WHERE item_id IN ($placeholders)", $ids ) );
 		$members      = $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . Schema::table( 'bundle_items' ) . " WHERE item_type='curriculum' AND item_id IN ($placeholders)", $ids ) );
 		$groups       = Syllabus::delete_for_items( $ids );
-		if ( $links === false || $members === false || $groups === false || $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::table() . " WHERE id IN ($placeholders)", $ids ) ) === false ) {
+		if ( false === $links || false === $members || false === $groups || $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . self::table() . " WHERE id IN ($placeholders)", $ids ) ) === false ) {
 			throw new \RuntimeException( 'Delete failed' ); }
 		do_action( 'ohmylms_curriculum_items_deleted', $ids );
 		return array(
-			'links_removed'  => (int) $links,
+			'links_removed'   => (int) $links,
 			'bundles_updated' => (int) $members,
-			'groups_removed' => (int) $groups,
+			'groups_removed'  => (int) $groups,
 		);
 	}
 
@@ -444,8 +452,8 @@ final class Items {
 			static function ( $row ) use ( $links, $bundles, $children, $syllabuses ) {
 				$id     = (int) $row['id'];
 				$counts = array(
-					'child_count' => $children[ $id ] ?? 0,
-					'links'       => ( $links[ $id ] ?? array() ) + array_fill_keys( Links::TYPES, 0 ),
+					'child_count'  => $children[ $id ] ?? 0,
+					'links'        => ( $links[ $id ] ?? array() ) + array_fill_keys( Links::TYPES, 0 ),
 					'bundle_count' => $bundles[ $id ] ?? 0,
 				);
 				// Skill groups and skills inside a syllabus, counting everything under it.

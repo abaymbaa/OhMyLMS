@@ -52,7 +52,12 @@ export function BankAnswerFields( {
 				mainStatement={ mainStatement }
 				value={ settings }
 				onChange={ ( patch ) =>
-					onChange( { settings: { ...settings, ...patch } } )
+					onChange( {
+						settings: {
+							...settings,
+							...patch,
+						},
+					} )
 				}
 			/>
 		);
@@ -85,9 +90,12 @@ export function BankAnswerFields( {
 					checked={
 						! [ false, 0, '0' ].includes( settings.case_sensitive )
 					}
-					onChange={ ( case_sensitive ) =>
+					onChange={ ( _caseSensitive ) =>
 						onChange( {
-							settings: { ...settings, case_sensitive },
+							settings: {
+								...settings,
+								case_sensitive: _caseSensitive,
+							},
 						} )
 					}
 				/>
@@ -114,7 +122,12 @@ export function BankAnswerFields( {
 			mainStatement,
 			value: settings,
 			onChange: ( patch ) =>
-				onChange( { settings: { ...settings, ...patch } } ),
+				onChange( {
+					settings: {
+						...settings,
+						...patch,
+					},
+				} ),
 		} );
 	}
 	if ( type === 'numerical' ) {
@@ -122,7 +135,12 @@ export function BankAnswerFields( {
 			<NumericalEditor
 				value={ settings }
 				onChange={ ( patch ) =>
-					onChange( { settings: { ...settings, ...patch } } )
+					onChange( {
+						settings: {
+							...settings,
+							...patch,
+						},
+					} )
 				}
 			/>
 		);
@@ -182,7 +200,12 @@ export function BankAnswerFields( {
 	const patchOption = ( index, patch ) =>
 		onChange( {
 			questions: options.map( ( option, position ) =>
-				position === index ? { ...option, ...patch } : option
+				position === index
+					? {
+							...option,
+							...patch,
+						}
+					: option
 			),
 		} );
 	const reorder = ( index, direction ) => {
@@ -270,7 +293,10 @@ export function BankAnswerFields( {
 									: 'radio'
 							}
 							aria-label={ sprintf(
-								__( 'Correct answer %d', 'ohmylms' ),
+								/* translators: %d: correct answer number. */ __(
+									'Correct answer %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							checked={
@@ -282,12 +308,17 @@ export function BankAnswerFields( {
 									questions: options.map(
 										( item, position ) => ( {
 											...item,
-											is_correct:
-												position === index
-													? event.target.checked
-													: type === 'multiple-choice'
-														? item.is_correct
-														: false,
+											is_correct: ( () => {
+												if ( position === index ) {
+													return event.target.checked;
+												}
+												if (
+													type === 'multiple-choice'
+												) {
+													return item.is_correct;
+												}
+												return false;
+											} )(),
 										} )
 									),
 								} )
@@ -304,33 +335,49 @@ export function BankAnswerFields( {
 							compact
 							html={ false }
 							label={ sprintf(
-								__( 'Answer %d', 'ohmylms' ),
+								/* translators: %d: answer number. */ __(
+									'Answer %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							placeholder={ sprintf(
-								__( 'Option %d', 'ohmylms' ),
+								/* translators: %d: option number. */ __(
+									'Option %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							value={ option.answer || '' }
 							onChange={ ( answer ) =>
-								patchOption( index, { answer } )
+								patchOption( index, {
+									answer,
+								} )
 							}
 						/>
 					) : (
 						<TextControl
 							label={ sprintf(
-								__( 'Answer %d', 'ohmylms' ),
+								/* translators: %d: answer number. */ __(
+									'Answer %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							hideLabelFromVision
 							placeholder={ sprintf(
-								__( 'Option %d', 'ohmylms' ),
+								/* translators: %d: option number. */ __(
+									'Option %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							value={ option.answer || '' }
 							disabled={ type === 'true-false' }
 							onChange={ ( answer ) =>
-								patchOption( index, { answer } )
+								patchOption( index, {
+									answer,
+								} )
 							}
 						/>
 					) }
@@ -358,7 +405,10 @@ export function BankAnswerFields( {
 							compact
 							html={ false }
 							label={ sprintf(
-								__( 'Match %d', 'ohmylms' ),
+								/* translators: %d: match number. */ __(
+									'Match %d',
+									'ohmylms'
+								),
 								index + 1
 							) }
 							value={ option.matching_data?.label || '' }
@@ -488,7 +538,9 @@ export function BankAnswerFields( {
 									answer: '',
 									is_correct: false,
 									order_number: options.length + 1,
-									matching_data: { label: '' },
+									matching_data: {
+										label: '',
+									},
 								},
 							],
 						} )

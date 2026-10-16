@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer classmap path; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS\Commerce\Data;
 
@@ -98,7 +98,7 @@ class Order extends Data {
 			$this->set_id( absint( $order->ID ) );
 		}
 
-		// load the data store
+		// load the data store.
 		$this->data_store = DataStores::load( $this->data_store_name );
 
 		if ( $this->get_id() > 0 ) {
@@ -182,7 +182,7 @@ class Order extends Data {
 	 * @since 1.0.0
 	 */
 	public function needs_payment() {
-		// if the total is greater than 0, then payment is needed
+		// if the total is greater than 0, then payment is needed.
 		if ( $this->get_total() > 0 ) {
 			return true;
 		}
@@ -221,7 +221,7 @@ class Order extends Data {
 			do_action( 'ohmylms_payment_completed', $this->get_id() );
 		} catch ( \Exception $e ) {
 			// TODO: Add the error at Log file
-			// TODO: Add order note with the error message
+			// TODO: Add order note with the error message.
 			return false;
 		}
 		return true;
@@ -1385,7 +1385,7 @@ class Order extends Data {
 	 * This function retrieves the formatted line subtotal for the specified order item.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The order item to get the subtotal for.
-	 * @param string                            $tax_display The tax display mode. Default is an empty string.
+	 * @param string                           $tax_display The tax display mode. Default is an empty string.
 	 * @return string The formatted line subtotal.
 	 *
 	 * @since 1.0.0
@@ -1400,8 +1400,8 @@ class Order extends Data {
 	 * This function calculates the line subtotal for the specified order item.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\OrderItem $item The order item to calculate the subtotal for.
-	 * @param bool                              $inc_tax Whether to include tax in the subtotal calculation. Default is false.
-	 * @param bool                              $round Whether to round the subtotal. Default is true.
+	 * @param bool                             $inc_tax Whether to include tax in the subtotal calculation. Default is false.
+	 * @param bool                             $round Whether to round the subtotal. Default is true.
 	 * @return float The line subtotal for the order item.
 	 *
 	 * @since 1.0.0
@@ -1514,7 +1514,7 @@ class Order extends Data {
 			$tax_rate  = $this->get_tax_rate();
 			$tax_label = TaxService::get_instance()->get_tax_label();
 
-			// Add tax rate span if tax rate exists
+			// Add tax rate span if tax rate exists.
 			if ( $tax_rate > 0 ) {
 				$tax_label .= ' <span class="tax-rate">' . ( $tax_rate ) . '%</span>';
 			}
@@ -1660,7 +1660,7 @@ class Order extends Data {
 			$this->set_status( $new_status );
 			$this->save();
 		} catch ( \Exception $e ) {
-			// Todo: Add the error at Log file
+			// Todo: Add the error at Log file.
 			return false;
 		}
 		return true;

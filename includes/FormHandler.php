@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 
 namespace OhMyLMS;
 
@@ -59,7 +59,7 @@ class FormHandler {
 
 		$save_pass = true;
 
-		// current user data
+		// current user data.
 		$current_user       = get_user_by( 'id', $user_id );
 		$current_first_name = $current_user->first_name;
 		$current_last_name  = $current_user->last_name;
@@ -89,7 +89,7 @@ class FormHandler {
 			}
 		}
 
-		// handle email
+		// handle email.
 		if ( $email ) {
 			$email = sanitize_email( $email );
 			if ( ! is_email( $email ) ) {
@@ -100,7 +100,7 @@ class FormHandler {
 			$user->user_email = $email;
 		}
 
-		// handle password
+		// handle password.
 		if ( ! empty( $pass_current ) && empty( $pass1 ) && empty( $pass2 ) ) {
 			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Please fill out all password fields.', 'ohmylms' ), 'error' );
 			$save_pass = false;

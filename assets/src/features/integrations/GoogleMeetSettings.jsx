@@ -47,126 +47,141 @@ export function createGoogleMeetSettings( readRuntime ) {
 			C = R[ 1 ];
 		( 0, ReactHooks.useEffect )( function () {
 			var e = ! 0;
-			function t() {
-				return ( t = n7(
-					X6().m( function t() {
-						var n, r;
+			function _tLocal( ..._args ) {
+				return ( _tLocal = n7(
+					X6().m( function _tLocal2() {
+						var _nLocal, _rLocal;
 						return X6().w(
-							function ( t ) {
+							function ( _tLocal3 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal3.p = _tLocal3.n ) ) {
 										case 0:
 											return (
-												( t.p = 0 ),
-												( t.n = 1 ),
+												( _tLocal3.p = 0 ),
+												( _tLocal3.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/googlemeet/settings/credentials',
 													method: 'GET',
 												} )
 											 );
 										case 1:
-											( ( n = t.v ),
+											_nLocal = _tLocal3.v;
+											if (
 												e &&
-													null != n &&
-													n.data &&
-													( o( {
+												_nLocal !== null &&
+												_nLocal !== void 0 &&
+												_nLocal.data
+											) {
+												{
+													o( {
 														client_id:
-															n.data.client_id ||
+															_nLocal.data
+																.client_id ||
 															'',
 														client_secret:
-															n.data
+															_nLocal.data
 																.client_secret ||
 															'',
 														redirect_url:
-															n.data
+															_nLocal.data
 																.redirect_url ||
 															'',
-													} ),
-													null != n &&
+													} );
+													if (
+														_nLocal !== null &&
+														_nLocal !== void 0 &&
 														null !==
-															( r = n.data ) &&
-														void 0 !== r &&
+															( _rLocal =
+																_nLocal.data ) &&
+														void 0 !== _rLocal &&
 														null !==
-															( r = r.tokens ) &&
-														void 0 !== r &&
-														r.access_token &&
-														C( 'valid' ) ),
-												( t.n = 3 ) );
+															( _rLocal =
+																_rLocal.tokens ) &&
+														void 0 !== _rLocal &&
+														_rLocal.access_token
+													) {
+														C( 'valid' );
+													}
+												}
+											}
+											_tLocal3.n = 3;
 											break;
 										case 2:
-											( ( t.p = 2 ), t.v );
+											_tLocal3.p = 2;
+										// Falls through to the shared async state cleanup.
 										case 3:
 											return (
-												( t.p = 3 ),
+												( _tLocal3.p = 3 ),
 												e && v( ! 1 ),
-												t.f( 3 )
+												_tLocal3.f( 3 )
 											 );
 										case 4:
-											return t.a( 2 );
+											return _tLocal3.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal2,
 							null,
 							[ [ 0, 2, 3, 4 ] ]
 						);
 					} )
-				) ).apply( this, arguments );
+				) ).apply( this, _args );
 			}
 			return (
-				( function () {
-					t.apply( this, arguments );
+				( function ( ..._args2 ) {
+					_tLocal.apply( this, _args2 );
 				} )(),
 				function () {
 					e = ! 1;
 				}
 			 );
 		}, [] );
-		var P = function () {
+		var P = function ( ..._args3 ) {
 				var e =
-						arguments.length > 0 && void 0 !== arguments[ 0 ]
-							? arguments[ 0 ]
+						_args3.length > 0 && void 0 !== _args3[ 0 ]
+							? _args3[ 0 ]
 							: a,
-					t = {};
+					_tLocal4 = {};
 				return (
 					( e.client_id && e.client_id.trim() ) ||
-						( t.client_id = ( 0, I18n.__ )(
+						( _tLocal4.client_id = ( 0, I18n.__ )(
 							'Client ID is required',
 							'ohmylms'
 						) ),
 					( e.client_secret && e.client_secret.trim() ) ||
-						( t.client_secret = ( 0, I18n.__ )(
+						( _tLocal4.client_secret = ( 0, I18n.__ )(
 							'Client Secret is required',
 							'ohmylms'
 						) ),
-					t
+					_tLocal4
 				 );
 			},
 			O = ( function () {
 				var e = n7(
-					X6().m( function e() {
-						var n, r, o;
+					X6().m( function _eLocal() {
+						var _nLocal2, _rLocal2, _oLocal;
 						return X6().w(
-							function ( e ) {
+							function ( _eLocal2 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal2.p = _eLocal2.n ) ) {
 										case 0:
 											if (
-												( ( n = P() ),
-												m( n ),
+												( ( _nLocal2 = P() ),
+												m( _nLocal2 ),
 												! (
-													Object.keys( n ).length > 0
+													Object.keys( _nLocal2 )
+														.length > 0
 												) )
 											) {
-												e.n = 1;
+												_eLocal2.n = 1;
 												break;
 											}
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 										case 1:
 											return (
 												u( ! 0 ),
-												( e.p = 2 ),
-												( e.n = 3 ),
+												( _eLocal2.p = 2 ),
+												( _eLocal2.n = 3 ),
 												l()( {
 													path: '/ohmylms/v1/googlemeet/settings/credentials',
 													method: 'POST',
@@ -174,65 +189,77 @@ export function createGoogleMeetSettings( readRuntime ) {
 												} )
 											 );
 										case 3:
-											( null != ( r = e.v ) &&
-												r.success &&
-												( _( ! 0 ),
-												t &&
-													t(
-														'success',
-														( 0, I18n.__ )(
-															'Google Meet credentials saved successfully. Please authenticate with Google.',
-															'ohmylms'
-														)
-													) ),
-												( e.n = 5 ) );
+											if (
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													( _rLocal2 = _eLocal2.v )
+												) &&
+												_rLocal2.success
+											) {
+												{
+													_( ! 0 );
+													if ( t ) {
+														t(
+															'success',
+															( 0, I18n.__ )(
+																'Google Meet credentials saved successfully. Please authenticate with Google.',
+																'ohmylms'
+															)
+														);
+													}
+												}
+											}
+											_eLocal2.n = 5;
 											break;
 										case 4:
-											( ( e.p = 4 ),
-												( o = e.v ),
-												t &&
-													t(
-														'error',
-														( 0, I18n.__ )(
-															'Something went wrong.',
-															'ohmylms'
-														)
-													),
-												console.error( o ) );
+											_eLocal2.p = 4;
+											_oLocal = _eLocal2.v;
+											if ( t ) {
+												t(
+													'error',
+													( 0, I18n.__ )(
+														'Something went wrong.',
+														'ohmylms'
+													)
+												);
+											}
+											console.error( _oLocal );
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
-												( e.p = 5 ),
+												( _eLocal2.p = 5 ),
 												u( ! 1 ),
-												e.f( 5 )
+												_eLocal2.f( 5 )
 											 );
 										case 6:
-											return e.a( 2 );
+											return _eLocal2.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal,
 							null,
 							[ [ 2, 4, 5, 6 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args4 ) {
+					return e.apply( this, _args4 );
 				};
 			} )(),
 			k = ( function () {
 				var e = n7(
-					X6().m( function e() {
-						var n, r;
+					X6().m( function _eLocal3() {
+						var _nLocal3, _rLocal3;
 						return X6().w(
-							function ( e ) {
+							function ( _eLocal4 ) {
 								for (;;) {
-									switch ( ( e.p = e.n ) ) {
+									switch ( ( _eLocal4.p = _eLocal4.n ) ) {
 										case 0:
 											return (
 												S( ! 0 ),
-												( e.p = 1 ),
-												( e.n = 2 ),
+												( _eLocal4.p = 1 ),
+												( _eLocal4.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/googlemeet/settings/oauth-url',
 													method: 'GET',
@@ -240,70 +267,78 @@ export function createGoogleMeetSettings( readRuntime ) {
 											 );
 										case 2:
 											if (
-												null == ( n = e.v ) ||
-												! n.success ||
-												! n.auth_url
+												( ( _nullableValue2 ) =>
+													_nullableValue2 === null ||
+													_nullableValue2 ===
+														void 0 )(
+													( _nLocal3 = _eLocal4.v )
+												) ||
+												! _nLocal3.success ||
+												! _nLocal3.auth_url
 											) {
-												e.n = 3;
+												_eLocal4.n = 3;
 												break;
 											}
-											( ( window.location.href =
-												n.auth_url ),
-												( e.n = 4 ) );
+											window.location.href =
+												_nLocal3.auth_url;
+											_eLocal4.n = 4;
 											break;
 										case 3:
 											throw new Error(
-												( null == n
+												( _nLocal3 === null ||
+												_nLocal3 === void 0
 													? void 0
-													: n.message ) ||
+													: _nLocal3.message ) ||
 													'OAuth URL not found'
 											);
 										case 4:
-											e.n = 6;
+											_eLocal4.n = 6;
 											break;
 										case 5:
-											( ( e.p = 5 ),
-												( r = e.v ),
-												console.error(
-													'OAuth authentication failed:',
-													r
-												),
-												t &&
-													t(
-														'error',
-														( 0, I18n.__ )(
-															'Failed to start authentication.',
-															'ohmylms'
-														)
-													) );
+											_eLocal4.p = 5;
+											_rLocal3 = _eLocal4.v;
+											console.error(
+												'OAuth authentication failed:',
+												_rLocal3
+											);
+											if ( t ) {
+												t(
+													'error',
+													( 0, I18n.__ )(
+														'Failed to start authentication.',
+														'ohmylms'
+													)
+												);
+											}
+										// Falls through to the shared async state cleanup.
 										case 6:
 											return (
-												( e.p = 6 ),
+												( _eLocal4.p = 6 ),
 												S( ! 1 ),
-												e.f( 6 )
+												_eLocal4.f( 6 )
 											 );
 										case 7:
-											return e.a( 2 );
+											return _eLocal4.a( 2 );
 									}
 								}
 							},
-							e,
+							_eLocal3,
 							null,
 							[ [ 1, 5, 6, 7 ] ]
 						);
 					} )
 				);
-				return function () {
-					return e.apply( this, arguments );
+				return function ( ..._args5 ) {
+					return e.apply( this, _args5 );
 				};
 			} )(),
-			j = function ( e, t ) {
-				( o( function ( n ) {
-					return K6( K6( {}, n ), {}, J6( {}, e, t ) );
-				} ),
-					m( function ( t ) {
-						return K6( K6( {}, t ), {}, J6( {}, e, void 0 ) );
-					} ) );
+			j = function ( e, _tLocal5 ) {
+				o( function ( _nLocal4 ) {
+					return K6( K6( {}, _nLocal4 ), {}, J6( {}, e, _tLocal5 ) );
+				} );
+				m( function ( _tLocal6 ) {
+					return K6( K6( {}, _tLocal6 ), {}, J6( {}, e, void 0 ) );
+				} );
 			};
 		return f ? (
 			<div>

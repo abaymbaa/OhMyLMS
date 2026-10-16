@@ -32,9 +32,11 @@ export function BundlesPage() {
 	const [ description, setDescription ] = useState( '' );
 	const [ touched, setTouched ] = useState( false );
 	const [ pending, setPending ] = useState( false );
-	const errors = validateBundle( { title, description } );
+	const errors = validateBundle( {
+		title,
+		description,
+	} );
 	const hub = useContext( HubContext );
-
 	const reload = () => {
 		setLoadError( '' );
 		return api
@@ -64,14 +66,17 @@ export function BundlesPage() {
 		return () => clearTimeout( timer );
 	}, [ notice ] );
 	const say = ( kind, text ) =>
-		setNotice( { id: Date.now() + Math.random(), kind, text } );
+		setNotice( {
+			id: Date.now() + Math.random(),
+			kind,
+			text,
+		} );
 	const replace = ( bundle ) =>
 		setBundles( ( previous ) =>
 			( previous || [] ).map( ( existing ) =>
 				existing.id === bundle.id ? bundle : existing
 			)
 		);
-
 	async function create( event ) {
 		event.preventDefault();
 		setTouched( true );
@@ -80,7 +85,10 @@ export function BundlesPage() {
 		}
 		setPending( true );
 		try {
-			const response = await api.createBundle( { title, description } );
+			const response = await api.createBundle( {
+				title,
+				description,
+			} );
 			setBundles( ( previous ) => [
 				...( previous || [] ),
 				response.bundle,
@@ -93,7 +101,7 @@ export function BundlesPage() {
 			say(
 				'success',
 				sprintf(
-					__(
+					/* translators: %s: course bundle or member title. */ __(
 						'Created “%s”. Add courses or syllabuses, then publish it.',
 						'ohmylms'
 					),
@@ -110,7 +118,6 @@ export function BundlesPage() {
 			setPending( false );
 		}
 	}
-
 	return (
 		<AdminPage
 			className="ohmylms-bundles-admin"
@@ -176,19 +183,21 @@ export function BundlesPage() {
 								) }
 								value={ title }
 								onChange={ setTitle }
-								help={
-									touched && errors.title
-										? errors.title === 'required'
-											? __(
-													'Enter a name for the bundle.',
-													'ohmylms'
-												)
-											: __(
-													'That is too long.',
-													'ohmylms'
-												)
-										: undefined
-								}
+								help={ ( () => {
+									if ( touched && errors.title ) {
+										if ( errors.title === 'required' ) {
+											return __(
+												'Enter a name for the bundle.',
+												'ohmylms'
+											);
+										}
+										return __(
+											'That is too long.',
+											'ohmylms'
+										);
+									}
+									return undefined;
+								} )() }
 								__nextHasNoMarginBottom
 							/>
 							<TextareaControl
@@ -255,7 +264,9 @@ export function BundlesPage() {
 								>
 									<div
 										className={ `ohmylms-cur-row${ editing ? ' is-editing' : '' }` }
-										style={ { '--ohmylms-cur-depth': 0 } }
+										style={ {
+											'--ohmylms-cur-depth': 0,
+										} }
 									>
 										<span
 											className="ohmylms-cur-toggle-spacer"
@@ -271,7 +282,7 @@ export function BundlesPage() {
 										</span>
 										<span className="ohmylms-cur-counts">
 											{ sprintf(
-												_n(
+												/* translators: %d: number of bundle members. */ _n(
 													'%d member',
 													'%d members',
 													bundle.member_count,
@@ -280,7 +291,7 @@ export function BundlesPage() {
 												bundle.member_count
 											) }
 											{ bundle.follower_count > 0
-												? ` · ${ sprintf( _n( '%d follower', '%d followers', bundle.follower_count, 'ohmylms' ), bundle.follower_count ) }`
+												? ` · ${ sprintf( /* translators: %d: number of followers. */ _n( '%d follower', '%d followers', bundle.follower_count, 'ohmylms' ), bundle.follower_count ) }`
 												: '' }
 										</span>
 										<span className="ohmylms-cur-actions">
@@ -293,18 +304,27 @@ export function BundlesPage() {
 														? `ohmylms-bundle-panel-${ bundle.id }`
 														: undefined
 												}
-												aria-label={ sprintf(
+												aria-label={
 													editing
-														? __(
-																'Close editor for %s',
-																'ohmylms'
+														? sprintf(
+																/* translators: %s: course bundle or member title. */
+																/* translators: %s: course bundle or member title. */
+																__(
+																	'Close editor for %s',
+																	'ohmylms'
+																),
+																bundle.title
 															)
-														: __(
-																'Edit %s',
-																'ohmylms'
-															),
-													bundle.title
-												) }
+														: sprintf(
+																/* translators: %s: course bundle or member title. */
+																/* translators: %s: course bundle or member title. */
+																__(
+																	'Edit %s',
+																	'ohmylms'
+																),
+																bundle.title
+															)
+												}
 												onClick={ () =>
 													setOpenId(
 														editing ? 0 : bundle.id

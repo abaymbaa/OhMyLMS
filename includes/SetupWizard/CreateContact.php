@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Create Contact to MailMint and Appsero.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\SetupWizard;
 
 /**
@@ -74,7 +79,7 @@ class CreateContact {
 	 * @var string
 	 * @since 3.3.2
 	 */
-	protected $source = 'setup-wizard'; // always it will be 'setup-wizard'
+	protected $source = 'setup-wizard'; // always it will be 'setup-wizard'.
 
 	/**
 	 * Setup data

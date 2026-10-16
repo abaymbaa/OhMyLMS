@@ -38,16 +38,25 @@ export function createMembershipSaleSchedule( readRuntime ) {
 			v =
 				( f[ 0 ],
 				f[ 1 ],
-				0 < ( null == u ? void 0 : u.length )
-					? null === ( t = u[ 0 ] ) || void 0 === t
-						? void 0
-						: t.currency
-					: null === ( n = window ) ||
-						  void 0 === n ||
-						  null === ( n = n.ohmylms_params ) ||
-						  void 0 === n
-						? void 0
-						: n.currency ),
+				( () => {
+					if (
+						0 < ( u === null || u === void 0 ? void 0 : u.length )
+					) {
+						if ( null === ( t = u[ 0 ] ) || void 0 === t ) {
+							return void 0;
+						}
+						return t.currency;
+					}
+					if (
+						null === ( n = window ) ||
+						void 0 === n ||
+						null === ( n = n.ohmylms_params ) ||
+						void 0 === n
+					) {
+						return void 0;
+					}
+					return n.currency;
+				} )() ),
 			h = function ( e ) {
 				return e && sn()( e ).isValid()
 					? sn()( e )
@@ -56,32 +65,46 @@ export function createMembershipSaleSchedule( readRuntime ) {
 					: ( console.error( 'Invalid date value provided:', e ),
 						null );
 			},
-			_ = function ( e, t, n ) {
-				var r;
-				( n
-					? ( ( r = t8(
+			_ = function ( e, _tLocal, _nLocal ) {
+				var _rLocal;
+				if ( _nLocal ) {
+					{
+						_rLocal = t8(
 							t8( {}, c ),
 							{},
 							n8(
 								{},
 								e,
-								t8( t8( {}, c[ e ] ), {}, n8( {}, n, t ) )
+								t8(
+									t8( {}, c[ e ] ),
+									{},
+									n8( {}, _nLocal, _tLocal )
+								)
 							)
-						) ),
+						);
 						updateMembershipPlan(
 							e,
-							t8( t8( {}, c[ e ] ), {}, n8( {}, n, t ) )
-						) )
-					: ( ( r = t8( t8( {}, c ), {}, n8( {}, e, t ) ) ),
-						updateMembershipPlan( e, t ) ),
-					validate( r ) );
+							t8(
+								t8( {}, c[ e ] ),
+								{},
+								n8( {}, _nLocal, _tLocal )
+							)
+						);
+					}
+				} else {
+					{
+						_rLocal = t8( t8( {}, c ), {}, n8( {}, e, _tLocal ) );
+						updateMembershipPlan( e, _tLocal );
+					}
+				}
+				validate( _rLocal );
 			},
 			w = function () {
 				p( ! m );
 			},
 			E = function () {
-				( updateMembershipPlan( 'sale_price_dates_from', '' ),
-					updateMembershipPlan( 'sale_price_dates_to', '' ) );
+				updateMembershipPlan( 'sale_price_dates_from', '' );
+				updateMembershipPlan( 'sale_price_dates_to', '' );
 			};
 		return (
 			<React.Fragment>
@@ -134,21 +157,36 @@ export function createMembershipSaleSchedule( readRuntime ) {
 										>
 											<Controls.InputNumberWP
 												onChange={ function ( e ) {
-													var t = e;
-													/^\d*\.?\d*$/.test( t ) &&
-														_( 'sale_price', t );
+													var _tLocal2 = e;
+													if (
+														/^\d*\.?\d*$/.test(
+															_tLocal2
+														)
+													) {
+														_(
+															'sale_price',
+															_tLocal2
+														);
+													}
 												} }
 												onKeyDown={ function ( e ) {
-													( '-' !== e.key &&
+													if ( ! (
+														'-' !== e.key &&
 														'+' !== e.key &&
-														'e' !== e.key ) ||
+														'e' !== e.key
+													) ) {
 														e.preventDefault();
+													}
 												} }
 												onBlur={ function () {
-													( null == c
-														? void 0
-														: c.sale_price ) < 0 &&
+													if (
+														( c === null ||
+														c === void 0
+															? void 0
+															: c.sale_price ) < 0
+													) {
 														_( 'sale_price', '0' );
+													}
 												} }
 												type={ 'number' }
 												placeholder={ ( 0, I18n.__ )(
@@ -158,7 +196,8 @@ export function createMembershipSaleSchedule( readRuntime ) {
 												value={
 													null !==
 														( r =
-															null == c
+															c === null ||
+															c === void 0
 																? void 0
 																: c.sale_price ) &&
 													void 0 !== r
@@ -171,7 +210,8 @@ export function createMembershipSaleSchedule( readRuntime ) {
 													'ohmylms-sale-price-input'
 												}
 											/>
-											{ ( null == errors
+											{ ( errors === null ||
+											errors === void 0
 												? void 0
 												: errors.sale_price ) && (
 												<Controls.TextWP
@@ -190,7 +230,7 @@ export function createMembershipSaleSchedule( readRuntime ) {
 												direction={ 'column' }
 											>
 												{ Boolean(
-													null == c
+													c === null || c === void 0
 														? void 0
 														: c.sale_price_dates_from
 												) ? (
@@ -207,11 +247,13 @@ export function createMembershipSaleSchedule( readRuntime ) {
 														onKeyDown={ function (
 															e
 														) {
-															( 'Enter' !==
-																e.key &&
-																' ' !==
-																	e.key ) ||
+															if ( ! (
+																'Enter' !==
+																	e.key &&
+																' ' !== e.key
+															) ) {
 																E();
+															}
 														} }
 														className={
 															'ohmylms-sale-price-clear-button'
@@ -244,11 +286,13 @@ export function createMembershipSaleSchedule( readRuntime ) {
 														onKeyDown={ function (
 															e
 														) {
-															( 'Enter' !==
-																e.key &&
-																' ' !==
-																	e.key ) ||
+															if ( ! (
+																'Enter' !==
+																	e.key &&
+																' ' !== e.key
+															) ) {
 																w();
+															}
 														} }
 														className={
 															'ohmylms-sale-price-schedule-button'
@@ -271,7 +315,8 @@ export function createMembershipSaleSchedule( readRuntime ) {
 														isVisible:
 															m ||
 															Boolean(
-																null == c
+																c === null ||
+																	c === void 0
 																	? void 0
 																	: c.sale_price_dates_from
 															),
@@ -281,93 +326,126 @@ export function createMembershipSaleSchedule( readRuntime ) {
 														},
 													},
 													<Controls.DateRangePickerWP
-														initialStartDate={
-															Boolean(
-																null == c
-																	? void 0
-																	: c.sale_price_dates_from
-															)
-																? null == c ||
+														initialStartDate={ ( () => {
+															if (
+																Boolean(
+																	c ===
+																		null ||
+																		c ===
+																			void 0
+																		? void 0
+																		: c.sale_price_dates_from
+																)
+															) {
+																if (
+																	c ===
+																		null ||
+																	c ===
+																		void 0 ||
 																	null ===
 																		( a =
 																			c.sale_price_dates_from ) ||
 																	void 0 === a
-																	? void 0
-																	: a.date
-																: null
-														}
-														initialEndDate={
-															null != c &&
-															c.sale_price_dates_to
-																? null == c ||
+																) {
+																	return void 0;
+																}
+																return a.date;
+															}
+															return null;
+														} )() }
+														initialEndDate={ ( () => {
+															if (
+																c !== null &&
+																c !== void 0 &&
+																c.sale_price_dates_to
+															) {
+																if (
+																	c ===
+																		null ||
+																	c ===
+																		void 0 ||
 																	null ===
 																		( o =
 																			c.sale_price_dates_to ) ||
 																	void 0 === o
-																	? void 0
-																	: o.date
-																: null
-														}
+																) {
+																	return void 0;
+																}
+																return o.date;
+															}
+															return null;
+														} )() }
 														onChange={ function (
 															e
 														) {
-															var t, n, r, a;
-															( _(
+															var _tLocal3,
+																_nLocal2,
+																_rLocal2,
+																_aLocal;
+															_(
 																'sale_price_dates_from',
 																{
 																	date: h(
 																		e[ 0 ]
 																	),
 																	timezone_type:
-																		null ==
-																			c ||
+																		c ===
+																			null ||
+																		c ===
+																			void 0 ||
 																		null ===
-																			( t =
+																			( _tLocal3 =
 																				c.date_created ) ||
 																		void 0 ===
-																			t
+																			_tLocal3
 																			? void 0
-																			: t.timezone_type,
+																			: _tLocal3.timezone_type,
 																	timezone:
-																		null ==
-																			c ||
+																		c ===
+																			null ||
+																		c ===
+																			void 0 ||
 																		null ===
-																			( n =
+																			( _nLocal2 =
 																				c.date_created ) ||
 																		void 0 ===
-																			n
+																			_nLocal2
 																			? void 0
-																			: n.timezone,
+																			: _nLocal2.timezone,
 																}
-															),
-																_(
-																	'sale_price_dates_to',
-																	{
-																		date: h(
-																			e[ 1 ]
-																		),
-																		timezone_type:
-																			null ==
-																				c ||
-																			null ===
-																				( r =
-																					c.date_created ) ||
-																			void 0 ===
-																				r
-																				? void 0
-																				: r.timezone_type,
-																		timezone:
-																			null ==
-																				c ||
-																			null ===
-																				( a =
-																					c.date_created ) ||
-																			void 0 ===
-																				a
-																				? void 0
-																				: a.timezone,
-																	}
-																) );
+															);
+															_(
+																'sale_price_dates_to',
+																{
+																	date: h(
+																		e[ 1 ]
+																	),
+																	timezone_type:
+																		c ===
+																			null ||
+																		c ===
+																			void 0 ||
+																		null ===
+																			( _rLocal2 =
+																				c.date_created ) ||
+																		void 0 ===
+																			_rLocal2
+																			? void 0
+																			: _rLocal2.timezone_type,
+																	timezone:
+																		c ===
+																			null ||
+																		c ===
+																			void 0 ||
+																		null ===
+																			( _aLocal =
+																				c.date_created ) ||
+																		void 0 ===
+																			_aLocal
+																			? void 0
+																			: _aLocal.timezone,
+																}
+															);
 														} }
 														disablePastDates={ ! 0 }
 													/>

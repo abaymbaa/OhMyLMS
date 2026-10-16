@@ -39,7 +39,7 @@ $enrolled_students = 0;
 			<div class="no-course-data">
 				<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 				<p>
-					<?php echo __( 'No Enrolled Courses.', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'No Enrolled Courses.', 'ohmylms' ); ?>
 				</p>
 			</div>
 		<?php endif; ?>
@@ -48,7 +48,7 @@ $enrolled_students = 0;
 	<div class="no-course-data">
 		<?php include OHMYLMS_DIR . '/assets/images/icon/no-course-found-image.php'; ?>
 		<p>
-			<?php echo __( 'No Enrolled Courses.', 'ohmylms' ); ?>
+			<?php echo esc_html__( 'No Enrolled Courses.', 'ohmylms' ); ?>
 		</p>
 	</div>
 <?php } ?>

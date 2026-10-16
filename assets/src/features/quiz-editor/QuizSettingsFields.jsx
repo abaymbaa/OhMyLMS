@@ -9,7 +9,6 @@ export function createQuizSettingsFields( readRuntime ) {
 			He,
 			I: Controls,
 			Km,
-			L: Entitlements,
 			Pn,
 			React,
 			T: StoreModule,
@@ -25,131 +24,126 @@ export function createQuizSettingsFields( readRuntime ) {
 			y: WordPressData,
 			zm,
 		} = readRuntime();
-		var t,
-			n,
-			r,
-			a,
-			o,
-			i,
-			l,
-			c,
-			u,
-			s = true,
-			d =
-				( props.chapterId,
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getQuizSettings();
-				}, [] ) ),
-			quiz = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getQuiz();
-			}, [] ),
-			p =
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getAllQuestions();
-				}, [] ) || [],
-			Router =
-				'cohort-based' ===
-				( 0, WordPressData.useSelect )( function ( e ) {
-					return e( StoreModule.default ).getCourseType();
-				}, [] ),
-			setQuiz = ( 0, WordPressData.useDispatch )(
-				StoreModule.default
-			).setQuiz,
-			h =
-				( ( 0, WordPressData.useDispatch )( StoreModule.default ),
-				Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) ),
-			_ = ( h[ 0 ], h[ 1 ], Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) ),
-			w = ( _[ 0 ], _[ 1 ], Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) ),
-			E = w[ 0 ],
-			S = w[ 1 ],
-			R = [
-				'time_limit',
-				'hide_answers',
-				'show_correct_answers',
-				'move_to_next_section',
-				'randomize_questions',
-				'allow_attempts',
-				'question_in_one_page',
-				'layout',
-				'hide_question_number',
-				'short_text_limit',
-				'long_text_limit',
-			],
-			x = function ( e, t ) {
-				setQuiz( {
-					settings: Um( Um( {}, d ), {}, qm( {}, e, t ) ),
-				} );
-			},
-			C = function ( e, t, n ) {
-				setQuiz(
-					n
-						? {
-								settings: Um(
-									Um( {}, d ),
-									{},
-									qm(
-										{},
-										e,
-										Um(
-											Um(
-												{},
-												null == d ? void 0 : d[ e ]
-											),
-											{},
-											qm( {}, n, t )
-										)
-									)
-								),
-							}
-						: {
-								settings: Um( Um( {}, d ), {}, qm( {}, e, t ) ),
-							}
-				);
-			},
-			P = ( 0, ReactHooks.useCallback )(
-				function ( e ) {
-					Number( e ) < 1 ||
-						setQuiz(
-							Um(
-								Um( {}, quiz ),
+		var t;
+		var n;
+		var r;
+		var a;
+		var o;
+		var i;
+		var l;
+		var c;
+		var u;
+		var s = true;
+		var d =
+			( props.chapterId,
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getQuizSettings();
+			}, [] ) );
+		var quiz = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getQuiz();
+		}, [] );
+		var p =
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getAllQuestions();
+			}, [] ) || [];
+		var Router =
+			'cohort-based' ===
+			( 0, WordPressData.useSelect )( function ( e ) {
+				return e( StoreModule.default ).getCourseType();
+			}, [] );
+		var setQuiz = ( 0, WordPressData.useDispatch )(
+			StoreModule.default
+		).setQuiz;
+		var h =
+			( ( 0, WordPressData.useDispatch )( StoreModule.default ),
+			Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) );
+		var _ = ( h[ 0 ], h[ 1 ], Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) );
+		var w = ( _[ 0 ], _[ 1 ], Ym( ( 0, ReactHooks.useState )( ! 1 ), 2 ) );
+		var E = w[ 0 ];
+		var S = w[ 1 ];
+		var x = function ( e, _tLocal ) {
+			setQuiz( {
+				settings: Um( Um( {}, d ), {}, qm( {}, e, _tLocal ) ),
+			} );
+		};
+		var C = function ( e, _tLocal2, _nLocal ) {
+			setQuiz(
+				_nLocal
+					? {
+							settings: Um(
+								Um( {}, d ),
 								{},
-								{
-									drip_settings: Um(
+								qm(
+									{},
+									e,
+									Um(
 										Um(
 											{},
-											null == quiz
+											d === null || d === void 0
 												? void 0
-												: quiz.drip_settings
+												: d[ e ]
 										),
 										{},
-										{
-											days: e,
-										}
+										qm( {}, _nLocal, _tLocal2 )
+									)
+								)
+							),
+						}
+					: {
+							settings: Um(
+								Um( {}, d ),
+								{},
+								qm( {}, e, _tLocal2 )
+							),
+						}
+			);
+		};
+		var P = ( 0, ReactHooks.useCallback )(
+			function ( e ) {
+				if ( ! ( Number( e ) < 1 ) ) {
+					setQuiz(
+						Um(
+							Um( {}, quiz ),
+							{},
+							{
+								drip_settings: Um(
+									Um(
+										{},
+										quiz === null || quiz === void 0
+											? void 0
+											: quiz.drip_settings
 									),
-								}
-							)
-						);
-				},
-				[ quiz, setQuiz ]
-			),
-			O = p.reduce( function ( e, t ) {
-				var n;
-				return (
-					e +
-					Number(
-						( null == t ||
-						null === ( n = t.settings ) ||
-						void 0 === n ||
-						null === ( n = n.score ) ||
-						void 0 === n
-							? void 0
-							: n.value ) || 0
-					)
-				);
-			}, 0 );
+									{},
+									{
+										days: e,
+									}
+								),
+							}
+						)
+					);
+				}
+			},
+			[ quiz, setQuiz ]
+		);
+		var O = p.reduce( function ( e, _tLocal3 ) {
+			var _nLocal2;
+			return (
+				e +
+				Number(
+					( _tLocal3 === null ||
+					_tLocal3 === void 0 ||
+					null === ( _nLocal2 = _tLocal3.settings ) ||
+					void 0 === _nLocal2 ||
+					null === ( _nLocal2 = _nLocal2.score ) ||
+					void 0 === _nLocal2
+						? void 0
+						: _nLocal2.value ) || 0
+				)
+			);
+		}, 0 );
 		return (
 			( 0, ReactHooks.useEffect )( function () {
-				( null != d && d.allow_attempts ) ||
+				if ( ! ( d !== null && d !== void 0 && d.allow_attempts ) ) {
 					setQuiz( {
 						settings: Um(
 							Um( {}, d ),
@@ -159,6 +153,7 @@ export function createQuizSettingsFields( readRuntime ) {
 							}
 						),
 					} );
+				}
 			}, [] ),
 			(
 				<React.Fragment>
@@ -179,7 +174,11 @@ export function createQuizSettingsFields( readRuntime ) {
 							className: 'ohmylms-quiz-visibility-settings',
 						},
 						<vn.A
-							value={ null == quiz ? void 0 : quiz.status }
+							value={
+								quiz === null || quiz === void 0
+									? void 0
+									: quiz.status
+							}
 							onChange={ function ( e ) {
 								return setQuiz( {
 									status: e,
@@ -197,8 +196,9 @@ export function createQuizSettingsFields( readRuntime ) {
 						onChange={ function () {
 							var e;
 							{
-								var t = ! (
-									null != quiz &&
+								var _tLocal4 = ! (
+									quiz !== null &&
+									quiz !== void 0 &&
 									null !== ( e = quiz.drip_settings ) &&
 									void 0 !== e &&
 									e.enable
@@ -211,15 +211,16 @@ export function createQuizSettingsFields( readRuntime ) {
 											drip_settings: Um(
 												Um(
 													{},
-													null == quiz
+													quiz === null ||
+														quiz === void 0
 														? void 0
 														: quiz.drip_settings
 												),
 												{},
 												{
-													enable: t,
+													enable: _tLocal4,
 												},
-												t && {
+												_tLocal4 && {
 													type: Router
 														? 'cohort-start'
 														: 'enrollment-from-x-days',
@@ -231,7 +232,8 @@ export function createQuizSettingsFields( readRuntime ) {
 							}
 						} }
 						isChecked={
-							null == quiz ||
+							quiz === null ||
+							quiz === void 0 ||
 							null === ( t = quiz.drip_settings ) ||
 							void 0 === t
 								? void 0
@@ -239,12 +241,12 @@ export function createQuizSettingsFields( readRuntime ) {
 						}
 						onDripFeedTypeChange={ function ( e ) {
 							{
-								var t,
-									n,
-									r = Um(
+								var _tLocal5,
+									_nLocal3,
+									_rLocal = Um(
 										Um(
 											{},
-											null == quiz
+											quiz === null || quiz === void 0
 												? void 0
 												: quiz.drip_settings
 										),
@@ -254,59 +256,63 @@ export function createQuizSettingsFields( readRuntime ) {
 										}
 									);
 								if ( 'specific-date' === e ) {
-									( delete r.days,
-										( r.date =
-											( null == quiz ||
-											null ===
-												( t = quiz.drip_settings ) ||
-											void 0 === t
-												? void 0
-												: t.date ) ||
-											sn()( new Date() ).format(
-												'YYYY-MM-DDTHH:mm:ss.SSSD'
-											) ),
-										( r.time =
-											( null == quiz ||
-											null ===
-												( n = quiz.drip_settings ) ||
-											void 0 === n
-												? void 0
-												: n.time ) ||
-											sn()( new Date() ).format(
-												'YYYY-MM-DDTHH:mm:ss.SSSD'
-											) ) );
+									delete _rLocal.days;
+									_rLocal.date =
+										( quiz === null ||
+										quiz === void 0 ||
+										null ===
+											( _tLocal5 = quiz.drip_settings ) ||
+										void 0 === _tLocal5
+											? void 0
+											: _tLocal5.date ) ||
+										sn()( new Date() ).format(
+											'YYYY-MM-DDTHH:mm:ss.SSSD'
+										);
+									_rLocal.time =
+										( quiz === null ||
+										quiz === void 0 ||
+										null ===
+											( _nLocal3 = quiz.drip_settings ) ||
+										void 0 === _nLocal3
+											? void 0
+											: _nLocal3.time ) ||
+										sn()( new Date() ).format(
+											'YYYY-MM-DDTHH:mm:ss.SSSD'
+										);
 								} else if (
 									'cohort-from-x-days' === e ||
 									'enrollment-from-x-days' === e
 								) {
-									var a;
-									( delete r.date,
-										delete r.time,
-										( r.days =
-											( null == quiz ||
-											null ===
-												( a = quiz.drip_settings ) ||
-											void 0 === a
-												? void 0
-												: a.days ) || 1 ) );
-								} else {
-									'cohort-start' === e &&
-										( delete r.days,
-										delete r.date,
-										delete r.time );
+									var _aLocal;
+									delete _rLocal.date;
+									delete _rLocal.time;
+									_rLocal.days =
+										( quiz === null ||
+										quiz === void 0 ||
+										null ===
+											( _aLocal = quiz.drip_settings ) ||
+										void 0 === _aLocal
+											? void 0
+											: _aLocal.days ) || 1;
+								} else if ( 'cohort-start' === e ) {
+									{
+										delete _rLocal.days;
+										delete _rLocal.date;
+										delete _rLocal.time;
+									}
 								}
 								setQuiz(
 									Um(
 										Um( {}, quiz ),
 										{},
 										{
-											drip_settings: r,
+											drip_settings: _rLocal,
 										}
 									)
 								);
 							}
 						} }
-						handleDripDatePickerChange={ function ( e, t ) {
+						handleDripDatePickerChange={ function ( e ) {
 							setQuiz(
 								Um(
 									Um( {}, quiz ),
@@ -315,7 +321,7 @@ export function createQuizSettingsFields( readRuntime ) {
 										drip_settings: Um(
 											Um(
 												{},
-												null == quiz
+												quiz === null || quiz === void 0
 													? void 0
 													: quiz.drip_settings
 											),
@@ -341,7 +347,7 @@ export function createQuizSettingsFields( readRuntime ) {
 										drip_settings: Um(
 											Um(
 												{},
-												null == quiz
+												quiz === null || quiz === void 0
 													? void 0
 													: quiz.drip_settings
 											),
@@ -360,14 +366,16 @@ export function createQuizSettingsFields( readRuntime ) {
 						} }
 						handleDayChange={ P }
 						dripFeedType={
-							null == quiz ||
+							quiz === null ||
+							quiz === void 0 ||
 							null === ( n = quiz.drip_settings ) ||
 							void 0 === n
 								? void 0
 								: n.type
 						}
 						dripDate={
-							( null == quiz ||
+							( quiz === null ||
+							quiz === void 0 ||
 							null === ( r = quiz.drip_settings ) ||
 							void 0 === r
 								? void 0
@@ -375,14 +383,16 @@ export function createQuizSettingsFields( readRuntime ) {
 							sn()().startOf( 'day' ).format( 'YYYY-MM-DD' )
 						}
 						dripTime={
-							( null == quiz ||
+							( quiz === null ||
+							quiz === void 0 ||
 							null === ( a = quiz.drip_settings ) ||
 							void 0 === a
 								? void 0
 								: a.time ) || new Date()
 						}
 						enrollmentFromXDays={
-							null == quiz ||
+							quiz === null ||
+							quiz === void 0 ||
 							null === ( o = quiz.drip_settings ) ||
 							void 0 === o
 								? void 0
@@ -413,7 +423,8 @@ export function createQuizSettingsFields( readRuntime ) {
 								min={ 0 }
 								max={ 1e3 }
 								value={
-									null == d ||
+									d === null ||
+									d === void 0 ||
 									null === ( i = d.time_limit ) ||
 									void 0 === i
 										? void 0
@@ -425,23 +436,25 @@ export function createQuizSettingsFields( readRuntime ) {
 								} }
 								className={ 'ohmylms-time-limit-input' }
 								onChange={ function ( e ) {
-									var t = e;
-									/^\d*\.?\d*$/.test( t ) &&
-										C( 'time_limit', t, 'value' );
+									var _tLocal7 = e;
+									if ( /^\d*\.?\d*$/.test( _tLocal7 ) ) {
+										C( 'time_limit', _tLocal7, 'value' );
+									}
 								} }
 								onKeyDown={ function ( e ) {
-									( [
-										'e',
-										'E',
-										'+',
-										'-',
-										'/',
-										'\\',
-										'.',
-										',',
-										'*',
-										' ',
-									].includes( e.key ) ||
+									if (
+										[
+											'e',
+											'E',
+											'+',
+											'-',
+											'/',
+											'\\',
+											'.',
+											',',
+											'*',
+											' ',
+										].includes( e.key ) ||
 										( /[a-zA-Z]/.test( e.key ) &&
 											! [
 												'Backspace',
@@ -450,23 +463,30 @@ export function createQuizSettingsFields( readRuntime ) {
 												'ArrowRight',
 												'Delete',
 												'Enter',
-											].includes( e.key ) ) ) &&
+											].includes( e.key ) )
+									) {
 										e.preventDefault();
+									}
 								} }
 								onBlur={ function () {
 									var e;
-									( null == d ||
-									null === ( e = d.time_limit ) ||
-									void 0 === e
-										? void 0
-										: e.value ) < 0 &&
+									if (
+										( d === null ||
+										d === void 0 ||
+										null === ( e = d.time_limit ) ||
+										void 0 === e
+											? void 0
+											: e.value ) < 0
+									) {
 										C( 'time_limit', 0, 'value' );
+									}
 								} }
 								disabled={ ! s }
 							/>
 							<vn.A
 								value={
-									( null == d ||
+									( d === null ||
+									d === void 0 ||
 									null === ( l = d.time_limit ) ||
 									void 0 === l
 										? void 0
@@ -488,14 +508,16 @@ export function createQuizSettingsFields( readRuntime ) {
 					<Vm
 						handleChange={ C }
 						isChecked={
-							null == d ||
+							d === null ||
+							d === void 0 ||
 							null === ( c = d.passing_grade ) ||
 							void 0 === c
 								? void 0
 								: c.enabled
 						}
 						value={
-							null == d ||
+							d === null ||
+							d === void 0 ||
 							null === ( u = d.passing_grade ) ||
 							void 0 === u
 								? void 0
@@ -525,8 +547,9 @@ export function createQuizSettingsFields( readRuntime ) {
 						>
 							<Bt.A
 								checked={
-									( null == d ? void 0 : d.hide_answers ) ||
-									! 1
+									( d === null || d === void 0
+										? void 0
+										: d.hide_answers ) || ! 1
 								}
 								onChange={ function ( e ) {
 									return x( 'hide_answers', e );
@@ -593,7 +616,7 @@ export function createQuizSettingsFields( readRuntime ) {
 						>
 							<Bt.A
 								checked={
-									( null == d
+									( d === null || d === void 0
 										? void 0
 										: d.move_to_next_section ) || ! 1
 								}
@@ -627,7 +650,7 @@ export function createQuizSettingsFields( readRuntime ) {
 						>
 							<Bt.A
 								checked={
-									( null == d
+									( d === null || d === void 0
 										? void 0
 										: d.randomize_questions ) || ! 1
 								}
@@ -657,29 +680,35 @@ export function createQuizSettingsFields( readRuntime ) {
 							type={ 'number' }
 							min={ 0 }
 							max={ 1e3 }
-							value={ null == d ? void 0 : d.allow_attempts }
+							value={
+								d === null || d === void 0
+									? void 0
+									: d.allow_attempts
+							}
 							controls={ ! 1 }
 							style={ {
 								width: 100,
 							} }
 							onChange={ function ( e ) {
-								var t = e;
-								/^\d*\.?\d*$/.test( t ) &&
-									x( 'allow_attempts', t );
+								var _tLocal8 = e;
+								if ( /^\d*\.?\d*$/.test( _tLocal8 ) ) {
+									x( 'allow_attempts', _tLocal8 );
+								}
 							} }
 							onKeyDown={ function ( e ) {
-								( [
-									'e',
-									'E',
-									'+',
-									'-',
-									'/',
-									'\\',
-									'.',
-									',',
-									'*',
-									' ',
-								].includes( e.key ) ||
+								if (
+									[
+										'e',
+										'E',
+										'+',
+										'-',
+										'/',
+										'\\',
+										'.',
+										',',
+										'*',
+										' ',
+									].includes( e.key ) ||
 									( /[a-zA-Z]/.test( e.key ) &&
 										! [
 											'Backspace',
@@ -688,12 +717,19 @@ export function createQuizSettingsFields( readRuntime ) {
 											'ArrowRight',
 											'Delete',
 											'Enter',
-										].includes( e.key ) ) ) &&
+										].includes( e.key ) )
+								) {
 									e.preventDefault();
+								}
 							} }
 							onBlur={ function () {
-								( null == d ? void 0 : d.allow_attempts ) < 0 &&
+								if (
+									( d === null || d === void 0
+										? void 0
+										: d.allow_attempts ) < 0
+								) {
 									x( 'allow_attempts', 0 );
+								}
 							} }
 							className={ 'ohmylms-attempts-allowed-input' }
 						/>
@@ -715,8 +751,9 @@ export function createQuizSettingsFields( readRuntime ) {
 						<div className={ 'ohmylms-quiz-layout-settings' }>
 							<vn.A
 								value={
-									( null == d ? void 0 : d.layout ) ||
-									'one_question_per_page'
+									( d === null || d === void 0
+										? void 0
+										: d.layout ) || 'one_question_per_page'
 								}
 								onChange={ function ( e ) {
 									return C( 'layout', e );
@@ -735,7 +772,9 @@ export function createQuizSettingsFields( readRuntime ) {
 								disabled={ ! s }
 							/>
 							{ 'number_of_questions_per_page' ===
-								( null == d ? void 0 : d.layout ) && (
+								( d === null || d === void 0
+									? void 0
+									: d.layout ) && (
 								<React.Fragment>
 									<Controls.SpacerWP />
 									<Controls.InputNumberWP
@@ -743,7 +782,7 @@ export function createQuizSettingsFields( readRuntime ) {
 										min={ 0 }
 										max={ 1e3 }
 										value={
-											null == d
+											d === null || d === void 0
 												? void 0
 												: d.question_in_one_page
 										}
@@ -753,23 +792,30 @@ export function createQuizSettingsFields( readRuntime ) {
 											marginLeft: 'auto',
 										} }
 										onChange={ function ( e ) {
-											var t = e;
-											/^\d*\.?\d*$/.test( t ) &&
-												x( 'question_in_one_page', t );
+											var _tLocal9 = e;
+											if (
+												/^\d*\.?\d*$/.test( _tLocal9 )
+											) {
+												x(
+													'question_in_one_page',
+													_tLocal9
+												);
+											}
 										} }
 										onKeyDown={ function ( e ) {
-											( [
-												'e',
-												'E',
-												'+',
-												'-',
-												'/',
-												'\\',
-												'.',
-												',',
-												'*',
-												' ',
-											].includes( e.key ) ||
+											if (
+												[
+													'e',
+													'E',
+													'+',
+													'-',
+													'/',
+													'\\',
+													'.',
+													',',
+													'*',
+													' ',
+												].includes( e.key ) ||
 												( /[a-zA-Z]/.test( e.key ) &&
 													! [
 														'Backspace',
@@ -778,18 +824,23 @@ export function createQuizSettingsFields( readRuntime ) {
 														'ArrowRight',
 														'Delete',
 														'Enter',
-													].includes( e.key ) ) ) &&
+													].includes( e.key ) )
+											) {
 												e.preventDefault();
+											}
 										} }
 										onBlur={ function () {
-											( null == d
-												? void 0
-												: d.question_in_one_page ) <
-												0 &&
+											if (
+												( d === null || d === void 0
+													? void 0
+													: d.question_in_one_page ) <
+												0
+											) {
 												x(
 													'question_in_one_page',
 													value
 												);
+											}
 										} }
 										className={
 											'ohmylms-questions-per-page-input'
@@ -819,7 +870,7 @@ export function createQuizSettingsFields( readRuntime ) {
 						>
 							<Bt.A
 								checked={
-									( null == d
+									( d === null || d === void 0
 										? void 0
 										: d.hide_question_number ) || ! 1
 								}
@@ -851,29 +902,35 @@ export function createQuizSettingsFields( readRuntime ) {
 								'Set Character Limit',
 								'ohmylms'
 							) }
-							value={ null == d ? void 0 : d.short_text_limit }
+							value={
+								d === null || d === void 0
+									? void 0
+									: d.short_text_limit
+							}
 							controls={ ! 1 }
 							style={ {
 								width: 170,
 							} }
 							onChange={ function ( e ) {
-								var t = e;
-								/^\d*\.?\d*$/.test( t ) &&
-									x( 'short_text_limit', t );
+								var _tLocal0 = e;
+								if ( /^\d*\.?\d*$/.test( _tLocal0 ) ) {
+									x( 'short_text_limit', _tLocal0 );
+								}
 							} }
 							onKeyDown={ function ( e ) {
-								( [
-									'e',
-									'E',
-									'+',
-									'-',
-									'/',
-									'\\',
-									'.',
-									',',
-									'*',
-									' ',
-								].includes( e.key ) ||
+								if (
+									[
+										'e',
+										'E',
+										'+',
+										'-',
+										'/',
+										'\\',
+										'.',
+										',',
+										'*',
+										' ',
+									].includes( e.key ) ||
 									( /[a-zA-Z]/.test( e.key ) &&
 										! [
 											'Backspace',
@@ -882,12 +939,19 @@ export function createQuizSettingsFields( readRuntime ) {
 											'ArrowRight',
 											'Delete',
 											'Enter',
-										].includes( e.key ) ) ) &&
+										].includes( e.key ) )
+								) {
 									e.preventDefault();
+								}
 							} }
 							onBlur={ function () {
-								( null == d ? void 0 : d.short_text_limit ) <
-									0 && x( 'short_text_limit', 0 );
+								if (
+									( d === null || d === void 0
+										? void 0
+										: d.short_text_limit ) < 0
+								) {
+									x( 'short_text_limit', 0 );
+								}
 							} }
 							disabled={ ! s }
 							className={ 'ohmylms-short-answer-limit-input' }
@@ -913,29 +977,35 @@ export function createQuizSettingsFields( readRuntime ) {
 								'Set Character Limit',
 								'ohmylms'
 							) }
-							value={ null == d ? void 0 : d.long_text_limit }
+							value={
+								d === null || d === void 0
+									? void 0
+									: d.long_text_limit
+							}
 							controls={ ! 1 }
 							style={ {
 								width: 170,
 							} }
 							onChange={ function ( e ) {
-								var t = e;
-								/^\d*\.?\d*$/.test( t ) &&
-									x( 'long_text_limit', t );
+								var _tLocal1 = e;
+								if ( /^\d*\.?\d*$/.test( _tLocal1 ) ) {
+									x( 'long_text_limit', _tLocal1 );
+								}
 							} }
 							onKeyDown={ function ( e ) {
-								( [
-									'e',
-									'E',
-									'+',
-									'-',
-									'/',
-									'\\',
-									'.',
-									',',
-									'*',
-									' ',
-								].includes( e.key ) ||
+								if (
+									[
+										'e',
+										'E',
+										'+',
+										'-',
+										'/',
+										'\\',
+										'.',
+										',',
+										'*',
+										' ',
+									].includes( e.key ) ||
 									( /[a-zA-Z]/.test( e.key ) &&
 										! [
 											'Backspace',
@@ -944,12 +1014,19 @@ export function createQuizSettingsFields( readRuntime ) {
 											'ArrowRight',
 											'Delete',
 											'Enter',
-										].includes( e.key ) ) ) &&
+										].includes( e.key ) )
+								) {
 									e.preventDefault();
+								}
 							} }
 							onBlur={ function () {
-								( null == d ? void 0 : d.long_text_limit ) <
-									0 && x( 'long_text_limit', 0 );
+								if (
+									( d === null || d === void 0
+										? void 0
+										: d.long_text_limit ) < 0
+								) {
+									x( 'long_text_limit', 0 );
+								}
 							} }
 							disabled={ ! s }
 							className={ 'ohmylms-long-answer-limit-input' }

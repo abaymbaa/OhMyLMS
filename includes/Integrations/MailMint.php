@@ -1,4 +1,9 @@
 <?php
+/**
+ * MailMint Integration.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Integrations;
 
 use Mint\MRM\DataBase\Tables\AutomationMetaSchema;

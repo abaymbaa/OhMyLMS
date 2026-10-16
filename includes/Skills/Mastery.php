@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Transparent, configurable attainment rules (deliberately not a probability score).
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
@@ -23,15 +28,15 @@ final class Mastery {
 
 	public static function rules() {
 		$defaults = array(
-			'window'              => 8,                 // most recent independent first tries considered
-			'proficient_min'      => 3,         // independent questions needed
+			'window'              => 8,                 // most recent independent first tries considered.
+			'proficient_min'      => 3,         // independent questions needed.
 			'proficient_families' => 2,
 			'proficient_accuracy' => 0.8,
 			'mastered_min'        => 5,
 			'mastered_families'   => 3,
 			'mastered_accuracy'   => 0.85,
-			'review_gap_hours'    => 24,      // spacing required before mastery is confirmed
-			'review_after_days'   => 14,     // stale evidence makes a review due
+			'review_gap_hours'    => 24,      // spacing required before mastery is confirmed.
+			'review_after_days'   => 14,     // stale evidence makes a review due.
 		);
 		$saved    = get_option( self::OPTION );
 		return array_merge( $defaults, is_array( $saved ) ? array_intersect_key( $saved, $defaults ) : array() );
@@ -40,8 +45,8 @@ final class Mastery {
 	/** Recompute and store the state for one learner and skill. */
 	public static function recompute( $student_id, $term_id ) {
 		global $wpdb;
-		$rules               = self::rules();
-		$rows                = $wpdb->get_results(
+		$rules = self::rules();
+		$rows  = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT awarded, available, independent, first_try, family_id, question_id, evidence_at FROM ' . Schema::table( 'skill_evidence' ) . "
              WHERE student_id=%d AND term_id=%d AND role='primary' AND superseded=0 ORDER BY evidence_at ASC, id ASC",
@@ -50,7 +55,7 @@ final class Mastery {
 			),
 			ARRAY_A
 		);
-		$state               = self::evaluate( $rows, $rules, time() );
+		$state = self::evaluate( $rows, $rules, time() );
 		// With the Khan model on, a skill that has Khan history takes its level from those rules.
 		$state               = Khan\Levels::override_state( $state, (int) $student_id, (int) $term_id );
 		$state['student_id'] = (int) $student_id;
@@ -85,7 +90,7 @@ final class Mastery {
 			return (float) $row['awarded'] >= (float) $row['available'] - 0.0001;
 		};
 		$family         = static function ( $row ) {
-			return $row['family_id'] !== '' ? 'f:' . $row['family_id'] : 'q:' . $row['question_id'];
+			return '' !== $row['family_id'] ? 'f:' . $row['family_id'] : 'q:' . $row['question_id'];
 		};
 		$level          = $rows ? 'developing' : 'not-assessed';
 		$recent         = array_slice( $independent, -max( 1, (int) $rules['window'] ) );
@@ -120,7 +125,7 @@ final class Mastery {
 		$proficient_now = count( $correct_recent ) >= $rules['proficient_min'] && $families >= $rules['proficient_families'] && $accuracy >= $rules['proficient_accuracy'];
 		if ( $proficient_now ) {
 			$level = 'proficient'; }
-		if ( $proficient_now && $proficient_at !== null && count( $correct_recent ) >= $rules['mastered_min'] && $families >= $rules['mastered_families'] && $accuracy >= $rules['mastered_accuracy'] ) {
+		if ( $proficient_now && null !== $proficient_at && count( $correct_recent ) >= $rules['mastered_min'] && $families >= $rules['mastered_families'] && $accuracy >= $rules['mastered_accuracy'] ) {
 			$gap = (int) $rules['review_gap_hours'] * 3600;
 			foreach ( $correct_recent as $row ) {
 				if ( strtotime( $row['evidence_at'] . ' UTC' ) >= $proficient_at + $gap ) {
@@ -132,7 +137,7 @@ final class Mastery {
 		$review_due_at = in_array( $level, array( 'proficient', 'mastered' ), true ) && $last ? $last + (int) $rules['review_after_days'] * DAY_IN_SECONDS : null;
 		return array(
 			'level'               => $level,
-			'review_due'          => $review_due_at !== null && $now >= $review_due_at ? 1 : 0,
+			'review_due'          => null !== $review_due_at && $now >= $review_due_at ? 1 : 0,
 			'review_due_at'       => $review_due_at ? gmdate( 'Y-m-d H:i:s', $review_due_at ) : null,
 			'evidence_count'      => count( $rows ),
 			'independent_correct' => count( array_filter( $independent, $correct ) ),

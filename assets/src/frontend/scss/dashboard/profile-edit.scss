@@ -58,8 +58,8 @@
                     visibility: visible;
                 }
 
-                & > figure:focus + .hoverlay,
-                & > figure:hover + .hoverlay {
+                > figure:focus + .hoverlay,
+                > figure:hover + .hoverlay {
                     opacity: 1;
                     visibility: visible;
                 }

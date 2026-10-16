@@ -80,7 +80,15 @@ export function createRegistry() {
 				.sort(
 					( a, b ) =>
 						a.priority - b.priority ||
-						( a.id < b.id ? -1 : a.id > b.id ? 1 : 0 )
+						( () => {
+							if ( a.id < b.id ) {
+								return -1;
+							}
+							if ( a.id > b.id ) {
+								return 1;
+							}
+							return 0;
+						} )()
 				),
 		get: ( kind, id ) => entries.get( kind )?.get( id ),
 		subscribe( listener ) {

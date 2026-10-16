@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $course;
 $url = $course->get_permalink();
 
-// Check if course should show add to cart button
+// Check if course should show add to cart button.
 $should_show_add_to_cart = true;
 
-// If course is cohort-based, check enrollment deadline
+// If course is cohort-based, check enrollment deadline.
 if ( $course && $course->get_type() === 'cohort-based' ) {
 	$cohorts               = $course->get_cohort();
 	$has_active_enrollment = false;
@@ -38,7 +38,7 @@ if ( $course && $course->get_type() === 'cohort-based' ) {
 	$should_show_add_to_cart = $has_active_enrollment;
 }
 
-// Only show add to cart button if enrollment is active
+// Only show add to cart button if enrollment is active.
 if ( $should_show_add_to_cart ) {
 	echo apply_filters(
 		'ohmylms_loop_add_to_cart_link', // WPCS: XSS ok.

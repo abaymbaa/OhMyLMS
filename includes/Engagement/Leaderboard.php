@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Leaderboard Helper class.
  *
@@ -126,7 +126,7 @@ class Leaderboard {
 					return isset( $student['completion_rate'] ) && self::maybe_met_threshold( $student['completion_rate'] );
 				}
 			);
-			$filtered_students = array_values( $filtered_students ); // reindex array
+			$filtered_students = array_values( $filtered_students ); // reindex array.
 			if ( $limit && count( $filtered_students ) >= (int) $limit ) {
 				return $filtered_students;
 			} else {
@@ -152,7 +152,7 @@ class Leaderboard {
 			return 0;
 		}
 
-		// Get all completed attempts for this student and quiz
+		// Get all completed attempts for this student and quiz.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT total 
@@ -169,7 +169,7 @@ class Leaderboard {
 			return 0;
 		}
 
-		// Calculate average
+		// Calculate average.
 		$total_score   = 0;
 		$attempt_count = count( $results );
 
@@ -196,7 +196,7 @@ class Leaderboard {
 			return 0;
 		}
 
-		// Get all submitted assignments for this student and assignment
+		// Get all submitted assignments for this student and assignment.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
 				"SELECT score 
@@ -212,7 +212,7 @@ class Leaderboard {
 			return 0;
 		}
 
-		// Calculate average
+		// Calculate average.
 		$total_marks      = 0;
 		$submission_count = count( $results );
 
@@ -246,7 +246,7 @@ class Leaderboard {
 			return array();
 		}
 
-		// Prepare quiz IDs for SQL IN clause
+		// Prepare quiz IDs for SQL IN clause.
 		$quiz_ids_sql = implode( ',', array_map( 'intval', $quiz_ids ) );
 		$student_ids  = wp_list_pluck( $students, 'student_id' );
 		if ( empty( $student_ids ) ) {
@@ -278,14 +278,14 @@ class Leaderboard {
 			$student_scores[ $row->student_id ] = ( $student_scores[ $row->student_id ] ?? 0 )
 				+ (float) $row->average_percent / count( array_unique( $quiz_ids ) );
 		}
-		// Attach score to students
+		// Attach score to students.
 		foreach ( $students as &$student ) {
 			$sid                           = isset( $student['student_id'] ) ? $student['student_id'] : ( $student['ID'] ?? null );
 			$student['highest_quiz_score'] = isset( $student_scores[ $sid ] ) ? $student_scores[ $sid ] : 0;
 		}
 		unset( $student );
 
-		// Sort students by highest_quiz_score descending
+		// Sort students by highest_quiz_score descending.
 		usort(
 			$students,
 			function ( $a, $b ) {
@@ -304,7 +304,7 @@ class Leaderboard {
 					return isset( $student['highest_quiz_score'] ) && self::maybe_met_threshold( $student['highest_quiz_score'] );
 				}
 			);
-			$students = array_values( $students ); // reindex array
+			$students = array_values( $students ); // reindex array.
 		}
 		return $students;
 	}

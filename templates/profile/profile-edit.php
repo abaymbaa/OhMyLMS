@@ -16,7 +16,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 <div class="ohmylms-student-profile-tab-content student-profile student-profile-edit">
 	<h4 class="profile-tab-title">
-		<?php echo __( 'Edit Profile', 'ohmylms' ); ?>
+		<?php echo esc_html__( 'Edit Profile', 'ohmylms' ); ?>
 	</h4>
 
 	<div class="ohmylms-profile-cover-area">
@@ -29,12 +29,12 @@ do_action( 'ohmylms_before_edit_account_form' );
 				<label for="cover_image_input" role="button" aria-label="Edit" class="cover-action-btn cover-edit" tabindex="0">
 					<input type="file" id="cover_image_input" style="display: none;" accept="image/*">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/edit-icon.php'; ?>
-					<?php echo __( 'Edit', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Edit', 'ohmylms' ); ?>
 				</label>
 
 				<button tabindex="0" type="button" aria-label="Delete" class="cover-action-btn cover-delete" id="cover-image-delete" style="<?php echo $student->has_cover_image() ? 'display: flex;' : 'display: none;'; ?>">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/delete-icon.php'; ?>
-					<?php echo __( 'Delete', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Delete', 'ohmylms' ); ?>
 				</button>
 			</div>
 
@@ -53,7 +53,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 				<label for="profile_photo_input" class="edit-avatar" tabindex="0">
 					<input type="file" id="profile_photo_input" style="display: none;" accept="image/*">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/camera-icon.php'; ?>
-					<small><?php echo __( 'Recomanded size 400 x 400 px', 'ohmylms' ); ?></small>
+					<small><?php echo esc_html__( 'Recomanded size 400 x 400 px', 'ohmylms' ); ?></small>
 				</label>
 			</div>
 		</div>
@@ -63,13 +63,13 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 			<div class="ohmylms-student-basic-info">
 				<h6 class="account-title">
-					<?php echo __( 'Account', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Account', 'ohmylms' ); ?>
 				</h6>
 
 				<div class="ohmylms-form-wrapper">
 					<div class="ohmylms-form-group firstname half-width">
 						<label>
-							<?php echo __( 'First Name', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'First Name', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -79,7 +79,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group lastname half-width">
 						<label>
-							<?php echo __( 'Last Name', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Last Name', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -89,29 +89,29 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group display-name">
 						<label>
-							<?php echo __( 'Display Name', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Display Name', 'ohmylms' ); ?>
 							<span class="required">*</span>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="text" name="display_name" placeholder="<?php echo __( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo $student->get_display_name(); ?>">
+							<input type="text" name="display_name" placeholder="<?php echo esc_attr__( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo $student->get_display_name(); ?>">
 						</span>
 					</div>
 
 					<div class="ohmylms-form-group email">
 						<label>
-							<?php echo __( 'Email', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Email', 'ohmylms' ); ?>
 							<span class="required">*</span>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="email" name="email" placeholder="<?php echo __( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo $student->get_email(); ?>">
+							<input type="email" name="email" placeholder="<?php echo esc_attr__( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo $student->get_email(); ?>">
 						</span>
 					</div>
 
 					<div class="ohmylms-form-group address-line1">
 						<label>
-							<?php echo __( 'Address', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Address', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -121,7 +121,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group phone half-width">
 						<label>
-							<?php echo __( 'Phone Number', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Phone Number', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -131,7 +131,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group whatsapp half-width">
 						<label>
-							<?php echo __( 'WhatsApp', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'WhatsApp', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -141,12 +141,12 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group country">
 						<label>
-							<?php echo __( 'Country', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Country', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
 							<select name="country">
-								<option value=""><?php echo __( '— Select country —', 'ohmylms' ); ?></option>
+								<option value=""><?php echo esc_html__( '— Select country —', 'ohmylms' ); ?></option>
 								<?php
 								$student_country = $student->get_country();
 								foreach ( ohmylms_get_countries() as $country ) {
@@ -164,7 +164,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group bio" id="bio">
 						<label>
-							<?php echo __( 'Headline/Bio', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Headline/Bio', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -174,7 +174,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 					<div class="ohmylms-form-group interests">
 						<label>
-							<?php echo __( 'Learning Interests', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Learning Interests', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-input-wrapper">
@@ -185,11 +185,11 @@ do_action( 'ohmylms_before_edit_account_form' );
 					<!-- Skills Section -->
 					<div class="ohmylms-form-group skills-section" id="skills">
 						<label>
-							<?php echo __( 'Skills', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Skills', 'ohmylms' ); ?>
 						</label>
 						<div class="ohmylms-dynamic-fields" id="skills-container">
 							<?php
-							$skills = $student->get_skills(); // We'll need to implement this method
+							$skills = $student->get_skills(); // We'll need to implement this method.
 							if ( ! empty( $skills ) && is_array( $skills ) ) {
 								foreach ( $skills as $index => $skill ) {
 									?>
@@ -214,18 +214,18 @@ do_action( 'ohmylms_before_edit_account_form' );
 							?>
 						</div>
 						<button type="button" class="ohmylms-button ohmylms-add-field" data-target="skills-container" data-template="skills-template">
-							<?php echo __( 'Add Another Skill', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Add Another Skill', 'ohmylms' ); ?>
 						</button>
 					</div>
 
 					<!-- Links Section -->
 					<div class="ohmylms-form-group links-section"  id="social-links">
 						<label>
-							<?php echo __( 'Social Links', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Social Links', 'ohmylms' ); ?>
 						</label>
 						<div class="ohmylms-dynamic-fields" id="links-container">
 							<?php
-							$links = $student->get_social_links(); // We'll need to implement this method
+							$links = $student->get_social_links(); // We'll need to implement this method.
 							if ( ! empty( $links ) && is_array( $links ) ) {
 								foreach ( $links as $index => $link ) {
 									?>
@@ -256,7 +256,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 							?>
 						</div>
 						<button type="button" class="ohmylms-button ohmylms-add-field" data-target="links-container" data-template="links-template">
-							<?php echo __( 'Add Another Link', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Add Another Link', 'ohmylms' ); ?>
 						</button>
 					</div>
 				</div>
@@ -264,14 +264,14 @@ do_action( 'ohmylms_before_edit_account_form' );
 
 			<div class="ohmylms-student-account">
 				<h6 class="account-title">
-					<?php echo __( 'Password', 'ohmylms' ); ?>
+					<?php echo esc_html__( 'Password', 'ohmylms' ); ?>
 				</h6>
 
 				<div class="ohmylms-form-wrapper">
 					<!-- current password -->
 					<div class="ohmylms-form-group password">
 						<label for="current-password">
-							<?php echo __( 'Current Password', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Current Password', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-password-show">
@@ -300,7 +300,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					<!-- new password -->
 					<div class="ohmylms-form-group new-password">
 						<label for="new-password">
-							<?php echo __( 'New Password', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'New Password', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-password-show">
@@ -329,7 +329,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					<!-- confirm password -->
 					<div class="ohmylms-form-group confirm-password">
 						<label for="confirm-password">
-							<?php echo __( 'Confirm Password', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Confirm Password', 'ohmylms' ); ?>
 						</label>
 
 						<span class="ohmylms-password-show">
@@ -359,19 +359,19 @@ do_action( 'ohmylms_before_edit_account_form' );
 				<!-- <div class="ohmylms-password-strength">
 					<ul>
 						<li class="password-strength matched">
-							<?php // echo __( 'Password strength: weak.', 'ohmylms' ); ?>
+							<?php // echo __( 'Password strength: weak.', 'ohmylms' );. ?>
 						</li>
 
 						<li class="password-characters">
-							<?php // echo __( 'Password least 8-12 characters long.', 'ohmylms' ); ?>
+							<?php // echo __( 'Password least 8-12 characters long.', 'ohmylms' );. ?>
 						</li>
 
 						<li class="password-number">
-							<?php // echo __( 'Contains a number or symbol.', 'ohmylms' ); ?>
+							<?php // echo __( 'Contains a number or symbol.', 'ohmylms' );. ?>
 						</li>
 
 						<li class="password-case">
-							<?php // echo __( 'Uppercase letters (A-Z); Lowercase letters (a-z).', 'ohmylms' ); ?>
+							<?php // echo __( 'Uppercase letters (A-Z); Lowercase letters (a-z).', 'ohmylms' );. ?>
 						</li>
 					</ul>
 				</div> -->

@@ -27,10 +27,10 @@ export function createCertificateTemplateDialog( readRuntime ) {
 		return (
 			( 0, Router.Zp )(),
 			( 0, ReactHooks.useEffect )( function () {
-				( c( ! 0 ),
-					setTimeout( function () {
-						c( ! 1 );
-					}, 300 ) );
+				c( ! 0 );
+				setTimeout( function () {
+					c( ! 1 );
+				}, 300 );
 			}, [] ),
 			(
 				<React.Fragment>
@@ -57,10 +57,10 @@ export function createCertificateTemplateDialog( readRuntime ) {
 									hB
 										.slice()
 										.reverse()
-										.map( function ( e, t ) {
+										.map( function ( e, _tLocal ) {
 											return (
 												<Controls.FlexItemWP
-													key={ t }
+													key={ _tLocal }
 													isBlock={ ! 0 }
 													style={ {
 														width: '100%',

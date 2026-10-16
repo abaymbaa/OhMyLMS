@@ -1,4 +1,9 @@
 <?php
+/**
+ * Emails email order items template.
+ *
+ * @package OhMyLMS
+ */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -17,15 +22,15 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 				<thead>
 					<tr>
 						<th style="background: #F9FAFB; color: #7A8B9A; font-size: 14px; line-height: 1; padding: 13px 20px; border: none; border-bottom: 1px solid #EBECED; text-align: left; border-radius: 10px 0 0 0; font-weight: 500;">
-							<?php echo __( 'Course Name', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Course Name', 'ohmylms' ); ?>
 						</th>
 
 						<th style="background: #F9FAFB; color: #7A8B9A; font-size: 14px; line-height: 1; padding: 13px 20px; border: none; border-bottom: 1px solid #EBECED; text-align: left; font-weight: 500;">
-							<?php echo __( 'Quantity', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Quantity', 'ohmylms' ); ?>
 						</th>
 
 						<th style="background: #F9FAFB; color: #7A8B9A; font-size: 14px; line-height: 1; padding: 13px 20px; border: none; border-bottom: 1px solid #EBECED; text-align: left; border-radius: 0 10px 0 0; font-weight: 500;">
-							<?php echo __( 'Price', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Price', 'ohmylms' ); ?>
 						</th>
 					</tr>
 				</thead>
@@ -53,7 +58,7 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 					
 					<tr>
 						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo __( 'Subtotal:', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Subtotal:', 'ohmylms' ); ?>
 						</th>
 
 						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
@@ -64,7 +69,7 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 
 					<tr>
 						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo __( 'Discount:', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Discount:', 'ohmylms' ); ?>
 						</th>
 
 						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
@@ -78,7 +83,7 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 
 					<tr>
 						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo __( 'Tax', 'ohmylms' ); ?> <span class="tax-rate" style="color: <?php echo $email_text_color; ?>;">(<?php echo esc_html( wp_strip_all_tags( $order->get_tax_rate() ) ); ?>%):</span>
+							<?php echo esc_html__( 'Tax', 'ohmylms' ); ?> <span class="tax-rate" style="color: <?php echo $email_text_color; ?>;">(<?php echo esc_html( wp_strip_all_tags( $order->get_tax_rate() ) ); ?>%):</span>
 						</th>
 
 						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
@@ -90,7 +95,7 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 					
 					<tr>
 						<th colspan="2" style="background: transparent; padding: 7px 20px 14px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo __( 'Payment method:', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Payment method:', 'ohmylms' ); ?>
 						</th>
 
 						<td style="background: transparent; padding: 7px 20px 14px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
@@ -100,7 +105,7 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 					
 					<tr>
 						<th colspan="2" style="background: transparent; padding: 14px 20px; color: <?php echo $email_text_color; ?>; border: none; border-top: 1px solid #EBECED; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo __( 'Total:', 'ohmylms' ); ?>
+							<?php echo esc_html__( 'Total:', 'ohmylms' ); ?>
 						</th>
 
 						<td style="background: transparent; padding: 14px 20px; color: <?php echo $email_text_color; ?>; border: none; border-top: 1px solid #EBECED; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">

@@ -1,4 +1,9 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
+/**
+ * Class Kadence.
+ *
+ * @package OhMyLMS
+ */
 namespace OhMyLMS\ThemeSupport;
 
 defined( 'ABSPATH' ) || exit;

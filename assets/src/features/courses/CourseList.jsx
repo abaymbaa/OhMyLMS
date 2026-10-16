@@ -1,9 +1,10 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
-import { createElement } from '@wordpress/element';
+import { createElement, useId } from '@wordpress/element';
 import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
 import { CourseGradebook } from './CourseGradebook';
 export function createCourseList( readRuntime ) {
 	return function CourseList() {
+		const _controlId = useId();
 		const {
 			Br,
 			Ea,
@@ -11,7 +12,6 @@ export function createCourseList( readRuntime ) {
 			He,
 			I: Controls,
 			Ie,
-			L: Entitlements,
 			Ne,
 			Ot,
 			React,
@@ -51,21 +51,23 @@ export function createCourseList( readRuntime ) {
 		const [ gradebook, setGradebook ] = ReactHooks.useState( null );
 		var e = true,
 			t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectCourses();
+			n = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).selectCourses();
 			}, [] ),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectCoursesPagination();
+			r = ( 0, WordPressData.useSelect )( function ( _eLocal2 ) {
+				return _eLocal2(
+					StoreModule.default
+				).selectCoursesPagination();
 			}, [] ),
 			a = ( r.totalPages, r.totalCourses ),
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationMessage();
+			o = ( 0, WordPressData.useSelect )( function ( _eLocal3 ) {
+				return _eLocal3( StoreModule.default ).getNotificationMessage();
 			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getNotificationStatus();
+			i = ( 0, WordPressData.useSelect )( function ( _eLocal4 ) {
+				return _eLocal4( StoreModule.default ).getNotificationStatus();
 			}, [] ),
-			c = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getAllCategories();
+			c = ( 0, WordPressData.useSelect )( function ( _eLocal5 ) {
+				return _eLocal5( StoreModule.default ).getAllCategories();
 			}, [] ),
 			u = mY( ( 0, ReactHooks.useState )( '' ), 2 ),
 			s = u[ 0 ],
@@ -141,91 +143,104 @@ export function createCourseList( readRuntime ) {
 			je = ke[ 0 ],
 			Ae = ke[ 1 ],
 			Me = ( function () {
-				var e = ( function ( e, t ) {
+				var _eLocal6 = ( function ( _eLocal7, t ) {
 						return (
-							( function ( e ) {
-								if ( Array.isArray( e ) ) {
-									return e;
+							( function ( _eLocal8 ) {
+								if ( Array.isArray( _eLocal8 ) ) {
+									return _eLocal8;
 								}
-							} )( e ) ||
-							( function ( e, t ) {
+							} )( _eLocal7 ) ||
+							( function ( _eLocal9, _tLocal ) {
 								var n =
-									null == e
+									_eLocal9 === null || _eLocal9 === void 0
 										? null
 										: ( 'undefined' !== typeof Symbol &&
-												e[ Symbol.iterator ] ) ||
-											e[ '@@iterator' ];
-								if ( null != n ) {
+												_eLocal9[ Symbol.iterator ] ) ||
+											_eLocal9[ '@@iterator' ];
+								if ( n !== null && n !== void 0 ) {
 									var r,
-										a,
-										o,
-										i,
-										l = [],
-										c = ! 0,
-										u = ! 1;
+										_aLocal,
+										_oLocal,
+										_iLocal,
+										_lLocal = [],
+										_cLocal = ! 0,
+										_uLocal = ! 1;
 									try {
 										if (
-											( ( o = ( n = n.call( e ) ).next ),
-											0 === t )
+											( ( _oLocal = ( n =
+												n.call( _eLocal9 ) ).next ),
+											0 === _tLocal )
 										) {
 											if ( Object( n ) !== n ) {
 												return;
 											}
-											c = ! 1;
+											_cLocal = ! 1;
 										} else {
 											for (
 												;
-												! ( c = ( r = o.call( n ) )
+												! ( _cLocal = ( r =
+													_oLocal.call( n ) )
 													.done ) &&
-												( l.push( r.value ),
-												l.length !== t );
-												c = ! 0
+												( _lLocal.push( r.value ),
+												_lLocal.length !== _tLocal );
+												_cLocal = ! 0
 											) {}
 										}
-									} catch ( e ) {
-										( ( u = ! 0 ), ( a = e ) );
+									} catch ( _eLocal0 ) {
+										_uLocal = ! 0;
+										_aLocal = _eLocal0;
 									} finally {
 										try {
 											if (
-												! c &&
-												null != n.return &&
-												( ( i = n.return() ),
-												Object( i ) !== i )
+												! _cLocal &&
+												( ( _nullableValue ) =>
+													_nullableValue !== null &&
+													_nullableValue !== void 0 )(
+													n.return
+												) &&
+												( ( _iLocal = n.return() ),
+												Object( _iLocal ) !== _iLocal )
 											) {
 												return;
 											}
 										} finally {
-											if ( u ) {
-												throw a;
+											if ( _uLocal ) {
+												throw _aLocal;
 											}
 										}
 									}
-									return l;
+									return _lLocal;
 								}
-							} )( e, t ) ||
-							( function ( e, t ) {
-								if ( e ) {
-									if ( 'string' === typeof e ) {
-										return iY( e, t );
+							} )( _eLocal7, t ) ||
+							( function ( _eLocal1, _tLocal2 ) {
+								if ( _eLocal1 ) {
+									if ( 'string' === typeof _eLocal1 ) {
+										return iY( _eLocal1, _tLocal2 );
 									}
 									var n = {}.toString
-										.call( e )
+										.call( _eLocal1 )
 										.slice( 8, -1 );
 									return (
 										'Object' === n &&
-											e.constructor &&
-											( n = e.constructor.name ),
-										'Map' === n || 'Set' === n
-											? Array.from( e )
-											: 'Arguments' === n ||
-												  /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-														n
-												  )
-												? iY( e, t )
-												: void 0
+											_eLocal1.constructor &&
+											( n = _eLocal1.constructor.name ),
+										( () => {
+											if ( 'Map' === n || 'Set' === n ) {
+												return Array.from( _eLocal1 );
+											}
+											if (
+												'Arguments' === n ||
+												/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+													n
+												)
+											) {
+												return iY( _eLocal1, _tLocal2 );
+											}
+											return void 0;
+										} )()
 									 );
 								}
-							} )( e, t ) ||
+							} )( _eLocal7, t ) ||
 							( function () {
 								throw new TypeError(
 									'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -233,48 +248,52 @@ export function createCourseList( readRuntime ) {
 							} )()
 						);
 					} )( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-					t = e[ 0 ],
-					n = e[ 1 ],
-					r = ( 0, ReactHooks.useCallback )( function ( e ) {
-						var t =
-							arguments.length > 1 && void 0 !== arguments[ 1 ]
-								? arguments[ 1 ]
+					_tLocal3 = _eLocal6[ 0 ],
+					_nLocal = _eLocal6[ 1 ],
+					_rLocal = ( 0, ReactHooks.useCallback )( function (
+						..._args3
+					) {
+						let [ _eLocal10 ] = _args3;
+						var _tLocal4 =
+							_args3.length > 1 && void 0 !== _args3[ 1 ]
+								? _args3[ 1 ]
 								: 'download_'.concat(
 										new Date().toISOString(),
 										'.json'
 									);
 						try {
-							n( ! 0 );
-							var r =
-									'object' === oY( e )
-										? JSON.stringify( e, null, 2 )
-										: e,
-								a = new Blob( [ r ], {
+							_nLocal( ! 0 );
+							var _rLocal2 =
+									'object' === oY( _eLocal10 )
+										? JSON.stringify( _eLocal10, null, 2 )
+										: _eLocal10,
+								_aLocal2 = new Blob( [ _rLocal2 ], {
 									type: 'application/json',
 								} ),
-								o = window.URL.createObjectURL( a ),
-								i = document.createElement( 'a' );
+								_oLocal2 =
+									window.URL.createObjectURL( _aLocal2 ),
+								_iLocal2 = document.createElement( 'a' );
 							return (
-								( i.href = o ),
-								( i.download = t ),
-								document.body.appendChild( i ),
-								i.click(),
-								document.body.removeChild( i ),
-								window.URL.revokeObjectURL( o ),
-								n( ! 1 ),
+								( _iLocal2.href = _oLocal2 ),
+								( _iLocal2.download = _tLocal4 ),
+								document.body.appendChild( _iLocal2 ),
+								_iLocal2.click(),
+								document.body.removeChild( _iLocal2 ),
+								window.URL.revokeObjectURL( _oLocal2 ),
+								_nLocal( ! 1 ),
 								! 0
 							 );
-						} catch ( e ) {
+						} catch ( _eLocal11 ) {
 							return (
-								console.error( 'Download failed:', e ),
-								n( ! 1 ),
+								console.error( 'Download failed:', _eLocal11 ),
+								_nLocal( ! 1 ),
 								! 1
 							 );
 						}
 					}, [] );
 				return {
-					isDownloading: t,
-					downloadFile: r,
+					isDownloading: _tLocal3,
+					downloadFile: _rLocal,
 				};
 			} )(),
 			Te = ( Me.isDownloading, Me.downloadFile ),
@@ -285,224 +304,248 @@ export function createCourseList( readRuntime ) {
 			Le = ( 0, Router.zy )();
 		( 0, ReactHooks.useEffect )(
 			function () {
-				'true' ===
-					new URLSearchParams( Le.search ).get(
-						'openAddCourseModal'
-					) &&
-					( Ae( ! 0 ),
-					Be( '/courses', {
-						replace: ! 0,
-					} ) );
+				if (
+					'true' ===
+					new URLSearchParams( Le.search ).get( 'openAddCourseModal' )
+				) {
+					{
+						Ae( ! 0 );
+						Be( '/courses', {
+							replace: ! 0,
+						} );
+					}
+				}
 			},
 			[ Le.search, Be ]
 		);
 		var Ve = ( 0, ReactHooks.useCallback )(
 				dY(
-					cY().m( function e() {
-						var n,
-							r,
-							a,
-							o = arguments;
-						return cY().w( function ( e ) {
+					cY().m( function _eLocal12( ..._args ) {
+						var _nLocal2,
+							_rLocal3,
+							_aLocal3,
+							_oLocal3 = _args;
+						return cY().w( function ( _eLocal13 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal13.n ) {
 									case 0:
-										( ( n =
-											o.length > 0 && void 0 !== o[ 0 ]
-												? o[ 0 ]
-												: 'date' ),
-											( r =
-												o.length > 1 &&
-												void 0 !== o[ 1 ]
-													? o[ 1 ]
-													: 'DESC' ),
-											N( ! 0 ),
-											( a = {
-												offset: 5 * ( j - 1 ),
-												order: r,
-												page: j,
-												per_page: 5,
-												search: P,
-												post_status: R,
-												orderby: n,
-												date_filter: s,
-												price_type: p,
-												category_id: w,
-											} ),
-											xq( s ) &&
-												( ( a.date_filter = 'custom' ),
-												( a.start_date = sn()(
+										_nLocal2 =
+											_oLocal3.length > 0 &&
+											void 0 !== _oLocal3[ 0 ]
+												? _oLocal3[ 0 ]
+												: 'date';
+										_rLocal3 =
+											_oLocal3.length > 1 &&
+											void 0 !== _oLocal3[ 1 ]
+												? _oLocal3[ 1 ]
+												: 'DESC';
+										N( ! 0 );
+										_aLocal3 = {
+											offset: 5 * ( j - 1 ),
+											order: _rLocal3,
+											page: j,
+											per_page: 5,
+											search: P,
+											post_status: R,
+											orderby: _nLocal2,
+											date_filter: s,
+											price_type: p,
+											category_id: w,
+										};
+										if ( xq( s ) ) {
+											{
+												_aLocal3.date_filter = 'custom';
+												_aLocal3.start_date = sn()(
 													s[ 0 ]
-												).format( 'YYYY-MM-DD' ) ),
-												( a.end_date = sn()(
+												).format( 'YYYY-MM-DD' );
+												_aLocal3.end_date = sn()(
 													s[ 1 ]
-												).format( 'YYYY-MM-DD' ) ) ),
-											t
-												.fetchCourses( a )
-												.finally( function () {
-													N( ! 1 );
-												} ) );
+												).format( 'YYYY-MM-DD' );
+											}
+										}
+										t.fetchCourses( _aLocal3 ).finally(
+											function () {
+												N( ! 1 );
+											}
+										);
+									// Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 1:
-										return e.a( 2 );
+										return _eLocal13.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal12 );
 					} )
 				),
 				[ j, P, s, p, w, R ]
 			),
 			Ge = ( 0, ReactHooks.useCallback )(
 				dY(
-					cY().m( function e() {
-						return cY().w( function ( e ) {
+					cY().m( function _eLocal14() {
+						return cY().w( function ( _eLocal15 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal15.n ) {
 									case 0:
 										Ae( ! 0 );
+									// Falls through to the shared async state cleanup.
+									// Falls through to the shared async state cleanup.
 									case 1:
-										return e.a( 2 );
+										return _eLocal15.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal14 );
 					} )
 				),
 				[]
 			),
-			Ue = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( O( e ), A( 1 ) );
+			Ue = ( 0, ReactHooks.useCallback )( function ( _eLocal16 ) {
+				O( _eLocal16 );
+				A( 1 );
 			}, [] ),
-			qe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( d( e ), A( 1 ) );
+			qe = ( 0, ReactHooks.useCallback )( function ( _eLocal17 ) {
+				d( _eLocal17 );
+				A( 1 );
 			}, [] ),
-			Ye = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( h( e ), A( 1 ) );
+			Ye = ( 0, ReactHooks.useCallback )( function ( _eLocal18 ) {
+				h( _eLocal18 );
+				A( 1 );
 			}, [] ),
-			Qe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( E( e ), A( 1 ) );
+			Qe = ( 0, ReactHooks.useCallback )( function ( _eLocal19 ) {
+				E( _eLocal19 );
+				A( 1 );
 			}, [] ),
-			Ze = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( x( e ), A( 1 ) );
+			Ze = ( 0, ReactHooks.useCallback )( function ( _eLocal20 ) {
+				x( _eLocal20 );
+				A( 1 );
 			}, [] ),
-			$e = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( A( e ), B( [] ) );
+			$e = ( 0, ReactHooks.useCallback )( function ( _eLocal21 ) {
+				A( _eLocal21 );
+				B( [] );
 			}, [] ),
 			Ke = ( 0, ReactHooks.useCallback )(
-				function ( e, t, n ) {
-					var r =
+				function ( _eLocal22, _tLocal5, _nLocal3 ) {
+					var _rLocal4 =
 							{
 								date_created: 'date',
 								total_enrollment: 'enrollment',
 								status: 'post_status',
 								price: 'price',
 								courseDetails: 'title',
-							}[ n.field ] || n.field,
-						a =
+							}[ _nLocal3.field ] || _nLocal3.field,
+						_aLocal4 =
 							{
 								ascend: 'ASC',
 								descend: 'DESC',
-							}[ n.order ] || n.order;
-					( A( 1 ), Ve( r, a ) );
+							}[ _nLocal3.order ] || _nLocal3.order;
+					A( 1 );
+					Ve( _rLocal4, _aLocal4 );
 				},
 				[ Ve, A ]
 			),
-			Je = ( 0, ReactHooks.useCallback )( function ( e ) {
-				window.open( e, '_blank' );
+			Je = ( 0, ReactHooks.useCallback )( function ( _eLocal23 ) {
+				window.open( _eLocal23, '_blank' );
 			}, [] ),
-			Xe = ( 0, ReactHooks.useCallback )( function ( e ) {
-				( ne( ! 0 ), oe( e ) );
+			Xe = ( 0, ReactHooks.useCallback )( function ( _eLocal24 ) {
+				ne( ! 0 );
+				oe( _eLocal24 );
 			}, [] ),
 			et = ( 0, ReactHooks.useCallback )( function () {
 				ne( ! 1 );
 			}, [] ),
 			tt = ( 0, ReactHooks.useCallback )(
 				dY(
-					cY().m( function e() {
-						return cY().w( function ( e ) {
+					cY().m( function _eLocal25() {
+						return cY().w( function ( _eLocal26 ) {
 							for (;;) {
-								switch ( e.n ) {
+								switch ( _eLocal26.n ) {
 									case 0:
 										return (
-											( e.n = 1 ),
+											( _eLocal26.n = 1 ),
 											t.handleBulkDelete( 'courses', {
 												course_ids: ae ? [ ae ] : W,
 											} )
 										 );
 									case 1:
-										( e.v,
-											Ve(),
-											B( [] ),
-											A( 1 ),
-											oe( null ),
-											ne( ! 1 ) );
+										Ve();
+										B( [] );
+										A( 1 );
+										oe( null );
+										ne( ! 1 );
+									// Falls through to the shared async state cleanup.
 									case 2:
-										return e.a( 2 );
+										return _eLocal26.a( 2 );
 								}
 							}
-						}, e );
+						}, _eLocal25 );
 					} )
 				),
 				[ W, ae, Ve ]
 			),
 			nt = ( 0, ReactHooks.useCallback )(
 				( function () {
-					var n = dY(
-						cY().m( function n( r ) {
-							var a, o;
-							return cY().w( function ( n ) {
+					var _nLocal4 = dY(
+						cY().m( function _nLocal5( _rLocal5 ) {
+							var _aLocal5, _oLocal4;
+							return cY().w( function ( _nLocal6 ) {
 								for (;;) {
-									switch ( n.n ) {
+									switch ( _nLocal6.n ) {
 										case 0: {
-											n.n = 1;
+											_nLocal6.n = 1;
 											break;
 										}
 										case 1:
-											if ( ! r ) {
-												n.n = 3;
+											if ( ! _rLocal5 ) {
+												_nLocal6.n = 3;
 												break;
 											}
 											return (
-												( n.n = 2 ),
-												t.exportCourses( [ r ] )
+												( _nLocal6.n = 2 ),
+												t.exportCourses( [ _rLocal5 ] )
 											 );
 										case 2:
-											( ( a = n.v ), ( n.n = 5 ) );
+											_aLocal5 = _nLocal6.v;
+											_nLocal6.n = 5;
 											break;
 										case 3:
 											return (
-												( n.n = 4 ),
+												( _nLocal6.n = 4 ),
 												t.exportCourses( W )
 											 );
 										case 4:
-											a = n.v;
+											_aLocal5 = _nLocal6.v;
+										// Falls through to the shared async state cleanup.
 										case 5:
-											( ( o = null ),
-												a &&
-													( o = Te(
-														a,
-														'courses_export_'.concat(
-															new Date().toISOString(),
-															'.json'
-														)
-													) ),
-												o &&
-													t.showNotification(
-														( 0, I18n.__ )(
-															'Exported successfully.',
-															'ohmylms'
-														),
-														'success'
+											_oLocal4 = null;
+											if ( _aLocal5 ) {
+												_oLocal4 = Te(
+													_aLocal5,
+													'courses_export_'.concat(
+														new Date().toISOString(),
+														'.json'
+													)
+												);
+											}
+											if ( _oLocal4 ) {
+												t.showNotification(
+													( 0, I18n.__ )(
+														'Exported successfully.',
+														'ohmylms'
 													),
-												ue( ! 1 ),
-												B( [] ) );
+													'success'
+												);
+											}
+											ue( ! 1 );
+											B( [] );
+										// Falls through to the shared async state cleanup.
 										case 6:
-											return n.a( 2 );
+											return _nLocal6.a( 2 );
 									}
 								}
-							}, n );
+							}, _nLocal5 );
 						} )
 					);
-					return function ( e ) {
-						return n.apply( this, arguments );
+					return function ( ..._args4 ) {
+						return _nLocal4.apply( this, _args4 );
 					};
 				} )(),
 				[ e, Te, W ]
@@ -512,85 +555,96 @@ export function createCourseList( readRuntime ) {
 			}, [] ),
 			at = ( 0, ReactHooks.useCallback )(
 				dY(
-					cY().m( function n() {
-						var r, a;
+					cY().m( function _nLocal7() {
+						var _rLocal6, _aLocal6;
 						return cY().w(
-							function ( n ) {
+							function ( _nLocal8 ) {
 								for (;;) {
-									switch ( ( n.p = n.n ) ) {
+									switch ( ( _nLocal8.p = _nLocal8.n ) ) {
 										case 0: {
-											n.n = 1;
+											_nLocal8.n = 1;
 											break;
 										}
 										case 1:
 											if (
-												( ye( ! 0 ), ( n.p = 2 ), ! ae )
+												( ye( ! 0 ),
+												( _nLocal8.p = 2 ),
+												! ae )
 											) {
-												n.n = 4;
+												_nLocal8.n = 4;
 												break;
 											}
 											return (
-												( n.n = 3 ),
+												( _nLocal8.n = 3 ),
 												t.exportCoursesAsScorm(
 													[ ae ],
 													fe
 												)
 											 );
 										case 3:
-											( ( a = n.v ), ( n.n = 6 ) );
+											_aLocal6 = _nLocal8.v;
+											_nLocal8.n = 6;
 											break;
 										case 4:
 											return (
-												( n.n = 5 ),
+												( _nLocal8.n = 5 ),
 												t.exportCoursesAsScorm( W, fe )
 											 );
 										case 5:
-											a = n.v;
+											_aLocal6 = _nLocal8.v;
+										// Falls through to the shared async state cleanup.
 										case 6:
-											( null !== ( r = a ) &&
-											void 0 !== r &&
-											r.success
-												? ( t.showNotification(
+											if (
+												null !==
+													( _rLocal6 = _aLocal6 ) &&
+												void 0 !== _rLocal6 &&
+												_rLocal6.success
+											) {
+												{
+													t.showNotification(
 														( 0, I18n.__ )(
 															'SCORM package is being downloaded...',
 															'ohmylms'
 														),
 														'success'
-													),
-													me( ! 1 ),
-													B( [] ),
-													oe( null ) )
-												: t.showNotification(
-														( 0, I18n.__ )(
-															'SCORM export failed. Please try again.',
-															'ohmylms'
-														),
-														'error'
-													),
-												( n.n = 8 ) );
-											break;
-										case 7:
-											( ( n.p = 7 ),
-												n.v,
+													);
+													me( ! 1 );
+													B( [] );
+													oe( null );
+												}
+											} else {
 												t.showNotification(
 													( 0, I18n.__ )(
 														'SCORM export failed. Please try again.',
 														'ohmylms'
 													),
 													'error'
-												) );
+												);
+											}
+											_nLocal8.n = 8;
+											break;
+										case 7:
+											_nLocal8.p = 7;
+											t.showNotification(
+												( 0, I18n.__ )(
+													'SCORM export failed. Please try again.',
+													'ohmylms'
+												),
+												'error'
+											);
+										// Falls through to the shared async state cleanup.
 										case 8:
 											return (
-												( n.p = 8 ),
+												( _nLocal8.p = 8 ),
 												ye( ! 1 ),
-												n.f( 8 )
+												_nLocal8.f( 8 )
 											 );
 										case 9:
-											return n.a( 2 );
+											return _nLocal8.a( 2 );
 									}
 								}
 							},
-							n,
+							_nLocal7,
 							null,
 							[ [ 2, 7, 8, 9 ] ]
 						);
@@ -599,35 +653,40 @@ export function createCourseList( readRuntime ) {
 				[ e, W, fe, ae ]
 			),
 			ot = ( 0, ReactHooks.useCallback )( function () {
-				( me( ! 1 ), ve( '1.2' ), oe( null ) );
+				me( ! 1 );
+				ve( '1.2' );
+				oe( null );
 			}, [] ),
 			it = ( 0, ReactHooks.useCallback )(
-				function () {
-					var t =
-						arguments.length > 0 && void 0 !== arguments[ 0 ]
-							? arguments[ 0 ]
+				function ( ..._args2 ) {
+					var _tLocal6 =
+						_args2.length > 0 && void 0 !== _args2[ 0 ]
+							? _args2[ 0 ]
 							: null;
-					( t && oe( t ), me( ! 0 ) );
+					if ( _tLocal6 ) {
+						oe( _tLocal6 );
+					}
+					me( ! 0 );
 				},
 				[ e ]
 			),
 			lt = ( 0, ReactHooks.useCallback )(
 				( function () {
-					var e = dY(
-						cY().m( function e( t ) {
-							var n, r;
-							return cY().w( function ( e ) {
+					var _eLocal28 = dY(
+						cY().m( function _eLocal29( _tLocal7 ) {
+							var _nLocal9, _rLocal7;
+							return cY().w( function ( _eLocal30 ) {
 								for (;;) {
-									switch ( e.n ) {
+									switch ( _eLocal30.n ) {
 										case 0:
 											return (
-												( n = {
+												( _nLocal9 = {
 													status: 'publish',
 												} ),
-												( e.n = 1 ),
+												( _eLocal30.n = 1 ),
 												l()( {
 													path: '/ohmylms/v1/courses/'.concat(
-														t,
+														_tLocal7,
 														'/status'
 													),
 													method: 'POST',
@@ -635,54 +694,67 @@ export function createCourseList( readRuntime ) {
 														'Content-Type':
 															'application/json',
 													},
-													body: JSON.stringify( n ),
+													body: JSON.stringify(
+														_nLocal9
+													),
 												} )
 											 );
 										case 1:
-											'success' ===
-												( null == ( r = e.v )
+											if (
+												'success' ===
+												( ( ( _nullableValue2 ) =>
+													_nullableValue2 === null ||
+													_nullableValue2 ===
+														void 0 )(
+													( _rLocal7 = _eLocal30.v )
+												)
 													? void 0
-													: r.status ) &&
-												( openNotificationWithIcon(
-													'success',
-													( 0, I18n.__ )(
-														'Course published successfully.',
-														'ohmylms'
-													)
-												),
-												Ve() );
+													: _rLocal7.status )
+											) {
+												{
+													openNotificationWithIcon(
+														'success',
+														( 0, I18n.__ )(
+															'Course published successfully.',
+															'ohmylms'
+														)
+													);
+													Ve();
+												}
+											}
+										// Falls through to the shared async state cleanup.
 										case 2:
-											return e.a( 2 );
+											return _eLocal30.a( 2 );
 									}
 								}
-							}, e );
+							}, _eLocal29 );
 						} )
 					);
-					return function ( t ) {
-						return e.apply( this, arguments );
+					return function ( ..._args5 ) {
+						return _eLocal28.apply( this, _args5 );
 					};
 				} )(),
 				[]
 			),
 			ct = ( 0, ReactHooks.useCallback )(
 				dY(
-					cY().m( function t() {
-						var n, r;
+					cY().m( function _tLocal9() {
+						var _nLocal0, _rLocal8;
 						return cY().w(
-							function ( t ) {
+							function ( _tLocal0 ) {
 								for (;;) {
-									switch ( ( t.p = t.n ) ) {
+									switch ( ( _tLocal0.p = _tLocal0.n ) ) {
 										case 0:
 											if ( ! Se ) {
-												t.n = 1;
+												_tLocal0.n = 1;
 												break;
 											}
-											return t.a( 2 );
+											return _tLocal0.a( 2 );
 										case 1:
 											return (
-												( t.p = 1 ),
+												( _tLocal0.p = 1 ),
 												Re( ! 0 ),
-												( t.n = 2 ),
+												( _tLocal0.n = 2 ),
 												l()( {
 													path: '/ohmylms/v1/courses/'.concat(
 														ae,
@@ -696,45 +768,54 @@ export function createCourseList( readRuntime ) {
 												} )
 											 );
 										case 2:
-											( 'success' ===
-												( null == ( n = t.v )
+											if (
+												'success' ===
+												( ( ( _nullableValue3 ) =>
+													_nullableValue3 === null ||
+													_nullableValue3 ===
+														void 0 )(
+													( _nLocal0 = _tLocal0.v )
+												)
 													? void 0
-													: n.status ) &&
+													: _nLocal0.status )
+											) {
 												openNotificationWithIcon(
 													'success',
 													( 0, I18n.__ )(
 														'Course duplicated successfully.',
 														'ohmylms'
 													)
-												),
-												( t.n = 4 ) );
+												);
+											}
+											_tLocal0.n = 4;
 											break;
 										case 3:
-											( ( t.p = 3 ),
-												( r = t.v ),
-												console.error( r ),
-												openNotificationWithIcon(
-													'error',
-													( 0, I18n.__ )(
-														'Something went wrong!',
-														'ohmylms'
-													)
-												) );
+											_tLocal0.p = 3;
+											_rLocal8 = _tLocal0.v;
+											console.error( _rLocal8 );
+											openNotificationWithIcon(
+												'error',
+												( 0, I18n.__ )(
+													'Something went wrong!',
+													'ohmylms'
+												)
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
-												( t.p = 4 ),
+												( _tLocal0.p = 4 ),
 												Ve(),
 												oe( null ),
 												we( ! 1 ),
 												Re( ! 1 ),
-												t.f( 4 )
+												_tLocal0.f( 4 )
 											 );
 										case 5:
-											return t.a( 2 );
+											return _tLocal0.a( 2 );
 									}
 								}
 							},
-							t,
+							_tLocal9,
 							null,
 							[ [ 1, 3, 4, 5 ] ]
 						);
@@ -743,116 +824,140 @@ export function createCourseList( readRuntime ) {
 				[ ae, Se, e ]
 			),
 			ut = ( 0, ReactHooks.useCallback )( function () {
-				( oe( null ), we( ! 1 ) );
+				oe( null );
+				we( ! 1 );
 			}, [] ),
-			st = ( 0, ReactHooks.useCallback )( function ( t ) {
-				( we( ! 0 ), oe( t ) );
+			st = ( 0, ReactHooks.useCallback )( function ( _tLocal1 ) {
+				we( ! 0 );
+				oe( _tLocal1 );
 			}, [] ),
 			dt = ( 0, ReactHooks.useCallback )( function () {
 				Q( ! 0 );
 			}, [] ),
 			mt = ( 0, ReactHooks.useCallback )( function () {
-				( Q( ! 1 ), K( ! 1 ) );
+				Q( ! 1 );
+				K( ! 1 );
 			}, [] ),
 			pt = ( 0, ReactHooks.useCallback )(
 				( function () {
-					var e = dY(
-						cY().m( function e( n ) {
-							var r,
-								a,
-								o,
-								i,
-								l,
-								c,
-								u = arguments;
+					var _eLocal31 = dY(
+						cY().m( function _eLocal32( ..._args6 ) {
+							let [ _nLocal1 ] = _args6;
+							var _rLocal9,
+								_aLocal7,
+								_oLocal5,
+								_iLocal3,
+								_lLocal2,
+								_cLocal2,
+								_uLocal2 = _args6;
 							return cY().w(
-								function ( e ) {
+								function ( _eLocal33 ) {
 									for (;;) {
-										switch ( ( e.p = e.n ) ) {
+										switch (
+											( _eLocal33.p = _eLocal33.n )
+										) {
 											case 0:
 												if (
-													( ( r =
-														u.length > 1 &&
-														void 0 !== u[ 1 ]
-															? u[ 1 ]
+													( ( _rLocal9 =
+														_uLocal2.length > 1 &&
+														void 0 !== _uLocal2[ 1 ]
+															? _uLocal2[ 1 ]
 															: 'json' ),
-													n )
+													_nLocal1 )
 												) {
-													e.n = 1;
+													_eLocal33.n = 1;
 													break;
 												}
-												return e.a( 2 );
+												return _eLocal33.a( 2 );
 											case 1:
 												if (
-													( ( e.p = 1 ),
+													( ( _eLocal33.p = 1 ),
 													K( ! 0 ),
-													'scorm' !== r )
+													'scorm' !== _rLocal9 )
 												) {
-													e.n = 3;
+													_eLocal33.n = 3;
 													break;
 												}
 												return (
-													( e.n = 2 ),
-													t.importScormCourse( n )
+													( _eLocal33.n = 2 ),
+													t.importScormCourse(
+														_nLocal1
+													)
 												 );
 											case 2:
-												( ( o = e.v ), ( e.n = 5 ) );
+												_oLocal5 = _eLocal33.v;
+												_eLocal33.n = 5;
 												break;
 											case 3:
 												return (
-													( e.n = 4 ),
-													t.importCourse( n )
+													( _eLocal33.n = 4 ),
+													t.importCourse( _nLocal1 )
 												 );
 											case 4:
-												o = e.v;
+												_oLocal5 = _eLocal33.v;
+											// Falls through to the shared async state cleanup.
 											case 5:
-												( null !== ( a = o ) &&
-													void 0 !== a &&
-													a.success &&
-													( Q( ! 1 ),
-													Ve(),
-													'scorm' === r &&
-														null !== ( i = o ) &&
-														void 0 !== i &&
-														i.data &&
-														( ( l = o.data )
-															.chapters_created,
-														l.lessons_created,
-														l.quizzes_created,
-														l.media_imported ) ),
-													( e.n = 7 ) );
+												if (
+													null !==
+														( _aLocal7 =
+															_oLocal5 ) &&
+													void 0 !== _aLocal7 &&
+													_aLocal7.success
+												) {
+													{
+														Q( ! 1 );
+														Ve();
+														if (
+															'scorm' ===
+																_rLocal9 &&
+															null !==
+																( _iLocal3 =
+																	_oLocal5 ) &&
+															void 0 !==
+																_iLocal3 &&
+															_iLocal3.data
+														) {
+															{
+																_lLocal2 =
+																	_oLocal5.data;
+															}
+														}
+													}
+												}
+												_eLocal33.n = 7;
 												break;
 											case 6:
-												( ( e.p = 6 ),
-													( c = e.v ),
-													console.error( c ),
-													openNotificationWithIcon(
-														'error',
-														c.message ||
-															( 0, I18n.__ )(
-																'Import failed',
-																'ohmylms'
-															)
-													) );
+												_eLocal33.p = 6;
+												_cLocal2 = _eLocal33.v;
+												console.error( _cLocal2 );
+												openNotificationWithIcon(
+													'error',
+													_cLocal2.message ||
+														( 0, I18n.__ )(
+															'Import failed',
+															'ohmylms'
+														)
+												);
+											// Falls through to the shared async state cleanup.
 											case 7:
 												return (
-													( e.p = 7 ),
+													( _eLocal33.p = 7 ),
 													K( ! 1 ),
-													e.f( 7 )
+													_eLocal33.f( 7 )
 												 );
 											case 8:
-												return e.a( 2 );
+												return _eLocal33.a( 2 );
 										}
 									}
 								},
-								e,
+								_eLocal32,
 								null,
 								[ [ 1, 6, 7, 8 ] ]
 							);
 						} )
 					);
-					return function ( t ) {
-						return e.apply( this, arguments );
+					return function ( ..._args7 ) {
+						return _eLocal31.apply( this, _args7 );
 					};
 				} )(),
 				[ t, Ve, openNotificationWithIcon ]
@@ -943,11 +1048,11 @@ export function createCourseList( readRuntime ) {
 					key: 'courseDetails',
 					sorter: ! 0,
 					width: '420px',
-					render( e, t ) {
-						var n = H === t.id;
+					render( _eLocal34, _tLocal11 ) {
+						var _nLocal10 = H === _tLocal11.id;
 						return React.createElement( yG, {
-							course: t,
-							isHover: n,
+							course: _tLocal11,
+							isHover: _nLocal10,
 						} );
 					},
 				},
@@ -956,8 +1061,8 @@ export function createCourseList( readRuntime ) {
 					dataIndex: 'type',
 					key: 'type',
 					width: 150,
-					render( e ) {
-						return 'cohort-based' === e ? (
+					render( _eLocal35 ) {
+						return 'cohort-based' === _eLocal35 ? (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
@@ -980,15 +1085,17 @@ export function createCourseList( readRuntime ) {
 					key: 'date_created',
 					sorter: ! 0,
 					width: null,
-					render( e ) {
+					render( _eLocal36 ) {
 						return (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
 							>
-								{ sn()( null == e ? void 0 : e.date ).format(
-									'MMMM DD, YYYY'
-								) || '-' }
+								{ sn()(
+									_eLocal36 === null || _eLocal36 === void 0
+										? void 0
+										: _eLocal36.date
+								).format( 'MMMM DD, YYYY' ) || '-' }
 							</Controls.BadgeWP>
 						);
 					},
@@ -999,20 +1106,23 @@ export function createCourseList( readRuntime ) {
 					key: 'total_enrollment',
 					sorter: ! 0,
 					width: null,
-					render( e, t ) {
+					render( _eLocal37, _tLocal12 ) {
 						return (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
 							>
-								{ e ? (
+								{ _eLocal37 ? (
 									<v.Link
 										to={ ''.concat(
-											null == t ? void 0 : t.id,
+											_tLocal12 === null ||
+												_tLocal12 === void 0
+												? void 0
+												: _tLocal12.id,
 											'/students'
 										) }
 									>
-										{ e }{ ' ' }
+										{ _eLocal37 }{ ' ' }
 									</v.Link>
 								) : (
 									'-'
@@ -1026,29 +1136,38 @@ export function createCourseList( readRuntime ) {
 					dataIndex: 'status',
 					key: 'status',
 					width: null,
-					render( e, t ) {
+					render( _eLocal38 ) {
 						return (
 							<Controls.BadgeWP
 								isBorderLess={ ! 0 }
-								variant={
-									'publish' === e
-										? 'success'
-										: 'future' === e
-											? 'warning'
-											: 'secondary'
-								}
+								variant={ ( () => {
+									if ( 'publish' === _eLocal38 ) {
+										return 'success';
+									}
+									if ( 'future' === _eLocal38 ) {
+										return 'warning';
+									}
+									return 'secondary';
+								} )() }
 								style={ {
 									textTransform: 'capitalize',
 								} }
 							>
-								{ 'publish' === e
-									? ( 0, I18n.__ )( 'Published', 'ohmylms' )
-									: 'future' === e
-										? ( 0, I18n.__ )(
-												'Scheduled',
-												'ohmylms'
-											)
-										: ( 0, I18n.__ )( 'Draft', 'ohmylms' ) }
+								{ ( () => {
+									if ( 'publish' === _eLocal38 ) {
+										return ( 0, I18n.__ )(
+											'Published',
+											'ohmylms'
+										);
+									}
+									if ( 'future' === _eLocal38 ) {
+										return ( 0, I18n.__ )(
+											'Scheduled',
+											'ohmylms'
+										);
+									}
+									return ( 0, I18n.__ )( 'Draft', 'ohmylms' );
+								} )() }
 							</Controls.BadgeWP>
 						);
 					},
@@ -1058,50 +1177,62 @@ export function createCourseList( readRuntime ) {
 					dataIndex: 'price',
 					key: 'price',
 					width: null,
-					render( e, t ) {
+					render( _eLocal39, _tLocal14 ) {
 						return 'paid' ===
-							( null == t ? void 0 : t.price_type ) ? (
+							( _tLocal14 === null || _tLocal14 === void 0
+								? void 0
+								: _tLocal14.price_type ) ? (
 							<Controls.BadgeWP
 								variant={ 'secondary' }
 								isBorderLess={ ! 0 }
 							>
-								{ t.sale_price ? (
+								{ _tLocal14.sale_price ? (
 									<React.Fragment>
 										<YH
 											currency={
-												( null == t
+												( _tLocal14 === null ||
+												_tLocal14 === void 0
 													? void 0
-													: t.currency ) || '$'
+													: _tLocal14.currency ) ||
+												'$'
 											}
 											currency_pos={
-												( null == t
+												( _tLocal14 === null ||
+												_tLocal14 === void 0
 													? void 0
-													: t.currency_pos ) || 'left'
+													: _tLocal14.currency_pos ) ||
+												'left'
 											}
 											price={ Number(
-												( null == t
+												( _tLocal14 === null ||
+												_tLocal14 === void 0
 													? void 0
-													: t.sale_price ) || '0'
+													: _tLocal14.sale_price ) ||
+													'0'
 											) }
 										/>
 										{ ' ' }
 										<del>
 											<YH
 												currency={
-													( null == t
+													( _tLocal14 === null ||
+													_tLocal14 === void 0
 														? void 0
-														: t.currency ) || '$'
+														: _tLocal14.currency ) ||
+													'$'
 												}
 												currency_pos={
-													( null == t
+													( _tLocal14 === null ||
+													_tLocal14 === void 0
 														? void 0
-														: t.currency_pos ) ||
+														: _tLocal14.currency_pos ) ||
 													'left'
 												}
 												price={ Number(
-													( null == t
+													( _tLocal14 === null ||
+													_tLocal14 === void 0
 														? void 0
-														: t.regular_price ) ||
+														: _tLocal14.regular_price ) ||
 														'0'
 												) }
 												del={ ! 0 }
@@ -1111,18 +1242,23 @@ export function createCourseList( readRuntime ) {
 								) : (
 									<YH
 										currency={
-											( null == t
+											( _tLocal14 === null ||
+											_tLocal14 === void 0
 												? void 0
-												: t.currency ) || '$'
+												: _tLocal14.currency ) || '$'
 										}
 										currency_pos={
-											( null == t
+											( _tLocal14 === null ||
+											_tLocal14 === void 0
 												? void 0
-												: t.currency_pos ) || 'left'
+												: _tLocal14.currency_pos ) ||
+											'left'
 										}
 										price={ Number(
-											( null == t ? void 0 : t.price ) ||
-												'0'
+											( _tLocal14 === null ||
+											_tLocal14 === void 0
+												? void 0
+												: _tLocal14.price ) || '0'
 										) }
 									/>
 								) }
@@ -1142,7 +1278,7 @@ export function createCourseList( readRuntime ) {
 					dataIndex: 'action',
 					key: 'action',
 					width: null,
-					render( e, t ) {
+					render( _eLocal40, _tLocal15 ) {
 						return (
 							<Controls.DropdownMenuWP
 								controls={ [
@@ -1152,7 +1288,9 @@ export function createCourseList( readRuntime ) {
 											'ohmylms'
 										),
 										onClick: () =>
-											setGradebook( Number( t.id ) ),
+											setGradebook(
+												Number( _tLocal15.id )
+											),
 									},
 									...( canViewAs()
 										? [ 'student', 'instructor' ].map(
@@ -1167,7 +1305,7 @@ export function createCourseList( readRuntime ) {
 														setViewAs( {
 															role,
 															courseId: Number(
-																t.id
+																_tLocal15.id
 															),
 														} ),
 												} )
@@ -1180,9 +1318,10 @@ export function createCourseList( readRuntime ) {
 										),
 										onClick() {
 											return Je(
-												null == t
+												_tLocal15 === null ||
+													_tLocal15 === void 0
 													? void 0
-													: t.course_url
+													: _tLocal15.course_url
 											);
 										},
 										icon: <Br />,
@@ -1190,7 +1329,10 @@ export function createCourseList( readRuntime ) {
 								].concat(
 									lY(
 										'publish' !==
-											( null == t ? void 0 : t.status )
+											( _tLocal15 === null ||
+											_tLocal15 === void 0
+												? void 0
+												: _tLocal15.status )
 											? [
 													{
 														title: ( 0, I18n.__ )(
@@ -1199,9 +1341,12 @@ export function createCourseList( readRuntime ) {
 														),
 														onClick() {
 															return lt(
-																null == t
+																_tLocal15 ===
+																	null ||
+																	_tLocal15 ===
+																		void 0
 																	? void 0
-																	: t.id
+																	: _tLocal15.id
 															);
 														},
 														icon: <Ot />,
@@ -1217,7 +1362,10 @@ export function createCourseList( readRuntime ) {
 											),
 											onClick() {
 												return st(
-													null == t ? void 0 : t.id
+													_tLocal15 === null ||
+														_tLocal15 === void 0
+														? void 0
+														: _tLocal15.id
 												);
 											},
 											icon: React.createElement(
@@ -1233,7 +1381,10 @@ export function createCourseList( readRuntime ) {
 											),
 											onClick() {
 												return nt(
-													null == t ? void 0 : t.id
+													_tLocal15 === null ||
+														_tLocal15 === void 0
+														? void 0
+														: _tLocal15.id
 												);
 											},
 											icon: React.createElement(
@@ -1249,7 +1400,10 @@ export function createCourseList( readRuntime ) {
 											),
 											onClick() {
 												return it(
-													null == t ? void 0 : t.id
+													_tLocal15 === null ||
+														_tLocal15 === void 0
+														? void 0
+														: _tLocal15.id
 												);
 											},
 											icon: React.createElement(
@@ -1265,7 +1419,10 @@ export function createCourseList( readRuntime ) {
 											),
 											onClick() {
 												return Xe(
-													null == t ? void 0 : t.id
+													_tLocal15 === null ||
+														_tLocal15 === void 0
+														? void 0
+														: _tLocal15.id
 												);
 											},
 											icon: <We />,
@@ -1303,11 +1460,11 @@ export function createCourseList( readRuntime ) {
 		return (
 			( 0, ReactHooks.useEffect )(
 				function () {
-					var e = ! 0;
+					var _eLocal41 = ! 0;
 					return (
-						e && Ve(),
+						_eLocal41 && Ve(),
 						function () {
-							e = ! 1;
+							_eLocal41 = ! 1;
 						}
 					 );
 				},
@@ -1315,7 +1472,9 @@ export function createCourseList( readRuntime ) {
 			),
 			( 0, ReactHooks.useEffect )(
 				function () {
-					! F && o && openNotificationWithIcon( i, o );
+					if ( ! F && o ) {
+						openNotificationWithIcon( i, o );
+					}
 				},
 				[ o ]
 			),
@@ -1391,8 +1550,13 @@ export function createCourseList( readRuntime ) {
 									scroll={ {
 										x: 'max-content',
 									} }
-									onRowMouseEnter={ function ( e ) {
-										return G( null == e ? void 0 : e.id );
+									onRowMouseEnter={ function ( _eLocal42 ) {
+										return G(
+											_eLocal42 === null ||
+												_eLocal42 === void 0
+												? void 0
+												: _eLocal42.id
+										);
 									} }
 									onRowMouseLeave={ function () {
 										return G( null );
@@ -1547,6 +1711,9 @@ export function createCourseList( readRuntime ) {
 													marginBottom: '8px',
 													fontWeight: '500',
 												} }
+												htmlFor={
+													_controlId + '-field-1'
+												}
 											>
 												{ ( 0, I18n.__ )(
 													'Select SCORM Version:',
@@ -1555,8 +1722,12 @@ export function createCourseList( readRuntime ) {
 											</label>
 											<select
 												value={ fe }
-												onChange={ function ( e ) {
-													return ve( e.target.value );
+												onChange={ function (
+													_eLocal43
+												) {
+													return ve(
+														_eLocal43.target.value
+													);
 												} }
 												style={ {
 													width: '100%',
@@ -1565,6 +1736,7 @@ export function createCourseList( readRuntime ) {
 													borderRadius: '4px',
 													fontSize: '14px',
 												} }
+												id={ _controlId + '-field-1' }
 											>
 												<option value={ '1.2' }>
 													{ 'SCORM 1.2' }

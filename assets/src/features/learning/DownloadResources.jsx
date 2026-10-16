@@ -8,7 +8,6 @@ export function createDownloadResources( readRuntime ) {
 			I: Controls,
 			Ie,
 			In,
-			L: Entitlements,
 			M,
 			Mt,
 			React,
@@ -38,31 +37,31 @@ export function createDownloadResources( readRuntime ) {
 			h = ( 0, ReactHooks.useCallback )(
 				function () {
 					var e;
-					( ( e = wp.media( {
+					( e = wp.media( {
 						title: 'Select or Upload Media',
 						button: {
 							text: 'Use this media',
 						},
 						multiple: ! 0,
 					} ) ).on( 'select', function () {
-						var t = e
+						var _tLocal = e
 							.state()
 							.get( 'selection' )
 							.toJSON()
-							.map( function ( e ) {
+							.map( function ( _eLocal ) {
 								return {
-									id: e.id,
-									url: e.url,
-									name: e.filename,
+									id: _eLocal.id,
+									url: _eLocal.url,
+									name: _eLocal.filename,
 									size:
-										null == e
+										_eLocal === null || _eLocal === void 0
 											? void 0
-											: e.filesizeHumanReadable,
+											: _eLocal.filesizeHumanReadable,
 								};
 							} );
-						handleResources( t );
-					} ),
-						e.open() );
+						handleResources( _tLocal );
+					} );
+					e.open();
 				},
 				[ t, i ]
 			);
@@ -202,7 +201,9 @@ export function createDownloadResources( readRuntime ) {
 																	'Size:',
 																	'ohmylms'
 																) }{ ' ' }
-																{ ( null == e
+																{ ( e ===
+																	null ||
+																e === void 0
 																	? void 0
 																	: e.size ) ||
 																	'67 KB' }
@@ -218,11 +219,14 @@ export function createDownloadResources( readRuntime ) {
 														icon={ <An /> }
 														onClick={ function () {
 															return (
-																( t = e.id ),
+																( _tLocal2 =
+																	e.id ),
 																u( ! 0 ),
-																void m( t )
+																void m(
+																	_tLocal2
+																)
 															 );
-															var t;
+															var _tLocal2;
 														} }
 													/>
 												</Controls.FlexWP>
@@ -245,10 +249,13 @@ export function createDownloadResources( readRuntime ) {
 							'ohmylms'
 						) }
 						onClose={ function () {
-							( u( ! 1 ), m( null ) );
+							u( ! 1 );
+							m( null );
 						} }
 						onDelete={ function () {
-							( u( ! 1 ), handleDeleteResource( d ), m( null ) );
+							u( ! 1 );
+							handleDeleteResource( d );
+							m( null );
 						} }
 						isOpen={ c }
 						isDelete={ ! 0 }

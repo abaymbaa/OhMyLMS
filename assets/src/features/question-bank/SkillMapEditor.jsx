@@ -17,10 +17,10 @@ import {
  * @param root0.parts
  * @param root0.disabled
  * @param root0.onChange
+ * @param skill
  */
 const skillLabel = ( skill ) =>
 	`${ '— '.repeat( skill.depth ) }${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`;
-
 export function SkillMapEditor( {
 	skills,
 	value,
@@ -39,12 +39,21 @@ export function SkillMapEditor( {
 	return (
 		<fieldset disabled={ disabled } className="ohmylms-skill-map">
 			{ parts.map( ( part ) => {
-				const roles = value?.[ part ] || { primary: 0, supporting: [] };
+				const roles = value?.[ part ] || {
+					primary: 0,
+					supporting: [],
+				};
 				return (
 					<Fragment key={ part }>
 						{ parts.length > 1 && (
 							<h4>
-								{ sprintf( __( 'Part %s', 'ohmylms' ), part ) }
+								{ sprintf(
+									/* translators: %s: question part identifier. */ __(
+										'Part %s',
+										'ohmylms'
+									),
+									part
+								) }
 							</h4>
 						) }
 						<SelectControl
