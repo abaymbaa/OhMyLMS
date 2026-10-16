@@ -289,7 +289,8 @@ final class Hub {
 	/**
 	 * Signed-in learners always land on the Khan-style course overview, where enrolment also happens.
 	 *
-	 * Skipped for roadmap courses (never shown to learners), when Browse subjects is off and for
+	 * Skipped for roadmap courses (never shown to learners), password-protected courses that are still
+	 * locked (the public page shows the password form and the enrol card), when Browse subjects is off and for
 	 * ?preview links. Signed-out visitors get the same page at the course URL, as the hub needs a sign-in.
 	 */
 	public static function redirect_course_page() {
@@ -301,6 +302,9 @@ final class Hub {
 		}
 		$course_id = get_queried_object_id();
 		if ( ! $course_id || in_array( $course_id, LearnerCatalog::roadmap_course_ids(), true ) ) {
+			return;
+		}
+		if ( post_password_required( $course_id ) ) {
 			return;
 		}
 		wp_safe_redirect( self::course_url( $course_id ) );

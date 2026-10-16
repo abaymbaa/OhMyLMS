@@ -127,7 +127,10 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<p><?php echo esc_html( $hub_outline['description'] ); ?></p>
 			<?php endif; ?>
 			<?php if ( $hub_outline['locked'] ) : ?>
-				<p><?php esc_html_e( 'This course is protected. Open the course page to enter its password.', 'ohmylms' ); ?></p>
+				<p>
+					<?php esc_html_e( 'This course is protected.', 'ohmylms' ); ?>
+					<a href="<?php echo esc_url( get_permalink( $hub_course_id ) ); ?>"><?php esc_html_e( 'Open the course page to enter its password.', 'ohmylms' ); ?></a>
+				</p>
 			<?php endif; ?>
 			<?php if ( $hub_outline['enrolled'] ) : ?>
 				<a class="oml-hub-button" href="<?php echo esc_url( $hub_outline['continue']['url'] ); ?>"><?php echo esc_html( $hub_outline['continue']['label'] ); ?></a>
@@ -151,11 +154,13 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 		<?php if ( ! $hub_outline['enrolled'] && $hub_course_object ) : ?>
 			<?php
 			global $course;
-			$course = $hub_course_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The enrollment card reads the current course global.
+			$hub_previous_course = $course;
+			$course              = $hub_course_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The enrollment card reads the current course global.
 			?>
 			<div id="oml-course-enroll" class="oml-course-enroll">
 				<?php ohmylms_get_template( 'single-course/widgets/pricebox.php' ); ?>
 			</div>
+			<?php $course = $hub_previous_course; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restore the global the enrollment card borrowed. ?>
 		<?php endif; ?>
 		<?php if ( ! $hub_units ) : ?>
 			<?php if ( ! $hub_outline['locked'] ) : ?>
@@ -279,8 +284,10 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<h2 id="hub-reviews-title"><?php esc_html_e( 'Reviews', 'ohmylms' ); ?></h2>
 				<?php
 				global $course;
-				$course = $hub_course_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The reviews template reads the current course global.
+				$hub_previous_course = $course;
+				$course              = $hub_course_object; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- The reviews template reads the current course global.
 				ohmylms_get_template( 'single-course/tabs/reviews.php' );
+				$course = $hub_previous_course; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restore the global the reviews template borrowed.
 				?>
 			</section>
 		<?php endif; ?>
