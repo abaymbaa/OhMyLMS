@@ -25,6 +25,9 @@ require dirname(__DIR__, 2) . '/includes/MCP/CourseObjectiveTools.php';
 require dirname(__DIR__, 2) . '/includes/Extensions/Registry.php';
 require dirname(__DIR__, 2) . '/includes/Learning/NativeLessonEditor.php';
 require dirname(__DIR__, 2) . '/includes/MCP/AuthoringTools.php';
+require dirname(__DIR__, 2) . '/includes/MCP/QuestionBankTools.php';
+require dirname(__DIR__, 2) . '/includes/MCP/SkillAssessmentTools.php';
+require dirname(__DIR__, 2) . '/includes/MCP/CourseStructureTools.php';
 use OhMyLMS\MCP\Server;
 use OhMyLMS\MCP\Abilities;
 function mcp_addon_check($condition, $message) { if (!$condition) throw new RuntimeException($message); }
@@ -44,7 +47,7 @@ mcp_addon_check(Server::enabled() && Server::manifest([])['mcp']['is_enable'] ==
 Server::register_server($adapter);
 mcp_addon_check($adapter->calls === 1, 'Enabled add-on creates a server.');
 Abilities::register();
-mcp_addon_check(count($GLOBALS['mcp_abilities']) === 34, 'Enabled MCP preserves existing abilities and adds eight bounded authoring and review tools.');
+mcp_addon_check(count($GLOBALS['mcp_abilities']) === 50, 'Enabled MCP preserves existing abilities and adds the structure tools.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/save-lesson']['meta']['annotations']['destructive'], 'Existing published lesson edits are accurately marked as writes.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-lesson-objectives']['meta']['annotations']['readonly'], 'Lesson mapping reads remain read-only.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-objectives']['meta']['annotations']['readonly'], 'Course objective reads are read-only.');
@@ -55,6 +58,11 @@ mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/list-courses']['meta']['annot
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-skill-mapping']['meta']['annotations']['readonly'], 'Mapping writes are accurately annotated.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/remove-skill-mapping']['meta']['annotations']['destructive'], 'Mapping removals are accurately annotated.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/create-shared-skill-roadmap']['meta']['annotations']['idempotent'], 'Roadmap creation is not presented as idempotent.');
+mcp_addon_check(count(array_unique(array_keys(Server::tools()))) === 50 && count(Abilities::names()) === 50, 'Tool names stay unique after merging every tool family.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-program']['meta']['annotations']['readonly'], 'Program reads are read-only.');
+mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-course-program']['meta']['annotations']['readonly'], 'Program writes are writes.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['meta']['annotations']['destructive'], 'Unit deletion is marked destructive.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['required'] === ['id', 'chapter_id', 'confirm'] && $GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['additionalProperties'] === false, 'Unit deletion requires an explicit confirm and a closed schema.');
 $permission = $GLOBALS['mcp_abilities']['ohmylms/list-courses']['permission_callback'];
 mcp_addon_check($permission(), 'Enabled administrator can use an ability.');
 $GLOBALS['mcp_integrations']['mcp']['is_enable'] = 0;

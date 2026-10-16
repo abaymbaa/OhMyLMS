@@ -295,6 +295,6 @@ class Server {
 			),
 			'required'    => array( 'id' ),
 		);
-		return array_merge( $tools, ComparisonTools::definitions(), CourseObjectiveTools::definitions(), AuthoringTools::definitions(), QuestionBankTools::definitions(), SkillAssessmentTools::definitions() );
+		return array_merge( $tools, ComparisonTools::definitions(), CourseObjectiveTools::definitions(), CourseStructureTools::definitions(), AuthoringTools::definitions(), QuestionBankTools::definitions(), SkillAssessmentTools::definitions() );
 	}
 }

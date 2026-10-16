@@ -84,9 +84,67 @@ drafts. Profile configuration neither publishes nor enrolls a course. See [share
 
 Single-pair relationships are `equivalent`, `broader` (source covers more), `narrower` (source covers less), and `related`. Only `equivalent` pools evidence. Combined groups store required membership and use the separate grouped tool; they neither infer mastery nor pool evidence. Individual editing tools reject members of combined groups so group integrity is preserved.
 
+## Course structure: units, lesson groups and links
+
+Ten tools let an assistant organise a course. They call the same services as the Content Hub and
+the course editor, so every rule the editors enforce applies and nothing is duplicated.
+
+| Tool | Arguments |
+| --- | --- |
+| `get_course_program` | Course `id`. Returns `revision`, `mode`, `units` (`id`, `title`, `number`, `label`, `position`), lesson `groups` (`id`, `chapter_id`, `title`), `outcomes` (skills with `chapter_id`, `group_id`) and `attachments` (`id`, `type`, `content_id`, `title`, `status`, `chapter_id`, `group_id`), plus `unpublished_changes`. |
+| `save_course_program` | `id`, `revision`; any of `mode`, `outcomes` (up to 200), `attachments` (up to 500), `groups` (up to 200); optional `dry_run`. Each list sent replaces the stored list; lists left out are kept. |
+| `create_course_unit` | `id`, `name` (up to 200 characters). Adds a unit at the end. |
+| `rename_course_unit` | `id`, `chapter_id`, `name`. |
+| `set_unit_number` | `id`, `chapter_id`, `number`: up to 10 letters, digits, dots or dashes (`3`, `2A`); `""` returns to automatic numbering. |
+| `reorder_course_units` | `id`, `ids`: every unit of the course exactly once, in the new order. |
+| `delete_course_unit` | `id`, `chapter_id`, `confirm` (must be `true`). **Destructive.** |
+| `set_unit_lesson_groups` | `id`, `chapter_id`, `revision`, `groups` (up to 50) of `{id?, title, item_ids?, skill_ids?}`; optional `dry_run`. Replaces the groups of one unit only. |
+| `get_course_links` | Course `id`. Links to other courses of type `subcourse`, `prerequisite` or `get_ready`, with titles. |
+| `save_course_links` | `id`, `links` (up to 50) of `{course_id, type}`. Replaces all links; `[]` clears them. |
+
+How writes behave:
+
+- **Nothing here publishes.** Program writes change the draft only; learners see changes after a
+  person publishes the course in the Content Hub. `get_course_program` reports `unpublished_changes`.
+- **Revision check.** `save_course_program` and `set_unit_lesson_groups` must quote the `revision`
+  from `get_course_program`. A stale revision fails with HTTP 409 and saves nothing: read again and
+  reapply. Every successful write returns the new program including its new `revision`.
+- **Replace semantics.** Read first and send back everything you want to keep. In
+  `save_course_program`, an attachment or skill sent without `group_id` keeps its current group; send
+  `""` to ungroup it. Groups listed in `groups` that are missing from the list are deleted, and
+  their members must then be sent with another `group_id` or `""`.
+- **Dry run.** With `dry_run: true` the full validation runs (units belong to the course, a group only
+  holds content of its own unit, content needs edit permission, each resource is placed once) and
+  nothing is saved. The reply counts what would be stored, or the group list of the unit.
+- **Lesson groups.** In `set_unit_lesson_groups` a group with an `id` from `get_course_program` is
+  renamed, one without an `id` is created, and a group left out is deleted. `item_ids` are attachment
+  ids and `skill_ids` are skill term ids already placed in that unit. Anything of the unit that no group
+  lists becomes ungrouped. Other units are untouched.
+- **Units.** `create_course_unit` makes a chapter that holds nothing yet; attach lessons with
+  `save_course_program` (`chapter_id`). `delete_course_unit` is refused while the unit still holds lessons
+  or quizzes in the course editor or appears in the published program. Otherwise it removes the unit, its
+  lesson groups are deleted, and its skills and attachments stay in the course, unplaced. Call it only
+  after a person has agreed; without `confirm: true` it does nothing.
+- **Links** are advisory and never gate enrollment. The server rejects a link to the course itself,
+  a loop among `subcourse` links or among `prerequisite` links (each type is checked separately, under a lock),
+  and a target the administrator cannot read.
+- Inputs are closed schemas with capped list sizes. The tools need the same administrator credentials as
+  the others, plus permission to edit the course.
+
+Example: organising a course.
+
+> **You:** Split course 42 into three units and put the lessons into groups.
+> **Assistant:** reads `get_course_program` (`id` 42): no units, 9 lesson attachments, `revision` `3f…`.
+> Calls `create_course_unit` three times ("Fractions", "Decimals", "Percentages"), then `set_unit_number`
+> to `1`, `2`, `2A`. It saves the placement with `save_course_program` (each attachment gets a `chapter_id`;
+> `dry_run: true` first, then again without it) and rereads the program for the new `revision`. For the first unit it
+> calls `set_unit_lesson_groups` with two groups ("Warm-up", "Practice") listing their `item_ids`.
+> It finishes with `save_course_links` (`{course_id: 17, type: "prerequisite"}`) and reports that the
+> changes are drafts for a person to review and publish.
+
 ## Lesson and question authoring
 
-The server exposes 34 tools, including these eight authoring and review operations. Refresh
+The server exposes 50 tools, including these eight authoring and review operations. Refresh
 tool discovery or reconnect after updating; clients with tool allowlists must add their names.
 The endpoint and existing administrator token remain the same.
 
