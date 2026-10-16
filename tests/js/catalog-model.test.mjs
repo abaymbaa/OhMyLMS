@@ -326,3 +326,38 @@ test( 'After saving, new content takes its server identifier and local edits are
 		[ 'Grade 2', 2, true ]
 	);
 } );
+
+test( 'Lesson group membership survives a save and is cleared when a row changes unit', () => {
+	const group = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+	const uuid = 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb';
+	const skills = updateSkill( base(), 1, { group_id: group } );
+	const attachments = [
+		{
+			id: uuid,
+			type: 'lesson',
+			content_id: 7,
+			chapter_id: 10,
+			group_id: group,
+			skill_ids: [],
+			required: false,
+		},
+	];
+	const payload = toSavePayload( { mode: 'blended', skills, attachments } );
+	assert.equal( payload.outcomes[ 0 ].group_id, group );
+	assert.ok( ! ( 'group_id' in payload.outcomes[ 1 ] ) );
+	assert.equal( payload.attachments[ 0 ].group_id, group );
+
+	const moved = placeSkill( skills, 1, 20 );
+	assert.equal( moved.find( ( s ) => s.term_id === 1 ).group_id, '' );
+	const same = updateSkill( skills, 1, { target: 'mastered' } );
+	assert.equal( same.find( ( s ) => s.term_id === 1 ).group_id, group );
+	const moveItem = updateAttachment( attachments, uuid, { chapter_id: 20 } );
+	assert.equal( moveItem[ 0 ].group_id, '' );
+	assert.ok(
+		! (
+			'group_id' in
+			toSavePayload( { mode: 'blended', skills, attachments: moveItem } )
+				.attachments[ 0 ]
+		)
+	);
+} );

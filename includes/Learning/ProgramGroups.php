@@ -116,4 +116,34 @@ final class ProgramGroups {
 			'ungrouped' => $loose,
 		);
 	}
+
+	/**
+	 * Carry lesson-group membership over from the stored draft for rows whose payload omits `group_id`
+	 * (editors that do not know about groups). A row that moved to another unit is left ungrouped, and a
+	 * row that sends `group_id` itself (even empty) is never overridden.
+	 *
+	 * @param array  $rows     Submitted rows.
+	 * @param array  $stored   Rows of the stored draft.
+	 * @param string $key      Field that identifies a row: `id` for items, `term_id` for outcomes.
+	 * @return array
+	 */
+	public static function carry( array $rows, array $stored, $key ) {
+		$by_key = array();
+		foreach ( $stored as $row ) {
+			if ( ! empty( $row['group_id'] ) && isset( $row[ $key ] ) ) {
+				$by_key[ (string) $row[ $key ] ] = $row;
+			}
+		}
+		foreach ( $rows as &$row ) {
+			if ( array_key_exists( 'group_id', $row ) || ! isset( $row[ $key ] ) || ! isset( $by_key[ (string) $row[ $key ] ] ) ) {
+				continue;
+			}
+			$old = $by_key[ (string) $row[ $key ] ];
+			if ( (int) ( $old['chapter_id'] ?? 0 ) === (int) ( $row['chapter_id'] ?? 0 ) ) {
+				$row['group_id'] = $old['group_id'];
+			}
+		}
+		unset( $row );
+		return $rows;
+	}
 }

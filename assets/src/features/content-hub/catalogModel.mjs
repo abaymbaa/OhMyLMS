@@ -47,15 +47,29 @@ export function addSkills( skills, picked, chapterId, mode ) {
 			target: 'proficient',
 			required: mode !== 'traditional',
 			chapter_id: Number( chapterId ) || 0,
+			group_id: '',
 			missing: false,
 		} );
 	}
 	return [ ...skills, ...fresh ];
 }
 
+/**
+ * Apply a patch to a row. A row that changes unit leaves its lesson group, which belongs to one unit.
+ * @param row
+ * @param patch
+ */
+function patchRow( row, patch ) {
+	const next = { ...row, ...patch };
+	if ( 'chapter_id' in patch && chapterOf( patch ) !== chapterOf( row ) ) {
+		next.group_id = '';
+	}
+	return next;
+}
+
 export const updateSkill = ( skills, termId, patch ) =>
 	skills.map( ( skill ) =>
-		skill.term_id === termId ? { ...skill, ...patch } : skill
+		skill.term_id === termId ? patchRow( skill, patch ) : skill
 	);
 
 /**
@@ -96,7 +110,7 @@ export function placeSkill( skills, termId, chapterId ) {
 	}
 	return [
 		...skills.filter( ( row ) => row.term_id !== termId ),
-		{ ...skill, chapter_id: Number( chapterId ) || 0 },
+		patchRow( skill, { chapter_id: Number( chapterId ) || 0 } ),
 	];
 }
 
@@ -173,6 +187,7 @@ export function addAttachments( attachments, picks, scope, options = {} ) {
 					: null,
 			chapter_id: Number( scope.chapterId ) || 0,
 			skill_ids: [ ...new Set( scope.skillIds || [] ) ],
+			group_id: '',
 			also_in: [],
 		} );
 	}
@@ -181,7 +196,7 @@ export function addAttachments( attachments, picks, scope, options = {} ) {
 
 export const updateAttachment = ( attachments, id, patch ) =>
 	attachments.map( ( item ) =>
-		item.id === id ? { ...item, ...patch } : item
+		item.id === id ? patchRow( item, patch ) : item
 	);
 
 export const removeAttachment = ( attachments, id ) =>
@@ -204,12 +219,14 @@ export function toSavePayload( { mode, skills, attachments } ) {
 			target: skill.target,
 			required: Boolean( skill.required ),
 			chapter_id: chapterOf( skill ),
+			...( skill.group_id ? { group_id: skill.group_id } : {} ),
 		} ) ),
 		attachments: attachments.map( ( item ) => ( {
 			...( isUuid( item.id ) ? { id: item.id } : {} ),
 			type: item.type,
 			content_id: item.content_id,
 			chapter_id: chapterOf( item ),
+			...( item.group_id ? { group_id: item.group_id } : {} ),
 			skill_ids: item.skill_ids,
 			required: Boolean( item.required ),
 			...( item.type === 'quiz'

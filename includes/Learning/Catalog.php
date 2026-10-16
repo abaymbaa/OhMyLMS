@@ -260,6 +260,7 @@ final class Catalog {
 				'target'     => $outcome['target'],
 				'required'   => ! empty( $outcome['required'] ),
 				'chapter_id' => (int) ( $outcome['chapter_id'] ?? 0 ),
+				'group_id'   => (string) ( $outcome['group_id'] ?? '' ),
 				'missing'    => ! $valid,
 			);
 		}
@@ -279,6 +280,7 @@ final class Catalog {
 				'required'          => ! empty( $item['required'] ),
 				'pass_percent'      => isset( $item['pass_percent'] ) ? (float) $item['pass_percent'] : null,
 				'chapter_id'        => (int) ( $item['chapter_id'] ?? 0 ),
+				'group_id'          => (string) ( $item['group_id'] ?? '' ),
 				'skill_ids'         => array_map( 'intval', (array) ( $item['skill_ids'] ?? array() ) ),
 				'also_in'           => $valid ? self::also_in( $post->ID, $course_id ) : array(),
 			);
@@ -306,6 +308,7 @@ final class Catalog {
 			return self::error( __( 'Learning storage is unavailable.', 'ohmylms' ), 503 ); }
 		$draft = self::draft( $course_id );
 		unset( $draft['id'], $draft['version'], $draft['course_id'] );
+		$existing = $draft;
 		if ( isset( $data['mode'] ) ) {
 			if ( ! in_array( $data['mode'], self::MODES, true ) ) {
 				return self::error( __( 'Choose a valid learning mode.', 'ohmylms' ) ); }
@@ -314,7 +317,7 @@ final class Catalog {
 		if ( array_key_exists( 'outcomes', $data ) ) {
 			if ( ! is_array( $data['outcomes'] ) ) {
 				return self::error( __( 'Skills must be a list.', 'ohmylms' ) ); }
-			$draft['outcomes'] = array_values( array_filter( $data['outcomes'], 'is_array' ) );
+			$draft['outcomes'] = ProgramGroups::carry( array_values( array_filter( $data['outcomes'], 'is_array' ) ), $existing['outcomes'], 'term_id' );
 		}
 		$kept     = array_column( $draft['outcomes'], 'term_id' );
 		$kept     = array_map( 'intval', $kept );
@@ -329,7 +332,7 @@ final class Catalog {
 		if ( array_key_exists( 'attachments', $data ) ) {
 			if ( ! is_array( $data['attachments'] ) ) {
 				return self::error( __( 'Attachments must be a list.', 'ohmylms' ) ); }
-			$attachments = array_values( array_filter( $data['attachments'], 'is_array' ) );
+			$attachments = ProgramGroups::carry( array_values( array_filter( $data['attachments'], 'is_array' ) ), $existing['items'], 'id' );
 		} else {
 			$attachments = array_values(
 				array_filter(
