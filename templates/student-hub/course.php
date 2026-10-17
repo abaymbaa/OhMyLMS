@@ -223,7 +223,11 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 							$hub_state = $hub_row['level'] ? $hub_row['level'] : ( $hub_row['complete'] ? 'complete' : 'none' );
 							$hub_tip   = ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) . ': ' . $hub_row['name'] . ( $hub_row['label'] ? ' (' . $hub_row['label'] . ')' : ( $hub_row['complete'] ? ' (' . __( 'Complete', 'ohmylms' ) . ')' : '' ) );
 							?>
-							<a class="oml-course-cell is-<?php echo esc_attr( $hub_state ); ?>" href="<?php echo esc_url( $hub_row['url'] ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><span aria-hidden="true"><?php echo esc_html( $hub_marker( $hub_row ) ); ?></span><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></a>
+							<a class="oml-course-cell is-<?php echo esc_attr( $hub_state ); ?>" href="<?php echo esc_url( $hub_row['url'] ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><span aria-hidden="true"><?php
+								$hub_glyph = $hub_marker( $hub_row );
+								// Lessons have no text marker, so they show their kind icon (a static, allowlisted SVG).
+								echo '' !== $hub_glyph ? esc_html( $hub_glyph ) : $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								?></span><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
 					<?php if ( ! empty( $hub_unit['test'] ) ) : ?>
