@@ -872,26 +872,30 @@
 	width: 28px;
 	height: 28px;
 	border-radius: 50%;
-	background: var(--hub-border);
-	color: #fff;
+	background: var(--hub-muted);
+	color: var(--hub-surface);
 	place-items: center;
 }
 
 .ohmylms-student-hub .oml-hub-row-icon.is-complete,
 .ohmylms-student-hub .oml-hub-row-icon.is-proficient {
 	background: #2f9e6a;
+	color: #fff;
 }
 
 .ohmylms-student-hub .oml-hub-row-icon.is-attempted {
 	background: #d9a404;
+	color: #fff;
 }
 
 .ohmylms-student-hub .oml-hub-row-icon.is-familiar {
 	background: #e8780c;
+	color: #fff;
 }
 
 .ohmylms-student-hub .oml-hub-row-icon.is-mastered {
 	background: #7048e8;
+	color: #fff;
 }
 
 .ohmylms-student-hub .oml-hub-row-name {
@@ -2088,7 +2092,9 @@
 	border-radius: 4px;
 	background: var(--dot);
 	color: var(--hub-text);
-	font-size: 13px;
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1;
 	text-decoration: none;
 	place-items: center;
 }
