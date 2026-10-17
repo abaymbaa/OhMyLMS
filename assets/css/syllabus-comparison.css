@@ -36,8 +36,8 @@
 .ohmylms-comparison .ohmylms-roadmap-folders {
 	margin: 16px 0;
 	padding: 12px;
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-control, 4px);
 }
 
 .ohmylms-comparison .ohmylms-comparison-grid {
@@ -55,8 +55,8 @@
 .ohmylms-comparison .ohmylms-comparison-center {
 	min-width: 0;
 	padding: 20px;
-	border: 1px solid #dcdcde;
-	border-radius: 8px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-card, 8px);
 	background: #fff;
 	overflow-wrap: anywhere;
 	max-height: calc(100vh - 320px);
@@ -65,7 +65,7 @@
 
 .ohmylms-comparison .ohmylms-comparison-objective {
 	padding: 16px 0;
-	border-top: 1px solid #dcdcde;
+	border-top: 1px solid var(--oml-border, #dcdcde);
 }
 
 .ohmylms-comparison .ohmylms-comparison-column {
@@ -202,7 +202,7 @@
 }
 
 .ohmylms-comparison .ohmylms-shared-skill-row[aria-pressed="true"] {
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	color: #4e2b91;
 	background: #f0edff;
 	font-weight: 600;
@@ -227,7 +227,7 @@
 	display: inline-block;
 	padding: 2px 6px;
 	border: 1px solid currentcolor;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	font-size: 11px;
 	font-weight: 500;
 	line-height: 1.5;
@@ -328,7 +328,7 @@
 .ohmylms-comparison .ohmylms-shared-focus {
 	margin: 4px 0;
 	padding: 4px 8px;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: #f0edff;
 	font-weight: 600;
 }

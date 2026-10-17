@@ -37,7 +37,7 @@
 	position: relative;
 	padding: 20px;
 	border: 1px solid #e5e5e5;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: #fff;
 }
 
@@ -54,7 +54,7 @@
 	height: 26px;
 	padding: 0;
 	border: 1px solid #e5e5e5;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: #fff;
 	cursor: grab;
 }
@@ -148,7 +148,7 @@
 	min-height: 520px;
 	padding: 16px;
 	border: 1px solid #ededed;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: #f8f9fa;
 }
 
@@ -284,7 +284,7 @@
 .ohmylms-skill-picker .ohmylms-skill-picker-branch > div {
 	margin-left: 12px;
 	padding-left: 12px;
-	border-left: 1px solid #dcdcde;
+	border-left: 1px solid var(--oml-border, #dcdcde);
 }
 
 .ohmylms-skill-picker .ohmylms-skill-picker-branch > summary:focus-visible {

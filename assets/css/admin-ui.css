@@ -103,7 +103,7 @@
 	margin: 16px 0;
 	padding: 16px;
 	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 }
 
 .ohmylms-streak-settings__milestone-fields {
@@ -175,7 +175,7 @@
 
 .ohmylms-streak-settings .components-text-control__input,
 .ohmylms-streak-settings .components-select-control__input {
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	min-height: 40px;
 	width: 100%;
 }
@@ -295,7 +295,7 @@
 	padding: 2px 10px;
 	border-radius: 999px;
 	background: #efe9fb;
-	color: #5b2fc4;
+	color: var(--oml-primary-hover, #5b2fc4);
 }
 
 .ohmylms-import-preview {
@@ -328,7 +328,7 @@
 .ohmylms-quiz-skills-block {
 	padding: 16px;
 	border: 1px solid #e3e6eb;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: #fff;
 }
 
@@ -382,7 +382,7 @@ button.ohmylms-quiz-skill-chip {
 }
 
 .ohmylms-quiz-skill-chip.is-selected {
-	background: #5b2fc4;
+	background: var(--oml-primary-hover, #5b2fc4);
 	color: #fff;
 }
 
@@ -514,7 +514,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	align-items: end;
 	flex-wrap: wrap;
 	gap: 12px;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	padding: 12px;
 	margin-bottom: 12px;
 }
@@ -748,7 +748,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin: 12px 0;
 	padding: 8px 12px;
 	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 }
 
 .ohmylms-skill-picker-create {
@@ -953,7 +953,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	width: 28px;
 	height: 28px;
 	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 	cursor: pointer;
 }
@@ -1240,7 +1240,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-cur-toggle {
 	border: 1px solid var(--ohmylms-admin-border, #8c8f94);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: inherit;
 	cursor: pointer;
@@ -1356,7 +1356,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin: 8px 0;
 	padding: 8px 12px;
 	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
@@ -1417,7 +1417,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin: 12px 0 8px;
 	padding: 12px;
 	border: 1px solid var(--ohmylms-admin-border, #dcdcde);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
@@ -1507,8 +1507,8 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-cur-delete.is-confirming,
 .ohmylms-cur-delete .is-confirming {
 	padding: 12px 16px;
-	border: 1px solid #cc1818;
-	border-radius: 4px;
+	border: 1px solid var(--oml-danger, #cc1818);
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
@@ -1651,7 +1651,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 40px;
 	padding: 0 18px;
 	border: 1px solid var(--ws-border);
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ws-subtle);
 	color: inherit;
 	font-weight: 500;
@@ -1716,7 +1716,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	width: 32px;
 	height: 32px;
 	border: 0;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
@@ -1767,7 +1767,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	display: flex;
 	align-items: center;
 	border: 1px solid transparent;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 }
 
 .ohmylms-ws-drag-handle {
@@ -1800,7 +1800,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin-bottom: 8px;
 	padding: 12px 8px;
 	border: 1px dashed var(--ws-primary);
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: var(--ws-primary);
 	font: inherit;
@@ -1824,7 +1824,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	justify-content: center;
 	padding: 0;
 	border: 0;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: transparent;
 	color: inherit;
 	cursor: pointer;
@@ -2003,7 +2003,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	background: none;
 	color: var(--ws-primary);
 	cursor: pointer;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 }
 
 .ohmylms-ws-crumbs ol {
@@ -2181,7 +2181,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 140px;
 	padding: 10px 12px;
 	border: 1px solid var(--ws-border);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: inherit;
 	font-family: inherit;
@@ -2357,7 +2357,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin-top: 24px;
 	padding: 14px 16px;
 	border: 1px solid var(--ws-border);
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 .ohmylms-ws-content-icon {
@@ -2402,7 +2402,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-ws-row {
 	border: 1px solid var(--ws-border);
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
@@ -2419,7 +2419,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-width: 0;
 	padding: 14px 16px;
 	border: 0;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: none;
 	color: inherit;
 	font: inherit;
@@ -2461,7 +2461,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	display: inline-block;
 	flex: 0 0 auto;
 	padding: 2px 10px;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ws-subtle);
 	font-size: 12px;
 	font-weight: 600;
@@ -2472,7 +2472,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin: 12px 0;
 	padding: 18px;
 	border: 1px dashed var(--ws-border);
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	text-align: center;
 }
 
@@ -2481,7 +2481,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin: 0 0 12px;
 	padding: 12px;
 	border: 1px dashed var(--ws-primary);
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: var(--ws-soft);
 }
 
@@ -2516,7 +2516,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	margin-top: 24px;
 	padding: 16px 18px;
 	border: 1px solid var(--ws-border);
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: var(--ws-subtle);
 }
 
@@ -2564,8 +2564,8 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-form-settings-bar {
 	margin: 20px 0 0;
 	padding: 16px;
-	border: 1px solid #e4e7ee;
-	border-radius: 8px;
+	border: 1px solid var(--oml-border, #e4e7ee);
+	border-radius: var(--oml-radius-card, 8px);
 	background: var(--ohmylms-admin-surface-subtle, #f8f9fc);
 }
 
@@ -2652,7 +2652,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 38px;
 	padding: 6px 10px;
 	border: 1px solid var(--ws-border);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: inherit;
 }
@@ -2752,12 +2752,12 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-ws-description[id^="ohmylms-ws-skill-notes-"] {
 	padding: 10px 12px;
 	border: 1px solid #989da6;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
 .ohmylms-ws-note.is-error {
-	color: #cc1818;
+	color: var(--oml-danger, #cc1818);
 }
 
 .ohmylms-ws-add-content.components-button {
@@ -2785,7 +2785,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-ws-content-popover .components-popover__content {
 	width: min(360px, calc(100vw - 32px));
 	padding: 8px;
-	border: 1px solid #e4e7ee;
+	border: 1px solid var(--oml-border, #e4e7ee);
 	border-radius: 12px;
 	box-shadow:
 		0 12px 36px rgb(15 23 42 / 12%),
@@ -2879,13 +2879,13 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-ws-icon-picker .components-button {
 	gap: 8px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 .ohmylms-ws-icon-popover .components-popover__content {
 	width: min(340px, calc(100vw - 32px));
 	padding: 16px;
-	border: 1px solid #e4e7ee;
+	border: 1px solid var(--oml-border, #e4e7ee);
 	border-radius: 12px;
 	box-shadow: 0 12px 36px rgb(15 23 42 / 12%);
 }
@@ -2898,7 +2898,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	height: auto;
 	min-height: 68px;
 	padding: 8px 4px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	font-size: 10px;
 	line-height: 1.3;
 	text-align: center;
@@ -2914,7 +2914,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-ws-resource-actions .components-button {
 	min-height: 34px;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 }
 
 .ohmylms-ws-owns-extra:empty {
@@ -2942,21 +2942,21 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 38px;
 	padding: 6px 10px;
 	border: 1px solid var(--ws-border);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: inherit;
 }
 
 .ohmylms-ws-field input[aria-invalid="true"],
 .ohmylms-ws-quickadd input[aria-invalid="true"] {
-	border-color: #cc1818;
+	border-color: var(--oml-danger, #cc1818);
 }
 
 .ohmylms-ws-field textarea.ohmylms-ws-title {
 	min-height: 120px;
 	padding: 10px 12px;
 	border: 1px solid var(--ws-border);
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 	font-size: 22px;
 	white-space: pre-wrap;
 	overflow-wrap: anywhere;
@@ -2966,7 +2966,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-ws-owns-head h4 > .dashicon {
 	box-sizing: content-box;
 	padding: 8px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: var(--ws-soft);
 	color: var(--ws-primary);
 }
@@ -3009,7 +3009,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	height: auto;
 	min-height: 82px;
 	padding: 12px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	color: #18243b;
 	text-align: start;
 	white-space: normal;
@@ -3025,14 +3025,14 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 36px;
 	padding: 6px 10px;
 	gap: 6px;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	box-shadow: none;
 }
 
 .ohmylms-ws-content-popover.is-compact .components-popover__content {
 	width: min(200px, calc(100vw - 32px));
 	padding: 4px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 .ohmylms-ws-content-popover.is-compact .components-menu-item__item {
@@ -3042,7 +3042,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-ws-content-popover.is-compact .ohmylms-ws-content-icon {
 	flex-basis: 24px;
 	height: 24px;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 }
 
 .ohmylms-ws-icon-grid .components-button[aria-pressed="true"],
@@ -3060,7 +3060,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-ws-field input.ohmylms-ws-title.is-syllabus-name {
 	padding: 10px 12px;
 	border: 2px solid var(--ws-muted);
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ohmylms-admin-surface, #fff);
 }
 
@@ -3075,7 +3075,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 36px;
 	padding: 6px 8px;
 	gap: 8px;
-	border-radius: 4px;
+	border-radius: var(--oml-radius-control, 4px);
 }
 
 .ohmylms-ws-field input.ohmylms-ws-title.is-syllabus-name:hover {
@@ -3088,7 +3088,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-ws-field input.ohmylms-ws-title.is-syllabus-name[aria-invalid="true"] {
-	border-color: #cc1818;
+	border-color: var(--oml-danger, #cc1818);
 }
 
 @media (max-width: 782px) {
@@ -3184,9 +3184,9 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-category-add {
 	border: 0;
-	border-radius: 7px;
+	border-radius: var(--oml-radius-card, 7px);
 	background: #f0edfc;
-	color: #6048ce;
+	color: var(--oml-primary-hover, #6048ce);
 	padding: 6px 12px;
 	cursor: pointer;
 	font-weight: 600;
@@ -3239,7 +3239,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	min-height: 36px;
 	padding: 6px 12px;
 	border: 1px solid var(--category-color);
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: var(--ohmylms-admin-surface, #fff);
 	color: var(--category-color);
 	font: inherit;
@@ -3288,13 +3288,13 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-category-tags:focus-within {
-	border-color: #6048ce;
-	box-shadow: 0 0 0 2px #6048ce18;
+	border-color: var(--oml-primary-hover, #6048ce);
+	box-shadow: 0 0 0 2px var(--oml-primary-hover, #6048ce)18;
 }
 
 .ohmylms-assessment-editor-tabs [aria-selected="true"] {
-	color: #6740d8;
-	box-shadow: inset 0 -3px #6740d8;
+	color: var(--oml-primary-hover, #6740d8);
+	box-shadow: inset 0 -3px var(--oml-primary-hover, #6740d8);
 }
 
 .ohmylms-question-block-modal.components-modal__frame {
@@ -3335,7 +3335,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-category-tags button:focus-visible {
-	outline: 2px solid #6048ce;
+	outline: 2px solid var(--oml-primary-hover, #6048ce);
 	outline-offset: 2px;
 }
 
@@ -3363,8 +3363,8 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-question-answer-block {
-	border: 1px solid #dcdcde;
-	border-radius: 4px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-control, 4px);
 	padding: 20px;
 }
 
@@ -3397,7 +3397,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-question-live-preview fieldset {
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	padding: 16px;
 	margin: 12px 0;
 }
@@ -3416,7 +3416,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-quiz-form {
 	background: #f4f2fa;
 	padding: 24px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 .ohmylms-form-actions {
@@ -3437,9 +3437,9 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-question-card {
 	background: #fff;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	border-left: 6px solid transparent;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	box-shadow: 0 1px 3px #00000012;
 	overflow: hidden;
 }
@@ -3535,7 +3535,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-form-workspace {
 	background: #fff;
 	padding: 24px;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 .ohmylms-form-workspace-actions {
@@ -3606,7 +3606,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-blank-answer-chip {
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	padding: 6px 12px;
 	border-radius: 5px;
 	background: #f6f7f7;
@@ -3614,7 +3614,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 
 .ohmylms-question-content-modes {
 	display: flex;
-	border-right: 1px solid #dcdcde;
+	border-right: 1px solid var(--oml-border, #dcdcde);
 	margin-right: 8px;
 	padding-right: 8px;
 }
@@ -3708,8 +3708,8 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	max-height: 260px;
 	overflow-y: auto;
 	background: #fff;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-control, 6px);
 	box-shadow: 0 6px 18px rgba(0, 0, 0, 0.14);
 }
 
@@ -3719,17 +3719,17 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 }
 
 .ohmylms-form-description [role="toolbar"] {
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	background: #fafafa;
 	display: flex;
 }
 
 .ohmylms-form-description [role="textbox"] {
 	min-height: 80px;
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	border-top: 0;
 	padding: 12px;
-	outline-color: #7153c6;
+	outline-color: var(--oml-primary-hover, #7153c6);
 }
 
 .ohmylms-shared-answers > .components-button {
@@ -3753,8 +3753,8 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 .ohmylms-form-response-fields .ohmylms-numerical-editor,
 .ohmylms-form-response-fields .ohmylms-structured-editor {
 	padding: 16px;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-control, 6px);
 }
 
 .ohmylms-form-workspace .ohmylms-question-live-preview {
@@ -3790,7 +3790,7 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	width: 18px;
 	height: 18px;
 	border: 1px solid #949494 !important;
-	accent-color: #7153c6;
+	accent-color: var(--oml-primary-hover, #7153c6);
 	flex-shrink: 0;
 }
 

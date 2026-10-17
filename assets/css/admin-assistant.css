@@ -10,7 +10,7 @@
 #ohmylms-admin-assistant-root button {
 	padding: 8px 12px;
 	border: 1px solid #c3c4c7;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	background: #fff;
 	color: #1d2327;
 	font: inherit;
@@ -48,7 +48,7 @@
 	flex-direction: column;
 	width: min(460px, calc(100vw - 32px));
 	height: min(720px, calc(100dvh - 130px));
-	border: 1px solid #dcdcde;
+	border: 1px solid var(--oml-border, #dcdcde);
 	border-radius: 16px;
 	background: #fff;
 	box-shadow: 0 12px 48px rgb(0 0 0 / 20%);
@@ -102,8 +102,8 @@
 #oml-assistant-panel .oml-assistant-card {
 	margin-bottom: 12px;
 	padding: 12px;
-	border: 1px solid #dcdcde;
-	border-radius: 8px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-card, 8px);
 }
 
 #oml-assistant-panel .is-user {
@@ -123,7 +123,7 @@
 	margin-top: 6px;
 	padding: 8px;
 	border: 1px solid #8c8f94;
-	border-radius: 6px;
+	border-radius: var(--oml-radius-control, 6px);
 	font: inherit;
 }
 
@@ -155,8 +155,8 @@
 	justify-content: space-between;
 	margin-bottom: 6px;
 	padding: 6px 8px;
-	border: 1px solid #dcdcde;
-	border-radius: 8px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-card, 8px);
 	background: #f6f7f7;
 	overflow-wrap: anywhere;
 }

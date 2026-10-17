@@ -29,7 +29,7 @@
 .ohmylms-skill-studio [class~="components-modal__header"] {
 	margin: 0;
 	padding: 0 20px;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var(--oml-border, #dcdcde);
 }
 
 .ohmylms-skill-studio .ohmylms-studio-toolbar,
@@ -45,7 +45,7 @@
 .ohmylms-skill-studio .ohmylms-studio-toolbar {
 	justify-content: space-between;
 	padding: 12px 20px;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var(--oml-border, #dcdcde);
 }
 
 .ohmylms-skill-studio .ohmylms-studio-workspace {
@@ -68,12 +68,12 @@
 	display: flex;
 	flex-direction: column;
 	min-height: 0;
-	border-right: 1px solid #dcdcde;
+	border-right: 1px solid var(--oml-border, #dcdcde);
 	overflow: hidden;
 }
 
 .ohmylms-skill-studio .ohmylms-studio-inspector {
-	border-left: 1px solid #dcdcde;
+	border-left: 1px solid var(--oml-border, #dcdcde);
 }
 
 .ohmylms-skill-studio .ohmylms-studio-main {
@@ -112,8 +112,8 @@
 	height: auto;
 	min-height: 56px;
 	padding: 12px;
-	border: 1px solid #dcdcde;
-	border-radius: 6px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-control, 6px);
 	text-align: left;
 	white-space: normal;
 }
@@ -283,7 +283,7 @@
 	position: absolute;
 	width: 190px;
 	border: 1px solid #c3c4c7;
-	border-radius: 8px;
+	border-radius: var(--oml-radius-card, 8px);
 	background: #fff;
 	box-shadow: 0 3px 8px rgb(0 0 0 / 8%);
 	overflow: hidden;
@@ -306,7 +306,7 @@
 	max-height: 42px;
 	padding: 8px;
 	border: 0;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var(--oml-border, #dcdcde);
 	background: #f6f7f7;
 	color: #50575e;
 	font-size: 11px;
@@ -367,7 +367,7 @@
 .ohmylms-skill-studio .ohmylms-studio-coverage th,
 .ohmylms-skill-studio .ohmylms-studio-coverage td {
 	padding: 12px 8px;
-	border-bottom: 1px solid #dcdcde;
+	border-bottom: 1px solid var(--oml-border, #dcdcde);
 }
 
 @media (max-width: 1100px) {
