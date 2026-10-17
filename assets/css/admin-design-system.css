@@ -179,8 +179,8 @@ body.oml-ds .button:disabled {
 	opacity: 0.7;
 }
 
-/* ---- Buttons: @wordpress/components ---- */
-body.oml-ds .components-button {
+/* ---- Buttons: @wordpress/components (not inside the block editor, which keeps its own sizing) ---- */
+body.oml-ds:not(.block-editor-page) .components-button {
 	align-items: center;
 	border-radius: var(--oml-radius-button);
 	font-size: 14px;
@@ -192,111 +192,111 @@ body.oml-ds .components-button {
 	transition: background-color 0.12s ease, box-shadow 0.12s ease, color 0.12s ease;
 }
 
-body.oml-ds .components-button.is-small {
+body.oml-ds:not(.block-editor-page) .components-button.is-small {
 	min-height: var(--oml-button-height-sm);
 	padding: 0 var(--oml-button-pad-sm);
 }
 
-body.oml-ds .components-button.is-large {
+body.oml-ds:not(.block-editor-page) .components-button.is-large {
 	min-height: var(--oml-button-height-lg);
 	padding: 0 var(--oml-button-pad-lg);
 }
 
-body.oml-ds .components-button.has-icon:not(.has-text) {
+body.oml-ds:not(.block-editor-page) .components-button.has-icon:not(.has-text) {
 	min-width: var(--oml-button-height-md);
 	padding: 0;
 }
 
-body.oml-ds .components-button.has-icon.is-small:not(.has-text) {
+body.oml-ds:not(.block-editor-page) .components-button.has-icon.is-small:not(.has-text) {
 	min-width: var(--oml-button-height-sm);
 }
 
-body.oml-ds .components-button.is-primary {
+body.oml-ds:not(.block-editor-page) .components-button.is-primary {
 	background: var(--oml-primary);
 	color: var(--oml-on-primary);
 }
 
-body.oml-ds .components-button.is-primary:disabled,
-body.oml-ds .components-button.is-primary[aria-disabled="true"] {
+body.oml-ds:not(.block-editor-page) .components-button.is-primary:disabled,
+body.oml-ds:not(.block-editor-page) .components-button.is-primary[aria-disabled="true"] {
 	background: var(--oml-subtle);
 	color: var(--oml-muted);
 	opacity: 0.8;
 }
 
-body.oml-ds .components-button.is-primary:hover:not(:disabled),
-body.oml-ds .components-button.is-primary:focus:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-primary:hover:not(:disabled),
+body.oml-ds:not(.block-editor-page) .components-button.is-primary:focus:not(:disabled) {
 	background: var(--oml-primary-hover);
 	color: var(--oml-on-primary);
 }
 
-body.oml-ds .components-button.is-primary:active:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-primary:active:not(:disabled) {
 	background: var(--oml-primary-active);
 	color: var(--oml-on-primary);
 }
 
-body.oml-ds .components-button.is-secondary {
+body.oml-ds:not(.block-editor-page) .components-button.is-secondary {
 	background: var(--oml-surface);
 	box-shadow: inset 0 0 0 1px var(--oml-secondary);
 	color: var(--oml-primary);
 }
 
-body.oml-ds .components-button.is-secondary:hover:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-secondary:hover:not(:disabled) {
 	background: var(--oml-primary-soft);
 	box-shadow: inset 0 0 0 1px var(--oml-secondary-hover);
 	color: var(--oml-primary-hover);
 }
 
-body.oml-ds .components-button.is-tertiary {
+body.oml-ds:not(.block-editor-page) .components-button.is-tertiary {
 	background: transparent;
 	color: var(--oml-primary);
 }
 
-body.oml-ds .components-button.is-tertiary:hover:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-tertiary:hover:not(:disabled) {
 	background: var(--oml-primary-soft);
 	color: var(--oml-primary-hover);
 }
 
-body.oml-ds .components-button.is-link {
+body.oml-ds:not(.block-editor-page) .components-button.is-link {
 	color: var(--oml-link);
 	font-weight: 600;
 	min-height: 0;
 	padding: 0;
 }
 
-body.oml-ds .components-button.is-link:hover:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-link:hover:not(:disabled) {
 	color: var(--oml-link-hover);
 }
 
-body.oml-ds .components-button.is-destructive:not(.is-link):not(.is-primary) {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive:not(.is-link):not(.is-primary) {
 	color: var(--oml-danger);
 }
 
-body.oml-ds .components-button.is-destructive.is-primary {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-primary {
 	background: var(--oml-danger);
 	color: var(--oml-on-danger);
 }
 
-body.oml-ds .components-button.is-destructive.is-primary:hover:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-primary:hover:not(:disabled) {
 	background: var(--oml-danger-hover);
 	color: var(--oml-on-danger);
 }
 
-body.oml-ds .components-button.is-destructive.is-secondary {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-secondary {
 	box-shadow: inset 0 0 0 1px var(--oml-danger);
 }
 
-body.oml-ds .components-button.is-destructive.is-secondary:hover:not(:disabled),
-body.oml-ds .components-button.is-destructive.is-tertiary:hover:not(:disabled) {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-secondary:hover:not(:disabled),
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-tertiary:hover:not(:disabled) {
 	background: var(--oml-danger-soft);
 	color: var(--oml-danger-hover);
 }
 
-body.oml-ds .components-button.is-destructive.is-link {
+body.oml-ds:not(.block-editor-page) .components-button.is-destructive.is-link {
 	color: var(--oml-danger);
 }
 
-body.oml-ds .components-button:disabled,
-body.oml-ds .components-button[aria-disabled="true"] {
+body.oml-ds:not(.block-editor-page) .components-button:disabled,
+body.oml-ds:not(.block-editor-page) .components-button[aria-disabled="true"] {
 	cursor: not-allowed;
 	opacity: 0.55;
 }
@@ -533,7 +533,7 @@ body.oml-ds .arco-tag-arcoblue {
 /* ---- Focus: one accessible ring everywhere ---- */
 body.oml-ds .button:focus-visible,
 body.oml-ds .button-link:focus-visible,
-body.oml-ds .components-button:focus-visible,
+body.oml-ds:not(.block-editor-page) .components-button:focus-visible,
 body.oml-ds .arco-btn:focus-visible,
 body.oml-ds a:focus-visible,
 body.oml-ds input:focus-visible,
