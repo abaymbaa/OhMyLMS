@@ -1,37 +1,9 @@
 import { createElement, useEffect, useState } from '@wordpress/element';
 import apiFetch from '@wordpress/api-fetch';
-import { Button, Notice, Spinner } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
+import { Button, FormFileUpload, Notice, Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 const PATH = '/ohmylms/v1/hub-icons';
-
-/**
- * Open the media library and resolve with the chosen image, or null when it is dismissed.
- *
- * @param {string} title Dialog title.
- * @return {Promise<Object|null>} Attachment data.
- */
-function pickImage( title ) {
-	return new Promise( ( resolve ) => {
-		if ( ! window.wp || ! window.wp.media ) {
-			resolve( null );
-			return;
-		}
-		const frame = window.wp.media( {
-			title,
-			button: { text: __( 'Use this icon', 'ohmylms' ) },
-			library: { type: 'image' },
-			multiple: false,
-		} );
-		let chosen = null;
-		frame.on( 'select', () => {
-			const attachment = frame.state().get( 'selection' ).first();
-			chosen = attachment ? attachment.toJSON() : null;
-		} );
-		frame.on( 'close', () => resolve( chosen ) );
-		frame.open();
-	} );
-}
 
 /**
  * Choose or upload the icon shown for each kind of activity in the learner hub.
@@ -92,13 +64,34 @@ export function HubIconSettings() {
 		}
 	}
 
-	async function choose( kind ) {
-		const image = await pickImage(
-			/* translators: %s: activity kind such as Lesson. */
-			sprintf( __( 'Choose the %s icon', 'ohmylms' ), kind.label )
-		);
-		if ( image && image.id ) {
-			change( kind.key, image.id );
+	/**
+	 * Upload an image to the media library and use it for a kind.
+	 *
+	 * @param {Object} kind Kind being changed.
+	 * @param {File}   file Chosen image file.
+	 */
+	async function upload( kind, file ) {
+		if ( ! file ) {
+			return;
+		}
+		const body = new window.FormData();
+		body.append( 'file', file, file.name );
+		setBusy( kind.key );
+		setError( '' );
+		setNotice( '' );
+		try {
+			const media = await apiFetch( {
+				path: '/wp/v2/media',
+				method: 'POST',
+				body,
+			} );
+			await change( kind.key, media.id );
+		} catch ( failure ) {
+			setBusy( false );
+			setError(
+				failure.message ||
+					__( 'Could not upload the image.', 'ohmylms' )
+			);
 		}
 	}
 
@@ -107,7 +100,7 @@ export function HubIconSettings() {
 			<h3>{ __( 'Learner hub icons', 'ohmylms' ) }</h3>
 			<p>
 				{ __(
-					'Choose or upload an image for each kind of activity. Square images work best. Without one, the built-in icon is used.',
+					'Upload an image for each kind of activity. Square PNG, JPEG, GIF or WebP images work best. Without one, the built-in icon is used.',
 					'ohmylms'
 				) }
 			</p>
@@ -134,16 +127,30 @@ export function HubIconSettings() {
 								) }
 							</span>
 							<strong>{ kind.label }</strong>
-							<Button
-								variant="secondary"
-								isBusy={ busy === kind.key }
-								disabled={ !! busy }
-								onClick={ () => choose( kind ) }
-							>
-								{ kind.url
-									? __( 'Change icon', 'ohmylms' )
-									: __( 'Choose or upload', 'ohmylms' ) }
-							</Button>
+							<FormFileUpload
+								accept="image/png,image/jpeg,image/gif,image/webp"
+								onChange={ ( event ) =>
+									upload( kind, event.target.files[ 0 ] )
+								}
+								render={ ( { openFileDialog } ) => (
+									<Button
+										variant="secondary"
+										isBusy={ busy === kind.key }
+										disabled={ !! busy }
+										onClick={ openFileDialog }
+									>
+										{ kind.url
+											? __(
+													'Upload a new icon',
+													'ohmylms'
+												)
+											: __(
+													'Upload an icon',
+													'ohmylms'
+												) }
+									</Button>
+								) }
+							/>
 							{ kind.url && (
 								<Button
 									variant="tertiary"
