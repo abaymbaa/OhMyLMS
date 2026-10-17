@@ -21,6 +21,7 @@ import {
 	withDensity,
 	withRadius,
 } from './designSystem.mjs';
+import { HubIconSettings } from './HubIconSettings';
 
 const PATH = '/ohmylms/v1/design-system';
 
@@ -484,6 +485,7 @@ export function DesignSystemSettings() {
 					</div>
 				</fieldset>
 			</form>
+			<HubIconSettings />
 		</div>
 	);
 }

@@ -653,3 +653,47 @@ body.oml-ds .ohmylms-ds-preview h3 {
 html body.block-editor-page.is-fullscreen-mode #wpadminbar {
 	display: none !important;
 }
+
+/* Settings > Design system > Learner hub icons */
+.ohmylms-hub-icons {
+	margin-top: var(--oml-space-6, 32px);
+}
+
+.ohmylms-hub-icons-list {
+	display: grid;
+	gap: var(--oml-space-3, 12px);
+	margin: var(--oml-space-3, 12px) 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-hub-icons-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--oml-space-3, 12px);
+	margin: 0;
+}
+
+.ohmylms-hub-icons-row strong {
+	min-width: 96px;
+}
+
+.ohmylms-hub-icons-preview {
+	display: grid;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: 8px;
+	background: #fff;
+	color: var(--oml-muted, #50575e);
+	font-size: 11px;
+	place-items: center;
+}
+
+.ohmylms-hub-icons-preview img {
+	display: block;
+	max-width: 28px;
+	max-height: 28px;
+	object-fit: contain;
+}
