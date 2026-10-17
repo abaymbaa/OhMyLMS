@@ -645,3 +645,11 @@ body.oml-ds .ohmylms-ds-preview h3 {
 		transition: none;
 	}
 }
+
+/*
+ * A recovered stylesheet forces the admin bar visible on every plugin screen, which
+ * overlaps the block editor header. Keep the core fullscreen behaviour on lessons.
+ */
+html body.block-editor-page.is-fullscreen-mode #wpadminbar {
+	display: none !important;
+}
