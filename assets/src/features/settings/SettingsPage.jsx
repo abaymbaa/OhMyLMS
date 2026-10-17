@@ -3,6 +3,7 @@ import { createElement } from '@wordpress/element';
 import { MovableTabPanel } from '../navigation/MovableTabPanel';
 import { AiTutorSettings } from './AiTutorSettings';
 import { XApiSettings } from './XApiSettings';
+import { DesignSystemSettings } from './DesignSystemSettings';
 export function createSettingsPage( readRuntime ) {
 	return function SettingsPage() {
 		const {
@@ -471,6 +472,15 @@ export function createSettingsPage( readRuntime ) {
 				),
 				key: 'ai-tutor-settings',
 				children: <AiTutorSettings />,
+			},
+			{
+				label: (
+					<React.Fragment>
+						{ ( 0, I18n.__ )( 'Design system', 'ohmylms' ) }
+					</React.Fragment>
+				),
+				key: 'design-system-settings',
+				children: <DesignSystemSettings />,
 			},
 			{
 				label: 'xAPI',

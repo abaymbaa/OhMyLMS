@@ -69,6 +69,7 @@ class Api {
 			\OhMyLMS\Rest\V1\PreviewController::class,
 			\OhMyLMS\Rest\V1\TemplateController::class,
 			\OhMyLMS\Rest\V1\SettingsController::class,
+			\OhMyLMS\Rest\V1\DesignSystemController::class,
 			\OhMyLMS\Rest\V1\CategoryController::class,
 			\OhMyLMS\Rest\V1\TagController::class,
 			\OhMyLMS\Rest\V1\EmailController::class,
