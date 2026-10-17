@@ -877,6 +877,14 @@
 	place-items: center;
 }
 
+/* Images uploaded in Settings > Design system replace the built-in icons. */
+.ohmylms-student-hub .oml-hub-kind--custom {
+	display: block;
+	width: 16px;
+	height: 16px;
+	object-fit: contain;
+}
+
 .ohmylms-student-hub .oml-hub-row-icon.is-complete,
 .ohmylms-student-hub .oml-hub-row-icon.is-proficient {
 	background: #2f9e6a;

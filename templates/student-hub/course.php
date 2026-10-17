@@ -30,12 +30,16 @@ $hub_kind_name  = array(
 	'assignment' => __( 'Assignment', 'ohmylms' ),
 );
 /**
- * Small activity icon.
+ * Small activity icon: the administrator's uploaded image when one is set, else a built-in SVG.
  *
  * @param string $kind Activity kind.
- * @return string Static SVG built from an allowlist.
+ * @return string Escaped img element or static SVG built from an allowlist.
  */
 $hub_kind_icon = static function ( $kind ) use ( $hub_kind_paths ) {
+	$custom = \OhMyLMS\Design\HubIcons::markup( $kind );
+	if ( '' !== $custom ) {
+		return $custom;
+	}
 	return '<svg class="oml-hub-kind" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="' . esc_attr( $hub_kind_paths[ $kind ] ?? $hub_kind_paths['lesson'] ) . '"/></svg>';
 };
 /**
@@ -225,8 +229,13 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 							?>
 							<a class="oml-course-cell is-<?php echo esc_attr( $hub_state ); ?>" href="<?php echo esc_url( $hub_row['url'] ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><span aria-hidden="true"><?php
 								$hub_glyph = $hub_marker( $hub_row );
-								// Lessons have no text marker, so they show their kind icon (a static, allowlisted SVG).
-								echo '' !== $hub_glyph ? esc_html( $hub_glyph ) : $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+								// Unit tests keep their star; every other cell shows the kind icon (custom image or allowlisted SVG).
+								$hub_custom = '★' === $hub_glyph ? '' : \OhMyLMS\Design\HubIcons::markup( $hub_row['kind'] );
+								if ( '' !== $hub_custom ) {
+									echo $hub_custom; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in HubIcons::markup().
+								} else {
+									echo '' !== $hub_glyph ? esc_html( $hub_glyph ) : $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist.
+								}
 								?></span><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
