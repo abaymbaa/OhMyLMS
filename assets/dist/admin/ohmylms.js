@@ -87502,6 +87502,19 @@
               g,
               g7,
               l
+            })),
+            microsoft_signin: window.ohmylms.extensions.integrationComponents.MicrosoftSignInSettings(() => ({
+              E7,
+              I,
+              Pf,
+              React,
+              S7,
+              _7,
+              b,
+              b7,
+              g,
+              g7,
+              l
             }))
           },
           A7 = window.ohmylms.extensions.integrationComponents.IntegrationConfig(() => ({

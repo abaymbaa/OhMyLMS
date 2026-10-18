@@ -490,6 +490,7 @@ final class OhMyLMS {
 
 		$this->rest_api = new OhMyLMS\Rest\Api();
 		new \OhMyLMS\Integrations\GoogleSignIn\GoogleSignIn();
+		new \OhMyLMS\Integrations\MicrosoftSignIn\MicrosoftSignIn();
 		$this->course_factory      = new \OhMyLMS\Factory\CourseFactory();
 		$this->lesson_factory      = new \OhMyLMS\Factory\LessonFactory();
 		$this->chapter_factory     = new \OhMyLMS\Factory\ChapterFactory();
