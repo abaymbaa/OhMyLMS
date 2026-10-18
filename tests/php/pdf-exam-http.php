@@ -43,7 +43,9 @@ $call      = static function ( $method, $path, $data = array() ) {
 	if ( 'GET' === $method ) {
 		$request->set_query_params( $data );
 	} else {
-		$request->set_body_params( $data ); }
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( $data ) );
+	}
 	return rest_do_request( $request );
 };
 $saved_key = getenv( 'OHMYLMS_AI_API_KEY' );
@@ -147,11 +149,12 @@ try {
 			update_option(
 				'ohmylms_ai',
 				array(
-					'enabled'    => true,
-					'provider'   => 'openai',
-					'model'      => 'synthetic-pdf-fixture',
-					'max_tokens' => 400,
-					'timeout'    => 20,
+					'enabled'                => false,
+					'exam_converter_enabled' => true,
+					'provider'               => 'openai',
+					'model'                  => 'synthetic-pdf-fixture',
+					'max_tokens'             => 400,
+					'timeout'                => 20,
 				)
 			);
 			$skill       = $call( 'POST', 'skills', array( 'name' => 'PDF exam fixture ' . wp_generate_uuid4() ) )->get_data();
@@ -167,10 +170,31 @@ try {
 			$check( 201 === $response->get_status(), 'Upload: ' . wp_json_encode( $response->get_data() ) );
 			$id = $response->get_data()['id'];
 			Jobs::process( $id );
+			$settings = get_option( 'ohmylms_ai' );
+			$call(
+				'POST',
+				'ai',
+				array_merge(
+					$settings,
+					array(
+						'enabled'                => true,
+						'exam_converter_enabled' => false,
+					)
+				)
+			);
+			$check( 503 === $call( 'POST', 'exam-imports/' . $id . '/extract' )->get_status() && 0 === $network_calls, 'Tutor enabled does not permit PDF extraction when converter is off' );
+			$call( 'POST', 'ai', $settings );
 			$response = $call( 'POST', 'exam-imports/' . $id . '/extract' );
 			$check( 200 === $response->get_status(), 'Start extraction: ' . wp_json_encode( $response->get_data() ) );
 			$job        = get_post_meta( $id, Jobs::META, true );
 			$generation = $job['generation'];
+			$call( 'POST', 'ai', array_merge( $settings, array( 'exam_converter_enabled' => false ) ) );
+			Workflow::cancel( $id ); // Simulate dequeuing the action before its worker runs.
+			Workflow::process( $id, $generation, -1 );
+			$check( 'extraction_failed' === get_post_meta( $id, Jobs::META, true )['state'] && 0 === $network_calls, 'Queued extraction respects a disabled converter without provider traffic' );
+			$call( 'POST', 'ai', $settings );
+			$call( 'POST', 'exam-imports/' . $id . '/extract' );
+			$generation = get_post_meta( $id, Jobs::META, true )['generation'];
 			Workflow::process( $id, $generation, -1 );
 			Workflow::process( $id, $generation, 0 );
 			Workflow::process( $id, $generation, 5 );

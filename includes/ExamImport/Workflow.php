@@ -119,8 +119,8 @@ final class Workflow {
 				if ( ! in_array( $job['state'], array( 'ready_for_extraction', 'ready_for_review', 'extraction_failed', 'extracting' ), true ) || ! empty( $job['question_ids'] ) || ( $job['usage']['requests'] ?? 0 ) >= self::MAX_REQUESTS ) {
 					return new \WP_Error( 'exam_state', __( 'This import cannot start extraction.', 'ohmylms' ), array( 'status' => 409 ) );
 				}
-				if ( ! \OhMyLMS\AI\Settings::configured() ) {
-					return new \WP_Error( 'exam_provider', __( 'Configure an enabled AI provider first.', 'ohmylms' ), array( 'status' => 503 ) );
+				if ( ! \OhMyLMS\AI\Settings::configured( 'exam_converter' ) ) {
+					return new \WP_Error( 'exam_provider', __( 'Enable the PDF exam converter and configure its connection in Settings → AI tools.', 'ohmylms' ), array( 'status' => 503 ) );
 				}
 				if ( in_array( $job['state'], array( 'ready_for_extraction', 'ready_for_review' ), true ) ) {
 					unset( $job['inventory'] );
@@ -166,6 +166,12 @@ final class Workflow {
 				if ( ! user_can( $post->post_author, 'edit_posts' ) || ! user_can( $post->post_author, 'upload_files' ) || $job['stage_attempts'] >= 3 || ( $job['usage']['requests'] ?? 0 ) >= self::MAX_REQUESTS ) {
 					$job['state'] = 'extraction_failed';
 					$job['error'] = 'permission_or_budget';
+					self::save( $id, $job );
+					return;
+				}
+				if ( ! \OhMyLMS\AI\Settings::configured( 'exam_converter' ) ) {
+					$job['state'] = 'extraction_failed';
+					$job['error'] = 'exam_provider';
 					self::save( $id, $job );
 					return;
 				}

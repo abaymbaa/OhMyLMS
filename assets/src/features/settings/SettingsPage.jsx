@@ -467,7 +467,7 @@ export function createSettingsPage( readRuntime ) {
 			{
 				label: (
 					<React.Fragment>
-						{ ( 0, I18n.__ )( 'AI tutor', 'ohmylms' ) }
+						{ ( 0, I18n.__ )( 'AI tools', 'ohmylms' ) }
 					</React.Fragment>
 				),
 				key: 'ai-tutor-settings',

@@ -1,6 +1,6 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
- * Connection and policy settings for AI feedback (option "ohmylms_ai").
+ * Shared AI connection and independent tool policies (option "ohmylms_ai").
  *
  * @package OhMyLMS
  */
@@ -9,7 +9,7 @@ namespace OhMyLMS\AI;
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Connection and policy settings for AI feedback (option "ohmylms_ai").
+ * Shared AI connection and independent tool policies (option "ohmylms_ai").
  *
  * AI only explains and hints: it never grades, scores or changes mastery. When it is off,
  * unconfigured or failing, practice works exactly as before with the authored hint and
@@ -26,18 +26,20 @@ final class Settings {
 		'gemini'    => 'Google (Gemini)',
 	);
 
+	/** Defaults keep both tools off until an administrator enables them. */
 	public static function defaults() {
 		return array(
-			'enabled'      => false,
-			'provider'     => 'anthropic',
-			'model'        => '',
-			'key'          => '',
-			'hints'        => true,
-			'explanations' => true,
-			'guests'       => false,
-			'daily_limit'  => 30,
-			'max_tokens'   => 400,
-			'timeout'      => 20,
+			'enabled'                => false,
+			'exam_converter_enabled' => false,
+			'provider'               => 'anthropic',
+			'model'                  => '',
+			'key'                    => '',
+			'hints'                  => true,
+			'explanations'           => true,
+			'guests'                 => false,
+			'daily_limit'            => 30,
+			'max_tokens'             => 400,
+			'timeout'                => 20,
 		);
 	}
 
@@ -52,7 +54,12 @@ final class Settings {
 		return $settings;
 	}
 
-	/** Model ids are plain identifiers; a leading "models/" (Gemini) is dropped. */
+	/**
+	 * Normalize plain model identifiers, dropping Gemini's models/ prefix.
+	 *
+	 * @param string $model Provider model identifier.
+	 * @return string Valid identifier or an empty string.
+	 */
 	public static function clean_model( $model ) {
 		$model = preg_replace( '#^models/#', '', trim( (string) $model ) );
 		return preg_match( '/^[A-Za-z0-9._:\/-]{1,100}$/', $model ) ? $model : '';
@@ -78,15 +85,37 @@ final class Settings {
 		return Secrets::open( is_array( $stored ) ? (string) ( $stored['key'] ?? '' ) : '' );
 	}
 
-	/** True when requests can be made. */
-	public static function configured() {
+	/**
+	 * Whether the shared provider connection has usable credentials.
+	 *
+	 * @return bool Connection is configured, independently of tool switches.
+	 */
+	public static function connection_configured() {
 		$settings = self::get();
-		return ! empty( $settings['enabled'] ) && isset( self::PROVIDERS[ $settings['provider'] ] ) && '' !== $settings['model'] && self::api_key() !== '';
+		return isset( self::PROVIDERS[ $settings['provider'] ] ) && '' !== $settings['model'] && '' !== self::api_key();
+	}
+
+	/**
+	 * Whether a particular tool may send requests through the shared connection.
+	 *
+	 * Keep the no-argument tutor contract and its established enabled REST field.
+	 *
+	 * @param string $tool Tutor or exam_converter.
+	 * @return bool Tool is enabled and configured.
+	 */
+	public static function configured( $tool = 'tutor' ) {
+		$fields = array(
+			'tutor'          => 'enabled',
+			'exam_converter' => 'exam_converter_enabled',
+		);
+		return isset( $fields[ $tool ] ) && ! empty( self::get()[ $fields[ $tool ] ] ) && self::connection_configured();
 	}
 
 	/**
 	 * Save admin input. A blank key keeps the stored one; $clear_key removes it.
 	 *
+	 * @param array $input Submitted settings.
+	 * @param bool  $clear_key Remove the stored key.
 	 * @return array the sanitized settings that were stored
 	 */
 	public static function update( array $input, $clear_key = false ) {
@@ -94,16 +123,17 @@ final class Settings {
 		$stored   = get_option( self::OPTION, array() );
 		$provider = (string) ( $input['provider'] ?? $current['provider'] );
 		$next     = array(
-			'enabled'      => ! empty( $input['enabled'] ),
-			'provider'     => isset( self::PROVIDERS[ $provider ] ) ? $provider : 'anthropic',
-			'model'        => self::clean_model( $input['model'] ?? '' ),
-			'hints'        => ! empty( $input['hints'] ),
-			'explanations' => ! empty( $input['explanations'] ),
-			'guests'       => ! empty( $input['guests'] ),
-			'daily_limit'  => max( 1, min( 500, (int) ( $input['daily_limit'] ?? 30 ) ) ),
-			'max_tokens'   => max( 100, min( 1200, (int) ( $input['max_tokens'] ?? 400 ) ) ),
-			'timeout'      => max( 5, min( 60, (int) ( $input['timeout'] ?? 20 ) ) ),
-			'key'          => is_array( $stored ) ? (string) ( $stored['key'] ?? '' ) : '',
+			'enabled'                => ! empty( $input['enabled'] ),
+			'exam_converter_enabled' => array_key_exists( 'exam_converter_enabled', $input ) ? ! empty( $input['exam_converter_enabled'] ) : ! empty( $current['exam_converter_enabled'] ),
+			'provider'               => isset( self::PROVIDERS[ $provider ] ) ? $provider : 'anthropic',
+			'model'                  => self::clean_model( $input['model'] ?? '' ),
+			'hints'                  => ! empty( $input['hints'] ),
+			'explanations'           => ! empty( $input['explanations'] ),
+			'guests'                 => ! empty( $input['guests'] ),
+			'daily_limit'            => max( 1, min( 500, (int) ( $input['daily_limit'] ?? 30 ) ) ),
+			'max_tokens'             => max( 100, min( 1200, (int) ( $input['max_tokens'] ?? 400 ) ) ),
+			'timeout'                => max( 5, min( 60, (int) ( $input['timeout'] ?? 20 ) ) ),
+			'key'                    => is_array( $stored ) ? (string) ( $stored['key'] ?? '' ) : '',
 		);
 		$new_key  = trim( (string) ( $input['key'] ?? '' ) );
 		if ( $clear_key ) {
@@ -141,6 +171,11 @@ final class Settings {
 		);
 	}
 
+	/**
+	 * Accumulate provider usage without storing prompts or credentials.
+	 *
+	 * @param array $delta Usage counters and safe error codes.
+	 */
 	public static function record( array $delta ) {
 		$stats = self::stats();
 		foreach ( array( 'requests', 'failures', 'cached', 'input_tokens', 'output_tokens' ) as $key ) {

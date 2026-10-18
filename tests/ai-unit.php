@@ -86,6 +86,15 @@ check( Settings::api_key() === 'sk-test-ABCDEFGHIJ' && Settings::configured() &&
 $now = Settings::get();
 check( $now['provider'] === 'openai' && $now['daily_limit'] === 500 && $now['max_tokens'] === 100 && $now['timeout'] === 60 && $now['hints'] === false && $now['explanations'] === true, 'limits are clamped' );
 check( strpos( json_encode( Settings::summary() ), 'ABCDEFGHIJ' ) === false && Settings::summary()['key_hint'] === '…GHIJ' && Settings::summary()['has_key'] === true, 'the summary never carries the key' );
+check( ! Settings::configured( 'exam_converter' ), 'a legacy tutor setting does not opt into PDF conversion' );
+foreach ( array( array( false, false ), array( true, false ), array( false, true ), array( true, true ) ) as $switches ) {
+	Settings::update( array( 'enabled' => $switches[0], 'exam_converter_enabled' => $switches[1], 'provider' => 'openai', 'model' => 'm-1' ) );
+	check( Settings::configured() === $switches[0] && Settings::configured( 'exam_converter' ) === $switches[1], 'tool switches are independent' );
+	check( Settings::connection_configured() && Settings::api_key() === 'sk-test-ABCDEFGHIJ', 'tool switches preserve the shared connection' );
+}
+Settings::update( array( 'enabled' => false, 'provider' => 'openai', 'model' => 'm-1' ) );
+check( Settings::configured( 'exam_converter' ) && ! Settings::configured(), 'older tutor clients preserve the converter switch' );
+check( ! Settings::configured( 'unknown' ), 'unknown tools fail closed' );
 Settings::update( array( 'enabled' => '1', 'provider' => 'nonsense', 'model' => 'm-2' ) );
 check( Settings::get()['provider'] === 'anthropic' && Settings::api_key() === 'sk-test-ABCDEFGHIJ', 'a blank key keeps the saved one; unknown providers fall back' );
 Settings::update( array( 'enabled' => '1', 'provider' => 'gemini', 'model' => 'm-3' ), true );

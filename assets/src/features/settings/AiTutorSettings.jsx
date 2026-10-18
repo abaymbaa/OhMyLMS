@@ -89,7 +89,7 @@ export function AiTutorSettings() {
 			);
 			setMessage( {
 				status: 'success',
-				text: __( 'AI tutor settings saved.', 'ohmylms' ),
+				text: __( 'AI tools settings saved.', 'ohmylms' ),
 			} );
 		} ).finally( () => setSaving( false ) );
 	};
@@ -113,10 +113,10 @@ export function AiTutorSettings() {
 	return (
 		<form className="ohmylms-streak-settings" onSubmit={ save }>
 			<header className="ohmylms-streak-settings__header">
-				<h2>{ __( 'AI tutor', 'ohmylms' ) }</h2>
+				<h2>{ __( 'AI tools', 'ohmylms' ) }</h2>
 				<p>
 					{ __(
-						'Connect Claude, OpenAI or Gemini so learners can ask for a hint before they answer and an explanation after. The tutor only explains: it never marks an answer, changes a score or affects mastery, and practice keeps working with your own hints and worked solutions if it is off or unavailable.',
+						'Choose which AI tools to use. Each tool has its own switch and shares the provider connection below.',
 						'ohmylms'
 					) }
 				</p>
@@ -132,11 +132,56 @@ export function AiTutorSettings() {
 			>
 				<div className="ohmylms-streak-settings__grid">
 					<section className="ohmylms-streak-settings__card">
+						<h3>{ __( 'AI tutor', 'ohmylms' ) }</h3>
+						<p>
+							{ __(
+								'Give learners hints and explanations during practice. The tutor does not mark answers or change mastery.',
+								'ohmylms'
+							) }
+						</p>
 						<ToggleControl
-							label={ __( 'Turn the AI tutor on', 'ohmylms' ) }
+							label={ __( 'Enable AI tutor', 'ohmylms' ) }
 							checked={ !! form.enabled }
 							onChange={ ( value ) => set( 'enabled', value ) }
 						/>
+					</section>
+					<section className="ohmylms-streak-settings__card">
+						<h3>{ __( 'PDF exam converter', 'ohmylms' ) }</h3>
+						<p>
+							{ __(
+								'Extract questions and optional mark schemes from PDFs in Exams. Review and approve the questions before publishing.',
+								'ohmylms'
+							) }
+						</p>
+						<ToggleControl
+							label={ __(
+								'Enable PDF exam converter',
+								'ohmylms'
+							) }
+							checked={ !! form.exam_converter_enabled }
+							onChange={ ( value ) =>
+								set( 'exam_converter_enabled', value )
+							}
+						/>
+						<p>
+							{ __(
+								'Turning this off stops new extraction requests. Uploaded papers, reviews and existing exams stay available.',
+								'ohmylms'
+							) }
+						</p>
+					</section>
+				</div>
+				<div className="ohmylms-streak-settings__grid">
+					<section className="ohmylms-streak-settings__card">
+						<h3>
+							{ __( 'Shared provider connection', 'ohmylms' ) }
+						</h3>
+						<p>
+							{ __(
+								'Both tools use this provider, model and API key. You can test the saved connection while both tools are off.',
+								'ohmylms'
+							) }
+						</p>
 						<SelectControl
 							label={ __( 'Provider', 'ohmylms' ) }
 							value={ form.provider }
@@ -146,10 +191,9 @@ export function AiTutorSettings() {
 						<TextControl
 							label={ __( 'Model', 'ohmylms' ) }
 							help={ __(
-								'Use a fast, inexpensive model: replies are a few sentences. Models that think at length use part of the reply budget below before writing.',
+								'Enter a model supported by your provider. PDF conversion requires a model that accepts PDF documents.',
 								'ohmylms'
 							) }
-							placeholder="claude-haiku-5-5"
 							autoComplete="off"
 							value={ form.model }
 							onChange={ ( value ) => set( 'model', value ) }
@@ -212,9 +256,7 @@ export function AiTutorSettings() {
 						) }
 					</section>
 					<section className="ohmylms-streak-settings__card">
-						<h3>
-							{ __( 'Help learners can ask for', 'ohmylms' ) }
-						</h3>
+						<h3>{ __( 'AI tutor options', 'ohmylms' ) }</h3>
 						<CheckboxControl
 							label={ __(
 								'A hint before answering (the tutor is not told the answer)',
@@ -301,7 +343,7 @@ export function AiTutorSettings() {
 						isBusy={ saving }
 						disabled={ saving }
 					>
-						{ __( 'Save AI tutor settings', 'ohmylms' ) }
+						{ __( 'Save AI tools settings', 'ohmylms' ) }
 					</Button>{ ' ' }
 					<Button
 						variant="secondary"
@@ -317,13 +359,13 @@ export function AiTutorSettings() {
 					<ul>
 						<li>
 							{ __(
-								'The question as the learner saw it, their own answer, and for an explanation the reference answer and your worked solution.',
+								'AI tutor: the question, the learner’s answer, and for an explanation the reference answer and worked solution. Identical tutor requests can use a cached reply.',
 								'ohmylms'
 							) }
 						</li>
 						<li>
 							{ __(
-								'Never names, e-mail addresses, user IDs or anything about your site. Identical requests are answered from a cache for a week.',
+								'PDF exam converter: the uploaded question paper and optional mark scheme are sent when you start extraction. Check the PDFs for information you do not want to send.',
 								'ohmylms'
 							) }
 						</li>

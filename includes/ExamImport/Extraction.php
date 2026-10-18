@@ -109,8 +109,8 @@ final class Extraction {
 	 * @return array|\WP_Error Parsed reply and usage.
 	 */
 	public static function complete( array $job ) {
-		if ( ! Settings::configured() ) {
-			return self::error( 'provider', __( 'Enable and configure the AI connection before extracting PDFs.', 'ohmylms' ) );
+		if ( ! Settings::configured( 'exam_converter' ) ) {
+			return self::error( 'provider', __( 'Enable the PDF exam converter and configure its connection in Settings → AI tools.', 'ohmylms' ) );
 		}
 		$documents = array();
 		foreach ( array_filter( array( $job['document'], $job['mark_scheme'] ?? null ) ) as $index => $document ) {
