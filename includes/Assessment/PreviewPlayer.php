@@ -34,14 +34,35 @@ final class PreviewPlayer {
 			20
 		);
 	}
-	public static function url( $id ) {
+	/**
+	 * Build an authenticated preview link with an optional origin editor.
+	 *
+	 * @param int    $id Quiz ID.
+	 * @param string $editor Origin editor identifier.
+	 * @return string Preview URL.
+	 */
+	public static function url( $id, $editor = '' ) {
 		return add_query_arg(
 			array(
 				'ohmylms_quiz_preview' => (int) $id,
 				'_wpnonce'             => wp_create_nonce( 'ohmylms_quiz_preview_' . (int) $id ),
+				'quiz_editor'          => 'gutenberg' === $editor ? 'gutenberg' : false,
 			),
 			home_url( '/' )
 		);
+	}
+	/**
+	 * Return to the editor that opened this preview, using local routes only.
+	 *
+	 * @param int    $id Quiz ID.
+	 * @param string $editor Origin editor identifier.
+	 * @return string Editor URL.
+	 */
+	public static function editor_url( $id, $editor = '' ) {
+		if ( 'gutenberg' === $editor ) {
+			return (string) get_edit_post_link( $id, 'raw' );
+		}
+		return admin_url( 'admin.php?page=ohmylms#/quiz-edit/' . absint( $id ) );
 	}
 	public static function render() {
 		if ( ! isset( $_GET['ohmylms_quiz_preview'] ) ) {
@@ -81,6 +102,7 @@ final class PreviewPlayer {
 			$saved   = array(
 				'user'      => get_current_user_id(),
 				'quiz'      => $id,
+				'editor'    => isset( $_GET['quiz_editor'] ) && is_string( $_GET['quiz_editor'] ) && 'gutenberg' === sanitize_key( wp_unslash( $_GET['quiz_editor'] ) ) ? 'gutenberg' : '',
 				'snapshots' => $snapshots,
 				'settings'  => $quiz->get_settings(),
 			);
@@ -89,7 +111,7 @@ final class PreviewPlayer {
 		$result = null;
 		$items  = array();
 		if ( ( $_POST['action'] ?? '' ) === 'ohmylms-quiz-preview-exit' ) {
-			wp_safe_redirect( admin_url( 'admin.php?page=ohmylms#/quiz-edit/' . $id ) );
+			wp_safe_redirect( self::editor_url( $id, $saved['editor'] ?? '' ) );
 			exit;
 		}
 		if ( ( $_POST['action'] ?? '' ) === 'ohmylms-quiz-preview-submit' ) {

@@ -37,7 +37,6 @@ export function createQuizEditor( readRuntime ) {
 		const runtime = readRuntime();
 		const {
 			D: { A: Button },
-			W: { A: RichText },
 			Wr: PageHeader,
 			Nu: QuestionCanvas,
 			_s: QuestionSettings,
@@ -50,7 +49,7 @@ export function createQuizEditor( readRuntime ) {
 		const route = runtime.f.g();
 		const navigate = runtime.f.Zp();
 		const { contextHolder, openNotificationWithIcon } = runtime.z.A();
-		const [ hovered, setHovered ] = useState( false );
+		const [ , setHovered ] = useState( false );
 		const [ pickerOpen, setPickerOpen ] = useState( false );
 		const [ view, setView ] = useState( 'questions' );
 		const skills = useSkillList();
@@ -223,6 +222,16 @@ export function createQuizEditor( readRuntime ) {
 						onClick={ () => setView( 'questions' ) }
 					>
 						{ __( 'Questions', 'ohmylms' ) }
+					</Button>
+					<Button
+						disabled={ ! editor.quiz?.native_editor_url }
+						onClick={ () =>
+							window.location.assign(
+								editor.quiz.native_editor_url
+							)
+						}
+					>
+						{ __( 'Open Gutenberg editor', 'ohmylms' ) }
 					</Button>
 					<Button
 						role="tab"

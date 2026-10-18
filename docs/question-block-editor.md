@@ -2,7 +2,7 @@
 
 See [ASSESSMENT-MODULES.md](ASSESSMENT-MODULES.md) for source module boundaries, public interfaces and extension guidance.
 
-Quizzes and the question bank use form fields, without Gutenberg. Lesson authoring continues to use its existing Gutenberg workspace.
+Quizzes offer **Create with Gutenberg**, which opens the actual WordPress `/wp-admin/post.php` editor. Existing quizzes provide **Open Gutenberg editor**. Native WordPress controls manage core content blocks and **OhMyLMS Multiple Choice** question blocks. **Add Quiz** retains the existing form editor. No separate embedded block editor is used. Lessons can insert the same question block in their native editor. See [the shared choice prototype](shared-choice-prototype.md) for storage, approval, MathLive and verification details.
 
 The Questions tab uses a Wayground-style overview: question and point totals, Create question controls, numbered cards with type and points, prompt summaries, answer options and correctness indicators. Each card provides Preview, Duplicate, Remove, keyboard or drag reorder, and Edit actions. The right-hand Find questions panel searches this quiz by prompt or type and opens the existing question bank picker. Edit opens the fullscreen question workspace; Save question returns to the overview. Version controls remain available for the selected question.
 

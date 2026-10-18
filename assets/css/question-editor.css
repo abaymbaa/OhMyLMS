@@ -1,3 +1,180 @@
+.editor-styles-wrapper .ohmylms-shared-choice-block {
+	padding: 10px;
+	border: 1px solid #dcdcde;
+	border-radius: 6px;
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+/* Compact native question authoring; the form editor keeps its own layout. */
+
+
+.ohmylms-shared-choice-block .ohmylms-compact-choice,
+.ohmylms-shared-choice-block .ohmylms-shared-answer-row {
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+
+.ohmylms-shared-choice-block .ohmylms-compact-choice > .components-button {
+    float: right;
+    height: 28px;
+    margin-bottom: 4px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-rich-content-control {
+    position: relative;
+    clear: both;
+    margin: 0;
+}
+
+.ohmylms-shared-choice-block .ohmylms-rich-content-control > .ohmylms-prompt-label,
+.ohmylms-shared-choice-block .ohmylms-answer-guidance {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.ohmylms-shared-choice-block .ohmylms-rich-content-control > [role="textbox"] {
+    min-height: 34px;
+    padding: 6px 64px 6px 8px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.ohmylms-shared-choice-block .ohmylms-field-format-menu {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    z-index: 5;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block summary {
+    width: fit-content;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-field-format-menu [role="toolbar"] {
+    position: absolute;
+    top: 24px;
+    right: 0;
+    display: flex;
+    flex-wrap: wrap;
+    width: 280px;
+    max-width: 70vw;
+    padding: 4px;
+    border: 1px solid #c3c4c7;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0 2px 8px #0002;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answers {
+    display: grid;
+    gap: 4px;
+    margin: 6px 0;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answer-row {
+    display: grid;
+    grid-template-columns: 20px minmax(0, 1fr) repeat(3, 28px);
+    align-items: center;
+    gap: 4px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answer-row > .components-button {
+    min-width: 28px;
+    height: 28px;
+    padding: 4px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answer-correct {
+    margin: 0;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answers > .components-button {
+    justify-self: start;
+    height: 28px;
+    margin: 2px 0;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answer-image {
+    grid-column: 2 / -1;
+}
+
+.ohmylms-shared-choice-block .ohmylms-shared-answer-image img {
+    max-height: 90px;
+    object-fit: contain;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-settings {
+    margin: 6px 0;
+    padding: 6px 0;
+    border-top: 1px solid #dcdcde;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-settings[open] > :not(summary) {
+    margin: 8px 0;
+}
+
+.ohmylms-shared-choice-block .ohmylms-question-options-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-question-options-controls input[type="number"] {
+    width: 68px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-question-options-feedback {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-question-options-feedback .ohmylms-prompt-label {
+    position: static;
+    width: auto;
+    height: auto;
+    clip-path: none;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-save-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 4px;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-save-row > .components-button {
+    height: 28px;
+    padding: 0 8px;
+    font-size: 12px;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-save-help[open] {
+    flex-basis: 100%;
+}
+
+.ohmylms-shared-choice-block .ohmylms-choice-save-help p {
+    margin: 4px 0;
+    font-size: 12px;
+}
+
 .ohmylms-question-type-modal .ohmylms-question-type-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -300,4 +477,5 @@
 	font-size: 20px;
 	text-align: center;
 }
+
 

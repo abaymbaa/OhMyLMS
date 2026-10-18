@@ -29,10 +29,64 @@ final class NativeLessonEditor {
 
 	/** Register editor integration hooks. */
 	public static function init() {
+		NativeQuizEditor::init();
+		add_action( 'init', array( __CLASS__, 'register_question_block' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 20 );
+		add_action( 'enqueue_block_assets', array( __CLASS__, 'question_block_styles' ) );
 		add_action( 'rest_after_insert_ohmylms-lesson', array( __CLASS__, 'after_save' ), 10, 3 );
 		add_filter( 'ohmylms_rest_prepare_lesson', array( __CLASS__, 'legacy_response' ), 10, 2 );
+	}
+
+	/** Register a reference-only placement using the established inline assessment flow. */
+	public static function register_question_block() {
+		register_block_type(
+			'ohmylms/shared-multiple-choice',
+			array(
+				'api_version'     => 3,
+				'attributes'      => array(
+					'questionId' => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'uuid'       => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'delivery'   => array(
+						'type'    => 'string',
+						'default' => 'inline',
+					),
+				),
+				'render_callback' => array( __CLASS__, 'render_question_block' ),
+			)
+		);
+	}
+
+	/**
+	 * Resolve approved content through the existing access, grading and evidence boundary.
+	 *
+	 * @param array $attributes Saved question references, without answer keys.
+	 * @return string Learner-safe interactive question markup.
+	 */
+	public static function render_question_block( $attributes ) {
+		if ( 'quiz' === ( $attributes['delivery'] ?? '' ) || 'ohmylms-quiz' === get_post_type() ) {
+			return '';
+		}
+		$html = \OhMyLMS\Practice\Inline::render( (string) ( $attributes['uuid'] ?? '' ) );
+		return \OhMyLMS\Assessment\MathLive::content( $html );
+	}
+
+	/** Load shared authoring styles inside the native editor canvas, including its iframe. */
+	public static function question_block_styles() {
+		$screen = is_admin() ? get_current_screen() : null;
+		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz' ), true ) || ! $screen->is_block_editor() ) {
+			return;
+		}
+		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'wp-components', 'dashicons' ), OHMYLMS_VERSION );
+		if ( \OhMyLMS\Assessment\MathLive::enabled() ) {
+			wp_enqueue_style( 'ohmylms-mathlive', plugins_url( 'assets/css/mathlive.css', OHMYLMS_FILE ), array(), '0.111.1' );
+		}
 	}
 
 	/**
@@ -249,7 +303,8 @@ final class NativeLessonEditor {
 	 * @return string Native editor URL, or an empty string for custom lessons.
 	 */
 	public static function edit_url( $lesson_id ) {
-		$type = get_post_meta( $lesson_id, '_type', true ) ?: 'text';
+		$type = get_post_meta( $lesson_id, '_type', true );
+		$type = $type ? $type : 'text';
 		if ( 'ohmylms-lesson' !== get_post_type( $lesson_id ) || ! in_array( $type, array( 'text', 'audio', 'video' ), true ) || ! current_user_can( 'edit_post', $lesson_id ) ) {
 			return '';
 		}
@@ -259,7 +314,7 @@ final class NativeLessonEditor {
 	/** Enqueue only the settings extension on native lesson screens. */
 	public static function enqueue() {
 		$screen = get_current_screen();
-		if ( ! $screen || 'ohmylms-lesson' !== $screen->post_type || ! $screen->is_block_editor() ) {
+		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz' ), true ) || ! $screen->is_block_editor() ) {
 			return;
 		}
 		$asset_path = OHMYLMS_DIR . '/assets/dist/admin/native-lesson-editor.asset.php';
@@ -268,14 +323,18 @@ final class NativeLessonEditor {
 		}
 		$asset = require $asset_path;
 		wp_enqueue_script( 'ohmylms-native-lesson-settings', plugins_url( 'assets/dist/admin/native-lesson-editor.js', OHMYLMS_FILE ), $asset['dependencies'], $asset['version'], true );
+		// Reuse the lazy MathLive configuration on the native lesson screen as well as the LMS app.
+		wp_enqueue_script( 'ohmylms-mathlive-loader' );
+		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'wp-components', 'dashicons' ), OHMYLMS_VERSION );
 		wp_localize_script(
 			'ohmylms-native-lesson-settings',
 			'ohmylmsNativeLesson',
 			array(
-				'returnUrl' => self::return_url(),
+				'returnUrl'  => 'ohmylms-quiz' === $screen->post_type ? NativeQuizEditor::form_url( get_the_ID() ) : self::return_url(),
+				'previewUrl' => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID(), 'gutenberg' ) : '',
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presence flag for read-only navigation, not a submitted value.
-				'hasReturn' => isset( $_GET['ohmylms_return'] ),
-				'chapterId' => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
+				'hasReturn'  => isset( $_GET['ohmylms_return'] ),
+				'chapterId'  => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
 			)
 		);
 	}

@@ -2,6 +2,7 @@
 import { createElement } from '@wordpress/element';
 import {
 	ExportIcon,
+	CreateBlockQuizButton,
 	QuizImportButton,
 	useAddQuiz,
 	useExportQuiz,
@@ -543,6 +544,7 @@ export function createQuizList( readRuntime ) {
 							showAddButton={ ! 0 }
 							addButtonConfig={ addQuiz }
 						>
+							<CreateBlockQuizButton />
 							<QuizImportButton />
 						</YG>
 						<Ea

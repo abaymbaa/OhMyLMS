@@ -1,4 +1,6 @@
 /** @jsx createElement */
+import './LessonChoiceBlock';
+import './NativeQuizSettings';
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
@@ -19,6 +21,9 @@ import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
 import { searchBank } from '../question-bank/api.mjs';
 import { inlineShortcode } from '../assessment/model.mjs';
+import { installNativeCanvasRecovery } from './nativeCanvas.mjs';
+
+installNativeCanvasRecovery();
 
 /**
  * Insert approved practice questions using the native block insertion action.
@@ -76,9 +81,23 @@ function InlineChecks() {
 						variant="secondary"
 						onClick={ () =>
 							insertBlocks(
-								createBlock( 'core/shortcode', {
-									text: inlineShortcode( question.uuid ),
-								} )
+								[ 'single-choice', 'multiple-choice' ].includes(
+									question.type
+								)
+									? createBlock(
+											'ohmylms/shared-multiple-choice',
+											{
+												questionId: Number(
+													question.id
+												),
+												uuid: question.uuid,
+											}
+										)
+									: createBlock( 'core/shortcode', {
+											text: inlineShortcode(
+												question.uuid
+											),
+										} )
 							)
 						}
 					>

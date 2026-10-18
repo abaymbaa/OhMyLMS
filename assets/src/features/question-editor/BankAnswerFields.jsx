@@ -35,6 +35,8 @@ import { RichContentControl } from '../math/RichContentControl';
  * @param root0.onChange
  * @param root0.prompt
  * @param root0.mainStatement
+ * @param root0.collapseAnswerToolbar
+ * @param root0.showAnswerToolbar
  */
 export function BankAnswerFields( {
 	type,
@@ -43,6 +45,8 @@ export function BankAnswerFields( {
 	onChange,
 	prompt = '',
 	mainStatement = false,
+	showAnswerToolbar = false,
+	collapseAnswerToolbar = false,
 } ) {
 	const dragged = useRef( null );
 	if ( isExtendedType( type ) ) {
@@ -333,6 +337,8 @@ export function BankAnswerFields( {
 					].includes( type ) ? (
 						<RichContentControl
 							compact
+							showToolbar={ showAnswerToolbar }
+							collapseToolbar={ collapseAnswerToolbar }
 							html={ false }
 							label={ sprintf(
 								/* translators: %d: answer number. */ __(

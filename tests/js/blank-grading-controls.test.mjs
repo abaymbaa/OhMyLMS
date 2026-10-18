@@ -22,11 +22,10 @@ const { code } = transformSync( source, {
 	],
 } );
 const scope = {
-	createElement: ( type, props, ...children ) => ( {
-		type,
-		props,
-		children,
-	} ),
+	createElement: ( type, props, ...children ) =>
+		typeof type === 'function' ? type( props ) : { type, props, children },
+	useState: ( value ) => [ value, () => {} ],
+	Button: 'button',
 	Fragment: 'fragment',
 	__: ( text ) => text,
 	isUngradedType: () => false,

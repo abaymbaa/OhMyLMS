@@ -51,6 +51,10 @@ $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home'
 ?>
 <div class="ohmylms ohmylms-page">
 	<section class="ohmylms-student-hub" data-layout="<?php echo esc_attr( $config['layout'] ); ?>" data-role="<?php echo esc_attr( $hub_role ); ?>" data-section="<?php echo esc_attr( $section ); ?>" data-view="<?php echo esc_attr( $view ); ?>" data-theme="light" style="--hub-accent:<?php echo esc_attr( $config['accent'] ); ?>">
+		<?php
+		// Apply the saved theme before first paint so navigating does not flash the light default.
+		wp_print_inline_script_tag( "try{var t=localStorage.getItem('ohmylms-hub-theme');if(t==='system'||t==='dark'||t==='light'){document.currentScript.parentElement.dataset.theme=t;}}catch(e){}" );
+		?>
 		<aside class="oml-hub-rail" id="oml-hub-rail">
 			<div class="oml-hub-rail-head">
 				<a class="oml-hub-brand" href="<?php echo esc_url( $hub_url( $teacher_mode ? 'classes' : ( $parent_mode ? 'family' : ( $school_mode ? 'school-overview' : '' ) ) ) ); ?>"><span class="oml-hub-logo" aria-hidden="true">✦</span><span><?php echo esc_html( $config['title'] ); ?></span></a>

@@ -75,8 +75,9 @@ export const ExportIcon = () => (
 
 /**
  * Create an empty draft quiz and open its editor. For the title row's add-button config.
+ * @param {boolean} blocks Whether to start in the alternative block editor.
  */
-export function useAddQuiz() {
+export function useAddQuiz( blocks = false ) {
 	const [ loading, setLoading ] = useState( false );
 	const onClick = async () => {
 		setLoading( true );
@@ -85,7 +86,19 @@ export function useAddQuiz() {
 				'quiz',
 				__( 'Untitled quiz', 'ohmylms' )
 			);
-			openEditor( quiz.id );
+			if ( blocks ) {
+				if ( ! quiz.native_editor_url ) {
+					throw new Error(
+						__(
+							'The Gutenberg editor is unavailable. The draft remains in your quiz list.',
+							'ohmylms'
+						)
+					);
+				}
+				window.location.assign( quiz.native_editor_url );
+			} else {
+				openEditor( quiz.id );
+			}
 		} catch ( e ) {
 			setLoading( false );
 			// eslint-disable-next-line no-alert
@@ -94,7 +107,28 @@ export function useAddQuiz() {
 			);
 		}
 	};
-	return { label: __( 'Add Quiz', 'ohmylms' ), onClick, loading };
+	return {
+		label: blocks
+			? __( 'Create with Gutenberg', 'ohmylms' )
+			: __( 'Add Quiz', 'ohmylms' ),
+		onClick,
+		loading,
+	};
+}
+
+/** Create a quiz through the same API, opening the optional block workspace. */
+export function CreateBlockQuizButton() {
+	const action = useAddQuiz( true );
+	return (
+		<Button
+			variant="secondary"
+			onClick={ action.onClick }
+			isBusy={ action.loading }
+			disabled={ action.loading }
+		>
+			{ action.label }
+		</Button>
+	);
 }
 
 /**

@@ -32,6 +32,7 @@ const equationLabels = () => ( {
  * @param root0.placeholder
  * @param root0.onDoubleClick
  * @param root0.label
+ * @param root0.collapseToolbar
  * @param root0.showToolbar
  */
 export function RichContentControl( {
@@ -42,6 +43,7 @@ export function RichContentControl( {
 	html = true,
 	compact = false,
 	showToolbar = false,
+	collapseToolbar = false,
 	help,
 	onDoubleClick,
 	placeholder = __( 'Type here …', 'ohmylms' ),
@@ -49,8 +51,9 @@ export function RichContentControl( {
 	const field = useRef( null );
 	const textSelection = useRef( null );
 	useEffect( () => {
+		const ownerDocument = field.current?.ownerDocument || document;
 		const remember = () => {
-			const selection = window.getSelection();
+			const selection = ownerDocument.defaultView.getSelection();
 			if ( ! selection?.rangeCount || ! field.current ) {
 				return;
 			}
@@ -65,9 +68,9 @@ export function RichContentControl( {
 				textSelection.current = range.cloneRange();
 			}
 		};
-		document.addEventListener( 'selectionchange', remember );
+		ownerDocument.addEventListener( 'selectionchange', remember );
 		return () =>
-			document.removeEventListener( 'selectionchange', remember );
+			ownerDocument.removeEventListener( 'selectionchange', remember );
 	}, [] );
 	const insertEquation = ( source = '' ) => {
 		loadMath()
@@ -141,9 +144,70 @@ export function RichContentControl( {
 	}
 	const format = ( command ) => {
 		field.current.focus();
-		document.execCommand( command, false );
+		field.current.ownerDocument.execCommand( command, false );
 		onChange( serialize( field.current ) );
 	};
+	const toolbar = showToolbar && (
+		<div role="toolbar" aria-label={ __( 'Text formatting', 'ohmylms' ) }>
+			{ ( html
+				? [
+						[ 'bold', 'Bold', 'editor-bold' ],
+						[ 'italic', 'Italic', 'editor-italic' ],
+						[ 'underline', 'Underline', 'editor-underline' ],
+						[ 'insertUnorderedList', 'Bullet list', 'editor-ul' ],
+						[ 'superscript', 'Superscript', 'editor-superscript' ],
+						[ 'subscript', 'Subscript', 'editor-subscript' ],
+					]
+				: []
+			).map( ( [ command, formatLabel, icon ] ) => (
+				<Button
+					key={ command }
+					icon={
+						[ 'superscript', 'subscript' ].includes( command )
+							? undefined
+							: icon
+					}
+					label={ formatLabel }
+					onMouseDown={ ( event ) => event.preventDefault() }
+					onClick={ () => format( command ) }
+				>
+					{ 'superscript' === command && (
+						<span>
+							x<sup>2</sup>
+						</span>
+					) }
+					{ 'subscript' === command && (
+						<span>
+							x<sub>2</sub>
+						</span>
+					) }
+				</Button>
+			) ) }
+			{ html && (
+				<QuestionMediaUpload
+					allowedTypes={ [ 'image' ] }
+					onSelect={ ( image ) => {
+						if ( ! /^https?:\/\//i.test( image.url || '' ) ) {
+							return;
+						}
+						const node = document.createElement( 'img' );
+						node.src = image.url;
+						node.alt = image.alt || '';
+						field.current.appendChild( node );
+						onChange( serialize( field.current ) );
+					} }
+					render={ ( { open } ) => (
+						<Button
+							icon="format-image"
+							label={ __( 'Add question image', 'ohmylms' ) }
+							onClick={ open }
+						/>
+					) }
+				/>
+			) }
+			<RichMathToolbar onInsert={ insertEquation } />
+		</div>
+	);
 	return (
 		<div
 			className={
@@ -153,93 +217,23 @@ export function RichContentControl( {
 			}
 		>
 			<span className="ohmylms-prompt-label">{ label }</span>
-			{ showToolbar && (
-				<div
-					role="toolbar"
-					aria-label={ __( 'Text formatting', 'ohmylms' ) }
-				>
-					{ ( html
-						? [
-								[ 'bold', 'Bold', 'editor-bold' ],
-								[ 'italic', 'Italic', 'editor-italic' ],
-								[
-									'underline',
-									'Underline',
-									'editor-underline',
-								],
-								[
-									'insertUnorderedList',
-									'Bullet list',
-									'editor-ul',
-								],
-								[
-									'superscript',
-									'Superscript',
-									'editor-superscript',
-								],
-								[
-									'subscript',
-									'Subscript',
-									'editor-subscript',
-								],
-							]
-						: []
-					).map( ( [ command, formatLabel, icon ] ) => (
-						<Button
-							key={ command }
-							icon={
-								[ 'superscript', 'subscript' ].includes(
-									command
-								)
-									? undefined
-									: icon
+			{ showToolbar &&
+				( collapseToolbar ? (
+					<details className="ohmylms-field-format-menu">
+						<summary
+							aria-label={
+								label +
+								': ' +
+								__( 'Formatting and equations', 'ohmylms' )
 							}
-							label={ formatLabel }
-							onMouseDown={ ( event ) => event.preventDefault() }
-							onClick={ () => format( command ) }
 						>
-							{ 'superscript' === command && (
-								<span>
-									x<sup>2</sup>
-								</span>
-							) }
-							{ 'subscript' === command && (
-								<span>
-									x<sub>2</sub>
-								</span>
-							) }
-						</Button>
-					) ) }
-					{ html && (
-						<QuestionMediaUpload
-							allowedTypes={ [ 'image' ] }
-							onSelect={ ( image ) => {
-								if (
-									! /^https?:\/\//i.test( image.url || '' )
-								) {
-									return;
-								}
-								const node = document.createElement( 'img' );
-								node.src = image.url;
-								node.alt = image.alt || '';
-								field.current.appendChild( node );
-								onChange( serialize( field.current ) );
-							} }
-							render={ ( { open } ) => (
-								<Button
-									icon="format-image"
-									label={ __(
-										'Add question image',
-										'ohmylms'
-									) }
-									onClick={ open }
-								/>
-							) }
-						/>
-					) }
-					<RichMathToolbar onInsert={ insertEquation } />
-				</div>
-			) }
+							{ __( 'Format', 'ohmylms' ) }
+						</summary>
+						{ toolbar }
+					</details>
+				) : (
+					toolbar
+				) ) }
 			<div
 				ref={ field }
 				role="textbox"
@@ -250,10 +244,14 @@ export function RichContentControl( {
 				contentEditable
 				onDoubleClick={ onDoubleClick }
 				suppressContentEditableWarning
+				onCopy={ ( event ) => event.stopPropagation() }
+				onCut={ ( event ) => event.stopPropagation() }
 				onPaste={ ( event ) => {
+					// Keep field clipboard edits inside this question, not core's block selection.
+					event.stopPropagation();
 					if ( ! html ) {
 						event.preventDefault();
-						document.execCommand(
+						field.current.ownerDocument.execCommand(
 							'insertText',
 							false,
 							event.clipboardData.getData( 'text/plain' )

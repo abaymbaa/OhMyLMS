@@ -269,7 +269,7 @@ function authorCaret( widget, before = false ) {
 	if ( ! root ) {
 		return;
 	}
-	const range = document.createRange();
+	const range = root.ownerDocument.createRange();
 	if ( before ) {
 		range.setStartBefore( widget );
 	} else {
@@ -277,7 +277,7 @@ function authorCaret( widget, before = false ) {
 	}
 	range.collapse( true );
 	root.focus();
-	const selection = window.getSelection();
+	const selection = root.ownerDocument.defaultView.getSelection();
 	selection.removeAllRanges();
 	selection.addRange( range );
 }
@@ -382,7 +382,7 @@ function mountAuthor( widget ) {
  * @return {Element} Inserted widget.
  */
 function insertAuthor( root, source = '', selection = null, labels = {} ) {
-	const range = selection?.cloneRange() || document.createRange();
+	const range = selection?.cloneRange() || root.ownerDocument.createRange();
 	if ( ! selection || ! root.contains( range.commonAncestorContainer ) ) {
 		range.selectNodeContents( root );
 		range.collapse( false );
