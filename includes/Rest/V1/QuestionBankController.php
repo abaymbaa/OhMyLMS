@@ -193,9 +193,19 @@ class QuestionBankController extends RestController {
 
 	public function search( WP_REST_Request $request ) {
 		global $wpdb;
-		$q      = Schema::table( 'qb_questions' );
-		$where  = array( 'p.post_type=%s', "p.post_status NOT IN ('auto-draft','trash')" );
-		$args   = array( OHMYLMS_QUESTION_CPT );
+		$q     = Schema::table( 'qb_questions' );
+		$where = array( 'p.post_type=%s', "p.post_status NOT IN ('auto-draft','trash')" );
+		$args  = array( OHMYLMS_QUESTION_CPT );
+
+		$organisation = \OhMyLMS\QuestionBank\Organisation::condition( $request );
+		if ( is_wp_error( $organisation ) ) {
+			return $organisation;
+		}
+		if ( $organisation['where'] ) {
+			$where[] = $organisation['where'];
+			$args    = array_merge( $args, $organisation['args'] );
+		}
+
 		$status = (string) $request['status'];
 		if ( 'archived' === $status ) {
 			$where[] = 'p.post_status=%s';

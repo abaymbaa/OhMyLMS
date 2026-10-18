@@ -6,8 +6,9 @@ published mark scheme, supplied by the site owner. The paper's text is deliberat
 repository; only its structure is described.
 
 Update October 18, 2026: structured per-part imports are now implemented and rehearsed in
-WordPress. Private PDF/job storage is also implemented; PDF extraction, figures and the Exam
-entity/player remain unfinished. Follow [EXAM-IMPORT-IMPLEMENTATION.md](EXAM-IMPORT-IMPLEMENTATION.md)
+WordPress. Private PDF extraction/review, the Exam entity and a shell extending the quiz player
+are implemented with synthetic integration and browser coverage. Real-paper extraction quality,
+interactive figure reconstruction and the supplied mockup design remain pending. Follow [EXAM-IMPORT-IMPLEMENTATION.md](EXAM-IMPORT-IMPLEMENTATION.md)
 for the current sequence; the original findings below describe the earlier design state.
 
 ## 1. What a real paper looks like

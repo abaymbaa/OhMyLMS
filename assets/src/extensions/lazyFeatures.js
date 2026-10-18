@@ -152,7 +152,7 @@ export const bundleComponents = lazyComponents(
 );
 
 export const contentHubComponents = lazyComponents(
-	[ 'LessonsPage' ],
+	[ 'LessonsPage', 'ExamsPage' ],
 	() =>
 		import(
 			/* webpackChunkName: "content-hub" */ '../features/content-hub'

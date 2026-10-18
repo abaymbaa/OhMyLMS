@@ -100,10 +100,15 @@ function QuestionsTab() {
 	const [ error, setError ] = useState( '' );
 	const [ skills, setSkills ] = useState( [] );
 	const [ banks, setBanks ] = useState( [] );
+	const [ organisationViews, setOrganisationViews ] = useState( [] );
 	const [ selected, setSelected ] = useState( null );
 	const [ creating, setCreating ] = useState( false );
 	const [ reload, setReload ] = useState( 0 );
 	useEffect( () => {
+		window.wp
+			.apiFetch( { path: '/ohmylms/v1/question-bank-organisation' } )
+			.then( ( data ) => setOrganisationViews( data.views || [] ) )
+			.catch( ( cause ) => setError( cause.message ) );
 		listSkills()
 			.then( ( data ) => setSkills( data.skills || [] ) )
 			.catch( () => {} );
@@ -175,6 +180,79 @@ function QuestionsTab() {
 				/>
 			) }
 			<AdminCard className="ohmylms-bank-card">
+				<div className="ohmylms-bank-filters ohmylms-ext-toolbar">
+					<SelectControl
+						label={ __( 'Organise question bank by', 'ohmylms' ) }
+						value={ filters.organisation || '' }
+						options={ [
+							{
+								value: '',
+								label: __( 'All questions', 'ohmylms' ),
+							},
+							...organisationViews.map( ( view ) => ( {
+								value: view.id,
+								label: view.name,
+							} ) ),
+						] }
+						onChange={ ( value ) => {
+							setPage( 1 );
+							setFilters( {
+								...filters,
+								organisation: value,
+								scope: '',
+							} );
+						} }
+					/>
+					{ filters.organisation && (
+						<SelectControl
+							label={ __(
+								'Curriculum, roadmap or course',
+								'ohmylms'
+							) }
+							value={ filters.scope || '' }
+							options={ [
+								{
+									value: '',
+									label: __( 'Choose a location', 'ohmylms' ),
+								},
+								...(
+									organisationViews.find(
+										( view ) =>
+											view.id === filters.organisation
+									)?.scopes || []
+								).map( ( scope, index, scopes ) => {
+									const names = [ scope.name ];
+									const seen = new Set( [ scope.id ] );
+									let parent = scopes.find(
+										( item ) => item.id === scope.parent
+									);
+									while (
+										parent &&
+										! seen.has( parent.id )
+									) {
+										seen.add( parent.id );
+										names.unshift( parent.name );
+										parent = scopes.find(
+											( item ) =>
+												item.id === parent.parent
+										);
+									}
+									return {
+										value: String( scope.id ),
+										label: names.join( ' / ' ),
+									};
+								} ),
+							] }
+							onChange={ update( 'scope' ) }
+						/>
+					) }
+					<p>
+						{ __(
+							'These views follow existing curriculum skills, roadmap skills, course targets and quiz placements. Questions stay reusable; organising them grants no additional access. Use the Skill filter below to narrow a branch.',
+							'ohmylms'
+						) }
+					</p>
+				</div>
 				<div className="ohmylms-bank-filters ohmylms-ext-toolbar">
 					<TextControl
 						label={ __( 'Search', 'ohmylms' ) }

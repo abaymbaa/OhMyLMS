@@ -23,6 +23,7 @@ final class Jobs {
 		add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
 		add_action( self::HOOK, array( __CLASS__, 'process' ) );
 		add_action( 'before_delete_post', array( __CLASS__, 'cleanup' ) );
+		Workflow::init();
 	}
 
 	/** Register the nonpublic persistence record, separate from the future Exam type. */
@@ -147,6 +148,14 @@ final class Jobs {
 		if ( is_wp_error( $doc ) ) {
 			return $doc;
 		}
+		$mark_scheme = null;
+		if ( isset( $files['mark_scheme'] ) && UPLOAD_ERR_NO_FILE !== ( $files['mark_scheme']['error'] ?? null ) ) {
+			$mark_scheme = Documents::upload( (array) $files['mark_scheme'] );
+			if ( is_wp_error( $mark_scheme ) ) {
+				Documents::remove( $doc['id'] );
+				return $mark_scheme;
+			}
+		}
 		$id = wp_insert_post(
 			array(
 				'post_type'   => self::TYPE,
@@ -158,18 +167,25 @@ final class Jobs {
 		);
 		if ( is_wp_error( $id ) || ! $id ) {
 			Documents::remove( $doc['id'] );
+			if ( $mark_scheme ) {
+				Documents::remove( $mark_scheme['id'] );
+			}
 			return new \WP_Error( 'exam_job', __( 'Could not create the import job.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
 		$job = array(
-			'document'   => $doc,
-			'state'      => 'queued',
-			'attempts'   => 0,
-			'error'      => '',
-			'updated_at' => gmdate( 'c' ),
+			'document'    => $doc,
+			'mark_scheme' => $mark_scheme,
+			'state'       => 'queued',
+			'attempts'    => 0,
+			'error'       => '',
+			'updated_at'  => gmdate( 'c' ),
 		);
 		if ( ! update_post_meta( $id, self::META, $job ) || ! as_enqueue_async_action( self::HOOK, array( $id ), self::GROUP, true ) ) {
 			wp_delete_post( $id, true );
 			Documents::remove( $doc['id'] );
+			if ( $mark_scheme ) {
+				Documents::remove( $mark_scheme['id'] );
+			}
 			return new \WP_Error( 'exam_queue', __( 'Could not queue the import. Upload it again.', 'ohmylms' ), array( 'status' => 503 ) );
 		}
 		return new \WP_REST_Response( self::view( $id, $job ), 201 );
@@ -203,7 +219,8 @@ final class Jobs {
 		if ( ! self::permission( $request ) ) {
 			return new \WP_Error( 'exam_forbidden', __( 'Import unavailable.', 'ohmylms' ), array( 'status' => 403 ) );
 		}
-		return self::view( $request['id'], (array) get_post_meta( $request['id'], self::META, true ) );
+		$job = (array) get_post_meta( $request['id'], self::META, true );
+		return array_merge( self::view( $request['id'], $job ), Workflow::detail( $job ) );
 	}
 
 	/**
@@ -213,7 +230,7 @@ final class Jobs {
 	 * @param callable $work Operation.
 	 * @return mixed Result.
 	 */
-	private static function locked( $id, callable $work ) {
+	public static function locked( $id, callable $work ) {
 		global $wpdb;
 		$key = 'oml_import_' . md5( $wpdb->prefix . ':' . (int) $id );
 		if ( '1' !== (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 0)', $key ) ) ) { // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Connection-scoped worker serialization, not cacheable.
@@ -296,6 +313,10 @@ final class Jobs {
 		return self::locked(
 			$request['id'],
 			static function () use ( $request ) {
+				$job = get_post_meta( $request['id'], self::META, true );
+				if ( ! empty( $job['exam_id'] ) && get_post( $job['exam_id'] ) ) {
+					return new \WP_Error( 'exam_source_in_use', __( 'This source belongs to an exam and must be retained.', 'ohmylms' ), array( 'status' => 409 ) );
+				}
 				return array( 'deleted' => (bool) wp_delete_post( $request['id'], true ) );
 			}
 		);
@@ -314,6 +335,10 @@ final class Jobs {
 		if ( is_array( $job ) && isset( $job['document']['id'] ) ) {
 			Documents::remove( $job['document']['id'] );
 		}
+		if ( ! empty( $job['mark_scheme']['id'] ) ) {
+			Documents::remove( $job['mark_scheme']['id'] );
+		}
+		Workflow::cancel( $id );
 		if ( function_exists( 'as_unschedule_all_actions' ) ) {
 			as_unschedule_all_actions( self::HOOK, array( (int) $id ), self::GROUP );
 		}

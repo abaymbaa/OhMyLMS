@@ -1,8 +1,9 @@
 # Exam import implementation status
 
-This branch implements structured question-bank imports and the private PDF/job foundation.
-It does **not** yet provide PDF extraction, an import review UI, an Exams tab, an Exam content type or an exam player.
-Do not describe those features as available until their delivery and integration tests pass.
+This branch implements structured imports, private PDF extraction jobs, teacher review,
+an Exams tab and content type, and an exam shell using the existing quiz player.
+The workflow has synthetic WordPress integration and desktop browser coverage. Extraction
+quality on the owner's actual papers and providers is still awaiting supplied PDFs.
 
 ## Implemented in this change
 
@@ -26,18 +27,26 @@ See [QUESTION-BULK-IMPORT.md](QUESTION-BULK-IMPORT.md) for the format and exampl
 
 1. **Complete:** exercise structured imports on both Local and disposable WordPress, including repeat imports,
    frozen versions, review approval and per-part skill evidence after teacher marking.
-2. **Foundation complete:** private document storage, import job persistence and bounded validation stage.
-   Jobs intentionally stop at `ready_for_extraction`; add extraction stages next.
-3. Add PDF structure extraction and optional mark-scheme alignment through the server-side
-   AI provider, with schema validation, source figures, usage accounting and safe retry.
-4. Build the side-by-side import review UI. Commit bank drafts explicitly and separately
-   from approval and exam publication. Preserve teacher changes on subsequent extraction.
-5. Add an Exam content type, curriculum metadata, exam/assessment adapter and Exams hub tab.
-   Use the existing versioned assessment engine rather than creating a second grading engine.
-6. Add the separate exam player shell, typed mathematical working, teacher review, server
-   timing, autosave and release-controlled results/documents.
-7. Add standalone access and lesson/WordPress embedding without exposing secure answer data.
-8. Run regression, access, browser, accessibility and load verification on staging before release.
+2. **Implemented:** private storage and explicit extraction through the configured AI provider,
+   optional mark scheme, inventory followed by five-question batches, schema validation,
+   usage accounting, bounded retries and checkpoints. Native PDF requests support OpenAI,
+   Anthropic and Gemini; actual provider extraction accuracy remains unverified.
+3. **Implemented:** side-by-side paper/review form, editable parts, marks, answers, source
+   pages and skill search. Teacher review, commit, exact-version approval and publication
+   are separate actions. Re-extraction preserves the saved teacher draft.
+4. **Implemented:** Exam metadata and all imported questions in source order, pinned approved
+   versions, and a private backing course/quiz using the existing assessment engine.
+5. **Implemented:** standalone exam shell, existing typed answers/working, server timing,
+   autosave, teacher marking and release-controlled results/mark scheme. This extends the
+   quiz player; it does not add a new handwriting or automatic method-marking engine.
+6. **Implemented:** signed-in standalone access and `[ohmylms_exam exam="ID"]` embedding.
+   Original paper figures remain available through protected PDF references; rebuilding
+   figures as interactive question assets is deferred.
+7. **Implemented:** Question Bank views by curriculum descendants, roadmap, course and
+   skills using existing links and objectives, without copying questions. See the bulk
+   import document for extension hooks and limits.
+8. **Next:** test the supplied real papers and mockups, then complete mobile, accessibility,
+   provider failure and load verification on staging before release.
 
 Question-bank items are shared by quizzes, exams and future interactive books. Published uses
 must pin approved versions; edits must not change an existing attempt's content or score.

@@ -16,6 +16,7 @@ export const HUB_TABS = [
 	{ id: 'courses', path: '/content-hub/courses', label: 'Courses' },
 	{ id: 'lessons', path: '/content-hub/lessons', label: 'Lessons' },
 	{ id: 'quizzes', path: '/content-hub/quizzes', label: 'Quizzes' },
+	{ id: 'exams', path: '/content-hub/exams', label: 'Exams' },
 	{
 		id: 'question-bank',
 		path: '/content-hub/question-bank',
@@ -56,6 +57,7 @@ export const HUB_ALIASES = {
 /** Hub-provided page for each tab that is not one of the application's own screens. */
 const TAB_PAGES = {
 	lessons: 'LessonsPage',
+	exams: 'ExamsPage',
 	'question-bank': 'QuestionBankPage',
 	skills: 'SkillsPage',
 	curriculum: 'CurriculumPage',

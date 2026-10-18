@@ -61,13 +61,14 @@ const { ContentHubFrame, contentHubScreen, redirectScreen } = load(
 	}
 );
 
-test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curriculum and Course Bundles under one base path', () => {
+test( 'The hub has Courses, Lessons, quiz and exam tabs, Skills, Curriculum and Course Bundles under one base path', () => {
 	assert.deepEqual(
 		HUB_TABS.map( ( tab ) => tab.id ),
 		[
 			'courses',
 			'lessons',
 			'quizzes',
+			'exams',
 			'question-bank',
 			'assignments',
 			'skills',
@@ -81,6 +82,7 @@ test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curricul
 			'Courses',
 			'Lessons',
 			'Quizzes',
+			'Exams',
 			'Question Bank',
 			'Assignments',
 			'Skills',
@@ -103,6 +105,7 @@ test( 'The hub has Courses, Lessons, the three assessment tabs, Skills, Curricul
 
 const allPages = {
 	LessonsPage: () => null,
+	ExamsPage: () => null,
 	QuestionBankPage: () => null,
 	SkillsPage: () => null,
 	CurriculumPage: () => null,
@@ -135,6 +138,7 @@ test( 'Hub routes reuse the application list screens and the SDK pages', () => {
 			'/content-hub/courses',
 			'/content-hub/lessons',
 			'/content-hub/quizzes',
+			'/content-hub/exams',
 			'/content-hub/question-bank',
 			'/content-hub/assignments',
 			'/content-hub/skills',
@@ -164,6 +168,7 @@ test( 'Hub routes reuse the application list screens and the SDK pages', () => {
 		'the existing assignment list becomes the Assignments tab'
 	);
 	assert.equal( byTab.lessons, allPages.LessonsPage );
+	assert.equal( byTab.exams, allPages.ExamsPage );
 	assert.equal( byTab[ 'question-bank' ], allPages.QuestionBankPage );
 	assert.equal( byTab.skills, allPages.SkillsPage );
 	assert.equal( byTab.curriculum, allPages.CurriculumPage );
@@ -209,6 +214,7 @@ test( 'Without the application list screens the hub still serves its own tabs', 
 		[
 			'/content-hub',
 			'/content-hub/lessons',
+			'/content-hub/exams',
 			'/content-hub/question-bank',
 			'/content-hub/skills',
 			'/content-hub/curriculum',

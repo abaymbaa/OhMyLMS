@@ -1,8 +1,8 @@
 # Private PDF import jobs
 
-This is the storage and queue milestone. It accepts a source PDF and validates its stored
-integrity. It does not parse PDF structure, send documents to an AI provider, create questions,
-approve bank content, or publish exams. No import screen is included yet.
+The Exams tab accepts a question PDF and optional mark scheme, validates private storage,
+then offers explicit AI extraction and side-by-side teacher review. Committing drafts,
+approving versions, creating an exam and publishing it are separate owner actions.
 
 ## Storage configuration
 
@@ -26,16 +26,20 @@ cookie nonce verification remain in effect. Request IDs are job IDs, not source-
 
 | Request | Behavior |
 |---|---|
-| `POST /wp-json/ohmylms/v1/exam-imports` | Multipart field `file`; store one source and queue validation. Returns 201 with job ID. |
+| `POST /wp-json/ohmylms/v1/exam-imports` | Multipart `file` and optional `mark_scheme`; store private sources and queue validation. Returns 201 with job ID. |
 | `GET /wp-json/ohmylms/v1/exam-imports?page=1` | Current owner's jobs, newest first, 20 per page. |
 | `GET /wp-json/ohmylms/v1/exam-imports/{id}` | Safe status, attempts, error code, update timestamp and source name/size. |
 | `POST /wp-json/ohmylms/v1/exam-imports/{id}` | Retry failed validation or recover an interrupted queued job, within three attempts. |
 | `DELETE /wp-json/ohmylms/v1/exam-imports/{id}` | Delete job, private source and pending scheduler actions. |
+| `POST /wp-json/ohmylms/v1/exam-imports/{id}/extract` | Explicitly start/resume extraction through the configured AI provider. |
+| `POST /wp-json/ohmylms/v1/exam-imports/{id}/review` | Save teacher edits with optimistic draft revision checking. |
+| `POST /wp-json/ohmylms/v1/exam-imports/{id}/commit` | Validate and commit reviewed rows through the existing bank writer. |
+| `GET /wp-json/ohmylms/v1/exam-import-skills?search=algebra` | Search the existing skill catalogue during review. |
 
-Job records use a nonpublic `ohmylms-import` persistence type. It is separate from the future
+Job records use a nonpublic `ohmylms-import` persistence type. It is separate from the
 Exam content type and is absent from WordPress's generic REST API, search, rewrite and admin UI.
-Sources have no download endpoint in this milestone. Status never contains filesystem paths,
-document handles, content hashes, provider responses or answer data.
+Owner status includes review candidates and private answer/rubric fields. It never includes
+filesystem paths, document handles, content hashes or raw provider responses.
 
 Action Scheduler must be initialized before an upload is accepted. Hook
 `ohmylms_validate_exam_import` in group `ohmylms-exam-import` runs one bounded validation:
@@ -43,7 +47,28 @@ check the owner's current capabilities, private source availability, byte count 
 The state changes from `queued` to `ready_for_extraction` or `failed`. Duplicate deliveries of
 completed stages do nothing. Database advisory locks serialize validation, retry and deletion.
 If a runner is interrupted or cannot obtain the lock, an owner can requeue the persistent job;
-there is no automatic unbounded retry loop. Extraction has not been connected to this hook.
+there is no automatic unbounded retry loop.
+
+Extraction uses a separate `ohmylms_extract_exam_import` hook with generation/cursor tokens.
+It inventories up to 200 questions/pages and extracts five questions per request, with three
+attempts per stage and at most 125 provider requests per job. Each source is capped at 10 MiB.
+Truncated, malformed or incomplete requested batches fail validation. AI review flags cannot
+self-approve questions; saved teacher edits survive extraction retries. Source identity is
+stable per owner, file hash and printed question number for repeat imports.
+
+Native PDF wire formats follow the providers' documentation:
+[OpenAI](https://developers.openai.com/api/docs/guides/file-inputs),
+[Anthropic](https://platform.claude.com/docs/en/build-with-claude/pdf-support) and
+[Gemini](https://ai.google.dev/gemini-api/docs/document-processing).
+The configured provider/model must support PDFs. Tests mock transport; actual extraction
+quality and provider compatibility must be checked with the supplied papers.
+
+`POST /ohmylms/v1/exams` creates a private Exam from the committed job. Separate
+`/exams/{id}/publish` and `/exams/{id}/release` operations publish approved frozen versions
+and release feedback. The player uses a managed private course and the existing quiz engine.
+Source routes `?ohmylms_import_source=JOB` and `?ohmylms_exam_source=EXAM` enforce ownership
+or actual attempt access. Learners cannot access a scheme until submission and release;
+add `&mark_scheme=1` to select it. Jobs referenced by an Exam cannot be deleted.
 
 ## Runtime verification (October 18, 2026)
 
@@ -104,5 +129,22 @@ quiz uses or learner responses. Existing content was not edited. Screenshots are
 locally under ignored `test-results/exam-import-browser-*.jpg`. Full CSS standards still
 report the same 75 pre-existing findings; the scoped rule adds no finding. This is a desktop
 smoke test, not full accessibility, mobile, marking-player or load acceptance. Private PDF
-jobs still have no browser upload/review UI, so PDF extraction and exam-player browser tests
-remain unavailable until those features are implemented.
+upload/review was subsequently tested as described below.
+
+## PDF workflow browser and integration rehearsal (October 18, 2026)
+
+- 23 extraction checks cover inventory/part validation and all three native PDF request formats.
+- `tests/php/pdf-exam-http.php` passes 40 checks on disposable WordPress: two private source
+  uploads, batched extraction, stale actions, review conflicts, preserved teacher edits,
+  idempotent commit, approval/publication, frozen questions, timing, marking, per-part evidence,
+  protected sources/release and curriculum/roadmap/course/extension scopes without expanded access.
+- Local browser rehearsal used an actual synthetic PDF upload and seeded extraction candidates.
+  Review, save, commit, exact-version approval, exam creation/publication and the standalone
+  landing page worked. Curriculum scope found the questions. No external provider was called.
+  The synthetic exam/questions/source were removed after confirming no learner attempts existed.
+- New PHP services/tests, exam JavaScript and scoped CSS pass focused standards. The bank
+  page retains one existing hook dependency warning. The full repository still has existing
+  standards failures; these are reported rather than suppressed.
+
+The browser rehearsal does not establish real-paper extraction accuracy, full accessibility,
+mobile behaviour or load acceptance. Interactive figures and handwriting are deferred.

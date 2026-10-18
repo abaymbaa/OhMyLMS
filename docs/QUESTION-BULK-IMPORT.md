@@ -106,4 +106,21 @@ Each question gets `_ohmylms_import_key` (the identity above), `_ohmylms_import_
 - **Changed questions** get a new version. With *Approve* ticked, the new version is approved; otherwise the previously approved version stays in use.
 - **Other question types:** any type registered through the extension registry can be imported by giving its `settings` (and `options_raw`). The writer validates them with the type's own rules.
 - **AI classification and review:** import through the MCP tool (`import_questions`) always flags questions for review and never approves them. The admin page lists them under **Waiting for review** with the skills the AI chose, its confidence and its notes; *Approve selected* approves the current version, *Keep as draft* only removes the flag. See `docs/MCP.md`.
-- **Not included yet:** translations of a question, an Exam content type, bulk PDF/page attachments, reading questions out of a PDF. See `CONTINUE-LEARNER-HUB.md`.
+- **PDF exams:** the Exams tab provides private PDF upload, explicit extraction, teacher review,
+  draft commit, version approval and exam publication. See [EXAM-IMPORT-IMPLEMENTATION.md](EXAM-IMPORT-IMPLEMENTATION.md).
+- **Deferred:** translations, interactive reconstruction of PDF figures and handwriting input.
+
+## Question Bank organisation
+
+The bank's organisation selector follows existing curricula and their descendants, roadmap
+branches and course objectives/quiz placements. The skill filter can narrow these views further.
+Existing source/shared skill mappings are included for discovery. These are views over reusable
+questions, not separate question copies or an additional permission system; bank visibility
+checks remain authoritative. Newly imported PDF questions default to **Exam only**.
+
+`GET /ohmylms/v1/question-bank-organisation` supplies the available views. Bank requests accept
+`organisation` and `scope`. Integrations can extend the view metadata through
+`ohmylms_question_bank_organisation_views` and resolve references with
+`ohmylms_question_bank_resolve_scope`. Resolved references are limited to skills, banks,
+courses and quizzes; empty scopes return no questions. Discovery currently lists at most
+100 editable courses and resolves at most 5,000 references in a scope.

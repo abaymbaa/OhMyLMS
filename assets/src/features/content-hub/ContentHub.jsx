@@ -8,6 +8,7 @@ const tabLabels = () => ( {
 	courses: __( 'Courses', 'ohmylms' ),
 	lessons: __( 'Lessons', 'ohmylms' ),
 	quizzes: __( 'Quizzes', 'ohmylms' ),
+	exams: __( 'Exams', 'ohmylms' ),
 	'question-bank': __( 'Question Bank', 'ohmylms' ),
 	assignments: __( 'Assignments', 'ohmylms' ),
 	skills: __( 'Skills', 'ohmylms' ),
