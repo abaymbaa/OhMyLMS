@@ -3784,6 +3784,10 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	}
 }
 
+.ohmylms-form-workspace .ohmylms-question-live-preview > h3 {
+	color: inherit;
+}
+
 .ohmylms-question-live-preview input[type="radio"],
 .ohmylms-question-live-preview input[type="checkbox"] {
 	appearance: auto !important;

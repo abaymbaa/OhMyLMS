@@ -81,3 +81,28 @@ Changed PHP services and both new rehearsals pass syntax and focused WordPress s
 code. Separate full JavaScript standards report 295 errors and 35 warnings; CSS reports 75 errors.
 These findings are not suppressed. Browser, accessibility and load verification remain release gates;
 neither these service rehearsals nor a successful build establishes those results.
+
+## Local browser smoke test (October 18, 2026)
+
+Tested through the authenticated WordPress admin at `800.local` using the existing browser
+session. A synthetic structured question used existing DSAT skills, a two-mark numerical
+part and a one-mark written part with private rubric.
+
+- A conflicting total was rejected; the valid dry run reported one new question without writing it.
+- Import created one question; repeat import reported unchanged with the same ID.
+- Changed wording and answer updated that ID to version 2; approval remained draft.
+- The bank showed both mapped skills. The editor showed three total marks, both parts,
+  the updated numerical answer and teacher-only marking notes.
+- Learner preview showed the stem, part prompts and marks while hiding the answer and rubric.
+- No browser console warnings or errors were observed during these flows.
+- Browser inspection found a dark preview heading on the configured purple background.
+  The heading now inherits the preview text color within the form workspace. Reloaded
+  browser verification confirmed white text, including on an existing structured question.
+
+The synthetic question and its versions/mappings were removed after verifying it had no
+quiz uses or learner responses. Existing content was not edited. Screenshots are retained
+locally under ignored `test-results/exam-import-browser-*.jpg`. Full CSS standards still
+report the same 75 pre-existing findings; the scoped rule adds no finding. This is a desktop
+smoke test, not full accessibility, mobile, marking-player or load acceptance. Private PDF
+jobs still have no browser upload/review UI, so PDF extraction and exam-player browser tests
+remain unavailable until those features are implemented.
