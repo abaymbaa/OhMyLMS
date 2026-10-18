@@ -444,7 +444,8 @@ final class Service {
 				} else {
 					$user    = wp_get_current_user();
 					$user_id = $user->ID;
-					Access::require_access( $user_id && strtolower( $user->user_email ) === strtolower( $invite['email'] ) );
+					Access::require_access( $user_id );
+					self::need( strtolower( $user->user_email ) === strtolower( $invite['email'] ), 'This invitation was sent to a different email address. Sign in with the account it was sent to.' );
 					// Possession of a single-use token sent to this address proves mailbox access.
 					update_user_meta( $user_id, \OhMyLMS\Services\EmailVerificationService::META_VERIFIED, 'yes' );
 					if ( 'guardian' === $invite['role'] ) {

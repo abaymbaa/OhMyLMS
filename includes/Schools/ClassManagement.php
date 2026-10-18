@@ -202,7 +202,8 @@ final class ClassManagement {
 		$issuer = get_userdata( $invite['invited_by'] );
 		$user   = wp_get_current_user();
 		Access::require_access( $class && 'active' === $class['status'] && 0 === (int) $class['school_id'] && 0 === (int) $invite['school_id'] && 'student' === $invite['role'] && ! (int) $invite['student_user_id'] );
-		Access::require_access( $user->ID && 0 === strcasecmp( $user->user_email, $invite['email'] ) );
+		Access::require_access( $user->ID );
+		Service::need( 0 === strcasecmp( $user->user_email, $invite['email'] ), 'This invitation was sent to a different email address. Sign in with the account it was sent to.' );
 		global $wpdb;
 		$member         = $issuer && $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE class_id=%d AND user_id=%d AND role='teacher' AND status='active'", Schema::table( 'class_memberships' ), $class['id'], $issuer->ID ) );
 		$school_teacher = $issuer && $wpdb->get_var( $wpdb->prepare( "SELECT m.id FROM %i m JOIN %i s ON s.id=m.school_id AND s.status='active' WHERE m.user_id=%d AND m.role='teacher' AND m.status='active' LIMIT 1", Schema::table( 'school_memberships' ), Schema::table( 'schools' ), $issuer->ID ) );
