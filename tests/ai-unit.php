@@ -16,6 +16,10 @@ class WP_Error {
 	public function get_error_message() { return $this->message; }
 }
 function is_wp_error( $thing ) { return $thing instanceof WP_Error; }
+function current_user_can( $capability ) { return $GLOBALS['ai_admin'] ?? true; }
+function wp_remote_get( $url, $args ) { $GLOBALS['model_request'] = array( $url, $args ); return $GLOBALS['model_response']; }
+function wp_remote_retrieve_response_code( $response ) { return $response['response']['code']; }
+function wp_remote_retrieve_body( $response ) { return $response['body']; }
 require dirname( __DIR__ ) . '/vendor/autoload.php';
 use OhMyLMS\AI\Feedback;
 use OhMyLMS\AI\Providers\Anthropic;
@@ -158,4 +162,23 @@ foreach ( array( 'numerical', 'expression', 'multi-blank', 'structured' ) as $ty
 $plan = array_map( static function ( $n ) { return Selector::stage_for( $n, 9 ); }, range( 0, 8 ) );
 check( $plan === array( 'recognize', 'recognize', 'recognize', 'guided', 'guided', 'guided', 'produce', 'produce', 'produce' ), 'nine questions are three and three and three: ' . implode( ',', $plan ) );
 check( Selector::stage_for( 0, 3 ) === 'recognize' && Selector::stage_for( 1, 3 ) === 'guided' && Selector::stage_for( 2, 3 ) === 'produce' && Selector::stage_for( 9, 10 ) === 'produce', 'short lessons still pass through every stage' );
+// ---- Model discovery uses saved keys in headers, even with both tools off ----
+$before_models = get_option( Settings::OPTION );
+foreach ( array( 'openai', 'anthropic', 'gemini' ) as $provider ) {
+	Settings::update( array( 'enabled' => false, 'exam_converter_enabled' => false, 'provider' => $provider, 'key' => 'synthetic-model-key' ) );
+	$GLOBALS['model_response'] = array( 'response' => array( 'code' => 200 ), 'body' => wp_json_encode( 'gemini' === $provider ? array( 'models' => array( array( 'name' => 'models/gemini-test', 'supportedGenerationMethods' => array( 'generateContent' ) ), array( 'name' => 'models/embedding-test', 'supportedGenerationMethods' => array( 'embedContent' ) ) ), 'nextPageToken' => 'more' ) : array( 'data' => array( array( 'id' => 'model-test' ), array( 'id' => 'bad model' ), array( 'id' => 'old-model', 'lifecycle' => 'retired' ) ) ) ) );
+	$result = \OhMyLMS\AI\Models::listing();
+	check( 1 === count( $result['models'] ) && $provider === $result['provider'], 'model discovery validates provider results' );
+	check( false === strpos( $GLOBALS['model_request'][0], 'synthetic-model-key' ) && false !== strpos( wp_json_encode( $GLOBALS['model_request'][1]['headers'] ), 'synthetic-model-key' ), 'model discovery authenticates through headers only' );
+	check( 0 === $GLOBALS['model_request'][1]['redirection'] && 2097152 === $GLOBALS['model_request'][1]['limit_response_size'], 'model discovery is bounded and refuses redirects' );
+	check( false === strpos( wp_json_encode( $result ), 'synthetic-model-key' ), 'model discovery never returns credentials' );
+}
+check( $result['truncated'], 'pagination is disclosed rather than silently claiming completeness' );
+$GLOBALS['model_response'] = array( 'response' => array( 'code' => 401 ), 'body' => 'synthetic-model-key' );
+check( is_wp_error( \OhMyLMS\AI\Models::listing() ) && false === strpos( \OhMyLMS\AI\Models::listing()->get_error_message(), 'synthetic-model-key' ), 'provider errors never expose response bodies' );
+$GLOBALS['model_response'] = array( 'response' => array( 'code' => 200 ), 'body' => '{invalid' );
+check( is_wp_error( \OhMyLMS\AI\Models::listing() ), 'invalid catalogues fail safely' );
+$GLOBALS['ai_admin'] = false;
+check( is_wp_error( \OhMyLMS\AI\Models::listing() ), 'model discovery rejects non-administrators' );
+update_option( Settings::OPTION, $before_models );
 echo "$checks AI unit checks passed.\n";

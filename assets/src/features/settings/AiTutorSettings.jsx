@@ -11,6 +11,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { AiModelPicker } from './AiModelPicker';
 
 const PATH = '/ohmylms/v1/ai';
 
@@ -20,6 +21,7 @@ export function AiTutorSettings() {
 	const [ saving, setSaving ] = useState( false );
 	const [ testing, setTesting ] = useState( false );
 	const [ message, setMessage ] = useState( null );
+	const [ connectionRevision, setConnectionRevision ] = useState( 0 );
 	const load = ( snapshot ) => {
 		setData( snapshot );
 		setForm( {
@@ -91,6 +93,7 @@ export function AiTutorSettings() {
 				status: 'success',
 				text: __( 'AI tools settings saved.', 'ohmylms' ),
 			} );
+			setConnectionRevision( ( value ) => value + 1 );
 		} ).finally( () => setSaving( false ) );
 	};
 	const test = () => {
@@ -171,7 +174,7 @@ export function AiTutorSettings() {
 						</p>
 					</section>
 				</div>
-				<div className="ohmylms-streak-settings__grid">
+				<div>
 					<section className="ohmylms-streak-settings__card">
 						<h3>
 							{ __( 'Shared provider connection', 'ohmylms' ) }
@@ -187,16 +190,6 @@ export function AiTutorSettings() {
 							value={ form.provider }
 							options={ providers }
 							onChange={ ( value ) => set( 'provider', value ) }
-						/>
-						<TextControl
-							label={ __( 'Model', 'ohmylms' ) }
-							help={ __(
-								'Enter a model supported by your provider. PDF conversion requires a model that accepts PDF documents.',
-								'ohmylms'
-							) }
-							autoComplete="off"
-							value={ form.model }
-							onChange={ ( value ) => set( 'model', value ) }
 						/>
 						{ locked ? (
 							<p>
@@ -254,6 +247,18 @@ export function AiTutorSettings() {
 								) }
 							</div>
 						) }
+						<AiModelPicker
+							provider={ form.provider }
+							model={ form.model }
+							onChange={ ( value ) => set( 'model', value ) }
+							canLoad={
+								summary.has_key &&
+								form.provider === summary.provider &&
+								! form.key.trim() &&
+								! form.clear_key
+							}
+							refreshToken={ connectionRevision }
+						/>
 					</section>
 					<section className="ohmylms-streak-settings__card">
 						<h3>{ __( 'AI tutor options', 'ohmylms' ) }</h3>

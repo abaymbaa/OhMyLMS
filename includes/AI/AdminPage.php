@@ -24,6 +24,7 @@ final class AdminPage {
 	/** Where the tab lives in the admin app. */
 	const TAB = 'ai-tutor-settings';
 
+	/** Register shared AI tools routes and the legacy bookmark. */
 	public static function init() {
 		add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
 		add_action( 'admin_menu', array( __CLASS__, 'legacy_menu' ), 99 );
@@ -48,11 +49,22 @@ final class AdminPage {
 		}
 	}
 
+	/** Restrict provider credentials and tool policies to administrators. */
 	public static function can() {
 		return current_user_can( 'manage_options' );
 	}
 
+	/** Register settings, model discovery and connection tests. */
 	public static function routes() {
+		register_rest_route(
+			'ohmylms/v1',
+			'/ai/models',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => array( __CLASS__, 'can' ),
+				'callback'            => array( Models::class, 'listing' ),
+			)
+		);
 		register_rest_route(
 			'ohmylms/v1',
 			'/ai',
@@ -90,10 +102,17 @@ final class AdminPage {
 		);
 	}
 
+	/** Return settings without the saved key. */
 	public static function read() {
 		return rest_ensure_response( self::snapshot() );
 	}
 
+	/**
+	 * Save independent tool policies and the shared connection.
+	 *
+	 * @param WP_REST_Request $request Administrator JSON input.
+	 * @return \WP_REST_Response Updated safe snapshot.
+	 */
 	public static function save( WP_REST_Request $request ) {
 		$input = $request->get_json_params();
 		$input = is_array( $input ) ? $input : array();
@@ -104,6 +123,7 @@ final class AdminPage {
 		return rest_ensure_response( self::snapshot() );
 	}
 
+	/** Test saved credentials without enabling either tool. */
 	public static function test() {
 		if ( ! Settings::summary()['has_key'] ) {
 			return new WP_Error( 'ai_no_key', __( 'Save an API key first.', 'ohmylms' ), array( 'status' => 400 ) );
