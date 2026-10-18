@@ -25,7 +25,7 @@ $field_id = 'ohmylms-expr-' . (int) $attempt['id'] . '-' . (int) $question['id']
 Interactive::enqueue();
 \OhMyLMS\Assessment\MathLive::enqueue();
 ?>
-<div class="ohmylms-interactive ohmylms-expression" data-ohmylms-interactive="expression" data-math-format="latex">
+<div class="ohmylms-interactive ohmylms-expression" data-wp-on--input="ohmylms/quiz::actions.answerChanged" data-wp-on--change="ohmylms/quiz::actions.answerChanged" data-ohmylms-interactive="expression" data-math-format="latex">
 	<label class="screen-reader-text" for="<?php echo esc_attr( $field_id ); ?>"><?php esc_html_e( 'Your answer', 'ohmylms' ); ?></label>
 	<input type="text" id="<?php echo esc_attr( $field_id ); ?>" class="ohmylms-text-input ohmylms-expression-input" autocomplete="off" autocapitalize="off" spellcheck="false" data-answer-key="answer" data-question-id="<?php echo esc_attr( $question['id'] ); ?>" name="<?php echo esc_attr( Interactive::field_name( $attempt, $question ) ); ?>" placeholder="<?php esc_attr_e( 'e.g. 2(x+3)', 'ohmylms' ); ?>">
 	<?php if ( isset( $forms[ $form ] ) ) { ?>

@@ -61,8 +61,9 @@ function native_quiz_request( $method, $route, $data = array() ) {
 function native_quiz_block( $id, $type = NativeQuizEditor::QUESTION_BLOCK ) {
 	return '<!-- wp:' . $type . ' ' . wp_json_encode(
 		array(
-			'questionId' => $id,
-			'answer'     => 'must be removed',
+			'questionId'        => $id,
+			'authoringRevision' => 4,
+			'answer'            => 'must be removed',
 		)
 	) . ' /-->';
 }
@@ -165,6 +166,7 @@ try {
 	$stored = get_post_field( 'post_content', $quiz_id );
 	native_quiz_check( str_contains( $stored, $heading ) && ! str_contains( $stored, 'must be removed' ), 'Core block content was lost or private answer attributes entered the quiz post.' );
 	native_quiz_check( str_contains( $stored, '"delivery":"quiz"' ), 'Quiz question placements did not retain quiz delivery context.' );
+	native_quiz_check( str_contains( $stored, '"authoringRevision":4' ), 'Native saves lost the private question edit marker.' );
 	$rendered = do_blocks( $stored );
 	native_quiz_check( str_contains( $rendered, 'Core Gutenberg heading' ) && ! str_contains( $rendered, 'ohmylms-inline-check' ), 'Rendering a quiz introduction started inline practice.' );
 	$duplicate = native_quiz_request( 'POST', $route, array( 'content' => native_quiz_block( $question_ids[0] ) . native_quiz_block( $question_ids[0] ) ) );
@@ -190,6 +192,60 @@ try {
 	native_quiz_check( 201 === $core->get_status(), 'Native core creation failed.' );
 	$native_posts[] = (int) $core->get_data()['id'];
 	native_quiz_check( 1 === count( ohmylms_get_quiz( $core->get_data()['id'] )->get_questions() ), 'Native core creation did not create its placement.' );
+	$written_quiz_id = (int) $core->get_data()['id'];
+	foreach ( array( 'short-text', 'long-text', 'reorder' ) as $written_type ) {
+		$written_question = native_quiz_request(
+			'POST',
+			'/ohmylms/v1/question',
+			array(
+				'quiz_id'     => $written_quiz_id,
+				'name'        => 'Native written response',
+				'description' => 'Explain your answer.',
+				'settings'    => array(
+					'type'  => $written_type,
+					'score' => array(
+						'enabled' => true,
+						'value'   => 2,
+					),
+				),
+				'questions'   => 'reorder' === $written_type ? array(
+					array(
+						'answer'       => 'First',
+						'is_correct'   => false,
+						'order_number' => 1,
+					),
+					array(
+						'answer'       => 'Second',
+						'is_correct'   => false,
+						'order_number' => 2,
+					),
+				) : array(
+					array(
+						'answer'       => '',
+						'is_correct'   => false,
+						'order_number' => 1,
+					),
+				),
+			)
+		);
+		native_quiz_check( 201 === $written_question->get_status(), 'Written question creation failed: ' . wp_json_encode( $written_question->get_data() ) );
+		$native_posts[] = (int) $written_question->get_data()['id'];
+	}
+	$written_document = NativeQuizEditor::editor_content( get_post( $written_quiz_id ) );
+	native_quiz_check( 4 === substr_count( $written_document, 'wp:ohmylms/shared-multiple-choice' ), 'Written questions did not open in the shared native question card.' );
+	$written_saved = native_quiz_request(
+		'POST',
+		'/wp/v2/ohmylms-quizzes/' . $written_quiz_id,
+		array(
+			'content' => $written_document,
+			'status'  => 'publish',
+		)
+	);
+	native_quiz_check( 200 === $written_saved->get_status(), 'Native written quiz save failed.' );
+	$written_types = array_column( array_column( ohmylms_get_quiz( $written_quiz_id )->get_questions(), 'settings' ), 'type' );
+	native_quiz_check( in_array( 'short-text', $written_types, true ) && in_array( 'long-text', $written_types, true ), 'Written response contracts changed during native saving.' );
+	native_quiz_check( in_array( 'reorder', $written_types, true ), 'Native saving lost the reorder question contract.' );
+	native_quiz_check( 4 === count( RevisionPublisher::latest( $written_quiz_id )['slots'] ), 'Publishing lost the written question snapshots.' );
 	wp_set_current_user( 0 );
 	$denied = native_quiz_request( 'GET', $route, array( 'context' => 'edit' ) );
 	native_quiz_check( 401 === $denied->get_status(), 'Anonymous native reads were allowed.' );

@@ -82,7 +82,7 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 	<div class="oml-hub-family">
 	<section class="oml-hub-banner">
 		<h1><?php esc_html_e( 'My children', 'ohmylms' ); ?></h1>
-		<p><?php esc_html_e( 'See learners that a school has approved you to follow.', 'ohmylms' ); ?></p>
+		<p><?php esc_html_e( 'Follow children a school has linked to you and manage children learning at home.', 'ohmylms' ); ?></p>
 	</section>
 	<?php if ( $family_flash && ! empty( $family_flash['error'] ) ) : ?>
 		<p class="oml-hub-notice" role="alert"><?php echo esc_html( $family_flash['error'] ); ?></p>
@@ -102,7 +102,7 @@ $family_selected = $family_child_id ? ParentWorkspace::child( $family_child_id, 
 	<?php if ( ! $family_children && ! $family_home ) : ?>
 		<div class="oml-hub-empty">
 			<h2><?php esc_html_e( 'No children linked yet', 'ohmylms' ); ?></h2>
-			<p><?php esc_html_e( 'Your school will link your account to your child. If you received an invitation, open its link while signed in. Your account stays private until a link is approved.', 'ohmylms' ); ?></p>
+			<p><?php esc_html_e( 'A school can link your account to your child, or you can add or invite a child below. If you received an invitation, open its link while signed in. Your account stays private until a link is approved.', 'ohmylms' ); ?></p>
 		</div>
 	<?php endif; ?>
 	<?php if ( $family_children ) : ?>

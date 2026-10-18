@@ -5,11 +5,109 @@ import {
 	useEffect,
 	useState,
 } from '@wordpress/element';
-import { useSelect } from '@wordpress/data';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
-import { Button } from '@wordpress/components';
+import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { saveQuizForPreview } from './quizPreview.mjs';
+
+/**
+ * Open a fresh player session after the native document and bank edits are saved.
+ *
+ * @return {Element} Preview control.
+ */
+function QuizPreviewButton() {
+	const { locked, saving, dirty } = useSelect( ( getStore ) => {
+		const editor = getStore( 'core/editor' );
+		return {
+			locked: editor.isPostSavingLocked(),
+			saving: editor.isSavingPost(),
+			dirty: editor.isEditedPostDirty(),
+		};
+	}, [] );
+	const { savePost } = useDispatch( 'core/editor' );
+	const [ opening, setOpening ] = useState( false );
+	const [ error, setError ] = useState( '' );
+	const blocked = locked || saving || opening;
+	let label = __( 'Preview quiz', 'ohmylms' );
+	if ( locked ) {
+		label = __( 'Complete question to preview', 'ohmylms' );
+	} else if ( opening || saving ) {
+		label = __( 'Saving…', 'ohmylms' );
+	}
+	return (
+		<>
+			<Button
+				variant="secondary"
+				href={
+					blocked ? undefined : window.ohmylmsNativeLesson.previewUrl
+				}
+				target="_blank"
+				rel="noopener noreferrer"
+				disabled={ blocked }
+				title={
+					locked
+						? __(
+								'Complete the question and its answer key before previewing.',
+								'ohmylms'
+							)
+						: __(
+								'Preview the latest saved quiz in a fresh player session',
+								'ohmylms'
+							)
+				}
+				onClick={ async ( event ) => {
+					if ( ! dirty ) {
+						return;
+					}
+					event.preventDefault();
+					const preview = window.open( 'about:blank', '_blank' );
+					if ( preview ) {
+						preview.opener = null;
+					}
+					setOpening( true );
+					setError( '' );
+					try {
+						const ready = await saveQuizForPreview( {
+							editor: select( 'core/editor' ),
+							savePost,
+						} );
+						if ( ! ready ) {
+							throw new Error( 'quiz-preview-not-ready' );
+						}
+						if ( preview ) {
+							preview.location.replace(
+								window.ohmylmsNativeLesson.previewUrl
+							);
+						} else {
+							window.location.assign(
+								window.ohmylmsNativeLesson.previewUrl
+							);
+						}
+					} catch {
+						preview?.close();
+						setError(
+							__(
+								'The quiz could not be saved for preview. Complete any unfinished questions and try again.',
+								'ohmylms'
+							)
+						);
+					} finally {
+						setOpening( false );
+					}
+				} }
+			>
+				{ label }
+			</Button>
+			{ error && (
+				<Notice status="error" onRemove={ () => setError( '' ) }>
+					{ error }
+				</Notice>
+			) }
+		</>
+	);
+}
 
 /**
  * Keep the player preview visible when the document sidebar is closed.
@@ -40,23 +138,7 @@ function QuizPreviewAction() {
 			host.remove();
 		};
 	}, [] );
-	return container
-		? createPortal(
-				<Button
-					variant="secondary"
-					href={ window.ohmylmsNativeLesson.previewUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-					title={ __(
-						'Preview the saved quiz in the quiz player',
-						'ohmylms'
-					) }
-				>
-					{ __( 'Preview quiz', 'ohmylms' ) }
-				</Button>,
-				container
-			)
-		: null;
+	return container ? createPortal( <QuizPreviewButton />, container ) : null;
 }
 
 /**
@@ -65,7 +147,7 @@ function QuizPreviewAction() {
  */
 function NativeQuizSettings() {
 	const postType = useSelect(
-		( select ) => select( 'core/editor' ).getCurrentPostType(),
+		( getStore ) => getStore( 'core/editor' ).getCurrentPostType(),
 		[]
 	);
 	if ( postType !== 'ohmylms-quiz' ) {
@@ -81,7 +163,7 @@ function NativeQuizSettings() {
 			>
 				<p>
 					{ __(
-						'Use the block inserter to add paragraphs, headings, images and OhMyLMS Multiple Choice questions. Save each question, then save the quiz. Drag question blocks or use Gutenberg’s move controls to set their order.',
+						'Use the block inserter to add paragraphs, headings, images and Ohmylms Question blocks. Question edits save automatically. Use Gutenberg’s Save button to save the quiz. Drag question blocks or use Gutenberg’s move controls to set their order.',
 						'ohmylms'
 					) }
 				</p>
@@ -91,14 +173,7 @@ function NativeQuizSettings() {
 						'ohmylms'
 					) }
 				</p>
-				<Button
-					variant="secondary"
-					href={ window.ohmylmsNativeLesson.previewUrl }
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					{ __( 'Preview saved quiz', 'ohmylms' ) }
-				</Button>
+				<QuizPreviewButton />
 				<p>
 					<Button
 						variant="link"

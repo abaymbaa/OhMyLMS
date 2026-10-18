@@ -1,11 +1,22 @@
 /** @jsx createElement */
-import { createElement, useEffect, useRef, useState } from '@wordpress/element';
-import { useDispatch } from '@wordpress/data';
-import { Button, Notice, Spinner } from '@wordpress/components';
+import {
+	createElement,
+	useCallback,
+	useEffect,
+	useRef,
+	useState,
+} from '@wordpress/element';
+import { useDispatch, select } from '@wordpress/data';
+import { Notice, Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
-import { registerBlockType, getBlockType } from '@wordpress/blocks';
+import {
+	registerBlockType,
+	getBlockType,
+	createBlock,
+} from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
+import { choiceReadyToSave, reconcileChoiceSave } from './choiceAutosave.mjs';
 import {
 	loadBankQuestion,
 	createBankQuestion,
@@ -40,6 +51,10 @@ function LessonChoiceEdit( {
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	const loadedId = useRef( 0 );
+	const revision = useRef( 0 );
+	const latestQuestion = useRef( question );
+	latestQuestion.current = question;
+	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
 	useEffect( () => {
 		if ( context.postType ) {
@@ -76,8 +91,20 @@ function LessonChoiceEdit( {
 					score: { enabled: true, value: 1 },
 				},
 				questions: [
-					{ answer: '', is_correct: true, order_number: 1 },
-					{ answer: '', is_correct: false, order_number: 2 },
+					{
+						id: Date.now(),
+						temp: true,
+						answer: '',
+						is_correct: true,
+						order_number: 1,
+					},
+					{
+						id: Date.now() + 1,
+						temp: true,
+						answer: '',
+						is_correct: false,
+						order_number: 2,
+					},
 				],
 			} );
 			return undefined;
@@ -106,53 +133,121 @@ function LessonChoiceEdit( {
 			active = false;
 		};
 	}, [ attributes.questionId, attributes.uuid, setAttributes ] );
-	async function save( approve = false ) {
-		setBusy( true );
-		setError( '' );
-		try {
-			const base = attributes.questionId
-				? detail ||
-					( await loadBankQuestion(
-						attributes.questionId,
+	const save = useCallback(
+		async ( approve = false ) => {
+			const submittedRevision = revision.current;
+			setBusy( true );
+			setError( '' );
+			try {
+				const base = attributes.questionId
+					? detail ||
+						( await loadBankQuestion(
+							attributes.questionId,
+							apiFetch
+						) )
+					: null;
+				const payload = {
+					name: question.name,
+					description: question.description,
+					settings: question.settings,
+					questions: question.questions.map(
+						( { clientKey, ...option } ) => option
+					),
+					...( base ? { base_modified: base.modified } : {} ),
+				};
+				const saved = attributes.questionId
+					? await saveQuestionAttributes(
+							attributes.questionId,
+							payload,
+							apiFetch
+						)
+					: await createBankQuestion( payload, apiFetch );
+				const id = attributes.questionId || saved.id;
+				// Keep the created identity even if refreshing its private details fails.
+				loadedId.current = id;
+				setAttributes( { questionId: id } );
+				const fresh = await loadBankQuestion( id, apiFetch );
+				setDetail( fresh );
+				const current = latestQuestion.current || question;
+				const unchanged = revision.current === submittedRevision;
+				const reconciled = reconcileChoiceSave(
+					question,
+					current,
+					fresh
+				);
+				const next = unchanged
+					? { ...reconciled, settings: fresh.settings }
+					: reconciled;
+				latestQuestion.current = next;
+				setQuestion( next );
+				setAttributes( {
+					questionId: id,
+					uuid: fresh.uuid,
+					authoringRevision:
+						( Number( attributes.authoringRevision ) || 0 ) + 1,
+				} );
+				setDirty( ! unchanged );
+				if ( approve ) {
+					await approveQuestion(
+						id,
+						fresh.current_version_id,
 						apiFetch
-					) )
-				: null;
-			const payload = {
-				name: question.name,
-				description: question.description,
-				settings: question.settings,
-				questions: question.questions,
-				...( base ? { base_modified: base.modified } : {} ),
-			};
-			const saved = attributes.questionId
-				? await saveQuestionAttributes(
-						attributes.questionId,
-						payload,
-						apiFetch
-					)
-				: await createBankQuestion( payload, apiFetch );
-			const id = attributes.questionId || saved.id;
-			// Keep the created identity even if refreshing its private details fails.
-			loadedId.current = id;
-			setAttributes( { questionId: id } );
-			const fresh = await loadBankQuestion( id, apiFetch );
-			setDetail( fresh );
-			setQuestion( {
-				...question,
-				id,
-				questions: fresh.options || [],
-				settings: fresh.settings,
-			} );
-			setAttributes( { questionId: id, uuid: fresh.uuid } );
-			setDirty( false );
-			if ( approve ) {
-				await approveQuestion( id, fresh.current_version_id, apiFetch );
-				setDetail( await loadBankQuestion( id, apiFetch ) );
+					);
+					setDetail( await loadBankQuestion( id, apiFetch ) );
+				}
+			} catch ( failure ) {
+				setError( failure.message );
+			} finally {
+				setBusy( false );
 			}
+		},
+		[
+			attributes.questionId,
+			attributes.authoringRevision,
+			question,
+			detail,
+			setAttributes,
+		]
+	);
+	useEffect( () => {
+		if (
+			! dirty ||
+			busy ||
+			error ||
+			detail?.can_edit === false ||
+			! choiceReadyToSave( question )
+		) {
+			return undefined;
+		}
+		const timer = window.setTimeout( () => save(), 650 );
+		return () => window.clearTimeout( timer );
+	}, [ dirty, busy, error, question, detail?.can_edit, save ] );
+	async function duplicate() {
+		try {
+			const created = await createBankQuestion(
+				{
+					name: question.name,
+					description: question.description,
+					settings: question.settings,
+					questions: question.questions.map(
+						( { id, temp, clientKey, ...option } ) => option
+					),
+				},
+				apiFetch
+			);
+			const fresh = await loadBankQuestion( created.id, apiFetch );
+			const editor = select( 'core/block-editor' );
+			insertBlock(
+				createBlock( 'ohmylms/shared-multiple-choice', {
+					questionId: fresh.id,
+					uuid: fresh.uuid,
+					delivery: quiz ? 'quiz' : 'inline',
+				} ),
+				editor.getBlockIndex( clientId ) + 1,
+				editor.getBlockRootClientId( clientId )
+			);
 		} catch ( failure ) {
 			setError( failure.message );
-		} finally {
-			setBusy( false );
 		}
 	}
 	if ( ! question ) {
@@ -164,41 +259,116 @@ function LessonChoiceEdit( {
 			<Spinner />
 		);
 	}
-	const supported = [ 'single-choice', 'multiple-choice' ].includes(
-		question.settings?.type
-	);
-	let status = __(
-		'Question saved. Approve this version before learners can use it.',
+	const supported = (
+		quiz
+			? [
+					'single-choice',
+					'multiple-choice',
+					'short-text',
+					'long-text',
+					'reorder',
+					'fill-in-the-blank',
+					'matching',
+					'match-table-grid',
+					'dropdown-blanks',
+					'multi-blank',
+					'build-expression',
+					'expression',
+				]
+			: [ 'single-choice', 'multiple-choice' ]
+	).includes( question.settings?.type );
+	let incompleteMessage = __(
+		'Complete the question and options, and select a correct answer.',
 		'ohmylms'
 	);
-	if ( quiz ) {
-		status = __(
-			'Question saved. Save the quiz to keep this block placement.',
+	if ( [ 'short-text', 'long-text' ].includes( question.settings.type ) ) {
+		incompleteMessage = __( 'Enter a question to save.', 'ohmylms' );
+	} else if ( question.settings.type === 'reorder' ) {
+		incompleteMessage = __( 'Add at least two items to save.', 'ohmylms' );
+	} else if ( question.settings.type === 'match-table-grid' ) {
+		incompleteMessage = __(
+			'Add row and column labels, and choose a correct column for every row.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'matching' ) {
+		incompleteMessage = __(
+			'Complete at least two matching pairs to save.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'fill-in-the-blank' ) {
+		incompleteMessage = __(
+			'Write {answer} in the question, or add an accepted answer below.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'expression' ) {
+		incompleteMessage = __(
+			'Enter a correct math expression to save.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'build-expression' ) {
+		incompleteMessage = __(
+			'Enter at least two tiles in the correct order to save.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'multi-blank' ) {
+		incompleteMessage = __(
+			'Add {a}, {b} or other blank markers, and set an answer for each blank.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'dropdown-blanks' ) {
+		incompleteMessage = __(
+			'Write {1} in the question, add dropdown choices, and select a correct choice.',
 			'ohmylms'
 		);
 	}
-	if ( dirty ) {
-		status = __( 'Question changes are not saved.', 'ohmylms' );
-	} else if ( ! quiz && detail?.approved_is_current ) {
-		status = __(
-			'Approved question saved. Save the lesson to keep this placement.',
-			'ohmylms'
-		);
-	}
+
 	return (
 		<>
 			{ error && (
-				<Notice status="error" isDismissible={ false }>
+				<Notice
+					status="error"
+					isDismissible={ false }
+					actions={ [
+						{
+							label: __( 'Retry', 'ohmylms' ),
+							onClick: () => save(),
+						},
+					] }
+				>
 					{ error }
 				</Notice>
 			) }
+			{ dirty &&
+				! busy &&
+				supported &&
+				! choiceReadyToSave( question ) && (
+					<p className="ohmylms-choice-validation" role="status">
+						{ incompleteMessage }
+					</p>
+				) }
 			{ supported ? (
 				<MultipleChoiceFields
 					question={ question }
-					readOnly={ busy || detail?.can_edit === false }
+					allowWritten={ quiz }
+					readOnly={ detail?.can_edit === false }
+					onRemove={ () => removeBlock( clientId ) }
+					onDuplicate={
+						! busy && choiceReadyToSave( question )
+							? duplicate
+							: undefined
+					}
+					onApprove={
+						! quiz && detail?.can_approve && ! busy
+							? () => save( true )
+							: undefined
+					}
 					onChange={ ( patch ) => {
-						setQuestion( { ...question, ...patch } );
+						revision.current++;
+						const next = { ...question, ...patch };
+						latestQuestion.current = next;
+						setQuestion( next );
 						setDirty( true );
+						setError( '' );
 					} }
 				/>
 			) : (
@@ -209,48 +379,6 @@ function LessonChoiceEdit( {
 					) }
 				</p>
 			) }
-			<div className="ohmylms-choice-save-row">
-				<Button
-					variant="primary"
-					disabled={
-						busy || ! supported || detail?.can_edit === false
-					}
-					onClick={ () => save() }
-				>
-					{ __( 'Save question', 'ohmylms' ) }
-				</Button>
-				{ ! quiz && detail?.can_approve && (
-					<Button
-						variant="secondary"
-						disabled={
-							busy || ! supported || detail?.can_edit === false
-						}
-						onClick={ () => save( true ) }
-					>
-						{ __( 'Save and approve for learners', 'ohmylms' ) }
-					</Button>
-				) }
-				<span role="status">
-					{ dirty
-						? __( 'Unsaved changes', 'ohmylms' )
-						: __( 'Question saved', 'ohmylms' ) }
-				</span>
-				<details className="ohmylms-choice-save-help">
-					<summary>{ __( 'Help', 'ohmylms' ) }</summary>
-					<p>{ status }</p>
-					<p>
-						{ quiz
-							? __(
-									'Save the question, then save the quiz.',
-									'ohmylms'
-								)
-							: __(
-									'Save the question and approve it before learners can use it. Save the lesson to keep its placement.',
-									'ohmylms'
-								) }
-					</p>
-				</details>
-			</div>
 		</>
 	);
 }

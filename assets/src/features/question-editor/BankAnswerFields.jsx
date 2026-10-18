@@ -36,6 +36,7 @@ import { RichContentControl } from '../math/RichContentControl';
  * @param root0.prompt
  * @param root0.mainStatement
  * @param root0.collapseAnswerToolbar
+ * @param root0.compactActions
  * @param root0.showAnswerToolbar
  */
 export function BankAnswerFields( {
@@ -47,6 +48,7 @@ export function BankAnswerFields( {
 	mainStatement = false,
 	showAnswerToolbar = false,
 	collapseAnswerToolbar = false,
+	compactActions = false,
 } ) {
 	const dragged = useRef( null );
 	if ( isExtendedType( type ) ) {
@@ -124,6 +126,7 @@ export function BankAnswerFields( {
 	if ( interactive ) {
 		return createElement( interactive, {
 			mainStatement,
+			compactActions,
 			value: settings,
 			onChange: ( patch ) =>
 				onChange( {
@@ -271,7 +274,7 @@ export function BankAnswerFields( {
 			</p>
 			{ options.map( ( option, index ) => (
 				<fieldset
-					key={ option.id || index }
+					key={ option.clientKey ?? option.id ?? index }
 					className="ohmylms-shared-answer-row"
 					onDragOver={ ( event ) => event.preventDefault() }
 					onDrop={ ( event ) => {
@@ -431,16 +434,28 @@ export function BankAnswerFields( {
 					{ type === 'reorder' && (
 						<>
 							<Button
+								icon={
+									compactActions ? 'arrow-up-alt2' : undefined
+								}
+								label={ __( 'Move up', 'ohmylms' ) }
 								disabled={ index === 0 }
 								onClick={ () => reorder( index, -1 ) }
 							>
-								{ __( 'Move up', 'ohmylms' ) }
+								{ ! compactActions &&
+									__( 'Move up', 'ohmylms' ) }
 							</Button>
 							<Button
+								icon={
+									compactActions
+										? 'arrow-down-alt2'
+										: undefined
+								}
+								label={ __( 'Move down', 'ohmylms' ) }
 								disabled={ index === options.length - 1 }
 								onClick={ () => reorder( index, 1 ) }
 							>
-								{ __( 'Move down', 'ohmylms' ) }
+								{ ! compactActions &&
+									__( 'Move down', 'ohmylms' ) }
 							</Button>
 						</>
 					) }

@@ -1,3 +1,4 @@
+import { MatchTableGridEditor } from './MatchTableGridEditor';
 import { RichContentControl } from '../math/RichContentControl';
 import { createElement, useState } from '@wordpress/element';
 import {
@@ -374,67 +375,7 @@ export function ExtendedEditor( {
 				</>
 			) }
 			{ type === 'match-table-grid' && (
-				<>
-					{ [ 'rows', 'columns' ].map( ( key ) => (
-						<RichContentControl
-							compact
-							html={ false }
-							key={ key }
-							label={
-								key === 'rows'
-									? __(
-											'Row labels (one per line)',
-											'ohmylms'
-										)
-									: __(
-											'Column labels (one per line)',
-											'ohmylms'
-										)
-							}
-							value={ rows( key )
-								.map( ( row ) => row.label )
-								.join( '\n' ) }
-							onChange={ ( text ) =>
-								set( {
-									[ key ]: text
-										.split( '\n' )
-										.map( ( label, index ) => ( {
-											id:
-												( key === 'rows' ? 'r' : 'c' ) +
-												( index + 1 ),
-											label,
-										} ) ),
-									key: {},
-								} )
-							}
-						/>
-					) ) }
-					{ rows( 'rows' ).map( ( row ) => (
-						<SelectControl
-							key={ row.id }
-							label={ row.label }
-							value={ value.key?.[ row.id ] || '' }
-							options={ [
-								{
-									value: '',
-									label: __(
-										'Choose correct column',
-										'ohmylms'
-									),
-								},
-								...rows( 'columns' ).map( ( column ) => ( {
-									value: column.id,
-									label: column.label,
-								} ) ),
-							] }
-							onChange={ ( answer ) =>
-								set( {
-									key: { ...value.key, [ row.id ]: answer },
-								} )
-							}
-						/>
-					) ) }
-				</>
+				<MatchTableGridEditor value={ value } onChange={ onChange } />
 			) }
 			{ type === 'labeling' && (
 				<>

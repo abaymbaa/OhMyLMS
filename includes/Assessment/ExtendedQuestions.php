@@ -71,7 +71,7 @@ final class ExtendedQuestions {
 			'passage'          => array( 'passage' ),
 			'graphing'         => array( 'mode', 'min', 'max' ),
 			'hot-text'         => array( 'tokens' ),
-			'match-table-grid' => array( 'rows', 'columns' ),
+			'match-table-grid' => array( 'rows', 'columns', 'multiple' ),
 			'labeling'         => array( 'image_url' ),
 			'hotspot'          => array( 'image_url' ),
 			'audio-response'   => array( 'max_seconds' ),
@@ -144,7 +144,15 @@ final class ExtendedQuestions {
 			$valid   = self::valid_rows( $rows, 'label' ) && self::valid_rows( $columns, 'label' ) && is_array( $key ) && count( $key ) === count( $rows );
 			if ( $valid ) {
 				foreach ( $rows as $row ) {
-					$valid = $valid && in_array( $key[ $row['id'] ] ?? null, array_column( $columns, 'id' ), true );
+					$expected = $key[ $row['id'] ] ?? null;
+					if ( ! empty( $settings['multiple'] ) ) {
+						$valid = $valid && is_array( $expected ) && count( $expected ) > 0 && count( $expected ) <= count( $columns );
+						if ( $valid ) {
+							$valid = count( array_filter( $expected, 'is_string' ) ) === count( $expected ) && count( array_unique( $expected ) ) === count( $expected ) && ! array_diff( $expected, array_column( $columns, 'id' ) );
+						}
+					} else {
+						$valid = $valid && in_array( $expected, array_column( $columns, 'id' ), true );
+					}
 				}
 			}
 		}
@@ -295,11 +303,25 @@ final class ExtendedQuestions {
 			$correct = $given === $expected;
 		}
 		if ( 'match-table-grid' === $type ) {
-			$given    = array_map( 'strval', $answer );
-			$expected = array_map( 'strval', $settings['key'] ?? array() );
-			ksort( $given );
-			ksort( $expected );
-			$correct = $given === $expected;
+			if ( ! empty( $settings['multiple'] ) ) {
+				$correct = count( $answer ) === count( $settings['key'] ?? array() );
+				foreach ( $settings['key'] ?? array() as $row_id => $expected ) {
+					$given = json_decode( (string) ( $answer[ $row_id ] ?? '' ), true );
+					if ( ! is_array( $given ) || count( array_filter( $given, 'is_string' ) ) !== count( $given ) || count( array_unique( $given ) ) !== count( $given ) ) {
+						$correct = false;
+						break;
+					}
+					sort( $given, SORT_STRING );
+					sort( $expected, SORT_STRING );
+					$correct = $correct && $given === $expected;
+				}
+			} else {
+				$given    = array_map( 'strval', $answer );
+				$expected = array_map( 'strval', $settings['key'] ?? array() );
+				ksort( $given );
+				ksort( $expected );
+				$correct = $given === $expected;
+			}
 		}
 		if ( 'labeling' === $type ) {
 			$correct = count( $answer ) === count( $settings['targets'] ?? array() );

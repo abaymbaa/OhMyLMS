@@ -110,7 +110,7 @@ export function extendedPublicView( type, settings ) {
 			passage: [ 'passage' ],
 			graphing: [ 'mode', 'min', 'max' ],
 			'hot-text': [ 'tokens' ],
-			'match-table-grid': [ 'rows', 'columns' ],
+			'match-table-grid': [ 'rows', 'columns', 'multiple' ],
 			labeling: [ 'image_url' ],
 			hotspot: [ 'image_url' ],
 			'audio-response': [ 'max_seconds' ],
@@ -191,7 +191,21 @@ export function extendedIssues( type, settings = {} ) {
 		type === 'match-table-grid' &&
 		( ! ( settings.rows || [] ).length ||
 			! ( settings.columns || [] ).length ||
-			settings.rows.some( ( row ) => ! settings.key?.[ row.id ] ) )
+			settings.rows.some( ( row ) => {
+				const answers = settings.multiple
+					? settings.key?.[ row.id ]
+					: [ settings.key?.[ row.id ] ];
+				return (
+					! Array.isArray( answers ) ||
+					! answers.length ||
+					answers.some(
+						( id ) =>
+							! settings.columns.some(
+								( column ) => column.id === id
+							)
+					)
+				);
+			} ) )
 	) {
 		return [ 'table' ];
 	}

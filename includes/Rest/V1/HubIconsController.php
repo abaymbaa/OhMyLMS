@@ -55,10 +55,12 @@ class HubIconsController extends RestController {
 	private function snapshot( $icons = null ) {
 		$icons = $icons ?? HubIcons::get();
 		$kinds = array();
-		foreach ( HubIcons::kinds() as $key => $label ) {
+		$logos = HubIcons::logo_kinds();
+		foreach ( HubIcons::all_kinds() as $key => $label ) {
 			$id      = $icons[ $key ] ?? 0;
 			$kinds[] = array(
 				'key'   => $key,
+				'group' => isset( $logos[ $key ] ) ? 'logo' : 'activity',
 				'label' => $label,
 				'id'    => $id,
 				'url'   => $id ? (string) wp_get_attachment_image_url( $id, 'thumbnail' ) : '',

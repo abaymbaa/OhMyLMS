@@ -19,7 +19,7 @@ Interactive::enqueue();
 // Registers the required-answer check for tile answers.
 ohmylms_enqueue_interactivity_module( 'ohmylms/questions' );
 ?>
-<div class="ohmylms-interactive ohmylms-build-expression" data-ohmylms-interactive="build-expression" data-field-name="<?php echo esc_attr( Interactive::field_name( $attempt, $question ) ); ?>" data-question-id="<?php echo esc_attr( $question['id'] ); ?>">
+<div class="ohmylms-interactive ohmylms-build-expression" data-wp-on--change="ohmylms/quiz::actions.answerChanged" data-ohmylms-interactive="build-expression" data-field-name="<?php echo esc_attr( Interactive::field_name( $attempt, $question ) ); ?>" data-question-id="<?php echo esc_attr( $question['id'] ); ?>">
 	<div class="ohmylms-build-answer" role="list" aria-label="<?php esc_attr_e( 'Your answer', 'ohmylms' ); ?>"></div>
 	<div class="ohmylms-build-bank" role="list" aria-label="<?php esc_attr_e( 'Available tiles', 'ohmylms' ); ?>">
 		<?php foreach ( (array) ( $settings['tiles'] ?? array() ) as $tile ) { ?>

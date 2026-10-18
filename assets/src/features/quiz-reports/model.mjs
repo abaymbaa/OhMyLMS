@@ -131,7 +131,7 @@ export function describeExpected( question ) {
 		return ( settings.rows || [] )
 			.map(
 				( row ) =>
-					`${ row.label } → ${ columns[ settings.key?.[ row.id ] ] || '' }`
+					`${ row.label } → ${ ( Array.isArray( settings.key?.[ row.id ] ) ? settings.key[ row.id ] : [ settings.key?.[ row.id ] ] ).map( ( id ) => columns[ id ] || '' ).join( ', ' ) }`
 			)
 			.join( ', ' );
 	}

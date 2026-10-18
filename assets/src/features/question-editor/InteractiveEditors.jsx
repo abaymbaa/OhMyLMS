@@ -646,9 +646,17 @@ const parseRows = ( text ) =>
  * @param root0.value
  * @param root0.onChange
  * @param root0.mainStatement
+ * @param root0.compactActions
  */
-export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
+export function MultiBlankEditor( {
+	value,
+	onChange,
+	mainStatement = false,
+	compactActions = false,
+} ) {
 	const table = value.layout === 'table';
+	const Group = compactActions ? 'details' : 'fieldset';
+	const Heading = compactActions ? 'summary' : 'legend';
 	const apply = ( patch ) => {
 		const next = {
 			...value,
@@ -774,8 +782,8 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 					kind: 'text',
 				};
 				return (
-					<fieldset key={ id } className="ohmylms-interactive-row">
-						<legend>
+					<Group key={ id } className="ohmylms-interactive-row">
+						<Heading>
 							{ sprintf(
 								/* translators: %s: blank identifier from the question template. */ __(
 									'Blank {%s}',
@@ -783,7 +791,7 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 								),
 								id
 							) }
-						</legend>
+						</Heading>
 						<SelectControl
 							label={ __( 'Answer type', 'ohmylms' ) }
 							value={ spec.kind || 'text' }
@@ -919,7 +927,7 @@ export function MultiBlankEditor( { value, onChange, mainStatement = false } ) {
 								/>
 							);
 						} )() }
-					</fieldset>
+					</Group>
 				);
 			} ) }
 			<PartialCredit value={ value } onChange={ onChange } />

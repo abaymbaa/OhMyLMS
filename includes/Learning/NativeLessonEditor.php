@@ -45,15 +45,19 @@ final class NativeLessonEditor {
 			array(
 				'api_version'     => 3,
 				'attributes'      => array(
-					'questionId' => array(
+					'questionId'        => array(
 						'type'    => 'integer',
 						'default' => 0,
 					),
-					'uuid'       => array(
+					'uuid'              => array(
 						'type'    => 'string',
 						'default' => '',
 					),
-					'delivery'   => array(
+					'authoringRevision' => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'delivery'          => array(
 						'type'    => 'string',
 						'default' => 'inline',
 					),

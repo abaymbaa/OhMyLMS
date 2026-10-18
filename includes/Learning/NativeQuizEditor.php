@@ -140,6 +140,7 @@ final class NativeQuizEditor {
 				if ( ! AccessPolicy::can_edit_question( $id ) && empty( $identity['approved_version_id'] ) ) {
 					ErrorException::raise( new \WP_Error( 'quiz_question_unapproved', __( 'Shared questions must be approved before they can be used in a quiz.', 'ohmylms' ), array( 'status' => 409 ) ) );
 				}
+				$authoring_revision    = absint( $block['attrs']['authoringRevision'] ?? 0 );
 				$ids[]                 = $id;
 				$block['attrs']        = array(
 					'questionId' => $id,
@@ -149,7 +150,8 @@ final class NativeQuizEditor {
 				$block['innerHTML']    = '';
 				$block['innerContent'] = array();
 				if ( self::QUESTION_BLOCK === $block['blockName'] ) {
-					$block['attrs']['delivery'] = 'quiz';
+					$block['attrs']['delivery']          = 'quiz';
+					$block['attrs']['authoringRevision'] = $authoring_revision;
 				}
 			} else {
 				$block['innerBlocks'] = self::normalize( $block['innerBlocks'] ?? array(), $ids );
@@ -220,7 +222,7 @@ final class NativeQuizEditor {
 		}
 		$content = serialize_blocks( self::without_questions( $blocks ) );
 		foreach ( $questions as $question ) {
-			$choice = in_array( $question['settings']['type'] ?? '', array( 'single-choice', 'multiple-choice' ), true );
+			$choice = in_array( $question['settings']['type'] ?? '', array( 'single-choice', 'multiple-choice', 'short-text', 'long-text', 'reorder', 'fill-in-the-blank', 'matching', 'dropdown-blanks', 'match-table-grid', 'multi-blank', 'build-expression', 'expression' ), true );
 			$attrs  = array(
 				'questionId' => (int) $question['id'],
 				'uuid'       => (string) ( $question['uuid'] ?? '' ),

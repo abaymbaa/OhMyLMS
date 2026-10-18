@@ -57,7 +57,10 @@ $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home'
 		?>
 		<aside class="oml-hub-rail" id="oml-hub-rail">
 			<div class="oml-hub-rail-head">
-				<a class="oml-hub-brand" href="<?php echo esc_url( $hub_url( $teacher_mode ? 'classes' : ( $parent_mode ? 'family' : ( $school_mode ? 'school-overview' : '' ) ) ) ); ?>"><span class="oml-hub-logo" aria-hidden="true">✦</span><span><?php echo esc_html( $config['title'] ); ?></span></a>
+				<a class="oml-hub-brand" href="<?php echo esc_url( $hub_url( $teacher_mode ? 'classes' : ( $parent_mode ? 'family' : ( $school_mode ? 'school-overview' : '' ) ) ) ); ?>"><?php
+				$hub_logo = \OhMyLMS\Design\HubIcons::logo_markup( $school_mode ? 'school' : ( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : 'learner' ) ) );
+				echo '' !== $hub_logo ? $hub_logo : '<span class="oml-hub-logo" aria-hidden="true">✦</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in HubIcons::logo_markup().
+				?><span><?php echo esc_html( $config['title'] ); ?></span></a>
 				<button type="button" class="oml-hub-rail-close" data-hub-rail-close aria-label="<?php esc_attr_e( 'Close menu', 'ohmylms' ); ?>">&times;</button>
 			</div>
 			<nav class="oml-hub-nav" aria-label="<?php echo esc_attr( $teacher_mode ? __( 'Teacher workspace', 'ohmylms' ) : ( $parent_mode ? __( 'Family workspace', 'ohmylms' ) : ( $school_mode ? __( 'School workspace', 'ohmylms' ) : __( 'Student workspace', 'ohmylms' ) ) ) ); ?>">

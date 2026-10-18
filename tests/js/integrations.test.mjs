@@ -14,6 +14,7 @@ const expected = [
 	'ZoomSettings',
 	'GoogleMeetSettings',
 	'GoogleSignInSettings',
+	'MicrosoftSignInSettings',
 	'IntegrationConfig',
 	'IntegrationsPage',
 ];

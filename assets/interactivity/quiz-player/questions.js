@@ -9,6 +9,7 @@ import {
 	registerQuestionMount,
 } from 'ohmylms/interactivity';
 import { createQuestionControls } from './questionControls.js';
+import { gridRowsAnswered } from './gridAnswers.mjs';
 const controllers = new WeakMap();
 store( 'ohmylms/questions', {
 	actions: Object.fromEntries(
@@ -106,11 +107,30 @@ registerAnswerValidator( 'build-expression', ( root ) =>
 );
 
 // Extended widgets write bounded scalar fields through the same answer collection contract.
+registerAnswerValidator( 'match-table-grid', ( root ) => {
+	const widget = root.querySelector(
+		'[data-ohmylms-interactive="match-table-grid"]'
+	);
+	if ( ! widget ) {
+		return false;
+	}
+	try {
+		const config = JSON.parse( widget.getAttribute( 'data-config' ) );
+		const answers = Array.from(
+			widget.querySelectorAll( 'input[data-answer-key]' )
+		).map( ( input ) => ( {
+			id: input.getAttribute( 'data-answer-key' ),
+			value: input.value,
+		} ) );
+		return gridRowsAnswered( config.rows || [], answers );
+	} catch {
+		return false;
+	}
+} );
 [
 	'passage',
 	'graphing',
 	'hot-text',
-	'match-table-grid',
 	'labeling',
 	'hotspot',
 	'draw',

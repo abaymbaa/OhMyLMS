@@ -60,6 +60,24 @@
 		]
 	},
 	{
+		"binding": "j7.microsoft_signin",
+		"name": "MicrosoftSignInSettings",
+		"file": "MicrosoftSignInSettings.jsx",
+		"dependencies": [
+			"E7",
+			"I",
+			"Pf",
+			"React",
+			"S7",
+			"_7",
+			"b",
+			"b7",
+			"g",
+			"g7",
+			"l"
+		]
+	},
+	{
 		"binding": "A7",
 		"name": "IntegrationConfig",
 		"file": "IntegrationConfig.jsx",

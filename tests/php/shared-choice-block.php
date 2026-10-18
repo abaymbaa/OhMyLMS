@@ -31,7 +31,7 @@ function get_post_type() {
 
 \OhMyLMS\Learning\NativeLessonEditor::register_question_block();
 list( $block_name, $settings ) = $GLOBALS['shared_choice_registration'];
-if ( 'ohmylms/shared-multiple-choice' !== $block_name || array( 'questionId', 'uuid', 'delivery' ) !== array_keys( $settings['attributes'] ) ) {
+if ( 'ohmylms/shared-multiple-choice' !== $block_name || array( 'questionId', 'uuid', 'authoringRevision', 'delivery' ) !== array_keys( $settings['attributes'] ) ) {
 	throw new RuntimeException( 'The placement must store references without private answer data.' );
 }
 $uuid = '12345678-1234-1234-1234-123456789abc';

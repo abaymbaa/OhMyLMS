@@ -129,12 +129,19 @@ export function questionAnswerPatch( question, patch ) {
 		return patch;
 	}
 	const content = questionPrompt( question );
-	const next = { ...question, ...patch };
+	const next = {
+		...question,
+		...patch,
+		settings: {
+			...patch.settings,
+			blanks: { ...question.settings.blanks, ...patch.settings.blanks },
+		},
+	};
 	if ( patch.settings.layout === 'table' ) {
 		return {
 			...patch,
 			description: content,
-			settings: { ...patch.settings, text: '' },
+			settings: { ...next.settings, text: '' },
 		};
 	}
 	return { ...patch, ...questionPromptPatch( next, content ) };

@@ -5,7 +5,12 @@ import { __ } from '@wordpress/i18n';
 import { RichContentControl } from '../math/RichContentControl';
 import { TextControl, ToggleControl } from '@wordpress/components';
 
-export function QuestionOptionsBar( { question, onChange } ) {
+export function QuestionOptionsBar( {
+	question,
+	onChange,
+	hideRequired = false,
+	hideRandomize = false,
+} ) {
 	const settings = question.settings || {};
 	const set = ( patch ) =>
 		onChange( { settings: { ...settings, ...patch } } );
@@ -15,16 +20,20 @@ export function QuestionOptionsBar( { question, onChange } ) {
 			aria-label={ __( 'Question options', 'ohmylms' ) }
 		>
 			<div className="ohmylms-question-options-controls">
-				<ToggleControl
-					label={ __( 'Required', 'ohmylms' ) }
-					checked={ !! settings.required }
-					onChange={ ( required ) => set( { required } ) }
-				/>
-				<ToggleControl
-					label={ __( 'Randomize', 'ohmylms' ) }
-					checked={ !! settings.randomize }
-					onChange={ ( randomize ) => set( { randomize } ) }
-				/>
+				{ ! hideRequired && (
+					<ToggleControl
+						label={ __( 'Required', 'ohmylms' ) }
+						checked={ !! settings.required }
+						onChange={ ( required ) => set( { required } ) }
+					/>
+				) }
+				{ ! hideRandomize && (
+					<ToggleControl
+						label={ __( 'Randomize', 'ohmylms' ) }
+						checked={ !! settings.randomize }
+						onChange={ ( randomize ) => set( { randomize } ) }
+					/>
+				) }
 				<TextControl
 					label={ __( 'Score', 'ohmylms' ) }
 					type="number"

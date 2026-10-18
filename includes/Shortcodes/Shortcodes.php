@@ -17,6 +17,7 @@ class Shortcodes {
 	 */
 	public static function init() {
 		\OhMyLMS\Student\Hub::init();
+		\OhMyLMS\Student\LoginExperience::init();
 		\OhMyLMS\Utility\Terminology::init();
 		\OhMyLMS\QuestionBank\ImportPage::init();
 		\OhMyLMS\Assessment\SkillAssessmentPage::init();

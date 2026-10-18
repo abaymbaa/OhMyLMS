@@ -498,13 +498,29 @@
 				] );
 				( config.columns || [] ).forEach( ( column ) => {
 					const input = el( 'input', {
-						type: 'radio',
+						type: config.multiple ? 'checkbox' : 'radio',
+						'data-grid-column': column.id,
 						name: 'ohmylms-grid-' + instance + '-' + row.id,
 						'aria-label': row.label + ' — ' + column.label,
 					} );
-					input.addEventListener( 'change', () =>
-						setAnswer( root, row.id, column.id )
-					);
+					input.addEventListener( 'change', () => {
+						if ( config.multiple ) {
+							const selected = Array.from(
+								tr.querySelectorAll( 'input:checked' )
+							).map( ( item ) =>
+								item.getAttribute( 'data-grid-column' )
+							);
+							setAnswer(
+								root,
+								row.id,
+								selected.length
+									? JSON.stringify( selected )
+									: null
+							);
+						} else {
+							setAnswer( root, row.id, column.id );
+						}
+					} );
 					tr.appendChild( el( 'td', {}, [ input ] ) );
 				} );
 				body.appendChild( tr );

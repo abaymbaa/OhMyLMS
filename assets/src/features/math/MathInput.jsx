@@ -42,7 +42,9 @@ export function MathInput( {
 	useEffect( () => {
 		let disposed = false;
 		let cleanup;
-		if ( mathEnabled() ) {
+		// MathLive belongs to its loading window; keep the text input in Gutenberg
+		// canvas documents rather than moving a custom element across documents.
+		if ( mathEnabled() && input.current.ownerDocument === document ) {
 			loadMath()
 				.then( ( runtime ) => {
 					if ( ! disposed ) {
