@@ -59,13 +59,14 @@
 
 .ohmylms-student-hub.oml-hub-signin {
 	display: block;
-	max-width: 480px;
-	min-height: 0;
-	margin: 15vh auto 0;
-	padding: 32px;
-	border: 1px solid var(--hub-border);
-	border-radius: 12px;
-	background: var(--hub-surface);
+	width: 100%;
+	max-width: none;
+	min-height: 100vh;
+	margin: 0;
+	padding: 48px max(16px, calc((100% - 480px) / 2));
+	border: 0;
+	border-radius: 0;
+	background: var(--hub-bg);
 	text-align: center;
 }
 
@@ -2235,4 +2236,25 @@
 	flex-wrap: wrap;
 	gap: 8px;
 	justify-content: center;
+}
+
+@media (min-width: 900px) {
+	.ohmylms-student-hub.oml-hub-signin {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 24px;
+		align-content: center;
+		align-items: start;
+		padding: 48px max(48px, calc((100% - 960px) / 2));
+	}
+
+	.ohmylms-student-hub.oml-hub-signin > h2,
+	.ohmylms-student-hub.oml-hub-signin > .oml-hub-subnav {
+		grid-column: 1 / -1;
+		margin: 0;
+	}
+
+	.ohmylms-student-hub.oml-hub-signin > .oml-hub-settings-card {
+		margin-top: 0;
+	}
 }

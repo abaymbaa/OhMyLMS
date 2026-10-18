@@ -27,7 +27,11 @@ $choices = array(
 	array( 'teacher', __( 'I’m a teacher', 'ohmylms' ), TeacherWorkspace::url() ),
 );
 ?>
-<div class="ohmylms-student-hub oml-hub-signin" data-role-choice="<?php echo esc_attr( $signin_role ? $signin_role : 'none' ); ?>">
+<div class="ohmylms-student-hub oml-hub-signin" data-theme="light" data-role-choice="<?php echo esc_attr( $signin_role ? $signin_role : 'none' ); ?>">
+	<?php
+	// Apply the saved theme before first paint so switching tabs does not flash the light default.
+	wp_print_inline_script_tag( "try{var t=localStorage.getItem('ohmylms-hub-theme');if(t==='system'||t==='dark'||t==='light'){document.currentScript.parentElement.dataset.theme=t;}}catch(e){}" );
+	?>
 	<h2><?php esc_html_e( 'Your learning space', 'ohmylms' ); ?></h2>
 	<nav class="oml-hub-subnav" aria-label="<?php esc_attr_e( 'Choose how you use this site', 'ohmylms' ); ?>">
 		<?php foreach ( $choices as $choice ) : ?>
