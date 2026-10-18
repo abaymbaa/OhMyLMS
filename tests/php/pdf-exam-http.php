@@ -222,8 +222,9 @@ try {
 			foreach ( $draft as &$row ) {
 				$row['reviewed'] = true;
 			} unset( $row );
-			$draft[0]['question'] = 'TEACHER EDIT: find 2 + 3.';
-			$response             = $call(
+			$draft[0]['question']           = 'TEACHER EDIT: find 2 + 3.';
+			$draft[0]['parts'][0]['prompt'] = 'Find $\\frac{10}{2}$. Keep \\(x\\) unchanged.';
+			$response                       = $call(
 				'POST',
 				'exam-imports/' . $id . '/review',
 				array(
@@ -254,6 +255,8 @@ try {
 			$check( 200 === $response->get_status(), 'Commit: ' . wp_json_encode( $response->get_data() ) );
 			$job = get_post_meta( $id, Jobs::META, true );
 			$check( 6 === count( $job['question_ids'] ), 'Every question committed once' );
+			$stored_settings = get_post_meta( $job['question_ids'][0], '_question_settings', true );
+			$check( $draft[0]['parts'][0]['prompt'] === $stored_settings['parts'][0]['prompt'], 'Nested part prompts preserve LaTeX backslashes through the WordPress writer' );
 			$again = $call( 'POST', 'exam-imports/' . $id . '/commit', array( 'revision' => 2 ) )->get_data();
 			$check( $again['question_ids'] === $job['question_ids'], 'Repeat commit returns same questions' );
 			$response = $call(
@@ -268,6 +271,7 @@ try {
 			$check( 200 === $response->get_status(), 'Exam create: ' . wp_json_encode( $response->get_data() ) );
 			$exam    = $response->get_data();
 			$exam_id = $exam['id'];
+			$check( $job['version_ids'] === $exam['version_ids'] && (int) $id === $exam['job_id'], 'Paper review exposes exact pinned versions and the owned source job' );
 			parse_str( wp_parse_url( $exam['preview_url'], PHP_URL_QUERY ), $preview_args );
 			$check( (int) $exam['quiz_id'] === (int) $preview_args['ohmylms_quiz_preview'] && wp_verify_nonce( $preview_args['_wpnonce'], 'ohmylms_quiz_preview_' . $exam['quiz_id'] ), 'Draft exams expose the authenticated non-recording quiz preview' );
 			$check( 'draft' === $exam['status'] && 18.0 === (float) $exam['total_marks'] && 6 === count( $exam['question_ids'] ), 'Draft exam contains the complete paper' );

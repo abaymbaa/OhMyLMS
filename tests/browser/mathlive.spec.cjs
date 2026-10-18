@@ -1,5 +1,31 @@
 const { test, expect } = require('@playwright/test');
 
+test('standard LaTeX renders only in question regions and preserves source fields', async ({page}) => {
+ await page.goto('/fixture');
+ const text = String.raw`Costs $5 and $10. Use $x^2$, $$\frac{1}{2}$$, \(a+b\) and \[\sqrt{y}\].`;
+ await page.evaluate(text => {
+  const region = document.createElement('section'); region.id = 'latex-paper'; region.setAttribute('data-ohmylms-latex', '');
+  const paragraph = document.createElement('p'); paragraph.textContent = text; region.append(paragraph);
+  const source = document.createElement('textarea'); source.value = text; region.append(source);
+  const literal = document.createElement('pre'); literal.id = 'outside-latex'; literal.textContent = text;
+  document.body.append(region, literal);
+ }, text);
+ await expect(page.locator('#latex-paper math-field')).toHaveCount(4);
+ await expect(page.locator('#latex-paper p')).toContainText('Costs $5 and $10.');
+ await expect(page.locator('#latex-paper textarea')).toHaveValue(text);
+ await expect(page.locator('#outside-latex math-field')).toHaveCount(0);
+ const fields = await page.locator('#latex-paper math-field').evaluateAll(nodes => nodes.map(node => ({value: node.value, readonly: node.readOnly})));
+ expect(fields.every(field => field.readonly)).toBe(true);
+ expect(fields[1].value).toBe(String.raw`\frac{1}{2}`);
+ await page.evaluate(() => {
+  const unsafe = document.createElement('p'); unsafe.id = 'unsafe-latex'; unsafe.textContent = String.raw`$\href{https://example.invalid}{x}$ and $z^2$`;
+  document.querySelector('#latex-paper').append(unsafe);
+ });
+ await expect(page.locator('#unsafe-latex math-field')).toHaveCount(1);
+ await expect(page.locator('#unsafe-latex')).toContainText(String.raw`$\href{https://example.invalid}{x}$`);
+ await expect(page.locator('#unsafe-latex a')).toHaveCount(0);
+});
+
 test('visual labels preserve plain contracts, newlines, literal HTML and equations on reopen', async ({ page }) => {
  await page.goto('/fixture');
  const source = 'Price < 5 & tax\n[[ohmylms-math:latex:inline]]\\frac{1}{2}[[/ohmylms-math]]';

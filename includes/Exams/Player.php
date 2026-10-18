@@ -225,6 +225,7 @@ final class Player {
 		remove_action( 'wp_head', 'wp_enqueue_scripts', 1 );
 		wp_enqueue_style( 'ohmylms-frontend' );
 		wp_enqueue_script( 'ohmylms-frontend' );
+		\OhMyLMS\Assessment\MathLive::enqueue();
 		wp_enqueue_style( 'ohmylms-exam-player', plugins_url( 'assets/css/exam-player.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/exam-player.css' ) );
 		ob_start();
 		if ( $error ) {

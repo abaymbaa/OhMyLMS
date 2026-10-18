@@ -1,6 +1,7 @@
 import { MathfieldElement } from 'mathlive';
 import {
 	equationPattern,
+	contentEquations,
 	templateLatex,
 	restoreTemplateTokens,
 	safeMathSource,
@@ -162,7 +163,7 @@ function mountInput( input ) {
 }
 
 /**
- * Render explicit equation text only. No HTML or dollar-delimiter interpretation.
+ * Render equation text without interpreting author HTML or changing stored source.
  * @param {Element} root Content region.
  */
 function renderContent( root ) {
@@ -174,7 +175,14 @@ function renderContent( root ) {
 			! node.parentElement.closest(
 				'script,style,textarea,input,math-field,[contenteditable="true"],option,[data-ohmylms-react-math]'
 			) &&
-			node.textContent.includes( '[[ohmylms-math:' )
+			contentEquations(
+				node.textContent,
+				Boolean(
+					node.parentElement.closest(
+						'[data-ohmylms-latex],.ohmylms-structured-question,.ohmylms-exam-player,.ohmylms-default-quiz-preview'
+					)
+				)
+			).length
 		) {
 			nodes.push( node );
 		}
@@ -182,26 +190,31 @@ function renderContent( root ) {
 	for ( const node of nodes ) {
 		const fragment = document.createDocumentFragment();
 		let end = 0;
-		for ( const match of node.textContent.matchAll( equationPattern() ) ) {
+		for ( const match of contentEquations(
+			node.textContent,
+			Boolean(
+				node.parentElement.closest(
+					'[data-ohmylms-latex],.ohmylms-structured-question,.ohmylms-exam-player,.ohmylms-default-quiz-preview'
+				)
+			)
+		) ) {
+			if ( ! safeMathSource( match.source ) ) {
+				continue;
+			}
 			fragment.append(
 				document.createTextNode(
 					node.textContent.slice( end, match.index )
 				)
 			);
-			if ( ! safeMathSource( match[ 2 ] ) ) {
-				fragment.append( document.createTextNode( match[ 2 ] ) );
-				end = match.index + match[ 0 ].length;
-				continue;
-			}
 			const field = new MathfieldElement();
 			field.readOnly = true;
 			field.tabIndex = -1;
 			field.mathVirtualKeyboardPolicy = 'manual';
-			field.className = `ohmylms-math-display is-${ match[ 1 ] }`;
-			field.setAttribute( 'aria-label', match[ 2 ] );
-			field.value = templateLatex( match[ 2 ] ).latex;
+			field.className = `ohmylms-math-display is-${ match.mode }`;
+			field.setAttribute( 'aria-label', match.source );
+			field.value = templateLatex( match.source ).latex;
 			fragment.append( field );
-			end = match.index + match[ 0 ].length;
+			end = match.index + match.raw.length;
 		}
 		if ( end ) {
 			fragment.append(

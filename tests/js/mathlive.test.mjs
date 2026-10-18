@@ -3,11 +3,37 @@ import assert from 'node:assert/strict';
 import {
 	equationMarker,
 	equationPattern,
+	contentEquations,
 	templateLatex,
 	restoreTemplateTokens,
 	normalizeTemplateTokens,
 } from '../../assets/src/features/math/content.mjs';
 import { inspectFormula } from '../../assets/src/features/math/teacherCompute.mjs';
+
+test( 'question regions accept LaTeX delimiters without changing currency or source', () => {
+	const text = String.raw`Costs $5 and $10. Use $x^2$, $$\frac{1}{2}$$, \(a+b\) and \[\sqrt{y}\]. Escaped \$20.`;
+	assert.equal( contentEquations( text ).length, 0 );
+	const matches = contentEquations( text, true );
+	assert.deepEqual(
+		matches.map( ( match ) => match.source ),
+		[ 'x^2', String.raw`\frac{1}{2}`, 'a+b', String.raw`\sqrt{y}` ]
+	);
+	assert.deepEqual(
+		matches.map( ( match ) => match.mode ),
+		[ 'inline', 'display', 'inline', 'display' ]
+	);
+	for ( const match of matches ) {
+		assert.equal(
+			text.slice( match.index, match.index + match.raw.length ),
+			match.raw
+		);
+	}
+	assert.equal( contentEquations( equationMarker( '$x$' ), true ).length, 1 );
+	assert.equal(
+		contentEquations( '$' + 'x'.repeat( 2001 ) + '$', true ).length,
+		0
+	);
+} );
 
 test( 'explicit markers preserve LaTeX, layout and dollar prose', () => {
 	const latex = String.raw`\frac{\sqrt{x^{12}+1}}{\frac{1}{2}}`;

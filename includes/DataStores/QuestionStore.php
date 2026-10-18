@@ -193,7 +193,8 @@ class QuestionStore extends DataStore {
 		$props_to_update = $this->question_meta_key();
 		foreach ( $props_to_update as $meta_key => $prop ) {
 			$value = $question->{"get_$prop"}( 'edit' );
-			$value = is_string( $value ) ? wp_slash( $value ) : $value;
+			// WordPress unslashes nested metadata too, including LaTeX in part prompts.
+			$value = wp_slash( $value );
 			$this->update_or_delete_post_meta( $question, $meta_key, $value );
 		}
 

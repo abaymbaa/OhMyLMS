@@ -8,8 +8,9 @@ import {
 	useState,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Button, Notice, Spinner } from '@wordpress/components';
+import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { approveQuestion } from '../question-bank/api.mjs';
+import { ExamPaperDialog } from './ExamPaperDialog.jsx';
 
 /**
  * Associate each repeated question/part control with its own accessible label.
@@ -118,6 +119,7 @@ function SkillSearch( { onPick } ) {
 export function ExamsPage() {
 	const [ jobs, setJobs ] = useState( [] );
 	const [ exams, setExams ] = useState( [] );
+	const [ paperExam, setPaperExam ] = useState( null );
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );
@@ -351,7 +353,18 @@ export function ExamsPage() {
 						<Button
 							variant="link"
 							disabled={ busy || dirty }
-							onClick={ () => run( () => load( entry.id ) ) }
+							onClick={ () =>
+								run( async () => {
+									const saved = exams.find(
+										( exam ) => exam.job_id === entry.id
+									);
+									if ( saved ) {
+										setPaperExam( saved );
+									} else {
+										await load( entry.id );
+									}
+								} )
+							}
 						>
 							{ entry.source.name }
 						</Button>{ ' ' }
@@ -360,326 +373,316 @@ export function ExamsPage() {
 				) ) }
 			</ul>
 			{ job && (
-				<section aria-label={ __( 'Selected PDF import', 'ohmylms' ) }>
-					<h3>{ job.source.name }</h3>
-					<p role="status">
-						{ states()[ job.state ] || job.state }
-						{ job.inventory &&
-							` · ${ Math.max( 0, job.cursor || 0 ) } / ${ job.inventory.question_numbers.length }` }
-					</p>
-					{ job.error && (
-						<p role="alert">
-							{ __(
-								'This stage stopped safely. Check the AI connection and source PDFs, then retry.',
-								'ohmylms'
-							) }{ ' ' }
-							({ job.error })
-						</p>
-					) }
-					{ [
-						'ready_for_extraction',
-						'extraction_failed',
-						'extracting',
-					].includes( job.state ) && (
-						<>
-							<p>
-								{ __(
-									'Extracting sends the uploaded PDFs to your configured AI provider. AI answers, diagrams and skills require your review.',
+				<Modal
+					title={ __( 'Review imported paper', 'ohmylms' ) }
+					size="fill"
+					className="ohmylms-exams ohmylms-paper-dialog"
+					shouldCloseOnClickOutside={ false }
+					onRequestClose={ () => {
+						if ( ! busy && ! dirty ) {
+							setJob( null );
+						} else {
+							setError(
+								__(
+									'Save your review before closing this paper.',
 									'ohmylms'
-								) }
-							</p>
-							<Button
-								variant="primary"
-								disabled={ busy }
-								onClick={ extract }
-							>
-								{ job.state === 'ready_for_extraction'
-									? __( 'Extract all questions', 'ohmylms' )
-									: __( 'Resume extraction', 'ohmylms' ) }
-							</Button>
-						</>
+								)
+							);
+						}
+					} }
+				>
+					{ error && (
+						<Notice status="error" isDismissible={ false }>
+							{ error }
+						</Notice>
 					) }
-					{ [ 'queued', 'failed' ].includes( job.state ) && (
+					{ dirty && (
 						<Button
-							variant="secondary"
+							variant="tertiary"
 							disabled={ busy }
-							onClick={ () =>
-								run( async () => {
-									await api( `exam-imports/${ job.id }`, {} );
-									await load( job.id );
-								} )
-							}
+							onClick={ () => {
+								setJob( null );
+								setDirty( false );
+							} }
 						>
-							{ __( 'Retry PDF check', 'ohmylms' ) }
+							{ __(
+								'Discard unsaved edits and close',
+								'ohmylms'
+							) }
 						</Button>
 					) }
-					{ job.usage && (
-						<p>
-							{ sprintf(
-								/* translators: 1: request count, 2: input tokens, 3: output tokens. */
-								__(
-									'AI requests: %1$d · Input tokens: %2$d · Output tokens: %3$d',
-									'ohmylms'
-								),
-								job.usage.requests || 0,
-								job.usage.input_tokens || 0,
-								job.usage.output_tokens || 0
-							) }
+					<section
+						aria-label={ __( 'Selected PDF import', 'ohmylms' ) }
+					>
+						<h3>{ job.source.name }</h3>
+						<p role="status">
+							{ states()[ job.state ] || job.state }
+							{ job.inventory &&
+								` · ${ Math.max( 0, job.cursor || 0 ) } / ${ job.inventory.question_numbers.length }` }
 						</p>
-					) }
-					{ job.state === 'ready_for_review' && current && (
-						<>
-							{ ! job.has_mark_scheme && (
-								<Notice
-									status="warning"
-									isDismissible={ false }
-								>
+						{ job.error && (
+							<p role="alert">
+								{ __(
+									'This stage stopped safely. Check the AI connection and source PDFs, then retry.',
+									'ohmylms'
+								) }{ ' ' }
+								({ job.error })
+							</p>
+						) }
+						{ [
+							'ready_for_extraction',
+							'extraction_failed',
+							'extracting',
+						].includes( job.state ) && (
+							<>
+								<p>
 									{ __(
-										'No mark scheme was supplied. Proposed solutions are unverified AI drafts. Check every answer before approval.',
+										'Extracting sends the uploaded PDFs to your configured AI provider. AI answers, diagrams and skills require your review.',
 										'ohmylms'
 									) }
-								</Notice>
-							) }
-							<div className="ohmylms-exam-review">
-								<div>
-									<iframe
-										title={ __(
-											'Original question paper',
+								</p>
+								<Button
+									variant="primary"
+									disabled={ busy }
+									onClick={ extract }
+								>
+									{ job.state === 'ready_for_extraction'
+										? __(
+												'Extract all questions',
+												'ohmylms'
+											)
+										: __( 'Resume extraction', 'ohmylms' ) }
+								</Button>
+							</>
+						) }
+						{ [ 'queued', 'failed' ].includes( job.state ) && (
+							<Button
+								variant="secondary"
+								disabled={ busy }
+								onClick={ () =>
+									run( async () => {
+										await api(
+											`exam-imports/${ job.id }`,
+											{}
+										);
+										await load( job.id );
+									} )
+								}
+							>
+								{ __( 'Retry PDF check', 'ohmylms' ) }
+							</Button>
+						) }
+						{ job.usage && (
+							<p>
+								{ sprintf(
+									/* translators: 1: request count, 2: input tokens, 3: output tokens. */
+									__(
+										'AI requests: %1$d · Input tokens: %2$d · Output tokens: %3$d',
+										'ohmylms'
+									),
+									job.usage.requests || 0,
+									job.usage.input_tokens || 0,
+									job.usage.output_tokens || 0
+								) }
+							</p>
+						) }
+						{ job.state === 'ready_for_review' && current && (
+							<>
+								{ ! job.has_mark_scheme && (
+									<Notice
+										status="warning"
+										isDismissible={ false }
+									>
+										{ __(
+											'No mark scheme was supplied. Proposed solutions are unverified AI drafts. Check every answer before approval.',
 											'ohmylms'
 										) }
-										src={ source }
-									/>
-									<a
-										href={ source }
-										target="_blank"
-										rel="noreferrer"
-									>
-										{ __( 'Open source PDF', 'ohmylms' ) }
-									</a>
-									{ job.has_mark_scheme && (
+									</Notice>
+								) }
+								<div className="ohmylms-exam-review">
+									<div>
+										<iframe
+											title={ __(
+												'Original question paper',
+												'ohmylms'
+											) }
+											src={ source }
+										/>
 										<a
-											href={ `${ window.location.origin }/?ohmylms_import_source=${ job.id }&mark_scheme=1` }
+											href={ source }
 											target="_blank"
 											rel="noreferrer"
 										>
 											{ __(
-												'Open mark scheme',
+												'Open source PDF',
 												'ohmylms'
 											) }
 										</a>
-									) }
-								</div>
-								<fieldset
-									disabled={ busy }
-									aria-label={ __(
-										'Question review',
-										'ohmylms'
-									) }
-								>
-									<ExamField>
-										{ __( 'Question', 'ohmylms' ) }
-										<select
-											value={ selected }
-											onChange={ ( event ) =>
-												setSelected(
-													Number( event.target.value )
-												)
-											}
-										>
-											{ questions.map(
-												( question, index ) => (
-													<option
-														key={ question.number }
-														value={ index }
-													>
-														{ question.number }
-														{ question.reviewed
-															? ' ✓'
-															: '' }
-													</option>
-												)
+										{ job.has_mark_scheme && (
+											<a
+												href={ `${ window.location.origin }/?ohmylms_import_source=${ job.id }&mark_scheme=1` }
+												target="_blank"
+												rel="noreferrer"
+											>
+												{ __(
+													'Open mark scheme',
+													'ohmylms'
+												) }
+											</a>
+										) }
+									</div>
+									<fieldset
+										disabled={ busy }
+										aria-label={ __(
+											'Question review',
+											'ohmylms'
+										) }
+									>
+										<ExamField>
+											{ __( 'Question', 'ohmylms' ) }
+											<select
+												value={ selected }
+												onChange={ ( event ) =>
+													setSelected(
+														Number(
+															event.target.value
+														)
+													)
+												}
+											>
+												{ questions.map(
+													( question, index ) => (
+														<option
+															key={
+																question.number
+															}
+															value={ index }
+														>
+															{ question.number }
+															{ question.reviewed
+																? ' ✓'
+																: '' }
+														</option>
+													)
+												) }
+											</select>
+										</ExamField>
+										<ExamField>
+											{ __( 'Question stem', 'ohmylms' ) }
+											<textarea
+												value={ current.question }
+												onChange={ ( event ) =>
+													change(
+														'question',
+														event.target.value
+													)
+												}
+											/>
+										</ExamField>
+										<ExamField>
+											{ __(
+												'Default skill codes (separate with semicolons)',
+												'ohmylms'
 											) }
-										</select>
-									</ExamField>
-									<ExamField>
-										{ __( 'Question stem', 'ohmylms' ) }
-										<textarea
-											value={ current.question }
-											onChange={ ( event ) =>
-												change(
-													'question',
-													event.target.value
-												)
-											}
-										/>
-									</ExamField>
-									<ExamField>
-										{ __(
-											'Default skill codes (separate with semicolons)',
-											'ohmylms'
-										) }
-										<input
-											value={ current.skills }
-											onChange={ ( event ) =>
-												change(
-													'skills',
-													event.target.value
-												)
-											}
-										/>
-									</ExamField>
-									<p>
-										{ __(
-											'Each part inherits these skills unless it specifies its own.',
-											'ohmylms'
-										) }
-									</p>
-									<SkillSearch
-										key={ current.number }
-										onPick={ ( token ) =>
-											change(
-												'skills',
-												[ current.skills, token ]
-													.filter( Boolean )
-													.join( ';' )
-											)
-										}
-									/>
-									{ current.requires_source && (
+											<input
+												value={ current.skills }
+												onChange={ ( event ) =>
+													change(
+														'skills',
+														event.target.value
+													)
+												}
+											/>
+										</ExamField>
 										<p>
 											{ __(
-												'This question needs its original figure or table. Verify the source page; students can open the private paper during the exam.',
+												'Each part inherits these skills unless it specifies its own.',
 												'ohmylms'
 											) }
 										</p>
-									) }
-									{ current.notes && (
-										<p>{ current.notes }</p>
-									) }
-									<ExamField>
-										{ __( 'Source PDF page', 'ohmylms' ) }
-										<input
-											type="number"
-											min="1"
-											max={
-												(
-													job.draft_inventory ||
-													job.inventory
-												).page_count
-											}
-											value={ current.page }
-											onChange={ ( event ) =>
+										<SkillSearch
+											key={ current.number }
+											onPick={ ( token ) =>
 												change(
-													'page',
-													Number( event.target.value )
+													'skills',
+													[ current.skills, token ]
+														.filter( Boolean )
+														.join( ';' )
 												)
 											}
 										/>
-									</ExamField>
-									{ current.parts.map( ( part, index ) => (
-										<fieldset key={ part.id }>
-											<legend>
-												{ part.label || part.id }
-											</legend>
-											<ExamField>
+										{ current.requires_source && (
+											<p>
 												{ __(
-													'Printed part label',
+													'This question needs its original figure or table. Verify the source page; students can open the private paper during the exam.',
 													'ohmylms'
 												) }
-												<input
-													value={ part.label || '' }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'label',
+											</p>
+										) }
+										{ current.notes && (
+											<p>{ current.notes }</p>
+										) }
+										<ExamField>
+											{ __(
+												'Source PDF page',
+												'ohmylms'
+											) }
+											<input
+												type="number"
+												min="1"
+												max={
+													(
+														job.draft_inventory ||
+														job.inventory
+													).page_count
+												}
+												value={ current.page }
+												onChange={ ( event ) =>
+													change(
+														'page',
+														Number(
 															event.target.value
 														)
-													}
-												/>
-											</ExamField>
-											<ExamField>
-												{ __(
-													'Part prompt',
-													'ohmylms'
-												) }
-												<textarea
-													value={ part.prompt || '' }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'prompt',
-															event.target.value
-														)
-													}
-												/>
-											</ExamField>
-											<ExamField>
-												{ __(
-													'Answer type',
-													'ohmylms'
-												) }
-												<select
-													value={ part.kind }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'kind',
-															event.target.value
-														)
-													}
-												>
-													<option value="written">
-														{ __(
-															'Written / teacher marked',
-															'ohmylms'
-														) }
-													</option>
-													<option value="numerical">
-														{ __(
-															'Number',
-															'ohmylms'
-														) }
-													</option>
-													<option value="text">
-														{ __(
-															'Exact text',
-															'ohmylms'
-														) }
-													</option>
-												</select>
-											</ExamField>
-											<ExamField>
-												{ __( 'Marks', 'ohmylms' ) }
-												<input
-													type="number"
-													min="0"
-													max="1000"
-													step="0.25"
-													value={ part.marks }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'marks',
-															Number(
-																event.target
-																	.value
-															)
-														)
-													}
-												/>
-											</ExamField>
-											{ part.kind === 'numerical' && (
-												<>
+													)
+												}
+											/>
+										</ExamField>
+										{ current.parts.map(
+											( part, index ) => (
+												<fieldset key={ part.id }>
+													<legend>
+														{ part.label ||
+															part.id }
+													</legend>
 													<ExamField>
 														{ __(
-															'Expected number',
+															'Printed part label',
 															'ohmylms'
 														) }
 														<input
-															type="number"
-															step="any"
 															value={
-																part.answer ??
+																part.label || ''
+															}
+															onChange={ (
+																event
+															) =>
+																changePart(
+																	index,
+																	'label',
+																	event.target
+																		.value
+																)
+															}
+														/>
+													</ExamField>
+													<ExamField>
+														{ __(
+															'Part prompt',
+															'ohmylms'
+														) }
+														<textarea
+															value={
+																part.prompt ||
 																''
 															}
 															onChange={ (
@@ -687,39 +690,68 @@ export function ExamsPage() {
 															) =>
 																changePart(
 																	index,
-																	'answer',
+																	'prompt',
 																	event.target
-																		.value ===
-																		''
-																		? ''
-																		: Number(
-																				event
-																					.target
-																					.value
-																			)
+																		.value
 																)
 															}
 														/>
 													</ExamField>
 													<ExamField>
 														{ __(
-															'Tolerance',
+															'Answer type',
 															'ohmylms'
 														) }
-														<input
-															type="number"
-															min="0"
-															step="any"
-															value={
-																part.tolerance ||
-																0
-															}
+														<select
+															value={ part.kind }
 															onChange={ (
 																event
 															) =>
 																changePart(
 																	index,
-																	'tolerance',
+																	'kind',
+																	event.target
+																		.value
+																)
+															}
+														>
+															<option value="written">
+																{ __(
+																	'Written / teacher marked',
+																	'ohmylms'
+																) }
+															</option>
+															<option value="numerical">
+																{ __(
+																	'Number',
+																	'ohmylms'
+																) }
+															</option>
+															<option value="text">
+																{ __(
+																	'Exact text',
+																	'ohmylms'
+																) }
+															</option>
+														</select>
+													</ExamField>
+													<ExamField>
+														{ __(
+															'Marks',
+															'ohmylms'
+														) }
+														<input
+															type="number"
+															min="0"
+															max="1000"
+															step="0.25"
+															value={ part.marks }
+															onChange={ (
+																event
+															) =>
+																changePart(
+																	index,
+																	'marks',
 																	Number(
 																		event
 																			.target
@@ -729,327 +761,435 @@ export function ExamsPage() {
 															}
 														/>
 													</ExamField>
-												</>
-											) }
-											{ part.kind === 'text' && (
-												<ExamField>
-													{ __(
-														'Accepted answers (one per line)',
-														'ohmylms'
+													{ part.kind ===
+														'numerical' && (
+														<>
+															<ExamField>
+																{ __(
+																	'Expected number',
+																	'ohmylms'
+																) }
+																<input
+																	type="number"
+																	step="any"
+																	value={
+																		part.answer ??
+																		''
+																	}
+																	onChange={ (
+																		event
+																	) =>
+																		changePart(
+																			index,
+																			'answer',
+																			event
+																				.target
+																				.value ===
+																				''
+																				? ''
+																				: Number(
+																						event
+																							.target
+																							.value
+																					)
+																		)
+																	}
+																/>
+															</ExamField>
+															<ExamField>
+																{ __(
+																	'Tolerance',
+																	'ohmylms'
+																) }
+																<input
+																	type="number"
+																	min="0"
+																	step="any"
+																	value={
+																		part.tolerance ||
+																		0
+																	}
+																	onChange={ (
+																		event
+																	) =>
+																		changePart(
+																			index,
+																			'tolerance',
+																			Number(
+																				event
+																					.target
+																					.value
+																			)
+																		)
+																	}
+																/>
+															</ExamField>
+														</>
 													) }
-													<textarea
-														value={ (
-															part.accepted || []
-														).join( '\n' ) }
-														onChange={ ( event ) =>
-															changePart(
-																index,
-																'accepted',
-																event.target.value.split(
-																	'\n'
+													{ part.kind === 'text' && (
+														<ExamField>
+															{ __(
+																'Accepted answers (one per line)',
+																'ohmylms'
+															) }
+															<textarea
+																value={ (
+																	part.accepted ||
+																	[]
+																).join( '\n' ) }
+																onChange={ (
+																	event
+																) =>
+																	changePart(
+																		index,
+																		'accepted',
+																		event.target.value.split(
+																			'\n'
+																		)
+																	)
+																}
+															/>
+														</ExamField>
+													) }
+													<ExamField>
+														{ __(
+															'Part skill codes (optional override)',
+															'ohmylms'
+														) }
+														<input
+															value={
+																part.skills ||
+																''
+															}
+															onChange={ (
+																event
+															) =>
+																changePart(
+																	index,
+																	'skills',
+																	event.target
+																		.value
+																)
+															}
+														/>
+													</ExamField>
+													<ExamField>
+														{ __(
+															'Teacher marking notes',
+															'ohmylms'
+														) }
+														<textarea
+															value={
+																part.rubric ||
+																''
+															}
+															onChange={ (
+																event
+															) =>
+																changePart(
+																	index,
+																	'rubric',
+																	event.target
+																		.value
+																)
+															}
+														/>
+													</ExamField>
+													<Button
+														variant="secondary"
+														disabled={
+															current.parts
+																.length <= 1
+														}
+														onClick={ () =>
+															change(
+																'parts',
+																current.parts.filter(
+																	(
+																		value,
+																		at
+																	) =>
+																		at !==
+																		index
 																)
 															)
 														}
-													/>
-												</ExamField>
-											) }
-											<ExamField>
-												{ __(
-													'Part skill codes (optional override)',
-													'ohmylms'
-												) }
-												<input
-													value={ part.skills || '' }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'skills',
-															event.target.value
-														)
-													}
-												/>
-											</ExamField>
-											<ExamField>
-												{ __(
-													'Teacher marking notes',
-													'ohmylms'
-												) }
-												<textarea
-													value={ part.rubric || '' }
-													onChange={ ( event ) =>
-														changePart(
-															index,
-															'rubric',
-															event.target.value
-														)
-													}
-												/>
-											</ExamField>
-											<Button
-												variant="secondary"
-												disabled={
-													current.parts.length <= 1
+													>
+														{ __(
+															'Remove part',
+															'ohmylms'
+														) }
+													</Button>
+												</fieldset>
+											)
+										) }
+										<Button
+											variant="secondary"
+											disabled={
+												current.parts.length >= 50
+											}
+											onClick={ () => {
+												let partNumber = 1;
+												while (
+													current.parts.some(
+														( part ) =>
+															part.id ===
+															`p${ partNumber }`
+													)
+												) {
+													partNumber++;
 												}
-												onClick={ () =>
+												change( 'parts', [
+													...current.parts,
+													{
+														id: `p${ partNumber }`,
+														label: '',
+														kind: 'written',
+														prompt: '',
+														marks: 1,
+														rubric: '',
+														skills: '',
+													},
+												] );
+											} }
+										>
+											{ __(
+												'Add missing part',
+												'ohmylms'
+											) }
+										</Button>
+										<ExamField>
+											<input
+												type="checkbox"
+												checked={ current.reviewed }
+												onChange={ ( event ) =>
 													change(
-														'parts',
-														current.parts.filter(
-															( value, at ) =>
-																at !== index
-														)
+														'reviewed',
+														event.target.checked
 													)
 												}
-											>
-												{ __(
-													'Remove part',
-													'ohmylms'
-												) }
-											</Button>
-										</fieldset>
-									) ) }
-									<Button
-										variant="secondary"
-										disabled={ current.parts.length >= 50 }
-										onClick={ () => {
-											let partNumber = 1;
-											while (
-												current.parts.some(
-													( part ) =>
-														part.id ===
-														`p${ partNumber }`
-												)
-											) {
-												partNumber++;
-											}
-											change( 'parts', [
-												...current.parts,
-												{
-													id: `p${ partNumber }`,
-													label: '',
-													kind: 'written',
-													prompt: '',
-													marks: 1,
-													rubric: '',
-													skills: '',
-												},
-											] );
-										} }
-									>
-										{ __( 'Add missing part', 'ohmylms' ) }
-									</Button>
-									<ExamField>
-										<input
-											type="checkbox"
-											checked={ current.reviewed }
-											onChange={ ( event ) =>
-												change(
-													'reviewed',
-													event.target.checked
-												)
-											}
-										/>
-										{ __(
-											'I checked this question, its parts, marks, answers, skills and source figures.',
-											'ohmylms'
-										) }
-									</ExamField>
-								</fieldset>
-							</div>
-							<p>
-								{ sprintf(
-									/* translators: 1: reviewed part mark total, 2: total printed in the PDF inventory. */ __(
-										'Part marks: %1$s · Paper total: %2$s',
-										'ohmylms'
-									),
-									questions.reduce(
-										( sum, question ) =>
-											sum +
-											question.parts.reduce(
-												( marks, part ) =>
-													marks +
-													Number( part.marks || 0 ),
-												0
-											),
-										0
-									),
-									( job.draft_inventory || job.inventory )
-										.total_marks
-								) }
-							</p>
-							<p>
-								{ sprintf(
-									/* translators: 1: reviewed question count, 2: total questions. */
-									__(
-										'%1$d of %2$d questions reviewed',
-										'ohmylms'
-									),
-									questions.filter(
-										( question ) => question.reviewed
-									).length,
-									questions.length
-								) }
-							</p>
-							<Button
-								variant="secondary"
-								disabled={ busy }
-								onClick={ () =>
-									run( async () => {
-										const next = await api(
-											`exam-imports/${ job.id }/review`,
-											{
-												questions,
-												revision: job.draft_revision,
-											}
-										);
-										setJob( next );
-										setQuestions( next.draft );
-										setDirty( false );
-										setMessage(
-											__( 'Review saved.', 'ohmylms' )
-										);
-									} )
-								}
-							>
-								{ __( 'Save review', 'ohmylms' ) }
-							</Button>
-							<Button
-								variant="primary"
-								disabled={
-									busy ||
-									dirty ||
-									questions.some(
-										( question ) => ! question.reviewed
-									)
-								}
-								onClick={ () =>
-									run( async () => {
-										await api(
-											`exam-imports/${ job.id }/commit`,
-											{ revision: job.draft_revision }
-										);
-										await load( job.id );
-										await refresh();
-									} )
-								}
-							>
-								{ __( 'Commit question drafts', 'ohmylms' ) }
-							</Button>
-						</>
-					) }
-					{ job.state === 'committed' && (
-						<>
-							<p>
-								{ __(
-									'Questions are saved as bank drafts. Approval and exam publication are separate actions.',
-									'ohmylms'
-								) }
-							</p>
-							<Button
-								variant="secondary"
-								disabled={ busy }
-								onClick={ () =>
-									run( async () => {
-										for ( const id of job.question_ids ) {
-											await approveQuestion(
-												id,
-												job.version_ids?.[ id ]
-											);
-										}
-										setMessage(
-											__(
-												'Question versions approved.',
+											/>
+											{ __(
+												'I checked this question, its parts, marks, answers, skills and source figures.',
 												'ohmylms'
-											)
-										);
-									} )
-								}
-							>
-								{ __( 'Approve question versions', 'ohmylms' ) }
-							</Button>
-							{ ! job.exam_id && (
-								<form
-									onSubmit={ ( event ) => {
-										event.preventDefault();
+											) }
+										</ExamField>
+									</fieldset>
+								</div>
+								<p>
+									{ sprintf(
+										/* translators: 1: reviewed part mark total, 2: total printed in the PDF inventory. */ __(
+											'Part marks: %1$s · Paper total: %2$s',
+											'ohmylms'
+										),
+										questions.reduce(
+											( sum, question ) =>
+												sum +
+												question.parts.reduce(
+													( marks, part ) =>
+														marks +
+														Number(
+															part.marks || 0
+														),
+													0
+												),
+											0
+										),
+										( job.draft_inventory || job.inventory )
+											.total_marks
+									) }
+								</p>
+								<p>
+									{ sprintf(
+										/* translators: 1: reviewed question count, 2: total questions. */
+										__(
+											'%1$d of %2$d questions reviewed',
+											'ohmylms'
+										),
+										questions.filter(
+											( question ) => question.reviewed
+										).length,
+										questions.length
+									) }
+								</p>
+								<Button
+									variant="secondary"
+									disabled={ busy }
+									onClick={ () =>
 										run( async () => {
-											await api( 'exams', {
-												job_id: job.id,
-												...header,
-											} );
+											const next = await api(
+												`exam-imports/${ job.id }/review`,
+												{
+													questions,
+													revision:
+														job.draft_revision,
+												}
+											);
+											setJob( next );
+											setQuestions( next.draft );
+											setDirty( false );
+											setMessage(
+												__( 'Review saved.', 'ohmylms' )
+											);
+										} )
+									}
+								>
+									{ __( 'Save review', 'ohmylms' ) }
+								</Button>
+								<Button
+									variant="primary"
+									disabled={
+										busy ||
+										dirty ||
+										questions.some(
+											( question ) => ! question.reviewed
+										)
+									}
+									onClick={ () =>
+										run( async () => {
+											await api(
+												`exam-imports/${ job.id }/commit`,
+												{ revision: job.draft_revision }
+											);
 											await load( job.id );
 											await refresh();
-										} );
-									} }
+										} )
+									}
 								>
-									<h3>{ __( 'Exam details', 'ohmylms' ) }</h3>
-									{ field(
-										__( 'Exam title', 'ohmylms' ),
-										'title'
+									{ __(
+										'Commit question drafts',
+										'ohmylms'
 									) }
-									<ExamField>
-										{ __(
-											'Duration (minutes)',
-											'ohmylms'
-										) }
-										<input
-											type="number"
-											min="1"
-											max="1440"
-											required
-											value={ header.duration_minutes }
-											onChange={ ( event ) =>
-												setHeader( {
-													...header,
-													duration_minutes: Number(
-														event.target.value
-													),
-												} )
+								</Button>
+							</>
+						) }
+						{ job.state === 'committed' && (
+							<>
+								<p>
+									{ __(
+										'Questions are saved as bank drafts. Approval and exam publication are separate actions.',
+										'ohmylms'
+									) }
+								</p>
+								<Button
+									variant="secondary"
+									disabled={ busy }
+									onClick={ () =>
+										run( async () => {
+											for ( const id of job.question_ids ) {
+												await approveQuestion(
+													id,
+													job.version_ids?.[ id ]
+												);
 											}
-										/>
-									</ExamField>
-									{ field(
-										__( 'Board', 'ohmylms' ),
-										'board'
+											setMessage(
+												__(
+													'Question versions approved.',
+													'ohmylms'
+												)
+											);
+										} )
+									}
+								>
+									{ __(
+										'Approve question versions',
+										'ohmylms'
 									) }
-									{ field(
-										__( 'Qualification', 'ohmylms' ),
-										'qualification'
-									) }
-									{ field(
-										__( 'Subject code', 'ohmylms' ),
-										'subject_code'
-									) }
-									{ field(
-										__( 'Paper', 'ohmylms' ),
-										'paper'
-									) }
-									{ field(
-										__( 'Variant', 'ohmylms' ),
-										'variant'
-									) }
-									{ field(
-										__( 'Session', 'ohmylms' ),
-										'session'
-									) }
-									{ field(
-										__( 'Calculator rule', 'ohmylms' ),
-										'calculator'
-									) }
-									{ field(
-										__( 'Instructions', 'ohmylms' ),
-										'instructions'
-									) }
-									<Button
-										variant="primary"
-										type="submit"
-										disabled={ busy }
+								</Button>
+								{ ! job.exam_id && (
+									<form
+										onSubmit={ ( event ) => {
+											event.preventDefault();
+											run( async () => {
+												await api( 'exams', {
+													job_id: job.id,
+													...header,
+												} );
+												await load( job.id );
+												await refresh();
+											} );
+										} }
 									>
-										{ __( 'Create draft exam', 'ohmylms' ) }
-									</Button>
-								</form>
-							) }
-						</>
-					) }
-				</section>
+										<h3>
+											{ __( 'Exam details', 'ohmylms' ) }
+										</h3>
+										{ field(
+											__( 'Exam title', 'ohmylms' ),
+											'title'
+										) }
+										<ExamField>
+											{ __(
+												'Duration (minutes)',
+												'ohmylms'
+											) }
+											<input
+												type="number"
+												min="1"
+												max="1440"
+												required
+												value={
+													header.duration_minutes
+												}
+												onChange={ ( event ) =>
+													setHeader( {
+														...header,
+														duration_minutes:
+															Number(
+																event.target
+																	.value
+															),
+													} )
+												}
+											/>
+										</ExamField>
+										{ field(
+											__( 'Board', 'ohmylms' ),
+											'board'
+										) }
+										{ field(
+											__( 'Qualification', 'ohmylms' ),
+											'qualification'
+										) }
+										{ field(
+											__( 'Subject code', 'ohmylms' ),
+											'subject_code'
+										) }
+										{ field(
+											__( 'Paper', 'ohmylms' ),
+											'paper'
+										) }
+										{ field(
+											__( 'Variant', 'ohmylms' ),
+											'variant'
+										) }
+										{ field(
+											__( 'Session', 'ohmylms' ),
+											'session'
+										) }
+										{ field(
+											__( 'Calculator rule', 'ohmylms' ),
+											'calculator'
+										) }
+										{ field(
+											__( 'Instructions', 'ohmylms' ),
+											'instructions'
+										) }
+										<Button
+											variant="primary"
+											type="submit"
+											disabled={ busy }
+										>
+											{ __(
+												'Create draft exam',
+												'ohmylms'
+											) }
+										</Button>
+									</form>
+								) }
+							</>
+						) }
+					</section>
+				</Modal>
 			) }
 			<h3>{ __( 'Your exams', 'ohmylms' ) }</h3>
 			<ul>
@@ -1062,15 +1202,12 @@ export function ExamsPage() {
 						· { exam.question_ids.length }{ ' ' }
 						{ __( 'questions', 'ohmylms' ) } · { exam.total_marks }{ ' ' }
 						{ __( 'marks', 'ohmylms' ) }
-						{ exam.preview_url && (
-							<a
-								href={ exam.preview_url }
-								target="_blank"
-								rel="noreferrer"
-							>
-								{ __( 'Preview exam', 'ohmylms' ) }
-							</a>
-						) }
+						<Button
+							variant="secondary"
+							onClick={ () => setPaperExam( exam ) }
+						>
+							{ __( 'Review paper', 'ohmylms' ) }
+						</Button>
 						{ exam.status === 'draft' ? (
 							<Button
 								variant="primary"
@@ -1131,6 +1268,12 @@ export function ExamsPage() {
 					</li>
 				) ) }
 			</ul>
+			{ paperExam && (
+				<ExamPaperDialog
+					exam={ paperExam }
+					onClose={ () => setPaperExam( null ) }
+				/>
+			) }
 		</section>
 	);
 }

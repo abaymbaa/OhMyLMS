@@ -1,6 +1,6 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
- * Local math assets and optional rollout.
+ * Locally packaged math presentation and optional rollout overrides.
  *
  * @package OhMyLMS
  */
@@ -21,12 +21,12 @@ final class MathLive {
 	}
 
 	/**
-	 * Whether the site opted in, following the assessment rollout convention.
+	 * Enable the installed renderer unless the site explicitly disables it.
 	 *
 	 * @return bool
 	 */
 	public static function enabled() {
-		$enabled = defined( 'OHMYLMS_MATHLIVE_ENABLED' ) && OHMYLMS_MATHLIVE_ENABLED;
+		$enabled = ! defined( 'OHMYLMS_MATHLIVE_ENABLED' ) || OHMYLMS_MATHLIVE_ENABLED;
 		return (bool) apply_filters( 'ohmylms_mathlive_enabled', $enabled );
 	}
 
@@ -68,7 +68,7 @@ final class MathLive {
 	 * @return string Unchanged template output.
 	 */
 	public static function content( $html ) {
-		if ( false !== strpos( $html, '[[ohmylms-math:latex:' ) ) {
+		if ( false !== strpos( $html, '[[ohmylms-math:latex:' ) || preg_match( '/\$\S|\\\\[\[(]/', $html ) ) {
 			self::enqueue();
 		}
 		return $html;

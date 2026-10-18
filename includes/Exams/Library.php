@@ -111,6 +111,9 @@ final class Library {
 			'total_marks'      => $data['total_marks'],
 			'quiz_id'          => $data['quiz_id'],
 			'question_ids'     => $data['question_ids'],
+			'job_id'           => (int) $data['job_id'],
+			'version_ids'      => $data['version_ids'],
+			'source_pages'     => $data['source_pages'],
 			'released'         => AssessmentSettings::get( $data['quiz_id'] )['released'],
 		);
 	}

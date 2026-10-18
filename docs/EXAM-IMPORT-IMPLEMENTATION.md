@@ -6,11 +6,25 @@ The workflow has synthetic WordPress integration and desktop browser coverage. A
 local GPT-6 Luna run on the owner's 0580/43 October/November 2025 paper and mark scheme
 retained all 26 questions and 100 marks. The owner requested saving that paper: its question
 drafts and a private 120-minute exam draft are now saved. Exact-version approval and
-publication remain pending. The authenticated **Preview exam** link opens the existing
-quiz player without recording learner responses, including pinned question versions.
-Browser verification exposed remaining raw LaTeX/part-prompt formatting and diagram
-delivery work; this draft is not yet ready for publication. Broader real-paper accuracy
-and other provider compatibility still need verification.
+publication were initially pending; the owner subsequently approved the questions and
+published the local exam. **Review paper** now opens a dedicated dialog in Exams. It
+shows the exact pinned question version, per-part marks, skills, answer/rubric notes and
+approval controls. **Try exam** embeds the existing non-recording quiz preview in that
+dialog. Imported papers awaiting commitment also use a dialog, with save/discard protection.
+The optional side-by-side source PDF depends on browser PDF support; its protected link
+remains available when embedding is unavailable. Timed learner exams keep their own player.
+
+MathLive now renders explicit markers plus `$...$`, `$$...$$`, `\(...\)` and `\[...\]`
+in question regions. Ordinary currency outside those regions and editable source fields
+remain untouched. The installed renderer is enabled by default; an explicit
+`OHMYLMS_MATHLIVE_ENABLED=false` or the existing filter can still disable it. Presentation
+does not change answers or grading. The question metadata writer now recursively slashes
+nested settings before WordPress unslashes them, preserving LaTeX in part prompts/rubrics.
+For the local 0580 paper, eight questions had lost backslashes: only fields exactly matching
+the unslashed original reviewed import were restored, through new approved versions and a
+new quiz revision. Original versions and existing attempt snapshots remain intact; future
+attempts and new previews use the repaired versions. Diagram delivery and broader real-paper
+accuracy/provider compatibility still need verification before release.
 
 ## Implemented in this change
 

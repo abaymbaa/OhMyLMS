@@ -12,7 +12,12 @@
 		}
 		if (
 			! document.querySelector( 'input.ohmylms-expression-input' ) &&
-			! document.body.textContent.includes( '[[ohmylms-math:latex:' )
+			! document.body.textContent.includes( '[[ohmylms-math:latex:' ) &&
+			! [
+				...document.querySelectorAll(
+					'[data-ohmylms-latex],.ohmylms-structured-question'
+				),
+			].some( ( region ) => /[$\\]/.test( region.textContent ) )
 		) {
 			return;
 		}

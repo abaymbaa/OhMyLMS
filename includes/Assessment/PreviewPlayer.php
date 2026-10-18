@@ -29,6 +29,7 @@ final class PreviewPlayer {
 				}
 				wp_enqueue_style( 'ohmylms-frontend' );
 				wp_enqueue_script( 'ohmylms-frontend' );
+				MathLive::enqueue();
 			},
 			20
 		);
