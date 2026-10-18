@@ -124,6 +124,15 @@
 	line-height: 1;
 }
 
+/* An image uploaded in Settings > Design system replaces the built-in mark. */
+.ohmylms-student-hub .oml-hub-logo--custom {
+	display: block;
+	flex: none;
+	width: 28px;
+	height: 28px;
+	object-fit: contain;
+}
+
 .ohmylms-student-hub .oml-hub-rail-close,
 .ohmylms-student-hub .oml-hub-menu {
 	display: none;

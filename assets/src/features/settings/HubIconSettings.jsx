@@ -95,12 +95,65 @@ export function HubIconSettings() {
 		}
 	}
 
+	/**
+	 * One list of slots, each with a preview, upload and reset control.
+	 *
+	 * @param {Array} rows Slots to show.
+	 * @return {Element} The list.
+	 */
+	function renderRows( rows ) {
+		return (
+			<ul className="ohmylms-hub-icons-list">
+				{ rows.map( ( kind ) => (
+					<li key={ kind.key } className="ohmylms-hub-icons-row">
+						<span className="ohmylms-hub-icons-preview">
+							{ kind.url ? (
+								<img src={ kind.url } alt="" />
+							) : (
+								<span>{ __( 'Default', 'ohmylms' ) }</span>
+							) }
+						</span>
+						<strong>{ kind.label }</strong>
+						<FormFileUpload
+							accept="image/png,image/jpeg,image/gif,image/webp"
+							onChange={ ( event ) =>
+								upload( kind, event.target.files[ 0 ] )
+							}
+							render={ ( { openFileDialog } ) => (
+								<Button
+									variant="secondary"
+									isBusy={ busy === kind.key }
+									disabled={ !! busy }
+									onClick={ openFileDialog }
+								>
+									{ kind.url
+										? __( 'Upload a new image', 'ohmylms' )
+										: __( 'Upload an image', 'ohmylms' ) }
+								</Button>
+							) }
+						/>
+						{ kind.url && (
+							<Button
+								variant="tertiary"
+								isDestructive
+								disabled={ !! busy }
+								onClick={ () => change( kind.key, 0 ) }
+							>
+								{ __( 'Use default', 'ohmylms' ) }
+							</Button>
+						) }
+					</li>
+				) ) }
+			</ul>
+		);
+	}
+
 	return (
 		<section className="ohmylms-hub-icons">
-			<h3>{ __( 'Learner hub icons', 'ohmylms' ) }</h3>
+			<h3>{ __( 'Hub logo', 'ohmylms' ) }</h3>
 			<p>
 				{ __(
-					'Upload an image for each kind of activity. Square PNG, JPEG, GIF or WebP images work best. Without one, the built-in icon is used.',
+					'The mark at the top of the left menu. One logo covers every user type; add a role logo only to show a different one to learners, teachers, parents or school administrators. Square PNG, JPEG, GIF or WebP images work best.',
 					'ohmylms'
 				) }
 			</p>
@@ -115,55 +168,23 @@ export function HubIconSettings() {
 				</Notice>
 			) }
 			{ ! kinds && ! error && <Spinner /> }
+			{ kinds &&
+				renderRows(
+					kinds.filter( ( kind ) => 'logo' === kind.group )
+				) }
 			{ kinds && (
-				<ul className="ohmylms-hub-icons-list">
-					{ kinds.map( ( kind ) => (
-						<li key={ kind.key } className="ohmylms-hub-icons-row">
-							<span className="ohmylms-hub-icons-preview">
-								{ kind.url ? (
-									<img src={ kind.url } alt="" />
-								) : (
-									<span>{ __( 'Default', 'ohmylms' ) }</span>
-								) }
-							</span>
-							<strong>{ kind.label }</strong>
-							<FormFileUpload
-								accept="image/png,image/jpeg,image/gif,image/webp"
-								onChange={ ( event ) =>
-									upload( kind, event.target.files[ 0 ] )
-								}
-								render={ ( { openFileDialog } ) => (
-									<Button
-										variant="secondary"
-										isBusy={ busy === kind.key }
-										disabled={ !! busy }
-										onClick={ openFileDialog }
-									>
-										{ kind.url
-											? __(
-													'Upload a new icon',
-													'ohmylms'
-												)
-											: __(
-													'Upload an icon',
-													'ohmylms'
-												) }
-									</Button>
-								) }
-							/>
-							{ kind.url && (
-								<Button
-									variant="tertiary"
-									isDestructive
-									disabled={ !! busy }
-									onClick={ () => change( kind.key, 0 ) }
-								>
-									{ __( 'Use default', 'ohmylms' ) }
-								</Button>
-							) }
-						</li>
-					) ) }
-				</ul>
+				<>
+					<h3>{ __( 'Learner hub icons', 'ohmylms' ) }</h3>
+					<p>
+						{ __(
+							'Upload an image for each kind of activity. Square PNG, JPEG, GIF or WebP images work best. Without one, the built-in icon is used.',
+							'ohmylms'
+						) }
+					</p>
+					{ renderRows(
+						kinds.filter( ( kind ) => 'logo' !== kind.group )
+					) }
+				</>
 			) }
 		</section>
 	);

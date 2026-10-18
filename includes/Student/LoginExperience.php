@@ -33,7 +33,8 @@ final class LoginExperience {
 	public static function init() {
 		add_filter( 'login_redirect', array( __CLASS__, 'login_redirect' ), 99, 3 );
 		add_filter( 'show_admin_bar', array( __CLASS__, 'show_admin_bar' ), 99 );
-		add_action( 'admin_init', array( __CLASS__, 'close_admin' ), 1 );
+		// On init (this class registers during init at priority 10), because WordPress refuses plugin admin pages with a bare error before admin_init runs.
+		add_action( 'init', array( __CLASS__, 'close_admin' ), 11 );
 		add_action( 'wp_login_failed', array( __CLASS__, 'login_failed' ), 10, 1 );
 	}
 
@@ -143,6 +144,9 @@ final class LoginExperience {
 	 */
 	public static function close_admin() {
 		global $pagenow;
+		if ( ! is_admin() ) {
+			return;
+		}
 		if ( wp_doing_ajax() || wp_doing_cron() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || in_array( $pagenow, array( 'admin-post.php', 'admin-ajax.php' ), true ) ) {
 			return;
 		}
