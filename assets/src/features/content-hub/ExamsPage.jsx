@@ -1062,6 +1062,15 @@ export function ExamsPage() {
 						· { exam.question_ids.length }{ ' ' }
 						{ __( 'questions', 'ohmylms' ) } · { exam.total_marks }{ ' ' }
 						{ __( 'marks', 'ohmylms' ) }
+						{ exam.preview_url && (
+							<a
+								href={ exam.preview_url }
+								target="_blank"
+								rel="noreferrer"
+							>
+								{ __( 'Preview exam', 'ohmylms' ) }
+							</a>
+						) }
 						{ exam.status === 'draft' ? (
 							<Button
 								variant="primary"

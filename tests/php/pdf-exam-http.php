@@ -268,6 +268,8 @@ try {
 			$check( 200 === $response->get_status(), 'Exam create: ' . wp_json_encode( $response->get_data() ) );
 			$exam    = $response->get_data();
 			$exam_id = $exam['id'];
+			parse_str( wp_parse_url( $exam['preview_url'], PHP_URL_QUERY ), $preview_args );
+			$check( (int) $exam['quiz_id'] === (int) $preview_args['ohmylms_quiz_preview'] && wp_verify_nonce( $preview_args['_wpnonce'], 'ohmylms_quiz_preview_' . $exam['quiz_id'] ), 'Draft exams expose the authenticated non-recording quiz preview' );
 			$check( 'draft' === $exam['status'] && 18.0 === (float) $exam['total_marks'] && 6 === count( $exam['question_ids'] ), 'Draft exam contains the complete paper' );
 			$check( 409 === $call( 'POST', 'exams/' . $exam_id . '/publish' )->get_status(), 'Publication requires approved question versions' );
 			foreach ( $job['version_ids'] as $question_id => $version_id ) {

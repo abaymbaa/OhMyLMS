@@ -104,7 +104,7 @@ final class PreviewPlayer {
 			}
 			foreach ( $saved['snapshots'] as $data ) {
 				// A template question keeps the same numbers for the whole preview session.
-				$snapshot         = ( new QuestionSnapshot( $data ) )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
+				$snapshot         = QuestionSnapshot::from_row( $data )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
 				$grade            = Grader::grade( $snapshot, $answers[ $snapshot->get_id() ] ?? array() );
 				$marks            = max( 0, (float) ( $snapshot->get_settings()['score']['value'] ?? 1 ) );
 				$result['total'] += $marks;
@@ -129,7 +129,7 @@ final class PreviewPlayer {
 		}
 		$questions = array();
 		foreach ( $saved['snapshots'] as $data ) {
-			$snapshot = ( new QuestionSnapshot( $data ) )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
+			$snapshot = QuestionSnapshot::from_row( $data )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
 			$ids      = array_column( $snapshot->get_questions(), 'id' );
 			if ( ! empty( $snapshot->get_settings()['randomize'] ) ) {
 				shuffle( $ids );

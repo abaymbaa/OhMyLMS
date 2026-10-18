@@ -4,8 +4,13 @@ This branch implements structured imports, private PDF extraction jobs, teacher 
 an Exams tab and content type, and an exam shell using the existing quiz player.
 The workflow has synthetic WordPress integration and desktop browser coverage. An initial
 local GPT-6 Luna run on the owner's 0580/43 October/November 2025 paper and mark scheme
-retained all 26 questions and 100 marks. Teacher review remains pending; broader real-paper
-accuracy and other provider compatibility still need verification.
+retained all 26 questions and 100 marks. The owner requested saving that paper: its question
+drafts and a private 120-minute exam draft are now saved. Exact-version approval and
+publication remain pending. The authenticated **Preview exam** link opens the existing
+quiz player without recording learner responses, including pinned question versions.
+Browser verification exposed remaining raw LaTeX/part-prompt formatting and diagram
+delivery work; this draft is not yet ready for publication. Broader real-paper accuracy
+and other provider compatibility still need verification.
 
 ## Implemented in this change
 

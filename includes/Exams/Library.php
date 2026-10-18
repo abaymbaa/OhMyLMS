@@ -106,6 +106,7 @@ final class Library {
 			'title'            => get_the_title( $id ),
 			'status'           => get_post_status( $id ),
 			'url'              => Player::url( $id ),
+			'preview_url'      => \OhMyLMS\Assessment\PreviewPlayer::url( $data['quiz_id'] ),
 			'duration_minutes' => $data['duration_minutes'],
 			'total_marks'      => $data['total_marks'],
 			'quiz_id'          => $data['quiz_id'],
