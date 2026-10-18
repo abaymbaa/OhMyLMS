@@ -186,6 +186,8 @@ try {
 			$call( 'POST', 'ai', $settings );
 			$response = $call( 'POST', 'exam-imports/' . $id . '/extract' );
 			$check( 200 === $response->get_status(), 'Start extraction: ' . wp_json_encode( $response->get_data() ) );
+			$repeated = $call( 'POST', 'exam-imports/' . $id . '/extract' );
+			$check( 200 === $repeated->get_status() && 'extracting' === $repeated->get_data()['state'], 'Repeated resume keeps an already queued exact token active' );
 			$job        = get_post_meta( $id, Jobs::META, true );
 			$generation = $job['generation'];
 			$call( 'POST', 'ai', array_merge( $settings, array( 'exam_converter_enabled' => false ) ) );
@@ -194,8 +196,20 @@ try {
 			$check( 'extraction_failed' === get_post_meta( $id, Jobs::META, true )['state'] && 0 === $network_calls, 'Queued extraction respects a disabled converter without provider traffic' );
 			$call( 'POST', 'ai', $settings );
 			$call( 'POST', 'exam-imports/' . $id . '/extract' );
-			$generation = get_post_meta( $id, Jobs::META, true )['generation'];
+			$generation      = get_post_meta( $id, Jobs::META, true )['generation'];
+			$running_actions = as_get_scheduled_actions(
+				array(
+					'hook'     => Workflow::HOOK,
+					'args'     => array( $id, $generation, -1 ),
+					'group'    => Jobs::GROUP,
+					'status'   => 'pending',
+					'per_page' => 1,
+				),
+				'ids'
+			);
+			$wpdb->update( $wpdb->prefix . 'actionscheduler_actions', array( 'status' => 'in-progress' ), array( 'action_id' => $running_actions[0] ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Simulate the real worker's running status inside the rolled-back fixture.
 			Workflow::process( $id, $generation, -1 );
+			$check( 'extracting' === get_post_meta( $id, Jobs::META, true )['state'] && as_has_scheduled_action( Workflow::HOOK, array( $id, $generation, 0 ), Jobs::GROUP ), 'A running stage can schedule its next cursor' );
 			Workflow::process( $id, $generation, 0 );
 			Workflow::process( $id, $generation, 5 );
 			$job = get_post_meta( $id, Jobs::META, true );

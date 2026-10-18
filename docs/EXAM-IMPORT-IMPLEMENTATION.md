@@ -2,8 +2,10 @@
 
 This branch implements structured imports, private PDF extraction jobs, teacher review,
 an Exams tab and content type, and an exam shell using the existing quiz player.
-The workflow has synthetic WordPress integration and desktop browser coverage. Extraction
-quality on the owner's actual papers and providers is still awaiting supplied PDFs.
+The workflow has synthetic WordPress integration and desktop browser coverage. An initial
+local GPT-6 Luna run on the owner's 0580/43 October/November 2025 paper and mark scheme
+retained all 26 questions and 100 marks. Teacher review remains pending; broader real-paper
+accuracy and other provider compatibility still need verification.
 
 ## Implemented in this change
 

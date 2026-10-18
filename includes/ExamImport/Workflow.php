@@ -97,7 +97,16 @@ final class Workflow {
 	 * @return bool Queued.
 	 */
 	private static function schedule( $id, array $job ) {
-		return function_exists( 'as_schedule_single_action' ) && (bool) as_schedule_single_action( time() + 1, self::HOOK, array( (int) $id, $job['generation'], $job['cursor'] ), Jobs::GROUP, true );
+		if ( ! function_exists( 'as_schedule_single_action' ) ) {
+			return false;
+		}
+		$args = array( (int) $id, $job['generation'], $job['cursor'] );
+		if ( as_has_scheduled_action( self::HOOK, $args, Jobs::GROUP ) ) {
+			return true;
+		}
+		// Scheduler uniqueness is hook/group-wide, so it blocks the next cursor while
+		// this stage is running. The job lock and exact token check serialize inserts.
+		return (bool) as_schedule_single_action( time() + 1, self::HOOK, $args, Jobs::GROUP, false );
 	}
 
 	/**
@@ -134,6 +143,7 @@ final class Workflow {
 				}
 				$job['state'] = 'extracting';
 				$job['error'] = '';
+				unset( $job['validation_error'] );
 				self::save( $id, $job );
 				if ( ! self::schedule( $id, $job ) ) {
 					$job['state'] = 'extraction_failed';
@@ -190,6 +200,9 @@ final class Workflow {
 				if ( is_wp_error( $valid ) ) {
 					$job['state'] = 'extraction_failed';
 					$job['error'] = $valid->get_error_code();
+					if ( in_array( $valid->get_error_code(), array( 'exam_parts', 'exam_questions', 'exam_inventory' ), true ) ) {
+						$job['validation_error'] = mb_substr( sanitize_text_field( $valid->get_error_message() ), 0, 300 );
+					}
 					self::save( $id, $job );
 					return;
 				}

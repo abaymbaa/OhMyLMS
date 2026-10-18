@@ -148,3 +148,25 @@ upload/review was subsequently tested as described below.
 
 The browser rehearsal does not establish real-paper extraction accuracy, full accessibility,
 mobile behaviour or load acceptance. Interactive figures and handwriting are deferred.
+
+## First real 0580 paper rehearsal
+
+The owner's October/November 2025 0580/43 question paper and mark scheme exposed a queue
+integration defect: Action Scheduler's unique flag applies to the hook/group, so a running
+stage blocked the next cursor. Scheduling now checks the exact job/generation/cursor token
+under the existing job lock and inserts without hook-wide uniqueness. Repeated resume reuses
+an existing exact token. A running-stage fixture and repeated-resume regression bring the
+mocked WordPress rehearsal to 44 checks. No scheduler dependency is edited.
+
+The provider prompt now names the exact answer fields and ID format, omits unused nulls,
+and requests teacher-marked written parts where the scheme permits method, follow-through
+or partial credit. Safe schema diagnostics are retained privately in the import record;
+raw provider responses are not stored. Extracted candidates still require teacher review.
+
+After the fixes, local GPT-6 Luna extraction completed all 26 questions, with 100 part marks
+matching the 120-minute paper inventory. The owner review draft was saved with existing
+Extended syllabus skill references and part-level overrides. Early numerical/text candidates
+with method credit or algebraic-equivalence requirements were changed to teacher marking;
+two ambiguous partial-credit rubrics were clarified against the source scheme. All teacher
+review flags remain false. No question versions or Exam were approved or published. Original
+PDF figures remain references, and drawing-response support still needs a separate solution.
