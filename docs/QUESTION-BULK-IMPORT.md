@@ -29,6 +29,7 @@ Column names are case-insensitive; spaces and dashes are read as underscores.
 | `explanation` (`solution`) | Shown after answering in practice. |
 | `image` | A media library image ID or URL (upload the screenshot first). Becomes the question image. |
 | `confidence`, `notes` (`ai_confidence`, `ai_notes`, `rationale`) | For AI-classified rows: how sure the classifier is (0 to 1) and why it chose those skills. Shown to the reviewer; they are not part of the question, so changing only these does not update a question. |
+| `parts` | Structured questions: a JSON list of 1–50 parts. Each part has a stable `id`, `kind` (`numerical`, `text`, `written`), optional label/prompt, marks (default 1), answer configuration, optional teacher-only rubric, and optional `skills`. Part skills override the row skills; omitted part skills inherit them. |
 | `settings`, `options_raw` | JSON, for question types that are not listed above. `settings` is the type's settings object; `options_raw` is its list of `{answer, is_correct}` rows if it uses options. |
 
 Example (CSV):
@@ -37,6 +38,42 @@ Example (CSV):
 exam,paper,year,section,number,type,question,answers,correct,skills,family,difficulty
 Digital SAT,2023-03 US,2023,Math M1,1,single-choice,"What is 2+2?",3|4|5|6,B,ALG.1,add-1,easy
 ```
+
+## Structured past-paper questions
+
+Use one row per printed question and keep its answerable parts together. Nested printed
+labels such as `(a)(i)` use stable IDs such as `a_i`; labels do not replace IDs.
+
+```json
+{
+  "exam": "Cambridge IGCSE Mathematics 0580",
+  "paper": "Sample Paper 4",
+  "year": "2026",
+  "number": "1",
+  "type": "structured",
+  "question": "A rectangle has length 4 cm and width 3 cm.",
+  "skills": "GEOMETRY.AREA",
+  "parts": [
+    {"id":"a_i","label":"(a)(i)","prompt":"Find the area.","kind":"numerical","marks":2,"answer":12,"unit":"cm²"},
+    {"id":"b","label":"(b)","prompt":"Explain your method.","kind":"written","marks":1,"rubric":"Teacher reviews the student's method.","skills":"GEOMETRY.REASONING"}
+  ]
+}
+```
+
+Skill codes in this synthetic example must exist in the target site's catalogue. Each part
+needs skills: use the row mapping as a fallback or supply every part's own mapping. An
+explicit empty part mapping is an error. First skill is primary; later skills support it.
+Unknown or ambiguous codes fail the dry run, including codes used only inside a part.
+
+Question marks default to the sum of part marks. If `marks` is supplied on the row, it must
+match that sum. Existing `settings.parts` imports remain accepted; do not provide conflicting
+`parts` and `settings.parts`. In CSV, encode `parts` as a properly quoted JSON cell.
+
+Part mappings go through the normal skill writer under their stable IDs, not `p1`.
+Import-only skill tokens are removed from the saved answer settings. Answers and rubrics
+remain private under the existing learner projection; written parts require teacher marking.
+Rubric notes do not implement automatic method marks. These changes do not add PDF reading,
+a new Exam content type, graph interactions or new structured part kinds.
 
 ## Checking and importing
 

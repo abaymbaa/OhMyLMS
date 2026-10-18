@@ -14,6 +14,7 @@
 
 namespace OhMyLMS\QuestionBank;
 
+use OhMyLMS\Assessment\Structured;
 use OhMyLMS\Extensions\Registry;
 use OhMyLMS\Skills\Taxonomy;
 
@@ -66,6 +67,7 @@ final class BulkImport {
 		'unit'            => 'unit',
 		'image'           => 'image',
 		'settings'        => 'settings',
+		'parts'           => 'parts',
 		'options_raw'     => 'options_raw',
 		'confidence'      => 'confidence',
 		'ai_confidence'   => 'confidence',
@@ -195,6 +197,7 @@ final class BulkImport {
 			'unit'           => '',
 			'image'          => '',
 			'settings'       => array(),
+			'parts'          => null,
 			'options_raw'    => null,
 			'confidence'     => '',
 			'notes'          => '',
@@ -209,8 +212,11 @@ final class BulkImport {
 				$row[ $field ] = self::list_of( $value, '|' );
 			} elseif ( 'skills' === $field ) {
 				$row[ $field ] = self::list_of( $value, ';,|' );
-			} elseif ( in_array( $field, array( 'settings', 'options_raw' ), true ) ) {
+			} elseif ( in_array( $field, array( 'settings', 'options_raw', 'parts' ), true ) ) {
 				$row[ $field ] = self::json_value( $value );
+				if ( 'parts' === $field && null === $row[ $field ] ) {
+					$row[ $field ] = array();
+				}
 			} elseif ( is_scalar( $value ) ) {
 				$row[ $field ] = trim( (string) $value );
 			}
@@ -294,10 +300,10 @@ final class BulkImport {
 		if ( ! in_array( $row['difficulty'], self::DIFFICULTIES, true ) ) {
 			$errors[] = __( 'Difficulty must be easy, standard or challenge.', 'ohmylms' );
 		}
-		if ( ! $row['skills'] ) {
+		if ( 'structured' !== $row['type'] && ! $row['skills'] ) {
 			$errors[] = __( 'Add at least one skill code. Questions without skills cannot count toward progress.', 'ohmylms' );
 		}
-		if ( '' !== $row['marks'] && ( ! is_numeric( $row['marks'] ) || (float) $row['marks'] < 0 ) ) {
+		if ( '' !== $row['marks'] && ( ! is_numeric( $row['marks'] ) || (float) $row['marks'] < 0 || ! is_finite( (float) $row['marks'] ) ) ) {
 			$errors[] = __( 'Marks must be a number of zero or more.', 'ohmylms' );
 		}
 		if ( '' !== $row['confidence'] && ( ! is_numeric( $row['confidence'] ) || (float) $row['confidence'] < 0 || (float) $row['confidence'] > 1 ) ) {
@@ -306,9 +312,15 @@ final class BulkImport {
 		if ( '' !== $row['year'] && ! preg_match( '/^\d{4}$/', $row['year'] ) ) {
 			$warnings[] = __( 'Year is not four digits; it will be kept as written.', 'ohmylms' );
 		}
+		if ( 'structured' !== $row['type'] && null !== $row['parts'] ) {
+			$errors[] = __( 'The parts field is only supported for structured questions.', 'ohmylms' );
+		}
 		$built = self::build_answers( $row );
 		foreach ( $built['errors'] as $message ) {
 			$errors[] = $message;
+		}
+		if ( 'structured' === $row['type'] && is_array( $built['settings']['parts'] ?? null ) && in_array( 'written', array_column( $built['settings']['parts'], 'kind' ), true ) ) {
+			$warnings[] = __( 'Written parts require teacher marking; rubric notes do not automatically award method marks.', 'ohmylms' );
 		}
 		if ( in_array( $row['type'], array( 'short-text', 'long-text' ), true ) ) {
 			$warnings[] = __( 'Short and long text answers are marked by hand, so this question cannot be used in practice or move SmartScore.', 'ohmylms' );
@@ -331,6 +343,8 @@ final class BulkImport {
 		$options  = null;
 		$answers  = $row['answers'];
 		switch ( $row['type'] ) {
+			case 'structured':
+				return self::build_structured( $row );
 			case 'single-choice':
 			case 'multiple-choice':
 				if ( count( $answers ) < 2 || count( $answers ) > 12 ) {
@@ -415,6 +429,180 @@ final class BulkImport {
 	}
 
 	/**
+	 * Build multipart settings without storing import-only skill tokens in the answer key.
+	 *
+	 * @param array $row Normalized import row.
+	 * @return array
+	 */
+	private static function build_structured( array $row ) {
+		$settings = is_array( $row['settings'] ) ? $row['settings'] : array();
+		$errors   = array();
+		if ( null !== $row['parts'] && isset( $settings['parts'] ) && $row['parts'] !== $settings['parts'] ) {
+			$errors[] = __( 'Provide parts either in parts or settings.parts, not two different definitions.', 'ohmylms' );
+		}
+		$parts = null !== $row['parts'] ? $row['parts'] : ( $settings['parts'] ?? array() );
+		if ( ! is_array( $parts ) || ! $parts || array_keys( $parts ) !== range( 0, count( $parts ) - 1 ) || count( $parts ) > 50 ) {
+			return array(
+				'options'  => array(),
+				'settings' => $settings,
+				'errors'   => array( __( 'Provide a list of 1 to 50 structured parts.', 'ohmylms' ) ),
+			);
+		}
+		foreach ( $parts as $part ) {
+			if ( ! is_array( $part ) ) {
+				$errors[] = __( 'Each part must be an object.', 'ohmylms' );
+				break;
+			}
+			foreach ( array( 'id', 'label', 'prompt', 'rubric', 'unit' ) as $field ) {
+				if ( isset( $part[ $field ] ) && ! is_scalar( $part[ $field ] ) ) {
+					$errors[] = __( 'Part IDs, labels, prompts, rubrics and units must be text.', 'ohmylms' );
+				}
+			}
+			if ( isset( $part['accepted'] ) && ( ! is_array( $part['accepted'] ) || array_filter(
+				$part['accepted'],
+				static function ( $value ) {
+					return ! is_string( $value ); }
+			) ) ) {
+				$errors[] = __( 'Accepted text answers must be a list of strings.', 'ohmylms' );
+			}
+			if ( isset( $part['answers'] ) && ( ! is_array( $part['answers'] ) || ! $part['answers'] ) ) {
+				$errors[] = __( 'Numerical answer alternatives must be a non-empty list.', 'ohmylms' );
+			}
+			if ( isset( $part['tolerance'] ) && ( ! is_numeric( $part['tolerance'] ) || ! is_finite( (float) $part['tolerance'] ) || (float) $part['tolerance'] < 0 ) ) {
+				$errors[] = __( 'Tolerance must be a finite number of zero or more.', 'ohmylms' );
+			}
+			if ( isset( $part['tolerance_type'] ) && ! in_array( $part['tolerance_type'], array( 'absolute', 'relative' ), true ) ) {
+				$errors[] = __( 'Tolerance type must be absolute or relative.', 'ohmylms' );
+			}
+		}
+		if ( $errors ) {
+			return array(
+				'options'  => array(),
+				'settings' => $settings,
+				'errors'   => $errors,
+			);
+		}
+		$settings['parts'] = $parts;
+		$valid             = Structured::validate_settings( $settings );
+		if ( true !== $valid ) {
+			$errors[] = $valid;
+		}
+		$total = 0.0;
+		foreach ( $parts as $index => $part ) {
+			if ( ! is_array( $part ) ) {
+				continue;
+			}
+			$marks = $part['marks'] ?? 1;
+			if ( ! is_numeric( $marks ) || ! is_finite( (float) $marks ) || (float) $marks < 0 ) {
+				$errors[] = __( 'Part marks must be finite numbers of zero or more.', 'ohmylms' );
+			} else {
+				$total += (float) $marks;
+			}
+			if ( ! self::part_skill_tokens( $part, $row['skills'] ) ) {
+				/* translators: %s: structured part label or ID. */
+				$errors[] = sprintf( __( 'Add at least one skill for part "%s", or provide row skills as a fallback.', 'ohmylms' ), (string) ( $part['id'] ?? $index ) );
+			}
+			unset( $settings['parts'][ $index ]['skills'] );
+		}
+		if ( ! is_finite( $total ) || ( '' !== $row['marks'] && abs( (float) $row['marks'] - $total ) > 0.00001 ) ) {
+			$errors[] = __( 'Question marks must equal the sum of its part marks.', 'ohmylms' );
+		}
+		$settings['score'] = array(
+			'enabled' => true,
+			'value'   => $total,
+		);
+		$settings['type']  = 'structured';
+		return array(
+			'options'  => array(),
+			'settings' => $settings,
+			'errors'   => $errors,
+		);
+	}
+
+	/**
+	 * Read a part's explicit skills or inherit the row mapping when omitted.
+	 *
+	 * @param array $part Structured part.
+	 * @param array $fallback Row skill tokens.
+	 * @return array
+	 */
+	private static function part_skill_tokens( array $part, array $fallback ) {
+		return array_key_exists( 'skills', $part ) ? self::list_of( $part['skills'], ';,|' ) : $fallback;
+	}
+
+	/**
+	 * Read raw parts from either supported import format.
+	 *
+	 * @param array $row Normalized row.
+	 * @return array
+	 */
+	private static function import_parts( array $row ) {
+		$parts = $row['parts'] ?? ( $row['settings']['parts'] ?? array() );
+		return is_array( $parts ) ? $parts : array();
+	}
+
+	/**
+	 * Collect only the skill tokens actually used by this row for batch lookup.
+	 *
+	 * @param array $row Normalized row.
+	 * @return array
+	 */
+	public static function skill_tokens( array $row ) {
+		if ( 'structured' !== $row['type'] ) {
+			return $row['skills'];
+		}
+		$tokens = array();
+		foreach ( self::import_parts( $row ) as $part ) {
+			if ( is_array( $part ) ) {
+				$tokens = array_merge( $tokens, self::part_skill_tokens( $part, $row['skills'] ) );
+			}
+		}
+		return array_values( array_unique( $tokens ) );
+	}
+
+	/**
+	 * Resolve imported skill tokens into a per-part writer mapping.
+	 *
+	 * @param array $row Normalized row.
+	 * @param array $resolved Token to ID (or ambiguous IDs) lookup.
+	 * @param array $errors Receives unknown or ambiguous skill errors.
+	 * @return array
+	 */
+	public static function skill_map( array $row, array $resolved, array &$errors ) {
+		$tokens = array( 'p1' => $row['skills'] );
+		if ( 'structured' === $row['type'] ) {
+			$tokens = array();
+			foreach ( self::import_parts( $row ) as $part ) {
+				if ( is_array( $part ) && isset( $part['id'] ) && is_scalar( $part['id'] ) ) {
+					$tokens[ (string) $part['id'] ] = self::part_skill_tokens( $part, $row['skills'] );
+				}
+			}
+		}
+		$map = array();
+		foreach ( $tokens as $part_id => $part_tokens ) {
+			$terms = array();
+			foreach ( $part_tokens as $token ) {
+				$found = $resolved[ $token ] ?? null;
+				if ( is_array( $found ) ) {
+					/* translators: %s: skill code. */
+					$errors[] = sprintf( __( 'Skill "%s" matches more than one skill. Use its UUID instead.', 'ohmylms' ), $token );
+				} elseif ( ! $found ) {
+					/* translators: %s: skill code. */
+					$errors[] = sprintf( __( 'Skill "%s" was not found.', 'ohmylms' ), $token );
+				} else {
+					$terms[] = (int) $found;
+				}
+			}
+			$terms           = array_values( array_unique( $terms ) );
+			$map[ $part_id ] = array(
+				'primary'    => $terms[0] ?? 0,
+				'supporting' => array_slice( $terms, 1 ),
+			);
+		}
+		return $map;
+	}
+
+	/**
 	 * Position of the answer a token refers to: a letter, a 1-based number or the answer text.
 	 *
 	 * @param string   $token Value from the correct column.
@@ -473,19 +661,20 @@ final class BulkImport {
 	/**
 	 * Writer payload for a valid row.
 	 *
-	 * @param array $row Normalized row.
-	 * @param array $skills Resolved skill term IDs, primary first.
-	 * @param int   $bank_id Target bank, 0 for none.
-	 * @param int   $image_id Attachment ID for a question image, 0 for none.
+	 * @param array      $row Normalized row.
+	 * @param array      $skills Resolved skill term IDs, primary first.
+	 * @param int        $bank_id Target bank, 0 for none.
+	 * @param int        $image_id Attachment ID for a question image, 0 for none.
+	 * @param array|null $part_skills Resolved per-part mapping, or inherit the supplied skills.
 	 * @return array
 	 */
-	public static function payload( array $row, array $skills, $bank_id, $image_id ) {
+	public static function payload( array $row, array $skills, $bank_id, $image_id, $part_skills = null ) {
 		$built    = self::build_answers( $row );
 		$settings = $built['settings'] + array( 'type' => $row['type'] );
 		if ( '' !== $row['explanation'] ) {
 			$settings['explanation'] = $row['explanation'];
 		}
-		if ( '' !== $row['marks'] ) {
+		if ( 'structured' !== $row['type'] && '' !== $row['marks'] ) {
 			$settings['score'] = (float) $row['marks'];
 		}
 		$title = '' !== $row['title'] ? $row['title'] : trim( implode( ' ', array_filter( array( $row['exam'], $row['paper'], $row['year'] ), 'strlen' ) ) . ' · Q' . $row['number'] );
@@ -499,16 +688,24 @@ final class BulkImport {
 		if ( $bank_id ) {
 			$bank['bank_id'] = (int) $bank_id;
 		}
+		if ( null === $part_skills ) {
+			$mapping     = array(
+				'primary'    => (int) ( $skills[0] ?? 0 ),
+				'supporting' => array_map( 'intval', array_slice( $skills, 1 ) ),
+			);
+			$part_skills = array( 'p1' => $mapping );
+			if ( 'structured' === $row['type'] ) {
+				$part_skills = array();
+				foreach ( Structured::parts( $settings ) as $part ) {
+					$part_skills[ $part['id'] ] = $mapping;
+				}
+			}
+		}
 		$payload = array(
 			'name'     => 'fill-in-the-blank' === $row['type'] ? $row['question'] : $title,
 			'status'   => 'publish',
 			'settings' => $settings,
-			'skills'   => array(
-				'p1' => array(
-					'primary'    => (int) $skills[0],
-					'supporting' => array_map( 'intval', array_slice( $skills, 1 ) ),
-				),
-			),
+			'skills'   => $part_skills,
 			'bank'     => $bank,
 		);
 		if ( 'fill-in-the-blank' !== $row['type'] ) {
@@ -570,7 +767,7 @@ final class BulkImport {
 		$type_known = static function ( $type ) {
 			return (bool) Registry::get( 'question', $type );
 		};
-		$skill_ids  = self::resolve_skills( array_merge( array(), ...array_column( $rows, 'skills' ) ) );
+		$skill_ids  = self::resolve_skills( array_merge( array(), ...array_map( array( __CLASS__, 'skill_tokens' ), $rows ) ) );
 		$keys       = array_values( array_filter( array_map( array( __CLASS__, 'key' ), $rows ) ) );
 		$existing   = self::existing( $keys );
 		$report     = array();
@@ -589,19 +786,7 @@ final class BulkImport {
 			$check              = self::validate_row( $row, $type_known );
 			$result['errors']   = $check['errors'];
 			$result['warnings'] = $check['warnings'];
-			$terms              = array();
-			foreach ( $row['skills'] as $token ) {
-				$found = $skill_ids[ $token ] ?? null;
-				if ( is_array( $found ) ) {
-					/* translators: %s: skill code. */
-					$result['errors'][] = sprintf( __( 'Skill "%s" matches more than one skill. Use its UUID instead.', 'ohmylms' ), $token );
-				} elseif ( ! $found ) {
-					/* translators: %s: skill code. */
-					$result['errors'][] = sprintf( __( 'Skill "%s" was not found.', 'ohmylms' ), $token );
-				} else {
-					$terms[] = (int) $found;
-				}
-			}
+			$part_skills        = self::skill_map( $row, $skill_ids, $result['errors'] );
 			if ( $result['key'] && isset( $seen[ $result['key'] ] ) ) {
 				/* translators: %d: earlier row number. */
 				$result['errors'][] = sprintf( __( 'The same question appears again; row %d already uses this exam, paper, year, section, number and language.', 'ohmylms' ), $seen[ $result['key'] ] );
@@ -610,7 +795,7 @@ final class BulkImport {
 			}
 			$image_id = self::image_id( $row['image'], $result );
 			if ( ! $result['errors'] ) {
-				$payload = self::payload( $row, array_values( array_unique( $terms ) ), $bank_id, $image_id );
+				$payload = self::payload( $row, array(), $bank_id, $image_id, $part_skills );
 				$hash    = self::fingerprint( $payload );
 				$match   = $existing[ $result['key'] ] ?? null;
 				if ( $match ) {
