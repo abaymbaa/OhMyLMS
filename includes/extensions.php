@@ -28,6 +28,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Extensions\Slots::init();
 \OhMyLMS\Extensions\Authoring::init();
 \OhMyLMS\Assessment\Bootstrap::init();
+\OhMyLMS\ExamImport\Jobs::init();
 \OhMyLMS\XApi\Bootstrap::init();
 \OhMyLMS\Assessment\MathLive::init();
 \OhMyLMS\Engagement\StreakHooks::init();

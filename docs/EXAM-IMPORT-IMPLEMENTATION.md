@@ -1,7 +1,7 @@
 # Exam import implementation status
 
-This branch implements the first question-bank foundation for the planned PDF-to-exam workflow.
-It does **not** yet provide PDF upload/extraction, an Exams tab, a new post type or an exam player.
+This branch implements structured question-bank imports and the private PDF/job foundation.
+It does **not** yet provide PDF extraction, an import review UI, an Exams tab, an Exam content type or an exam player.
 Do not describe those features as available until their delivery and integration tests pass.
 
 ## Implemented in this change
@@ -15,14 +15,19 @@ Do not describe those features as available until their delivery and integration
 - Validation of conflicting totals, conflicting part definitions, invalid part settings and the
   50-part delivery limit. Unsupported question interactions are not installed automatically.
 - Synthetic unit fixtures covering the import contracts and learner-safe projection.
+- Runtime rehearsals on the owner's Local WordPress LMS and the disposable WordPress installation:
+  repeat imports, review approval, frozen question versions, marking and per-part skill evidence.
+- Private PDF upload API, owner-scoped persistent import records, status/list/retry/delete routes,
+  source integrity validation and bounded Action Scheduler processing. See [EXAM-IMPORT-JOBS.md](EXAM-IMPORT-JOBS.md).
 
 See [QUESTION-BULK-IMPORT.md](QUESTION-BULK-IMPORT.md) for the format and example.
 
 ## Remaining sequence
 
-1. Exercise structured imports on the disposable WordPress site, including repeat imports,
+1. **Complete:** exercise structured imports on both Local and disposable WordPress, including repeat imports,
    frozen versions, review approval and per-part skill evidence after teacher marking.
-2. Add private document storage, import job persistence and bounded Action Scheduler stages.
+2. **Foundation complete:** private document storage, import job persistence and bounded validation stage.
+   Jobs intentionally stop at `ready_for_extraction`; add extraction stages next.
 3. Add PDF structure extraction and optional mark-scheme alignment through the server-side
    AI provider, with schema validation, source figures, usage accounting and safe retry.
 4. Build the side-by-side import review UI. Commit bank drafts explicitly and separately
