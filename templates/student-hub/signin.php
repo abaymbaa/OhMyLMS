@@ -6,6 +6,7 @@
  */
 
 use OhMyLMS\Student\Hub;
+use OhMyLMS\Student\LoginExperience;
 use OhMyLMS\Student\ParentActions;
 use OhMyLMS\Student\ParentWorkspace;
 use OhMyLMS\Student\TeacherWorkspace;
@@ -33,7 +34,40 @@ $choices = array(
 			<a class="oml-hub-pill" href="<?php echo esc_url( $choice[2] ); ?>" <?php echo ( $signin_role ? $signin_role : 'learner' ) === $choice[0] ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $choice[1] ); ?></a>
 		<?php endforeach; ?>
 	</nav>
-	<p><a class="oml-hub-button" href="<?php echo esc_url( wp_login_url( $signin_return ) ); ?>"><?php esc_html_e( 'Sign in to continue', 'ohmylms' ); ?></a></p>
+	<?php
+	$signin_failed    = isset( $_GET[ LoginExperience::FAILED_FLAG ] ) && 'failed' === sanitize_key( wp_unslash( $_GET[ LoginExperience::FAILED_FLAG ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only result code.
+	$signin_origin    = remove_query_arg( LoginExperience::FAILED_FLAG, Hub::url() );
+	$signin_origin    = 'learner' === ( $signin_role ? $signin_role : 'learner' ) ? $signin_origin : ( 'parent' === $signin_role ? ParentWorkspace::url() : TeacherWorkspace::url() );
+	$signin_providers = array();
+	if ( \OhMyLMS\Services\GoogleAuthService::is_configured() ) {
+		$signin_providers[ __( 'Continue with Google', 'ohmylms' ) ] = add_query_arg( 'redirect_to', rawurlencode( $signin_return ), rest_url( 'ohmylms/v1/auth/google' ) );
+	}
+	if ( \OhMyLMS\Services\MicrosoftAuthService::is_configured() ) {
+		$signin_providers[ __( 'Continue with Microsoft', 'ohmylms' ) ] = add_query_arg( 'redirect_to', rawurlencode( $signin_return ), rest_url( 'ohmylms/v1/auth/microsoft' ) );
+	}
+	?>
+	<section class="oml-hub-card oml-hub-settings-card oml-hub-signin-card">
+		<h3><?php esc_html_e( 'Sign in', 'ohmylms' ); ?></h3>
+		<?php if ( $signin_failed ) : ?>
+			<p class="oml-hub-notice" role="alert"><?php esc_html_e( 'We could not sign you in. Check your email or username and password, then try again.', 'ohmylms' ); ?></p>
+		<?php endif; ?>
+		<form method="post" action="<?php echo esc_url( site_url( 'wp-login.php', 'login_post' ) ); ?>">
+			<input type="hidden" name="redirect_to" value="<?php echo esc_url( $signin_return ); ?>">
+			<input type="hidden" name="<?php echo esc_attr( LoginExperience::FIELD ); ?>" value="<?php echo esc_url( $signin_origin ); ?>">
+			<div class="oml-hub-field"><label for="hub-login-user"><?php esc_html_e( 'Email or username', 'ohmylms' ); ?></label><input id="hub-login-user" name="log" type="text" required autocomplete="username" autocapitalize="none" spellcheck="false"></div>
+			<div class="oml-hub-field"><label for="hub-login-pass"><?php esc_html_e( 'Password', 'ohmylms' ); ?></label><input id="hub-login-pass" name="pwd" type="password" required autocomplete="current-password"></div>
+			<p class="oml-hub-signin-options"><label><input name="rememberme" type="checkbox" value="forever"> <?php esc_html_e( 'Keep me signed in', 'ohmylms' ); ?></label> <a href="<?php echo esc_url( wp_lostpassword_url( $signin_return ) ); ?>"><?php esc_html_e( 'Forgot password?', 'ohmylms' ); ?></a></p>
+			<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Sign in', 'ohmylms' ); ?></button></p>
+		</form>
+		<?php if ( $signin_providers ) : ?>
+			<p class="oml-hub-signin-divider"><?php esc_html_e( 'or', 'ohmylms' ); ?></p>
+			<div class="oml-hub-signin-providers">
+				<?php foreach ( $signin_providers as $provider_label => $provider_url ) : ?>
+					<a class="oml-hub-pill" href="<?php echo esc_url( $provider_url ); ?>"><?php echo esc_html( $provider_label ); ?></a>
+				<?php endforeach; ?>
+			</div>
+		<?php endif; ?>
+	</section>
 <?php
 $signup_role      = $signin_role ? $signin_role : 'learner';
 	$signup_texts = array(

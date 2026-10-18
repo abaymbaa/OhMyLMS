@@ -149,7 +149,7 @@ class MicrosoftAuthController extends RestController {
 			\OhMyLMS\Commerce\ecommerce()->session->init_session_cookie();
 		}
 
-		wp_safe_redirect( '' !== $redirect_to ? $redirect_to : $this->dashboard_url() );
+		wp_safe_redirect( '' !== $redirect_to ? $redirect_to : \OhMyLMS\Student\LoginExperience::landing_url( $user, $this->dashboard_url() ) );
 		exit;
 	}
 
