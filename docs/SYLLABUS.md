@@ -189,4 +189,4 @@ The integration suite refuses any database other than `ohmylms_source_test`. It 
 - A new syllabus course cannot be published until you require a skill and that skill has approved questions; there is no "require everything" shortcut beyond one chapter at a time.
 - Lessons attach to a whole chapter in the editor. Attaching to chosen skills of the course is supported by the API (`skill_ids` on an attachment) but the app has no screen for it since the Content Hub Catalog tab was removed. Lessons tagged to a skill belong to the skill, and are not attached to the course automatically.
 - Games are not built yet; only the slot for them exists.
-- New strings are not yet in `languages/ohmylms.pot`.
+- Strings added after the last catalog refresh are not yet in `languages/ohmylms.pot` or the Mongolian translation; see "Translations" in [DEVELOPMENT.md](DEVELOPMENT.md).

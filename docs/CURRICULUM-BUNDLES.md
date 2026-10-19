@@ -134,4 +134,4 @@ The PHP integration suite refuses any database other than `ohmylms_source_test`.
 - Bundle order is creation order; there is no reorder control for bundles themselves (members can be reordered).
 - Suggested bundles rank only by how many of the learner's enrolled courses a bundle includes.
 - Viewing progress for a learning-program course can create that enrollment's program binding, as any learner page view already does.
-- New strings are not yet in `languages/ohmylms.pot`.
+- Strings added after the last catalog refresh are not yet in `languages/ohmylms.pot` or the Mongolian translation; see "Translations" in [DEVELOPMENT.md](DEVELOPMENT.md).

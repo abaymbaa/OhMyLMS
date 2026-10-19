@@ -2,7 +2,7 @@
 
 The Activity, Course List, My Courses and Student Assignments Gutenberg blocks have been removed at the user's request. Their registrations, editor enqueues, exclusive PHP renderers and exclusive JavaScript sources/outputs are retired. The general editor helper no longer contains Course List styling setup.
 
-Course catalog widgets and shortcodes, the My Courses shortcode, activity registrations and shortcodes, and the student assignment portal remain shared features. Student Assignments is still available through its existing shortcode; removing its block does not remove learner assignments.
+Course catalog widgets and shortcodes, the My Courses shortcode and activity registrations and shortcodes remain shared features. The My Courses and Student Assignments shortcodes (`[ohmylms_my_courses]`, `[ohmylms_student_assignments]`) are still registered, but they now only print a link to the learner hub, where learner assignments live under Classes; the front-end student assignment portal was retired (see [learner-experience/LEGACY-RETIREMENT-PLAN.md](learner-experience/LEGACY-RETIREMENT-PLAN.md)). Removing the block does not remove learner assignments.
 
 Existing posts are not rewritten or deleted. Saved instances of these four blocks become unsupported blocks and their dynamic frontend content stops rendering. Replace those instances with the appropriate existing shortcode in a WordPress Shortcode block if their content is still needed.
 

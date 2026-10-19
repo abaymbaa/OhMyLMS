@@ -46,11 +46,17 @@ const marker = '[[ohmylms-math:latex:inline]]x^2[[/ohmylms-math]]';
 
 test( 'shared block preserves equations without showing prompt or answer format dropdowns', () => {
 	let definition;
+	let opened = false;
 	const scope = {
 		createElement: element,
 		Fragment: 'fragment',
 		createContext: () => ( {} ),
-		useState: ( value ) => [ value, () => {} ],
+		useState: () => [
+			true,
+			( value ) => {
+				opened = value;
+			},
+		],
 		useRef: () => ( {} ),
 		useEffect: () => {},
 		__: ( text ) => text,
@@ -59,6 +65,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		SelectControl: 'select',
 		ToggleControl: 'toggle',
 		Dropdown: 'dropdown',
+		Modal: 'modal',
 		QuestionOptionsBar: 'settings',
 		MathVariables: { Provider: 'variables-provider' },
 		TemplatePanel: 'template-panel',
@@ -90,20 +97,11 @@ test( 'shared block preserves equations without showing prompt or answer format 
 			patch = value;
 		},
 	} );
-	const variables = nodes( tree ).find(
+	const toggle = nodes( tree ).find(
 		( node ) =>
-			node.props?.contentClassName ===
-			'ohmylms-question-variables-popover'
+			node.type === 'toggle' &&
+			node.props.label === 'Enable randomized variables'
 	);
-	assert.equal( variables.props.popoverProps.placement, 'right-start' );
-	let opened = false;
-	const controls = variables.props.renderToggle( {
-		isOpen: false,
-		onToggle: () => {
-			opened = true;
-		},
-	} );
-	const toggle = nodes( controls ).find( ( node ) => node.type === 'toggle' );
 	toggle.props.onChange( true );
 	assert.equal( opened, true );
 	assert.deepEqual( patch.settings.template, defaultTemplate() );
@@ -116,22 +114,29 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		},
 	} );
 	assert.deepEqual( enabledTree.props.value, defaultTemplate().variables );
-	const enabledVariables = nodes( enabledTree ).find(
-		( node ) =>
-			node.props?.contentClassName ===
-			'ohmylms-question-variables-popover'
+	const modal = nodes( enabledTree ).find(
+		( node ) => node.type === 'modal'
 	);
-	const panel = nodes(
-		enabledVariables.props.renderContent( { onClose: () => {} } )
-	).find( ( node ) => node.type === 'template-panel' );
-	assert.equal( panel.props.question, randomized );
-	const enabledControls = enabledVariables.props.renderToggle( {
-		isOpen: true,
-		onToggle: () => {},
-	} );
-	nodes( enabledControls )
-		.find( ( node ) => node.type === 'toggle' )
+	assert.equal( modal.props.isFullScreen, true );
+	assert.equal(
+		nodes( modal ).find( ( node ) => node.type === 'template-panel' ).props
+			.question,
+		randomized
+	);
+	modal.props.onRequestClose();
+	assert.equal( opened, false );
+	nodes( enabledTree )
+		.find( ( node ) => node.props?.[ 'aria-haspopup' ] === 'dialog' )
+		.props.onClick();
+	assert.equal( opened, true );
+	nodes( enabledTree )
+		.find(
+			( node ) =>
+				node.type === 'toggle' &&
+				node.props.label === 'Enable randomized variables'
+		)
 		.props.onChange( false );
+	assert.equal( opened, false );
 	assert.equal( patch.settings.template, undefined );
 	assert.equal( patch.settings.partial_credit, true );
 	const prompt = nodes( tree ).find( ( node ) => node.type === 'rich' );

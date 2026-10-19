@@ -54,7 +54,31 @@ ESLint's JSX pragma is `createElement`, matching `webpack.config.cjs`; JSX impor
 counted as used by the same function that compiles them. Reconstructed component contracts,
 public object keys and REST field names remain unchanged during private-binding renames.
 
-These boundaries are not a claim of full compliance. See the audit report for unresolved findings. Follow `AGENTS.md` for every future change; use modern declarations and WordPress conventions in new authored code.
+These boundaries are not a claim of full compliance (see "Known standards debt" below). Follow `AGENTS.md` for every future change; use modern declarations and WordPress conventions in new authored code.
+
+## Known standards debt
+
+The plugin is **not fully compliant**. Automatic fixes and the official tooling are in place, but the remaining findings need
+source-level review, and the standards commands intentionally fail while they remain; there is no blanket baseline hiding them.
+Figures from the last full repository run (October 16, 2026): PHP 14,100 errors and 2,986 warnings, JavaScript 6,947 errors and 27
+warnings, CSS 1,647 errors. The first audit (October 9) covered 771 PHP files, 424 authored JavaScript files and 102 stylesheets
+and started from 122,082 PHP errors; earlier smaller totals in older documents are superseded. Recovered upstream runtime assets
+and third-party code are outside the authored-source audit, so these figures are not a certification of every file. Rerun the commands
+above for the current numbers.
+
+What remains, by language:
+
+- PHP: contextual output escaping, prepared queries and caching, nonce and request boundaries, Yoda comparisons, documentation and
+  translator comments, and naming and file conventions (the PSR-4 filename findings above).
+- JavaScript: shadowed recovered aliases, loose comparisons, unused expressions and variables, nested ternaries, fallthrough,
+  internationalization and accessibility findings.
+- CSS: descending specificity, existing selector naming, import placement, duplicate selectors, and deprecated or unknown
+  properties and values.
+
+Public PHP interfaces, PSR-4 mappings, database fields and CSS selectors need compatible migrations before renaming. Escaping and query
+findings need inspection of the actual trust boundary. CSS rules need coordinated template changes and visual regression checks.
+Reconstructed React factories keep the narrowly scoped `no-var`/`prefer-const` exception described above; new authored modules do not
+receive it. Full JSON reports are local audit artifacts under the ignored `.wp-dev/` folder.
 
 ## Review findings manually
 

@@ -1,6 +1,6 @@
 # Gamification repair and daily learning streaks
 
-Implemented on `codex/gamification-streaks`. Existing Performance removal and student-directory changes were preserved. No live learner records or settings were changed by the regression fixtures; WordPress integration and browser checks used the separate `ohmylms_streak_test` database with outbound HTTP and email blocked.
+Implemented on the `codex/gamification-streaks` branch (on `origin`; the feature is part of `main`). Existing Performance removal and student-directory changes were preserved. No live learner records or settings were changed by the regression fixtures; WordPress integration and browser checks used the separate `ohmylms_streak_test` database with outbound HTTP and email blocked.
 
 ## Audit and repairs
 
@@ -44,7 +44,7 @@ Authenticated `GET /ohmylms/v1/engagement/streak` returns the caller's state and
 
 ## Enable and rollback
 
-If the Gamification menu is hidden, enable the free Gamification add-on under Add-ons. After releasing/reviewing this branch, open **OhMyLMS → Gamification → Streaks** (also available under the existing gamification settings route). Enable learning streaks, choose activities/freezes/milestones, and save. The additive tables install at that step. The student dashboard displays the responsive card with current/longest counts, today's state, seven calendar dates, freeze balance, a learning action and timezone control. Optional point milestones require Bonus Point's feature switch to be enabled.
+If the Gamification menu is hidden, enable the free Gamification add-on under Add-ons. Open **OhMyLMS → Gamification → Streaks** (also available under the existing gamification settings route). Enable learning streaks, choose activities/freezes/milestones, and save. The additive tables install at that step. The learner hub (Achievements) and the legacy student dashboard display the responsive card with current/longest counts, today's state, seven calendar dates, freeze balance, a learning action and timezone control. Optional point milestones require Bonus Point's feature switch to be enabled.
 
 Disable streaks to stop new recording and hide the card. Existing streak tables, learning progress and awarded achievements remain stored. A code rollback should retain the additive tables rather than delete learner history. No automatic backfill is provided. PHP runtime integration was verified on PHP 8.2/MySQL; other supported PHP/database versions were not exercised. The new checkout eligibility/accounting services were integration-tested; external payment gateways were not transacted.
 

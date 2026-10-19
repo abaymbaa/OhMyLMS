@@ -1,10 +1,11 @@
 /** @jsx createElement */
-import { createElement, useEffect, useRef } from '@wordpress/element';
+import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { getBlockType, registerBlockType } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import {
 	Button,
 	Dropdown,
+	Modal,
 	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -49,6 +50,7 @@ export function MultipleChoiceFields( {
 	onRemove,
 } ) {
 	const root = useRef( null );
+	const [ variablesOpen, setVariablesOpen ] = useState( false );
 	useEffect( () => {
 		let disposed = false;
 		let cleanup;
@@ -443,81 +445,57 @@ export function MultipleChoiceFields( {
 								}
 								__nextHasNoMarginBottom
 							/>
-							<Dropdown
-								contentClassName="ohmylms-question-variables-popover"
-								popoverProps={ { placement: 'right-start' } }
-								renderToggle={ ( { isOpen, onToggle } ) => (
-									<>
-										<ToggleControl
-											label={ __(
-												'Enable randomized variables',
-												'ohmylms'
-											) }
-											checked={
-												!! question.settings.template
-											}
-											onChange={ ( enabled ) => {
-												const {
-													template,
-													...settings
-												} = question.settings;
-												onChange( {
-													settings: enabled
-														? {
-																...settings,
-																template:
-																	template ||
-																	defaultTemplate(),
-															}
-														: settings,
-												} );
-												if ( enabled !== isOpen ) {
-													onToggle();
+							<ToggleControl
+								label={ __(
+									'Enable randomized variables',
+									'ohmylms'
+								) }
+								checked={ !! question.settings.template }
+								onChange={ ( enabled ) => {
+									const { template, ...settings } =
+										question.settings;
+									onChange( {
+										settings: enabled
+											? {
+													...settings,
+													template:
+														template ||
+														defaultTemplate(),
 												}
-											} }
-											__nextHasNoMarginBottom
-										/>
-										{ question.settings.template && (
-											<Button
-												variant="tertiary"
-												aria-expanded={ isOpen }
-												onClick={ onToggle }
-											>
-												{ __(
-													'Edit variables',
-													'ohmylms'
-												) }
-											</Button>
-										) }
-									</>
-								) }
-								renderContent={ ( { onClose } ) => (
-									<div
-										style={ {
-											width: '360px',
-											maxWidth: '80vw',
-											maxHeight: '70vh',
-											overflowY: 'auto',
-											padding: '16px',
-										} }
-									>
-										<Button
-											variant="tertiary"
-											onClick={ onClose }
-										>
-											{ __(
-												'Close variables',
-												'ohmylms'
-											) }
-										</Button>
-										<TemplatePanel
-											question={ question }
-											onChange={ onChange }
-											readOnly={ readOnly }
-										/>
-									</div>
-								) }
+											: settings,
+									} );
+									setVariablesOpen( enabled );
+								} }
+								__nextHasNoMarginBottom
 							/>
+							{ question.settings.template && (
+								<Button
+									variant="tertiary"
+									aria-haspopup="dialog"
+									aria-expanded={ variablesOpen }
+									onClick={ () => setVariablesOpen( true ) }
+								>
+									{ __( 'Edit variables', 'ohmylms' ) }
+								</Button>
+							) }
+							{ variablesOpen && question.settings.template && (
+								<Modal
+									title={ __(
+										'Edit randomized variables',
+										'ohmylms'
+									) }
+									isFullScreen
+									onRequestClose={ () =>
+										setVariablesOpen( false )
+									}
+								>
+									<TemplatePanel
+										question={ question }
+										onChange={ onChange }
+										readOnly={ readOnly }
+									/>
+								</Modal>
+							) }
 							<Dropdown
 								contentClassName="ohmylms-choice-settings-popover"
 								renderToggle={ ( { isOpen, onToggle } ) => (

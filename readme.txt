@@ -349,7 +349,7 @@ Migration is non-destructive. Your old LMS data stays intact until you're confid
 == 🌐 Multilingual & RTL Support ==
 
 - Fully translatable (.pot files included)
-- Spanish language included
+- Mongolian translation included (machine translation, native review pending); other languages can be added with the .pot file
 - RTL support (Arabic, Hebrew, Persian)
 - WPML compatible
 - Works with Loco Translate, Weglot, TranslatePress
@@ -510,6 +510,10 @@ New Gutenberg blocks for Student Dashboard, My Courses, and Student Profile page
 - Changed: Curriculum replaces course categories and Course Bundles replace course tags. Courses are placed under curriculum items (and in bundles by an administrator) from the course editor's Organize tab; the course list, public filters and tabs, the single course sidebar, the course list shortcode, block and Elementor, Bricks and WPBakery widgets (new `curriculum` and `bundle` attributes), membership plans, duplicate, export and import, LearnDash, LearnPress, Tutor LMS and MasterStudy imports and the setup wizard all use them.
 - Changed: Existing category and tag terms are not converted or deleted, and old category and tag archive addresses keep working. Membership plans that still have a category or tag rule keep granting access through it; those rules can be removed but not added to.
 - Changed: The old categories and tags REST endpoints now list curriculum items and bundles and refuse writes (HTTP 410). The `category` attribute of the course list shortcode and block is ignored.
+- Added: Learner hub (`[ohmylms_student_hub]`, page slug `profile`) with learner, teacher, parent and school workspaces, a role chooser with inline sign-in and sign-up, and optional learner details (phone, province, school name and grade) in Settings. The front-end LMS portal is retired: old portal addresses, blocks and shortcodes forward to the hub.
+- Added: Khan-style practice runner with progress dots, Skip, stepped hints and Start over; an optional Khan Academy mastery model (OhMyLMS → Gamification → XP & mastery) with retry after a wrong practice answer; mixed-skill quizzes, unit tests and course challenges with an intro screen, a Level up button and Course challenge card in the hub course overview, and an OhMyLMS → Skill assessments authoring screen.
+- Added: Administrator assistant and MCP tools `list_unit_skills` and `create_skill_assessment` (draft only), question bulk import, quiz import and export, exam PDF import, xAPI emitter.
+- Changed: Mongolian is the only bundled translation; the Spanish, Dutch and Bengali files were removed.
 
 = 1.2.19 (2026-09-15) =
 🚀 New Features

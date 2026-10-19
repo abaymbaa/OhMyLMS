@@ -26,6 +26,11 @@ Custom lesson-editor extensions retain their existing editor.
 The retired embedded block workspace and its custom fullscreen/inspector styles
 have been removed. `LessonContent.jsx` preserves the extension hook and the shared
 rich-text/media fallback used by custom lesson types; built-in lessons bypass it.
+Also kept on purpose: the shared rich-text/media editor and its recovered vendor runtime
+(assignments and custom lesson types still use them), `LessonEditor` and `LessonSettings`
+for the custom lesson-editor extension, the public question-block exports and assessment
+contracts, the recovered application fragments (parity baseline) and the stored `text`
+identifier and lesson metadata, which saved lessons depend on.
 `NativeLessonSettings.jsx` adds LMS panels using Gutenberg SlotFills; it does not
 replace the editor canvas, toolbar, inserter, list view or WordPress editor CSS.
 The Block inspector opens by default. The return route is stored per lesson in tab

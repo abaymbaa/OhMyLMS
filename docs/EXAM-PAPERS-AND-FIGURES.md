@@ -1,6 +1,6 @@
 # Exam papers, structured questions and figures: design notes
 
-Status: **design and findings. Only the skill-search improvement below is built.** Written October 15, 2026
+Status: **design notes and findings; the structured-part import and exam features proposed here have since been built (see the update below), while interactive figures remain a design only.** Written October 15, 2026
 after studying a real Cambridge IGCSE Mathematics 0580 Paper 4 (Extended, calculator) question paper and its
 published mark scheme, supplied by the site owner. The paper's text is deliberately not copied into this
 repository; only its structure is described.

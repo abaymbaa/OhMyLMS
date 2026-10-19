@@ -1,5 +1,12 @@
 # Student dashboard reference study
 
+Status (October 19, 2026): this describes the **legacy student dashboard** (`templates/profile/dashboard-content.php`,
+`Practice\Dashboard`, route `PUT /ohmylms/v1/student/dashboard-theme`). Learners now use the Khan-style learner hub
+([STUDENT-HOME.md](STUDENT-HOME.md)); the dashboard shortcode and the generated dashboard page only link to the hub.
+The legacy renderer and its Meadow, Ocean and Sunset themes run only when the hub is disabled. The IXL study and
+the data decisions below remain accurate for that legacy dashboard; the browser spec is
+`tests/browser/student-dashboard.spec.cjs`.
+
 Reference: [IXL for students: Take charge of your learning with the Student Dashboard](https://www.youtube.com/watch?v=MfPxveAWHZc). Reviewed the visible dashboard screens in the 65-second video. No transcript was available. This document distinguishes observed features from the proposed OhMyLMS adaptation.
 
 ## What the video shows

@@ -9,6 +9,25 @@ Hub → Home**, under *Customize the learner home*; the former
 `admin.php?page=ohmylms-student-home` address redirects there. The canonical page fills the viewport; embedding
 the shortcode in another page retains that page's theme template.
 
+The one page serves several workspaces, chosen with `hub_role` and shown through **Switch role** to accounts
+that are eligible: the learner workspace described here (the default), the Teacher workspace (independent
+classes, roster, reports), the Parent workspace (school-linked and home-learning children) and the School
+workspace (classes, people, reports, gradebook). They have their own documents:
+[SCHOOL-FAMILY-SETUP.md](SCHOOL-FAMILY-SETUP.md) and [learner-experience/](learner-experience/). The learner
+sections are My learning, Browse subjects, Classes, Achievements, History, Membership and Settings.
+
+**Signing in.** Signed-out visitors see a chooser (Learner, Parent, Teacher) with an inline sign-in form that
+posts to `wp-login.php` and returns to the hub (`Student\LoginExperience`), a sign-up form for each role, and
+Google or Microsoft buttons when those integrations are configured. Hub users are kept out of wp-admin after
+sign-in.
+
+**Learner details.** **Settings** is a stack of cards: Basics (first name, last name, display name and the
+optional learner details phone number, province (Ulaanbaatar, the 21 aimags or outside Mongolia), school name
+and grade 1 to 12 or other), About you, Email address, Password, Appearance, Notifications and Connections
+(teachers, parents / guardians and Leave school). The learner details are stored through `Student\LearnerProfile` (user meta `ohmylms_profile_province`,
+`ohmylms_profile_school_name`, `ohmylms_profile_grade`; the phone reuses the student phone field) and are never
+asked at registration.
+
 Administrators can rename, hide and reorder sections, set the default section,
 choose sidebar or top navigation, set the title/accent, show/hide commerce and
 theme controls, and show/hide/reorder Home cards. Reordering supports drag and
@@ -44,11 +63,12 @@ The three fresh membership/connection reads intentionally avoid a cross-request
 cache so that revocations apply immediately. PHPCS reports six direct-database
 and caching warnings for these prepared queries; no rule is disabled for them.
 
-Old shortcodes remain registered. Configured Dashboard/Profile/My Courses page
-bookmarks and account endpoint helpers resolve to matching hub sections while
-the hub is enabled and its page is published. Legacy pages are not deleted.
-POST handlers and logout remain in the existing account pipeline. Disabling
-the hub link setting restores original navigation. Invoice rendering checks
+The old dashboard, profile and My Courses shortcodes remain registered but now print a link to the matching
+hub section, and their generated pages are retired to the Trash with redirects that survive (see
+[learner-experience/LEGACY-RETIREMENT-PLAN.md](learner-experience/LEGACY-RETIREMENT-PLAN.md)). Configured
+Dashboard/Profile/My Courses bookmarks and account endpoint helpers resolve to hub sections while the hub is
+enabled and its page is published. POST handlers and logout remain in the existing account pipeline. Disabling
+the hub link setting restores original navigation and the legacy renderers. Invoice rendering checks
 the current customer's ownership before displaying an order.
 
 Navigation visibility is presentation, not authorization. Student data comes
@@ -69,7 +89,8 @@ pointing to the private credentials file for the disposable
 `ohmylms_source_test` database. The script refuses other databases and restores
 its settings and fixtures. Provider credentials are not needed.
 
-Validated in the disposable WordPress site: 50 integration checks covering
+Validated in the disposable WordPress site (first release, 50 checks; the suite has grown since and is
+recorded in the checkpoints of [CONTINUE-LEARNER-HUB.md](../CONTINUE-LEARNER-HUB.md)): 50 integration checks covering
 installation, settings capability/nonce enforcement, layout persistence, legacy
 URLs/pagination, guest isolation, invoice ownership, enrolled work, school class
 memberships, approved connections and immediate revocation. The existing JavaScript

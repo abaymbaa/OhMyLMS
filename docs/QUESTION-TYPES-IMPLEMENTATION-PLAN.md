@@ -1,6 +1,15 @@
 # Question types implementation plan
 
-Prepared: 2026-10-09. Status: proposed; no runtime changes implemented.
+Prepared: 2026-10-09. Status (checked 2026-10-19): **partly overtaken.** This was the plan; it was written before the work it describes. The
+editor and learner player now offer 38 native formats, including passage, graphing (points and straight lines), hot text, match
+table grid, labeling, hotspot, draw, audio and video response, poll, word cloud, discussion board (individual responses), slide and
+interactive video (see [question-block-editor.md](question-block-editor.md) for the list and
+[question-editor-verification.md](question-editor-verification.md) for the parity limits), implemented in `Assessment\ExtendedQuestions`,
+`ExtendedEditor.jsx` and `extendedModel.mjs` (check section 4's descriptor and codec proposals against that code before relying on them). The proposed identifiers `table-fill-in`, `drag-and-drop`
+and `math-response` were not adopted (blank tables and tile building exist under other type names; `numerical` and the math editors
+cover math response). Sections 4, 6 (milestones G to I) and 9 remain the design reference for what is still open: shape-aware
+response codecs, historical grader dispatch, live Discussion Board, graphing curves and inequalities, and optional AI evaluation.
+Repository findings in section 2 describe the code as it was on 2026-10-09.
 
 ## 1. Objective and scope
 

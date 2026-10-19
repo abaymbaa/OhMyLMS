@@ -1,10 +1,15 @@
 # Question bank, versioned assessments and skill evidence
 
-Status: implemented on branch `assessment-engine` (2026-10-02) against the
-"OhMyLMS implementation plan — repository-based revision" (v2.0). Not yet released
-to a live site; the classroom pilot is still to be run. This document describes what
-exists, how it fits together, how to roll it out and back, and what is deliberately
-out of scope.
+Status: implemented (2026-10-02) against the "OhMyLMS implementation plan — repository-based
+revision" (v2.0) and merged into `main`. Not yet released to a live site; the classroom pilot
+is still to be run. This document describes what exists, how it fits together, how to roll it
+out and back, and what is deliberately out of scope. Later additions that build on the engine
+are documented elsewhere: the optional Khan level model, mixed-skill unit tests and course
+challenges in [learner-experience/KHAN-ACTIVITIES.md](learner-experience/KHAN-ACTIVITIES.md),
+quiz and question editors in [question-block-editor.md](question-block-editor.md), quiz files in
+[QUIZ-IMPORT-EXPORT.md](QUIZ-IMPORT-EXPORT.md), bulk import in
+[QUESTION-BULK-IMPORT.md](QUESTION-BULK-IMPORT.md) and exam PDFs in
+[EXAM-IMPORT-IMPLEMENTATION.md](EXAM-IMPORT-IMPLEMENTATION.md).
 
 The engine extends the existing quiz/question post types, React editors, question
 type registry, submission/review entry points and gradebook. There is no second
@@ -200,7 +205,7 @@ account blocks 44, leaderboard, view-as, membership 15, QPay 59). `npm run check
 
 Browser suite (`npx playwright test`): `tests/browser/assessment.spec.cjs` covers exam page
 breaks, autosave and resume, keyboard-only answering and phone layouts, lesson checks with
-guest claim, skill practice, guardian and teacher portal skill views, and the skills/question
+guest claim, skill practice, guardian and teacher skill views, and the skills/question
 bank pages. Known failures unrelated to this work: course, lesson and learning editor specs
 report ProseMirror's `Adding different instances of a keyed plugin` because the shipped vendor
 bundles are kept (see DEVELOPMENT.md), and the student registration specs expect a published
@@ -216,8 +221,9 @@ performance report.
 ## Limitations and later work
 
 - Classroom pilot, full RTL/mobile acceptance and enabling on the math site remain.
-- Translations: `languages/ohmylms.pot` is regenerated (WP-CLI bundled with Local). There is no
-  Mongolian plugin translation yet. Mongolian (Cyrillic) content itself is verified: question
+- Translations: `languages/ohmylms.pot` is the template and Mongolian is the only bundled translation
+  (see "Translations" in [DEVELOPMENT.md](DEVELOPMENT.md)); strings added by later work arrive with
+  the next catalog refresh. Mongolian (Cyrillic) content itself is verified: question
   text, skill names, family IDs and case-insensitive text answers.
 - Math rendering uses the site's KaTeX auto-render (`wpmath`). Server-rendered quizzes and
   lesson checks are covered by its page-load pass; content added later by the practice runner
@@ -237,4 +243,6 @@ performance report.
   to written parts). Choice-type parts are not supported.
 - Pool feasibility is checked greedily across pools; unusual overlaps may be reported short.
 - Not built: symbolic equivalence, follow-through marking, Moodle XML import/export,
-  generators, PDF/mark-scheme export, AI drafting.
+  generators, PDF/mark-scheme export. (Quiz files, bulk import, exam PDF import and AI-drafted
+  questions through the MCP import tools, which arrive unapproved, were added after this list was
+  written; see the status paragraph at the top.)

@@ -1,6 +1,6 @@
 # Exam import implementation status
 
-This branch implements structured imports, private PDF extraction jobs, teacher review,
+Status (October 19, 2026): merged into `main`. The code implements structured imports, private PDF extraction jobs, teacher review,
 an Exams tab and content type, and an exam shell using the existing quiz player.
 The workflow has synthetic WordPress integration and desktop browser coverage. An initial
 local GPT-6 Luna run on the owner's 0580/43 October/November 2025 paper and mark scheme
@@ -87,5 +87,5 @@ repository tools. Run syntax, standards, focused PHP tests, `npm run check`, bui
 reproducibility checks. A source/unit result does not establish WordPress runtime correctness.
 Report unavailable tests and unrelated existing failures separately from regressions.
 
-Continue in the feature branch and use a reviewable pull request. Merge into `main` after the
-owner's go-ahead; production deployment is separate from merging code.
+Use a reviewable pull request and merge into `main` after the owner's go-ahead; production deployment is
+separate from merging code.

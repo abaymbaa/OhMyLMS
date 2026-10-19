@@ -39,11 +39,20 @@ Derived from the evidence ledger by `Skills\ScoreModel`, so it can be recomputed
 * Hooks: `ohmylms_skill_score_updated`, `ohmylms_skill_score_milestone`.
 * REST: `GET/POST /ohmylms/v1/engagement/settings/score`.
 
+## Mastery model: evidence rules or Khan levels
+
+The mastery score above sits beside the skill **level** (developing, proficient, mastered), which by default comes from the
+evidence rules. A site setting, **Gamification → XP & mastery → Mastery model** (REST group `mastery`, option
+`ohmylms_mastery_settings`), can switch skills to *Khan Academy levels* (Not started, Attempted, Familiar, Proficient,
+Mastered), where an exercise sets a level from its percentage and quizzes and tests move a skill one step up or down. The
+default is the evidence rules and switching back keeps every record. Details and code: section 8 of
+[learner-experience/KHAN-ACTIVITIES.md](learner-experience/KHAN-ACTIVITIES.md).
+
 ## Where learners see it
 
 * Lesson summary: reward card with XP and its parts, daily-goal progress, mastery before to
   after with medals, and the streak.
-* Student dashboard: XP card with week chart and goal picker; score and medal on recent skills.
+* Learner hub (Achievements and the practice summary) and, with the hub disabled, the legacy student dashboard: XP card with week chart and goal picker; score and medal on recent skills.
 * `[ohmylms_skills]`: a Mastery column.
 
 ## Not built
