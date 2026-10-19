@@ -1,6 +1,6 @@
 # Continue the OhMyLMS learner experience
 
-Last updated: October 16, 2026, Asia/Ulaanbaatar.
+Last updated: October 19, 2026, Asia/Ulaanbaatar (documentation cleanup; see the last section). The checkpoints dated October 16 are unchanged.
 
 ## Current state: start here (October 16, 2026)
 
@@ -1969,3 +1969,44 @@ or deployed. Do not restart the obsolete teacher restore/cleanup hand-off.
 - **One-click previews.** `assets/src/features/schools/PreviewHome.jsx` shows Student, Teacher, Parent and School admin cards. A card starts the existing `POST school/view-as/start` for the default person from `GET school/view-as/default?role=` (the admin's remembered person in user meta `_ohmylms_view_as_last_<role>`, validated against the role's eligible people again; otherwise the most recent sign-in among the newest 50 accounts holding the role). "Change person" opens the existing ViewAsModal. A new `school` View as role (school administrators) lands on `SchoolWorkspace::url()`. The "Previewing as X / Return to admin" bar already exists: `ViewAs::banner()` on `wp_footer`/`admin_footer`.
 - **Sample people.** `includes/Schools/SamplePreview.php`, REST `school/sample-preview` (GET status, POST create, POST remove with `confirm`), administrators only. Creates one "Sample Preview School" with year, class, school admin, teacher, parent and student (guardian-linked, teacher and student in the class) through the existing `Service` functions. Accounts have marker user meta `_ohmylms_sample_preview`, an `@example.invalid` address and a random password that is hashed and discarded, so only View as reaches them. A ledger option `ohmylms_sample_preview` records the IDs; a second create only fills gaps. Removal first lists what it would delete; it deletes nothing that is not marked, and refuses while the school has other members, classes, invitations, assignments or the sample student has enrolments, quiz attempts or assignments. Never run create/remove against a database you do not own. Tests: `php tests/php/sample-preview-unit.php` (in-memory fakes) and `tests/php/sample-preview-integration.php` (disposable site only).
 - **Slug.** New sites create the hub page as `profile` (`Hub::SLUG`). Existing sites migrate once (`Hub::migrate_slug`, on `admin_init`, outcome in option `ohmylms_hub_slug_migration`): only the configured hub page, only while its slug is still `student-home`, only when no other non-trashed post owns `profile` (trashed posts carry `__trashed`); otherwise nothing changes and the reason is recorded. `LegacyPages::renamed_hub_target` 301-redirects the old path to the new hub URL with the whole query string (`?hub_section=..&hub_role=..`, `?ohmylms_invite=<token>`) when the old address 404s. `LegacyPages::target` ignores the retired ledger's old `/profile/` page for the exact hub address so the hub cannot redirect onto itself. Tests: `php tests/php/hub-slug-unit.php`.
+
+## Documentation cleanup (October 19, 2026)
+
+Every Markdown and text document outside `vendor/`, `node_modules/` and generated assets was audited against the code. Documents whose job is
+done were deleted (all recoverable from git history; this session did not commit, but another session's commit `3f4e76c` "Randomized variable" swept these documentation changes in with its own code, so the history of the cleanup is mixed into that commit); the others were corrected. Documents of other sessions'
+uncommitted work (`docs/question-player-block.md`, `docs/shared-choice-prototype.md`) and `languages/` were not touched.
+
+**Deleted, with the reason:**
+
+- `docs/learner-experience/PLAN.md`: historical planning draft, already marked superseded by this ledger; its slices all shipped, its entity
+  distinctions live in `MAPPING.md` and its commands in `docs/DEVELOPMENT.md`.
+- `docs/learner-experience/PARENT-CHILD-P3-PLAN.md`: P3a to P3d shipped; the adopted decisions moved into `PARENT-CHILD-P0.md`.
+- `docs/SCHOOL-FAMILY-IMPLEMENTATION-PLAN.md`: the 2026-09-30 plan for the retired portal and React app; the design rules and table list moved
+  into `docs/SCHOOL-FAMILY-SETUP.md`.
+- `docs/UNIFIED-LEARNING-PLAN.md`: the planning proposal shipped as `docs/UNIFIED-LEARNING.md`; its still-valid design rules moved there.
+- `docs/shared-skills-implementation-plan.md`: the original phased plan, shipped and documented in `docs/SHARED-SKILLS.md`.
+- `docs/question-editor-continuation.md`: a session hand-off from another machine ("resume this task"); the work was completed and is described in
+  `question-block-editor.md` and `question-editor-verification.md`.
+- `docs/quiz-overview-verification.md` and `docs/choice-controls-verification.md`: dated browser verification notes whose behaviour is now described in
+  `docs/question-block-editor.md`.
+- `docs/CLAUDE-DESIGN-BRIEF.md`: a brief written to feed an external design tool, describing an IXL-style product and the portal and React app that were retired.
+- `docs/QUIZ-REPORT-INTEGRATION.md`: a one-time live test log on another local site; its fixture helper only runs on a site folder named `xyz`. The fixes it found
+  are recorded in `assets/src/features/quiz-reports/README.md`.
+- `docs/LESSON-EDITOR-CLEANUP.md`: a cleanup report (what was removed is in git history); the "retained on purpose" list moved into
+  `assets/src/features/learning/README.md`.
+- `docs/CODING-STANDARDS-AUDIT.md`: an audit snapshot with superseded totals; the remaining-debt description and the latest figures moved into
+  `docs/CODING-STANDARDS.md`.
+- `changelog.txt`: a stale CreatorLMS-era 1.0.1 fragment; `readme.txt` holds the changelog.
+
+**Rewritten:** `docs/learner-experience/LEGACY-RETIREMENT-PLAN.md` (now the record of what was retired and what still forwards, with no front-end portal) and
+`docs/SCHOOL-FAMILY-SETUP.md` (hub workspaces instead of the portal and blocks). **Corrected or extended:** `README.md` (now an index), `README-UNIFIED.md`,
+`readme.txt` (translation claim and Unreleased changelog), `docs/DEVELOPMENT.md` (assessment-engine status, Translations section), `docs/CODING-STANDARDS.md`,
+`docs/ACCEPTANCE.md`, `docs/ASSESSMENT-ENGINE.md`, `docs/UNIFIED-LEARNING.md`, `docs/STUDENT-HOME.md`, `docs/STUDENT-DASHBOARD-REFERENCE.md`, `docs/XP-MASTERY.md`,
+`docs/ADDONS.md`, `docs/BLOCK-CLEANUP.md`, `docs/CURRICULUM-BUNDLES.md`, `docs/SYLLABUS.md`, `docs/GAMIFICATION-STREAKS.md`, `docs/EXAM-IMPORT-IMPLEMENTATION.md`,
+`docs/EXAM-PAPERS-AND-FIGURES.md`, `docs/QUESTION-TYPES-IMPLEMENTATION-PLAN.md`, `docs/EXTENSIBILITY-SCOPE.md`, `docs/CREATORLMS-COEXISTENCE.md`, the learner-experience
+documents (`KHAN-ACTIVITIES.md`, `MAPPING.md`, `RESEARCH.md`, `PARENT-CHILD-P0.md`, `learner-hub-development.md`, `RELEASE-READINESS.md`), the Google Meet and WPBakery
+READMEs, and the quiz-reports and learning feature READMEs. Links in this ledger to the removed documents were annotated rather than rewritten, because the entries are
+chronological.
+
+**Known gap found while documenting:** teachers have no create-assignment form in the hub; "Assign learning" is in the wp-admin class editor and the REST route
+`POST ohmylms/v1/school/classes/{id}/assignments`, and hub users are kept out of wp-admin. Confirm this is intended.
