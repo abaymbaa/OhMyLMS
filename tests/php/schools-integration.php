@@ -82,7 +82,8 @@ try {
     school_request('POST', "classes/$class/members", ['user_id' => $users['student'], 'role' => 'student']);
     school_request('POST', "classes/$class/members", ['user_id' => $users['outsider'], 'role' => 'student'], 403);
     $invite = school_request('POST', "schools/$a/invitations", ['email' => get_userdata($users['teacher'])->user_email, 'role' => 'teacher', 'class_id' => $class]);
-    wp_set_current_user($users['outsider']); school_request('POST', 'accept', ['token' => school_token($invite)], 403);
+    // A signed-in user whose email differs from the invitation is refused with a clear message (400); the invitation stays usable for the right person.
+    wp_set_current_user($users['outsider']); school_request('POST', 'accept', ['token' => school_token($invite)], 400);
     wp_set_current_user($users['teacher']); school_request('POST', 'accept', ['token' => school_token($invite)]);
     school_request('POST', 'accept', ['token' => school_token($invite)], 400);
     school_request('GET', "classes/$class/members");

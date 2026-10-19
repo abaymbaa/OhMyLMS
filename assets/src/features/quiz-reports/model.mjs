@@ -213,7 +213,8 @@ export function describeExpected( question ) {
 		);
 	}
 	const correct = ( question?.questions || [] ).filter(
-		( option ) => String( option.is_correct ) === '1'
+		( option ) =>
+			option.is_correct === true || String( option.is_correct ) === '1'
 	);
 	return correct.map( ( option ) => option.answer ).join( ', ' ) || '—';
 }
@@ -234,6 +235,12 @@ export function structuredRows( question ) {
 		} else if ( part.kind === 'text' ) {
 			expected = ( part.accepted || [] ).join( ' / ' );
 		}
+		if ( part.kind === 'question' ) {
+			expected = [ describeExpected( part.question ), part.rubric ]
+				.filter( Boolean )
+				.join( '; ' );
+		}
+		const response = given[ part.id ];
 		const state = question?.parts?.[ part.id ] || {};
 		const edited = question?.part_marks?.[ part.id ];
 		return {
@@ -241,7 +248,10 @@ export function structuredRows( question ) {
 			label: part.label || part.id,
 			prompt: part.prompt || '',
 			marks: part.marks ?? 1,
-			given: given[ part.id ] ?? '',
+			given:
+				response && typeof response === 'object'
+					? JSON.stringify( response )
+					: ( response ?? '' ),
 			expected: expected || '—',
 			max: state.max ?? null,
 			awarded: edited !== undefined ? edited : ( state.awarded ?? null ),

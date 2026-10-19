@@ -159,9 +159,8 @@ final class Selector {
 							return null; }
 						// Structured questions with teacher-marked parts cannot give immediate practice feedback.
 						if ( in_array( $row['type'], array( 'structured', 'passage' ), true ) ) {
-							foreach ( \OhMyLMS\Assessment\Structured::parts( json_decode( $row['settings'], true ) ?: array() ) as $part ) {
-								if ( 'written' === $part['kind'] ) {
-										return null; }
+							if ( \OhMyLMS\Assessment\Structured::has_manual( json_decode( $row['settings'], true ) ?: array() ) ) {
+								return null;
 							}
 						}
 						$row['is_template'] = \OhMyLMS\Assessment\Template::has( json_decode( $row['settings'], true ) ?: array() );

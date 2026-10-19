@@ -173,7 +173,7 @@ final class Evidence {
 	/** Independence and first-try information from the response surface. */
 	private static function context( array $event ) {
 		global $wpdb;
-		if ( in_array( $event['source_type'], array( 'practice', 'inline' ), true ) ) {
+		if ( in_array( $event['source_type'], array( 'practice', 'inline', 'question-player' ), true ) ) {
 			$item = $wpdb->get_row( $wpdb->prepare( 'SELECT assisted, tries FROM ' . Schema::table( 'practice_items' ) . ' WHERE id=%d', (int) $event['item_id'] ), ARRAY_A );
 			return array(
 				'independent' => $item && ! (int) $item['assisted'] ? 1 : 0,

@@ -93,7 +93,7 @@ class PreviewController extends RestController {
 				},
 				$snapshot->get_questions()
 			);
-			$view                    = $snapshot->student_view( $ids, AttemptItems::tokens( $scope, $ids ), array( 'definitions' => $ids ), AttemptItems::tokens( $scope, $ids, 'd' ) );
+			$view                    = $snapshot->student_view( $ids, AttemptItems::tokens( $scope, $ids ), array( 'definitions' => $ids ), AttemptItems::tokens( $scope, $ids, 'd' ), $scope );
 			$view['token']           = $token;
 			$view['marks']           = (float) $slot['marks'];
 			$view['section']         = (string) $slot['section'];

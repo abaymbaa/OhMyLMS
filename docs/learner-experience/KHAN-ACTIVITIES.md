@@ -1,5 +1,8 @@
 # Khan Academy exercises, quizzes and tests: observed behaviour and OhMyLMS gaps
 
+Status (October 19, 2026): the observation (sections 1 to 4) is a reference; sections 5 to 11 record what was
+built from it in OhMyLMS, all merged. Section 12 lists where each piece lives in the code.
+
 Observed October 16, 2026 on khanacademy.org in the built-in browser, **signed out**, on 5th grade math
 (Unit 1, Decimal place value). Mastery rules come from the Khan Academy Help Center articles
 "How do Khan Academy's Mastery levels work?" and "What are Course and Unit Mastery?". No account,
@@ -64,37 +67,38 @@ Skill levels: Not started, Attempted, Familiar, Proficient, Mastered.
 - Not verified here: whether an exercise can lower a Mastered skill (older community text said 70-99% drops Mastered
   to Proficient), and the exact unit test and course challenge question counts per skill.
 
-## 5. OhMyLMS today
+## 5. Where OhMyLMS stands against the observation
+
+This table was written before the slices in sections 7 to 11 and is updated to the code as of October 19, 2026.
 
 | Area | OhMyLMS now | Khan |
 | --- | --- | --- |
-| Skill exercise runner | Practice sessions (3-30 questions), Check, one authored hint, Next, summary, resume, templates with new numbers | Same idea plus progress dots, Skip, progressive hints, tiered feedback, restart, related content |
-| Hints | One hint per question; a hint makes the answer "assisted" | Up to four progressive hints |
-| Skip | Not supported | Skip on every question |
-| Mastery levels | Evidence rules (developing, proficient, mastered) and an optional 0-100 SmartScore; display names mapped by `MasteryDisplay` | Level set by exercise percentage and by mixed-skill assessments, one step up or down |
-| Quiz | Quiz engine with attempts, sections, exam preset, answer review | Short mixed-skill check, 5 questions, drives skill levels |
-| Unit test, Course challenge | Do not exist | Present in every unit and course |
-| Post-activity summary | Practice summary with accuracy and XP, mastery before/after when SmartScore on | Leveled up/down/same per skill plus recommended lessons |
-| Quiz intro | None | Question count and time estimate before starting |
-| Level up button | None | Starts the unit test |
+| Skill exercise runner | Practice sessions (3-30 questions), Check, Next, summary, resume, templates with new numbers; progress dots, Skip, stepped hints, tiered feedback and Start over in the standard runner (section 7) | Same, plus per-question related content, Report a problem, standards badge |
+| Hints | Stepped hints: an authored hint split with `<hr>` shows one step at a time; the first request marks the answer "assisted" | Up to four progressive hints |
+| Skip | Standard runner only; not graded, no evidence, does not use up a problem; refused in lesson style | Skip on every question |
+| Mastery levels | Evidence rules (default) or, by setting, Khan Academy levels (five names, append-only log, one-step moves from assessments, retry after a wrong practice answer; section 8); display names mapped by `MasteryDisplay`; optional 0-100 SmartScore | Level set by exercise percentage and by mixed-skill assessments |
+| Quiz | Quiz engine with attempts, sections, exam preset, answer review; a mixed-skill quiz built from several skills (section 9) | Short mixed-skill check that drives skill levels |
+| Unit test, Course challenge | Built as the `unit-test` and `course-challenge` styles of a skill assessment; one unit test per unit and an optional course challenge can be created in one step (section 11) | Present in every unit and course |
+| Post-activity summary | Practice summary with accuracy and XP, and "Leveled up / down / Stayed at" with the Khan model on; the same list on a quiz result | Leveled up/down/same per skill plus recommended lessons |
+| Quiz intro | Intro screen with question count, time range and skills covered (section 9) | Question count and time estimate before starting |
+| Level up button | Hub course overview shows Level up on a unit with a published unit test, and a Course challenge card (section 11) | Starts the unit test |
 | Standards badge | None | CCSS code on each exercise |
-| Weekly streak and level strip | Streak card when streaks enabled | Header strip on every page |
+| Weekly streak and level strip | Streak card when streaks are enabled; no first-use tour | Header strip on every page and a first-use tour |
 
-## 6. Proposed slices (each additive, nothing built yet)
+## 6. The slices and what became of them
 
-1. **Runner parity**: progress dots, Skip (counted as not answered), restart, tiered feedback text, multi-step
-   hints (needs a hint list on questions), Enter-to-check, standards label. Runner only; no scoring change.
-2. **Khan level rules as a selectable mastery model**: new setting, default unchanged. Exercise percentage
-   to level, assessment answers to one-step moves, leveled up/down summary. Needs a decision on whether it
-   replaces or sits beside the evidence and SmartScore models.
-3. **Mixed-skill assessments**: a "Skill check" (quiz) and "Unit test" built from the unit's skills with a
-   question count per skill and time estimate, intro screen, results with skill level changes.
-4. **Course challenge** and the unit page **Level up** button, once 3 exists.
-5. **Header strip** (weekly streak and level) and the first-use tour.
+1. **Runner parity** - built (section 7): progress dots, Skip, Start over, tiered feedback, stepped hints.
+   Not built: Enter-to-check beyond the existing behaviour, a standards label.
+2. **Khan level rules as a selectable mastery model** - built as an option beside the evidence model
+   (section 8). The default is unchanged.
+3. **Mixed-skill assessments** - built (section 9), with an authoring screen and AI draft tools (section 10).
+4. **Course challenge and the Level up button** - built (section 11).
+5. **Header strip and first-use tour** - not built.
 
-Open decisions for the owner: replace or add the Khan level model; whether quizzes hide hints and feedback until
-the end when signed in (not observed); how many questions per skill in tests; whether Skip is allowed in
-formal assessments.
+How the owner's open questions were settled: the Khan level model sits beside the evidence model (a
+setting, off by default); whether signed-in quizzes hide hints and feedback was never observed, so they
+behave as before; a test draws `per_skill` (1-10, default 1) questions per skill, at most 60 in all; Skip
+exists only in the standard practice runner, not in formal assessments.
 
 ## 7. Slice 1, runner parity: what was built (October 16, 2026)
 
@@ -154,9 +158,9 @@ With the Khan model on:
 - **Display**: `MasteryDisplay` shows the Khan level (five names) for skills with history; the achievements counts include them. The
   practice summary lists "Leveled up / Leveled down / Stayed at" with before and after for the skill.
 
-Not built: the leveled up/down list on the quiz result screen (the data is in `Levels::changes()`), the unit test and course challenge
-(slice 3 and 4), a migration of old history into the log, teacher-side reports of Khan levels. Retry is not offered to guests' lesson
-style or inside quizzes.
+Not built: a migration of old history into the log. (When this section was written the leveled up/down list on the quiz result, the unit
+test and course challenge, and teacher-side reports of Khan levels were also missing; the first two arrived in sections 9 and 11 and the
+class-only teacher levels in `RELEASE-READINESS.md`.) Retry is not offered to guests' lesson style or inside quizzes.
 
 Verification: assessment phase `khan` (87 checks: all rule tables, setting validation and permissions, retry flow with event and
 row checks, no leak of the solution, summary changes, assessment up/down, replay idempotency, evidence-model fallback), phases skip,
@@ -186,8 +190,8 @@ unused-family question with the smallest hash of seed, rule and question, and th
 - **Result screen.** With the Khan model on, the review lists each skill the attempt touched: "Leveled up: Not started -> Familiar",
   "Leveled down", or "Stayed at".
 
-Not built: the unit page "Level up" button, placing a unit test automatically at the end of every unit, an authoring screen (the builder is
-an API for now; the Account Hub could call it), a time-per-question rule, and any change to how a quiz is marked.
+Not built: a time-per-question rule and any change to how a quiz is marked. (The unit page "Level up" button, placing a unit test at the end
+of every unit and an authoring screen were missing at this point and were added in sections 10 and 11.)
 
 Verification: assessment phase `skillcheck` (58 checks: input validation, shortage rollback, builder output, one question per skill per
 attempt, placement, the intro summary and wording, timed quiz, Khan level moves over two attempts, the result block, off-state), all
@@ -259,3 +263,16 @@ checks, including empty/deduplicated bulk reads. Teacher Reports now replays onl
 quiz outcomes for a selected period, without reading overall skill history; its UI and privacy limits
 are in `RELEASE-READINESS.md`. That checkpoint also supersedes the earlier credential/browser blockers
 and records the remaining full-repository standards and exact-parity differences.
+
+## 12. Where it lives in the code (checked October 19, 2026)
+
+| Piece | Files and entry points |
+| --- | --- |
+| Practice runner (dots, Skip, stepped hints, tiers, Start over) | `assets/js/practice.js`, `includes/Practice/Sessions.php` (`can_skip`, `results`, `skipped`), REST `POST /practice/sessions/{uuid}/skip` in `Rest/V1/PracticeController.php` |
+| Khan level model | `includes/Skills/Khan/Settings.php` (option `ohmylms_mastery_settings`, models `evidence` and `khan`), `Levels.php` (rules, `changes()`), `Schema.php` (table `{prefix}ohmylms_khan_level_events`, option `ohmylms_khan_schema`); the setting is the Mastery model switch under Gamification, XP & mastery (REST group `mastery` of `Rest/V1/EngagementController.php`) |
+| Level display | `includes/Skills/MasteryDisplay.php` |
+| Mixed-skill assessments | `includes/Assessment/SkillAssessment.php` (`create()`, `create_for_course()`), REST `POST /ohmylms/v1/skill-assessments` and `/skill-assessments/course` in `Rest/V1/AssessmentController.php`, setting `style` in `Assessment/AssessmentSettings.php`, pools in `Assessment/Pools.php` |
+| Intro screen and result levels | `includes/Quiz/Intro.php`, `Quiz/AnswerReview.php` |
+| Authoring screen | **OhMyLMS -> Skill assessments**: `Assessment/SkillAssessmentPage.php` and `templates/admin/skill-assessments.php` |
+| AI and MCP tools | `list_unit_skills` and `create_skill_assessment` (draft only): `includes/MCP/SkillAssessmentTools.php`, the administrator assistant in `includes/AI/AssistantTools.php`; see [../ADMIN-ASSISTANT.md](../ADMIN-ASSISTANT.md) and [../MCP.md](../MCP.md) |
+| Level up and Course challenge on the hub | `includes/Student/CourseOutline.php` (`units[].test`, `challenge`), `templates/student-hub/course.php` |

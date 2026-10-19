@@ -12,6 +12,7 @@ import {
 	reconcileChoiceSave,
 } from '../../assets/src/features/learning/choiceAutosave.mjs';
 import { questionTypePatch } from '../../assets/src/features/question-editor/questionBlocks.mjs';
+import { defaultTemplate } from '../../assets/src/features/question-editor/templateModel.mjs';
 import { choiceModePatch } from '../../assets/src/features/question-editor/choiceModel.mjs';
 const element = ( type, props, ...children ) => ( { type, props, children } );
 function compile( file, scope, expression ) {
@@ -59,6 +60,9 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		ToggleControl: 'toggle',
 		Dropdown: 'dropdown',
 		QuestionOptionsBar: 'settings',
+		MathVariables: { Provider: 'variables-provider' },
+		TemplatePanel: 'template-panel',
+		defaultTemplate,
 		Button: 'button',
 		questionPrompt,
 		questionPromptPatch,
@@ -86,6 +90,50 @@ test( 'shared block preserves equations without showing prompt or answer format 
 			patch = value;
 		},
 	} );
+	const variables = nodes( tree ).find(
+		( node ) =>
+			node.props?.contentClassName ===
+			'ohmylms-question-variables-popover'
+	);
+	assert.equal( variables.props.popoverProps.placement, 'right-start' );
+	let opened = false;
+	const controls = variables.props.renderToggle( {
+		isOpen: false,
+		onToggle: () => {
+			opened = true;
+		},
+	} );
+	const toggle = nodes( controls ).find( ( node ) => node.type === 'toggle' );
+	toggle.props.onChange( true );
+	assert.equal( opened, true );
+	assert.deepEqual( patch.settings.template, defaultTemplate() );
+	assert.equal( patch.settings.partial_credit, true );
+	const randomized = { ...question, settings: patch.settings };
+	const enabledTree = MultipleChoiceFields( {
+		question: randomized,
+		onChange: ( value ) => {
+			patch = value;
+		},
+	} );
+	assert.deepEqual( enabledTree.props.value, defaultTemplate().variables );
+	const enabledVariables = nodes( enabledTree ).find(
+		( node ) =>
+			node.props?.contentClassName ===
+			'ohmylms-question-variables-popover'
+	);
+	const panel = nodes(
+		enabledVariables.props.renderContent( { onClose: () => {} } )
+	).find( ( node ) => node.type === 'template-panel' );
+	assert.equal( panel.props.question, randomized );
+	const enabledControls = enabledVariables.props.renderToggle( {
+		isOpen: true,
+		onToggle: () => {},
+	} );
+	nodes( enabledControls )
+		.find( ( node ) => node.type === 'toggle' )
+		.props.onChange( false );
+	assert.equal( patch.settings.template, undefined );
+	assert.equal( patch.settings.partial_credit, true );
 	const prompt = nodes( tree ).find( ( node ) => node.type === 'rich' );
 	assert.equal( Boolean( prompt.props.showToolbar ), false );
 	prompt.props.onChange( `<p>Solve ${ marker }</p>` );
@@ -100,11 +148,62 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		[
 			'single-choice',
 			'multiple-choice',
+			'numerical',
+			'structured',
+			'graphing',
+			'number-line',
+			'shade-model',
+			'count-blocks',
+			'set-clock',
+			'make-amount',
+			'fill-level',
+			'build-chart',
+			'grid-build',
+			'labeling',
+			'hotspot',
+			'draw',
+			'fill-in-the-blank',
+			'matching',
+			'match-table-grid',
+			'dropdown-blanks',
+			'multi-blank',
+			'build-expression',
+			'expression',
 			'reorder',
 			'short-text',
 			'long-text',
 		]
 	);
+
+	for ( const type of [
+		'numerical',
+		'structured',
+		'graphing',
+		'number-line',
+		'shade-model',
+		'count-blocks',
+		'set-clock',
+		'make-amount',
+		'fill-level',
+		'build-chart',
+		'grid-build',
+		'labeling',
+		'hotspot',
+		'draw',
+	] ) {
+		selector.props.onChange( type );
+		assert.equal( patch.settings.type, type );
+		assert.deepEqual( patch.questions, [] );
+		const visual = MultipleChoiceFields( {
+			question: { ...question, ...patch },
+			onChange: () => {},
+		} );
+		assert.equal(
+			nodes( visual ).find( ( node ) => node.type === 'answers' ).props
+				.type,
+			type
+		);
+	}
 	selector.props.onChange( 'short-text' );
 	assert.equal( patch.settings.type, 'short-text' );
 	assert.equal( patch.questions.length, 1 );
@@ -143,6 +242,7 @@ function lessonHarness( {
 	approvalFailure = false,
 	refreshFailure = false,
 	pauseSave = false,
+	context = {},
 } = {} ) {
 	let cursor = 0;
 	let refCursor = 0;
@@ -251,6 +351,7 @@ function lessonHarness( {
 		return Edit( {
 			attributes,
 			clientId: 'placement-a',
+			context,
 			setAttributes: ( patch ) => Object.assign( attributes, patch ),
 		} );
 	};
@@ -373,4 +474,72 @@ test( 'automatic save keeps newer edits dirty and available for the next save', 
 			.description,
 		'<p>Newer typing</p>'
 	);
+} );
+
+test( 'native quiz references reopen visual formats and autosave their private settings', async () => {
+	for ( const type of [
+		'number-line',
+		'shade-model',
+		'count-blocks',
+		'set-clock',
+		'make-amount',
+		'fill-level',
+		'build-chart',
+		'grid-build',
+		'labeling',
+		'hotspot',
+		'draw',
+	] ) {
+		const harness = lessonHarness( {
+			context: { postType: 'ohmylms-quiz' },
+		} );
+		const draft = {
+			name: 'Visual question',
+			...questionTypePatch( { settings: {} }, type ),
+		};
+		if ( [ 'labeling', 'hotspot' ].includes( type ) ) {
+			draft.settings.image_url = 'https://example.com/diagram.png';
+		}
+		harness.state[ 0 ] = draft;
+		const fields = nodes( harness.render() ).find(
+			( node ) => node.type === 'fields'
+		);
+		assert.ok( fields, type );
+		assert.equal( fields.props.allowWritten, true );
+		fields.props.onChange( draft );
+		await harness.autosave();
+		const payload = harness.calls.find(
+			( call ) => call[ 0 ] === 'create'
+		)[ 1 ];
+		assert.deepEqual( payload.settings, draft.settings );
+		assert.deepEqual( payload.questions, [] );
+		assert.equal( harness.attributes.questionId, 42 );
+		assert.equal( 'settings' in harness.attributes, false );
+	}
+} );
+
+test( 'native mathematics questions reopen and save through the existing private writer', async () => {
+	for ( const type of [ 'numerical', 'structured', 'graphing' ] ) {
+		const harness = lessonHarness( {
+			context: { postType: 'ohmylms-quiz' },
+		} );
+		const draft = {
+			name: 'Math question',
+			...questionTypePatch( { settings: {} }, type ),
+		};
+		if ( type === 'numerical' ) draft.settings.answer = 0;
+		harness.state[ 0 ] = draft;
+		const fields = nodes( harness.render() ).find(
+			( node ) => node.type === 'fields'
+		);
+		assert.ok( fields, type );
+		fields.props.onChange( draft );
+		await harness.autosave();
+		const payload = harness.calls.find(
+			( call ) => call[ 0 ] === 'create'
+		)[ 1 ];
+		assert.deepEqual( payload.settings, draft.settings );
+		assert.deepEqual( payload.questions, [] );
+		assert.equal( 'settings' in harness.attributes, false );
+	}
 } );

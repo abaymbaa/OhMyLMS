@@ -129,6 +129,37 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</span>
 					</div>
 
+					<?php $learner_details = \OhMyLMS\Student\LearnerProfile::get( $student->get_id() ); ?>
+					<div class="ohmylms-form-group province half-width">
+						<label>
+							<?php echo esc_html__( 'Province', 'ohmylms' ); ?>
+						</label>
+
+						<span class="ohmylms-input-wrapper">
+							<?php \OhMyLMS\Student\LearnerProfile::select( 'profile-province', 'province', \OhMyLMS\Student\LearnerProfile::provinces(), $learner_details['province'], __( 'Choose your province', 'ohmylms' ) ); ?>
+						</span>
+					</div>
+
+					<div class="ohmylms-form-group school-name half-width">
+						<label>
+							<?php echo esc_html__( 'School name', 'ohmylms' ); ?>
+						</label>
+
+						<span class="ohmylms-input-wrapper">
+							<input type="text" name="school_name" maxlength="<?php echo esc_attr( \OhMyLMS\Student\LearnerProfile::MAX_SCHOOL ); ?>" value="<?php echo esc_attr( $learner_details['school_name'] ); ?>">
+						</span>
+					</div>
+
+					<div class="ohmylms-form-group grade half-width">
+						<label>
+							<?php echo esc_html__( 'Grade', 'ohmylms' ); ?>
+						</label>
+
+						<span class="ohmylms-input-wrapper">
+							<?php \OhMyLMS\Student\LearnerProfile::select( 'profile-grade', 'grade', \OhMyLMS\Student\LearnerProfile::grades(), $learner_details['grade'], __( 'Choose your grade', 'ohmylms' ) ); ?>
+						</span>
+					</div>
+
 					<div class="ohmylms-form-group whatsapp half-width">
 						<label>
 							<?php echo esc_html__( 'WhatsApp', 'ohmylms' ); ?>

@@ -66,6 +66,9 @@ final class SettingsSave {
 				} elseif ( is_email( $display ) ) {
 					$errors[] = __( 'Display name cannot be an email address, for privacy.', 'ohmylms' );
 				}
+				// Phone, province, school and grade are saved only when the form sent them, so other roles are untouched.
+				$details = LearnerProfile::validate( array_intersect_key( $input, array_flip( array( 'phone', 'province', 'school_name', 'grade' ) ) ) );
+				$errors  = array_merge( $errors, $details['errors'] );
 				if ( ! $errors ) {
 					wp_update_user(
 						array(
@@ -79,6 +82,7 @@ final class SettingsSave {
 					$student->set_last_name( $last );
 					$student->set_display_name( $display );
 					$student->save();
+					LearnerProfile::save( $user_id, $details['values'] );
 				}
 				break;
 			case 'email':
@@ -127,13 +131,20 @@ final class SettingsSave {
 				}
 				break;
 			case 'about':
-				$student->set_bio( self::text( $input['bio'] ?? '', 1000, true ) );
-				$student->set_interest( self::text( $input['interests'] ?? '', 300 ) );
-				$student->set_country( self::text( $input['country'] ?? '', 80 ) );
-				$student->set_phone( self::text( $input['phone'] ?? '', 40 ) );
-				$student->set_whatsapp( self::text( $input['whatsapp'] ?? '', 40 ) );
-				$student->set_address( self::text( $input['address'] ?? '', 200 ) );
-				$student->save();
+				// The phone number now lives in the Basics card; older forms that still send it are validated the same way.
+				$phone  = LearnerProfile::validate( array_intersect_key( $input, array( 'phone' => true ) ) );
+				$errors = array_merge( $errors, $phone['errors'] );
+				if ( ! $errors ) {
+					$student->set_bio( self::text( $input['bio'] ?? '', 1000, true ) );
+					$student->set_interest( self::text( $input['interests'] ?? '', 300 ) );
+					$student->set_country( self::text( $input['country'] ?? '', 80 ) );
+					if ( isset( $phone['values']['phone'] ) ) {
+						$student->set_phone( $phone['values']['phone'] );
+					}
+					$student->set_whatsapp( self::text( $input['whatsapp'] ?? '', 40 ) );
+					$student->set_address( self::text( $input['address'] ?? '', 200 ) );
+					$student->save();
+				}
 				break;
 			default:
 				foreach ( array( 'chapter', 'direct_messages', 'new_course_content', 'comments_replies' ) as $key ) {
@@ -156,7 +167,7 @@ final class SettingsSave {
 		if ( ! is_user_logged_in() || ! isset( self::CARDS[ $card ] ) || ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), self::ACTION . '_' . $card ) ) {
 			wp_die( esc_html__( 'This form has expired. Go back, reload the page and try again.', 'ohmylms' ), '', array( 'response' => 403 ) );
 		}
-		$fields = array( 'first_name', 'last_name', 'display_name', 'email', 'password_current', 'password1', 'password2', 'bio', 'interests', 'country', 'phone', 'whatsapp', 'address', 'notification_chapter', 'notification_direct_messages', 'notification_new_course_content', 'notification_comments_replies' );
+		$fields = array( 'first_name', 'last_name', 'display_name', 'email', 'password_current', 'password1', 'password2', 'bio', 'interests', 'country', 'phone', 'province', 'school_name', 'grade', 'whatsapp', 'address', 'notification_chapter', 'notification_direct_messages', 'notification_new_course_content', 'notification_comments_replies' );
 		$input  = array();
 		foreach ( $fields as $field ) {
 			if ( isset( $_POST[ $field ] ) && is_scalar( $_POST[ $field ] ) ) {

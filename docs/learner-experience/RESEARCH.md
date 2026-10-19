@@ -3,6 +3,14 @@
 Observed October 15, 2026, in the user's existing signed-in Khan Academy account.
 This records navigation and interaction patterns, not exported learner data.
 
+Status (October 19, 2026): reference notes, kept as the evidence behind the learner hub design. They
+describe the external product as it was observed, not OhMyLMS. Where they say a teacher interface is
+out of scope, that was superseded: the teacher, parent and school workspaces were built (see
+[CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md)). Product decisions that still apply:
+no Tutor Me, no Teacher Tools, no learner-facing roadmaps, and a class is a student roster. Later
+observations of exercises, quizzes and tests are in [KHAN-ACTIVITIES.md](KHAN-ACTIVITIES.md); the
+data mapping is in [MAPPING.md](MAPPING.md).
+
 ## 1. Evidence and limits
 
 The live reference was the Khan Academy Classroom application on

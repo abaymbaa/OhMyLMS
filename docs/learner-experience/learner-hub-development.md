@@ -2,23 +2,28 @@
 
 Updated: October 16, 2026, Asia/Ulaanbaatar.
 
-Status as of October 16, 2026: implementation specification, partly delivered. Built and verified
-(see "Current state: start here" in [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md)): shared
-role contexts and sign-in chooser, parent sign-up, the parent workspace with school-linked children
-(P2), independent family links with managed children, invitations and learning choices (P3a to P3d),
-and the school workspace. Home-learning activity reports now use explicit, immutable launch context
-(see [the reporting contract](HOME-LEARNING-REPORTS.md)); older unknown activity and global mastery
-are excluded. Managed-child recovery and grade-then-collections refinements are implemented.
-P5 now adds grouped unit activities, a mastery legend, focused program lessons and course practice,
-collapsible course navigation, unit return links, and keyboard-friendly practice controls/progress.
-See [the P5 checkpoint](P5-UNIT-PRACTICE.md) for verification and supported-player limits.
-Remaining visual acceptance includes parent dashboard references and same-viewport reference comparison.
-The slice list below is the original plan, not a
-progress record.
-The user requested extending the development plan and explicitly requested UI
-replication. This document adds that scope to [PLAN.md](PLAN.md). Resume from
-[CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md), whose later decisions
-supersede the older planning defaults in PLAN.md.
+Status (checked October 19, 2026): **P0 to P5 are delivered; P6 (parent read-only reports and release
+verification) is delivered in part.** This document keeps the screen specification and the rules the
+parent and child experience must obey; the delivery table in section 5 records what was built and
+where. See "Current state: start here" in [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md)
+for the current summary and chronological ledger.
+
+Built and verified: shared role contexts and sign-in chooser, parent sign-up, the parent workspace
+with school-linked children (P2), independent family links with managed children, invitations and
+learning choices (P3a to P3d), the teacher and school workspaces, and home-learning activity reports
+with explicit, immutable launch context ([the reporting contract](HOME-LEARNING-REPORTS.md); older
+unknown activity and global mastery are excluded). Managed-child recovery and grade-then-collections
+refinements are implemented. P5 added grouped unit activities, a mastery legend, focused program
+lessons and course practice, collapsible course navigation, unit return links and keyboard-friendly
+practice controls ([P5 checkpoint](P5-UNIT-PRACTICE.md)). The Khan-style practice runner, level model
+and mixed-skill assessments came after that ([KHAN-ACTIVITIES.md](KHAN-ACTIVITIES.md)).
+Remaining visual acceptance: the parent dashboard reference screens and a same-viewport reference
+comparison were never observed, so exact parity is not claimed (see
+[RELEASE-READINESS.md](RELEASE-READINESS.md)).
+
+The user explicitly requested UI replication of the observed Khan Academy screens, with OhMyLMS
+branding. Roadmaps stay hidden shared-syllabus infrastructure, a class is a student roster, and there
+is no front-end portal and no learner tutor ("Tutor Me") or Teacher Tools.
 
 ## 1. Product direction: replicate the observed UI
 
@@ -186,19 +191,16 @@ prepared queries, contextual escaping, and generic unauthorized responses.
 
 ## 5. Delivery order and acceptance gates
 
-All slices start as planned, not implemented.
+| Slice | Deliverable | Acceptance gate | Status |
+| --- | --- | --- | --- |
+| P0 | Screen inventory, annotated reference comparisons, relationship/data contract | Observed vs proposed screens and supported vs missing player features recorded | Delivered: [PARENT-CHILD-P0.md](PARENT-CHILD-P0.md) |
+| P1 | Role chooser, parent auth/profile UI, role-aware landing | Parent/teacher dual-role account reaches requested workspace; no role escalation | Delivered |
+| P2 | Parent workspace using existing school guardian links | Two children switch correctly; unrelated child IDs denied; revocation effective immediately | Delivered |
+| P3 | Independent family links and child setup | No-school family works; duplicate identity, expired/replayed invitation, recovery and multi-guardian cases pass | Delivered (P3a-P3d) |
+| P4 | Child personalization, My learning, profile and connections | Reference composition reproduced with real data, empty states, supported metrics and working navigation | Delivered in the learner hub; unobserved reference screens not claimed |
+| P5 | Unit and practice presentation integration | Question extensions and genuine assessment behavior preserved; resume/exit and keyboard flow verified | Delivered: [P5-UNIT-PRACTICE.md](P5-UNIT-PRACTICE.md) |
+| P6 | Parent read-only reports and release verification | Cross-school/home scope tests, visual comparison, localization, migration rehearsal and rollback checks pass | Reports delivered ([HOME-LEARNING-REPORTS.md](HOME-LEARNING-REPORTS.md)); the visual comparison, full localization and migration rehearsal remain open ([RELEASE-READINESS.md](RELEASE-READINESS.md)) |
 
-| Slice | Deliverable | Acceptance gate |
-| --- | --- | --- |
-| P0 | Screen inventory, annotated reference comparisons, relationship/data contract | Observed vs proposed screens and supported vs missing player features recorded |
-| P1 | Role chooser, parent auth/profile UI, role-aware landing | Parent/teacher dual-role account reaches requested workspace; no role escalation |
-| P2 | Parent workspace using existing school guardian links | Two children switch correctly; unrelated child IDs denied; revocation effective immediately |
-| P3 | Independent family links and child setup | No-school family works; duplicate identity, expired/replayed invitation, recovery and multi-guardian cases pass |
-| P4 | Child personalization, My learning, profile and connections | Reference composition reproduced with real data, empty states, supported metrics and working navigation |
-| P5 | Unit and practice presentation integration | Question extensions and genuine assessment behavior preserved; resume/exit and keyboard flow verified |
-| P6 | Parent read-only reports and release verification | Cross-school/home scope tests, visual comparison, localization, migration rehearsal and rollback checks pass |
-
-Use the existing learner/teacher slices as dependencies, not duplicate replacements.
 Update the continuation ledger after each slice with changed files, checks actually
 run, known failures, and one exact next step.
 
@@ -221,11 +223,10 @@ run, known failures, and one exact next step.
   `php tests/php/student-hub-integration.php`. Respect their disposable database
   and credential requirements. Report existing violations and unavailable checks.
 
-This specification does not itself implement UI or migrate data. The October 16
-source audit, screen inventory and proposed family contract are now recorded in
-[PARENT-CHILD-P0.md](PARENT-CHILD-P0.md). Unobserved reference screens remain open
-visual acceptance items. Next implementation slice: P1 role selection and parent
-onboarding; follow the continuation ledger for current runtime changes and checks.
+This specification does not itself implement UI or migrate data. The source audit, screen
+inventory and family contract are in [PARENT-CHILD-P0.md](PARENT-CHILD-P0.md). Unobserved reference
+screens remain open visual acceptance items; follow the continuation ledger for current runtime
+changes and checks.
 
 
 ## Hub address and administration (October 2026)

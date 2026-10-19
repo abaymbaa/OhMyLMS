@@ -9,6 +9,7 @@
 
 use OhMyLMS\Data\Student;
 use OhMyLMS\Student\Hub;
+use OhMyLMS\Student\LearnerProfile;
 use OhMyLMS\Student\SettingsSave;
 
 defined( 'ABSPATH' ) || exit;
@@ -63,6 +64,14 @@ $hub_save = static function () {
 			<div class="oml-hub-field"><label for="hub-first"><?php esc_html_e( 'First name', 'ohmylms' ); ?></label><input id="hub-first" name="first_name" type="text" maxlength="60" autocomplete="given-name" value="<?php echo esc_attr( $hub_student->get_first_name() ); ?>"></div>
 			<div class="oml-hub-field"><label for="hub-last"><?php esc_html_e( 'Last name', 'ohmylms' ); ?></label><input id="hub-last" name="last_name" type="text" maxlength="60" autocomplete="family-name" value="<?php echo esc_attr( $hub_student->get_last_name() ); ?>"></div>
 			<div class="oml-hub-field"><label for="hub-display"><?php esc_html_e( 'Display name', 'ohmylms' ); ?></label><input id="hub-display" name="display_name" type="text" required maxlength="60" value="<?php echo esc_attr( $hub_user->display_name ); ?>"></div>
+			<div class="oml-hub-field"><label for="hub-phone"><?php esc_html_e( 'Phone number', 'ohmylms' ); ?></label><input id="hub-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" inputmode="tel" placeholder="+976 9911 2233" value="<?php echo esc_attr( $hub_student->get_phone() ); ?>"><small><?php esc_html_e( 'Include the country code if you are outside Mongolia.', 'ohmylms' ); ?></small></div>
+			<?php if ( ! $teacher_mode && ! $parent_mode && ! $school_mode ) : ?>
+				<?php $hub_details = LearnerProfile::get( $hub_user->ID ); ?>
+				<div class="oml-hub-field"><label for="hub-province"><?php esc_html_e( 'Province', 'ohmylms' ); ?></label><?php LearnerProfile::select( 'hub-province', 'province', LearnerProfile::provinces(), $hub_details['province'], __( 'Choose your province', 'ohmylms' ) ); ?></div>
+				<div class="oml-hub-field"><label for="hub-school"><?php esc_html_e( 'School name', 'ohmylms' ); ?></label><input id="hub-school" name="school_name" type="text" maxlength="<?php echo esc_attr( LearnerProfile::MAX_SCHOOL ); ?>" autocomplete="organization" value="<?php echo esc_attr( $hub_details['school_name'] ); ?>"></div>
+				<div class="oml-hub-field"><label for="hub-grade"><?php esc_html_e( 'Grade', 'ohmylms' ); ?></label><?php LearnerProfile::select( 'hub-grade', 'grade', LearnerProfile::grades(), $hub_details['grade'], __( 'Choose your grade', 'ohmylms' ) ); ?></div>
+			<?php endif; ?>
+			<p><small><?php esc_html_e( 'Change your email address in the Email address card below.', 'ohmylms' ); ?></small></p>
 			<?php $hub_save(); ?>
 		</form>
 
@@ -71,7 +80,6 @@ $hub_save = static function () {
 			<div class="oml-hub-field"><label for="hub-bio"><?php esc_html_e( 'Bio', 'ohmylms' ); ?></label><textarea id="hub-bio" name="bio" rows="3" maxlength="1000"><?php echo esc_textarea( $hub_student->get_bio() ); ?></textarea></div>
 			<div class="oml-hub-field"><label for="hub-interests"><?php esc_html_e( 'Interests', 'ohmylms' ); ?></label><input id="hub-interests" name="interests" type="text" maxlength="300" value="<?php echo esc_attr( $hub_student->get_interest() ); ?>"></div>
 			<div class="oml-hub-field"><label for="hub-country"><?php esc_html_e( 'Country', 'ohmylms' ); ?></label><input id="hub-country" name="country" type="text" maxlength="80" autocomplete="country-name" value="<?php echo esc_attr( $hub_student->get_country() ); ?>"></div>
-			<div class="oml-hub-field"><label for="hub-phone"><?php esc_html_e( 'Phone', 'ohmylms' ); ?></label><input id="hub-phone" name="phone" type="tel" maxlength="40" autocomplete="tel" value="<?php echo esc_attr( $hub_student->get_phone() ); ?>"></div>
 			<div class="oml-hub-field"><label for="hub-whatsapp"><?php esc_html_e( 'WhatsApp', 'ohmylms' ); ?></label><input id="hub-whatsapp" name="whatsapp" type="tel" maxlength="40" value="<?php echo esc_attr( $hub_student->get_whatsapp() ); ?>"></div>
 			<div class="oml-hub-field"><label for="hub-address"><?php esc_html_e( 'Address', 'ohmylms' ); ?></label><input id="hub-address" name="address" type="text" maxlength="200" autocomplete="street-address" value="<?php echo esc_attr( $hub_student->get_address() ); ?>"></div>
 			<?php $hub_save(); ?>

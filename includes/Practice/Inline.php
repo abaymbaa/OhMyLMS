@@ -87,7 +87,7 @@ final class Inline {
 			shuffle( $order ); }
 		$definitions = $ids;
 		shuffle( $definitions );
-		$view = $snapshot->student_view( $order, AttemptItems::tokens( $scope, $ids ), array( 'definitions' => $definitions ), AttemptItems::tokens( $scope, $ids, 'd' ) );
+		$view = $snapshot->student_view( $order, AttemptItems::tokens( $scope, $ids ), array( 'definitions' => $definitions ), AttemptItems::tokens( $scope, $ids, 'd' ), $scope );
 		self::enqueue();
 		ob_start();
 		?>

@@ -16,6 +16,7 @@ use OhMyLMS\Assessment\InlineBlanks;
 use OhMyLMS\Assessment\Interactive;
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Assessment\Structured;
+use OhMyLMS\Assessment\StructuredPart;
 use OhMyLMS\Extensions\Registry;
 use OhMyLMS\QuestionBank\Usage;
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -493,6 +494,10 @@ final class AnswerReview {
 		foreach ( Structured::parts( $settings ) as $part ) {
 			$id      = $part['id'];
 			$text    = isset( $given[ $id ] ) && is_scalar( $given[ $id ] ) ? trim( (string) $given[ $id ] ) : '';
+			if ( 'question' === $part['kind'] ) {
+				$child = StructuredPart::snapshot( $part );
+				$text = implode( '; ', self::given_lines( $child->get_type(), self::options( $child ), (array) ( $given[ $id ] ?? array() ) ) );
+			}
 			$mark    = $marks[ $id ] ?? null;
 			$max     = $mark ? (float) $mark['max'] : (float) $part['marks'];
 			$awarded = $mark && null !== $mark['awarded'] ? (float) $mark['awarded'] : null;
@@ -507,7 +512,10 @@ final class AnswerReview {
 			}
 			$unit     = trim( (string) ( $part['unit'] ?? '' ) );
 			$expected = null;
-			if ( 'numerical' === $part['kind'] ) {
+			if ( 'question' === $part['kind'] ) {
+				$expected_lines = self::expected_lines( $child->get_type(), $child, self::options( $child ), $child->get_settings() );
+				$expected = $expected_lines ? implode( '; ', $expected_lines ) : null;
+			} elseif ( 'numerical' === $part['kind'] ) {
 				$numbers  = isset( $part['answers'] ) && is_array( $part['answers'] ) ? $part['answers'] : ( isset( $part['answer'] ) ? array( $part['answer'] ) : array() );
 				$expected = trim( implode( ' / ', array_map( 'strval', array_filter( $numbers, 'is_scalar' ) ) ) . ' ' . $unit );
 			} elseif ( 'text' === $part['kind'] ) {
@@ -630,7 +638,7 @@ final class AnswerReview {
 		}
 		$lines = array();
 		foreach ( $given as $key => $value ) {
-			$value = is_array( $value ) ? implode( ', ', array_filter( array_map( 'strval', $value ), 'strlen' ) ) : trim( (string) $value );
+			$value = is_array( $value ) ? implode( ', ', array_filter( array_map( static function ( $item ) { return is_scalar( $item ) ? (string) $item : wp_json_encode( $item ); }, $value ), 'strlen' ) ) : trim( (string) $value );
 			if ( '' === $value ) {
 				continue;
 			}

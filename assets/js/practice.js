@@ -229,6 +229,12 @@
 				'fill-level',
 				'build-chart',
 				'grid-build',
+				'graphing',
+				'hot-text',
+				'match-table-grid',
+				'labeling',
+				'hotspot',
+				'draw',
 			].indexOf( type ) !== -1
 		) {
 			window.OhMyLMSInteractive.render( container, type, view.settings );
@@ -240,24 +246,34 @@
 			var fields = {};
 			( ( view.settings && view.settings.parts ) || [] ).forEach(
 				function ( part ) {
-					var field = el( 'input', {
-						type: 'text',
-						class: 'ohmylms-text-input',
-						inputmode:
-							part.kind === 'numerical' ? 'decimal' : 'text',
-						'aria-label': part.label,
-					} );
-					fields[ part.id ] = field;
+					var field = el(
+						part.kind === 'written' ? 'textarea' : 'input',
+						{
+							type: 'text',
+							class: 'ohmylms-text-input',
+							inputmode:
+								part.kind === 'numerical' ? 'decimal' : 'text',
+							'aria-label': part.label,
+						}
+					);
+					var nested = el( 'div', {} );
+					fields[ part.id ] =
+						part.kind === 'question'
+							? renderInputs( nested, {
+									...part.question,
+									item_id: view.item_id + '-' + part.id,
+								} )
+							: function () {
+									return field.value;
+								};
 					container.appendChild(
 						el( 'div', { class: 'ohmylms-structured-part' }, [
-							el( 'p', {
-								html:
-									'<strong>' +
-									( part.label || '' ) +
-									'</strong> ' +
-									( part.prompt || '' ),
-							} ),
-							field,
+							el( 'p', {}, [
+								el( 'strong', { text: part.label || '' } ),
+								document.createTextNode( ' ' ),
+								el( 'span', { html: part.prompt || '' } ),
+							] ),
+							part.kind === 'question' ? nested : field,
 							part.unit
 								? el( 'span', {
 										class: 'ohmylms-numerical-unit',
@@ -271,7 +287,7 @@
 			return function () {
 				var answer = {};
 				Object.keys( fields ).forEach( function ( id ) {
-					answer[ id ] = fields[ id ].value;
+					answer[ id ] = fields[ id ]();
 				} );
 				return answer;
 			};

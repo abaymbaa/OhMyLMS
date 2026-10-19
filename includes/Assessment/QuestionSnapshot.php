@@ -35,6 +35,27 @@ class QuestionSnapshot {
 			if ( ! empty( $option['matching_data']['image_url'] ) ) {
 				$this->version['options'][ $index ]['matching_data']['image_url'] = $this->frozen_url( 'match:' . $id, (string) $option['matching_data']['image_url'] ); }
 		}
+		$parts = in_array( $this->get_type(), array( 'structured', 'passage' ), true ) ? (array) ( $this->version['settings']['parts'] ?? array() ) : array();
+		foreach ( $parts as $index => $part ) {
+			if ( ! is_array( $part ) ) {
+				continue;
+			}
+			$prefix = 'part:' . ( $part['id'] ?? '' ) . ':';
+			$frozen = array();
+			foreach ( $this->frozen() as $key => $record ) {
+				if ( 0 === strpos( $key, $prefix ) ) {
+					$frozen[ substr( $key, strlen( $prefix ) ) ] = $record;
+				}
+			}
+			$this->version['settings']['parts'][ $index ]['prompt'] = \OhMyLMS\QuestionBank\MediaFreezer::body( (string) ( $part['prompt'] ?? '' ), $frozen );
+			if ( 'question' === ( $part['kind'] ?? '' ) && in_array( $part['question']['settings']['type'] ?? '', StructuredPart::TYPES, true ) ) {
+				$child_data                    = StructuredPart::snapshot( $part )->to_array();
+				$child_data['media']['frozen'] = $frozen;
+				$child                         = new self( $child_data );
+				$this->version['settings']['parts'][ $index ]['question']['settings']  = $child->get_settings();
+				$this->version['settings']['parts'][ $index ]['question']['questions'] = $child->get_questions();
+			}
+		}
 	}
 
 	/** Decode a qb_question_versions row (JSON columns) into a snapshot. */
@@ -153,8 +174,10 @@ class QuestionSnapshot {
 	 * @param array $option_order Option IDs in delivery order.
 	 * @param array $tokens       option id => token.
 	 * @param array $display      Extra frozen presentation data (e.g. matching definition order).
+	 * @param array $definition_tokens Matching definition tokens.
+	 * @param string $scope Delivery token scope for nested parts.
 	 */
-	public function student_view( array $option_order = array(), array $tokens = array(), array $display = array(), array $definition_tokens = array() ) {
+	public function student_view( array $option_order = array(), array $tokens = array(), array $display = array(), array $definition_tokens = array(), $scope = '' ) {
 		$type  = $this->get_type();
 		$by_id = array();
 		foreach ( $this->version['options'] as $option ) {
@@ -175,7 +198,7 @@ class QuestionSnapshot {
 		$public     = array_merge( array( 'type', 'required', 'score', 'randomize' ), (array) ( $definition['public_settings'] ?? array() ) );
 		$settings   = array_intersect_key( $this->get_settings(), array_flip( $public ) );
 		if ( 'structured' === $type ) {
-			$settings['parts'] = Structured::public_parts( $this->get_settings() ); }
+			$settings['parts'] = Structured::public_parts( $this->get_settings(), $this->get_id() . '|' . $this->get_version_id(), $scope ); }
 		// A type with private keys inside public structures builds its own learner view.
 		if ( is_callable( $definition['public_view'] ?? null ) ) {
 			$settings = array_merge( $settings, (array) call_user_func( $definition['public_view'], $this->get_settings(), $this->get_id() . '|' . $this->get_version_id() ) ); }

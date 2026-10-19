@@ -3,7 +3,33 @@ import {
 	promptText,
 } from '../question-editor/questionPrompt.mjs';
 import { parseInlineBlankPrompt } from '../question-editor/inlineBlanks.mjs';
-import { interactiveIssues } from '../question-editor/interactiveModel.mjs';
+import { extendedIssues } from '../question-editor/extendedModel.mjs';
+import {
+	interactiveIssues,
+	isInteractiveType,
+} from '../question-editor/interactiveModel.mjs';
+
+/**
+ * Check numerical keys before autosaving an incomplete answer field.
+ *
+ * @param {Object} settings Numerical answer settings.
+ * @return {boolean} Whether the answer key and tolerance are valid.
+ */
+function numericalReady( settings ) {
+	const finite = ( value ) =>
+		[ 'number', 'string' ].includes( typeof value ) &&
+		String( value ).trim() !== '' &&
+		Number.isFinite( Number( value ) );
+	const answers = settings.answers ?? [ settings.answer ];
+	return (
+		Array.isArray( answers ) &&
+		answers.length > 0 &&
+		answers.every( finite ) &&
+		( settings.tolerance === undefined ||
+			( finite( settings.tolerance ) &&
+				Number( settings.tolerance ) >= 0 ) )
+	);
+}
 
 /**
  * Avoid creating incomplete bank questions while their author is still typing.
@@ -46,14 +72,52 @@ export function choiceReadyToSave( question ) {
 			} )
 		);
 	}
+	if ( type === 'numerical' ) {
+		return hasPrompt && numericalReady( question.settings );
+	}
+	if ( type === 'structured' ) {
+		const parts = question.settings.parts || [];
+		return (
+			hasPrompt &&
+			parts.length > 0 &&
+			new Set( parts.map( ( part ) => part.id ) ).size === parts.length &&
+			parts.every(
+				( part ) =>
+					/^[a-z0-9_-]{1,40}$/i.test( part.id || '' ) &&
+					Number.isFinite( Number( part.marks ?? 1 ) ) &&
+					Number( part.marks ?? 1 ) >= 0 &&
+					( ( part.kind === 'question' &&
+						! [ 'structured', 'passage' ].includes(
+							part.question?.settings?.type
+						) &&
+						choiceReadyToSave( {
+							...part.question,
+							name: part.prompt || 'Part',
+							description: '',
+							settings: {
+								...part.question?.settings,
+								question_code: false,
+							},
+						} ) ) ||
+						part.kind === 'written' ||
+						( part.kind === 'numerical' &&
+							numericalReady( part ) ) ||
+						( part.kind === 'text' &&
+							Array.isArray( part.accepted ) &&
+							part.accepted.some( ( answer ) =>
+								String( answer ).trim()
+							) ) )
+			)
+		);
+	}
 	if (
-		[
-			'dropdown-blanks',
-			'multi-blank',
-			'build-expression',
-			'expression',
-		].includes( type )
+		[ 'labeling', 'hotspot', 'draw', 'graphing', 'hot-text' ].includes(
+			type
+		)
 	) {
+		return hasPrompt && ! extendedIssues( type, question.settings ).length;
+	}
+	if ( isInteractiveType( type ) ) {
 		return (
 			hasPrompt && ! interactiveIssues( type, question.settings ).length
 		);

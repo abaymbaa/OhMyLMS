@@ -486,23 +486,31 @@
 			categories.forEach( function ( category, index ) {
 				var x = left + index * colWidth + 10;
 				var value = 0;
-				var bar = svg( 'rect', { x: x, width: colWidth - 20, class: 'ohmylms-vis-bar', role: 'slider', tabindex: '0', 'aria-label': category.label, 'aria-valuemin': 0, 'aria-valuemax': max } );
+				var control = svg( 'g', { class: 'ohmylms-vis-bar-control', role: 'slider', tabindex: '0', 'aria-label': category.label, 'aria-valuemin': 0, 'aria-valuemax': max, 'aria-orientation': 'vertical' } );
+				var bar = svg( 'rect', { x: x, width: colWidth - 20, class: 'ohmylms-vis-bar' } );
+				var handle = svg( 'g', { class: 'ohmylms-vis-bar-handle', 'aria-hidden': 'true' }, [
+					svg( 'rect', { x: -15, y: -9, width: 30, height: 18, rx: 5 } ),
+					svg( 'path', { d: 'M -6 -3 H 6 M -6 0 H 6 M -6 3 H 6' } ),
+				] );
+				control.appendChild( bar );
+				control.appendChild( handle );
 				var text = svg( 'text', { x: x + ( colWidth - 20 ) / 2, y: 210, 'text-anchor': 'middle', class: 'ohmylms-vis-text', text: category.label } );
 				function draw() {
 					var h = ( value / max ) * ( bottom - top );
 					bar.setAttribute( 'y', bottom - h );
 					bar.setAttribute( 'height', h );
-					bar.setAttribute( 'aria-valuenow', value );
+					handle.setAttribute( 'transform', 'translate(' + ( x + ( colWidth - 20 ) / 2 ) + ' ' + ( bottom - h ) + ')' );
+					control.setAttribute( 'aria-valuenow', value );
 				}
 				function set( next ) {
 					value = round( clamp( Math.round( next / step ) * step, 0, max ) );
 					draw();
 					setAnswer( root, category.id, value );
 				}
-				drag( bar, s, function ( p ) {
+				drag( control, s, function ( p ) {
 					set( ( ( bottom - p.y ) / ( bottom - top ) ) * max );
 				} );
-				bar.addEventListener( 'keydown', function ( event ) {
+				control.addEventListener( 'keydown', function ( event ) {
 					var keys = { ArrowUp: step, ArrowRight: step, ArrowDown: -step, ArrowLeft: -step };
 					if ( keys[ event.key ] !== undefined ) {
 						event.preventDefault();
@@ -515,11 +523,12 @@
 					set( ( ( bottom - p.y ) / ( bottom - top ) ) * max );
 				} );
 				s.appendChild( hit );
-				s.appendChild( bar );
+				s.appendChild( control );
 				s.appendChild( text );
 				draw();
 			} );
 			root.appendChild( s );
+			root.appendChild( el( 'p', { class: 'ohmylms-vis-chart-help', text: 'Drag the handles up or down to set each bar, or focus a handle and use the arrow keys.' } ) );
 		},
 	} );
 

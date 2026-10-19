@@ -155,6 +155,7 @@ export function BankAnswerFields( {
 	if ( type === 'structured' ) {
 		return (
 			<StructuredEditor
+				renderQuestion={ BankAnswerFields }
 				value={ settings }
 				onChange={ ( patch ) =>
 					onChange( {

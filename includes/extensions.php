@@ -40,6 +40,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Learning\NativeLessonEditor::init();
 \OhMyLMS\Blocks\QuizPlayerBlock::init();
+\OhMyLMS\Blocks\QuestionPlayerBlock::init();
 \OhMyLMS\Quiz\AnswerReview::init();
 \OhMyLMS\Curriculum\Bootstrap::init();
 \OhMyLMS\Design\Tokens::init();

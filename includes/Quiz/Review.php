@@ -12,6 +12,7 @@ use OhMyLMS\Assessment\GradeEvents;
 use OhMyLMS\Assessment\Grader;
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Assessment\Scoring;
+use OhMyLMS\Assessment\Structured;
 use OhMyLMS\Extensions\Registry;
 use OhMyLMS\Data\Student;
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -302,7 +303,7 @@ final class Review {
 		$auto    = 0.0;
 		$written = array();
 		foreach ( $parts as $part ) {
-			if ( 'written' === $part['kind'] ) {
+			if ( Structured::has_manual( array( 'parts' => array( $part ) ) ) ) {
 				$written[ $part['id'] ] = $question_marks * $weights[ $part['id'] ];
 				continue; }
 			$current = self::current_part( $attempt_id, (int) $item['id'], $part['id'] );

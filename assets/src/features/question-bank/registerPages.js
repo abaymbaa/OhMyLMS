@@ -1,3 +1,5 @@
+import { createElement } from '@wordpress/element';
+import { BankAnswerFields } from '../question-editor/BankAnswerFields';
 import { __ } from '@wordpress/i18n';
 
 /**
@@ -66,7 +68,11 @@ export function registerQuestionBankPages( registry, components ) {
 			'A shared stem with separately scored parts',
 			'ohmylms'
 		),
-		render: StructuredEditor,
+		render: ( props ) =>
+			createElement( StructuredEditor, {
+				...props,
+				renderQuestion: BankAnswerFields,
+			} ),
 	} );
 	[
 		[

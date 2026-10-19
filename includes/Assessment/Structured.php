@@ -11,9 +11,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Structured (multi-part) questions: one shared stem/diagram with separately scored parts.
  *
- * settings.parts = [[
+ * Settings.parts = [[
  *   'id' => 'a', 'label' => '(a)', 'prompt' => '...', 'marks' => 2,
- *   'kind' => 'numerical' | 'text' | 'written',
+ *   'kind' => 'numerical' | 'text' | 'written' | 'question',
  *   'answer' / 'answers' / 'tolerance' / 'tolerance_type' / 'unit'   (numerical)
  *   'accepted' => ['x=3', ...]                       (text; case and spaces ignored)
  *   'rubric' => 'teacher-only marking notes'
@@ -22,14 +22,21 @@ defined( 'ABSPATH' ) || exit;
  * can be attributed per part. The parent always stays together in a delivery.
  */
 final class Structured {
-	const KINDS = array( 'numerical', 'text', 'written' );
+	const KINDS = array( 'numerical', 'text', 'written', 'question' );
 
+	/**
+	 * Normalize stable part identities and marks.
+	 *
+	 * @param array $settings Private parent settings.
+	 * @return array Normalized parts.
+	 */
 	public static function parts( array $settings ) {
 		$parts = array();
 		foreach ( (array) ( $settings['parts'] ?? array() ) as $index => $part ) {
 			if ( ! is_array( $part ) ) {
 				continue; }
-			$id      = preg_replace( '/[^a-z0-9_-]/i', '', (string) ( $part['id'] ?? '' ) ) ?: 'p' . ( $index + 1 );
+			$id      = preg_replace( '/[^a-z0-9_-]/i', '', (string) ( $part['id'] ?? '' ) );
+			$id      = $id ? $id : 'p' . ( $index + 1 );
 			$parts[] = array_merge(
 				$part,
 				array(
@@ -43,7 +50,12 @@ final class Structured {
 		return $parts;
 	}
 
-	/** Part weights for evidence: id => share of the question's marks. */
+	/**
+	 * Part weights for evidence.
+	 *
+	 * @param array $settings Private settings.
+	 * @return array Part ID to share of marks.
+	 */
 	public static function weights( array $settings ) {
 		$parts   = self::parts( $settings );
 		$total   = array_sum( array_column( $parts, 'marks' ) );
@@ -53,17 +65,38 @@ final class Structured {
 		return $weights;
 	}
 
-	/** Learner-safe parts (no answers, tolerances or rubrics). */
-	public static function public_parts( array $settings ) {
+	/**
+	 * Build learner-safe parts.
+	 *
+	 * @param array  $settings Private settings.
+	 * @param string $identity Parent question/version identity.
+	 * @param string $scope Delivery token scope.
+	 * @return array Public parts.
+	 */
+	public static function public_parts( array $settings, $identity = '', $scope = '' ) {
 		return array_map(
-			static function ( $part ) {
-				return array_intersect_key( $part, array_flip( array( 'id', 'label', 'prompt', 'kind', 'marks', 'unit' ) ) );
+			static function ( $part ) use ( $identity, $scope ) {
+				$public           = array_intersect_key( $part, array_flip( array( 'id', 'label', 'prompt', 'kind', 'marks', 'unit' ) ) );
+				$public['prompt'] = wp_kses_post( $public['prompt'] ?? '' );
+				if ( 'question' === $part['kind'] ) {
+					$public['question'] = StructuredPart::view( $part, StructuredPart::scope( $scope, $identity, $part ) );
+					if ( 'fill-in-the-blank' === $public['question']['settings']['type'] && ! empty( $public['question']['inline_blanks'] ) ) {
+						$public['prompt'] = '';
+					}
+				}
+				return $public;
 			},
 			self::parts( $settings )
 		);
 	}
 
-	/** @return array{correct:bool,fraction:float,manual:bool,parts:array} */
+	/**
+	 * Grade each part against its frozen settings.
+	 *
+	 * @param mixed  $answer Submitted parts.
+	 * @param object $question Frozen parent question.
+	 * @return array|\WP_Error Grade or invalid leaf response.
+	 */
 	public static function grade( $answer, $question ) {
 		$settings = $question->get_settings();
 		$parts    = self::parts( $settings );
@@ -82,7 +115,19 @@ final class Structured {
 				$all                    = false;
 				continue;
 			}
-			if ( 'numerical' === $part['kind'] ) {
+			if ( 'question' === $part['kind'] ) {
+				$grade = Grader::grade( StructuredPart::snapshot( $part ), is_array( $input ) ? $input : array() );
+				if ( is_wp_error( $grade ) ) {
+					return $grade;
+				}
+				if ( $grade['pending'] ) {
+					$manual                 = true;
+					$all                    = false;
+					$results[ $part['id'] ] = null;
+					continue;
+				}
+				$fraction = $grade['fraction'];
+			} elseif ( 'numerical' === $part['kind'] ) {
 				$fraction = NumericAnswer::grade( $input, $part )['fraction'];
 			} else {
 				$accepted = array_map(
@@ -105,15 +150,92 @@ final class Structured {
 		);
 	}
 
-	/** Case- and whitespace-insensitive: "X = 2" matches "x=2". */
+	/**
+	 * Validate bounded leaf responses before grading.
+	 *
+	 * @param mixed  $answer Submitted parts.
+	 * @param object $question Frozen parent.
+	 * @return bool Whether the response has a valid shape.
+	 */
+	public static function validate_response( $answer, $question ) {
+		if ( ! is_array( $answer ) || count( $answer ) > 50 ) {
+			return false;
+		}
+		$parts = array_column( self::parts( $question->get_settings() ), null, 'id' );
+		foreach ( $answer as $id => $input ) {
+			if ( ! isset( $parts[ $id ] ) ) {
+				return false;
+			}
+			$part = $parts[ $id ];
+			if ( 'question' === $part['kind'] ) {
+				$child      = StructuredPart::snapshot( $part );
+				$definition = \OhMyLMS\Extensions\Registry::get( 'question', $child->get_type() );
+				if ( ! in_array( $child->get_type(), StructuredPart::TYPES, true ) || ! is_array( $input ) || ! is_callable( $definition['validate'] ?? null ) || ! call_user_func( $definition['validate'], $input, $child ) ) {
+					return false;
+				}
+			} elseif ( ! is_scalar( $input ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * Whether a part needs teacher review.
+	 *
+	 * @param array $settings Private settings.
+	 * @return bool Whether any part is manual.
+	 */
+	public static function has_manual( array $settings ) {
+		foreach ( self::parts( $settings ) as $part ) {
+			if ( 'written' === $part['kind'] || ( 'question' === $part['kind'] && Grader::manual_type( StructuredPart::snapshot( $part )->get_type() ) ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Map child options without changing numerical or text answers.
+	 *
+	 * @param object $question Frozen parent.
+	 * @param mixed  $answer Response.
+	 * @param string $scope Delivery token scope.
+	 * @param bool   $decode Whether to decode tokens.
+	 * @return mixed Mapped response.
+	 */
+	public static function map_response( $question, $answer, $scope, $decode ) {
+		if ( ! is_array( $answer ) ) {
+			return $answer;
+		}
+		foreach ( self::parts( $question->get_settings() ) as $part ) {
+			if ( 'question' === $part['kind'] && isset( $answer[ $part['id'] ] ) ) {
+				$identity              = $question->get_id() . '|' . $question->get_version_id();
+				$answer[ $part['id'] ] = StructuredPart::map_response( $part, $answer[ $part['id'] ], StructuredPart::scope( $scope, $identity, $part ), $decode );
+			}
+		}
+		return $answer;
+	}
+
+	/**
+	 * Normalize case and whitespace in exact text answers.
+	 *
+	 * @param mixed $value Answer.
+	 * @return string Normalized answer.
+	 */
 	public static function normalize_text( $value ) {
 		return preg_replace( '/\s+/u', '', mb_strtolower( trim( (string) $value ) ) );
 	}
 
-	/** Authoring validation: returns true or a message. */
+	/**
+	 * Validate private part settings.
+	 *
+	 * @param array $settings Private settings.
+	 * @return true|string Validation result.
+	 */
 	public static function validate_settings( array $settings ) {
 		$parts = (array) ( $settings['parts'] ?? array() );
-		if ( ! $parts ) {
+		if ( ! $parts || count( $parts ) > 50 ) {
 			return __( 'A structured question needs at least one part.', 'ohmylms' ); }
 		$ids = array();
 		foreach ( $parts as $part ) {
@@ -124,9 +246,15 @@ final class Structured {
 				return __( 'Each part needs a unique ID (letters, numbers, - or _).', 'ohmylms' ); }
 			$ids[ $id ] = true;
 			if ( ! in_array( $part['kind'] ?? '', self::KINDS, true ) ) {
-				return __( 'Part kind must be numerical, text or written.', 'ohmylms' ); }
+				return __( 'Choose an answer type for each part.', 'ohmylms' ); }
 			if ( isset( $part['marks'] ) && ( ! is_numeric( $part['marks'] ) || (float) $part['marks'] < 0 ) ) {
 				return __( 'Part marks must be zero or more.', 'ohmylms' ); }
+			if ( 'question' === $part['kind'] ) {
+				$valid = StructuredPart::validate( $part );
+				if ( true !== $valid ) {
+					return $valid;
+				}
+			}
 			if ( 'numerical' === $part['kind'] ) {
 				$expected = $part['answers'] ?? array( $part['answer'] ?? null );
 				foreach ( (array) $expected as $value ) {

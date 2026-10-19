@@ -274,6 +274,20 @@ function LessonChoiceEdit( {
 					'multi-blank',
 					'build-expression',
 					'expression',
+					'numerical',
+					'structured',
+					'graphing',
+					'number-line',
+					'shade-model',
+					'count-blocks',
+					'set-clock',
+					'make-amount',
+					'fill-level',
+					'build-chart',
+					'grid-build',
+					'labeling',
+					'hotspot',
+					'draw',
 				]
 			: [ 'single-choice', 'multiple-choice' ]
 	).includes( question.settings?.type );
@@ -281,8 +295,44 @@ function LessonChoiceEdit( {
 		'Complete the question and options, and select a correct answer.',
 		'ohmylms'
 	);
-	if ( [ 'short-text', 'long-text' ].includes( question.settings.type ) ) {
+	if (
+		[
+			'number-line',
+			'shade-model',
+			'count-blocks',
+			'set-clock',
+			'make-amount',
+			'fill-level',
+			'build-chart',
+			'grid-build',
+			'labeling',
+			'hotspot',
+			'draw',
+		].includes( question.settings.type )
+	) {
+		incompleteMessage = __(
+			'Complete the question and its visual answer settings to save.',
+			'ohmylms'
+		);
+	} else if (
+		[ 'short-text', 'long-text' ].includes( question.settings.type )
+	) {
 		incompleteMessage = __( 'Enter a question to save.', 'ohmylms' );
+	} else if ( question.settings.type === 'numerical' ) {
+		incompleteMessage = __(
+			'Enter a finite correct answer to save.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'structured' ) {
+		incompleteMessage = __(
+			'Add at least one part and complete its answer and marks to save.',
+			'ohmylms'
+		);
+	} else if ( question.settings.type === 'graphing' ) {
+		incompleteMessage = __(
+			'Set a valid graph range and correct points to save.',
+			'ohmylms'
+		);
 	} else if ( question.settings.type === 'reorder' ) {
 		incompleteMessage = __( 'Add at least two items to save.', 'ohmylms' );
 	} else if ( question.settings.type === 'match-table-grid' ) {

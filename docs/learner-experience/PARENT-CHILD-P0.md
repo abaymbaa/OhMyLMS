@@ -3,16 +3,17 @@
 Source audit: October 16, 2026. This records implementation decisions and remaining
 reference gaps.
 
-**Status as of October 16, 2026:** the contract below has been implemented through P1, P2 and
+**Status (checked October 19, 2026):** the contract below is implemented through P1, P2 and
 P3a-P3d: role chooser and parent sign-up, school-linked read-only child overview, and the
 independent family schema (`ohmylms_family_schema`, tables `ohmylms_family_links`,
-`_invitations`, `_audit`, and version 2 `_activity`) with managed children, setup links, existing-learner invitations,
-learning choices and revocation. Differences from this contract: family operations use
-`admin-post` forms rather than a `/ohmylms/v1/family` REST namespace, and the hub password minimum was
-reconciled to 12-128. Home-learning activity reports and launch provenance are implemented; see
-[HOME-LEARNING-REPORTS.md](HOME-LEARNING-REPORTS.md). The unobserved reference screens remain proposed.
-See "Current state: start here" in the continuation ledger. The "No migrations or parent UI have
-run" line near the end is historical.
+`_invitations`, `_audit`, and version 2 `_activity`) with managed children, setup links,
+existing-learner invitations, learning choices and revocation. Differences from this contract:
+family operations use `admin-post` forms rather than a `/ohmylms/v1/family` REST namespace
+(no such routes exist), and the hub password minimum was reconciled to 12-128. Home-learning
+activity reports and launch provenance are implemented; see
+[HOME-LEARNING-REPORTS.md](HOME-LEARNING-REPORTS.md). The unobserved reference screens
+(parent dashboard, family linking, recovery, personalization step two) remain proposed designs.
+The current summary is "Current state: start here" in the continuation ledger.
 Read with [the screen specification](learner-hub-development.md) and the
 [continuation ledger](../../CONTINUE-LEARNER-HUB.md).
 
@@ -28,7 +29,7 @@ Read with [the screen specification](learner-hub-development.md) and the
 | HTTP caching | `Schools/Controller::dispatch()` sets `Cache-Control: private, no-store` | Parent responses and HTML follow the same private/no-store policy |
 | Invitations | School invitations carry a school, hashed token, issuer, expiry, consumed/revoked state; acceptance rechecks issuer access | Keep school invitations school-scoped; create independent family invitations separately |
 | Role routing | The current hub supports learner/teacher context; teacher Settings now preserves eligible teacher context | Add parent context using current relationships; preserve explicit routes over device defaults |
-| Passwords | School signup requires 12–128 characters; hub password changes currently allow eight | Parent signup uses the 12–128 rule. Reconcile password-change policy as an explicit P1 task; the specification's 12-character statement is not yet true across every account surface |
+| Passwords | School signup requires 12–128 characters; hub password changes allowed eight when this audit was written | Parent signup uses the 12–128 rule. The hub password-change policy was reconciled to 12–128 during P1 |
 | Preview | `Schools/ViewAs.php` is administrative preview with its own session | Never use it for parent viewing or child switching |
 
 The current class definition is **a student roster**. Courses are followed/enrolled
@@ -92,8 +93,9 @@ scope-specific reports; do not invent a home/school split from course membership
 
 ## HTTP and migration contract
 
-- Keep `/ohmylms/v1/school/children` and school report contracts intact. Add a
-  separate `/ohmylms/v1/family` namespace for independent-family operations.
+- Keep `/ohmylms/v1/school/children` and school report contracts intact. The contract
+  proposed a separate `/ohmylms/v1/family` namespace; it was not built, and independent-family
+  operations use nonce-protected `admin-post` forms instead.
 - Reads use the signed-in actor, never a client-supplied guardian ID. A child/scope
   identifier selects a candidate; it does not grant access. Writes require current
   authorization, nonce, input validation and bounded/rate-limited invitation handling.
@@ -107,21 +109,32 @@ scope-specific reports; do not invent a home/school split from course membership
   explicit indexes. Do not rewrite learning history or enrollments. Rollback disables
   new routes/views while retaining identities, relationships and audit history.
 
-## Delivery gates and next step
+## Delivery status and decisions adopted for P3
 
-P0 source/screen inventory and the proposed independent-family contract are recorded
-here. Reference inspection is still incomplete for parent dashboard, family linking,
-reports, recovery and personalization step two. Visual parity for those screens is
-pending. No migrations or parent UI have run.
+P1 (role selection, parent onboarding, the 12-128 character password rule), P2 (school-linked
+read-only overview, which denies unrelated children, inactive schools, inactive student
+memberships and revoked links on every request) and P3a-P3d are built. Reference inspection is
+still incomplete for the parent dashboard, family linking, reports, recovery and personalization
+step two, so visual parity for those screens is not claimed.
 
-P1 can now implement shared role selection and parent onboarding against these
-boundaries, reconcile the password policy and verify dual-role/explicit-route
-landing. P2 must deny unrelated children, inactive schools, inactive student
-memberships and revoked links on every page/report request. P3 adds no-school and
-multiple-guardian cases, invitation replay/expiry tests and migration/rollback checks.
+P3 was delivered in four slices:
 
-Legacy retirement remains part of each slice: inventory and migrate consumers,
-establish redirects independent of page publication, then trash redundant generated
-pages and remove unused renderers/assets. The current old dashboard/profile/course
-pages still support public compatibility routes; their deletion needs that redirect
-migration first. Checkout is an active dependency and remains separate from the hub.
+- **P3a** schema plus `Family\Service` (`children()`, `child()`, `create_child()`,
+  `invite_existing()`, `accept()`, `revoke()`) with no UI; **P3b** "Add a child" and the child
+  setup link; **P3c** invite an existing learner, with accept/decline in the learner's
+  Connections; **P3d** grade and collections step for a managed child. Accept is one transaction
+  that rechecks the issuer and consumes the invitation while activating the link, so replay and
+  concurrent accepts cannot double-link.
+- Decisions adopted: collect no birth date (display name and grade only) unless a site policy
+  requires more; a managed child is a `wp_users` row with a generated login and no personal
+  email, signing in through a parent-issued expiring setup link; an existing learner is linked
+  only through a private single-use invitation bound to their verified email; selector rows
+  carry a scope (`school:<id>` or `home`) and `ParentWorkspace::children()` merges both,
+  revalidating the exact scope on every request. `OHMYLMS_FAMILY_ENABLED=false` disables
+  recording and views and keeps every table, link and audit row.
+- Not part of P3: parent-created assignments, messaging, purchases for a child, importing school
+  guardian links into family links, and the unobserved reference screens.
+
+Legacy retirement was handled slice by slice; see
+[LEGACY-RETIREMENT-PLAN.md](LEGACY-RETIREMENT-PLAN.md). Checkout is an active dependency and
+remains separate from the hub.

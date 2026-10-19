@@ -107,8 +107,31 @@ if ( $engagement_visible ) {
 				</div>
 			<?php endif ?>
 
-			<?php if ( ! empty( $student->get_phone() ) || ! empty( $student->get_whatsapp() ) || ! empty( $student->get_country() ) ) : ?>
+			<?php
+			$learner_details = \OhMyLMS\Student\LearnerProfile::get( $student->get_id() );
+			$learner_places  = \OhMyLMS\Student\LearnerProfile::provinces();
+			$learner_grades  = \OhMyLMS\Student\LearnerProfile::grades();
+			?>
+			<?php if ( ! empty( $student->get_phone() ) || ! empty( $student->get_whatsapp() ) || ! empty( $student->get_country() ) || array_filter( $learner_details ) ) : ?>
 				<div class="profile-contact-details">
+					<?php if ( '' !== $learner_details['province'] ) : ?>
+						<span class="profile-contact-item">
+							<strong><?php echo esc_html__( 'Province:', 'ohmylms' ); ?></strong>
+							<?php echo esc_html( $learner_places[ $learner_details['province'] ] ?? $learner_details['province'] ); ?>
+						</span>
+					<?php endif; ?>
+					<?php if ( '' !== $learner_details['school_name'] ) : ?>
+						<span class="profile-contact-item">
+							<strong><?php echo esc_html__( 'School:', 'ohmylms' ); ?></strong>
+							<?php echo esc_html( $learner_details['school_name'] ); ?>
+						</span>
+					<?php endif; ?>
+					<?php if ( '' !== $learner_details['grade'] ) : ?>
+						<span class="profile-contact-item">
+							<strong><?php echo esc_html__( 'Grade:', 'ohmylms' ); ?></strong>
+							<?php echo esc_html( $learner_grades[ $learner_details['grade'] ] ?? $learner_details['grade'] ); ?>
+						</span>
+					<?php endif; ?>
 					<?php if ( ! empty( $student->get_phone() ) ) : ?>
 						<span class="profile-contact-item">
 							<strong><?php echo esc_html__( 'Phone:', 'ohmylms' ); ?></strong>

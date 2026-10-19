@@ -1,8 +1,8 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
  * Item-level grade history. Each grade or regrade is a new event; the previous
- * current event for the same item is marked superseded. Every event also gets
- * an evidence-outbox row in the same transaction, so skill evidence is updated
+ * current event for the same item is marked superseded. Events get an evidence-outbox
+ * row unless their surface explicitly opts out, so participating skill evidence is updated
  * exactly once per grade even if a request dies after commit.
  *
  * @package OhMyLMS
@@ -20,7 +20,8 @@ defined( 'ABSPATH' ) || exit;
 final class GradeEvents {
 	/**
 	 * @param array $event source_type, source_id, item_id, student_id, question_id, version_id,
-	 *                     awarded, max_marks, fraction, correct, grader, reviewer_id, reason
+	 *                     awarded, max_marks, fraction, correct, grader, reviewer_id, reason.
+	 *                     Optional record_evidence defaults to true; false saves a grade without skill effects.
 	 * @return int event ID
 	 */
 	public static function record( array $event ) {
@@ -59,7 +60,7 @@ final class GradeEvents {
 		$id = (int) $wpdb->insert_id;
 		if ( $previous && $wpdb->update( $table, array( 'superseded_by' => $id ), array( 'id' => $previous ) ) === false ) {
 			throw new \RuntimeException( 'Grade event supersede failed' ); }
-		if ( ! $wpdb->insert(
+		if ( ( ! array_key_exists( 'record_evidence', $event ) || $event['record_evidence'] ) && ! $wpdb->insert(
 			Schema::table( 'evidence_outbox' ),
 			array(
 				'grade_event_id' => $id,
@@ -70,8 +71,8 @@ final class GradeEvents {
 			throw new \RuntimeException( 'Evidence outbox write failed' );
 		}
 		/**
-		 * Fires inside the grading transaction, after the grade event and its evidence outbox row
-		 * are written. Listeners must be cheap and must not throw: an exception here would roll
+		 * Fires inside the grading transaction, after the grade event and any participating evidence
+		 * outbox row are written. Listeners must be cheap and must not throw: an exception here would roll
 		 * back the grade.
 		 *
 		 * @param int   $id  Grade event ID.

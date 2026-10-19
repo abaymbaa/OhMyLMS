@@ -16,6 +16,9 @@ import { choiceModePatch } from './choiceModel.mjs';
 import { questionTypePatch } from './questionBlocks.mjs';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { QuestionLivePreview } from './QuestionLivePreview';
+import { TemplatePanel } from './TemplatePanel';
+import { defaultTemplate } from './templateModel.mjs';
+import { MathVariables } from '../math/MathInput';
 import {
 	questionAnswerPatch,
 	questionPrompt,
@@ -64,321 +67,524 @@ export function MultipleChoiceFields( {
 		};
 	}, [] );
 	return (
-		<fieldset
-			className={ `ohmylms-compact-choice ohmylms-choice-card${ question.settings.type === 'match-table-grid' ? ' is-match-table-grid' : '' }` }
-			ref={ root }
-			disabled={ readOnly }
+		<MathVariables.Provider
+			value={ question.settings?.template?.variables || [] }
 		>
-			{ readOnly ? (
-				<QuestionLivePreview question={ question } />
-			) : (
-				<>
-					<div className="ohmylms-choice-card-header">
-						<RichContentControl
-							label={ __( 'Question statement', 'ohmylms' ) }
-							placeholder={ __( 'Untitled question', 'ohmylms' ) }
-							compact
-							value={ questionPrompt( question ) }
-							onChange={ ( value ) =>
-								onChange(
-									questionPromptPatch( question, value )
-								)
-							}
-						/>
-						<SelectControl
-							label={ __( 'Question type', 'ohmylms' ) }
-							hideLabelFromVision
-							value={ question.settings.type }
-							options={ [
-								{
-									label: __( 'Multiple choice', 'ohmylms' ),
-									value: 'single-choice',
-								},
-								{
-									label: __( 'Checkboxes', 'ohmylms' ),
-									value: 'multiple-choice',
-								},
-								...( allowWritten
-									? [
-											{
-												label: __(
-													'Fill in the blank',
-													'ohmylms'
-												),
-												value: 'fill-in-the-blank',
-											},
-											{
-												label: __(
-													'Matching',
-													'ohmylms'
-												),
-												value: 'matching',
-											},
-											{
-												label: __(
-													'Match table grid',
-													'ohmylms'
-												),
-												value: 'match-table-grid',
-											},
-											{
-												label: __(
-													'Dropdown in a sentence',
-													'ohmylms'
-												),
-												value: 'dropdown-blanks',
-											},
-											{
-												label: __(
-													'Multi-blank / table',
-													'ohmylms'
-												),
-												value: 'multi-blank',
-											},
-											{
-												label: __(
-													'Build from tiles',
-													'ohmylms'
-												),
-												value: 'build-expression',
-											},
-											{
-												label: __(
-													'Math expression',
-													'ohmylms'
-												),
-												value: 'expression',
-											},
-										]
-									: [] ),
-								...( allowWritten
-									? [
-											{
-												label: __(
-													'Reorder',
-													'ohmylms'
-												),
-												value: 'reorder',
-											},
-										]
-									: [] ),
-								...( allowWritten
-									? [
-											{
-												label: __(
-													'Short answer',
-													'ohmylms'
-												),
-												value: 'short-text',
-											},
-											{
-												label: __(
-													'Long answer',
-													'ohmylms'
-												),
-												value: 'long-text',
-											},
-										]
-									: [] ),
-							] }
-							onChange={ ( type ) =>
-								onChange(
-									[
-										'single-choice',
-										'multiple-choice',
-									].includes( question.settings.type ) &&
+			<fieldset
+				className={ `ohmylms-compact-choice ohmylms-choice-card${ question.settings.type === 'match-table-grid' ? ' is-match-table-grid' : '' }` }
+				ref={ root }
+				disabled={ readOnly }
+			>
+				{ readOnly ? (
+					<QuestionLivePreview question={ question } />
+				) : (
+					<>
+						<div className="ohmylms-choice-card-header">
+							<RichContentControl
+								label={ __( 'Question statement', 'ohmylms' ) }
+								placeholder={ __(
+									'Untitled question',
+									'ohmylms'
+								) }
+								compact
+								value={ questionPrompt( question ) }
+								onChange={ ( value ) =>
+									onChange(
+										questionPromptPatch( question, value )
+									)
+								}
+							/>
+							<SelectControl
+								label={ __( 'Question type', 'ohmylms' ) }
+								hideLabelFromVision
+								value={ question.settings.type }
+								options={ [
+									{
+										label: __(
+											'Multiple choice',
+											'ohmylms'
+										),
+										value: 'single-choice',
+									},
+									{
+										label: __( 'Checkboxes', 'ohmylms' ),
+										value: 'multiple-choice',
+									},
+									...( allowWritten
+										? [
+												{
+													label: __(
+														'Numerical',
+														'ohmylms'
+													),
+													value: 'numerical',
+												},
+												{
+													label: __(
+														'Structured (multi-part)',
+														'ohmylms'
+													),
+													value: 'structured',
+												},
+												{
+													label: __(
+														'Graphing',
+														'ohmylms'
+													),
+													value: 'graphing',
+												},
+											]
+										: [] ),
+									...( allowWritten
+										? [
+												{
+													label: __(
+														'Number line',
+														'ohmylms'
+													),
+													value: 'number-line',
+												},
+												{
+													label: __(
+														'Shade a model',
+														'ohmylms'
+													),
+													value: 'shade-model',
+												},
+												{
+													label: __(
+														'Count with blocks',
+														'ohmylms'
+													),
+													value: 'count-blocks',
+												},
+												{
+													label: __(
+														'Set the clock',
+														'ohmylms'
+													),
+													value: 'set-clock',
+												},
+												{
+													label: __(
+														'Make an amount',
+														'ohmylms'
+													),
+													value: 'make-amount',
+												},
+												{
+													label: __(
+														'Fill to a level',
+														'ohmylms'
+													),
+													value: 'fill-level',
+												},
+												{
+													label: __(
+														'Build a chart',
+														'ohmylms'
+													),
+													value: 'build-chart',
+												},
+												{
+													label: __(
+														'Build on a grid',
+														'ohmylms'
+													),
+													value: 'grid-build',
+												},
+												{
+													label: __(
+														'Labeling',
+														'ohmylms'
+													),
+													value: 'labeling',
+												},
+												{
+													label: __(
+														'Hotspot',
+														'ohmylms'
+													),
+													value: 'hotspot',
+												},
+												{
+													label: __(
+														'Draw',
+														'ohmylms'
+													),
+													value: 'draw',
+												},
+											]
+										: [] ),
+									...( allowWritten
+										? [
+												{
+													label: __(
+														'Fill in the blank',
+														'ohmylms'
+													),
+													value: 'fill-in-the-blank',
+												},
+												{
+													label: __(
+														'Matching',
+														'ohmylms'
+													),
+													value: 'matching',
+												},
+												{
+													label: __(
+														'Match table grid',
+														'ohmylms'
+													),
+													value: 'match-table-grid',
+												},
+												{
+													label: __(
+														'Dropdown in a sentence',
+														'ohmylms'
+													),
+													value: 'dropdown-blanks',
+												},
+												{
+													label: __(
+														'Multi-blank / table',
+														'ohmylms'
+													),
+													value: 'multi-blank',
+												},
+												{
+													label: __(
+														'Build from tiles',
+														'ohmylms'
+													),
+													value: 'build-expression',
+												},
+												{
+													label: __(
+														'Math expression',
+														'ohmylms'
+													),
+													value: 'expression',
+												},
+											]
+										: [] ),
+									...( allowWritten
+										? [
+												{
+													label: __(
+														'Reorder',
+														'ohmylms'
+													),
+													value: 'reorder',
+												},
+											]
+										: [] ),
+									...( allowWritten
+										? [
+												{
+													label: __(
+														'Short answer',
+														'ohmylms'
+													),
+													value: 'short-text',
+												},
+												{
+													label: __(
+														'Long answer',
+														'ohmylms'
+													),
+													value: 'long-text',
+												},
+											]
+										: [] ),
+								] }
+								onChange={ ( type ) =>
+									onChange(
 										[
 											'single-choice',
 											'multiple-choice',
-										].includes( type )
-										? choiceModePatch(
-												question,
-												type === 'multiple-choice'
-											)
-										: questionTypePatch( question, type )
-								)
-							}
-							__nextHasNoMarginBottom
-						/>
-					</div>
-					{ question.settings.type === 'reorder' && (
-						<p className="ohmylms-reorder-guidance">
-							{ __(
-								'Arrange items in the correct order.',
-								'ohmylms'
-							) }
-						</p>
-					) }
-					{ [ 'short-text', 'long-text' ].includes(
-						question.settings.type
-					) ? (
-						<div className="ohmylms-written-answer-preview">
-							{ question.settings.type === 'short-text' ? (
-								<input
-									type="text"
-									disabled
-									aria-label={ __(
-										'Learner short answer',
-										'ohmylms'
-									) }
-									placeholder={ __(
-										'Short answer text',
-										'ohmylms'
-									) }
-								/>
-							) : (
-								<textarea
-									disabled
-									rows={ 3 }
-									aria-label={ __(
-										'Learner long answer',
-										'ohmylms'
-									) }
-									placeholder={ __(
-										'Long answer text',
-										'ohmylms'
-									) }
-								/>
-							) }
-							<span>{ __( 'Teacher graded', 'ohmylms' ) }</span>
-						</div>
-					) : (
-						<>
-							{ ' ' }
-							{ question.settings.type === 'match-table-grid' ? (
-								<MatchTableGridEditor
-									value={ question.settings }
-									onChange={ ( patch ) =>
-										onChange( {
-											settings: {
-												...question.settings,
-												...patch,
-											},
-										} )
-									}
-								/>
-							) : (
-								<BankAnswerFields
-									mainStatement
-									prompt={ questionPrompt( question ) }
-									compactActions
-									type={ question.settings.type }
-									options={ question.questions || [] }
-									settings={ question.settings }
-									onChange={ ( patch ) =>
-										onChange(
-											questionAnswerPatch(
-												question,
-												patch
-											)
-										)
-									}
-								/>
-							) }{ ' ' }
-						</>
-					) }
-					<div className="ohmylms-choice-card-footer">
-						{ onDuplicate && (
-							<Button
-								icon="admin-page"
-								label={ __( 'Duplicate question', 'ohmylms' ) }
-								onClick={ onDuplicate }
+										].includes( question.settings.type ) &&
+											[
+												'single-choice',
+												'multiple-choice',
+											].includes( type )
+											? choiceModePatch(
+													question,
+													type === 'multiple-choice'
+												)
+											: questionTypePatch(
+													question,
+													type
+												)
+									)
+								}
+								__nextHasNoMarginBottom
 							/>
-						) }
-						{ onRemove && (
-							<Button
-								icon="trash"
-								label={ __(
-									'Remove question block',
+						</div>
+						{ question.settings.type === 'reorder' && (
+							<p className="ohmylms-reorder-guidance">
+								{ __(
+									'Arrange items in the correct order.',
 									'ohmylms'
 								) }
-								onClick={ onRemove }
-							/>
+							</p>
 						) }
-						<ToggleControl
-							label={
-								question.settings.type === 'match-table-grid'
-									? __(
-											'Require a response in each row',
+						{ [ 'short-text', 'long-text' ].includes(
+							question.settings.type
+						) ? (
+							<div className="ohmylms-written-answer-preview">
+								{ question.settings.type === 'short-text' ? (
+									<input
+										type="text"
+										disabled
+										aria-label={ __(
+											'Learner short answer',
 											'ohmylms'
-										)
-									: __( 'Required', 'ohmylms' )
-							}
-							checked={ !! question.settings.required }
-							onChange={ ( required ) =>
-								onChange( {
-									settings: {
-										...question.settings,
-										required,
-									},
-								} )
-							}
-							__nextHasNoMarginBottom
-						/>
-						<Dropdown
-							contentClassName="ohmylms-choice-settings-popover"
-							renderToggle={ ( { isOpen, onToggle } ) => (
+										) }
+										placeholder={ __(
+											'Short answer text',
+											'ohmylms'
+										) }
+									/>
+								) : (
+									<textarea
+										disabled
+										rows={ 3 }
+										aria-label={ __(
+											'Learner long answer',
+											'ohmylms'
+										) }
+										placeholder={ __(
+											'Long answer text',
+											'ohmylms'
+										) }
+									/>
+								) }
+								<span>
+									{ __( 'Teacher graded', 'ohmylms' ) }
+								</span>
+							</div>
+						) : (
+							<>
+								{ ' ' }
+								{ question.settings.type ===
+								'match-table-grid' ? (
+									<MatchTableGridEditor
+										value={ question.settings }
+										onChange={ ( patch ) =>
+											onChange( {
+												settings: {
+													...question.settings,
+													...patch,
+												},
+											} )
+										}
+									/>
+								) : (
+									<BankAnswerFields
+										mainStatement
+										prompt={ questionPrompt( question ) }
+										compactActions
+										type={ question.settings.type }
+										options={ question.questions || [] }
+										settings={ question.settings }
+										onChange={ ( patch ) =>
+											onChange(
+												questionAnswerPatch(
+													question,
+													patch
+												)
+											)
+										}
+									/>
+								) }{ ' ' }
+							</>
+						) }
+						<div className="ohmylms-choice-card-footer">
+							{ onDuplicate && (
 								<Button
-									icon="ellipsis"
+									icon="admin-page"
 									label={ __(
-										'Question settings',
+										'Duplicate question',
 										'ohmylms'
 									) }
-									aria-expanded={ isOpen }
-									onClick={ onToggle }
+									onClick={ onDuplicate }
 								/>
 							) }
-							renderContent={ () => (
-								<>
-									<QuestionOptionsBar
-										question={ question }
-										onChange={ onChange }
-										hideRequired
-										hideRandomize={ [
-											'short-text',
-											'long-text',
-										].includes( question.settings.type ) }
-									/>
-									{ question.settings.type ===
-										'multiple-choice' && (
+							{ onRemove && (
+								<Button
+									icon="trash"
+									label={ __(
+										'Remove question block',
+										'ohmylms'
+									) }
+									onClick={ onRemove }
+								/>
+							) }
+							<ToggleControl
+								label={
+									question.settings.type ===
+									'match-table-grid'
+										? __(
+												'Require a response in each row',
+												'ohmylms'
+											)
+										: __( 'Required', 'ohmylms' )
+								}
+								checked={ !! question.settings.required }
+								onChange={ ( required ) =>
+									onChange( {
+										settings: {
+											...question.settings,
+											required,
+										},
+									} )
+								}
+								__nextHasNoMarginBottom
+							/>
+							<Dropdown
+								contentClassName="ohmylms-question-variables-popover"
+								popoverProps={ { placement: 'right-start' } }
+								renderToggle={ ( { isOpen, onToggle } ) => (
+									<>
 										<ToggleControl
 											label={ __(
-												'Allow partial grading',
+												'Enable randomized variables',
 												'ohmylms'
 											) }
 											checked={
-												!! question.settings
-													.partial_credit
+												!! question.settings.template
 											}
-											onChange={ ( partialCredit ) =>
+											onChange={ ( enabled ) => {
+												const {
+													template,
+													...settings
+												} = question.settings;
 												onChange( {
-													settings: {
-														...question.settings,
-														partial_credit:
-															partialCredit,
-													},
-												} )
-											}
+													settings: enabled
+														? {
+																...settings,
+																template:
+																	template ||
+																	defaultTemplate(),
+															}
+														: settings,
+												} );
+												if ( enabled !== isOpen ) {
+													onToggle();
+												}
+											} }
+											__nextHasNoMarginBottom
 										/>
-									) }
-									{ onApprove && (
+										{ question.settings.template && (
+											<Button
+												variant="tertiary"
+												aria-expanded={ isOpen }
+												onClick={ onToggle }
+											>
+												{ __(
+													'Edit variables',
+													'ohmylms'
+												) }
+											</Button>
+										) }
+									</>
+								) }
+								renderContent={ ( { onClose } ) => (
+									<div
+										style={ {
+											width: '360px',
+											maxWidth: '80vw',
+											maxHeight: '70vh',
+											overflowY: 'auto',
+											padding: '16px',
+										} }
+									>
 										<Button
-											variant="secondary"
-											onClick={ onApprove }
+											variant="tertiary"
+											onClick={ onClose }
 										>
 											{ __(
-												'Save and approve for learners',
+												'Close variables',
 												'ohmylms'
 											) }
 										</Button>
-									) }
-								</>
-							) }
-						/>
-					</div>
-				</>
-			) }
-		</fieldset>
+										<TemplatePanel
+											question={ question }
+											onChange={ onChange }
+											readOnly={ readOnly }
+										/>
+									</div>
+								) }
+							/>
+							<Dropdown
+								contentClassName="ohmylms-choice-settings-popover"
+								renderToggle={ ( { isOpen, onToggle } ) => (
+									<Button
+										icon="ellipsis"
+										label={ __(
+											'Question settings',
+											'ohmylms'
+										) }
+										aria-expanded={ isOpen }
+										onClick={ onToggle }
+									/>
+								) }
+								renderContent={ () => (
+									<>
+										<QuestionOptionsBar
+											question={ question }
+											onChange={ onChange }
+											hideRequired
+											hideRandomize={ [
+												'short-text',
+												'long-text',
+											].includes(
+												question.settings.type
+											) }
+										/>
+										{ question.settings.type ===
+											'multiple-choice' && (
+											<ToggleControl
+												label={ __(
+													'Allow partial grading',
+													'ohmylms'
+												) }
+												checked={
+													!! question.settings
+														.partial_credit
+												}
+												onChange={ ( partialCredit ) =>
+													onChange( {
+														settings: {
+															...question.settings,
+															partial_credit:
+																partialCredit,
+														},
+													} )
+												}
+											/>
+										) }
+										{ onApprove && (
+											<Button
+												variant="secondary"
+												onClick={ onApprove }
+											>
+												{ __(
+													'Save and approve for learners',
+													'ohmylms'
+												) }
+											</Button>
+										) }
+									</>
+								) }
+							/>
+						</div>
+					</>
+				) }
+			</fieldset>
+		</MathVariables.Provider>
 	);
 }
 

@@ -1,160 +1,87 @@
-# Legacy retirement: inventory and proposal
+# Legacy retirement: what was retired and what still forwards
 
-Inventory taken October 16, 2026 against http://800.local and the plugin source. Status: the
-retire-now steps and the later decision to drop the front-end portal are done (see the status
-sections at the end); this section is the original inventory. Rules from the user: retire old pages and
-shortcodes only as replacements are verified; preserve custom content and working
-redirects.
+Rewritten October 19, 2026. The original inventory and proposal (October 16, 2026) is replaced by
+this record of the outcome, checked against the code. The decision behind it, from the owner: **there
+is no front-end LMS portal.** Learners, teachers, parents and school staff use the learner hub
+(`[ohmylms_student_hub]`, hub page slug `profile`); platform administrators use wp-admin. The standalone
+React school/parent app and its front-end screens were removed.
 
-## What exists
+## Rules that governed the retirement
 
-### Pages on 800.local
+- Retire an old page, shortcode or route only after its replacement was verified.
+- Preserve custom content, working redirects and learning records. Pages are trashed (recoverable),
+  never deleted, unless they were test fixtures.
+- Old public shortcode tags stay registered as link adapters so embedded copies never print raw
+  text.
 
-| Page | State | Owner | Notes |
-| --- | --- | --- | --- |
-| 318 Student Home | published | OhMyLMS | the hub, slug `profile` (renamed from `student-home` by `Hub::migrate_slug`; the old address 301-redirects); also configured as the student dashboard/profile/courses page |
-| 115, 117, 118 (old dashboard/profile/courses) | trashed | OhMyLMS | retired earlier; ledger option `ohmylms_hub_retired_pages`; redirects work |
-| 395 Checkout | published | OhMyLMS | active dependency; keep |
-| 123 All Membership | published | OhMyLMS | `ohmylms_membership_page_id`; keep |
-| 313, 314 "TEST quiz player/review shortcode" | trashed | test fixtures | safe to delete permanently (needs your OK) |
-| 6, 7, 8, 9 (draft), 10, 36 (`cr-*`, My Dashboard, My Courses, Legacy profile) | published/draft | a different, older plugin | content uses `creator_lms_*` tags that nothing registers, so they print raw text; 36 duplicates 123 |
-| 2 Sample Page, 3 Privacy Policy | WordPress defaults | site | untouched |
+## Generated pages
 
-No navigation menus exist, so no menu entry depends on any page.
+The three generated student pages (dashboard, profile, my courses) are retired by
+`Student\LegacyPages::retire()` only when they are unmodified (`[ohmylms_dashboard]`, `[ohmylms_profile]`
+or `[ohmylms_my_courses]` as the whole content, no menu entry, no child page, no custom metadata). Each
+retired page ID, its former URL and endpoint are kept in the ledger option `ohmylms_hub_retired_pages`;
+`LegacyPages::redirect()` sends GET requests for those URLs to the matching hub section, so the
+redirect works even though the page is in the Trash. `LegacyPages::restore()` untrashes them and
+restores the configured page IDs when the hub is turned off.
 
-### Shortcodes registered by the plugin
+`ohmylms_default_pages` is filtered by `LegacyPages::default_pages()`, so `Install::create_pages()` and
+the REST `restore_pages` action never recreate a retired page. Checkout and the membership page are
+not part of the hub and are untouched.
 
-| Tag | Status | Consumers found |
-| --- | --- | --- |
-| `ohmylms_dashboard`, `ohmylms_profile`, `ohmylms_my_courses`, `ohmylms_my_profile` | adapters render a link to the hub (`LegacyPages::link`) | `Install.php` and `SettingsController` still provision pages with them when the hub is off; `FrontendAssets`, `Dashboard`, `CommonHook` use the conditional checks; legacy renderer classes are the rollback path |
-| `ohmylms_checkout`, `_course_list`, `_membership_plan`, `_offer_button`, `_buy_now` | active | commerce and catalog; keep |
-| `ohmylms_student_hub`, `_quiz`, `_quiz_review`, `_question`, `_skills`, `_practice`, `_learning`, `_bundles`, `_subject_skills`, `_activity` | active | keep |
-| School portal tags (`student_registration`, `teacher_registration`, `parent_registration`, `sign_in`, `school_dashboard`, `teacher_dashboard`, `parent_dashboard`, `student_assignments`) and blocks | active | see portal below |
+The hub itself moved from `/student-home/` to `/profile/` (`Hub::SLUG`, `Hub::migrate_slug()`); the old
+address redirects with its whole query string (`LegacyPages::renamed_hub_target()`), so invitation
+links and bookmarks keep working. Retired-page redirects never match the hub's own address.
 
-### The school portal (`/?ohmylms_portal=1&view=...`)
+## Shortcodes and blocks
 
-| View | Replacement | Still used by |
-| --- | --- | --- |
-| `teacher-dashboard` | teacher workspace | redirects already (signed-in eligible users, not invitation or file flows) |
-| `parent-dashboard` | parent workspace (P1/P2) | not redirected yet |
-| `student-assignments` | learner Classes | not redirected yet |
-| `school-dashboard` (administration) | none in the hub | admin links (`PeopleDirectory.jsx`), View-as preview |
-| sign-in, student/teacher/parent registration | hub sign-in chooser, parent sign-up | `Controller` login URL, school invitation links, registration blocks |
+| Tag | Behaviour now |
+| --- | --- |
+| `ohmylms_dashboard`, `ohmylms_profile`, `ohmylms_my_profile`, `ohmylms_my_courses` | Render a link to the matching hub section (`LegacyPages::link()`, `Shortcodes/Shortcodes.php`). With the hub disabled (no hub URL) the legacy renderers (`ShortCodeDashboard`, `ShortCodeProfile`, `ShortCodeMyProfile`, `ShortCodeMyCourses`) are the rollback path. |
+| `ohmylms_student_registration`, `_teacher_registration`, `_parent_registration`, `_sign_in`, `_school_dashboard`, `_teacher_dashboard`, `_parent_dashboard`, `_student_assignments` and the matching `ohmylms/*` blocks (no block exists for student assignments) | `Schools\Views::render()` returns "Continue to your learning hub", linking to the right workspace (`Views::workspace_url()`: parent, teacher, school, learner Classes, otherwise the hub home). The block editor preview describes this. Platform admins still get the React management screen inside wp-admin. |
+| `ohmylms_checkout`, `_course_list`, `_membership_plan`, `_offer_button`, `_buy_now`, `_quiz`, `_quiz_review`, `_question`, `_skills`, `_practice`, `_learning`, `_bundles`, `_subject_skills`, `_activity`, `_student_hub` | Active, unchanged. |
 
-School invitation emails use `Views::portal_url()` (`Service.php`), so the portal route
-must keep working for links already sent.
+## The old portal URL (`/?ohmylms_portal=1&view=...`)
 
-## Proposal
+The portal has no renderer any more. `LegacyPages::redirect_portal()` and `Schools\Views::portal()` forward
+GET requests; other methods get HTTP 405, and an unavailable hub gets 503.
 
-### Retire now (low risk, reversible)
+- Invitation links (`ohmylms_invite=<64 hex>`) keep their token and open in the hub; school-file
+  downloads (`ohmylms_school_file`) are served after a nonce, resource-scope and upload-path check.
+- `parent-dashboard`, `teacher-dashboard` and `student-assignments` go to the parent workspace, the
+  teacher workspace and the learner Classes view, keeping a `class` selection as `hub_class`.
+- `school-dashboard` (and an empty view) goes to the hub School workspace for school staff and to the
+  wp-admin Account Hub (`#/accounthub`, `school`, `class` and `tab` kept) for platform administrators;
+  signed-out visitors go to the hub sign-in chooser.
+- View as previews land in the hub workspace of the previewed role.
 
-1. **Redirect `parent-dashboard` to the parent workspace and `student-assignments` to
-   the learner Classes view**, with the same guards as the teacher redirect (GET only,
-   signed in and eligible, never for invitation, file or admin preview flows). Add probe
-   and live checks. Nothing is deleted; the old views stay as fallback for ineligible users.
-2. **Permanently delete trashed test pages 313 and 314** (fixtures, no content worth
-   keeping). Needs your OK because deletion is permanent.
-3. **Update `Install.php`/`SettingsController` provisioning** so a hub-enabled site never
-   recreates dashboard/profile/courses pages (the ledger already prevents it for the three
-   retired IDs; make the REST settings path respect it too).
+## What stays in wp-admin
 
-### Retire after migrating a consumer
+The React school app (`assets/src/features/schools/`) only mounts as `admin-management` inside
+wp-admin for platform administrators: the Account Hub tabs (Home, Students, Teachers, Parents, All
+accounts, Classes, Schools), the hidden `ohmylms-schools` editor page, the one-click role previews
+(`PreviewHome.jsx`) and the View as dialog. `admin.php?page=ohmylms-schools` forwards to the Account Hub
+tab for administrators and to the hub School workspace for everyone else.
 
-4. **Move school invitation links to the hub** (join view plus sign-in chooser) while the
-   portal URL keeps working for emails already sent. Then the registration views and
-   blocks can redirect to the hub chooser.
-5. **Give school administration a hub or admin home** and repoint `PeopleDirectory.jsx`
-   and View-as, then the portal route can be retired with a permanent redirect.
-6. **Drop the legacy renderers** (`ShortCodeDashboard`, `ShortCodeProfile`,
-   `ShortCodeMyCourses`, `ShortCodeMyProfile`) only when the hub-disabled rollback is no
-   longer needed. Keep the shortcode tags themselves as link adapters indefinitely: they
-   are cheap and protect embedded copies.
+## Self-registration
 
-### Needs your decision (not this plugin's)
+Student, teacher and parent self-registration all live in the hub sign-in chooser, one form per role,
+submitting to `ohmylms_parent_signup` (`Student\ParentActions`). The role is allow-listed to student,
+teacher or parent and anything else becomes parent. Roles created are `ohmylms_student`,
+`ohmylms_teacher` and `ohmylms_parent`. The sign-in itself is an inline form on the same screen that
+posts to `wp-login.php` and returns to the hub (`Student\LoginExperience`); hub users are kept out of
+wp-admin. The public registration REST routes stay because the hub uses them.
 
-7. The `cr-*` / `creator_lms_*` pages (6, 7, 8, 9, 10, 36) belong to an older plugin, show
-   raw tags, and 36 duplicates 123. Trashing them is safe in practice but they are
-   custom site content, so I will not touch them without your instruction.
+## Verification record
 
-### Keep
+Probes and live checks from October 16, 2026 (portal forwarding, teacher/parent/student redirects,
+ledger intact, role allow-list, invitation tokens preserved) are summarised in
+[CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md) ("No portal" and "Frontend portal retirement
+checkpoint"). The probe scripts lived in the git-ignored `test-results/` folder and are not in the
+repository; the lasting automated coverage is `tests/php/view-as-unit.php`, the protected Student
+Home suite and the legacy account blocks suite.
 
-Checkout, membership, course list, offer/buy shortcodes, quiz and practice shortcodes, the
-admin `ohmylms-schools` redirect, and the retirement ledger with its redirects.
+## Left alone on purpose
 
-## Verification each step needs
-
-Probe for the redirect/guard, live browser check as the relevant role (signed in by you),
-confirmation that invitation, file and preview routes are untouched, ledger/rollback note
-in `CONTINUE-LEARNER-HUB.md`.
-
-## Status of the retire-now steps (October 16, 2026)
-
-1. **Done.** `LegacyPages::portal_target()` and `redirect_portal()` send eligible
-   signed-in users from `?ohmylms_portal=1&view=parent-dashboard` to the parent workspace
-   and from `view=student-assignments` to the learner Classes view (only when they
-   actually have a class). Invitation, school-file and `school=` links, signed-out
-   visitors, View-as sessions and non-GET requests are never redirected. Probe
-   `test-results/legacy-redirect-probe.php`: 12 checks passed. Over HTTP on 800.local the
-   portal views still return 200 for signed-out visitors, and the earlier retired page URLs
-   still redirect (302) to the hub. A signed-in parent session redirect was tested by
-   probe, not in the browser.
-2. **Done.** Trashed test pages 313 and 314 were checked (page type, trash status, test
-   title, no menu or child references) and permanently deleted. The ledger (115, 117,
-   118) is intact. Trashed page 312 ("TEST quiz player block") is another test fixture
-   and was left because it was not named.
-3. **No code change needed.** Both `Install::create_pages()` and the REST
-   `restore_pages` apply the `ohmylms_default_pages` filter, and `LegacyPages` already
-   removes retired definitions from it. A probe confirms only the three retired keys are
-   dropped. Calling the REST restore itself was avoided because it would also recreate
-   other missing default pages on the live site.
-
-## Step 5 findings: the school portal is not a legacy page (October 16, 2026)
-
-Inspection of `assets/src/features/schools/index.jsx` (about 2,300 lines) and
-`Schools/Views.php` shows the portal's `school-dashboard` is the full school
-administration product, not a retired learner page. It covers schools, academic years,
-classes, staff and roster management, roster import, invitations for every role
-(including activation), grading, skill reports and managed students. The same app also
-runs inside wp-admin (`admin-management`, `Views.php:99`) and the Account Hub's
-People/Classes/Schools tabs. Rebuilding that in the hub would be a large new product, so
-the earlier idea of giving administration a hub home is **withdrawn**.
-
-Revised direction:
-
-1. **Keep the portal app as "School administration"** for school admins and platform
-   admins (and keep the wp-admin host). Do not retire its route; `PeopleDirectory.jsx` and
-   View-as depend on it.
-2. **Retire only the learner-facing portal surfaces**: `parent-dashboard` and
-   `student-assignments` (done), the teacher dashboard (done), and then sign-in and
-   registration.
-3. **Registration is the open policy question.** The hub chooser only creates parent
-   accounts. The portal also offers student and teacher self-registration through the same
-   `Controller::signup()`. Before redirecting those views and blocks, decide whether
-   student and teacher self-registration should exist. If yes, add them to the hub chooser
-   (the handler already accepts the role); if no, disable them first (a school-level
-   policy switch) and then retire the blocks.
-4. After 3, point `loginUrl`/`logoutUrl` in the portal config at the hub and keep a
-   redirect for the old registration URLs.
-
-Needs from you: whether student and teacher self-registration should remain.
-
-## Decision: no front-end portal (October 16, 2026)
-
-The user does not want to use the LMS portal. Invitations and acceptance go through the hub
-workspaces (learner, teacher, family); school administration uses wp-admin. Done:
-
-- Student, teacher and parent self-registration are all in the hub sign-in chooser (one
-  form per role through `ohmylms_parent_signup`, role allowlisted to student, teacher or
-  parent; any other value becomes parent). Created roles: `ohmylms_student`,
-  `ohmylms_teacher`, `ohmylms_parent`.
-- Old registration and sign-in tags/blocks (`Views::render`) now render a link to the hub.
-- Every portal GET entry forwards: invitation links keep their token and open in the hub;
-  parent/student/teacher views go to their workspaces; the school view goes to the wp-admin
-  Account Hub (`school`, `class`, `tab` preserved); signed-out visitors go to the hub chooser.
-  Authorized file downloads are untouched. The wp-admin page no longer bounces when `school`
-  or `class` is present.
-- View-as preview now lands in the hub workspace of the viewed role.
-- Not removed: the portal renderer code and React app remain as dormant fallback and are
-  what the wp-admin page uses; the "Manage" button in the admin directory still points at the
-  portal URL, which now forwards to wp-admin. Removing the code is a later cleanup.
-
+- Pages 6, 7, 8, 9, 10 and 36 on the development site belong to an older plugin (`cr-*`,
+  `creator_lms_*` tags); they are site content, not plugin content.
+- The legacy renderer classes are kept as the hub-disabled rollback path.

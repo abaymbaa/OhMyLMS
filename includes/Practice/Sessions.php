@@ -260,7 +260,7 @@ final class Sessions {
 			},
 			$snapshot->get_questions()
 		);
-		$view             = $snapshot->student_view( $item['option_order'], AttemptItems::tokens( $scope, $ids ), $item['display'], AttemptItems::tokens( $scope, $ids, 'd' ) );
+		$view             = $snapshot->student_view( $item['option_order'], AttemptItems::tokens( $scope, $ids ), $item['display'], AttemptItems::tokens( $scope, $ids, 'd' ), $scope );
 		$view['item_id']  = (int) $item['id'];
 		$view['position'] = (int) $item['position'];
 		$view['has_hint'] = trim( (string) ( $snapshot->get_settings()['hint'] ?? '' ) ) !== '';

@@ -80,26 +80,22 @@ final class Grader {
 		);
 	}
 
-	public static function present( $answer ) {
-		if ( is_array( $answer ) ) {
-			return count(
-				array_filter(
-					$answer,
-					static function ( $value ) {
-						if ( is_array( $value ) && count( $value ) <= 200 ) {
-							return (bool) array_filter(
-								$value,
-								static function ( $selection ) {
-									return is_scalar( $selection ) && '' !== trim( (string) $selection );
-								}
-							);
-						}
-						return is_scalar( $value ) && trim( (string) $value ) !== '';
-					}
-				)
-			) > 0;
+	public static function present( $answer, $depth = 0 ) {
+		if ( $depth > 3 ) {
+			return false;
 		}
-		return trim( (string) $answer ) !== '';
+		if ( is_array( $answer ) ) {
+			if ( count( $answer ) > 1000 ) {
+				return false;
+			}
+			foreach ( $answer as $value ) {
+				if ( self::present( $value, $depth + 1 ) ) {
+					return true;
+				}
+			}
+			return false;
+		}
+		return is_scalar( $answer ) && '' !== trim( (string) $answer );
 	}
 
 	/** Is manual review required for this type? */

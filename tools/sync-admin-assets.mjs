@@ -20,6 +20,18 @@ for ( const retired of manifest.retiredAssets || [] ) {
 	}
 }
 for ( const [ source, target ] of [
+	[
+		'build/sdk/question-player-block.js',
+		'assets/dist/admin/question-player-block.js',
+	],
+	[
+		'build/sdk/question-player-block.js.map',
+		'assets/dist/admin/question-player-block.js.map',
+	],
+	[
+		'build/sdk/question-player-block.asset.php',
+		'assets/dist/admin/question-player-block.asset.php',
+	],
 	[ 'build/assets/js/blocks.js', 'assets/js/blocks.js' ],
 	[ 'build/assets/js/blocks.js.map', 'assets/js/blocks.js.map' ],
 	[

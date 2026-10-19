@@ -1,9 +1,12 @@
 # Khan Academy to OhMyLMS: data-model mapping and restructuring notes
 
-Status: **analysis for discussion; no storage or code change is proposed as approved**.
+Status (updated October 19, 2026): **mapping analysis behind the learner hub; its open decisions are
+now resolved** (see section 5). The comparison tables record the position on October 15, 2026,
+corrected below where later work changed a row; the code is the authority. No stored name was
+renamed: only learner-facing labels changed.
 
 Written October 15, 2026 from the repository schemas and the Khan Academy Classroom
-observations in `RESEARCH.md`. Schema versions quoted: curriculum 6, learning 1,
+observations in [RESEARCH.md](RESEARCH.md). Schema versions quoted: curriculum 6, learning 1,
 assessment 4. Re-read the schema files before acting on any column name.
 
 ## 1. The core idea
@@ -35,11 +38,11 @@ mostly in that layer's vocabulary, and storage can change later behind it.
 | Subject (library tile, icon, colour) | Top-level grouping of courses | `ohmylms_curriculum_items` (any depth, `parent_id`, `position`, `item_type`, `icon`, `description`); suggested types framework, qualification, level, grade, section, subject, syllabus, strand, topic, unit, custom | Strong. `icon` already exists. | Treat items of the chosen "subject" types as library tiles. Add a learner-visible colour only if wanted (see section 5). |
 | Course | Titled page with unit and skill counts | Course CPT (`ohmylms-course`), linked to items through `curriculum_links` (`object_type`, `object_id`) | Strong | Count units and skills from real data only. |
 | Unit | Large block with description, "Continue this unit" | Chapter CPT (`ohmylms-chapter`) via `ohmylms_chapter_relationship`; also curriculum item type `unit` and syllabus chapters | Strong | Label change only. Keep IDs. |
-| **Lesson group** (the numbered "1. What is the SAT?" headings) | Groups activities inside a unit | **No equivalent level.** Program items carry `chapter_id` but no group. `syllabus_groups` are skill groups, not content groups. | **Gap** | Decision D1 below. |
+| **Lesson group** (the numbered "1. What is the SAT?" headings) | Groups activities inside a unit | Was a gap. Program drafts now carry real groups (`Learning\ProgramGroups`; items and skills have `group_id`; MCP `set_unit_lesson_groups`). `syllabus_groups` remain skill groups, not content groups. | Resolved | Decision D1 below. |
 | Article / video | Reading and watching, mark complete | Lesson CPT (`ohmylms-lesson`) with text, video, audio | Strong | Activity kind `lesson`. |
 | Exercise (skill practice, level up) | Adaptive practice that raises mastery | Practice sessions per skill (`practice_sessions`, `practice_items`), Selector, SmartScore | Strong, richer than Khan | Activity kind `practice`, one per skill term. |
-| Quiz / Unit test | Scored check | Quiz CPT plus `quiz_revisions.kind` (`quiz` by default, other kinds exist) | Good | Present a revision `kind` as quiz, unit test or exam. Confirm the kinds before wiring. |
-| Course challenge | Whole-course mixed test | No dedicated concept | Gap, optional | Only show when an assessment is explicitly flagged. Do not add to every course. |
+| Quiz / Unit test | Scored check | Quiz CPT. The assessment setting `style` (`quiz`, `unit-test`, `course-challenge`) is presentation only; the kind (quiz, exam, practice) is unchanged | Resolved | Mixed-skill unit tests are built by `Assessment\SkillAssessment` ([KHAN-ACTIVITIES.md](KHAN-ACTIVITIES.md) sections 9 to 11). |
+| Course challenge | Whole-course mixed test | The `course-challenge` style of a skill assessment | Resolved | Shown as a card on the hub course overview only when a published one exists. |
 | Skill | A thing to master | Hierarchical taxonomy `ohmylms_skill` with stable UUID, optional code, prerequisites (acyclic); `question_skills`, `quiz_skills`, `syllabus_group_skills` | Stronger than Khan | Use as the exercise identity. |
 | Mastery levels: Attempted, Familiar, Proficient, Mastered | Four coloured levels | `student_skill_state.level`: not-assessed, developing, proficient, mastered. SmartScore bands: learning, building, proficient, challenge (starting at 0, 70, 80, 90) | Partial | Decision D2. |
 | Course progress strip (one icon per activity, coloured) | Shows state at a glance | `student_skill_state` per skill, lesson completion from existing progress | Possible | Strip needs one query joining unit activities to level. Bound it per course. |
@@ -121,18 +124,22 @@ contracts, the evidence pipeline (`grade_events`, `evidence_outbox`, `skill_evid
    course, syllabus-course, roadmap and collection. This is the main build item.
 5. **Mission and group-goal features.** Separate product scope. Not part of the redesign.
 
-## 5. Open decisions for the user
+## 5. Decisions and their outcome
 
-- **D1. Lesson groups:** derive from `syllabus_groups` only where a syllabus course exists,
-  or add real groups to course programs? Recommended: derive first, add real groups
-  later if authors need them.
-- **D2. Mastery names (resolved October 15, 2026):** Khan's four names are shown in the learner UI as a view-only mapping from the SmartScore bands, falling back to the stored level; see `Skills\MasteryDisplay`. The data contract is untouched.
-- **D3. Subject set:** which `item_type` values form top-level Subjects in the library
-  (for example subject, qualification, grade)? This depends on how your curriculum is
-  organised, so I need to inspect your real data before deciding.
-- **D4. Unit test and course challenge:** which `quiz_revisions.kind` values count?
-- **D5. Missions and gems:** leave out of the first release? Recommended: yes.
-- **D6. Teacher shell timing:** after learner slices A, C, D, B, G, J (agreed).
+- **D1. Lesson groups: resolved.** Real groups were added to course programs
+  (`Learning\ProgramGroups`) rather than derived from syllabus groups. Programs are immutable
+  versions, so groups appear on new versions only.
+- **D2. Mastery names: resolved (October 15, 2026).** Khan's four names are shown in the learner UI
+  as a view-only mapping from the SmartScore bands, falling back to the stored level; see
+  `Skills\MasteryDisplay`. The data contract is untouched. The optional Khan level model (five names
+  stored in an append-only log) was added later; see [KHAN-ACTIVITIES.md](KHAN-ACTIVITIES.md) section 8.
+- **D3. Subject set: resolved in code.** `LearnerCatalog::subjects()` takes the curriculum item types
+  that count as a subject from the hub setting; the real item types depend on the site's curriculum.
+- **D4. Unit test and course challenge: resolved.** They are a presentation `style` on a normal
+  quiz built from several skills, not a new `quiz_revisions.kind`.
+- **D5. Missions and gems: left out**, as recommended.
+- **D6. Teacher shell timing: done.** The teacher, parent and school workspaces were built after the
+  learner slices.
 
 ## 6. Recommended implementation order
 

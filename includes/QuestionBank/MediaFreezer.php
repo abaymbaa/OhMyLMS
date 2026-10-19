@@ -43,6 +43,22 @@ final class MediaFreezer {
 			self::add( $sources, 'option:' . $id, (string) ( $option['image_url'] ?? '' ), (int) ( $option['thumbnail_id'] ?? 0 ) );
 			self::add( $sources, 'match:' . $id, (string) ( $option['matching_data']['image_url'] ?? '' ), 0 );
 		}
+		foreach ( (array) ( $content['settings']['parts'] ?? array() ) as $part ) {
+			if ( ! is_array( $part ) ) {
+				continue;
+			}
+			$child_settings = (array) ( $part['question']['settings'] ?? array() );
+			// Structured children are leaves; do not recurse into unvalidated author input.
+			unset( $child_settings['parts'] );
+			$child = array(
+				'body'     => (string) ( $part['prompt'] ?? '' ),
+				'settings' => $child_settings,
+				'options'  => (array) ( $part['question']['questions'] ?? array() ),
+			);
+			foreach ( self::sources( $child ) as $key => $source ) {
+				$sources[ 'part:' . ( $part['id'] ?? '' ) . ':' . $key ] = $source;
+			}
+		}
 		if ( preg_match_all( '/<img\b[^>]*\bsrc\s*=\s*["\']([^"\']+)["\']/i', (string) ( $content['body'] ?? '' ), $matches ) ) {
 			foreach ( array_unique( $matches[1] ) as $url ) {
 				self::add( $sources, 'body:' . md5( html_entity_decode( $url ) ), html_entity_decode( $url ), 0 ); }

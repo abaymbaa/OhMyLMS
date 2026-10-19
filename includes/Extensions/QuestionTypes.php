@@ -112,13 +112,7 @@ final class QuestionTypes {
 				'validate_settings' => array( \OhMyLMS\Assessment\Structured::class, 'validate_settings' ),
 				'render'            => static function ( $question, $attempt ) {
 					ohmylms_get_template( 'single-lesson/quiz-loop/structured.php', compact( 'question', 'attempt' ) ); },
-				'validate'          => static function ( $answer ) {
-					return is_array( $answer ) && count( $answer ) <= 50 && ! array_filter(
-						$answer,
-						static function ( $v ) {
-							return ! is_scalar( $v );
-						}
-					); },
+				'validate'          => array( \OhMyLMS\Assessment\Structured::class, 'validate_response' ),
 				'grade'             => array( \OhMyLMS\Assessment\Structured::class, 'grade' ),
 			)
 		);

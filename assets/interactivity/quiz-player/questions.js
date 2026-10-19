@@ -7,6 +7,8 @@ import {
 import {
 	registerAnswerValidator,
 	registerQuestionMount,
+	isAnswered,
+	mountQuestion,
 } from 'ohmylms/interactivity';
 import { createQuestionControls } from './questionControls.js';
 import { gridRowsAnswered } from './gridAnswers.mjs';
@@ -148,3 +150,27 @@ registerAnswerValidator( 'match-table-grid', ( root ) => {
 		)
 	)
 );
+
+// Structured parts keep the existing leaf validators and dynamic mount behavior.
+registerAnswerValidator( 'structured', ( root ) => {
+	const parts = [ ...root.querySelectorAll( '.ohmylms-structured-part' ) ];
+	return (
+		parts.length > 0 &&
+		parts.every( ( part ) => {
+			const child = part.querySelector( '.ohmylms-structured-child' );
+			return child
+				? isAnswered( child, child.dataset.partType )
+				: [ ...part.querySelectorAll( 'input,textarea' ) ].some(
+						( field ) => field.value.trim() !== ''
+					);
+		} )
+	);
+} );
+registerQuestionMount( 'structured', ( root, detail ) => {
+	const cleanups = [ ...root.querySelectorAll( '.ohmylms-structured-child' ) ]
+		.map( ( child ) =>
+			mountQuestion( child, child.dataset.partType, detail )
+		)
+		.filter( Boolean );
+	return () => cleanups.forEach( ( cleanup ) => cleanup() );
+} );

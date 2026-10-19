@@ -47,6 +47,7 @@ final class Levels {
 		// Before XP and streak read the finished session (priority 10 and 11).
 		add_action( 'ohmylms_practice_completed', array( self::class, 'apply_practice' ), 9 );
 		add_action( 'ohmylms_attempt_graded', array( self::class, 'apply_attempt' ), 9 );
+		add_action( 'ohmylms_question_player_completed', array( self::class, 'apply_player' ), 9 );
 	}
 
 	/**
@@ -363,6 +364,44 @@ final class Levels {
 		foreach ( $skills as $term => $count ) {
 			$after = self::assessment( self::current( $student, $term ), 0 === $count['wrong'] );
 			if ( self::record( $student, $term, 'quiz', $attempt, $after, $count ) ) {
+				Mastery::recompute( $student, $term );
+			}
+		}
+	}
+
+	/**
+	 * Apply opted-in question players to the same skill-level assessment rules.
+	 *
+	 * @param string $uuid Completed session UUID.
+	 */
+	public static function apply_player( $uuid ) {
+		global $wpdb;
+		$session = Sessions::get( $uuid );
+		if ( ! Settings::enabled() || ! $session || 'question-player' !== $session['mode'] || 'complete' !== $session['status'] || empty( $session['policy']['affects_skills'] ) || ! empty( $session['policy']['preview'] ) ) {
+			return;
+		}
+		$student = (int) $session['student_id'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Read committed, current grades for this one completed player.
+		$events = $wpdb->get_results( $wpdb->prepare( "SELECT version_id, part_id, correct FROM %i WHERE source_type='question-player' AND source_id=%d AND superseded_by=0 AND reason<>'unanswered'", AssessmentSchema::table( 'grade_events' ), (int) $session['id'] ), ARRAY_A );
+		$skills = array();
+		foreach ( $events as $grade ) {
+			foreach ( SkillMap::for_version( (int) $grade['version_id'] ) as $mapping ) {
+				if ( 'primary' !== $mapping['role'] || ( '' !== $grade['part_id'] && $grade['part_id'] !== $mapping['part_id'] ) ) {
+					continue;
+				}
+				$term = (int) $mapping['term_id'];
+				if ( ! isset( $skills[ $term ] ) ) {
+					$skills[ $term ] = array(
+						'right' => 0,
+						'wrong' => 0,
+					);
+				}
+				++$skills[ $term ][ (int) $grade['correct'] ? 'right' : 'wrong' ];
+			}
+		}
+		foreach ( $skills as $term => $count ) {
+			$after = self::assessment( self::current( $student, $term ), 0 === $count['wrong'] );
+			if ( self::record( $student, $term, 'question-player', (int) $session['id'], $after, $count ) ) {
 				Mastery::recompute( $student, $term );
 			}
 		}

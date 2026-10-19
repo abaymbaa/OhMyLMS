@@ -450,7 +450,9 @@ try {
 	$wp_query->set( 'hub_view', 'invalid' );
 	ohmylms_hub_check( str_contains( Hub::shortcode(), 'Pick up where you left off.' ), 'Hidden section did not fall back to configured default (My learning).' );
 	wp_set_current_user( 0 );
-	ohmylms_hub_check( str_contains( Hub::shortcode(), 'Sign in to continue' ) && ! str_contains( Hub::shortcode(), 'Student workspace' ), 'Guest received student content.' );
+	// The sign-in screen is now an inline form (name="log" and name="pwd" posting to wp-login.php) instead of a single link.
+	$hub_guest = Hub::shortcode();
+	ohmylms_hub_check( str_contains( $hub_guest, 'name="log"' ) && str_contains( $hub_guest, 'name="pwd"' ) && str_contains( $hub_guest, 'Your learning space' ) && ! str_contains( $hub_guest, 'Student workspace' ), 'Guest received student content.' );
 	$hub_config['enabled'] = false;
 	update_option( Hub::OPTION, $hub_config );
 	ohmylms_hub_check( '' === Hub::base_url() && '' === Hub::endpoint_url( 'dashboard' ), 'Disabling the hub did not restore legacy routing.' );

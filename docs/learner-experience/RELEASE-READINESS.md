@@ -1,5 +1,10 @@
 # Learner hub release verification — October 16, 2026
 
+Status (October 19, 2026): this is a dated verification record, not a living checklist. Test counts,
+lint totals and translation coverage below are the figures of October 16 and change with every build;
+rerun the commands for current numbers. The "Remaining release gates" at the end are still open
+unless the ledger in [CONTINUE-LEARNER-HUB.md](../../CONTINUE-LEARNER-HUB.md) says otherwise.
+
 This checkpoint covers the requested code checks, integration verification, browser acceptance,
 report additions, translations and local build. Work was done in the live OhMyLMS plugin checkout.
 Fixture writes used only the guarded `ohmylms_source_test` installation outside the web root;
@@ -113,7 +118,12 @@ This comparison records the remaining differences; it does not certify complete 
 
 ## Translation artifacts
 
-The POT now has 9,641 entries. PHP extraction and extraction from changed authored JavaScript
+Mongolian (`mn`) is the only bundled translation: `languages/ohmylms-mn.po`, `.mo` and the admin script
+catalog `ohmylms-mn-ohmylms.json`, plus the template `ohmylms.pot`. The Spanish, Dutch and Bengali files
+that shipped earlier were deleted (commit `0d04837`). The figures in this section are the October 16
+snapshot; the catalog has been refreshed since.
+
+The POT then had 9,641 entries. PHP extraction and extraction from changed authored JavaScript
 were merged into the existing catalog with [WP-CLI make-pot](https://developer.wordpress.org/cli/commands/i18n/make-pot/).
 Unchanged JavaScript/JSON catalog entries were retained. An initial full scan failed when the
 bundled tool tried to fetch WordPress block metadata without a working HTTP transport; its
@@ -137,7 +147,7 @@ python tools/compile-translations.py --locale mn --merge-pot
 
 - Triage and repair the older repository-wide lint debt without a blanket baseline or disabled rules.
 - Complete untranslated Mongolian strings and native-language review; the catalog is refreshed,
-  not fully translated. Other locale availability must be assessed separately.
+  not fully translated. No other locale is bundled.
 - Run a spoken screen-reader acceptance session. Text-contrast/DOM checks do not cover every
   image, icon, focus indicator, browser or assistive-technology combination.
 - Email/password card mutations still need the user's password entry under the standing local

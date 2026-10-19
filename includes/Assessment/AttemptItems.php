@@ -193,7 +193,7 @@ final class AttemptItems {
 				},
 				$snapshot->get_questions()
 			);
-			$view                         = $snapshot->student_view( $item['option_order'], self::tokens( $attempt_id, $ids ), $item['display'], self::tokens( $attempt_id, $ids, 'd' ) );
+			$view                         = $snapshot->student_view( $item['option_order'], self::tokens( $attempt_id, $ids ), $item['display'], self::tokens( $attempt_id, $ids, 'd' ), $attempt_id );
 			$view['item_id']              = (int) $item['id'];
 			$view['position']             = (int) $item['position'];
 			$view['marks']                = (float) $item['marks'];
@@ -214,6 +214,10 @@ final class AttemptItems {
 		$snapshot = self::snapshot( $item );
 		if ( ! $snapshot || ! is_array( $answer ) ) {
 			return $answer; }
+		if ( 'structured' === $snapshot->get_type() ) {
+			return Structured::map_response( $snapshot, $answer, $attempt_id, false );
+		}
+
 		$ids         = array_map(
 			static function ( $option ) {
 				return (int) $option['id'];
@@ -243,6 +247,10 @@ final class AttemptItems {
 		$snapshot = self::snapshot( $item );
 		if ( ! $snapshot || ! is_array( $answer ) ) {
 			return $answer; }
+		if ( 'structured' === $snapshot->get_type() ) {
+			return Structured::map_response( $snapshot, $answer, $attempt_id, true );
+		}
+
 		$ids            = array_map(
 			static function ( $option ) {
 				return (int) $option['id'];

@@ -112,3 +112,91 @@ test( 'reorder questions use their item order rather than correctness flags', ()
 		false
 	);
 } );
+
+test( 'native visual questions save settings without requiring choice options', async () => {
+	const { questionTypePatch } =
+		await import( '../../assets/src/features/question-editor/questionBlocks.mjs' );
+	for ( const type of [
+		'number-line',
+		'shade-model',
+		'count-blocks',
+		'set-clock',
+		'make-amount',
+		'fill-level',
+		'build-chart',
+		'grid-build',
+		'labeling',
+		'hotspot',
+		'draw',
+	] ) {
+		const draft = {
+			name: 'Visual question',
+			...questionTypePatch( { settings: {} }, type ),
+		};
+		if ( [ 'labeling', 'hotspot' ].includes( type ) ) {
+			assert.equal( choiceReadyToSave( draft ), false );
+			draft.settings.image_url = 'https://example.com/diagram.png';
+		}
+		assert.equal( choiceReadyToSave( draft ), true, type );
+		assert.equal(
+			choiceReadyToSave( { ...draft, name: '' } ),
+			false,
+			type
+		);
+	}
+	const invalid = {
+		name: 'Scale',
+		...questionTypePatch( { settings: {} }, 'number-line' ),
+	};
+	invalid.settings.target = invalid.settings.max + 1;
+	assert.equal( choiceReadyToSave( invalid ), false );
+} );
+
+test( 'numerical autosave accepts zero and alternatives but waits for a finite key', () => {
+	const ready = ( settings ) =>
+		choiceReadyToSave( {
+			name: 'Calculate',
+			settings: { type: 'numerical', ...settings },
+			questions: [],
+		} );
+	assert.equal( ready( {} ), false );
+	for ( const answer of [ '', ' ', null, Infinity, NaN ] )
+		assert.equal( ready( { answer } ), false );
+	assert.equal( ready( { answer: 0 } ), true );
+	assert.equal( ready( { answers: [ 2, 3 ] } ), true );
+	assert.equal( ready( { answer: 2, answers: [] } ), false );
+	assert.equal( ready( { answer: 2, tolerance: -1 } ), false );
+} );
+
+test( 'structured autosave waits for valid part identities, marks and answer keys', () => {
+	const ready = ( parts ) =>
+		choiceReadyToSave( {
+			name: 'Solve each part',
+			settings: { type: 'structured', parts },
+			questions: [],
+		} );
+	const number = { id: 'a', kind: 'numerical', marks: 2, answer: 0 };
+	const text = { id: 'b', kind: 'text', marks: 1, accepted: [ 'yes' ] };
+	assert.equal( ready( [] ), false );
+	assert.equal(
+		ready( [ number, text, { id: 'c', kind: 'written', marks: 3 } ] ),
+		true
+	);
+	assert.equal( ready( [ { ...number, answer: undefined } ] ), false );
+	assert.equal( ready( [ { ...text, accepted: [] } ] ), false );
+	assert.equal( ready( [ { ...number, marks: -1 } ] ), false );
+	assert.equal( ready( [ number, { ...text, id: 'a' } ] ), false );
+} );
+
+test( 'graphing autosave validates its existing graph settings without choice rows', async () => {
+	const { questionTypePatch } =
+		await import( '../../assets/src/features/question-editor/questionBlocks.mjs' );
+	const draft = {
+		name: 'Plot the point',
+		...questionTypePatch( { settings: {} }, 'graphing' ),
+	};
+	assert.equal( choiceReadyToSave( draft ), true );
+	assert.equal( choiceReadyToSave( { ...draft, name: '' } ), false );
+	draft.settings.points = [];
+	assert.equal( choiceReadyToSave( draft ), false );
+} );

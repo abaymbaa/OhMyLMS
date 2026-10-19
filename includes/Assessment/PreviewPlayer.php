@@ -128,7 +128,11 @@ final class PreviewPlayer {
 			foreach ( $saved['snapshots'] as $data ) {
 				// A template question keeps the same numbers for the whole preview session.
 				$snapshot         = QuestionSnapshot::from_row( $data )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
-				$grade            = Grader::grade( $snapshot, $answers[ $snapshot->get_id() ] ?? array() );
+				$response = $answers[ $snapshot->get_id() ] ?? array();
+				if ( 'structured' === $snapshot->get_type() ) {
+					$response = Structured::map_response( $snapshot, $response, 'preview:' . $session, true );
+				}
+				$grade = Grader::grade( $snapshot, $response );
 				$marks            = max( 0, (float) ( $snapshot->get_settings()['score']['value'] ?? 1 ) );
 				$result['total'] += $marks;
 				if ( is_wp_error( $grade ) ) {
@@ -138,7 +142,7 @@ final class PreviewPlayer {
 				$result['pending'] += (int) $grade['pending'];
 				$items[]            = array(
 					'snapshot' => $snapshot,
-					'given'    => (array) ( $answers[ $snapshot->get_id() ] ?? array() ),
+					'given'    => (array) $response,
 					'grade'    => $grade,
 					'marks'    => $marks,
 				);
@@ -159,7 +163,7 @@ final class PreviewPlayer {
 			}
 			$definitions = $ids;
 			shuffle( $definitions );
-			$questions[] = $snapshot->student_view( $ids, array(), array( 'definitions' => $definitions ) );
+			$questions[] = $snapshot->student_view( $ids, array(), array( 'definitions' => $definitions ), array(), 'preview:' . $session );
 		}
 		$GLOBALS['post'] = get_post( $id );
 		setup_postdata( $GLOBALS['post'] );

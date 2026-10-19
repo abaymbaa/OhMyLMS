@@ -1,3 +1,4 @@
+import { QUESTION_BLOCK_TYPES, questionTypePatch } from './questionBlocks.mjs';
 /** @jsx createElement */
 import { createElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -120,8 +121,13 @@ export function NumericalEditor( { value, onChange } ) {
  * @param root0
  * @param root0.value
  * @param root0.onChange
+ * @param root0.renderQuestion
  */
-export function StructuredEditor( { value, onChange } ) {
+export function StructuredEditor( {
+	value,
+	onChange,
+	renderQuestion: PartQuestion,
+} ) {
 	const parts = value.parts || [];
 	const set = ( index, fields ) =>
 		onChange( {
@@ -170,7 +176,11 @@ export function StructuredEditor( { value, onChange } ) {
 						/>
 						<SelectControl
 							label={ __( 'Answer type', 'ohmylms' ) }
-							value={ part.kind || 'written' }
+							value={
+								part.kind === 'question'
+									? part.question?.settings?.type
+									: part.kind || 'written'
+							}
 							options={ [
 								{
 									value: 'numerical',
@@ -187,10 +197,50 @@ export function StructuredEditor( { value, onChange } ) {
 										'ohmylms'
 									),
 								},
+								...( PartQuestion
+									? QUESTION_BLOCK_TYPES.filter(
+											( [ type ] ) =>
+												! [
+													'numerical',
+													'structured',
+													'passage',
+													'short-text',
+													'long-text',
+													'statement',
+													'audio-response',
+													'video-response',
+													'poll',
+													'word-cloud',
+													'discussion-board',
+													'interactive-video',
+												].includes( type )
+										).map( ( [ type, label ] ) => ( {
+											value: type,
+											label:
+												type === 'single-choice'
+													? __(
+															'Single choice',
+															'ohmylms'
+														)
+													: label,
+										} ) )
+									: [] ),
 							] }
 							onChange={ ( kind ) =>
 								set( index, {
-									kind,
+									...( [
+										'numerical',
+										'text',
+										'written',
+									].includes( kind )
+										? { kind }
+										: {
+												kind: 'question',
+												question: questionTypePatch(
+													{},
+													kind
+												),
+											} ),
 								} )
 							}
 						/>
@@ -207,10 +257,18 @@ export function StructuredEditor( { value, onChange } ) {
 							}
 						/>
 					</div>
+					<p className="ohmylms-part-statement-label">
+						{ __( 'Part statement', 'ohmylms' ) }
+					</p>
 					<RichContentControl
 						compact
-						html={ false }
-						label={ __( 'Part prompt', 'ohmylms' ) }
+						showToolbar
+						collapseToolbar
+						label={ __( 'Part statement', 'ohmylms' ) }
+						placeholder={ __(
+							'Write the statement for this part…',
+							'ohmylms'
+						) }
 						value={ part.prompt || '' }
 						onChange={ ( prompt ) =>
 							set( index, {
@@ -261,6 +319,20 @@ export function StructuredEditor( { value, onChange } ) {
 								}
 							/>
 						</div>
+					) }
+					{ part.kind === 'question' && PartQuestion && (
+						<PartQuestion
+							type={ part.question?.settings?.type }
+							settings={ part.question?.settings || {} }
+							options={ part.question?.questions || [] }
+							prompt={ part.prompt || '' }
+							mainStatement
+							onChange={ ( patch ) =>
+								set( index, {
+									question: { ...part.question, ...patch },
+								} )
+							}
+						/>
 					) }
 					{ part.kind === 'text' && (
 						<TextControl

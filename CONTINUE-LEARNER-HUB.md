@@ -168,7 +168,8 @@ parent/child implementation or schema migration is claimed by this roadmap updat
 ### Legacy retirement is part of delivery (October 16, 2026)
 
 The user authorized deleting old pages and cleaning up obsolete shortcodes along
-the way. Apply PLAN.md Slice K to every completed replacement, rather than leaving
+the way. Apply this rule (formerly PLAN.md Slice K; PLAN.md was removed on October 19, 2026, and the outcome is in
+`docs/learner-experience/LEGACY-RETIREMENT-PLAN.md`) to every completed replacement, rather than leaving
 duplicate interfaces indefinitely. Inventory actual use, migrate content/menu/page
 settings, establish redirects that survive page retirement, then trash redundant
 generated pages and remove unused shortcode implementations/templates/assets.
@@ -197,7 +198,7 @@ and including a Khan-style **teacher shell after the learner slices**. Defaults 
 progressive enhancement**, not a new React entry. Reasons: the existing hub is server-rendered,
 works without JavaScript, supports bookmarks, and a new React entry needs build manifests,
 contracts and routing work that does not help the visual goal. Revisit only if a screen
-needs client-side state. **Explicitly skipped by the user:** the learner app's **Tutor Me** and the teacher app's **Teacher Tools** menu. Do not build or stub them. Teacher scope is learner-first; MAPPING.md D1-D6 remain open.
+needs client-side state. **Explicitly skipped by the user:** the learner app's **Tutor Me** and the teacher app's **Teacher Tools** menu. Do not build or stub them. Teacher scope is learner-first; MAPPING.md D1-D6 were open at the time and are all resolved now (see MAPPING.md section 5).
 
 ## Previous instruction: planning first (superseded by the decisions above)
 
@@ -213,13 +214,17 @@ assistant or schedule an automatic continuation.
 ## Read these files in order
 
 1. `AGENTS.md`: repository development and validation requirements.
-2. `docs/learner-experience/PLAN.md`: target experience, entity mapping, delivery
-   slices, acceptance criteria, open decisions, and migration boundaries.
+2. "Current state: start here" at the top of this file, then the latest checkpoints at the end.
 3. `docs/learner-experience/RESEARCH.md`: what was actually observed in the user's
    Khan Academy browser account, including the library-to-course-to-lesson flow.
 4. `docs/learner-experience/MAPPING.md`: Khan vs OhMyLMS data model, gaps, rename rules.
-5. `docs/STUDENT-HOME.md`: the initial hub that already exists, its limitations,
-   compatibility behavior, and validation.
+5. `docs/STUDENT-HOME.md`: the hub shell, its settings, compatibility behavior, and validation.
+6. `docs/learner-experience/KHAN-ACTIVITIES.md`, `learner-hub-development.md`, `PARENT-CHILD-P0.md`,
+   `HOME-LEARNING-REPORTS.md`, `P5-UNIT-PRACTICE.md`, `LEGACY-RETIREMENT-PLAN.md` and
+   `RELEASE-READINESS.md`: the current feature documents.
+
+(The original item 2, `docs/learner-experience/PLAN.md`, was removed on October 19, 2026; see the
+documentation cleanup section at the end.)
 
 ## Latest user direction
 
@@ -318,8 +323,8 @@ agreed decisions. Do not start the shell rewrite while the user is asking to pla
 |---|---|---|
 | Initial functional hub | Implemented; superseded as visual direction | Existing files and checks above |
 | Live reference inspection | Completed for class, library, course overview, and article flow | RESEARCH.md |
-| New experience plan | Draft ready for discussion | PLAN.md |
-| Navigation/entity decisions | Proposed; awaiting discussion | PLAN sections 3–7, 12 |
+| New experience plan | Superseded; carried out in the slices below (PLAN.md removed October 19, 2026) | This ledger |
+| Navigation/entity decisions | Decided; see MAPPING.md section 5 | MAPPING.md |
 | New visual shell | Implemented; browser-checked light, dark, 390px | Slice A notes below |
 | Class screen redesign | Implemented; browser-checked with a removable fixture | Slice B notes below |
 | Library redesign | Implemented (first version); browser-checked | Slice C notes below |
@@ -1183,11 +1188,12 @@ links on every request.
   `PARENT-CHILD-P0.md`, only after reconfirming the contract; it introduces schema,
   so start with a migration/rollback plan.
 
-P3 plan (no code yet): `docs/learner-experience/PARENT-CHILD-P3-PLAN.md`, with four open policy decisions before P3a.
+P3 plan (no code yet): `PARENT-CHILD-P3-PLAN.md` in `docs/learner-experience/`, with four open policy decisions before P3a. (That file was
+removed on October 19, 2026; its adopted decisions are in `PARENT-CHILD-P0.md`.)
 
 ## P3a: independent family schema and service, no UI (October 16, 2026)
 
-Defaults from `PARENT-CHILD-P3-PLAN.md` were adopted: no birth date (name and
+Defaults from the P3 plan (now summarised in `PARENT-CHILD-P0.md`) were adopted: no birth date (name and
 optional grade only); managed children have no email and sign in through a
 parent-issued setup link; existing learners link by private email-matched
 invitation; no home aggregates.
@@ -1360,7 +1366,7 @@ learner accepting a parent invitation, the unrun credential-protected teacher
 integration runner, legacy-page retirement, home-learning reports, and the unobserved
 reference screens.
 
-Legacy retirement inventory and proposal: `docs/learner-experience/LEGACY-RETIREMENT-PLAN.md` (no changes made; first proposed steps are parent/student portal redirects and deleting two trashed test pages).
+Legacy retirement inventory and proposal (the original text of `docs/learner-experience/LEGACY-RETIREMENT-PLAN.md`; that file now records the outcome instead) (no changes made; first proposed steps are parent/student portal redirects and deleting two trashed test pages).
 
 ### Legacy retire-now steps done (October 16, 2026)
 

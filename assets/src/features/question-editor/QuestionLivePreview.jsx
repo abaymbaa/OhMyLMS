@@ -303,15 +303,29 @@ function QuestionPreviewContent( { question, showNote } ) {
 							{ part.label } · { part.marks }{ ' ' }
 							{ __( 'marks', 'ohmylms' ) }
 						</legend>
-						<p>{ part.prompt }</p>
-						{ answerInput(
-							sprintf(
-								/* translators: %s: part label. */
-								__( 'Part %s answer', 'ohmylms' ),
-								part.label
-							),
-							part.kind === 'written'
+						{ part.kind === 'question' ? (
+							<QuestionLivePreview
+								question={ {
+									...question.settings.parts.find(
+										( item ) => item.id === part.id
+									)?.question,
+									name: part.prompt || '',
+									description: '',
+								} }
+								showNote={ false }
+							/>
+						) : (
+							<RawHTML>{ part.prompt }</RawHTML>
 						) }
+						{ part.kind !== 'question' &&
+							answerInput(
+								sprintf(
+									/* translators: %s: part label. */
+									__( 'Part %s answer', 'ohmylms' ),
+									part.label
+								),
+								part.kind === 'written'
+							) }
 					</fieldset>
 				) ) }
 		</section>

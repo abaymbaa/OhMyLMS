@@ -222,7 +222,7 @@ final class NativeQuizEditor {
 		}
 		$content = serialize_blocks( self::without_questions( $blocks ) );
 		foreach ( $questions as $question ) {
-			$choice = in_array( $question['settings']['type'] ?? '', array( 'single-choice', 'multiple-choice', 'short-text', 'long-text', 'reorder', 'fill-in-the-blank', 'matching', 'dropdown-blanks', 'match-table-grid', 'multi-blank', 'build-expression', 'expression' ), true );
+			$choice = in_array( $question['settings']['type'] ?? '', array( 'single-choice', 'multiple-choice', 'short-text', 'long-text', 'reorder', 'fill-in-the-blank', 'matching', 'dropdown-blanks', 'match-table-grid', 'multi-blank', 'build-expression', 'expression', 'number-line', 'shade-model', 'count-blocks', 'set-clock', 'make-amount', 'fill-level', 'build-chart', 'grid-build', 'labeling', 'hotspot', 'draw', 'numerical', 'structured', 'graphing' ), true );
 			$attrs  = array(
 				'questionId' => (int) $question['id'],
 				'uuid'       => (string) ( $question['uuid'] ?? '' ),

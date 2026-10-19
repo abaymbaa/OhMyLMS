@@ -122,6 +122,12 @@ class FormHandler {
 			$user->user_pass = $pass1;
 		}
 
+		// Phone, province, school name and grade share their rules with the hub Settings screen.
+		$learner_details = \OhMyLMS\Student\LearnerProfile::validate( array_intersect_key( wp_unslash( $_POST ), array_flip( array( 'phone', 'province', 'school_name', 'grade' ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce verified above; sanitized by LearnerProfile::validate().
+		foreach ( $learner_details['errors'] as $learner_error ) {
+			\OhMyLMS\Commerce\ohmylmse_add_notice( esc_html( $learner_error ), 'error' );
+		}
+
 		if ( \OhMyLMS\Commerce\ohmylmse_notice_count( 'error' ) === 0 ) {
 			wp_update_user( $user );
 			$student = new Student( $user->ID );
@@ -139,6 +145,7 @@ class FormHandler {
 			$student->set_country( $country );
 
 			$student->save();
+			\OhMyLMS\Student\LearnerProfile::save( $user->ID, $learner_details['values'] );
 
 			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'Account details changed successfully.', 'ohmylms' ) );
 
