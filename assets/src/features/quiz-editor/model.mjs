@@ -1,5 +1,6 @@
 import {
 	isExtendedType,
+	isSettingsAddonType,
 	extendedIssues,
 } from '../question-editor/extendedModel.mjs';
 export { moveOption } from '../question-editor/model.mjs';
@@ -56,7 +57,10 @@ export function prepareQuizPayload( quiz, questions ) {
 	return payload;
 }
 export function canLeaveQuestion( question, validate ) {
-	if ( isExtendedType( question?.settings?.type ) ) {
+	if (
+		isExtendedType( question?.settings?.type ) ||
+		isSettingsAddonType( question?.settings?.type )
+	) {
 		return (
 			!! ( question.settings.question_code
 				? promptText( questionPrompt( question ) )

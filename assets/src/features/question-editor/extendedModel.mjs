@@ -15,6 +15,19 @@ export const EXTENDED_TYPES = [
 ];
 export const isExtendedType = ( type ) =>
 	EXTENDED_TYPES.some( ( [ id ] ) => id === type );
+/**
+ * Add-on question types registered with the settings editor format keep their
+ * own fields in settings and have no answer options, so the choice-question
+ * checks do not apply. The server validates their settings on save.
+ * @param type
+ * @param manifest Question manifest from the extension REST route.
+ */
+export const isSettingsAddonType = (
+	type,
+	manifest = globalThis.window?.ohmylmsExtensionManifest?.question
+) =>
+	! isExtendedType( type ) &&
+	manifest?.[ type ]?.editor?.format === 'ohmylms-settings';
 export const isUngradedType = ( type ) =>
 	[ 'poll', 'word-cloud' ].includes( type );
 /**
