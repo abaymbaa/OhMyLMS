@@ -556,6 +556,106 @@
 		} );
 		observer.observe( document.body, { childList: true, subtree: true } );
 	}
+	/**
+	 * How to play an interactive video link. Mirrors videoSource in
+	 * assets/src/features/question-editor/extendedModel.mjs; only YouTube, Google Drive
+	 * and OneDrive addresses are ever placed in an iframe.
+	 * @param input Saved link.
+	 */
+	function videoSource( input ) {
+		const none = { provider: 'invalid', embed: '', id: '' };
+		const text = String( input || '' ).trim();
+		const frame = /<iframe[^>]+src\s*=\s*["']([^"']+)["']/i.exec( text );
+		let url;
+		try {
+			url = new URL( frame ? frame[ 1 ].replace( /&amp;/g, '&' ) : text );
+		} catch {
+			return none;
+		}
+		if ( ! /^https?:$/.test( url.protocol ) ) {
+			return none;
+		}
+		const host = url.hostname.toLowerCase().replace( /^www\./, '' );
+		const parts = url.pathname.split( '/' ).filter( Boolean );
+		const youtube = ( id ) =>
+			/^[\w-]{11}$/.test( id || '' )
+				? { provider: 'youtube', embed: '', id }
+				: none;
+		if ( host === 'youtu.be' ) {
+			return youtube( parts[ 0 ] );
+		}
+		if (
+			[
+				'youtube.com',
+				'm.youtube.com',
+				'music.youtube.com',
+				'youtube-nocookie.com',
+			].includes( host )
+		) {
+			return youtube(
+				[ 'embed', 'shorts', 'live', 'v' ].includes( parts[ 0 ] )
+					? parts[ 1 ]
+					: url.searchParams.get( 'v' )
+			);
+		}
+		if ( host === 'drive.google.com' ) {
+			const id =
+				parts[ 0 ] === 'file' && parts[ 1 ] === 'd'
+					? parts[ 2 ]
+					: url.searchParams.get( 'id' );
+			return /^[\w-]{10,}$/.test( id || '' )
+				? {
+						provider: 'drive',
+						embed:
+							'https://drive.google.com/file/d/' +
+							id +
+							'/preview',
+						id,
+					}
+				: none;
+		}
+		if ( host === 'onedrive.live.com' ) {
+			return [ 'embed', 'redir' ].includes( parts[ 0 ] ) &&
+				url.searchParams.get( 'resid' )
+				? {
+						provider: 'onedrive',
+						embed:
+							'https://onedrive.live.com/embed?' +
+							url.searchParams.toString(),
+						id: '',
+					}
+				: none;
+		}
+		if ( host.endsWith( '.sharepoint.com' ) ) {
+			return url.pathname.toLowerCase().endsWith( '/embed.aspx' )
+				? { provider: 'onedrive', embed: url.href, id: '' }
+				: none;
+		}
+		if ( host === '1drv.ms' ) {
+			return none;
+		}
+		return { provider: 'file', embed: url.href, id: '' };
+	}
+	let youtubeApi = null;
+	/** Load the YouTube player API once. */
+	function loadYouTube() {
+		if ( window.YT?.Player ) {
+			return Promise.resolve( window.YT );
+		}
+		if ( ! youtubeApi ) {
+			youtubeApi = new Promise( ( resolve ) => {
+				const previous = window.onYouTubeIframeAPIReady;
+				window.onYouTubeIframeAPIReady = () => {
+					previous?.();
+					resolve( window.YT );
+				};
+				const script = document.createElement( 'script' );
+				script.src = 'https://www.youtube.com/iframe_api';
+				document.head.appendChild( script );
+			} );
+		}
+		return youtubeApi;
+	}
 	function build( root, type, config ) {
 		const instance = ++instanceId;
 		root.classList.add( 'ohmylms-extended-question' );
@@ -863,41 +963,116 @@
 			return;
 		}
 		if ( type === 'interactive-video' ) {
-			const player = el( 'video', {
-				controls: '',
-				src: config.video_url || '',
-			} );
-			root.appendChild( player );
+			const source = videoSource( config.video_url );
+			const frame = el( 'div', { class: 'ohmylms-video-frame' } );
+			let player = null;
+			let seekTo = () => {};
+			let onTime = () => {};
+			if ( source.provider === 'file' ) {
+				player = el( 'video', { controls: '', src: source.embed } );
+				root.appendChild( player );
+				seekTo = ( seconds ) => {
+					player.currentTime = seconds;
+					player.pause();
+				};
+				player.addEventListener( 'timeupdate', () =>
+					onTime( player.currentTime, () => player.pause() )
+				);
+			} else if ( source.provider === 'youtube' ) {
+				root.appendChild( frame );
+				const holder = el( 'div' );
+				frame.appendChild( holder );
+				loadYouTube().then( ( YT ) => {
+					const yt = new YT.Player( holder, {
+						videoId: source.id,
+						playerVars: { rel: 0, modestbranding: 1 },
+					} );
+					seekTo = ( seconds ) => {
+						yt.seekTo( seconds, true );
+						yt.pauseVideo();
+					};
+					// The YouTube player has no time event, so its clock is read while it plays.
+					setInterval( () => {
+						if (
+							yt.getPlayerState?.() === YT.PlayerState.PLAYING
+						) {
+							onTime( yt.getCurrentTime(), () =>
+								yt.pauseVideo()
+							);
+						}
+					}, 250 );
+				} );
+			} else if ( [ 'drive', 'onedrive' ].includes( source.provider ) ) {
+				// These hosts cannot report playback time, so checkpoints stay open while watching.
+				const iframe = el( 'iframe', {
+					src: source.embed,
+					title: __( 'Video', 'ohmylms' ),
+					allow: 'autoplay; fullscreen',
+					allowfullscreen: '',
+					referrerpolicy: 'no-referrer',
+					sandbox:
+						'allow-scripts allow-same-origin allow-presentation allow-popups',
+					loading: 'lazy',
+				} );
+				frame.appendChild( iframe );
+				root.appendChild( frame );
+			} else {
+				root.appendChild(
+					el( 'p', {
+						role: 'alert',
+						text: __(
+							'This video link cannot be played.',
+							'ohmylms'
+						),
+					} )
+				);
+			}
+			const timed =
+				source.provider === 'file' || source.provider === 'youtube';
+			const reached = new Set();
+			const checkpoints = [];
 			( config.checkpoints || [] ).forEach( ( checkpoint ) => {
 				const panel = el(
 					'fieldset',
 					{ class: 'ohmylms-video-checkpoint' },
 					[
 						el( 'legend', {
-							text: checkpoint.at + 's · ' + checkpoint.prompt,
+							text: timed
+								? checkpoint.at + 's · ' + checkpoint.prompt
+								: checkpoint.prompt,
 						} ),
 					]
 				);
 				const input = field( root, checkpoint.id, checkpoint.prompt );
 				panel.appendChild( input.parentElement );
-				panel.appendChild(
-					button( __( 'Jump to checkpoint', 'ohmylms' ), () => {
-						player.currentTime = Number( checkpoint.at );
-						player.pause();
-					} )
-				);
+				if ( timed ) {
+					panel.appendChild(
+						button( __( 'Jump to checkpoint', 'ohmylms' ), () =>
+							seekTo( Number( checkpoint.at ) )
+						)
+					);
+				}
 				root.appendChild( panel );
-				player.addEventListener( 'timeupdate', () => {
-					if (
-						Math.abs(
-							player.currentTime - Number( checkpoint.at )
-						) < 0.5
+				checkpoints.push( { checkpoint, panel, input } );
+			} );
+			// Pause when playback reaches a checkpoint, once per pass.
+			onTime = ( now, pause ) => {
+				checkpoints.forEach( ( { checkpoint, panel, input } ) => {
+					const at = Number( checkpoint.at );
+					if ( now < at - 1 ) {
+						reached.delete( checkpoint.id );
+					} else if (
+						now >= at &&
+						now < at + 1 &&
+						! reached.has( checkpoint.id )
 					) {
-						player.pause();
+						reached.add( checkpoint.id );
+						pause();
 						panel.scrollIntoView( { block: 'nearest' } );
+						input.focus( { preventScroll: true } );
 					}
 				} );
-			} );
+			};
 		}
 	}
 	types.forEach( ( type ) =>

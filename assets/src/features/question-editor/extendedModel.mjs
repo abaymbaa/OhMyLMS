@@ -30,6 +30,118 @@ export const isSettingsAddonType = (
 	manifest?.[ type ]?.editor?.format === 'ohmylms-settings';
 export const isUngradedType = ( type ) =>
 	[ 'poll', 'word-cloud' ].includes( type );
+
+/**
+ * Work out how an interactive video link should be played.
+ *
+ * Accepts a video file address, a YouTube, Google Drive or OneDrive link, or pasted
+ * embed code. Only these hosts are ever put in an iframe. The learner player carries
+ * the same rules (assets/interactivity/extended-questions.js).
+ * @param  input Link or embed code.
+ * @return {{provider: string, embed: string, id: string, timed: boolean}} provider is
+ * file, youtube, drive, onedrive, onedrive-short or invalid. Only file and youtube can
+ * report the playback time, so only they can pause at a checkpoint.
+ */
+export function videoSource( input ) {
+	const text = String( input || '' ).trim();
+	const frame = /<iframe[^>]+src\s*=\s*["']([^"']+)["']/i.exec( text );
+	const raw = frame ? frame[ 1 ].replace( /&amp;/g, '&' ) : text;
+	let url;
+	try {
+		url = new URL( raw );
+	} catch {
+		return { provider: 'invalid', embed: '', id: '', timed: false };
+	}
+	if ( ! /^https?:$/.test( url.protocol ) ) {
+		return { provider: 'invalid', embed: '', id: '', timed: false };
+	}
+	const host = url.hostname.toLowerCase().replace( /^www\./, '' );
+	const parts = url.pathname.split( '/' ).filter( Boolean );
+	const youtube = ( id ) =>
+		/^[\w-]{11}$/.test( id || '' )
+			? {
+					provider: 'youtube',
+					embed: 'https://www.youtube.com/embed/' + id,
+					id,
+					timed: true,
+				}
+			: null;
+	if ( host === 'youtu.be' ) {
+		return (
+			youtube( parts[ 0 ] ) || {
+				provider: 'invalid',
+				embed: '',
+				id: '',
+				timed: false,
+			}
+		);
+	}
+	if (
+		[
+			'youtube.com',
+			'm.youtube.com',
+			'music.youtube.com',
+			'youtube-nocookie.com',
+		].includes( host )
+	) {
+		const id = [ 'embed', 'shorts', 'live', 'v' ].includes( parts[ 0 ] )
+			? parts[ 1 ]
+			: url.searchParams.get( 'v' );
+		return (
+			youtube( id ) || {
+				provider: 'invalid',
+				embed: '',
+				id: '',
+				timed: false,
+			}
+		);
+	}
+	if ( host === 'drive.google.com' ) {
+		const id =
+			parts[ 0 ] === 'file' && parts[ 1 ] === 'd'
+				? parts[ 2 ]
+				: url.searchParams.get( 'id' );
+		return /^[\w-]{10,}$/.test( id || '' )
+			? {
+					provider: 'drive',
+					embed: 'https://drive.google.com/file/d/' + id + '/preview',
+					id,
+					timed: false,
+				}
+			: { provider: 'invalid', embed: '', id: '', timed: false };
+	}
+	if ( host === 'onedrive.live.com' ) {
+		if (
+			[ 'embed', 'redir' ].includes( parts[ 0 ] ) &&
+			url.searchParams.get( 'resid' )
+		) {
+			return {
+				provider: 'onedrive',
+				embed:
+					'https://onedrive.live.com/embed?' +
+					url.searchParams.toString(),
+				id: url.searchParams.get( 'resid' ),
+				timed: false,
+			};
+		}
+		return { provider: 'invalid', embed: '', id: '', timed: false };
+	}
+	if ( host.endsWith( '.sharepoint.com' ) ) {
+		return url.pathname.toLowerCase().endsWith( '/embed.aspx' )
+			? {
+					provider: 'onedrive',
+					embed: url.href,
+					id: url.searchParams.get( 'UniqueId' ) || '',
+					timed: false,
+				}
+			: { provider: 'invalid', embed: '', id: '', timed: false };
+	}
+	if ( host === '1drv.ms' ) {
+		// A short share link cannot be embedded; OneDrive's Embed option gives the right address.
+		return { provider: 'onedrive-short', embed: '', id: '', timed: false };
+	}
+	return { provider: 'file', embed: url.href, id: '', timed: true };
+}
 /**
  * Initial examples use the same settings shapes as the frozen server writer.
  * @param type
@@ -183,7 +295,10 @@ export function extendedIssues( type, settings = {} ) {
 	}
 	if (
 		type === 'interactive-video' &&
-		! /^https?:\/\//.test( settings.video_url || '' )
+		( ! /^https?:\/\//.test( settings.video_url || '' ) ||
+			[ 'invalid', 'onedrive-short' ].includes(
+				videoSource( settings.video_url ).provider
+			) )
 	) {
 		return [ 'video' ];
 	}

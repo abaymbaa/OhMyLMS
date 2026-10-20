@@ -12,6 +12,51 @@ import { StructuredEditor } from './MathEditors';
 import { questionTypePatch } from './questionBlocks.mjs';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
 import { DiagramPopup } from './DiagramPopup';
+import { videoSource } from './extendedModel.mjs';
+/**
+ * Explain what a pasted video link will do.
+ * @param link The saved video link.
+ */
+function videoHelp( link ) {
+	const { provider } = videoSource( link );
+	switch ( provider ) {
+		case 'youtube':
+			return __(
+				'YouTube video. Checkpoints pause the video at their time.',
+				'ohmylms'
+			);
+		case 'drive':
+			return __(
+				'Google Drive video. Share the file so anyone with the link can view it. Drive cannot report the playback time, so learners answer each checkpoint while they watch.',
+				'ohmylms'
+			);
+		case 'onedrive':
+			return __(
+				'OneDrive video. Learners answer each checkpoint while they watch, because OneDrive cannot report the playback time.',
+				'ohmylms'
+			);
+		case 'onedrive-short':
+			return __(
+				'This short OneDrive link cannot be embedded. In OneDrive choose Share, then Embed, and paste the embed code or its address here.',
+				'ohmylms'
+			);
+		case 'invalid':
+			return link
+				? __(
+						'This link is not recognised. Use a video file, YouTube, Google Drive or OneDrive link.',
+						'ohmylms'
+					)
+				: __(
+						'Paste a YouTube, Google Drive or OneDrive link, or choose an uploaded video.',
+						'ohmylms'
+					);
+		default:
+			return __(
+				'Video file. Checkpoints pause the video at their time.',
+				'ohmylms'
+			);
+	}
+}
 /**
  * Authoring controls for additional response formats.
  * @param root0
@@ -675,10 +720,16 @@ export function ExtendedEditor( {
 						) }
 					/>
 					<TextControl
-						label={ __( 'Video URL', 'ohmylms' ) }
+						label={ __( 'Video link', 'ohmylms' ) }
+						help={ videoHelp( value.video_url ) }
 						value={ value.video_url || '' }
+						// Pasted embed code is reduced to its address.
 						onChange={ ( videoUrl ) =>
-							set( { video_url: videoUrl } )
+							set( {
+								video_url: /<iframe/i.test( videoUrl )
+									? videoSource( videoUrl ).embed || videoUrl
+									: videoUrl,
+							} )
 						}
 					/>
 					{ rows( 'checkpoints' ).map( ( checkpoint, index ) => (
