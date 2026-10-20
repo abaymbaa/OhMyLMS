@@ -306,7 +306,15 @@ export function ExtendedEditor( {
 									setSelected( Number( next ) )
 								}
 							/>
-							<div className="ohmylms-author-diagram">
+							{ /* Inline styles: the player stylesheet is not loaded in the editor, so a large image would overflow the question. */ }
+							<div
+								className="ohmylms-author-diagram"
+								style={ {
+									position: 'relative',
+									width: 'fit-content',
+									maxWidth: '100%',
+								} }
+							>
 								<button
 									type="button"
 									className="ohmylms-diagram-place"
@@ -315,10 +323,23 @@ export function ExtendedEditor( {
 										'Place selected marker on diagram',
 										'ohmylms'
 									) }
+									style={ {
+										display: 'block',
+										maxWidth: '100%',
+										padding: 0,
+										border: 0,
+										background: 'none',
+										cursor: 'crosshair',
+									} }
 								>
 									<img
 										src={ value.image_url }
 										alt={ __( 'Diagram', 'ohmylms' ) }
+										style={ {
+											display: 'block',
+											maxWidth: '100%',
+											height: 'auto',
+										} }
 									/>
 								</button>
 								{ rows( diagramKey ).map( ( row, index ) => (
@@ -337,8 +358,22 @@ export function ExtendedEditor( {
 										aria-pressed={ selected === index }
 										aria-label={ `${ __( 'Move marker', 'ohmylms' ) } ${ index + 1 }` }
 										style={ {
+											position: 'absolute',
 											left: `${ row.x }%`,
 											top: `${ row.y }%`,
+											width: 32,
+											height: 32,
+											padding: 0,
+											border: '2px solid #fff',
+											borderRadius: '50%',
+											color: '#fff',
+											background: '#432474',
+											transform: 'translate(-50%, -50%)',
+											cursor: 'move',
+											outline:
+												selected === index
+													? '3px solid #dba617'
+													: 'none',
 										} }
 									>
 										{ index + 1 }
