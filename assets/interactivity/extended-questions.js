@@ -270,22 +270,68 @@
 				player.hidden = false;
 			}
 		} );
-		function accept( blob ) {
-			if ( blob.size > 4 * 1024 * 1024 ) {
+		function accept( blob, name ) {
+			const config = window.ohmylmsResponseMedia || {};
+			const limit = Number( config.maxBytes || 4 * 1024 * 1024 );
+			if ( blob.size > limit ) {
 				status.textContent = __(
-					'Use a recording or file smaller than 4 MB.',
+					'Use a recording or file smaller than 8 MB.',
 					'ohmylms'
 				);
 				return;
 			}
-			const reader = new FileReader();
-			reader.addEventListener( 'load', () => {
-				player.src = reader.result;
-				player.hidden = false;
-				setAnswer( root, 'media', reader.result );
-				status.textContent = __( 'Media response ready.', 'ohmylms' );
-			} );
-			reader.readAsDataURL( blob );
+			if ( ! config.url ) {
+				status.textContent = __(
+					'Sign in to submit a recording.',
+					'ohmylms'
+				);
+				return;
+			}
+			const mime = ( blob.type || '' ).split( ';' )[ 0 ];
+			const extension =
+				( name || '' ).split( '.' ).pop().toLowerCase() ||
+				mime.split( '/' ).pop();
+			const body = new FormData();
+			body.append(
+				'file',
+				blob,
+				'response.' + extension.replace( /[^a-z0-9]/g, '' )
+			);
+			body.append( 'kind', video ? 'video' : 'audio' );
+			status.textContent = __( 'Saving recording…', 'ohmylms' );
+			// The file is stored in the uploads folder; only its link is kept in the answer.
+			window
+				.fetch( config.url, {
+					method: 'POST',
+					headers: { 'X-WP-Nonce': config.nonce },
+					credentials: 'same-origin',
+					body,
+				} )
+				.then( ( response ) =>
+					response.json().then( ( data ) => {
+						if ( ! response.ok || ! data.url ) {
+							throw new Error( data.message || '' );
+						}
+						return data.url;
+					} )
+				)
+				.then( ( url ) => {
+					player.src = url;
+					player.hidden = false;
+					setAnswer( root, 'media', url );
+					status.textContent = __(
+						'Media response ready.',
+						'ohmylms'
+					);
+				} )
+				.catch( ( error ) => {
+					status.textContent =
+						error.message ||
+						__(
+							'The recording could not be saved. Please try again.',
+							'ohmylms'
+						);
+				} );
 		}
 		const upload = el( 'input', {
 			type: 'file',
@@ -296,7 +342,7 @@
 		} );
 		upload.addEventListener( 'change', () => {
 			if ( upload.files[ 0 ] ) {
-				accept( upload.files[ 0 ] );
+				accept( upload.files[ 0 ], upload.files[ 0 ].name );
 			}
 		} );
 		root.appendChild( upload );

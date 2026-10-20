@@ -237,7 +237,17 @@ $stamp           = static function ( $row ) {
 						<h3><?php esc_html_e( 'Your answer', 'ohmylms' ); ?></h3>
 						<ul>
 							<?php foreach ( $entry['given'] as $line ) : ?>
-								<li><?php echo esc_html( $line ); ?></li>
+								<?php if ( in_array( $entry['type'], array( 'audio-response', 'video-response' ), true ) && preg_match( '#^https?://[^\s<>"]+$#i', $line ) ) : ?>
+									<li>
+										<?php if ( 'video-response' === $entry['type'] ) : ?>
+											<video controls preload="none" src="<?php echo esc_url( $line ); ?>"></video>
+										<?php else : ?>
+											<audio controls preload="none" src="<?php echo esc_url( $line ); ?>"></audio>
+										<?php endif; ?>
+									</li>
+								<?php else : ?>
+									<li><?php echo esc_html( $line ); ?></li>
+								<?php endif; ?>
 							<?php endforeach; ?>
 						</ul>
 					</div>

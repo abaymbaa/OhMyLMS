@@ -76,6 +76,14 @@ final class ReviewLines {
 					return array( self::point( $given['x'], $given['y'], '%' ) );
 				}
 				return array();
+			case 'audio-response':
+			case 'video-response':
+				$media = (string) ( $given['media'] ?? '' );
+				if ( '' === $media ) {
+					return array();
+				}
+				// A recording is a stored file; an embedded data link would be unreadable text.
+				return array( 0 === strpos( $media, 'data:' ) ? __( 'Recording submitted', 'ohmylms' ) : $media );
 			case 'interactive-video':
 				$lines = array();
 				foreach ( (array) ( $settings['checkpoints'] ?? array() ) as $checkpoint ) {

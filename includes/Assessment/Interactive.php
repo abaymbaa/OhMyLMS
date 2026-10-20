@@ -259,6 +259,7 @@ final class Interactive {
 		wp_enqueue_script( 'ohmylms-interactive' );
 		wp_enqueue_script( 'ohmylms-interactive-visual' );
 		wp_enqueue_script( 'ohmylms-extended-questions', plugins_url( 'assets/interactivity/extended-questions.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/extended-questions.js' ), true );
+		wp_localize_script( 'ohmylms-extended-questions', 'ohmylmsResponseMedia', ResponseMedia::script_data() );
 		wp_enqueue_style( 'ohmylms-extended-questions', plugins_url( 'assets/css/extended-questions.css', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), filemtime( OHMYLMS_DIR . '/assets/css/extended-questions.css' ) );
 		wp_enqueue_style( 'ohmylms-interactive' );
 	}

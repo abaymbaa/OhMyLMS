@@ -15,6 +15,7 @@ defined( 'ABSPATH' ) || exit;
 final class Bootstrap {
 	public static function init() {
 		PreviewPlayer::init();
+		ResponseMedia::init();
 		add_action( 'init', array( Taxonomy::class, 'register' ), 4 );
 		add_action( 'init', array( Usage::class, 'register_status' ), 4 );
 		add_action( 'before_delete_post', array( Usage::class, 'on_deleted_post' ) );
