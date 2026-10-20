@@ -198,9 +198,11 @@ export function NativeQuestionDetails( {
 							/>
 							<SkillMapEditor
 								parts={
-									detail.settings?.parts?.map(
-										( part ) => part.id
-									) || [ 'p1' ]
+									Array.isArray( detail.settings?.parts )
+										? detail.settings.parts.map(
+												( part ) => part.id
+											)
+										: [ 'p1' ]
 								}
 								skills={ skills }
 								value={ map }

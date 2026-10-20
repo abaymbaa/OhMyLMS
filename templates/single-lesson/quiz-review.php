@@ -223,7 +223,14 @@ $stamp           = static function ( $row ) {
 										</span>
 									<?php endif; ?>
 								</p>
-								<?php if ( '' !== $part['given'] ) : ?>
+								<?php if ( '' !== $part['given'] && ! empty( $part['media'] ) && preg_match( '#^https?://[^\s<>"]+$#i', $part['given'] ) ) : ?>
+									<p class="ohmylms-answer-review-part-answer"><span><?php esc_html_e( 'Your answer', 'ohmylms' ); ?>:</span></p>
+									<?php if ( 'video' === $part['media'] ) : ?>
+										<video controls preload="none" src="<?php echo esc_url( $part['given'] ); ?>"></video>
+									<?php else : ?>
+										<audio controls preload="none" src="<?php echo esc_url( $part['given'] ); ?>"></audio>
+									<?php endif; ?>
+								<?php elseif ( '' !== $part['given'] ) : ?>
 									<p class="ohmylms-answer-review-part-answer"><span><?php esc_html_e( 'Your answer', 'ohmylms' ); ?>:</span> <?php echo esc_html( $part['given'] ); ?></p>
 								<?php endif; ?>
 								<?php if ( $part['expected'] ) : ?>

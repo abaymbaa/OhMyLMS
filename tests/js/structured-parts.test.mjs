@@ -22,8 +22,6 @@ const leafTypes = QUESTION_BLOCK_TYPES.filter(
 			'short-text',
 			'long-text',
 			'statement',
-			'audio-response',
-			'video-response',
 			'poll',
 			'word-cloud',
 			'discussion-board',
@@ -90,6 +88,14 @@ test( 'a nested editor retains statement, stable ID, and marks when its answer t
 	} );
 	const selector = nodes( tree ).find( ( node ) => node.type === 'select' );
 	assert.equal( selector.props.options.length, leafTypes.length + 3 );
+	// Recorded audio and video can be parts, so a recording can sit beside other questions.
+	for ( const recording of [ 'audio-response', 'video-response' ] ) {
+		assert.ok(
+			selector.props.options.some(
+				( option ) => option.value === recording
+			)
+		);
+	}
 	assert.ok(
 		! selector.props.options.some(
 			( option ) => option.value === 'structured'

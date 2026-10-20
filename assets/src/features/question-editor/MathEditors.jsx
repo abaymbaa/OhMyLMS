@@ -207,8 +207,6 @@ export function StructuredEditor( {
 													'short-text',
 													'long-text',
 													'statement',
-													'audio-response',
-													'video-response',
 													'poll',
 													'word-cloud',
 													'discussion-board',

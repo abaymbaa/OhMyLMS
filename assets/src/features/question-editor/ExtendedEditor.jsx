@@ -9,6 +9,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { StructuredEditor } from './MathEditors';
+import { questionTypePatch } from './questionBlocks.mjs';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
 /**
  * Authoring controls for additional response formats.
@@ -179,6 +180,56 @@ export function ExtendedEditor( {
 							/>
 						);
 					} ) }
+				{ [ 'audio-response', 'video-response' ].includes( type ) && (
+					<div className="ohmylms-response-parts">
+						<p className="description">
+							{ __(
+								'Need an image or other questions with this recording? Convert it to a multi-part question. The recording becomes the first part and keeps its settings.',
+								'ohmylms'
+							) }
+						</p>
+						<Button
+							variant="secondary"
+							onClick={ () => {
+								const child = questionTypePatch( {}, type );
+								set( {
+									type: 'structured',
+									max_seconds: undefined,
+									sources: undefined,
+									parts: [
+										{
+											id: 'p1',
+											label: '(a)',
+											kind: 'question',
+											marks: 1,
+											prompt: '',
+											question: {
+												...child,
+												settings: {
+													...child.settings,
+													max_seconds:
+														value.max_seconds ?? 60,
+													...( type ===
+													'video-response'
+														? {
+																sources:
+																	value.sources || [
+																		'camera',
+																		'screen',
+																	],
+															}
+														: {} ),
+												},
+											},
+										},
+									],
+								} );
+							} }
+						>
+							{ __( 'Add other questions or images', 'ohmylms' ) }
+						</Button>
+					</div>
+				) }
 			</div>
 		);
 	}

@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 /** Nested questions are frozen inline with their parent, never read from a live draft. */
 final class StructuredPart {
 
-	const TYPES = array( 'single-choice', 'multiple-choice', 'true-false', 'fill-in-the-blank', 'matching', 'reorder', 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', 'number-line', 'shade-model', 'count-blocks', 'set-clock', 'make-amount', 'fill-level', 'build-chart', 'grid-build', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw' );
+	const TYPES = array( 'single-choice', 'multiple-choice', 'true-false', 'fill-in-the-blank', 'matching', 'reorder', 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', 'number-line', 'shade-model', 'count-blocks', 'set-clock', 'make-amount', 'fill-level', 'build-chart', 'grid-build', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw', 'audio-response', 'video-response' );
 
 	/**
 	 * Build the same immutable object used for standalone questions.
