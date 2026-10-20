@@ -1,5 +1,7 @@
 # Quiz and question modules
 
+Default authoring now runs through `includes/Learning/NativeQuizEditor.php`, `NativeQuestionEditor.php`, their REST controllers, and `assets/src/features/learning/Native*` components. See [Gutenberg authoring](GUTENBERG-AUTHORING.md). Form factories below remain compatibility interfaces during stabilization; shared answer and validation controls remain active in Gutenberg.
+
 | Module | Implementation | Responsibility |
 | --- | --- | --- |
 | Quiz player | `assets/interactivity/quiz-player/` | Learner navigation, required answers, submission, timer, matching and reorder interactions |

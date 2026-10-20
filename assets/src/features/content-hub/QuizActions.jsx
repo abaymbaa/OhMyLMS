@@ -77,7 +77,7 @@ export const ExportIcon = () => (
  * Create an empty draft quiz and open its editor. For the title row's add-button config.
  * @param {boolean} blocks Whether to start in the alternative block editor.
  */
-export function useAddQuiz( blocks = false ) {
+export function useAddQuiz( blocks = true ) {
 	const [ loading, setLoading ] = useState( false );
 	const onClick = async () => {
 		setLoading( true );
@@ -86,7 +86,7 @@ export function useAddQuiz( blocks = false ) {
 				'quiz',
 				__( 'Untitled quiz', 'ohmylms' )
 			);
-			if ( blocks ) {
+			if ( blocks && ! window.ohmylmsAssessment?.formAuthoring ) {
 				if ( ! quiz.native_editor_url ) {
 					throw new Error(
 						__(
@@ -108,9 +108,7 @@ export function useAddQuiz( blocks = false ) {
 		}
 	};
 	return {
-		label: blocks
-			? __( 'Create with Gutenberg', 'ohmylms' )
-			: __( 'Add Quiz', 'ohmylms' ),
+		label: __( 'Add Quiz', 'ohmylms' ),
 		onClick,
 		loading,
 	};

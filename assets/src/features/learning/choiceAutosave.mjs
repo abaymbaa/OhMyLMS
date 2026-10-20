@@ -3,7 +3,10 @@ import {
 	promptText,
 } from '../question-editor/questionPrompt.mjs';
 import { parseInlineBlankPrompt } from '../question-editor/inlineBlanks.mjs';
-import { extendedIssues } from '../question-editor/extendedModel.mjs';
+import {
+	extendedIssues,
+	isExtendedType,
+} from '../question-editor/extendedModel.mjs';
 import {
 	interactiveIssues,
 	isInteractiveType,
@@ -110,11 +113,7 @@ export function choiceReadyToSave( question ) {
 			)
 		);
 	}
-	if (
-		[ 'labeling', 'hotspot', 'draw', 'graphing', 'hot-text' ].includes(
-			type
-		)
-	) {
+	if ( isExtendedType( type ) ) {
 		return hasPrompt && ! extendedIssues( type, question.settings ).length;
 	}
 	if ( isInteractiveType( type ) ) {
@@ -150,8 +149,15 @@ export function choiceReadyToSave( question ) {
 			)
 		);
 	}
-	if ( [ 'short-text', 'long-text' ].includes( question.settings?.type ) ) {
+	if (
+		[ 'short-text', 'long-text', 'statement' ].includes(
+			question.settings?.type
+		)
+	) {
 		return Boolean( promptText( prompt ) || /<img\s/i.test( prompt ) );
+	}
+	if ( windowSafeCustomType( type ) ) {
+		return hasPrompt;
 	}
 	return (
 		Boolean( promptText( prompt ) || /<img\s/i.test( prompt ) ) &&
@@ -199,4 +205,15 @@ export function reconcileChoiceSave( submitted, current, fresh ) {
 				: option;
 		} ),
 	};
+}
+
+/**
+ * Whether a trusted extension supplies the private answer editor.
+ * @param type
+ */
+function windowSafeCustomType( type ) {
+	return (
+		typeof window !== 'undefined' &&
+		Boolean( window.ohmylms?.extensions?.get?.( 'question-editor', type ) )
+	);
 }

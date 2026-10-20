@@ -27,8 +27,15 @@ import {
  * @param root0.existingIds
  * @param root0.onAdded
  * @param root0.onClose
+ * @param root0.onPick
  */
-export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
+export function BankPicker( {
+	quizId,
+	existingIds,
+	onAdded,
+	onClose,
+	onPick,
+} ) {
 	const [ filters, setFilters ] = useState( {
 		search: '',
 		skill: '',
@@ -65,11 +72,16 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 			active = false;
 			clearTimeout( timer );
 		};
-	}, [ filters ] );
+	}, [ filters, quizId, existingIds ] );
 	async function add() {
 		setBusy( true );
 		setError( '' );
 		try {
+			if ( onPick ) {
+				await onPick( chosen );
+				onClose();
+				return;
+			}
 			const result = await addQuestionsToQuiz( quizId, chosen, pin );
 			onAdded( result.content || [], result.added || chosen );
 			onClose();
@@ -194,14 +206,16 @@ export function BankPicker( { quizId, existingIds, onAdded, onClose } ) {
 					</ul>
 				);
 			} )() }
-			<CheckboxControl
-				label={ __(
-					'Pin the current version (later edits will not change this quiz)',
-					'ohmylms'
-				) }
-				checked={ pin }
-				onChange={ setPin }
-			/>
+			{ ! onPick && (
+				<CheckboxControl
+					label={ __(
+						'Pin the current version (later edits will not change this quiz)',
+						'ohmylms'
+					) }
+					checked={ pin }
+					onChange={ setPin }
+				/>
+			) }
 			<Button
 				variant="primary"
 				isBusy={ busy }

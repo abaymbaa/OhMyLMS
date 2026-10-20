@@ -10,7 +10,7 @@ if ( 'cli' !== PHP_SAPI || ! $native_site || ! is_file( $native_site . '/wp-load
 	throw new RuntimeException( 'Set OHMYLMS_TEST_SITE_PATH to the disposable WordPress test installation.' );
 }
 require $native_site . '/wp-load.php';
-if ( ! defined( 'OHMYLMS_TEST_SITE' ) || ! OHMYLMS_TEST_SITE || 'ohmylms_block_browser_1dea' !== DB_NAME ) {
+if ( ! defined( 'OHMYLMS_TEST_SITE' ) || ! OHMYLMS_TEST_SITE || ! in_array( DB_NAME, array( 'ohmylms_block_browser_1dea', 'ohmylms_gutenberg_migration_20261020' ), true ) ) {
 	throw new RuntimeException( 'This test requires the isolated block-browser database.' );
 }
 
@@ -150,7 +150,7 @@ try {
 	$read  = native_quiz_request( 'GET', $route, array( 'context' => 'edit' ) );
 	native_quiz_check( 200 === $read->get_status(), 'The native document cannot be read by its author.' );
 	$raw = $read->get_data()['content']['raw'];
-	native_quiz_check( str_contains( $raw, NativeQuizEditor::QUESTION_BLOCK ) && str_contains( $raw, NativeQuizEditor::REFERENCE_BLOCK ), 'Opening an existing quiz did not preserve both supported and other question formats.' );
+	native_quiz_check( 2 === substr_count( $raw, 'wp:' . NativeQuizEditor::QUESTION_BLOCK ), 'Opening an existing quiz did not expose all registered formats in the native card.' );
 	$heading = '<!-- wp:heading --><h2 class="wp-block-heading">Core Gutenberg heading</h2><!-- /wp:heading -->';
 	$content = $heading . native_quiz_block( $question_ids[1] ) . native_quiz_block( $question_ids[2], NativeQuizEditor::REFERENCE_BLOCK ) . native_quiz_block( $question_ids[0] );
 	$saved   = native_quiz_request(
@@ -169,6 +169,12 @@ try {
 	native_quiz_check( str_contains( $stored, '"authoringRevision":4' ), 'Native saves lost the private question edit marker.' );
 	$rendered = do_blocks( $stored );
 	native_quiz_check( str_contains( $rendered, 'Core Gutenberg heading' ) && ! str_contains( $rendered, 'ohmylms-inline-check' ), 'Rendering a quiz introduction started inline practice.' );
+	$nested_post               = clone get_post( $quiz_id );
+	$nested_post->post_content = '<!-- wp:group --><div class="wp-block-group">' . $heading . native_quiz_block( $question_ids[0] ) . '<!-- wp:paragraph --><p>Keep this between questions.</p><!-- /wp:paragraph -->' . native_quiz_block( $question_ids[1] ) . native_quiz_block( $question_ids[2] ) . '</div><!-- /wp:group -->';
+	$nested_document           = NativeQuizEditor::editor_content( $nested_post );
+	$nested_blocks             = parse_blocks( $nested_document );
+	native_quiz_check( 'core/group' === $nested_blocks[0]['blockName'] && 5 === count( $nested_blocks[0]['innerBlocks'] ), 'Reconciliation moved questions out of their existing layout.' );
+	native_quiz_check( 'core/paragraph' === $nested_blocks[0]['innerBlocks'][2]['blockName'] && $question_ids[1] === $nested_blocks[0]['innerBlocks'][1]['attrs']['questionId'], 'Reconciliation lost interleaved content or authoritative placement order.' );
 	$duplicate = native_quiz_request( 'POST', $route, array( 'content' => native_quiz_block( $question_ids[0] ) . native_quiz_block( $question_ids[0] ) ) );
 	native_quiz_check( 400 === $duplicate->get_status() && get_post_field( 'post_content', $quiz_id ) === $stored, 'Duplicate question references changed the saved quiz.' );
 	$empty = native_quiz_request( 'POST', $route, array( 'content' => native_quiz_block( 0 ) ) );

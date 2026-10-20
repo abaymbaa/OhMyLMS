@@ -11,6 +11,40 @@ export function createQuestionControls( root, context ) {
 		emit( root, 'question-answer-changed', {
 			questionId: Number( root.dataset.questionId ),
 		} );
+	// Keep the first item's Up and the last item's Down buttons disabled.
+	const syncMoveButtons = () => {
+		const items = [ ...root.querySelectorAll( '.reorder-option' ) ];
+		items.forEach( ( item, index ) => {
+			const up = item.querySelector(
+				'.reorder-move[data-direction="-1"]'
+			);
+			const down = item.querySelector(
+				'.reorder-move[data-direction="1"]'
+			);
+			if ( up ) {
+				up.disabled = index === 0;
+			}
+			if ( down ) {
+				down.disabled = index === items.length - 1;
+			}
+		} );
+	};
+	const moveItem = ( item, direction ) => {
+		const sibling =
+			direction < 0
+				? item.previousElementSibling
+				: item.nextElementSibling;
+		if ( ! sibling ) {
+			return false;
+		}
+		root.insertBefore(
+			item,
+			direction < 0 ? sibling : sibling.nextSibling
+		);
+		syncMoveButtons();
+		changed();
+		return true;
+	};
 	const select = ( item ) => {
 		if ( ! item || ! root.contains( item ) ) {
 			return;
@@ -78,7 +112,19 @@ export function createQuestionControls( root, context ) {
 		} );
 		changed();
 	};
+	syncMoveButtons();
 	return {
+		move( event ) {
+			const button = event.target.closest( '.reorder-move' );
+			const item = button?.closest( '.reorder-option' );
+			if (
+				item &&
+				moveItem( item, Number( button.dataset.direction ) )
+			) {
+				// Keep focus on the same arrow, or the row when that end is reached.
+				( button.disabled ? item : button ).focus();
+			}
+		},
 		select( event ) {
 			select( itemOf( event ) );
 		},
@@ -122,12 +168,43 @@ export function createQuestionControls( root, context ) {
 			} else {
 				root.append( item );
 			}
+			syncMoveButtons();
 			changed();
 		},
 		place( event ) {
 			place( event.target.closest( '.option-drop-box' ) );
 		},
+		// Double-clicking a term or a definition removes its link.
+		unlink( event ) {
+			const item = event.target.closest( '.matching-option' );
+			const box = event.target.closest( '.option-drop-box' );
+			const input = item
+				? [ ...root.querySelectorAll( '.matching-answer-input' ) ].find(
+						( field ) => field.value === item.dataset.optionId
+					)
+				: box?.parentElement.querySelector( '.matching-answer-input' );
+			if ( ! input?.value ) {
+				return;
+			}
+			const target =
+				input.parentElement.querySelector( '.option-drop-box' );
+			input.value = '';
+			target.querySelector( '.dropped' )?.remove();
+			const placeholder = target.querySelector( '.placeholder-text' );
+			if ( placeholder ) {
+				placeholder.hidden = false;
+			}
+			context.selectedId = '';
+			root.querySelectorAll( '.matching-option' ).forEach( ( option ) => {
+				option.classList.remove( 'dragging' );
+				option.setAttribute( 'aria-pressed', 'false' );
+			} );
+			changed();
+		},
 		key( event ) {
+			if ( event.target.closest( '.reorder-move' ) ) {
+				return;
+			}
 			const item = itemOf( event ),
 				box = event.target.closest( '.option-drop-box' );
 			if (
@@ -145,6 +222,7 @@ export function createQuestionControls( root, context ) {
 						event.key === 'ArrowUp' ? sibling : sibling.nextSibling
 					);
 					item.focus();
+					syncMoveButtons();
 					changed();
 				}
 			} else if ( event.key === 'Enter' || event.key === ' ' ) {

@@ -306,6 +306,7 @@ class QuestionBankController extends RestController {
 			'usage'               => Usage::summary( $question_id ),
 			'author'              => (int) get_post_field( 'post_author', $question_id ),
 			'modified'            => get_post_field( 'post_modified_gmt', $question_id ),
+			'native_editor_url'   => AccessPolicy::can_edit_question( $question_id ) ? (string) get_edit_post_link( $question_id, 'raw' ) : '',
 			'can_edit'            => AccessPolicy::can_edit_question( $question_id ),
 			'can_approve'         => AccessPolicy::can_approve_question( $question_id ),
 		);

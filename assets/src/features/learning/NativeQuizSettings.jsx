@@ -8,6 +8,13 @@ import {
 import { select, useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
+import { BankPicker } from '../question-bank/BankPicker';
+import { AssessmentSettingsPanel } from '../assessment/AssessmentSettingsPanel';
+import { NativeExtensionPanels } from './NativeExtensionPanels';
+import { NativeQuizConfiguration } from './NativeQuizConfiguration';
+import { createBlock } from '@wordpress/blocks';
+import { exportQuiz } from '../content-hub/api.mjs';
+import { downloadText } from '../content-hub/quizExchange.mjs';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { saveQuizForPreview } from './quizPreview.mjs';
@@ -146,10 +153,17 @@ function QuizPreviewAction() {
  * @return {Element|null} Native quiz sidebar.
  */
 function NativeQuizSettings() {
-	const postType = useSelect(
-		( getStore ) => getStore( 'core/editor' ).getCurrentPostType(),
+	const { postType, postId } = useSelect(
+		( getStore ) => ( {
+			postType: getStore( 'core/editor' ).getCurrentPostType(),
+			postId: getStore( 'core/editor' ).getCurrentPostId(),
+		} ),
 		[]
 	);
+	const { insertBlocks } = useDispatch( 'core/block-editor' );
+	const { savePost } = useDispatch( 'core/editor' );
+	const [ pickerOpen, setPickerOpen ] = useState( false );
+	const [ error, setError ] = useState( '' );
 	if ( postType !== 'ohmylms-quiz' ) {
 		return null;
 	}
@@ -174,15 +188,96 @@ function NativeQuizSettings() {
 					) }
 				</p>
 				<QuizPreviewButton />
+				<Button
+					variant="secondary"
+					onClick={ () => setPickerOpen( true ) }
+				>
+					{ __( 'Add from question bank', 'ohmylms' ) }
+				</Button>
+				<Button
+					variant="tertiary"
+					onClick={ async () => {
+						try {
+							if (
+								! ( await saveQuizForPreview( {
+									editor: select( 'core/editor' ),
+									savePost,
+								} ) )
+							) {
+								throw new Error(
+									__(
+										'Save the quiz before exporting.',
+										'ohmylms'
+									)
+								);
+							}
+							const file = await exportQuiz( postId );
+							downloadText(
+								file.filename,
+								file.mime,
+								file.content
+							);
+						} catch ( cause ) {
+							setError( cause.message );
+						}
+					} }
+				>
+					{ __( 'Export quiz', 'ohmylms' ) }
+				</Button>
+				{ error && (
+					<Notice status="error" onRemove={ () => setError( '' ) }>
+						{ error }
+					</Notice>
+				) }
 				<p>
 					<Button
 						variant="link"
 						href={ window.ohmylmsNativeLesson.returnUrl }
 					>
-						{ __( 'Current quiz editor and settings', 'ohmylms' ) }
+						{ __( 'Back to quizzes', 'ohmylms' ) }
 					</Button>
 				</p>
 			</PluginDocumentSettingPanel>
+			<PluginDocumentSettingPanel
+				name="ohmylms-native-quiz-settings"
+				title={ __( 'Quiz settings', 'ohmylms' ) }
+				initialOpen={ false }
+			>
+				<NativeQuizConfiguration />
+			</PluginDocumentSettingPanel>
+			<PluginDocumentSettingPanel
+				name="ohmylms-native-assessment"
+				title={ __( 'Assessment and pools', 'ohmylms' ) }
+				initialOpen={ false }
+			>
+				<AssessmentSettingsPanel quizId={ postId } native />
+			</PluginDocumentSettingPanel>
+			<NativeExtensionPanels quizId={ postId } />
+			{ pickerOpen && (
+				<BankPicker
+					quizId={ postId }
+					existingIds={ select( 'core/block-editor' )
+						.getBlocks()
+						.flatMap( function collect( block ) {
+							return block.attributes?.questionId
+								? [ block.attributes.questionId ]
+								: ( block.innerBlocks || [] ).flatMap(
+										collect
+									);
+						} ) }
+					onClose={ () => setPickerOpen( false ) }
+					onPick={ ( ids ) =>
+						insertBlocks(
+							ids.map( ( questionId ) =>
+								createBlock( 'ohmylms/shared-multiple-choice', {
+									questionId,
+									delivery: 'quiz',
+								} )
+							)
+						)
+					}
+				/>
+			) }
 		</>
 	);
 }

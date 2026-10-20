@@ -1,4 +1,4 @@
-import { createElement, useRef, useState } from '@wordpress/element';
+import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Button, Modal, Notice } from '@wordpress/components';
 import { questionCreator } from './questionCreation.mjs';
@@ -38,7 +38,7 @@ const PROBLEMS = () => ( {
  * @param root0.onCreated
  * @param root0.skillId
  */
-export function NewQuestionModal( { onClose, onCreated, skillId } ) {
+function FormQuestionModal( { onClose, onCreated, skillId } ) {
 	const creator = useRef( null );
 	const [ draft, setDraft ] = useState( () => emptyDraft() );
 	const [ choosingType, setChoosingType ] = useState( true );
@@ -202,4 +202,32 @@ export function NewQuestionModal( { onClose, onCreated, skillId } ) {
 			</div>
 		</Modal>
 	);
+}
+
+/**
+ * Open the same native question builder from the bank and skill resources.
+ * @param {Object} props Modal context.
+ * @return {Element|null} Rollback form or native navigation.
+ */
+export function NewQuestionModal( props ) {
+	useEffect( () => {
+		if ( window.ohmylmsAssessment?.formAuthoring ) {
+			return;
+		}
+		const url = new URL(
+			'post-new.php?post_type=ohmylms-question',
+			window.location.href
+		);
+		if ( props.skillId ) {
+			url.searchParams.set( 'ohmylms_skill', props.skillId );
+		}
+		const route = window.location.hash.slice( 1 );
+		if ( /^\/(?:content-hub|question-bank)(?:\/|$)/.test( route ) ) {
+			url.searchParams.set( 'ohmylms_return', route );
+		}
+		window.location.assign( url.href );
+	}, [ props.skillId ] );
+	return window.ohmylmsAssessment?.formAuthoring ? (
+		<FormQuestionModal { ...props } />
+	) : null;
 }

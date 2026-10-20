@@ -38,6 +38,7 @@ import { RichContentControl } from '../math/RichContentControl';
  * @param root0.collapseAnswerToolbar
  * @param root0.compactActions
  * @param root0.showAnswerToolbar
+ * @param root0.question
  */
 export function BankAnswerFields( {
 	type,
@@ -49,8 +50,24 @@ export function BankAnswerFields( {
 	showAnswerToolbar = false,
 	collapseAnswerToolbar = false,
 	compactActions = false,
+	question,
 } ) {
 	const dragged = useRef( null );
+	const custom =
+		typeof window !== 'undefined' &&
+		window.ohmylms?.extensions?.get?.( 'question-editor', type );
+	if ( custom ) {
+		return createElement( custom.render, {
+			question: question || {
+				name: prompt,
+				settings,
+				questions: options,
+			},
+			value: settings,
+			onChange: ( patch ) =>
+				onChange( { settings: { ...settings, ...patch, type } } ),
+		} );
+	}
 	if ( isExtendedType( type ) ) {
 		return (
 			<ExtendedEditor
@@ -200,11 +217,15 @@ export function BankAnswerFields( {
 			</p>
 		);
 	}
-	const choices = [
-		'single-choice',
-		'multiple-choice',
-		'true-false',
-	].includes( type );
+	// Reorder and matching mark the answer by position or pair, not by a radio.
+	const choices =
+		! [ 'reorder', 'matching' ].includes( type ) &&
+		( ( typeof window !== 'undefined' &&
+			window.ohmylmsNativeLesson?.questionTypes?.[ type ]?.editor
+				?.format === 'ohmylms-options' ) ||
+			[ 'single-choice', 'multiple-choice', 'true-false' ].includes(
+				type
+			) );
 	const patchOption = ( index, patch ) =>
 		onChange( {
 			questions: options.map( ( option, position ) =>

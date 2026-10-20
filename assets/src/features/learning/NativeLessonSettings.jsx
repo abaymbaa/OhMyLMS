@@ -1,6 +1,8 @@
 /** @jsx createElement */
+import './nativeAuthoringBootstrap';
 import './LessonChoiceBlock';
 import './NativeQuizSettings';
+import './NativeQuestionSettings';
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';

@@ -162,6 +162,41 @@
 			return button;
 		}
 
+		function unassign( item ) {
+			item.select.value = '';
+			changed( item.select );
+			selected = null;
+			status.textContent = item.text;
+			render();
+		}
+
+		function slot( item ) {
+			var node = tile( item );
+			node.classList.add( 'ohmylms-tile-slot' );
+			node.removeAttribute( 'draggable' );
+			node.removeAttribute( 'aria-pressed' );
+			node.setAttribute( 'aria-label', item.text );
+			node.addEventListener( 'click', function () {
+				unassign( item );
+			} );
+			return node;
+		}
+
+		function dropOnBank( event ) {
+			event.preventDefault();
+			var id = event.dataTransfer.getData( 'text/plain' );
+			items.forEach( function ( item ) {
+				if ( item.id === id && item.select.value ) {
+					unassign( item );
+				}
+			} );
+		}
+
+		bank.addEventListener( 'dragover', function ( event ) {
+			event.preventDefault();
+		} );
+		bank.addEventListener( 'drop', dropOnBank );
+
 		function render() {
 			bank.textContent = '';
 			Object.keys( drops ).forEach( function ( id ) {
@@ -170,6 +205,8 @@
 			items.forEach( function ( item ) {
 				var button = tile( item );
 				if ( item.select.value && drops[ item.select.value ] ) {
+					// A dashed slot keeps the tile's place in the bank.
+					bank.appendChild( slot( item ) );
 					// A placed tile returns to the bank when pressed.
 					button.addEventListener( 'click', function () {
 						item.select.value = '';

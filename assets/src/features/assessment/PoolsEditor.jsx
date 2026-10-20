@@ -7,6 +7,10 @@ import {
 	SelectControl,
 	TextControl,
 } from '@wordpress/components';
+import {
+	NativeSaveGuard,
+	markNativeQuizDirty,
+} from '../learning/NativeSaveGuard';
 import { loadPools, savePools } from './api.mjs';
 import { listSkills } from '../question-bank/api.mjs';
 import { flattenTree, skillTree } from '../question-bank/model.mjs';
@@ -24,8 +28,10 @@ const EMPTY = {
  * The server validates pools together and refuses shortages with an explanation.
  * @param root0
  * @param root0.quizId
+ * @param root0.native
  */
-export function PoolsEditor( { quizId } ) {
+export function PoolsEditor( { quizId, native = false } ) {
+	const [ savedState, setSavedState ] = useState( null );
 	const [ pools, setPools ] = useState( null );
 	const [ skills, setSkills ] = useState( [] );
 	const [ message, setMessage ] = useState( null );
@@ -38,6 +44,7 @@ export function PoolsEditor( { quizId } ) {
 					return;
 				}
 				setPools( loaded.pools || [] );
+				setSavedState( JSON.stringify( loaded.pools || [] ) );
 				setSkills( catalogue.skills || [] );
 			} )
 			.catch(
@@ -72,6 +79,10 @@ export function PoolsEditor( { quizId } ) {
 		try {
 			const saved = await savePools( quizId, pools );
 			setPools( saved.pools );
+			if ( native ) {
+				markNativeQuizDirty();
+			}
+			setSavedState( JSON.stringify( saved.pools ) );
 			setMessage( {
 				status: 'success',
 				text: __(
@@ -90,7 +101,16 @@ export function PoolsEditor( { quizId } ) {
 	}
 	const options = flattenTree( skillTree( skills ) );
 	return (
-		<div className="ohmylms-pools-editor">
+		<fieldset disabled={ saving } className="ohmylms-pools-editor">
+			{ native && (
+				<NativeSaveGuard
+					dirty={
+						savedState !== null &&
+						savedState !== JSON.stringify( pools )
+					}
+					busy={ saving }
+				/>
+			) }
 			<h3>{ __( 'Random question pools', 'ohmylms' ) }</h3>
 			<p>
 				{ __(
@@ -243,6 +263,6 @@ export function PoolsEditor( { quizId } ) {
 			<Button variant="primary" isBusy={ saving } onClick={ save }>
 				{ __( 'Save pools', 'ohmylms' ) }
 			</Button>
-		</div>
+		</fieldset>
 	);
 }

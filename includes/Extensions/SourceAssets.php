@@ -8,6 +8,7 @@ namespace OhMyLMS\Extensions;
 
 /** Source asset overrides and the SDK used by the shipped admin application. */
 final class SourceAssets {
+	/** Register asset hooks for the LMS application. */
 	public static function init() {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 11 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 11 );
@@ -16,17 +17,28 @@ final class SourceAssets {
 		add_filter( 'script_loader_src', array( __CLASS__, 'url' ), 20 );
 		add_filter( 'style_loader_src', array( __CLASS__, 'url' ), 20 );
 	}
+	/**
+	 * Resolve source assets when the source build is enabled.
+	 *
+	 * @param string $url Published asset URL.
+	 * @return string Resolved URL.
+	 */
 	public static function url( $url ) {
 		$base = plugins_url( '/', OHMYLMS_FILE );
 		if ( strpos( $url, $base . 'assets/' ) !== 0 ) {
 			return $url; }
 		$relative = strtok( substr( $url, strlen( $base ) ), '?' );
-		$file = OHMYLMS_DIR . '/build/' . $relative;
+		$file     = OHMYLMS_DIR . '/build/' . $relative;
 		if ( ! is_file( $file ) ) {
 			return $url; }
 		return $base . 'build/' . $relative . '?ver=' . substr( hash_file( 'sha256', $file ), 0, 12 );
 	}
+	/** Load the application SDK; native screens use their dedicated editor bundle. */
 	public static function enqueue() {
+		$screen = is_admin() ? get_current_screen() : null;
+		if ( $screen && in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-question' ), true ) && $screen->is_block_editor() ) {
+			return;
+		}
 		$directory  = defined( 'OHMYLMS_SOURCE_ASSETS' ) && OHMYLMS_SOURCE_ASSETS ? 'build/sdk' : 'assets/dist/admin';
 		$asset_file = OHMYLMS_DIR . '/' . $directory . '/extensions.asset.php';
 		if ( ! is_file( $asset_file ) ) {
@@ -40,11 +52,12 @@ final class SourceAssets {
 			'ohmylms-extension-sdk',
 			'ohmylmsAssessment',
 			array(
-				'versioned' => \OhMyLMS\Assessment\Engine::versioned(),
-				'bankUi'    => \OhMyLMS\Assessment\Engine::bank_ui(),
-				'skills'    => true,
-				'practice'  => \OhMyLMS\Assessment\Engine::practice(),
-				'isAdmin'   => current_user_can( 'manage_options' ),
+				'versioned'     => \OhMyLMS\Assessment\Engine::versioned(),
+				'bankUi'        => \OhMyLMS\Assessment\Engine::bank_ui(),
+				'skills'        => true,
+				'practice'      => \OhMyLMS\Assessment\Engine::practice(),
+				'formAuthoring' => defined( 'OHMYLMS_FORM_AUTHORING' ) && OHMYLMS_FORM_AUTHORING,
+				'isAdmin'       => current_user_can( 'manage_options' ),
 			)
 		);
 		$scripts = wp_scripts();

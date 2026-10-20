@@ -12,6 +12,7 @@ import {
 } from 'ohmylms/interactivity';
 import { createQuestionControls } from './questionControls.js';
 import { gridRowsAnswered } from './gridAnswers.mjs';
+import { attachMatchingLines } from './matchingLines.js';
 const controllers = new WeakMap();
 store( 'ohmylms/questions', {
 	actions: Object.fromEntries(
@@ -22,6 +23,8 @@ store( 'ohmylms/questions', {
 			'dragover',
 			'drop',
 			'place',
+			'move',
+			'unlink',
 			'key',
 		].map( ( name ) => [
 			name,
@@ -63,11 +66,17 @@ function mountDynamic( container ) {
 		drop: 'drop',
 		keydown: 'key',
 		click: 'select',
+		dblclick: 'unlink',
 	};
 	const registered = [];
 	for ( const [ event, action ] of Object.entries( listeners ) ) {
 		const listener = ( eventObject ) => {
 			if (
+				event === 'click' &&
+				eventObject.target.closest( '.reorder-move' )
+			) {
+				controller.move( eventObject );
+			} else if (
 				event === 'click' &&
 				eventObject.target.closest( '.option-drop-box' )
 			) {
@@ -79,10 +88,24 @@ function mountDynamic( container ) {
 		root.addEventListener( event, listener );
 		registered.push( [ event, listener ] );
 	}
-	return () =>
+	const detachLines = root.classList.contains( 'quiz-matching-options' )
+		? attachMatchingLines( root )
+		: () => {};
+	return () => {
+		detachLines();
 		registered.forEach( ( [ event, listener ] ) =>
 			root.removeEventListener( event, listener )
 		);
+	};
+}
+const attachStaticMatching = () =>
+	document
+		.querySelectorAll( '.quiz-matching-options' )
+		.forEach( attachMatchingLines );
+if ( document.readyState === 'loading' ) {
+	document.addEventListener( 'DOMContentLoaded', attachStaticMatching );
+} else {
+	attachStaticMatching();
 }
 registerQuestionMount( 'matching', mountDynamic );
 registerQuestionMount( 'reorder', mountDynamic );

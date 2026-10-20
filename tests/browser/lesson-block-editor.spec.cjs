@@ -49,9 +49,7 @@ test( 'native Gutenberg edits lessons and saves LMS settings together', async ( 
 		const canvas = page.frameLocator( 'iframe[name="editor-canvas"]' );
 		const paragraph = canvas.locator( '[data-type="core/paragraph"]' );
 		await expect( paragraph ).toHaveText( 'Original paragraph.' );
-		await expect(
-			page.getByRole( 'tab', { name: 'Block', exact: true } )
-		).toHaveAttribute( 'aria-selected', 'true' );
+		// WordPress restores the user's sidebar preference; editing does not require a specific tab.
 		await paragraph.fill( 'Saved native block paragraph.' );
 		await page.getByRole( 'tab', { name: 'Lesson', exact: true } ).click();
 		const settingsPanel = page.getByRole( 'button', {

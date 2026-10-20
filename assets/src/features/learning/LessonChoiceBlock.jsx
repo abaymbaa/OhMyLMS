@@ -6,8 +6,21 @@ import {
 	useRef,
 	useState,
 } from '@wordpress/element';
-import { useDispatch, select } from '@wordpress/data';
-import { Notice, Spinner } from '@wordpress/components';
+import { useDispatch, useSelect, select } from '@wordpress/data';
+import { NativeSaveGuard } from './NativeSaveGuard';
+import { rememberQuestion, stepQuestionHistory } from './questionHistory.mjs';
+import {
+	Notice,
+	Spinner,
+	ToolbarGroup,
+	ToolbarButton,
+} from '@wordpress/components';
+import {
+	QUESTION_BLOCK_TYPES,
+	questionTypePatch,
+} from '../question-editor/questionBlocks.mjs';
+import { nativeQuestionTypes } from './nativeAuthoring.mjs';
+import { NativeQuestionDetails } from './NativeQuestionDetails';
 import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import {
@@ -15,13 +28,14 @@ import {
 	getBlockType,
 	createBlock,
 } from '@wordpress/blocks';
-import { useBlockProps } from '@wordpress/block-editor';
+import { useBlockProps, BlockControls } from '@wordpress/block-editor';
 import { choiceReadyToSave, reconcileChoiceSave } from './choiceAutosave.mjs';
 import {
 	loadBankQuestion,
 	createBankQuestion,
 	saveQuestionAttributes,
 	approveQuestion,
+	duplicateQuestion,
 } from '../question-bank/api.mjs';
 import {
 	MultipleChoiceFields,
@@ -42,7 +56,12 @@ function LessonChoiceEdit( {
 	clientId,
 	context = {},
 } ) {
-	const quiz = context.postType === 'ohmylms-quiz';
+	const standalone = context.postType === 'ohmylms-question';
+	const quiz = context.postType === 'ohmylms-quiz' || standalone;
+	const coreSaving = useSelect(
+		( getStore ) => getStore( 'core/editor' ).isSavingPost(),
+		[]
+	);
 	const [ question, setQuestion ] = useState( null );
 	const [ detail, setDetail ] = useState( null );
 	const [ dirty, setDirty ] = useState(
@@ -52,18 +71,28 @@ function LessonChoiceEdit( {
 	const [ error, setError ] = useState( '' );
 	const loadedId = useRef( 0 );
 	const revision = useRef( 0 );
+	const history = useRef( { past: [], future: [] } );
 	const latestQuestion = useRef( question );
 	latestQuestion.current = question;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
 	useEffect( () => {
 		if ( context.postType ) {
-			const delivery = quiz ? 'quiz' : 'inline';
+			let delivery = quiz ? 'quiz' : 'inline';
+			if ( standalone ) {
+				delivery = 'bank';
+			}
 			if ( attributes.delivery !== delivery ) {
 				setAttributes( { delivery } );
 			}
 		}
-	}, [ context.postType, attributes.delivery, quiz, setAttributes ] );
+	}, [
+		context.postType,
+		attributes.delivery,
+		quiz,
+		standalone,
+		setAttributes,
+	] );
 	useEffect( () => {
 		const lock = `ohmylms-question-${ clientId }`;
 		if ( dirty || busy ) {
@@ -118,13 +147,23 @@ function LessonChoiceEdit( {
 					if ( attributes.uuid !== data.uuid ) {
 						setAttributes( { uuid: data.uuid } );
 					}
-					setDirty( false );
+					setDirty( ! data.settings?.type );
 					setQuestion( {
+						...( ! data.settings?.type
+							? questionTypePatch(
+									{ settings: {} },
+									'single-choice'
+								)
+							: {} ),
 						id: data.id,
-						name: data.name,
+						name: data.settings?.type ? data.name : '',
 						description: data.description,
-						settings: data.settings,
-						questions: data.options || [],
+						...( data.settings?.type
+							? {
+									settings: data.settings,
+									questions: data.options || [],
+								}
+							: {} ),
 					} );
 				}
 			} )
@@ -133,6 +172,18 @@ function LessonChoiceEdit( {
 			active = false;
 		};
 	}, [ attributes.questionId, attributes.uuid, setAttributes ] );
+	useEffect( () => {
+		if ( coreSaving || ! attributes.questionId || ! loadedId.current ) {
+			return undefined;
+		}
+		let active = true;
+		loadBankQuestion( attributes.questionId, apiFetch )
+			.then( ( fresh ) => active && setDetail( fresh ) )
+			.catch( ( cause ) => active && setError( cause.message ) );
+		return () => {
+			active = false;
+		};
+	}, [ coreSaving, attributes.questionId ] );
 	const save = useCallback(
 		async ( approve = false ) => {
 			const submittedRevision = revision.current;
@@ -147,6 +198,25 @@ function LessonChoiceEdit( {
 						) )
 					: null;
 				const payload = {
+					...( standalone && ! detail?.type
+						? {
+								status: 'draft',
+								...( window.ohmylmsNativeLesson?.initialSkillId
+									? {
+											skills: {
+												p1: {
+													primary: Number(
+														window
+															.ohmylmsNativeLesson
+															.initialSkillId
+													),
+													supporting: [],
+												},
+											},
+										}
+									: {} ),
+							}
+						: {} ),
 					name: question.name,
 					description: question.description,
 					settings: question.settings,
@@ -205,6 +275,7 @@ function LessonChoiceEdit( {
 			attributes.questionId,
 			attributes.authoringRevision,
 			question,
+			standalone,
 			detail,
 			setAttributes,
 		]
@@ -224,15 +295,9 @@ function LessonChoiceEdit( {
 	}, [ dirty, busy, error, question, detail?.can_edit, save ] );
 	async function duplicate() {
 		try {
-			const created = await createBankQuestion(
-				{
-					name: question.name,
-					description: question.description,
-					settings: question.settings,
-					questions: question.questions.map(
-						( { id, temp, clientKey, ...option } ) => option
-					),
-				},
+			const created = await duplicateQuestion(
+				attributes.questionId,
+				0,
 				apiFetch
 			);
 			const fresh = await loadBankQuestion( created.id, apiFetch );
@@ -261,34 +326,9 @@ function LessonChoiceEdit( {
 	}
 	const supported = (
 		quiz
-			? [
-					'single-choice',
-					'multiple-choice',
-					'short-text',
-					'long-text',
-					'reorder',
-					'fill-in-the-blank',
-					'matching',
-					'match-table-grid',
-					'dropdown-blanks',
-					'multi-blank',
-					'build-expression',
-					'expression',
-					'numerical',
-					'structured',
-					'graphing',
-					'number-line',
-					'shade-model',
-					'count-blocks',
-					'set-clock',
-					'make-amount',
-					'fill-level',
-					'build-chart',
-					'grid-build',
-					'labeling',
-					'hotspot',
-					'draw',
-				]
+			? nativeQuestionTypes( QUESTION_BLOCK_TYPES ).map(
+					( item ) => item.value
+				)
 			: [ 'single-choice', 'multiple-choice' ]
 	).includes( question.settings?.type );
 	let incompleteMessage = __(
@@ -372,8 +412,45 @@ function LessonChoiceEdit( {
 		);
 	}
 
+	const restoreEdit = ( direction ) => {
+		const next = stepQuestionHistory(
+			history.current,
+			question,
+			direction
+		);
+		if ( next ) {
+			revision.current++;
+			latestQuestion.current = next;
+			setQuestion( next );
+			setDirty( true );
+			setError( '' );
+		}
+	};
 	return (
 		<>
+			<NativeSaveGuard dirty={ dirty } busy={ busy } />
+			<BlockControls>
+				<ToolbarGroup>
+					<ToolbarButton
+						icon="undo"
+						label={ __( 'Undo question edit', 'ohmylms' ) }
+						disabled={
+							busy || coreSaving || ! history.current.past.length
+						}
+						onClick={ () => restoreEdit( 'past' ) }
+					/>
+					<ToolbarButton
+						icon="redo"
+						label={ __( 'Redo question edit', 'ohmylms' ) }
+						disabled={
+							busy ||
+							coreSaving ||
+							! history.current.future.length
+						}
+						onClick={ () => restoreEdit( 'future' ) }
+					/>
+				</ToolbarGroup>
+			</BlockControls>
 			{ error && (
 				<Notice
 					status="error"
@@ -400,19 +477,24 @@ function LessonChoiceEdit( {
 				<MultipleChoiceFields
 					question={ question }
 					allowWritten={ quiz }
-					readOnly={ detail?.can_edit === false }
-					onRemove={ () => removeBlock( clientId ) }
+					readOnly={ coreSaving || detail?.can_edit === false }
+					onRemove={
+						standalone ? undefined : () => removeBlock( clientId )
+					}
 					onDuplicate={
-						! busy && choiceReadyToSave( question )
+						! standalone && ! busy && choiceReadyToSave( question )
 							? duplicate
 							: undefined
 					}
 					onApprove={
-						! quiz && detail?.can_approve && ! busy
+						( standalone || ! quiz ) &&
+						detail?.can_approve &&
+						! busy
 							? () => save( true )
 							: undefined
 					}
 					onChange={ ( patch ) => {
+						rememberQuestion( history.current, question );
 						revision.current++;
 						const next = { ...question, ...patch };
 						latestQuestion.current = next;
@@ -424,10 +506,39 @@ function LessonChoiceEdit( {
 			) : (
 				<p>
 					{ __(
-						'This question now uses another format. Edit it in the question bank.',
+						'The editor for this question type is unavailable. Enable its extension to edit it.',
 						'ohmylms'
 					) }
 				</p>
+			) }
+			{ attributes.questionId > 0 && (
+				<NativeQuestionDetails
+					id={ attributes.questionId }
+					revision={ attributes.authoringRevision }
+					quizId={
+						context.postType === 'ohmylms-quiz' ? context.postId : 0
+					}
+					busy={ busy || dirty }
+					onRefresh={ ( fresh, restored = false ) => {
+						setDetail( fresh );
+						setAttributes( {
+							authoringRevision:
+								( Number( attributes.authoringRevision ) ||
+									0 ) + 1,
+						} );
+						if ( restored ) {
+							const next = {
+								id: fresh.id,
+								name: fresh.name,
+								description: fresh.description,
+								settings: fresh.settings,
+								questions: fresh.options || [],
+							};
+							latestQuestion.current = next;
+							setQuestion( next );
+						}
+					} }
+				/>
 			) }
 		</>
 	);
@@ -457,6 +568,8 @@ if ( ! getBlockType( 'ohmylms/quiz-question-reference' ) ) {
 		icon: 'welcome-learn-more',
 		attributes: {
 			questionId: { type: 'integer', default: 0 },
+			authoringRevision: { type: 'integer', default: 0 },
+			delivery: { type: 'string', default: 'quiz' },
 			uuid: { type: 'string', default: '' },
 		},
 		usesContext: [ 'postId', 'postType' ],

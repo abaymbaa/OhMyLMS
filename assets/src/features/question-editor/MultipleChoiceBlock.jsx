@@ -14,7 +14,8 @@ import { RichContentControl } from '../math/RichContentControl';
 import { BankAnswerFields } from './BankAnswerFields';
 import { MatchTableGridEditor } from './MatchTableGridEditor';
 import { choiceModePatch } from './choiceModel.mjs';
-import { questionTypePatch } from './questionBlocks.mjs';
+import { questionTypePatch, QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
+import { nativeQuestionTypes } from '../learning/nativeAuthoring.mjs';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { QuestionLivePreview } from './QuestionLivePreview';
 import { TemplatePanel } from './TemplatePanel';
@@ -100,207 +101,28 @@ export function MultipleChoiceFields( {
 								label={ __( 'Question type', 'ohmylms' ) }
 								hideLabelFromVision
 								value={ question.settings.type }
-								options={ [
-									{
-										label: __(
-											'Multiple choice',
-											'ohmylms'
-										),
-										value: 'single-choice',
-									},
-									{
-										label: __( 'Checkboxes', 'ohmylms' ),
-										value: 'multiple-choice',
-									},
-									...( allowWritten
-										? [
+								options={
+									allowWritten
+										? nativeQuestionTypes(
+												QUESTION_BLOCK_TYPES
+											)
+										: [
 												{
+													value: 'single-choice',
 													label: __(
-														'Numerical',
+														'Multiple choice',
 														'ohmylms'
 													),
-													value: 'numerical',
 												},
 												{
+													value: 'multiple-choice',
 													label: __(
-														'Structured (multi-part)',
+														'Checkboxes',
 														'ohmylms'
 													),
-													value: 'structured',
-												},
-												{
-													label: __(
-														'Graphing',
-														'ohmylms'
-													),
-													value: 'graphing',
 												},
 											]
-										: [] ),
-									...( allowWritten
-										? [
-												{
-													label: __(
-														'Number line',
-														'ohmylms'
-													),
-													value: 'number-line',
-												},
-												{
-													label: __(
-														'Shade a model',
-														'ohmylms'
-													),
-													value: 'shade-model',
-												},
-												{
-													label: __(
-														'Count with blocks',
-														'ohmylms'
-													),
-													value: 'count-blocks',
-												},
-												{
-													label: __(
-														'Set the clock',
-														'ohmylms'
-													),
-													value: 'set-clock',
-												},
-												{
-													label: __(
-														'Make an amount',
-														'ohmylms'
-													),
-													value: 'make-amount',
-												},
-												{
-													label: __(
-														'Fill to a level',
-														'ohmylms'
-													),
-													value: 'fill-level',
-												},
-												{
-													label: __(
-														'Build a chart',
-														'ohmylms'
-													),
-													value: 'build-chart',
-												},
-												{
-													label: __(
-														'Build on a grid',
-														'ohmylms'
-													),
-													value: 'grid-build',
-												},
-												{
-													label: __(
-														'Labeling',
-														'ohmylms'
-													),
-													value: 'labeling',
-												},
-												{
-													label: __(
-														'Hotspot',
-														'ohmylms'
-													),
-													value: 'hotspot',
-												},
-												{
-													label: __(
-														'Draw',
-														'ohmylms'
-													),
-													value: 'draw',
-												},
-											]
-										: [] ),
-									...( allowWritten
-										? [
-												{
-													label: __(
-														'Fill in the blank',
-														'ohmylms'
-													),
-													value: 'fill-in-the-blank',
-												},
-												{
-													label: __(
-														'Matching',
-														'ohmylms'
-													),
-													value: 'matching',
-												},
-												{
-													label: __(
-														'Match table grid',
-														'ohmylms'
-													),
-													value: 'match-table-grid',
-												},
-												{
-													label: __(
-														'Dropdown in a sentence',
-														'ohmylms'
-													),
-													value: 'dropdown-blanks',
-												},
-												{
-													label: __(
-														'Multi-blank / table',
-														'ohmylms'
-													),
-													value: 'multi-blank',
-												},
-												{
-													label: __(
-														'Build from tiles',
-														'ohmylms'
-													),
-													value: 'build-expression',
-												},
-												{
-													label: __(
-														'Math expression',
-														'ohmylms'
-													),
-													value: 'expression',
-												},
-											]
-										: [] ),
-									...( allowWritten
-										? [
-												{
-													label: __(
-														'Reorder',
-														'ohmylms'
-													),
-													value: 'reorder',
-												},
-											]
-										: [] ),
-									...( allowWritten
-										? [
-												{
-													label: __(
-														'Short answer',
-														'ohmylms'
-													),
-													value: 'short-text',
-												},
-												{
-													label: __(
-														'Long answer',
-														'ohmylms'
-													),
-													value: 'long-text',
-												},
-											]
-										: [] ),
-								] }
+								}
 								onChange={ ( type ) =>
 									onChange(
 										[
@@ -331,6 +153,41 @@ export function MultipleChoiceFields( {
 									'ohmylms'
 								) }
 							</p>
+						) }
+						{ question.settings.type === 'matching' && (
+							<SelectControl
+								label={ __( 'Player layout', 'ohmylms' ) }
+								value={
+									question.settings.match_layout === 'grid'
+										? 'grid'
+										: 'wire'
+								}
+								options={ [
+									{
+										value: 'wire',
+										label: __(
+											'Wire — draw a line between pairs',
+											'ohmylms'
+										),
+									},
+									{
+										value: 'grid',
+										label: __(
+											'Grid — place tiles under definitions',
+											'ohmylms'
+										),
+									},
+								] }
+								onChange={ ( layout ) =>
+									onChange( {
+										settings: {
+											...question.settings,
+											match_layout: layout,
+										},
+									} )
+								}
+								__nextHasNoMarginBottom
+							/>
 						) }
 						{ [ 'short-text', 'long-text' ].includes(
 							question.settings.type
@@ -385,6 +242,7 @@ export function MultipleChoiceFields( {
 									/>
 								) : (
 									<BankAnswerFields
+										question={ question }
 										mainStatement
 										prompt={ questionPrompt( question ) }
 										compactActions
@@ -446,10 +304,7 @@ export function MultipleChoiceFields( {
 								__nextHasNoMarginBottom
 							/>
 							<ToggleControl
-								label={ __(
-									'Enable randomized variables',
-									'ohmylms'
-								) }
+								label={ __( 'Variable', 'ohmylms' ) }
 								checked={ !! question.settings.template }
 								onChange={ ( enabled ) => {
 									const { template, ...settings } =

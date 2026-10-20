@@ -1,7 +1,10 @@
+// Form-specific authoring checks explicitly exercise the stabilization rollback path.
+const {useFormAuthoring}=require('./helpers/form-authoring.cjs');
 // Assessment engine end-to-end checks on the isolated test site: exam page breaks, autosave and
 // resume, keyboard and mobile use, lesson checks with guest claim, skill practice, the school
 // portal skill views, and the skills/question bank admin pages.
 const { test, expect } = require('@playwright/test');
+test.beforeEach(async ({page}) => { await useFormAuthoring(page); });
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');

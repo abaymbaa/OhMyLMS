@@ -1,3 +1,4 @@
+import { nativeLessonHref } from '../content-hub/editorNavigation.mjs';
 import {
 	createElement,
 	Fragment,
@@ -358,7 +359,16 @@ function QuestionsTab() {
 					>
 						<Button
 							variant="primary"
-							onClick={ () => setCreating( true ) }
+							onClick={ () =>
+								window.ohmylmsAssessment?.formAuthoring
+									? setCreating( true )
+									: window.location.assign(
+											new URL(
+												'post-new.php?post_type=ohmylms-question',
+												window.location.href
+											).href
+										)
+							}
 						>
 							{ __( 'New question', 'ohmylms' ) }
 						</Button>
@@ -406,7 +416,20 @@ function QuestionsTab() {
 												<Button
 													variant="link"
 													onClick={ () =>
-														setSelected( item.id )
+														item.can_edit &&
+														! window
+															.ohmylmsAssessment
+															?.formAuthoring
+															? window.location.assign(
+																	item.native_editor_url ||
+																		nativeLessonHref(
+																			item.id,
+																			'/question-bank'
+																		)
+																)
+															: setSelected(
+																	item.id
+																)
 													}
 												>
 													{ item.name ||
@@ -479,6 +502,21 @@ function QuestionsTab() {
 														run( () =>
 															duplicateQuestion(
 																item.id
+															).then(
+																( copy ) => {
+																	if (
+																		! window
+																			.ohmylmsAssessment
+																			?.formAuthoring
+																	) {
+																		window.location.assign(
+																			nativeLessonHref(
+																				copy.id,
+																				'/question-bank'
+																			)
+																		);
+																	}
+																}
 															)
 														)
 													}

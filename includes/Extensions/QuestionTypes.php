@@ -24,7 +24,10 @@ final class QuestionTypes {
 					'snapshot'        => true,
 					// Answers reference options; versioned deliveries send opaque option tokens.
 					'answers'         => in_array( $type, array( 'multiple-choice', 'single-choice', 'true-false', 'reorder', 'matching' ), true ) ? 'options' : 'text',
-					'public_settings' => 'fill-in-the-blank' === $type ? array( 'blank_mode' ) : array(),
+					'public_settings' => array(
+						'fill-in-the-blank' => array( 'blank_mode' ),
+						'matching'          => array( 'match_layout' ),
+					)[ $type ] ?? array(),
 					'label'           => ucwords( str_replace( '-', ' ', $type ) ),
 					'editor'          => array(
 						'format'   => 'ohmylms-options',

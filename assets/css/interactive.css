@@ -78,6 +78,19 @@
 	background: #eff6ff;
 }
 
+.ohmylms-tile-slot,
+.ohmylms-tile-slot:hover,
+.ohmylms-tile-slot:focus-visible {
+	border: 2px dashed #b6c0cc;
+	background: transparent;
+	box-shadow: none;
+	color: transparent;
+}
+
+.ohmylms-tile-slot img {
+	visibility: hidden;
+}
+
 .ohmylms-tile img {
 	display: block;
 	max-width: 96px;
@@ -460,4 +473,34 @@ fieldset.ohmylms-interactive-row {
 	.ohmylms-tile:active {
 		transform: translateY(2px);
 	}
+}
+
+.ohmylms-tag-row .components-form-token-field__input-container {
+	gap: 6px;
+	padding: 8px;
+	border: 1px solid var(--ohmylms-primary-color, #6e42d3);
+	border-radius: 8px;
+}
+
+.ohmylms-tag-row .components-form-token-field__token {
+	max-width: none;
+	margin: 0;
+	font-size: 14px;
+}
+
+.ohmylms-tag-row .components-form-token-field__token-text,
+.ohmylms-tag-row .components-form-token-field__remove-token.components-button {
+	color: #fff;
+	background: var(--ohmylms-primary-color, #6e42d3);
+}
+
+.ohmylms-tag-row .components-form-token-field__token-text {
+	padding: 0 4px 0 12px;
+	border-radius: 8px 0 0 8px;
+	line-height: 32px;
+}
+
+.ohmylms-tag-row .components-form-token-field__remove-token.components-button {
+	padding: 0 8px 0 4px;
+	border-radius: 0 8px 8px 0;
 }

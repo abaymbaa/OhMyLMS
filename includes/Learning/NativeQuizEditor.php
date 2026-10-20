@@ -25,6 +25,105 @@ final class NativeQuizEditor {
 		add_filter( 'ohmylms_rest_prepare_quiz', array( __CLASS__, 'editor_link' ), 10, 2 );
 		add_filter( 'rest_prepare_post_type', array( __CLASS__, 'editor_viewability' ), 10, 2 );
 		add_action( 'init', array( __CLASS__, 'register_reference' ) );
+		add_action( 'rest_api_init', array( __CLASS__, 'register_settings' ) );
+	}
+
+	/** Register quiz configuration on the atomic native post save. */
+	public static function register_settings() {
+		register_rest_field(
+			'ohmylms-quiz',
+			'ohmylms_authoring_revision',
+			array(
+				'get_callback'    => static function ( $data ) {
+					return (int) get_post_meta( $data['id'], '_native_authoring_revision', true ); },
+				'update_callback' => static function ( $value, $post ) {
+					if ( ! AccessPolicy::can_edit_quiz( $post->ID ) ) {
+						return AccessPolicy::denied(); }
+					update_post_meta( $post->ID, '_native_authoring_revision', absint( $value ) );
+					return true;
+				},
+				'schema'          => array(
+					'type'    => 'integer',
+					'minimum' => 0,
+					'context' => array( 'edit' ),
+				),
+			)
+		);
+		register_rest_field(
+			'ohmylms-quiz',
+			'ohmylms_quiz',
+			array(
+				'get_callback'    => array( __CLASS__, 'read_settings' ),
+				'update_callback' => array( __CLASS__, 'save_settings' ),
+				'schema'          => array(
+					'type'                 => 'object',
+					'context'              => array( 'edit' ),
+					'properties'           => array(
+						'settings'      => array(
+							'type'                 => 'object',
+							'additionalProperties' => true,
+						),
+						'drip_settings' => array(
+							'type'                 => 'object',
+							'additionalProperties' => true,
+						),
+						'skill_ids'     => array(
+							'type'  => 'array',
+							'items' => array(
+								'type'    => 'integer',
+								'minimum' => 1,
+							),
+						),
+					),
+					'additionalProperties' => false,
+				),
+			)
+		);
+	}
+
+	/**
+	 * Read the existing storage without introducing a parallel settings model.
+	 *
+	 * @param array $data Core post data.
+	 * @return array Quiz configuration.
+	 */
+	public static function read_settings( $data ) {
+		$id = (int) $data['id'];
+		return array(
+			'settings'      => (object) (array) get_post_meta( $id, '_quiz_settings', true ),
+			'drip_settings' => (object) (array) get_post_meta( $id, '_drip_settings', true ),
+			'skill_ids'     => \OhMyLMS\Assessment\Schema::ready() ? \OhMyLMS\Quiz\QuizSkills::get( $id ) : array(),
+		);
+	}
+
+	/**
+	 * Save submitted configuration inside NativeQuizController's transaction.
+	 * Unknown extension settings survive edits to known fields.
+	 *
+	 * @param array    $value Configuration.
+	 * @param \WP_Post $post Quiz post.
+	 * @return true|\WP_Error Save result.
+	 */
+	public static function save_settings( $value, $post ) {
+		if ( ! AccessPolicy::can_edit_quiz( $post->ID ) ) {
+			return AccessPolicy::denied();
+		}
+		$value = NativeLessonEditor::sanitize_setting( $value );
+		foreach ( array(
+			'settings'      => '_quiz_settings',
+			'drip_settings' => '_drip_settings',
+		) as $field => $key ) {
+			if ( isset( $value[ $field ] ) ) {
+				update_post_meta( $post->ID, $key, (array) $value[ $field ] );
+			}
+		}
+		if ( isset( $value['skill_ids'] ) ) {
+			$result = \OhMyLMS\Quiz\QuizSkills::set( $post->ID, $value['skill_ids'] );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -55,8 +154,16 @@ final class NativeQuizEditor {
 			array(
 				'api_version'     => 3,
 				'attributes'      => array(
-					'questionId' => array( 'type' => 'integer' ),
-					'uuid'       => array( 'type' => 'string' ),
+					'questionId'        => array( 'type' => 'integer' ),
+					'authoringRevision' => array(
+						'type'    => 'integer',
+						'default' => 0,
+					),
+					'delivery'          => array(
+						'type'    => 'string',
+						'default' => 'quiz',
+					),
+					'uuid'              => array( 'type' => 'string' ),
 				),
 				'render_callback' => '__return_empty_string',
 			)
@@ -149,7 +256,7 @@ final class NativeQuizEditor {
 				$block['innerBlocks']  = array();
 				$block['innerHTML']    = '';
 				$block['innerContent'] = array();
-				if ( self::QUESTION_BLOCK === $block['blockName'] ) {
+				if ( self::is_question( $block ) ) {
 					$block['attrs']['delivery']          = 'quiz';
 					$block['attrs']['authoringRevision'] = $authoring_revision;
 				}
@@ -180,31 +287,66 @@ final class NativeQuizEditor {
 	}
 
 	/**
-	 * Keep core layout blocks when rebuilding references after edits in the current editor.
+	 * Reconcile placements in their existing layout slots, preserving surrounding core blocks.
 	 *
-	 * @param array $blocks Parsed blocks.
-	 * @return array Core content without quiz placement blocks.
+	 * @param array $blocks Parsed document.
+	 * @param array $questions Authoritative ordered placements.
+	 * @param int   $position Next placement to insert.
+	 * @return array Reconciled document.
 	 */
-	private static function without_questions( $blocks ) {
+	private static function reconcile_blocks( $blocks, $questions, &$position ) {
 		$result = array();
 		foreach ( $blocks as $block ) {
 			if ( self::is_question( $block ) ) {
+				if ( isset( $questions[ $position ] ) ) {
+					$result[] = self::question_block( $questions[ $position++ ] );
+				}
 				continue;
 			}
-			$children = $block['innerBlocks'] ?? array();
-			$index    = 0;
-			$content  = array();
+			$children      = $block['innerBlocks'] ?? array();
+			$next_children = array();
+			$next_content  = array();
+			$child_index   = 0;
 			foreach ( $block['innerContent'] ?? array() as $chunk ) {
-				if ( null === $chunk && self::is_question( $children[ $index++ ] ) ) {
+				if ( null !== $chunk ) {
+					$next_content[] = $chunk;
 					continue;
 				}
-				$content[] = $chunk;
+				$child = $children[ $child_index++ ] ?? null;
+				if ( ! $child ) {
+					continue;
+				}
+				foreach ( self::reconcile_blocks( array( $child ), $questions, $position ) as $next ) {
+					$next_children[] = $next;
+					$next_content[]  = null;
+				}
 			}
-			$block['innerContent'] = $content;
-			$block['innerBlocks']  = self::without_questions( $children );
+			$block['innerBlocks']  = $next_children;
+			$block['innerContent'] = $next_content;
 			$result[]              = $block;
 		}
 		return $result;
+	}
+
+	/**
+	 * Create a reference-only block for an existing question.
+	 *
+	 * @param array $question Existing question.
+	 * @return array Parsed block.
+	 */
+	private static function question_block( $question ) {
+		$available = (bool) \OhMyLMS\Extensions\Registry::get( 'question', $question['settings']['type'] ?? '' );
+		return array(
+			'blockName'    => $available ? self::QUESTION_BLOCK : self::REFERENCE_BLOCK,
+			'attrs'        => array(
+				'questionId' => (int) $question['id'],
+				'uuid'       => (string) ( $question['uuid'] ?? '' ),
+				'delivery'   => 'quiz',
+			),
+			'innerBlocks'  => array(),
+			'innerHTML'    => '',
+			'innerContent' => array(),
+		);
 	}
 
 	/**
@@ -220,18 +362,12 @@ final class NativeQuizEditor {
 		if ( self::reference_ids( $blocks ) === $ids ) {
 			return $post->post_content;
 		}
-		$content = serialize_blocks( self::without_questions( $blocks ) );
-		foreach ( $questions as $question ) {
-			$choice = in_array( $question['settings']['type'] ?? '', array( 'single-choice', 'multiple-choice', 'short-text', 'long-text', 'reorder', 'fill-in-the-blank', 'matching', 'dropdown-blanks', 'match-table-grid', 'multi-blank', 'build-expression', 'expression', 'number-line', 'shade-model', 'count-blocks', 'set-clock', 'make-amount', 'fill-level', 'build-chart', 'grid-build', 'labeling', 'hotspot', 'draw', 'numerical', 'structured', 'graphing' ), true );
-			$attrs  = array(
-				'questionId' => (int) $question['id'],
-				'uuid'       => (string) ( $question['uuid'] ?? '' ),
-			);
-			if ( $choice ) {
-				$attrs['delivery'] = 'quiz';
-			}
-			$content .= '<!-- wp:' . ( $choice ? self::QUESTION_BLOCK : self::REFERENCE_BLOCK ) . ' ' . wp_json_encode( $attrs ) . ' /-->';
+		$position = 0;
+		$blocks   = self::reconcile_blocks( $blocks, $questions, $position );
+		while ( isset( $questions[ $position ] ) ) {
+			$blocks[] = self::question_block( $questions[ $position++ ] );
 		}
+		$content = serialize_blocks( $blocks );
 		return $content;
 	}
 

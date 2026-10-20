@@ -1,3 +1,5 @@
+import { useSelect } from '@wordpress/data';
+import { NativeQuizRoute } from '../learning/NativeQuizRoute';
 import {
 	createElement,
 	Fragment,
@@ -22,7 +24,7 @@ import { BankIcon } from './QuizHeaderIcons';
  * Named React editor; the bridge retains existing controls, routes and store.
  * @param readRuntime
  */
-export function createQuizEditor( readRuntime ) {
+function createFormQuizEditor( readRuntime ) {
 	function registerTypes() {
 		const r = readRuntime();
 		[ r.Gs, r.Qs, r.nd, r.yd, r.Rd, r.Od, r.zd ].forEach( r.bm );
@@ -423,6 +425,26 @@ export function createQuizEditor( readRuntime ) {
 					/>
 				) }
 			</Fragment>
+		);
+	};
+}
+
+/**
+ * Keep public factories compatible while redirecting authoring into Gutenberg.
+ * @param readRuntime
+ */
+export function createQuizEditor( readRuntime ) {
+	const FormEditor = createFormQuizEditor( readRuntime );
+	return function QuizEditor( props ) {
+		const runtime = readRuntime();
+		const id = useSelect(
+			( getStore ) => getStore( runtime.T.default ).getSelectedQuizId(),
+			[ runtime.T.default ]
+		);
+		return window.ohmylmsAssessment?.formAuthoring ? (
+			<FormEditor { ...props } />
+		) : (
+			<NativeQuizRoute id={ id } chapterId={ props.chapterId } />
 		);
 	};
 }

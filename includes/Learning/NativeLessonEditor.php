@@ -30,6 +30,7 @@ final class NativeLessonEditor {
 	/** Register editor integration hooks. */
 	public static function init() {
 		NativeQuizEditor::init();
+		NativeQuestionEditor::init();
 		add_action( 'init', array( __CLASS__, 'register_question_block' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_settings' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'enqueue' ), 20 );
@@ -84,7 +85,7 @@ final class NativeLessonEditor {
 	/** Load shared authoring styles inside the native editor canvas, including its iframe. */
 	public static function question_block_styles() {
 		$screen = is_admin() ? get_current_screen() : null;
-		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz' ), true ) || ! $screen->is_block_editor() ) {
+		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-question' ), true ) || ! $screen->is_block_editor() ) {
 			return;
 		}
 		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'wp-components', 'dashicons' ), OHMYLMS_VERSION );
@@ -275,10 +276,12 @@ final class NativeLessonEditor {
 	 */
 	public static function return_url() {
 		// Navigation only: this parameter never changes lesson data.
+		$screen   = get_current_screen();
+		$fallback = $screen && 'ohmylms-quiz' === $screen->post_type ? '/content-hub/quizzes' : ( $screen && 'ohmylms-question' === $screen->post_type ? '/question-bank' : '/content-hub/lessons' );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only editor navigation.
-		$route = isset( $_GET['ohmylms_return'] ) ? wp_sanitize_redirect( wp_unslash( $_GET['ohmylms_return'] ) ) : '/content-hub/lessons';
-		if ( ! preg_match( '#^/(?:content-hub|course-edit)(?:/|$)#', $route ) || preg_match( '/[\r\n]/', $route ) ) {
-			$route = '/content-hub/lessons';
+		$route = isset( $_GET['ohmylms_return'] ) ? wp_sanitize_redirect( wp_unslash( $_GET['ohmylms_return'] ) ) : $fallback;
+		if ( ! preg_match( '#^/(?:content-hub|course-edit|question-bank)(?:/|$)#', $route ) || preg_match( '/[\r\n]/', $route ) ) {
+			$route = $fallback;
 		}
 		return admin_url( 'admin.php?page=ohmylms' ) . '#' . $route;
 	}
@@ -318,7 +321,7 @@ final class NativeLessonEditor {
 	/** Enqueue only the settings extension on native lesson screens. */
 	public static function enqueue() {
 		$screen = get_current_screen();
-		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz' ), true ) || ! $screen->is_block_editor() ) {
+		if ( ! $screen || ! in_array( $screen->post_type, array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-question' ), true ) || ! $screen->is_block_editor() ) {
 			return;
 		}
 		$asset_path = OHMYLMS_DIR . '/assets/dist/admin/native-lesson-editor.asset.php';
@@ -327,6 +330,8 @@ final class NativeLessonEditor {
 		}
 		$asset = require $asset_path;
 		wp_enqueue_script( 'ohmylms-native-lesson-settings', plugins_url( 'assets/dist/admin/native-lesson-editor.js', OHMYLMS_FILE ), $asset['dependencies'], $asset['version'], true );
+		wp_localize_script( 'ohmylms-native-lesson-settings', 'ohmylmsPlayerTemplates', \OhMyLMS\Quiz\PlayerTemplates::choices() );
+		do_action( 'ohmylms_enqueue_extension_scripts', 'ohmylms-native-lesson-settings' );
 		// Reuse the lazy MathLive configuration on the native lesson screen as well as the LMS app.
 		wp_enqueue_script( 'ohmylms-mathlive-loader' );
 		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'wp-components', 'dashicons' ), OHMYLMS_VERSION );
@@ -334,11 +339,16 @@ final class NativeLessonEditor {
 			'ohmylms-native-lesson-settings',
 			'ohmylmsNativeLesson',
 			array(
-				'returnUrl'  => 'ohmylms-quiz' === $screen->post_type ? NativeQuizEditor::form_url( get_the_ID() ) : self::return_url(),
-				'previewUrl' => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID(), 'gutenberg' ) : '',
+				'returnUrl'      => self::return_url(),
+				'previewUrl'     => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID(), 'gutenberg' ) : '',
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presence flag for read-only navigation, not a submitted value.
-				'hasReturn'  => isset( $_GET['ohmylms_return'] ),
-				'chapterId'  => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
+				'hasReturn'      => isset( $_GET['ohmylms_return'] ),
+				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only initial skill selection; the question writer validates it on save.
+				'initialSkillId' => isset( $_GET['ohmylms_skill'] ) ? absint( $_GET['ohmylms_skill'] ) : 0,
+				'questionTypes'  => \OhMyLMS\Extensions\Registry::manifest()['question'] ?? array(),
+				'newQuestionUrl' => admin_url( 'post-new.php?post_type=ohmylms-question' ),
+				'bankUrl'        => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
+				'chapterId'      => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
 			)
 		);
 	}

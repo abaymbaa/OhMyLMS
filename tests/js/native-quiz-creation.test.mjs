@@ -39,23 +39,23 @@ function authoring( nativeUrl ) {
 	return { calls, location, useAddQuiz };
 }
 
-test( 'Create with Gutenberg opens the native WordPress post editor returned by the quiz API', async () => {
+test( 'Add Quiz opens the native WordPress post editor returned by the quiz API', async () => {
 	const url = 'http://800.local/wp-admin/post.php?post=42&action=edit';
 	const view = authoring( url );
 	const action = view.useAddQuiz( true );
-	assert.equal( action.label, 'Create with Gutenberg' );
+	assert.equal( action.label, 'Add Quiz' );
 	await action.onClick();
 	assert.deepEqual( view.calls[ 1 ], [ 'native', url ] );
 	assert.equal( view.location.hash, '#/content-hub/quizzes' );
 } );
 
-test( 'the original Add Quiz action retains its current editor route', async () => {
+test( 'Add Quiz defaults to the native editor', async () => {
 	const view = authoring( 'unused' );
 	const action = view.useAddQuiz();
 	assert.equal( action.label, 'Add Quiz' );
 	await action.onClick();
-	assert.equal( view.location.hash, '#/quiz-edit/42' );
-	assert.equal( view.calls.length, 1 );
+	assert.equal( view.location.hash, '#/content-hub/quizzes' );
+	assert.deepEqual( view.calls[ 1 ], [ 'native', 'unused' ] );
 } );
 
 test( 'an unavailable native editor reports the problem without silently opening another editor', async () => {

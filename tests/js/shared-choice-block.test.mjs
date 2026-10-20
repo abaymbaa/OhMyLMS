@@ -1,3 +1,7 @@
+import {
+	rememberQuestion,
+	stepQuestionHistory,
+} from '../../assets/src/features/learning/questionHistory.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -11,7 +15,11 @@ import {
 	choiceReadyToSave,
 	reconcileChoiceSave,
 } from '../../assets/src/features/learning/choiceAutosave.mjs';
-import { questionTypePatch } from '../../assets/src/features/question-editor/questionBlocks.mjs';
+import { nativeQuestionTypes } from '../../assets/src/features/learning/nativeAuthoring.mjs';
+import {
+	QUESTION_BLOCK_TYPES,
+	questionTypePatch,
+} from '../../assets/src/features/question-editor/questionBlocks.mjs';
 import { defaultTemplate } from '../../assets/src/features/question-editor/templateModel.mjs';
 import { choiceModePatch } from '../../assets/src/features/question-editor/choiceModel.mjs';
 const element = ( type, props, ...children ) => ( { type, props, children } );
@@ -31,9 +39,35 @@ function compile( file, scope, expression ) {
 		],
 	} );
 	return new Function(
-		...Object.keys( scope ),
+		...Object.keys( {
+			nativeQuestionTypes,
+			QUESTION_BLOCK_TYPES,
+			NativeQuestionDetails: 'details',
+			NativeSaveGuard: 'guard',
+			BlockControls: 'block-controls',
+			ToolbarGroup: 'toolbar',
+			ToolbarButton: 'toolbar-button',
+			rememberQuestion,
+			stepQuestionHistory,
+			useSelect: () => false,
+			...scope,
+		} ),
 		`${ code }; return ${ expression };`
-	)( ...Object.values( scope ) );
+	)(
+		...Object.values( {
+			nativeQuestionTypes,
+			QUESTION_BLOCK_TYPES,
+			NativeQuestionDetails: 'details',
+			NativeSaveGuard: 'guard',
+			BlockControls: 'block-controls',
+			ToolbarGroup: 'toolbar',
+			ToolbarButton: 'toolbar-button',
+			rememberQuestion,
+			stepQuestionHistory,
+			useSelect: () => false,
+			...scope,
+		} )
+	);
 }
 const nodes = ( tree ) => [
 	tree,
@@ -100,7 +134,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 	const toggle = nodes( tree ).find(
 		( node ) =>
 			node.type === 'toggle' &&
-			node.props.label === 'Enable randomized variables'
+			node.props.label === 'Variable'
 	);
 	toggle.props.onChange( true );
 	assert.equal( opened, true );
@@ -133,7 +167,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		.find(
 			( node ) =>
 				node.type === 'toggle' &&
-				node.props.label === 'Enable randomized variables'
+				node.props.label === 'Variable'
 		)
 		.props.onChange( false );
 	assert.equal( opened, false );
@@ -150,34 +184,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 	const selector = nodes( tree ).find( ( node ) => node.type === 'select' );
 	assert.deepEqual(
 		selector.props.options.map( ( option ) => option.value ),
-		[
-			'single-choice',
-			'multiple-choice',
-			'numerical',
-			'structured',
-			'graphing',
-			'number-line',
-			'shade-model',
-			'count-blocks',
-			'set-clock',
-			'make-amount',
-			'fill-level',
-			'build-chart',
-			'grid-build',
-			'labeling',
-			'hotspot',
-			'draw',
-			'fill-in-the-blank',
-			'matching',
-			'match-table-grid',
-			'dropdown-blanks',
-			'multi-blank',
-			'build-expression',
-			'expression',
-			'reorder',
-			'short-text',
-			'long-text',
-		]
+		QUESTION_BLOCK_TYPES.map( ( [ id ] ) => id )
 	);
 
 	for ( const type of [

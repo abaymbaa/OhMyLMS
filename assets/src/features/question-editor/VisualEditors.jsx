@@ -28,6 +28,31 @@ const number = ( value, onChange, extra = {} ) => ( {
 } );
 
 /**
+ * Like `number`, but a randomized question may also use a formula such as {{a+b}}.
+ * Numbers are stored as numbers; a formula (or a number still being typed) as text.
+ * @param value
+ * @param onChange
+ * @param extra
+ */
+const numberOrFormula = ( value, onChange, extra = {} ) => ( {
+	type: 'text',
+	inputMode: 'decimal',
+	value: value ?? '',
+	onChange: ( text ) => {
+		if ( text === '' ) {
+			onChange( undefined );
+		} else if ( text.includes( '{' ) ) {
+			onChange( text );
+		} else if ( /^-?\d*\.?\d*$/.test( text ) ) {
+			onChange(
+				String( Number( text ) ) === text ? Number( text ) : text
+			);
+		}
+	},
+	...extra,
+} );
+
+/**
  * Min, max, step and the correct value on a scale: number line and jug.
  * @param root0
  * @param root0.value
@@ -40,7 +65,7 @@ function ScaleEditor( { value, onChange, jug } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Minimum', 'ohmylms' ) }
-					{ ...number( value.min, ( min ) =>
+					{ ...numberOrFormula( value.min, ( min ) =>
 						onChange( {
 							min,
 						} )
@@ -48,7 +73,7 @@ function ScaleEditor( { value, onChange, jug } ) {
 				/>
 				<TextControl
 					label={ __( 'Maximum', 'ohmylms' ) }
-					{ ...number( value.max, ( max ) =>
+					{ ...numberOrFormula( value.max, ( max ) =>
 						onChange( {
 							max,
 						} )
@@ -60,7 +85,7 @@ function ScaleEditor( { value, onChange, jug } ) {
 							? __( 'Minor tick', 'ohmylms' )
 							: __( 'Tick step', 'ohmylms' )
 					}
-					{ ...number(
+					{ ...numberOrFormula(
 						value.step,
 						( step ) =>
 							onChange( {
@@ -75,7 +100,11 @@ function ScaleEditor( { value, onChange, jug } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Correct value', 'ohmylms' ) }
-					{ ...number( value.target, ( target ) =>
+					help={ __(
+						'Randomized question? Use a formula such as {{a+b}}.',
+						'ohmylms'
+					) }
+					{ ...numberOrFormula( value.target, ( target ) =>
 						onChange( {
 							target,
 						} )
@@ -88,7 +117,7 @@ function ScaleEditor( { value, onChange, jug } ) {
 							? __( 'Empty means one minor tick.', 'ohmylms' )
 							: __( 'Empty means half a tick.', 'ohmylms' )
 					}
-					{ ...number(
+					{ ...numberOrFormula(
 						value.tolerance,
 						( tolerance ) =>
 							onChange( {
@@ -103,7 +132,7 @@ function ScaleEditor( { value, onChange, jug } ) {
 					<TextControl
 						label={ __( 'Snap to', 'ohmylms' ) }
 						help={ __( 'Empty means the tick step.', 'ohmylms' ) }
-						{ ...number(
+						{ ...numberOrFormula(
 							value.snap,
 							( snap ) =>
 								onChange( {
@@ -699,6 +728,14 @@ export function VisualPreview( { type, settings = {} } ) {
 		const config = {
 			...settings,
 		};
+		// A {{formula}} has no value until a learner gets a question, so the preview skips it.
+		[ 'min', 'max', 'step', 'snap', 'tolerance', 'target' ].forEach(
+			( name ) => {
+				if ( typeof config[ name ] === 'string' ) {
+					delete config[ name ];
+				}
+			}
+		);
 		if ( type === 'build-chart' && settings.show_table ) {
 			config.table = ( settings.categories || [] ).map(
 				( category ) => ( {
@@ -709,7 +746,7 @@ export function VisualPreview( { type, settings = {} } ) {
 		}
 		try {
 			player.render( node, type, config );
-		} catch ( error ) {
+		} catch {
 			node.textContent = '';
 		}
 		return () => {

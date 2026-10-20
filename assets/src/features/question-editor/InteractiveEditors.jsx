@@ -5,11 +5,11 @@ import { __, sprintf } from '@wordpress/i18n';
 import {
 	Button,
 	CheckboxControl,
+	FormTokenField,
 	SelectControl,
 	TextControl,
 	TextareaControl,
 } from '@wordpress/components';
-import { QuestionMediaUpload as MediaUpload } from './QuestionMediaUpload';
 import { VisualPreview } from './VisualEditors';
 import { MathInput } from '../math/MathInput';
 import {
@@ -22,7 +22,6 @@ import {
 	blankIds,
 	nextId,
 	removeBucket,
-	removeItem,
 	sequencesFromText,
 	syncBlanks,
 	syncSlots,
@@ -440,6 +439,79 @@ export function DropdownBlanksEditor( {
 }
 
 /**
+ * Tag input for the items that belong to one group (or to none).
+ * Enter or comma turns the typed text into a new item in that group.
+ * @param root0
+ * @param root0.bucket
+ * @param root0.index
+ * @param root0.value
+ * @param root0.onChange
+ */
+function TagItemsRow( { bucket, index, value, onChange } ) {
+	const items = value.items || [];
+	const key = value.key || {};
+	const mine = items.filter(
+		( item ) => ( key[ item.id ] || '' ) === bucket.id
+	);
+	const label = bucket.id
+		? bucket.label ||
+			sprintf(
+				/* translators: %d: group number. */ __(
+					'Group %d',
+					'ohmylms'
+				),
+				index + 1
+			)
+		: __( 'Not in a group yet', 'ohmylms' );
+	const setTags = ( tokens ) => {
+		const texts = tokens
+			.flatMap( ( token ) => String( token.value || token ).split( ',' ) )
+			.map( ( part ) => part.trim() )
+			.filter( Boolean );
+		const kept = [];
+		const pool = [ ...mine ];
+		const added = [];
+		texts.forEach( ( text ) => {
+			const at = pool.findIndex( ( item ) => item.text === text );
+			if ( at >= 0 ) {
+				kept.push( pool.splice( at, 1 )[ 0 ] );
+			} else {
+				added.push( {
+					id: nextId( [ ...items, ...added ], 'i' ),
+					text,
+				} );
+			}
+		} );
+		const dropped = new Set( pool.map( ( item ) => item.id ) );
+		const nextKey = { ...key };
+		dropped.forEach( ( id ) => delete nextKey[ id ] );
+		added.forEach( ( item ) => {
+			nextKey[ item.id ] = bucket.id;
+		} );
+		onChange( {
+			items: [
+				...items.filter( ( item ) => ! dropped.has( item.id ) ),
+				...added,
+			],
+			key: nextKey,
+		} );
+	};
+	return (
+		<div className="ohmylms-interactive-row ohmylms-tag-row">
+			<FormTokenField
+				__next40pxDefaultSize
+				label={ label }
+				value={ mine.map( ( item ) => item.text ) }
+				onChange={ setTags }
+				tokenizeOnSpace={ false }
+				tokenizeOnBlur
+				placeholder={ __( 'Type here …', 'ohmylms' ) }
+			/>
+		</div>
+	);
+}
+
+/**
  * Groups and the items that belong in them.
  * @param root0
  * @param root0.value
@@ -458,17 +530,6 @@ export function CategorizeEditor( { value, onChange } ) {
 							...patch,
 						}
 					: bucket
-			),
-		} );
-	const setItem = ( id, patch ) =>
-		onChange( {
-			items: items.map( ( item ) =>
-				item.id === id
-					? {
-							...item,
-							...patch,
-						}
-					: item
 			),
 		} );
 	return (
@@ -522,113 +583,27 @@ export function CategorizeEditor( { value, onChange } ) {
 				{ __( 'Add group', 'ohmylms' ) }
 			</Button>
 			<h4>{ __( 'Items to sort', 'ohmylms' ) }</h4>
-			{ items.map( ( item, index ) => (
-				<div key={ item.id } className="ohmylms-interactive-row">
-					<RichContentControl
-						compact
-						html={ false }
-						label={ sprintf(
-							/* translators: %d: item number. */ __(
-								'Item %d',
-								'ohmylms'
-							),
-							index + 1
-						) }
-						value={ item.text || '' }
-						onChange={ ( text ) =>
-							setItem( item.id, {
-								text,
-							} )
-						}
+			<p className="description">
+				{ __(
+					'Type an item and press Enter or comma to add it as a tag.',
+					'ohmylms'
+				) }
+			</p>
+			{ [ ...buckets, { id: '', label: '' } ]
+				.filter(
+					( bucket ) =>
+						bucket.id !== '' ||
+						items.some( ( item ) => ! key[ item.id ] )
+				)
+				.map( ( bucket, index ) => (
+					<TagItemsRow
+						key={ bucket.id || 'unassigned' }
+						bucket={ bucket }
+						index={ index }
+						value={ value }
+						onChange={ onChange }
 					/>
-					<SelectControl
-						label={ __( 'Belongs to', 'ohmylms' ) }
-						value={ key[ item.id ] || '' }
-						options={ [
-							{
-								value: '',
-								label: __( 'Choose …', 'ohmylms' ),
-							},
-							...buckets.map( ( bucket ) => ( {
-								value: bucket.id,
-								label:
-									bucket.label ||
-									sprintf(
-										/* translators: %s: answer group identifier. */ __(
-											'Group %s',
-											'ohmylms'
-										),
-										bucket.id
-									),
-							} ) ),
-						] }
-						onChange={ ( bucketId ) =>
-							onChange( {
-								key: {
-									...key,
-									[ item.id ]: bucketId,
-								},
-							} )
-						}
-					/>
-					<MediaUpload
-						allowedTypes={ [ 'image' ] }
-						value={ item.thumbnail_id }
-						onSelect={ ( image ) =>
-							setItem( item.id, {
-								thumbnail_id: image.id,
-								image_url: image.url,
-							} )
-						}
-						render={ ( { open } ) => (
-							<Button
-								icon="format-image"
-								label={ __( 'Item image', 'ohmylms' ) }
-								onClick={ open }
-							/>
-						) }
-					/>
-					{ item.image_url && (
-						<Button
-							variant="tertiary"
-							onClick={ () =>
-								setItem( item.id, {
-									thumbnail_id: 0,
-									image_url: '',
-								} )
-							}
-						>
-							{ __( 'Remove image', 'ohmylms' ) }
-						</Button>
-					) }
-					<Button
-						isDestructive
-						variant="tertiary"
-						disabled={ items.length <= 1 }
-						onClick={ () =>
-							onChange( removeItem( value, item.id ) )
-						}
-					>
-						{ __( 'Remove item', 'ohmylms' ) }
-					</Button>
-				</div>
-			) ) }
-			<Button
-				variant="secondary"
-				onClick={ () =>
-					onChange( {
-						items: [
-							...items,
-							{
-								id: nextId( items, 'i' ),
-								text: '',
-							},
-						],
-					} )
-				}
-			>
-				{ __( 'Add item', 'ohmylms' ) }
-			</Button>
+				) ) }
 			<PartialCredit value={ value } onChange={ onChange } />
 		</div>
 	);
