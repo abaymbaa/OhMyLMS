@@ -56,6 +56,8 @@ Versioned assessments grade frozen question versions. A type joins them by decla
 
 `validate($answer,$question)` returns bool and should accept empty answer shape for timeouts; required-answer enforcement is separate. `grade` returns `correct`, finite `fraction` (clamped 0..1), and `manual`. The server checks enrollment, ownership, timer, question membership and repeated submissions. Scores are server-derived: attempts started before the decimal migration award whole points; later attempts award marks × fraction to four decimal places.
 
+The learner result screen shows a readable "Your answer" and "Correct answer" for each question. A type that stores answers by ID can supply them with the optional `review_given($given,$settings)` and `review_expected($settings)` callbacks, each returning a list of strings built only from the settings passed in (so frozen versions review correctly). Without them the generic lines are used; the built-in ID-based types (categorize, dropdown and multi-blank, hot-text, match grid, labeling, hotspot, interactive video, graphing) already provide theirs through `AssessmentReviewLines`.
+
 `ohmylms_register_lesson_type` requires label/render. Its matching JS editor uses supplied authoring callbacks. The example persists normal WordPress content. Existing `ohmylms_register_layout` and `ohmylms_register_activity` remain; layouts accept course/chapter/lesson/quiz contexts. Avoid recursively invoking a layout hook from its renderer.
 
 ## Checkout/integrations

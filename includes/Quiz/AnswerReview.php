@@ -14,6 +14,7 @@ use OhMyLMS\Assessment\Engine;
 use OhMyLMS\Assessment\Grader;
 use OhMyLMS\Assessment\InlineBlanks;
 use OhMyLMS\Assessment\Interactive;
+use OhMyLMS\Assessment\ReviewLines;
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Assessment\Structured;
 use OhMyLMS\Assessment\StructuredPart;
@@ -568,8 +569,8 @@ final class AnswerReview {
 			'verdict'     => $verdict,
 			'awarded'     => $awarded,
 			'max'         => $max,
-			'given'       => $present ? self::given_lines( $type, $options, (array) $given ) : array(),
-			'expected'    => self::expected_lines( $type, $question, $options, $settings ),
+			'given'       => $present ? ( ReviewLines::given( $type, (array) $given, $settings ) ?? self::given_lines( $type, $options, (array) $given ) ) : array(),
+			'expected'    => ReviewLines::expected( $type, $settings ) ?: self::expected_lines( $type, $question, $options, $settings ),
 			'explanation' => wp_kses_post( (string) ( $settings['explanation'] ?? '' ) ),
 		);
 	}
