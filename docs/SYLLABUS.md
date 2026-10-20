@@ -25,6 +25,70 @@ The two references this was designed from fit this shape: a Cambridge IGCSE syll
 
 ## The syllabus editor
 
+### Spreadsheet view and row actions
+
+The header offers **Outline**, **Mind map**, and **Spreadsheet** views of the same
+syllabus. Spreadsheet fills the workspace with the existing №, Unit, Chapter and
+Topic columns, retaining the original folder, group and skill placement IDs.
+It opens in the page, without a modal or a second syllabus.
+
+Edit cells, add draft rows or paste rows, then **Save changes**. **Discard changes**
+restores the last saved values. Save or discard before switching views or running
+structural row actions. A rejected save keeps the draft available for correction.
+
+Each saved row has an **Actions** menu: open its details and resources beside the
+sheet, add a skill in its chapter, add a folder in its unit, move up/down, or open
+its existing folder-move controls. A skill row also offers **Remove skill from this
+chapter**, which removes only that placement and preserves the library skill and
+other placements. **Close details** returns the spreadsheet to full width. Structural
+actions use the workspace's existing save operations and refresh the sheet from the
+returned outline. Unsaved new rows have a local remove action instead.
+
+`tests/browser/syllabus-spreadsheet.spec.cjs` covers the actual view switcher, sheet
+and row-action components with fixture controls and persistence. It checks shared
+skill edits, failed-save recovery, draft guards, branch-aware additions, removal of
+one placement, details beside the sheet, and mobile scrolling.
+
+### Mind map
+
+Open a syllabus and choose **Mind map** in its header. The map lays out the existing
+folders, skill groups and skill placements from left to right. Select a card to edit
+its details, learning resources and assessment connections in the existing right pane.
+**Outline view** returns to the standard outline with the same selection.
+
+- Use **+ Folder** or **+ Skill** on a card to add inside that branch. Changes use the
+  existing authenticated syllabus actions; failed saves retain the entered text.
+- Search by displayed name or code. Matching paths open temporarily, including branches
+  that were collapsed. Clear search to restore the collapsed state.
+- Expand or collapse individual branches, use **Expand all** or **Collapse all**, and
+  adjust zoom. Selecting a node or searching brings it into the scrollable viewport.
+- Drag blank canvas with a mouse or a finger to pan; a middle-button drag also pans.
+  Normal wheel/two-finger scrolling moves the canvas. Ctrl/Cmd + wheel and trackpad
+  pinch zoom around the pointer; toolbar zoom preserves the viewport center. With
+  the canvas focused, `+`, `-` and `0` zoom in, zoom out and reset the scale.
+  **Fit map** shows the visible branches; **Find selected** clears search, opens the
+  path to the selection and brings it back into view. Zooming no longer recenters
+  the map on the selected node.
+- Drop a folder onto the middle of another folder to nest it; drop near the top or
+  bottom to reorder compatible siblings. Skills can be reordered against other skills
+  within the same topic. Drag from the labeled **Move** handle, using either a mouse
+  or touch; highlights indicate whether a drop goes inside, before or after a node.
+  The viewport scrolls when the dragged pointer approaches an edge. Click the handle
+  or use **Move selected** to choose a placement and destination without dragging.
+  Failed moves keep the picker open. Existing editor move controls provide additional
+  destinations. Every move uses the existing validator, which rejects cycles.
+- On narrow screens, the details editor stacks below the map. Canvas scrolling stays
+  inside its own region. Map position, zoom, search and collapsed branches are local UI
+  state; the map does not add another syllabus structure or change learner evidence.
+
+Verification: `node --test tests/js/syllabus-map.test.mjs tests/js/workspace.test.mjs`
+and `playwright test tests/browser/syllabus-mindmap.spec.cjs`. The browser suite runs
+the authored map and QuickAdd components with local WordPress React scripts and a
+workspace fixture recording writes; database persistence still requires the existing
+isolated WordPress syllabus integration suite.
+
+### Outline and detail editor
+
 Click a syllabus's **name** in the Curriculum tab (or **Open the syllabus editor** in its panel) to open it at `#/content-hub/curriculum/syllabus/{id}`. It is a full page like the course builder, with **Back** and **Done** on top, and it keeps the Content Hub menu entry highlighted.
 
 - **Left panel**: **Add Chapter**, the number of chapters, and the whole syllabus as a nested outline: the syllabus, its topics, the chapters in them, and the skills in each chapter. Choosing a node opens it. **Open all** and **Close all** help with a long syllabus, and the panel can be folded away. **Add Chapter** puts the new chapter into the topic the selection is in (or into the syllabus) and opens it.

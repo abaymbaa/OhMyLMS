@@ -103,12 +103,10 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 							isOpen
 								? sprintf(
 										/* translators: %s: curriculum item name. */
-										/* translators: %s: curriculum item name. */
 										__( 'Collapse %s', 'ohmylms' ),
 										label( node, drag.language )
 									)
 								: sprintf(
-										/* translators: %s: curriculum item name. */
 										/* translators: %s: curriculum item name. */
 										__( 'Expand %s', 'ohmylms' ),
 										label( node, drag.language )
@@ -228,6 +226,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
  * @param root0.collapsed
  * @param root0.onCollapse
  * @param root0.pending
+ * @param root0.onSpreadsheet
  */
 export function WorkspaceSidebar( {
 	tree,
@@ -245,6 +244,7 @@ export function WorkspaceSidebar( {
 	collapsed,
 	onCollapse,
 	pending,
+	onSpreadsheet,
 } ) {
 	const [ adding, setAdding ] = useState( '' );
 	const [ dragged, setDragged ] = useState( '' );
@@ -412,6 +412,20 @@ export function WorkspaceSidebar( {
 					] }
 				/>
 				<div className="ohmylms-ws-side-tools is-header">
+					{ onSpreadsheet && (
+						<button
+							type="button"
+							onClick={ onSpreadsheet }
+							disabled={ pending }
+							aria-label={ __(
+								'Open syllabus spreadsheet',
+								'ohmylms'
+							) }
+							title={ __( 'Spreadsheet', 'ohmylms' ) }
+						>
+							<Dashicon icon="editor-table" aria-hidden="true" />
+						</button>
+					) }
 					<button
 						type="button"
 						onClick={ () => onSelect( tree.root.key ) }

@@ -157,7 +157,10 @@ final class Terminology {
 	 * @return string
 	 */
 	public static function gettext_with_context( $translation, $text, $context, $domain ) {
-		unset( $context );
+		// Spreadsheet columns distinguish syllabus Units from Chapters explicitly.
+		if ( 'syllabus-spreadsheet' === $context ) {
+			return $translation;
+		}
 		return self::apply( $translation, $text, $domain );
 	}
 
@@ -224,9 +227,12 @@ final class Terminology {
 			return word.charAt( 0 ) === word.charAt( 0 ).toUpperCase() ? label : label.toLowerCase();
 		} );
 	};
-	var wrap = function ( originalIndex, domainIndex ) {
+	var wrap = function ( originalIndex, domainIndex, contextIndex ) {
 		return function () {
 			var args = arguments;
+			if ( contextIndex !== undefined && args[ contextIndex ] === "syllabus-spreadsheet" ) {
+				return args[ 0 ];
+			}
 			var domain = args[ domainIndex ];
 			if ( config.domains.indexOf( domain ) === -1 ) {
 				return args[ 0 ];
@@ -236,7 +242,7 @@ final class Terminology {
 		};
 	};
 	hooks.addFilter( "i18n.gettext", "ohmylms/terminology", wrap( 1, 2 ) );
-	hooks.addFilter( "i18n.gettext_with_context", "ohmylms/terminology", wrap( 1, 3 ) );
+	hooks.addFilter( "i18n.gettext_with_context", "ohmylms/terminology", wrap( 1, 3, 2 ) );
 	hooks.addFilter( "i18n.ngettext", "ohmylms/terminology", wrap( "n", 4 ) );
 	hooks.addFilter( "i18n.ngettext_with_context", "ohmylms/terminology", wrap( "n", 5 ) );
 } )( ' . $config . ' );',
