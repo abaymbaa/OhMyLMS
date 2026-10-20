@@ -16,7 +16,8 @@ defined( 'ABSPATH' ) || exit;
  * listed in the media library and cannot be found without its link.
  */
 final class ResponseMedia {
-	const MAX_BYTES  = 8388608;
+	const MAX_AUDIO  = 8388608;
+	const MAX_VIDEO  = 67108864;
 	const PER_HOUR   = 30;
 	const SUBFOLDER  = 'ohmylms-responses';
 	const EXTENSIONS = array(
@@ -53,8 +54,20 @@ final class ResponseMedia {
 		return array(
 			'url'      => is_user_logged_in() ? esc_url_raw( rest_url( 'ohmylms/v1/response-media' ) ) : '',
 			'nonce'    => wp_create_nonce( 'wp_rest' ),
-			'maxBytes' => self::MAX_BYTES,
+			'audioBytes' => self::limit( 'audio' ),
+			'videoBytes' => self::limit( 'video' ),
 		);
+	}
+
+	/**
+	 * Largest accepted file: the type's own cap, never above what the server allows.
+	 *
+	 * @param string $kind audio or video.
+	 * @return int Bytes.
+	 */
+	public static function limit( $kind ) {
+		$cap = 'video' === $kind ? self::MAX_VIDEO : self::MAX_AUDIO;
+		return min( $cap, (int) wp_max_upload_size() );
 	}
 
 	/**
@@ -95,8 +108,8 @@ final class ResponseMedia {
 		if ( ! is_array( $file ) || ! empty( $file['error'] ) || empty( $file['tmp_name'] ) || ! is_uploaded_file( $file['tmp_name'] ) ) {
 			return new \WP_Error( 'ohmylms_media_missing', __( 'No recording was received.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
-		if ( self::MAX_BYTES < (int) $file['size'] || 0 === (int) $file['size'] ) {
-			return new \WP_Error( 'ohmylms_media_size', __( 'Use a recording smaller than 8 MB.', 'ohmylms' ), array( 'status' => 413 ) );
+		if ( self::limit( $kind ) < (int) $file['size'] || 0 === (int) $file['size'] ) {
+			return new \WP_Error( 'ohmylms_media_size', __( 'This recording is too large.', 'ohmylms' ), array( 'status' => 413 ) );
 		}
 		$extension = strtolower( pathinfo( (string) $file['name'], PATHINFO_EXTENSION ) );
 		$handle    = fopen( $file['tmp_name'], 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Reads the first bytes of an uploaded temp file.

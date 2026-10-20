@@ -75,7 +75,7 @@ final class ExtendedQuestions {
 			'labeling'         => array( 'image_url' ),
 			'hotspot'          => array( 'image_url' ),
 			'audio-response'   => array( 'max_seconds' ),
-			'video-response'   => array( 'max_seconds' ),
+			'video-response'   => array( 'max_seconds', 'sources' ),
 			'poll'             => array( 'choices' ),
 		);
 		$view = array_intersect_key( $settings, array_flip( $keys[ $type ] ?? array() ) );
@@ -175,6 +175,11 @@ final class ExtendedQuestions {
 		if ( in_array( $type, array( 'audio-response', 'video-response' ), true ) ) {
 			$duration = $settings['max_seconds'] ?? 60;
 			$valid    = is_numeric( $duration ) && 1 <= $duration && 300 >= $duration;
+			// Video can be recorded from the camera, the screen, or both; at least one must stay on.
+			if ( $valid && 'video-response' === $type && isset( $settings['sources'] ) ) {
+				$sources = $settings['sources'];
+				$valid   = is_array( $sources ) && $sources && ! array_diff( $sources, array( 'camera', 'screen' ) );
+			}
 		}
 		if ( 'interactive-video' === $type ) {
 			$checkpoints = $settings['checkpoints'] ?? array();

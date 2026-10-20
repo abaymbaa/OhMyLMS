@@ -52,3 +52,24 @@ test( 'a titled add-on question can leave the quiz editor without options', () =
 		delete globalThis.window;
 	}
 } );
+
+import {
+	extendedDefaults,
+	extendedPublicView,
+} from '../../assets/src/features/question-editor/extendedModel.mjs';
+
+test( 'video response allows camera and screen recording by default', () => {
+	assert.deepEqual( extendedDefaults( 'video-response' ).sources, [
+		'camera',
+		'screen',
+	] );
+	assert.deepEqual(
+		extendedPublicView( 'video-response', {
+			max_seconds: 30,
+			sources: [ 'screen' ],
+			secret: 'x',
+		} ),
+		{ max_seconds: 30, sources: [ 'screen' ] }
+	);
+	assert.equal( extendedDefaults( 'audio-response' ).sources, undefined );
+} );

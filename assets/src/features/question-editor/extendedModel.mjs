@@ -106,8 +106,9 @@ export function extendedDefaults( type ) {
 				],
 			};
 		case 'audio-response':
-		case 'video-response':
 			return { max_seconds: 60 };
+		case 'video-response':
+			return { max_seconds: 60, sources: [ 'camera', 'screen' ] };
 		default:
 			return {};
 	}
@@ -127,7 +128,7 @@ export function extendedPublicView( type, settings ) {
 			labeling: [ 'image_url' ],
 			hotspot: [ 'image_url' ],
 			'audio-response': [ 'max_seconds' ],
-			'video-response': [ 'max_seconds' ],
+			'video-response': [ 'max_seconds', 'sources' ],
 			poll: [ 'choices' ],
 			'interactive-video': [ 'video_url' ],
 		}[ type ] || [];

@@ -6,7 +6,7 @@
 		return;
 	}
 	const { el, setAnswer } = api.util;
-	const __ = window.wp.i18n.__;
+	const { __, sprintf } = window.wp.i18n;
 	let instanceId = 0;
 	const types = [
 		'passage',
@@ -254,6 +254,7 @@
 		const player = el( video ? 'video' : 'audio', {
 			controls: '',
 			hidden: '',
+			playsinline: '',
 			class: 'ohmylms-response-media',
 		} );
 		root.appendChild( player );
@@ -270,17 +271,25 @@
 				player.hidden = false;
 			}
 		} );
+		const settings = window.ohmylmsResponseMedia || {};
+		const limit = Number(
+			( video ? settings.videoBytes : settings.audioBytes ) ||
+				4 * 1024 * 1024
+		);
+		const megabytes = Math.max( 1, Math.floor( limit / 1048576 ) );
 		function accept( blob, name ) {
-			const config = window.ohmylmsResponseMedia || {};
-			const limit = Number( config.maxBytes || 4 * 1024 * 1024 );
 			if ( blob.size > limit ) {
-				status.textContent = __(
-					'Use a recording or file smaller than 8 MB.',
-					'ohmylms'
+				status.textContent = sprintf(
+					/* translators: %d: megabytes. */
+					__(
+						'Use a recording or file smaller than %d MB.',
+						'ohmylms'
+					),
+					megabytes
 				);
 				return;
 			}
-			if ( ! config.url ) {
+			if ( ! settings.url ) {
 				status.textContent = __(
 					'Sign in to submit a recording.',
 					'ohmylms'
@@ -301,9 +310,9 @@
 			status.textContent = __( 'Saving recording…', 'ohmylms' );
 			// The file is stored in the uploads folder; only its link is kept in the answer.
 			window
-				.fetch( config.url, {
+				.fetch( settings.url, {
 					method: 'POST',
-					headers: { 'X-WP-Nonce': config.nonce },
+					headers: { 'X-WP-Nonce': settings.nonce },
 					credentials: 'same-origin',
 					body,
 				} )
@@ -316,6 +325,9 @@
 					} )
 				)
 				.then( ( url ) => {
+					player.srcObject = null;
+					player.muted = false;
+					player.controls = true;
 					player.src = url;
 					player.hidden = false;
 					setAnswer( root, 'media', url );
@@ -346,66 +358,196 @@
 			}
 		} );
 		root.appendChild( upload );
-		let recorder, stream, timer;
-		const stop = () => {
+
+		const buttons = [];
+		const stopButton = button( __( 'Stop recording', 'ohmylms' ), () =>
+			stop()
+		);
+		stopButton.disabled = true;
+		let recorder, stream, timer, ticker, audioContext;
+		const finish = () => {
+			stream?.getTracks().forEach( ( track ) => track.stop() );
+			audioContext?.close();
+			audioContext = null;
+			clearTimeout( timer );
+			clearInterval( ticker );
+			buttons.forEach( ( node ) => ( node.disabled = false ) );
+			stopButton.disabled = true;
+		};
+		function stop() {
 			if ( recorder?.state === 'recording' ) {
 				recorder.stop();
+			} else {
+				finish();
 			}
-			stream?.getTracks().forEach( ( track ) => track.stop() );
-			clearTimeout( timer );
-		};
-		const record = button( __( 'Record', 'ohmylms' ), async () => {
+		}
+		const supported = ( list ) =>
+			list.find( ( mime ) =>
+				window.MediaRecorder?.isTypeSupported?.( mime )
+			);
+		/**
+		 * Camera and microphone, or the screen with the microphone mixed into its sound.
+		 * @param source Either camera or screen.
+		 */
+		async function capture( source ) {
+			if ( source !== 'screen' ) {
+				return navigator.mediaDevices.getUserMedia( {
+					audio: true,
+					video,
+				} );
+			}
+			if ( ! navigator.mediaDevices?.getDisplayMedia ) {
+				throw new Error( 'screen' );
+			}
+			const screen = await navigator.mediaDevices.getDisplayMedia( {
+				video: true,
+				audio: true,
+			} );
+			let microphone = null;
+			try {
+				microphone = await navigator.mediaDevices.getUserMedia( {
+					audio: true,
+				} );
+			} catch {
+				microphone = null;
+			}
+			const withSound = [ screen, microphone ].filter(
+				( item ) => item && item.getAudioTracks().length
+			);
+			const tracks = [ ...screen.getVideoTracks() ];
+			if ( withSound.length && window.AudioContext ) {
+				audioContext = new window.AudioContext();
+				const mix = audioContext.createMediaStreamDestination();
+				withSound.forEach( ( item ) =>
+					audioContext
+						.createMediaStreamSource(
+							new MediaStream( item.getAudioTracks() )
+						)
+						.connect( mix )
+				);
+				tracks.push( ...mix.stream.getAudioTracks() );
+			}
+			const combined = new MediaStream( tracks );
+			// Stopping must also release the screen and microphone themselves.
+			const own = combined.getTracks.bind( combined );
+			combined.getTracks = () => [
+				...own(),
+				...screen.getTracks(),
+				...( microphone ? microphone.getTracks() : [] ),
+			];
+			// The browser's own "Stop sharing" button ends the recording.
+			screen.getVideoTracks()[ 0 ]?.addEventListener( 'ended', stop );
+			return combined;
+		}
+		async function record( source ) {
 			try {
 				if (
 					! navigator.mediaDevices?.getUserMedia ||
 					! window.MediaRecorder
 				) {
-					status.textContent = __(
-						'Recording is unavailable here. Upload a file or use a media link.',
-						'ohmylms'
-					);
+					status.textContent = window.isSecureContext
+						? __(
+								'Recording is unavailable here. Upload a file or use a media link.',
+								'ohmylms'
+						  )
+						: __(
+								'Browsers only allow recording on secure (HTTPS) pages. Upload a file or use a media link instead.',
+								'ohmylms'
+						  );
 					return;
 				}
-				stream = await navigator.mediaDevices.getUserMedia( {
-					audio: true,
-					video,
+				stream = await capture( source );
+				const mimeType = supported(
+					video
+						? [
+								'video/webm;codecs=vp9,opus',
+								'video/webm;codecs=vp8,opus',
+								'video/webm',
+								'video/mp4',
+							]
+						: [
+								'audio/webm;codecs=opus',
+								'audio/webm',
+								'audio/mp4',
+							]
+				);
+				recorder = new MediaRecorder( stream, {
+					...( mimeType ? { mimeType } : {} ),
+					// A modest bitrate keeps a minute of video well under the upload limit.
+					...( video ? { videoBitsPerSecond: 1500000 } : {} ),
+					audioBitsPerSecond: 96000,
 				} );
-				recorder = new MediaRecorder( stream );
 				const chunks = [];
-				recorder.addEventListener( 'dataavailable', ( event ) =>
-					chunks.push( event.data )
-				);
-				recorder.addEventListener( 'stop', () => {
-					accept(
-						new Blob( chunks, {
-							type: recorder.mimeType.split( ';' )[ 0 ],
-						} )
-					);
-					stream.getTracks().forEach( ( track ) => track.stop() );
-					record.disabled = false;
+				recorder.addEventListener( 'dataavailable', ( event ) => {
+					if ( event.data.size ) {
+						chunks.push( event.data );
+					}
 				} );
-				recorder.start();
-				record.disabled = true;
-				status.textContent = __( 'Recording…', 'ohmylms' );
-				timer = setTimeout(
-					stop,
-					Math.max(
-						1,
-						Math.min( 300, Number( config.max_seconds || 60 ) )
-					) * 1000
+				recorder.addEventListener( 'stop', () => {
+					const blobType = recorder.mimeType.split( ';' )[ 0 ];
+					finish();
+					player.srcObject = null;
+					accept( new Blob( chunks, { type: blobType } ) );
+				} );
+				if ( video ) {
+					player.controls = false;
+					player.muted = true;
+					player.srcObject = stream;
+					player.hidden = false;
+					player.play().catch( () => {} );
+				}
+				recorder.start( 1000 );
+				buttons.forEach( ( node ) => ( node.disabled = true ) );
+				stopButton.disabled = false;
+				const seconds = Math.max(
+					1,
+					Math.min( 300, Number( config.max_seconds || 60 ) )
 				);
-			} catch {
-				status.textContent = __(
-					'Recording permission was not granted. You can upload a file or use a media link.',
-					'ohmylms'
-				);
-				stop();
+				const started = Date.now();
+				const clock = () => {
+					status.textContent = sprintf(
+						/* translators: 1: elapsed seconds, 2: maximum seconds. */
+						__( 'Recording… %1$d s of %2$d s', 'ohmylms' ),
+						Math.floor( ( Date.now() - started ) / 1000 ),
+						seconds
+					);
+				};
+				clock();
+				ticker = setInterval( clock, 1000 );
+				timer = setTimeout( stop, seconds * 1000 );
+			} catch ( error ) {
+				status.textContent =
+					error?.message === 'screen'
+						? __(
+								'Screen recording is not supported in this browser. Use a camera recording or upload a file.',
+								'ohmylms'
+							)
+						: __(
+								'Recording permission was not granted. You can upload a file or use a media link.',
+								'ohmylms'
+							);
+				finish();
 			}
+		}
+		const sources =
+			video && Array.isArray( config.sources ) && config.sources.length
+				? config.sources
+				: [ 'camera', 'screen' ];
+		const labels = video
+			? {
+					camera: __( 'Record camera', 'ohmylms' ),
+					screen: __( 'Record screen', 'ohmylms' ),
+				}
+			: { camera: __( 'Record', 'ohmylms' ) };
+		( video ? sources : [ 'camera' ] ).forEach( ( source ) => {
+			if ( ! labels[ source ] ) {
+				return;
+			}
+			const node = button( labels[ source ], () => record( source ) );
+			buttons.push( node );
+			root.appendChild( node );
 		} );
-		root.append(
-			record,
-			button( __( 'Stop recording', 'ohmylms' ), stop )
-		);
+		root.appendChild( stopButton );
 		const observer = new MutationObserver( () => {
 			if ( ! root.isConnected ) {
 				stop();

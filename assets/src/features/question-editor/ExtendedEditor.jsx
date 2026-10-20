@@ -151,6 +151,34 @@ export function ExtendedEditor( {
 						__( 'Maximum recording seconds', 'ohmylms' ),
 						1
 					) }
+				{ type === 'video-response' &&
+					[
+						[ 'camera', __( 'Allow camera recording', 'ohmylms' ) ],
+						[ 'screen', __( 'Allow screen recording', 'ohmylms' ) ],
+					].map( ( [ source, label ] ) => {
+						const sources = value.sources || [ 'camera', 'screen' ];
+						return (
+							<CheckboxControl
+								key={ source }
+								label={ label }
+								checked={ sources.includes( source ) }
+								// At least one way to record must stay on.
+								disabled={
+									sources.includes( source ) &&
+									sources.length === 1
+								}
+								onChange={ ( checked ) =>
+									set( {
+										sources: checked
+											? [ ...sources, source ]
+											: sources.filter(
+													( item ) => item !== source
+												),
+									} )
+								}
+							/>
+						);
+					} ) }
 			</div>
 		);
 	}
