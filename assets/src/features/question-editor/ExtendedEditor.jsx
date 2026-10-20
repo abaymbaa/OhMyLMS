@@ -11,6 +11,7 @@ import { __ } from '@wordpress/i18n';
 import { StructuredEditor } from './MathEditors';
 import { questionTypePatch } from './questionBlocks.mjs';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
+import { DiagramPopup } from './DiagramPopup';
 /**
  * Authoring controls for additional response formats.
  * @param root0
@@ -26,6 +27,7 @@ export function ExtendedEditor( {
 	mainStatement = false,
 } ) {
 	const [ selected, setSelected ] = useState( 0 );
+	const [ popup, setPopup ] = useState( false );
 	const set = ( patch ) => onChange( patch );
 	const rows = ( key ) => value[ key ] || [];
 	const update = ( key, index, patch ) =>
@@ -263,6 +265,33 @@ export function ExtendedEditor( {
 									'ohmylms'
 								) }
 							</p>
+							<Button
+								variant="primary"
+								onClick={ () => setPopup( true ) }
+							>
+								{ type === 'hotspot'
+									? __(
+											'Place hotspots full screen',
+											'ohmylms'
+										)
+									: __(
+											'Place labels full screen',
+											'ohmylms'
+										) }
+							</Button>
+							{ popup && (
+								<DiagramPopup
+									type={ type }
+									imageUrl={ value.image_url }
+									rows={ rows( diagramKey ) }
+									selected={ selected }
+									onSelect={ setSelected }
+									onChange={ ( next ) =>
+										set( { [ diagramKey ]: next } )
+									}
+									onClose={ () => setPopup( false ) }
+								/>
+							) }
 							<SelectControl
 								label={ __( 'Marker to move', 'ohmylms' ) }
 								value={ selected }
