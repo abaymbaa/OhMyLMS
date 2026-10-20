@@ -16,6 +16,22 @@
 
 .ohmylms-extended-question .ohmylms-diagram { position: relative; }
 
+.ohmylms-extended-question .ohmylms-diagram-stage { position: relative; display: inline-block; max-width: 100%; line-height: 0; }
+
+.ohmylms-extended-question .ohmylms-diagram-stage img { cursor: crosshair; }
+
+.ohmylms-extended-question .ohmylms-diagram-full { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 16px; overflow: auto; background: rgba(0, 0, 0, 0.88); }
+
+.ohmylms-extended-question .ohmylms-diagram-full .ohmylms-diagram-stage { max-width: none; }
+
+.ohmylms-extended-question .ohmylms-diagram.ohmylms-diagram-full img { max-width: none; }
+
+.ohmylms-extended-question .ohmylms-diagram-close { display: none; }
+
+.ohmylms-extended-question .ohmylms-diagram-full .ohmylms-diagram-close { display: block; position: fixed; top: 12px; right: 12px; z-index: 100001; }
+
+body.ohmylms-diagram-open { overflow: hidden; }
+
 .ohmylms-extended-question .ohmylms-diagram img { display: block; max-width: 100%; }
 
 .ohmylms-extended-question .ohmylms-diagram select { position: absolute; max-width: 180px; transform: translate(-50%, -50%); }

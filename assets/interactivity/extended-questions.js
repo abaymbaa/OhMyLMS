@@ -449,11 +449,11 @@
 						? __(
 								'Recording is unavailable here. Upload a file or use a media link.',
 								'ohmylms'
-						  )
+							)
 						: __(
 								'Browsers only allow recording on secure (HTTPS) pages. Upload a file or use a media link instead.',
 								'ohmylms'
-						  );
+							);
 					return;
 				}
 				stream = await capture( source );
@@ -718,13 +718,65 @@
 			return;
 		}
 		if ( [ 'labeling', 'hotspot' ].includes( type ) ) {
+			// The stage hugs the image so marker percentages line up with the picture, whatever its size.
 			const box = el( 'div', { class: 'ohmylms-diagram' } ),
+				stage = el( 'div', { class: 'ohmylms-diagram-stage' } ),
 				image = el( 'img', {
 					src: config.image_url || '',
 					alt: __( 'Question diagram', 'ohmylms' ),
 				} );
-			box.appendChild( image );
+			stage.appendChild( image );
+			box.appendChild( stage );
+			// A larger view of the picture to answer on, closed with the button or Escape.
+			const enlarge = button(
+				__( 'View image full screen', 'ohmylms' ),
+				() =>
+					setFull(
+						! box.classList.contains( 'ohmylms-diagram-full' )
+					)
+			);
+			enlarge.classList.add( 'ohmylms-diagram-enlarge' );
+			const closeFull = button(
+				__( 'Close full screen', 'ohmylms' ),
+				() => setFull( false )
+			);
+			closeFull.classList.add( 'ohmylms-diagram-close' );
+			box.appendChild( closeFull );
+			const fit = () => {
+				if ( ! box.classList.contains( 'ohmylms-diagram-full' ) ) {
+					image.style.width = '';
+					image.style.height = '';
+					return;
+				}
+				const width = image.naturalWidth || 1;
+				const height = image.naturalHeight || 1;
+				const scale = Math.min(
+					( window.innerWidth - 32 ) / width,
+					( window.innerHeight - 96 ) / height,
+					4
+				);
+				image.style.width = Math.round( width * scale ) + 'px';
+				image.style.height = Math.round( height * scale ) + 'px';
+			};
+			const onKey = ( event ) => {
+				if ( event.key === 'Escape' ) {
+					setFull( false );
+				}
+			};
+			function setFull( on ) {
+				box.classList.toggle( 'ohmylms-diagram-full', on );
+				document.body.classList.toggle( 'ohmylms-diagram-open', on );
+				if ( on ) {
+					window.addEventListener( 'keydown', onKey );
+					window.addEventListener( 'resize', fit );
+				} else {
+					window.removeEventListener( 'keydown', onKey );
+					window.removeEventListener( 'resize', fit );
+				}
+				fit();
+			}
 			root.appendChild( box );
+			root.appendChild( enlarge );
 			if ( type === 'labeling' ) {
 				( config.targets || [] ).forEach( ( target ) => {
 					const select = el( 'select', {
@@ -751,19 +803,30 @@
 					select.addEventListener( 'change', () =>
 						setAnswer( root, target.id, select.value )
 					);
-					box.appendChild( select );
+					stage.appendChild( select );
 				} );
 			} else {
 				const pin = el( 'span', {
 					class: 'ohmylms-hotspot-pin',
 					text: '●',
 				} );
-				const place = ( x, y ) => {
+				const inputs = {};
+				const place = ( x, y, fromInput ) => {
+					const round = ( value ) =>
+						Math.round(
+							Math.max( 0, Math.min( 100, value ) ) * 10
+						) / 10;
+					x = round( x );
+					y = round( y );
 					setAnswer( root, 'x', String( x ) );
 					setAnswer( root, 'y', String( y ) );
 					pin.style.left = x + '%';
 					pin.style.top = y + '%';
-					box.appendChild( pin );
+					stage.appendChild( pin );
+					if ( ! fromInput ) {
+						inputs.x.value = x;
+						inputs.y.value = y;
+					}
 				};
 				image.addEventListener( 'click', ( event ) => {
 					const bounds = image.getBoundingClientRect();
@@ -783,13 +846,16 @@
 						'y',
 						__( 'Vertical position (%)', 'ohmylms' )
 					);
+				inputs.x = x;
+				inputs.y = y;
 				[ x, y ].forEach( ( input ) => {
 					input.type = 'number';
 					input.min = 0;
 					input.max = 100;
+					input.step = 'any';
 					input.addEventListener( 'input', () => {
 						if ( x.value !== '' && y.value !== '' ) {
-							place( Number( x.value ), Number( y.value ) );
+							place( Number( x.value ), Number( y.value ), true );
 						}
 					} );
 				} );
