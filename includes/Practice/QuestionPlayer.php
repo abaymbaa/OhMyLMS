@@ -80,12 +80,13 @@ final class QuestionPlayer {
 	 */
 	public static function start( array $placement ) {
 		global $wpdb;
-		$settings   = $placement['settings'];
-		$mode       = $settings['activityMode'] ?? 'standard';
-		$pair_count = 0;
-		$author_id  = (int) $placement['post']->post_author;
-		$student    = get_current_user_id();
-		$ids        = $settings['questionIds'];
+		$settings      = $placement['settings'];
+		$mode          = $settings['activityMode'] ?? 'standard';
+		$pair_count    = 0;
+		$recall_labels = array();
+		$author_id     = (int) $placement['post']->post_author;
+		$student       = get_current_user_id();
+		$ids           = $settings['questionIds'];
 		if ( 'random' === $settings['source'] ) {
 			$ids = array();
 			foreach ( $settings['skillIds'] as $skill_id ) {
@@ -115,6 +116,13 @@ final class QuestionPlayer {
 					}
 					return self::error( __( 'Word games need automatic text answers or letter tiles, containing letters and at most 64 characters per answer.', 'ohmylms' ) );
 				}
+			} elseif ( 'image-quiz' === $mode ) {
+				if ( ! ImageActivity::compatible( $snapshot ) ) {
+					if ( 'random' === $settings['source'] ) {
+						continue;
+					}
+					return self::error( __( 'Image quiz needs single-choice questions with a main image, 2–6 choices and exactly one correct answer. Variable questions are not supported.', 'ohmylms' ) );
+				}
 			} elseif ( 'standard' !== $mode ) {
 				if ( 'matching' !== $snapshot->get_type() ) {
 					if ( 'random' === $settings['source'] ) {
@@ -122,6 +130,7 @@ final class QuestionPlayer {
 					return self::error( __( 'Study modes require matching questions. Choose matching questions or use the standard mode.', 'ohmylms' ) );
 				}
 				foreach ( $snapshot->get_questions() as $option ) {
+					$recall_labels[] = mb_strtolower( RecallActivity::label( (string) $option['answer'] ), 'UTF-8' );
 					if ( '' === trim( (string) $option['answer'] ) || '' === trim( (string) ( $option['matching_data']['label'] ?? '' ) ) ) {
 						return self::error( __( 'Study cards need text on both sides of each pair.', 'ohmylms' ) );
 					}
@@ -142,6 +151,13 @@ final class QuestionPlayer {
 		if ( 'memory-pairs' === $mode && $pair_count < 2 ) {
 			return self::error( __( 'Matching pairs needs at least two pairs.', 'ohmylms' ) );
 		}
+		if ( 'memory-recall' === $mode && ( count( $recall_labels ) < 3 || count( array_unique( $recall_labels ) ) !== count( $recall_labels ) || in_array( '', $recall_labels, true ) || array_filter(
+			$recall_labels,
+			static function ( $label ) {
+				return mb_strlen( $label ) > 200; }
+		) || ( $settings['rememberCount'] ?? 2 ) >= count( $recall_labels ) ) ) {
+			return self::error( __( 'Memory recall needs at least three distinct text items (up to 200 characters each) and more items than the number to remember.', 'ohmylms' ) );
+		}
 		$policy = array(
 			'post_id'        => (int) $placement['post']->ID,
 			'key'            => $placement['key'],
@@ -150,7 +166,14 @@ final class QuestionPlayer {
 			'preview'        => $placement['preview'],
 			'activity_mode'  => $mode,
 		);
-		$uuid   = wp_generate_uuid4();
+		if ( 'memory-recall' === $mode ) {
+			$policy['remember_count'] = $settings['rememberCount'];
+			$policy['study_seconds']  = $settings['studySeconds'];
+		}
+		if ( 'image-quiz' === $mode ) {
+			$policy['reveal_seconds'] = $settings['revealSeconds'];
+		}
+		$uuid = wp_generate_uuid4();
 		try {
 			Transaction::run(
 				static function () use ( $wpdb, $uuid, $student, $policy, $versions ) {
@@ -205,6 +228,12 @@ final class QuestionPlayer {
 			if ( ! self::eligible( (int) $item['question_id'], (int) $placement['post']->post_author, get_current_user_id() ) ) {
 				return self::error( __( 'A question is no longer available. Ask the author to update this player.', 'ohmylms' ), 403 );
 			}
+		}
+		if ( 'image-quiz' === ( $session['policy']['activity_mode'] ?? '' ) ) {
+			return null !== $activity ? ImageActivity::act( $session, $items, $activity ) : ImageActivity::view( $session, $items );
+		}
+		if ( 'memory-recall' === ( $session['policy']['activity_mode'] ?? '' ) ) {
+			return null !== $activity ? RecallActivity::act( $session, $items, $activity ) : RecallActivity::view( $session, $items );
 		}
 		if ( 'standard' !== ( $session['policy']['activity_mode'] ?? 'standard' ) ) {
 			$handler = in_array( $session['policy']['activity_mode'], array( 'hangman', 'spell-word' ), true ) ? WordActivity::class : StudyActivity::class;
@@ -365,6 +394,12 @@ final class QuestionPlayer {
 	 */
 	private static function view( array $session ) {
 		$items = Sessions::items( $session['id'] );
+		if ( 'image-quiz' === ( $session['policy']['activity_mode'] ?? '' ) ) {
+			return ImageActivity::view( $session, $items );
+		}
+		if ( 'memory-recall' === ( $session['policy']['activity_mode'] ?? '' ) ) {
+			return RecallActivity::view( $session, $items );
+		}
 		if ( 'standard' !== ( $session['policy']['activity_mode'] ?? 'standard' ) ) {
 			$handler = in_array( $session['policy']['activity_mode'], array( 'hangman', 'spell-word' ), true ) ? WordActivity::class : StudyActivity::class;
 			return $handler::view( $session, $items );

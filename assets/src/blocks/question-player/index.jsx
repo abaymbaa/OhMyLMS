@@ -39,6 +39,9 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 		graded,
 		affectsSkills,
 		activityMode = 'standard',
+		revealSeconds = 30,
+		rememberCount = 2,
+		studySeconds = 10,
 	} = attributes;
 	const [ search, setSearch ] = useState( '' );
 	const [ items, setItems ] = useState( [] );
@@ -114,6 +117,11 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 						label={ __( 'Play mode', 'ohmylms' ) }
 						value={ activityMode }
 						options={ [
+							{ value: 'image-quiz', label: __( 'Image quiz', 'ohmylms' ) },
+							{
+								value: 'memory-recall',
+								label: __( 'Watch and memorize', 'ohmylms' ),
+							},
 							{
 								value: 'hangman',
 								label: __( 'Hangman', 'ohmylms' ),
@@ -150,21 +158,59 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 							} )
 						}
 					/>
-					{ activityMode !== 'standard' && (
-						<p>
-							{ [ 'hangman', 'spell-word' ].includes(
-								activityMode
-							)
-								? __(
-										'Choose automatic text answers or Build from tiles questions in Letters mode. Use a clue that does not reveal the answer. Answers must contain letters and be at most 64 characters. Six mistakes end a round. Progress is saved without grades or skill updates.',
-										'ohmylms'
-									)
-								: __(
-										'Choose matching questions, up to 24 pairs. Study progress is saved; reveals and game points never affect grades or skill performance.',
-										'ohmylms'
-									) }
-						</p>
+					{ activityMode === 'image-quiz' && (
+						<>
+							<p>{ __( 'Choose single-choice questions with a main image, 2–6 answers and one correct choice. Add the image in the question editor and approve the question. Images reveal gradually; buzz to answer. Faster correct answers earn practice points only. Variable questions are not supported.', 'ohmylms' ) }</p>
+							<RangeControl label={ __( 'Image reveal time (seconds)', 'ohmylms' ) } min={ 10 } max={ 120 } value={ revealSeconds } onChange={ ( value ) => setAttributes( { revealSeconds: value } ) } />
+						</>
 					) }
+					{ activityMode === 'memory-recall' && (
+						<>
+							<p>
+								{ __(
+									'Use 3â€“24 distinct Matching question fronts as the item pool. A random subset is studied; remaining items are distractors. Recall accuracy is practice feedback only.',
+									'ohmylms'
+								) }
+							</p>
+							<RangeControl
+								label={ __( 'Number to remember', 'ohmylms' ) }
+								min={ 1 }
+								max={ 10 }
+								value={ rememberCount }
+								onChange={ ( value ) =>
+									setAttributes( { rememberCount: value } )
+								}
+							/>
+							<RangeControl
+								label={ __(
+									'Study time (seconds)',
+									'ohmylms'
+								) }
+								min={ 5 }
+								max={ 120 }
+								value={ studySeconds }
+								onChange={ ( value ) =>
+									setAttributes( { studySeconds: value } )
+								}
+							/>
+						</>
+					) }
+					{ activityMode !== 'standard' &&
+						activityMode !== 'memory-recall' && activityMode !== 'image-quiz' && (
+							<p>
+								{ [ 'hangman', 'spell-word' ].includes(
+									activityMode
+								)
+									? __(
+											'Choose automatic text answers or Build from tiles questions in Letters mode. Use a clue that does not reveal the answer. Answers must contain letters and be at most 64 characters. Six mistakes end a round. Progress is saved without grades or skill updates.',
+											'ohmylms'
+										)
+									: __(
+											'Choose matching questions, up to 24 pairs. Study progress is saved; reveals and game points never affect grades or skill performance.',
+											'ohmylms'
+										) }
+							</p>
+						) }
 					<SelectControl
 						label={ __( 'Question source', 'ohmylms' ) }
 						value={ source }
@@ -341,11 +387,17 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 registerBlockType( metadata, { edit: QuestionPlayerEdit, save: () => null } );
 
 for ( const [ name, title, icon ] of [
+	[ 'image-quiz', __( 'OhMyLMS Image quiz', 'ohmylms' ), 'format-image' ],
 	[ 'hangman', __( 'OhMyLMS Hangman', 'ohmylms' ), 'editor-spellcheck' ],
 	[
 		'spell-word',
 		__( 'OhMyLMS Spell the word', 'ohmylms' ),
 		'editor-textcolor',
+	],
+	[
+		'memory-recall',
+		__( 'OhMyLMS Watch and memorize', 'ohmylms' ),
+		'visibility',
 	],
 	[ 'flashcards', __( 'OhMyLMS Flashcards', 'ohmylms' ), 'index-card' ],
 	[ 'memory-pairs', __( 'OhMyLMS Matching Pairs', 'ohmylms' ), 'grid-view' ],
@@ -355,7 +407,7 @@ for ( const [ name, title, icon ] of [
 		title,
 		icon,
 		description: __(
-			'Study matching question pairs with saved progress.',
+			'Play bank question activities with saved progress.',
 			'ohmylms'
 		),
 		attributes: { activityMode: name, graded: false, affectsSkills: false },

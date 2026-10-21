@@ -1,6 +1,6 @@
 # Wordwall template audit and OhMyLMS implementation plan
 
-Prepared 2026-10-21. Status: first delivery plus Hangman and Spell the word implemented; remaining phases proposed. See [first-delivery behavior and limits](WORDWALL-ACTIVITIES.md). The implementation extends Build from tiles for letters/words instead of introducing a duplicate word-builder type.
+Prepared 2026-10-21. Status: first delivery, Hangman, Spell the word, Crossword, Wordsearch and Watch and memorize practice mode implemented; remaining phases proposed. See [first-delivery behavior and limits](WORDWALL-ACTIVITIES.md). The implementation extends Build from tiles for letters/words instead of introducing a duplicate word-builder type.
 
 ## Evidence and scope
 
@@ -50,10 +50,10 @@ Default new game activities to practice. Accuracy, game points, time, hints and 
 | 14 | Type the answer | `short-text` is manual; exact auto-marking exists within blanks but lacks a clear dedicated format | Add `text-entry` using shared normalization, without reinterpreting historical short-text |
 | 15 | Spell the word | Dedicated spelling player now reuses existing word answers | Implemented `spell-word` Question Player mode over text-entry and letter tiles; typed input |
 | 16 | Flip tiles | No dedicated zoom/flip board | Reuse study deck, tile layout |
-| 17 | Wordsearch | No dedicated generated word grid | New `wordsearch` type and renderer |
+| 17 | Wordsearch | Generated frozen letter grid, words/clues and endpoint selection implemented | `wordsearch` question type |
 | 18 | Labelled diagram | `labeling` exists, currently selection controls rather than pin dragging | Extend existing labeling player with normalized target coordinates and drag/tap/keyboard input |
 | 19 | Hangman | Server-checked letter guesses, six mistakes and saved progress | Implemented `hangman` Question Player mode over text-entry and letter tiles |
-| 20 | Crossword | No intersecting clue/answer grid | New `crossword` type and renderer |
+| 20 | Crossword | Connected generator, word/clue builder and keyboard grid implemented | `crossword` question type |
 | 21 | True or false | `true-false` exists; timed stream is different | Timed binary-choice mode |
 | 22 | Maze chase | Choice content exists; movement/collision game missing | Maze mode; accessible stationary answer alternative |
 | 23 | Flying fruit | Choice content exists; moving-target game missing | Moving-target mode |
@@ -64,7 +64,7 @@ Default new game activities to practice. Accuracy, game points, time, hints and 
 | 28 | Airplane | Choice content exists; navigation/collision game missing | Flight mode with keyboard/touch and stationary alternative |
 | 29 | Image quiz | Image prompts/choices exist; progressive concealment and buzzer missing | Image-reveal mode, with frozen image and timed reveal state |
 | 30 | Speed sorting | `categorize` exists; speed/lives game loop missing | Timed sorting mode |
-| 31 | Watch and memorize | No explicit study-then-hidden-recall interaction | New `memory-recall` type with phase-aware delivery |
+| 31 | Watch and memorize | Implemented timed observation, hidden recall and saved practice feedback over matching fronts | `memory-recall` Question Player mode; dedicated question family remains proposed |
 | 32 | Win or lose quiz | Choice grading exists; wagering is missing | Practice-only confidence/wager mode; game stake cannot change academic marks |
 | 33 | Maths generator | Variables/formulas, numerical/expression questions and seeded instances exist | Authoring wizard over existing template engine; not a new answer type |
 | 34 | Word magnets | Reorder/tile interaction partly covers constrained ordering; free arrangement missing | Token-board mode; ordered answers use sequence grading, free composition is ungraded/manual |
@@ -161,3 +161,5 @@ Completion means an end-to-end playable, resumable and reportable activity. A ne
 ## First implementation slice
 
 Start with the mode foundation, `text-entry`, `word-builder`, Flash cards and Matching pairs. This adds useful recall/vocabulary mechanics with broad content reuse before undertaking the larger puzzle generators and arcade work. Follow with drag-labeling and Image quiz. Keep the full 34-template matrix above as the coverage checklist for later phases.
+
+Puzzle delivery details and observed Wordwall interface patterns: [puzzle UI](WORDWALL-PUZZLE-UI.md).

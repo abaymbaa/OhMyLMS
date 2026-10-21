@@ -139,3 +139,29 @@
 	height: 180px;
 	color: inherit;
 }
+
+.ohmylms-recall-study {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+	gap: 12px;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-recall-study li {
+	display: grid;
+	place-items: center;
+	min-height: 90px;
+	padding: 12px;
+	border: 1px solid #64748b;
+	border-radius: 12px;
+	background: #eff6ff;
+	font-size: 1.3em;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-recall-choices button[aria-pressed="true"] {
+	border-color: #2563eb;
+	background: #dbeafe;
+	color: #172033;
+}

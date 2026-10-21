@@ -126,6 +126,8 @@ final class QuestionTypes {
 	 */
 	public static function register_interactive() {
 		$labels = array(
+			'crossword'        => __( 'Crossword', 'ohmylms' ),
+			'wordsearch'       => __( 'Wordsearch', 'ohmylms' ),
 			'text-entry'       => __( 'Type the answer (automatic)', 'ohmylms' ),
 			'dropdown-blanks'  => __( 'Dropdown in a sentence', 'ohmylms' ),
 			'categorize'       => __( 'Sort into groups', 'ohmylms' ),
@@ -157,7 +159,7 @@ final class QuestionTypes {
 					'validate_settings' => static function ( array $settings ) use ( $type ) {
 						return \OhMyLMS\Assessment\Interactive::validate_settings( $type, $settings ); },
 					'render'            => static function ( $question, $attempt ) use ( $type ) {
-						ohmylms_get_template( 'single-lesson/quiz-loop/' . ( \OhMyLMS\Assessment\Visual::handles( $type ) ? 'visual' : $type ) . '.php', compact( 'question', 'attempt' ) ); },
+						ohmylms_get_template( 'single-lesson/quiz-loop/' . ( in_array( $type, \OhMyLMS\Assessment\WordPuzzle::TYPES, true ) ? 'puzzle' : ( \OhMyLMS\Assessment\Visual::handles( $type ) ? 'visual' : $type ) ) . '.php', compact( 'question', 'attempt' ) ); },
 					// Keyed by slot / item / blank ID, or an ordered list of tiles; values are scalars.
 					'validate'          => static function ( $answer ) use ( $type ) {
 						if ( 'dropdown-blanks' === $type ) {

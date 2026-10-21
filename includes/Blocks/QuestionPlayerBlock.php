@@ -56,7 +56,7 @@ final class QuestionPlayerBlock {
 		$ids    = static function ( $values ) {
 			return array_slice( array_values( array_unique( array_filter( array_map( 'absint', is_array( $values ) ? $values : array() ) ) ) ), 0, 30 );
 		};
-		$mode   = in_array( $attributes['activityMode'] ?? '', array( 'flashcards', 'memory-pairs', 'hangman', 'spell-word' ), true ) ? $attributes['activityMode'] : 'standard';
+		$mode   = in_array( $attributes['activityMode'] ?? '', array( 'flashcards', 'memory-pairs', 'hangman', 'spell-word', 'memory-recall', 'image-quiz' ), true ) ? $attributes['activityMode'] : 'standard';
 		$graded = 'standard' === $mode && ( ! isset( $attributes['graded'] ) || true === $attributes['graded'] );
 		$result = array(
 			'source'        => 'random' === ( $attributes['source'] ?? '' ) ? 'random' : 'selected',
@@ -68,6 +68,13 @@ final class QuestionPlayerBlock {
 		);
 		if ( 'standard' !== $mode ) {
 			$result['activityMode'] = $mode;
+		}
+		if ( 'memory-recall' === $mode ) {
+			$result['rememberCount'] = max( 1, min( 10, (int) ( $attributes['rememberCount'] ?? 2 ) ) );
+			$result['studySeconds']  = max( 5, min( 120, (int) ( $attributes['studySeconds'] ?? 10 ) ) );
+		}
+		if ( 'image-quiz' === $mode ) {
+			$result['revealSeconds'] = max( 10, min( 120, (int) ( $attributes['revealSeconds'] ?? 30 ) ) );
 		}
 		return $result;
 	}
@@ -269,7 +276,7 @@ final class QuestionPlayerBlock {
 		);
 		foreach ( $posts as $post ) {
 			$snapshot = QuestionPlayer::eligible( $post->ID, get_current_user_id() );
-			if ( $snapshot && ( ! in_array( $request['activityMode'], array( 'flashcards', 'memory-pairs' ), true ) || 'matching' === $snapshot->get_type() ) && ( ! in_array( $request['activityMode'], array( 'hangman', 'spell-word' ), true ) || \OhMyLMS\Practice\WordActivity::answers( $snapshot ) ) ) {
+			if ( $snapshot && ( 'image-quiz' !== $request['activityMode'] || \OhMyLMS\Practice\ImageActivity::compatible( $snapshot ) ) && ( ! in_array( $request['activityMode'], array( 'flashcards', 'memory-pairs', 'memory-recall' ), true ) || 'matching' === $snapshot->get_type() ) && ( ! in_array( $request['activityMode'], array( 'hangman', 'spell-word' ), true ) || \OhMyLMS\Practice\WordActivity::answers( $snapshot ) ) ) {
 				$result[] = array(
 					'id'    => (int) $post->ID,
 					'title' => get_the_title( $post ),

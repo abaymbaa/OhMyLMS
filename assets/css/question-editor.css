@@ -1,3 +1,5 @@
+@import url("./puzzles.css");
+
 .ohmylms-grid-lists,
 .ohmylms-grid-key-rows {
 	display: grid;

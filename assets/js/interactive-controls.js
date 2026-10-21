@@ -591,6 +591,8 @@
 		} else if ( widgets[ type ] ) {
 			widgets[ type ].build( root, settings );
 			root.setAttribute( 'data-enhanced', '1' );
+		} else if ( type === 'crossword' || type === 'wordsearch' ) {
+			root.setAttribute( 'data-config', JSON.stringify( settings ) );
 		} else if ( type === 'text-entry' ) {
  root.appendChild( el( 'input', { type: 'text', 'data-answer-key': 'text', 'aria-label': 'Your answer', maxlength: '2000', class: 'ohmylms-text-input' } ) );
 		} else if ( type === 'expression' ) {

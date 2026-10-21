@@ -22,6 +22,8 @@ export const QUESTION_BLOCK_TYPES = [
 	[ 'true-false', 'True / false' ],
 	[ 'short-text', 'Short answer' ],
 	[ 'text-entry', 'Type the answer (automatic)' ],
+	[ 'crossword', 'Crossword' ],
+	[ 'wordsearch', 'Wordsearch' ],
 	[ 'long-text', 'Long answer' ],
 	[ 'fill-in-the-blank', 'Fill in the blank' ],
 	[ 'statement', 'Statement' ],

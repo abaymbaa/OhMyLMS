@@ -1,3 +1,4 @@
+import { PuzzlePreview } from './PuzzleEditor';
 /** @jsx createElement */
 import { RichContentControl } from '../math/RichContentControl';
 import { createElement, Fragment, useState, useId } from '@wordpress/element';
@@ -1045,6 +1046,9 @@ export function BuildExpressionEditor( { value, onChange } ) {
 export function InteractivePreview( { type, settings = {} } ) {
 	const _controlId = useId();
 	const [ picked, setPicked ] = useState( [] );
+	if ( [ 'crossword', 'wordsearch' ].includes( type ) ) {
+		return <PuzzlePreview type={ type } settings={ settings } />;
+	}
 	if ( type === 'text-entry' ) {
 		return (
 			<label htmlFor={ `${ _controlId }-text-entry` }>

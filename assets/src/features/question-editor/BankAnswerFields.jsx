@@ -1,3 +1,4 @@
+import { CrosswordEditor, WordsearchEditor } from './PuzzleEditor';
 import { ExtendedEditor } from './ExtendedEditor';
 import { isExtendedType } from './extendedModel.mjs';
 import { createElement, useRef } from '@wordpress/element';
@@ -127,6 +128,8 @@ export function BankAnswerFields( {
 		);
 	}
 	const interactive = {
+		crossword: CrosswordEditor,
+		wordsearch: WordsearchEditor,
 		'dropdown-blanks': DropdownBlanksEditor,
 		categorize: CategorizeEditor,
 		'multi-blank': MultiBlankEditor,

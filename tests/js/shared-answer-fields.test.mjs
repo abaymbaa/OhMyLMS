@@ -51,6 +51,8 @@ const scope = {
 	MultiBlankEditor: 'multi-blank',
 	BuildExpressionEditor: 'build-expression',
 	TextEntryEditor: 'text-entry',
+	CrosswordEditor: 'crossword',
+	WordsearchEditor: 'wordsearch',
 	ExpressionEditor: 'expression',
 	NumberLineEditor: 'NumberLine',
 	ShadeModelEditor: 'ShadeModel',

@@ -1,6 +1,8 @@
+import { PUZZLE_TYPES, puzzleDefaults, puzzleIssues } from './puzzleModel.mjs';
 /** Pure helpers for the interactive question types (dropdown sentence, sorting, multi-blank, tiles). */
 import { dropdownAnswers } from './dropdownModel.mjs';
 export const INTERACTIVE_TYPES = [
+	...PUZZLE_TYPES,
 	'text-entry',
 	'dropdown-blanks',
 	'categorize',
@@ -48,6 +50,9 @@ export function markerIds( text ) {
  * @param type
  */
 export function interactiveDefaults( type ) {
+	if ( PUZZLE_TYPES.includes( type ) ) {
+		return puzzleDefaults( type );
+	}
 	switch ( type ) {
 		case 'text-entry':
 			return {
@@ -326,6 +331,9 @@ export function sequencesFromText( text ) {
  * @param settings
  */
 export function interactiveIssues( type, settings = {} ) {
+	if ( PUZZLE_TYPES.includes( type ) ) {
+		return puzzleIssues( type, settings );
+	}
 	// A template's numbers are drawn later; the server validates real examples instead.
 	if ( settings.template?.variables?.length ) {
 		return [];

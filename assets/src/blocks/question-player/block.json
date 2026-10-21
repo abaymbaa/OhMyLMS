@@ -40,6 +40,18 @@
 		"activityMode": {
 			"type": "string",
 			"default": "standard"
+		},
+		"rememberCount": {
+			"type": "integer",
+			"default": 2
+		},
+		"studySeconds": {
+			"type": "integer",
+			"default": 10
+		},
+		"revealSeconds": {
+			"type": "integer",
+			"default": 30
 		}
 	},
 	"supports": {

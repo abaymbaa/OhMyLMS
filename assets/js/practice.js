@@ -217,6 +217,8 @@
 			window.OhMyLMSInteractive &&
 			[
 				'text-entry',
+				'crossword',
+				'wordsearch',
 				'dropdown-blanks',
 				'categorize',
 				'multi-blank',

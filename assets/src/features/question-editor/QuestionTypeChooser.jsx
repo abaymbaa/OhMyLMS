@@ -36,6 +36,8 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 			formats( [
 				'reorder',
 				'build-expression',
+				'crossword',
+				'wordsearch',
 				'matching',
 				'dropdown-blanks',
 				'categorize',

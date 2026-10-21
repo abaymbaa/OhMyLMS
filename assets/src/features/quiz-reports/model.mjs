@@ -108,6 +108,11 @@ function describeVisualExpected( s ) {
 }
 export function describeExpected( question ) {
 	const settings = question?.settings || {};
+	if ( [ 'crossword', 'wordsearch' ].includes( settings.type ) ) {
+		return ( settings.entries || [] )
+			.map( ( entry ) => `${ entry.clue } = ${ entry.answer }` )
+			.join( '; ' );
+	}
 	if ( settings.type === 'text-entry' ) {
 		return ( settings.accepted || [] ).join( ' / ' );
 	}

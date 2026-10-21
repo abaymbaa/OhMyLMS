@@ -197,3 +197,11 @@ registerQuestionMount( 'structured', ( root, detail ) => {
 		.filter( Boolean );
 	return () => cleanups.forEach( ( cleanup ) => cleanup() );
 } );
+
+for ( const type of [ 'crossword', 'wordsearch' ] ) {
+	registerAnswerValidator( type, ( root ) =>
+		[ ...root.querySelectorAll( '[data-answer-key]' ) ].some(
+			( input ) => input.value.trim() !== ''
+		)
+	);
+}

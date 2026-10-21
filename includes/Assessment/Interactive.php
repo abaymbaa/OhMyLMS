@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  * build-expression correct = tiles in order; distractors = extra tiles; alternatives = other valid orders
  */
 final class Interactive {
-	const TYPES = array( 'text-entry', 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', ...Visual::TYPES );
+	const TYPES = array( ...WordPuzzle::TYPES, 'text-entry', 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', ...Visual::TYPES );
 
 	/** Marker such as {1} or {b2} inside a prompt or table cell. */
 	const MARKER = '/\{([a-z0-9_-]{1,20})\}/i';
@@ -84,6 +84,9 @@ final class Interactive {
 	 * @param string $seed Delivery seed that fixes the order of shuffled lists.
 	 */
 	public static function public_view( $type, array $settings, $seed = '' ) {
+		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
+			return WordPuzzle::public_view( $type, $settings );
+		}
 		if ( Visual::handles( $type ) ) {
 			return Visual::public_view( $type, $settings ); }
 		$view = array();
@@ -163,6 +166,14 @@ final class Interactive {
 
 	/** Readable correct answer, revealed only after a response has been graded. */
 	public static function expected( $type, array $settings ) {
+		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
+			return array_map(
+				static function ( $entry ) {
+					return $entry['clue'] . ' = ' . $entry['answer'];
+				},
+				$settings['entries']
+			);
+		}
 		if ( Visual::handles( $type ) ) {
 			return Visual::expected( $type, $settings ); }
 		switch ( $type ) {
@@ -203,6 +214,9 @@ final class Interactive {
 
 	/** Does this settings array still hold an answer key? */
 	private static function has_key( $type, array $settings ) {
+		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
+			return isset( $settings['entries'] );
+		}
 		if ( Visual::handles( $type ) ) {
 			return Visual::has_key( $type, $settings ); }
 		switch ( $type ) {
@@ -232,6 +246,9 @@ final class Interactive {
 	 */
 	public static function learner_settings( $type, array $question ) {
 		$settings = (array) ( $question['settings'] ?? array() );
+		if ( in_array( $type, WordPuzzle::TYPES, true ) && isset( $settings['entries'] ) ) {
+			return WordPuzzle::public_view( $type, $settings );
+		}
 		if ( self::has_key( $type, $settings ) ) {
 			$private = array(
 				'text-entry'       => array( 'accepted', 'case_sensitive', 'collapse_whitespace', 'ignore_punctuation' ),
@@ -265,6 +282,8 @@ final class Interactive {
 		MathLive::enqueue_loader();
 		wp_enqueue_script( 'ohmylms-interactive' );
 		wp_enqueue_script( 'ohmylms-interactive-visual' );
+		wp_enqueue_script( 'ohmylms-puzzle-loader', plugins_url( 'assets/js/puzzle-loader.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), max( filemtime( OHMYLMS_DIR . '/assets/js/puzzle-loader.js' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/puzzles.mjs' ) ), true );
+		wp_enqueue_style( 'ohmylms-puzzles', plugins_url( 'assets/css/puzzles.css', OHMYLMS_FILE ), array(), filemtime( OHMYLMS_DIR . '/assets/css/puzzles.css' ) );
 		wp_enqueue_script( 'ohmylms-extended-questions', plugins_url( 'assets/interactivity/extended-questions.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/extended-questions.js' ), true );
 		wp_localize_script( 'ohmylms-extended-questions', 'ohmylmsResponseMedia', ResponseMedia::script_data() );
 		wp_enqueue_style( 'ohmylms-extended-questions', plugins_url( 'assets/css/extended-questions.css', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), filemtime( OHMYLMS_DIR . '/assets/css/extended-questions.css' ) );
@@ -303,6 +322,9 @@ final class Interactive {
 	 */
 	public static function grade( $type, $answer, array $settings ) {
 		$answer = is_array( $answer ) ? $answer : array();
+		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
+			return WordPuzzle::grade( $type, $answer, $settings );
+		}
 		if ( Visual::handles( $type ) ) {
 			return Visual::grade( $type, $answer, $settings ); }
 		switch ( $type ) {
@@ -552,6 +574,9 @@ final class Interactive {
 
 	/** Authoring validation: true or a message. */
 	public static function validate_settings( $type, array $settings ) {
+		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
+			return WordPuzzle::validate_settings( $type, $settings );
+		}
 		if ( Visual::handles( $type ) ) {
 			return Visual::validate_settings( $type, $settings ); }
 		switch ( $type ) {

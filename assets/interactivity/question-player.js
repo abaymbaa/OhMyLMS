@@ -148,6 +148,28 @@ export function mountPlayer( root ) {
 			stage.querySelector( 'input, button' )?.focus();
 			return;
 		}
+		if ( data.activityMode === 'image-quiz' ) {
+			const { renderImageQuiz } = await import( './image-player.js' );
+			cleanups.push( renderImageQuiz( stage, data, ( card, value = '' ) => request( 'study', null, { card, value, revision: data.revision } ), () => request( 'start' ) ) );
+			return;
+		}
+		if ( data.activityMode === 'memory-recall' ) {
+			const { renderRecall } = await import( './recall-player.js' );
+			cleanups.push(
+				renderRecall(
+					stage,
+					data,
+					( card, value = '' ) =>
+						request( 'study', null, {
+							card,
+							value,
+							revision: data.revision,
+						} ),
+					() => request( 'start' )
+				)
+			);
+			return;
+		}
 		if ( data.activityMode ) {
 			const { renderStudy } = await import( './study-player.js' );
 			renderStudy(
