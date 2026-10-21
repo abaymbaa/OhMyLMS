@@ -52,3 +52,5 @@ Spin the wheel, Gameshow quiz and Hangman are also regular question types in the
 - **Hangman** (`hangman`): the first accepted line is the hidden word (learners get only its shape). Learners pick letters; the quiz is correct when every letter is guessed with no more than the allowed wrong letters. Letters are checked when the answer is submitted, so there is no live hit/miss feedback in the quiz version.
 
 The Question Player block variations are unchanged. The other 19 activities remain Question Player modes (and shortcuts under "More activities" in the type chooser) until they are ported.
+
+Batch 2 adds Open the box, Speaking cards, Flip tiles and Flashcards (ungraded card decks: one card per line as `front | back`), and Timed True or false, Whack-a-mole and Flying fruit (timed answer-pick games that grade like Gameshow quiz) as question types. Maze chase, Airplane, Win or lose, the matching games, Speed sorting, Word magnets, Image quiz, Spell the word and Watch and memorize remain Question Player modes.

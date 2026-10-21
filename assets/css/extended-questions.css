@@ -309,3 +309,155 @@ body.ohmylms-diagram-open { overflow: hidden; }
 	background: #f6f1ff;
 }
 
+.ohmylms-deck-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(7rem, 1fr));
+	gap: 10px;
+	width: 100%;
+}
+
+.ohmylms-activity .ohmylms-deck-tile {
+	min-height: 5.5rem;
+	padding: 10px;
+	border: 2px solid #d9d0f0;
+	border-radius: 14px;
+	background: #7153c6;
+	color: #fff;
+	font: inherit;
+	font-size: 1.3rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ohmylms-activity .ohmylms-deck-tile.is-open {
+	background: #f1ebff;
+	color: #432474;
+}
+
+.ohmylms-activity .ohmylms-deck-tile:disabled {
+	opacity: 1;
+	cursor: default;
+}
+
+.ohmylms-deck-progress {
+	margin: 0;
+	color: #646970;
+}
+
+.ohmylms-activity .ohmylms-flashcard {
+	display: grid;
+	place-items: center;
+	width: min(28rem, 100%);
+	min-height: 12rem;
+	padding: 24px;
+	border: 3px solid #7153c6;
+	border-radius: 18px;
+	background: #fff;
+	font: inherit;
+	font-size: 1.6rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-activity .ohmylms-flashcard.is-back {
+	background: #f1ebff;
+}
+
+.ohmylms-pick-field {
+	position: relative;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	justify-content: center;
+	width: 100%;
+	min-height: 8rem;
+}
+
+.ohmylms-activity .ohmylms-pick-target {
+	padding: 14px 28px;
+	border: 3px solid #d9d0f0;
+	border-radius: 14px;
+	background: #fff;
+	font: inherit;
+	font-size: 1.2rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ohmylms-activity .ohmylms-pick-target[aria-pressed="true"] {
+	border-color: #7153c6;
+	background: #f1ebff;
+}
+
+.ohmylms-activity .ohmylms-pick-target:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.ohmylms-activity.is-timed-true-false .ohmylms-pick-target {
+	flex: 1 1 40%;
+	min-height: 6rem;
+	font-size: 1.6rem;
+}
+
+.is-whack-a-mole .ohmylms-pick-field {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.ohmylms-activity.is-whack-a-mole .ohmylms-pick-target {
+	border-radius: 50% 50% 14px 14px;
+	min-height: 6rem;
+	background: #8b5e3c;
+	color: #fff;
+	animation: ohmylms-pop 3s ease-in-out infinite;
+	animation-delay: calc(var(--ohmylms-slot) * 0.6s);
+}
+
+.is-flying-fruit .ohmylms-pick-field {
+	overflow: hidden;
+	min-height: 12rem;
+}
+
+.ohmylms-activity.is-flying-fruit .ohmylms-pick-target {
+	position: absolute;
+	top: calc(var(--ohmylms-slot) * 3.2rem);
+	animation: ohmylms-fly 9s linear infinite;
+	animation-delay: calc(var(--ohmylms-slot) * -2.5s);
+}
+
+@keyframes ohmylms-pop {
+
+	0%,
+	100% {
+		transform: translateY(20%);
+	}
+
+	50% {
+		transform: translateY(-10%);
+	}
+}
+
+@keyframes ohmylms-fly {
+
+	from {
+		left: -20%;
+	}
+
+	to {
+		left: 100%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.ohmylms-activity.is-whack-a-mole .ohmylms-pick-target,
+	.ohmylms-activity.is-flying-fruit .ohmylms-pick-target {
+		position: static;
+		animation: none;
+	}
+
+	.is-flying-fruit .ohmylms-pick-field {
+		display: flex;
+	}
+}

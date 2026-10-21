@@ -36,7 +36,21 @@ export const QUESTION_TYPE_GROUPS = [
 			'discussion-board',
 		],
 	],
-	[ 'Activities and games', [ 'spin-wheel', 'gameshow', 'hangman' ] ],
+	[
+		'Activities and games',
+		[
+			'spin-wheel',
+			'gameshow',
+			'hangman',
+			'open-box',
+			'speaking-cards',
+			'flip-tiles',
+			'flashcards',
+			'timed-true-false',
+			'whack-a-mole',
+			'flying-fruit',
+		],
+	],
 	[ 'Mathematics', [ 'numerical', 'structured', 'expression', 'graphing' ] ],
 	[
 		'Visual learning',

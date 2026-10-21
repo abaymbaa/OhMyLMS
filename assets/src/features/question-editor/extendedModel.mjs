@@ -15,6 +15,28 @@ export const EXTENDED_TYPES = [
 	[ 'spin-wheel', 'Spin the wheel' ],
 	[ 'gameshow', 'Gameshow quiz' ],
 	[ 'hangman', 'Hangman' ],
+	[ 'open-box', 'Open the box' ],
+	[ 'speaking-cards', 'Speaking cards' ],
+	[ 'flip-tiles', 'Flip tiles' ],
+	[ 'flashcards', 'Flashcards' ],
+	[ 'timed-true-false', 'Timed True or false' ],
+	[ 'whack-a-mole', 'Whack-a-mole' ],
+	[ 'flying-fruit', 'Flying fruit' ],
+];
+/** Card decks: ungraded, content is a list of { text, back } cards. */
+export const DECK_TYPES = [
+	'spin-wheel',
+	'open-box',
+	'speaking-cards',
+	'flip-tiles',
+	'flashcards',
+];
+/** Timed answer-pick games share the gameshow choices and key. */
+export const CHOICE_GAME_TYPES = [
+	'gameshow',
+	'timed-true-false',
+	'whack-a-mole',
+	'flying-fruit',
 ];
 export const isExtendedType = ( type ) =>
 	EXTENDED_TYPES.some( ( [ id ] ) => id === type );
@@ -32,7 +54,7 @@ export const isSettingsAddonType = (
 	! isExtendedType( type ) &&
 	manifest?.[ type ]?.editor?.format === 'ohmylms-settings';
 export const isUngradedType = ( type ) =>
-	[ 'poll', 'word-cloud', 'spin-wheel' ].includes( type );
+	[ 'poll', 'word-cloud', ...DECK_TYPES ].includes( type );
 
 /**
  * Work out how an interactive video link should be played.
@@ -213,6 +235,10 @@ export function extendedDefaults( type ) {
 					{ id: 'c2', text: 'No' },
 				],
 			};
+		case 'open-box':
+		case 'speaking-cards':
+		case 'flip-tiles':
+		case 'flashcards':
 		case 'spin-wheel':
 			return {
 				cards: [
@@ -221,6 +247,17 @@ export function extendedDefaults( type ) {
 					{ id: 'c3', text: 'Card 3' },
 				],
 			};
+		case 'timed-true-false':
+			return {
+				choices: [
+					{ id: 'c1', text: 'True' },
+					{ id: 'c2', text: 'False' },
+				],
+				correct: 'c1',
+				seconds: 15,
+			};
+		case 'whack-a-mole':
+		case 'flying-fruit':
 		case 'gameshow':
 			return {
 				choices: [
@@ -265,7 +302,14 @@ export function extendedPublicView( type, settings ) {
 			'video-response': [ 'max_seconds', 'sources' ],
 			poll: [ 'choices' ],
 			'spin-wheel': [ 'cards' ],
+			'open-box': [ 'cards' ],
+			'speaking-cards': [ 'cards' ],
+			'flip-tiles': [ 'cards' ],
+			flashcards: [ 'cards' ],
 			gameshow: [ 'choices', 'seconds' ],
+			'timed-true-false': [ 'choices', 'seconds' ],
+			'whack-a-mole': [ 'choices', 'seconds' ],
+			'flying-fruit': [ 'choices', 'seconds' ],
 			hangman: [ 'max_misses' ],
 			'interactive-video': [ 'video_url' ],
 		}[ type ] || [];
@@ -333,11 +377,11 @@ export function extendedIssues( type, settings = {} ) {
 	) {
 		return [ 'video' ];
 	}
-	if ( type === 'spin-wheel' && ( settings.cards || [] ).length < 2 ) {
+	if ( DECK_TYPES.includes( type ) && ( settings.cards || [] ).length < 2 ) {
 		return [ 'cards' ];
 	}
 	if (
-		type === 'gameshow' &&
+		CHOICE_GAME_TYPES.includes( type ) &&
 		( ( settings.choices || [] ).length < 2 ||
 			( settings.choices || [] ).length > 6 ||
 			! ( settings.choices || [] ).some(

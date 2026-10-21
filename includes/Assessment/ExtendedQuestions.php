@@ -13,9 +13,11 @@ defined( 'ABSPATH' ) || exit;
 
 /** Native response formats with independent frozen grading keys. */
 final class ExtendedQuestions {
-	const TYPES          = array( 'passage', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw', 'audio-response', 'video-response', 'poll', 'word-cloud', 'discussion-board', 'slide', 'interactive-video', 'spin-wheel', 'gameshow', 'hangman' );
+	const TYPES          = array( 'passage', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw', 'audio-response', 'video-response', 'poll', 'word-cloud', 'discussion-board', 'slide', 'interactive-video', 'spin-wheel', 'gameshow', 'hangman', 'open-box', 'speaking-cards', 'flip-tiles', 'flashcards', 'timed-true-false', 'whack-a-mole', 'flying-fruit' );
+	const DECK_TYPES     = array( 'spin-wheel', 'open-box', 'speaking-cards', 'flip-tiles', 'flashcards' );
+	const CHOICE_GAMES   = array( 'gameshow', 'timed-true-false', 'whack-a-mole', 'flying-fruit' );
 	const MANUAL_TYPES   = array( 'draw', 'audio-response', 'video-response', 'discussion-board' );
-	const UNSCORED_TYPES = array( 'poll', 'word-cloud', 'slide', 'spin-wheel' );
+	const UNSCORED_TYPES = array( 'poll', 'word-cloud', 'slide', 'spin-wheel', 'open-box', 'speaking-cards', 'flip-tiles', 'flashcards' );
 
 	/** Register definitions before third-party extensions. */
 	public static function register() {
@@ -26,7 +28,14 @@ final class ExtendedQuestions {
 				array(
 					'label'             => array(
 						'spin-wheel' => __( 'Spin the wheel', 'ohmylms' ),
-						'gameshow'   => __( 'Gameshow quiz', 'ohmylms' ),
+						'gameshow'         => __( 'Gameshow quiz', 'ohmylms' ),
+						'open-box'         => __( 'Open the box', 'ohmylms' ),
+						'speaking-cards'   => __( 'Speaking cards', 'ohmylms' ),
+						'flip-tiles'       => __( 'Flip tiles', 'ohmylms' ),
+						'flashcards'       => __( 'Flashcards', 'ohmylms' ),
+						'timed-true-false' => __( 'Timed True or false', 'ohmylms' ),
+						'whack-a-mole'     => __( 'Whack-a-mole', 'ohmylms' ),
+						'flying-fruit'     => __( 'Flying fruit', 'ohmylms' ),
 					)[ $type ] ?? ucwords( str_replace( '-', ' ', $type ) ),
 					'snapshot'          => true,
 					'manual'            => in_array( $type, self::MANUAL_TYPES, true ),
@@ -81,7 +90,14 @@ final class ExtendedQuestions {
 			'video-response'   => array( 'max_seconds', 'sources' ),
 			'poll'             => array( 'choices' ),
 			'spin-wheel'       => array( 'cards' ),
+			'open-box'         => array( 'cards' ),
+			'speaking-cards'   => array( 'cards' ),
+			'flip-tiles'       => array( 'cards' ),
+			'flashcards'       => array( 'cards' ),
 			'gameshow'         => array( 'choices', 'seconds' ),
+			'timed-true-false' => array( 'choices', 'seconds' ),
+			'whack-a-mole'     => array( 'choices', 'seconds' ),
+			'flying-fruit'     => array( 'choices', 'seconds' ),
 			'hangman'          => array( 'max_misses' ),
 		);
 		$view = array_intersect_key( $settings, array_flip( $keys[ $type ] ?? array() ) );
@@ -187,10 +203,13 @@ final class ExtendedQuestions {
 				}
 			}
 		}
-		if ( 'spin-wheel' === $type ) {
+		if ( in_array( $type, self::DECK_TYPES, true ) ) {
 			$valid = self::valid_rows( $settings['cards'] ?? array(), 'text' ) && 30 >= count( $settings['cards'] );
+			foreach ( (array) ( $settings['cards'] ?? array() ) as $card ) {
+				$valid = $valid && ( ! isset( $card['back'] ) || ( is_string( $card['back'] ) && 2000 >= strlen( $card['back'] ) ) );
+			}
 		}
-		if ( 'gameshow' === $type ) {
+		if ( in_array( $type, self::CHOICE_GAMES, true ) ) {
 			$choices = $settings['choices'] ?? array();
 			$valid   = self::valid_rows( $choices, 'text' ) && 2 <= count( $choices ) && 6 >= count( $choices ) && in_array( $settings['correct'] ?? null, array_column( $choices, 'id' ), true );
 			$valid   = $valid && is_numeric( $settings['seconds'] ?? 20 ) && 5 <= ( $settings['seconds'] ?? 20 ) && 120 >= ( $settings['seconds'] ?? 20 );
@@ -386,7 +405,7 @@ final class ExtendedQuestions {
 				$correct = $correct || hypot( (float) $answer['x'] - $zone['x'], (float) $answer['y'] - $zone['y'] ) <= $zone['radius'];
 			}
 		}
-		if ( 'gameshow' === $type ) {
+		if ( in_array( $type, self::CHOICE_GAMES, true ) ) {
 			$correct = isset( $answer['choice'], $settings['correct'] ) && (string) $answer['choice'] === (string) $settings['correct'];
 		}
 		if ( 'hangman' === $type ) {

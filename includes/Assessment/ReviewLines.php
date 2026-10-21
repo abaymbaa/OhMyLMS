@@ -89,6 +89,9 @@ final class ReviewLines {
 				// A recording is a stored file; an embedded data link would be unreadable text.
 				return array( 0 === strpos( $media, 'data:' ) ? __( 'Recording submitted', 'ohmylms' ) : $media );
 			case 'gameshow':
+			case 'timed-true-false':
+			case 'whack-a-mole':
+			case 'flying-fruit':
 				$chosen = array_column( (array) ( $settings['choices'] ?? array() ), 'text', 'id' )[ $given['choice'] ?? '' ] ?? '';
 				return '' === $chosen ? array() : array( $chosen );
 			case 'hangman':
@@ -156,6 +159,9 @@ final class ReviewLines {
 				}
 				return $lines;
 			case 'gameshow':
+			case 'timed-true-false':
+			case 'whack-a-mole':
+			case 'flying-fruit':
 				$correct = array_column( (array) ( $settings['choices'] ?? array() ), 'text', 'id' )[ $settings['correct'] ?? '' ] ?? '';
 				return '' === $correct ? array() : array( $correct );
 			case 'hangman':
