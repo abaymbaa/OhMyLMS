@@ -254,6 +254,13 @@
 		bank.setAttribute( 'role', 'group' );
 		tiles.forEach( function ( tile ) { tile.button.removeAttribute( 'role' ); } );
 		var placed = [];
+		var clear = root.querySelector( '.ohmylms-build-clear' );
+		if ( clear ) {
+			clear.addEventListener( 'click', function () {
+				placed = [];
+				sync();
+			} );
+		}
 
 		function sync( silent ) {
 			answer.textContent = '';
@@ -288,6 +295,9 @@
 			tiles.forEach( function ( tile ) {
 				tile.button.hidden = placed.indexOf( tile ) !== -1;
 			} );
+			if ( clear ) {
+				clear.hidden = ! placed.length;
+			}
 			if ( ! silent ) {
 				changed( root );
 			}

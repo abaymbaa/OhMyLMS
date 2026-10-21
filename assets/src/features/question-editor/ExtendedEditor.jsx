@@ -699,6 +699,115 @@ export function ExtendedEditor( {
 					</Button>
 				</>
 			) }
+			{ type === 'spin-wheel' && (
+				<>
+					<p className="ohmylms-editor-field-label">
+						{ __( 'Cards on the wheel (one per line)', 'ohmylms' ) }
+					</p>
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __( 'Wheel cards (one per line)', 'ohmylms' ) }
+						help={ __(
+							'Each spin draws one card without repeating until the deck is used. Learners are not graded.',
+							'ohmylms'
+						) }
+						value={ rows( 'cards' )
+							.map( ( card ) => card.text )
+							.join( '\n' ) }
+						onChange={ ( text ) =>
+							set( {
+								cards: text
+									.split( '\n' )
+									.map( ( line, index ) => ( {
+										id: 'c' + ( index + 1 ),
+										text: line,
+									} ) ),
+							} )
+						}
+					/>
+				</>
+			) }
+			{ type === 'gameshow' && (
+				<>
+					<p className="ohmylms-editor-field-label">
+						{ __(
+							'Answer choices (one per line, 2–6)',
+							'ohmylms'
+						) }
+					</p>
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __(
+							'Answer choices (one per line, 2–6)',
+							'ohmylms'
+						) }
+						value={ rows( 'choices' )
+							.map( ( choice ) => choice.text )
+							.join( '\n' ) }
+						onChange={ ( text ) =>
+							set( {
+								choices: text
+									.split( '\n' )
+									.map( ( line, index ) => ( {
+										id: 'c' + ( index + 1 ),
+										text: line,
+									} ) ),
+							} )
+						}
+					/>
+					<SelectControl
+						label={ __( 'Correct answer', 'ohmylms' ) }
+						value={ value.correct || '' }
+						options={ rows( 'choices' ).map( ( choice ) => ( {
+							value: choice.id,
+							label: choice.text,
+						} ) ) }
+						onChange={ ( correct ) => set( { correct } ) }
+					/>
+					{ number(
+						'seconds',
+						__( 'Seconds to answer (5–120)', 'ohmylms' ),
+						5
+					) }
+				</>
+			) }
+			{ type === 'hangman' && (
+				<>
+					<p className="ohmylms-editor-field-label">
+						{ __(
+							'Word or phrase to guess (extra lines are accepted spellings)',
+							'ohmylms'
+						) }
+					</p>
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __(
+							'Word or phrase to guess (first line is shown as blanks; extra lines are accepted spellings)',
+							'ohmylms'
+						) }
+						help={ __(
+							'Put the clue in the question. Learners choose letters; too many wrong letters fails the question.',
+							'ohmylms'
+						) }
+						value={ ( value.accepted || [] ).join( '\n' ) }
+						onChange={ ( text ) =>
+							set( {
+								accepted: text
+									.split( '\n' )
+									.filter( ( line ) => line.trim() ),
+							} )
+						}
+					/>
+					{ number(
+						'max_misses',
+						__( 'Wrong letters allowed (1–10)', 'ohmylms' ),
+						1
+					) }
+				</>
+			) }
 			{ type === 'poll' && (
 				<RichContentControl
 					compact

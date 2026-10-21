@@ -42,3 +42,13 @@ The wizard writes numerical settings and a private variable template. Each issue
 `tests/php/all-activities-integration.php` covers every mode, compatibility, private projections, round actions, saved state, pause/resume, invalid/stale submissions, practice scoring, absence of academic events, magnet coordinate bounds and every Maths preset with multiple instance seeds. `tests/browser/all-activities.spec.cjs` exercises all 16 player interfaces, mobile controls, movement, lifelines, stakes, saved composition and native Gutenberg generator authoring/save/reopen/playback.
 
 Research references: [Wordwall template catalogue](https://wordwall.zendesk.com/hc/en-gb/sections/360005042778-Templates), [official interaction and conversion descriptions](https://wordwall.zendesk.com/hc/en-gb/articles/46885000250641--How-to-generate-content-with-AI), [official features](https://www.wordwall.net/features). These describe source mechanics; this delivery is not a claim of pixel-for-pixel or settings parity.
+
+## Activity question types (pilot)
+
+Spin the wheel, Gameshow quiz and Hangman are also regular question types in the **Question** block's type dropdown and the quiz type chooser. They reuse the extended response-format machinery (settings-based, frozen with each version, answer keys private) and play inside any quiz.
+
+- **Spin the wheel** (`spin-wheel`): up to 30 cards. Each spin draws a card without repeats. Ungraded (0 marks).
+- **Gameshow quiz** (`gameshow`): 2–6 choices, one correct, 5–120 seconds. The choice is graded on the server; the key is never sent to the learner. The 50/50 lifeline and speed bonus of the Question Player mode are not part of the quiz type.
+- **Hangman** (`hangman`): the first accepted line is the hidden word (learners get only its shape). Learners pick letters; the quiz is correct when every letter is guessed with no more than the allowed wrong letters. Letters are checked when the answer is submitted, so there is no live hit/miss feedback in the quiz version.
+
+The Question Player block variations are unchanged. The other 19 activities remain Question Player modes (and shortcuts under "More activities" in the type chooser) until they are ported.

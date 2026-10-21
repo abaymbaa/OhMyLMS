@@ -97,6 +97,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		RichContentControl: 'rich',
 		BankAnswerFields: 'answers',
 		SelectControl: 'select',
+		QuestionTypeMenu: 'type-menu',
 		ToggleControl: 'toggle',
 		Dropdown: 'dropdown',
 		Modal: 'modal',
@@ -180,7 +181,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 	const answers = nodes( tree ).find( ( node ) => node.type === 'answers' );
 	assert.equal( Boolean( answers.props.showAnswerToolbar ), false );
 	assert.equal( answers.props.options[ 0 ].answer, marker );
-	const selector = nodes( tree ).find( ( node ) => node.type === 'select' );
+	const selector = nodes( tree ).find( ( node ) => node.type === 'type-menu' );
 	assert.deepEqual(
 		selector.props.options.map( ( option ) => option.value ),
 		QUESTION_BLOCK_TYPES.map( ( [ id ] ) => id )

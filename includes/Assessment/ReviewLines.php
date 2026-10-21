@@ -88,6 +88,12 @@ final class ReviewLines {
 				}
 				// A recording is a stored file; an embedded data link would be unreadable text.
 				return array( 0 === strpos( $media, 'data:' ) ? __( 'Recording submitted', 'ohmylms' ) : $media );
+			case 'gameshow':
+				$chosen = array_column( (array) ( $settings['choices'] ?? array() ), 'text', 'id' )[ $given['choice'] ?? '' ] ?? '';
+				return '' === $chosen ? array() : array( $chosen );
+			case 'hangman':
+				$guesses = trim( (string) ( $given['guesses'] ?? '' ) );
+				return '' === $guesses ? array() : array( $guesses );
 			case 'interactive-video':
 				$lines = array();
 				foreach ( (array) ( $settings['checkpoints'] ?? array() ) as $checkpoint ) {
@@ -149,6 +155,11 @@ final class ReviewLines {
 					$lines[] = sprintf( __( 'Area %1$d: around %2$s', 'ohmylms' ), $index + 1, self::point( $zone['x'] ?? 0, $zone['y'] ?? 0, '%' ) );
 				}
 				return $lines;
+			case 'gameshow':
+				$correct = array_column( (array) ( $settings['choices'] ?? array() ), 'text', 'id' )[ $settings['correct'] ?? '' ] ?? '';
+				return '' === $correct ? array() : array( $correct );
+			case 'hangman':
+				return array_map( 'strval', array_values( (array) ( $settings['accepted'] ?? array() ) ) );
 			case 'interactive-video':
 				$lines = array();
 				foreach ( (array) ( $settings['checkpoints'] ?? array() ) as $checkpoint ) {

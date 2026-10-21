@@ -103,6 +103,18 @@ fs.copyFileSync(
 	path.join( root, 'node_modules/mathlive/LICENSE.txt' ),
 	path.join( root, 'assets/dist/mathlive/LICENSE.txt' )
 );
+fs.mkdirSync( path.join( root, 'assets/dist/jsxgraph' ), { recursive: true } );
+for ( const file of [
+	'jsxgraphcore.js',
+	'jsxgraph.css',
+	'LICENSE.MIT',
+	'LICENSE.LGPL',
+] ) {
+	fs.copyFileSync(
+		path.join( root, 'node_modules/jsxgraph/distrib', file ),
+		path.join( root, 'assets/dist/jsxgraph', file )
+	);
+}
 fs.copyFileSync(
 	path.join( root, 'node_modules/@cortex-js/compute-engine/LICENSE' ),
 	path.join( root, 'assets/dist/mathlive/COMPUTE-ENGINE-LICENSE.txt' )

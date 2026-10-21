@@ -3,6 +3,32 @@ import { Button, Modal, TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
 
+const ACTIVITIES = [
+	[ 'open-box', __( 'Open the box', 'ohmylms' ), 'matching' ],
+	[ 'speaking-cards', __( 'Speaking cards', 'ohmylms' ), 'statement' ],
+	[ 'flip-tiles', __( 'Flip tiles', 'ohmylms' ), 'matching' ],
+	[ 'find-match', __( 'Find the match', 'ohmylms' ), 'matching' ],
+	[ 'pair-or-no-pair', __( 'Pair or No Pair', 'ohmylms' ), 'matching' ],
+	[ 'balloon-pop', __( 'Balloon pop', 'ohmylms' ), 'matching' ],
+	[
+		'timed-true-false',
+		__( 'Timed True or false', 'ohmylms' ),
+		'true-false',
+	],
+	[ 'win-or-lose', __( 'Win or lose quiz', 'ohmylms' ), 'single-choice' ],
+	[ 'maze-chase', __( 'Maze chase', 'ohmylms' ), 'single-choice' ],
+	[ 'flying-fruit', __( 'Flying fruit', 'ohmylms' ), 'single-choice' ],
+	[ 'whack-a-mole', __( 'Whack-a-mole', 'ohmylms' ), 'single-choice' ],
+	[ 'airplane', __( 'Airplane', 'ohmylms' ), 'single-choice' ],
+	[ 'speed-sorting', __( 'Speed sorting', 'ohmylms' ), 'categorize' ],
+	[ 'word-magnets', __( 'Word magnets', 'ohmylms' ), 'build-expression' ],
+	[ 'image-quiz', __( 'Image quiz', 'ohmylms' ), 'single-choice' ],
+	[ 'spell-word', __( 'Spell the word', 'ohmylms' ), 'text-entry' ],
+	[ 'memory-recall', __( 'Watch and memorize', 'ohmylms' ), 'matching' ],
+	[ 'flashcards', __( 'Flashcards', 'ohmylms' ), 'matching' ],
+	[ 'memory-pairs', __( 'Matching Pairs', 'ohmylms' ), 'matching' ],
+];
+
 /**
  * Choose a response format before inserting an independent question draft.
  * @param root0
@@ -50,6 +76,10 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 			] ),
 		],
 		[
+			__( 'Activities and games', 'ohmylms' ),
+			formats( [ 'spin-wheel', 'gameshow', 'hangman' ] ),
+		],
+		[
 			__( 'Mathematics', 'ohmylms' ),
 			formats( [ 'numerical', 'structured', 'expression', 'graphing' ] ),
 		],
@@ -74,6 +104,12 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 			formats( [ 'passage', 'interactive-video' ] ),
 		],
 	];
+	const labels = Object.fromEntries( QUESTION_BLOCK_TYPES );
+	const activities = ACTIVITIES.filter( ( [ , label, type ] ) =>
+		( label + ' ' + labels[ type ] + ' activity game wordwall' )
+			.toLowerCase()
+			.includes( search.toLowerCase().trim() )
+	);
 	const matches = ( [ id, label ] ) => {
 		const keywords =
 			{
@@ -128,7 +164,30 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 						</section>
 					)
 			) }
-			{ ! QUESTION_BLOCK_TYPES.some( matches ) && (
+			{ activities.length > 0 && (
+				<section aria-label={ __( 'More activities', 'ohmylms' ) }>
+					<h2>{ __( 'More activities', 'ohmylms' ) }</h2>
+					<p>
+						{ __(
+							'Each activity is played from a question of the type shown. Write the question here, then choose the activity in a Question Player block.',
+							'ohmylms'
+						) }
+					</p>
+					<div className="ohmylms-question-type-grid">
+						{ activities.map( ( [ activity, label, type ] ) => (
+							<Button
+								key={ activity }
+								variant="secondary"
+								onClick={ () => onSelect( type, activity ) }
+							>
+								{ label }
+								<small>{ ' — ' + labels[ type ] }</small>
+							</Button>
+						) ) }
+					</div>
+				</section>
+			) }
+			{ ! QUESTION_BLOCK_TYPES.some( matches ) && ! activities.length && (
 				<p role="status">
 					{ __( 'No question types match your search.', 'ohmylms' ) }
 				</p>

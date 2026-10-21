@@ -504,3 +504,65 @@ fieldset.ohmylms-interactive-row {
 	padding: 0 8px 0 4px;
 	border-radius: 0 8px 8px 0;
 }
+
+.ohmylms-vis-hint,
+.ohmylms-build-hint {
+	margin: 0 0 8px;
+	color: #646970;
+	font-size: 0.95em;
+}
+
+.ohmylms-vis-ghost {
+	fill: var(--ohmylms-primary-color, #2563eb);
+	opacity: 0.3;
+	pointer-events: none;
+}
+
+.ohmylms-vis-numberline {
+	max-width: 720px;
+	cursor: pointer;
+}
+
+.ohmylms-build-expression .ohmylms-build-answer {
+	min-height: 64px;
+	border: 2px dashed #b6c0cc;
+	border-radius: 12px;
+	background: #f8fafc;
+}
+
+.ohmylms-build-expression .ohmylms-build-answer:empty::before {
+	align-self: center;
+	color: #8a94a3;
+	content: attr(data-placeholder);
+}
+
+.ohmylms-build-expression .ohmylms-tile {
+	min-width: 3rem;
+	min-height: 48px;
+	padding: 8px 18px;
+	font-size: 1.15rem;
+	font-weight: 600;
+}
+
+.ohmylms-build-expression .ohmylms-build-clear {
+	margin-top: 8px;
+	padding: 6px 14px;
+	border: 1px solid #b6c0cc;
+	border-radius: 999px;
+	background: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ohmylms-interactive .ohmylms-tile,
+.ohmylms-interactive .ohmylms-bill {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 6px 14px;
+	font: inherit;
+	font-weight: 600;
+}
+
+.ohmylms-interactive .ohmylms-vis-readout {
+	font-size: 1.3rem;
+}

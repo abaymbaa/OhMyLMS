@@ -1,11 +1,8 @@
 import { createElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import {
-	CheckboxControl,
-	SelectControl,
-	TextControl,
-} from '@wordpress/components';
+import { CheckboxControl, TextControl } from '@wordpress/components';
 import { isUngradedType } from './extendedModel.mjs';
+import { QuestionTypeMenu } from './QuestionTypeMenu';
 import { FormWorkspace } from './FormWorkspace';
 import { BankAnswerFields } from './BankAnswerFields';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
@@ -131,12 +128,7 @@ export function QuestionForm( {
 					<>
 						{ types && (
 							<div className="ohmylms-question-type-picker">
-								<SelectControl
-									label={ __( 'Question type', 'ohmylms' ) }
-									help={ __(
-										'Changing type resets the answer setup.',
-										'ohmylms'
-									) }
+								<QuestionTypeMenu
 									value={
 										choice
 											? 'single-choice'
