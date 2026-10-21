@@ -39,6 +39,29 @@
 		return Math.round( value * 1e6 ) / 1e6;
 	}
 
+	/* One plain instruction line above each widget, so learners know what to do. */
+	var HINTS = {
+		'shade-model': 'Tap the parts to shade them. Tap a shaded part again to clear it.',
+		'count-blocks': 'Use the plus and minus buttons to show the number with blocks.',
+		'set-clock': 'Drag the hand, or use the buttons, to set the time.',
+		'make-amount': 'Tap the notes and coins to add them to your total. Tap one in the tray to remove it.',
+		'fill-level': 'Move the slider to fill the container to the right level.',
+		'build-chart': 'Drag each bar up or down to the correct height.',
+		'grid-build': 'Select squares on the grid to build the shape.',
+	};
+	var translate = window.wp && window.wp.i18n ? window.wp.i18n.__ : function ( text ) { return text; };
+	var registerWidget = host.register;
+	host.register = function ( type, widget ) {
+		var build = widget.build;
+		if ( HINTS[ type ] ) {
+			widget.build = function ( root, config ) {
+				root.appendChild( el( 'p', { class: 'ohmylms-vis-hint', text: translate( HINTS[ type ], 'ohmylms' ) } ) );
+				build( root, config );
+			};
+		}
+		return registerWidget.call( host, type, widget );
+	};
+
 	/** Pointer position in an SVG's own coordinates. */
 	function local( root, event ) {
 		var point = root.createSVGPoint();
@@ -105,18 +128,32 @@
 			}
 			var point = svg( 'circle', { r: 11, cy: 50, class: 'ohmylms-vis-point', visibility: 'hidden' } );
 			s.appendChild( point );
-			var readout = el( 'p', { class: 'ohmylms-vis-readout', 'aria-live': 'polite' } );
+			var tr = window.wp && window.wp.i18n ? window.wp.i18n.__ : function ( text ) { return text; };
+			var hint = el( 'p', { class: 'ohmylms-vis-hint', text: tr( 'Click or tap the line to place your answer, or use the arrow keys.', 'ohmylms' ) } );
+			var ghost = svg( 'circle', { r: 11, cy: 50, class: 'ohmylms-vis-ghost', visibility: 'hidden' } );
+			s.insertBefore( ghost, point );
+			var readout = el( 'p', { class: 'ohmylms-vis-readout', 'aria-live': 'polite', text: tr( 'Your answer: not placed yet', 'ohmylms' ) } );
 			function place( next ) {
 				value = round( clamp( next, min, max ) );
 				point.setAttribute( 'cx', xOf( value ) );
 				point.setAttribute( 'visibility', 'visible' );
 				s.setAttribute( 'aria-valuenow', value );
-				readout.textContent = String( value );
+				readout.textContent = tr( 'Your answer: ', 'ohmylms' ) + String( value );
 				setAnswer( root, 'value', value );
 			}
 			drag( s, s, function ( p ) {
 				var raw = min + ( ( p.x - left ) / ( right - left ) ) * ( max - min );
 				place( min + Math.round( ( raw - min ) / snap ) * snap );
+			} );
+			s.addEventListener( 'pointermove', function ( event ) {
+				var p = local( s, event );
+				var raw = min + ( ( p.x - left ) / ( right - left ) ) * ( max - min );
+				var near = clamp( min + Math.round( ( raw - min ) / snap ) * snap, min, max );
+				ghost.setAttribute( 'cx', xOf( near ) );
+				ghost.setAttribute( 'visibility', 'visible' );
+			} );
+			s.addEventListener( 'pointerleave', function () {
+				ghost.setAttribute( 'visibility', 'hidden' );
 			} );
 			s.addEventListener( 'keydown', function ( event ) {
 				var base = value === null ? min : value;
@@ -132,6 +169,7 @@
 				}
 				event.preventDefault();
 			} );
+			root.appendChild( hint );
 			root.appendChild( s );
 			root.appendChild( readout );
 		},

@@ -11,8 +11,12 @@ defined( 'ABSPATH' ) || exit;
 	<span class="question-number"><?php echo esc_html( $ordinal . ' / ' . $question_count ); ?></span>
 	<span class="ohmylms-player-marks">
 		<?php
-		/* translators: %s: Available question marks. */
-		echo esc_html( sprintf( _n( '%s point', '%s points', $marks, 'ohmylms' ), $marks ) );
+		if ( 0.0 === (float) $marks ) {
+			esc_html_e( 'Not scored', 'ohmylms' );
+		} else {
+			/* translators: %s: Available question marks. */
+			echo esc_html( sprintf( _n( '%s point', '%s points', $marks, 'ohmylms' ), $marks ) );
+		}
 		?>
 	</span>
 </div>

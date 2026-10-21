@@ -17,6 +17,7 @@ import { choiceModePatch } from './choiceModel.mjs';
 import { questionTypePatch, QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
 import { nativeQuestionTypes } from '../learning/nativeAuthoring.mjs';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
+import { QuestionTypeMenu } from './QuestionTypeMenu';
 import { QuestionLivePreview } from './QuestionLivePreview';
 import { TemplatePanel } from './TemplatePanel';
 import { defaultTemplate } from './templateModel.mjs';
@@ -97,9 +98,7 @@ export function MultipleChoiceFields( {
 									)
 								}
 							/>
-							<SelectControl
-								label={ __( 'Question type', 'ohmylms' ) }
-								hideLabelFromVision
+							<QuestionTypeMenu
 								value={ question.settings.type }
 								options={
 									allowWritten
@@ -143,7 +142,6 @@ export function MultipleChoiceFields( {
 												)
 									)
 								}
-								__nextHasNoMarginBottom
 							/>
 						</div>
 						{ question.settings.type === 'reorder' && (

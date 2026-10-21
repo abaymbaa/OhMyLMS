@@ -13,9 +13,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Native response formats with independent frozen grading keys. */
 final class ExtendedQuestions {
-	const TYPES          = array( 'passage', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw', 'audio-response', 'video-response', 'poll', 'word-cloud', 'discussion-board', 'slide', 'interactive-video' );
+	const TYPES          = array( 'passage', 'graphing', 'hot-text', 'match-table-grid', 'labeling', 'hotspot', 'draw', 'audio-response', 'video-response', 'poll', 'word-cloud', 'discussion-board', 'slide', 'interactive-video', 'spin-wheel', 'gameshow', 'hangman' );
 	const MANUAL_TYPES   = array( 'draw', 'audio-response', 'video-response', 'discussion-board' );
-	const UNSCORED_TYPES = array( 'poll', 'word-cloud', 'slide' );
+	const UNSCORED_TYPES = array( 'poll', 'word-cloud', 'slide', 'spin-wheel' );
 
 	/** Register definitions before third-party extensions. */
 	public static function register() {
@@ -24,7 +24,10 @@ final class ExtendedQuestions {
 				'question',
 				$type,
 				array(
-					'label'             => ucwords( str_replace( '-', ' ', $type ) ),
+					'label'             => array(
+						'spin-wheel' => __( 'Spin the wheel', 'ohmylms' ),
+						'gameshow'   => __( 'Gameshow quiz', 'ohmylms' ),
+					)[ $type ] ?? ucwords( str_replace( '-', ' ', $type ) ),
 					'snapshot'          => true,
 					'manual'            => in_array( $type, self::MANUAL_TYPES, true ),
 					'answers'           => 'text',
@@ -77,10 +80,18 @@ final class ExtendedQuestions {
 			'audio-response'   => array( 'max_seconds' ),
 			'video-response'   => array( 'max_seconds', 'sources' ),
 			'poll'             => array( 'choices' ),
+			'spin-wheel'       => array( 'cards' ),
+			'gameshow'         => array( 'choices', 'seconds' ),
+			'hangman'          => array( 'max_misses' ),
 		);
 		$view = array_intersect_key( $settings, array_flip( $keys[ $type ] ?? array() ) );
 		if ( 'passage' === $type ) {
 			$view['parts'] = Structured::public_parts( $settings );
+		}
+		if ( 'hangman' === $type ) {
+			// Learners see the word's shape only: letters become blanks, other characters stay.
+			$word          = self::hangman_word( $settings );
+			$view['shape'] = preg_replace( '/[\p{L}\p{N}]/u', '_', preg_replace( '/\p{M}/u', '', $word ) );
 		}
 		if ( 'labeling' === $type ) {
 			$view['targets'] = array_map(
@@ -176,6 +187,22 @@ final class ExtendedQuestions {
 				}
 			}
 		}
+		if ( 'spin-wheel' === $type ) {
+			$valid = self::valid_rows( $settings['cards'] ?? array(), 'text' ) && 30 >= count( $settings['cards'] );
+		}
+		if ( 'gameshow' === $type ) {
+			$choices = $settings['choices'] ?? array();
+			$valid   = self::valid_rows( $choices, 'text' ) && 2 <= count( $choices ) && 6 >= count( $choices ) && in_array( $settings['correct'] ?? null, array_column( $choices, 'id' ), true );
+			$valid   = $valid && is_numeric( $settings['seconds'] ?? 20 ) && 5 <= ( $settings['seconds'] ?? 20 ) && 120 >= ( $settings['seconds'] ?? 20 );
+		}
+		if ( 'hangman' === $type ) {
+			$accepted = $settings['accepted'] ?? array();
+			$valid    = is_array( $accepted ) && 0 < count( $accepted ) && 20 >= count( $accepted );
+			foreach ( (array) $accepted as $word ) {
+				$valid = $valid && is_string( $word ) && 1 === preg_match( '/\p{L}/u', $word ) && 64 >= mb_strlen( trim( $word ) );
+			}
+			$valid = $valid && is_numeric( $settings['max_misses'] ?? 6 ) && 1 <= ( $settings['max_misses'] ?? 6 ) && 10 >= ( $settings['max_misses'] ?? 6 );
+		}
 		if ( 'poll' === $type ) {
 			$valid = self::valid_rows( $settings['choices'] ?? array(), 'text' ) && count( $settings['choices'] ) >= 2;
 		}
@@ -201,6 +228,16 @@ final class ExtendedQuestions {
 			$valid = $valid && 0.0 === (float) ( $settings['score']['value'] ?? 0 );
 		}
 		return $valid ? true : new \WP_Error( 'ohmylms_extended_settings', __( 'Complete the question response settings and correct answers.', 'ohmylms' ), array( 'status' => 400 ) );
+	}
+
+	/**
+	 * The word a Hangman question hides: its first accepted answer.
+	 *
+	 * @param array $settings Authored or frozen settings.
+	 * @return string
+	 */
+	public static function hangman_word( array $settings ) {
+		return trim( (string) ( ( (array) ( $settings['accepted'] ?? array() ) )[0] ?? '' ) );
 	}
 
 	/**
@@ -276,6 +313,9 @@ final class ExtendedQuestions {
 		if ( in_array( $type, array( 'word-cloud', 'discussion-board' ), true ) ) {
 			return strlen( (string) ( $answer['text'] ?? '' ) ) <= ( 'word-cloud' === $type ? 1000 : 20000 );
 		}
+		if ( 'hangman' === $type ) {
+			return 1 === preg_match( '/\A[\p{L}\p{M}]{0,60}\z/u', (string) ( $answer['guesses'] ?? '' ) );
+		}
 		if ( 'hotspot' === $type && ! empty( $answer ) ) {
 			return self::valid_points( array( $answer ), 1, 0, 100 );
 		}
@@ -345,6 +385,15 @@ final class ExtendedQuestions {
 			foreach ( $settings['zones'] ?? array() as $zone ) {
 				$correct = $correct || hypot( (float) $answer['x'] - $zone['x'], (float) $answer['y'] - $zone['y'] ) <= $zone['radius'];
 			}
+		}
+		if ( 'gameshow' === $type ) {
+			$correct = isset( $answer['choice'], $settings['correct'] ) && (string) $answer['choice'] === (string) $settings['correct'];
+		}
+		if ( 'hangman' === $type ) {
+			$target  = array_unique( preg_split( '//u', mb_strtolower( preg_replace( '/[^\p{L}]/u', '', self::hangman_word( $settings ) ) ), -1, PREG_SPLIT_NO_EMPTY ) );
+			$guesses = array_unique( preg_split( '//u', mb_strtolower( preg_replace( '/\p{M}/u', '', (string) ( $answer['guesses'] ?? '' ) ) ), -1, PREG_SPLIT_NO_EMPTY ) );
+			$misses  = count( array_diff( $guesses, $target ) );
+			$correct = $target && ! array_diff( $target, $guesses ) && $misses <= (int) ( $settings['max_misses'] ?? 6 );
 		}
 		if ( 'interactive-video' === $type ) {
 			$correct = count( $answer ) === count( $settings['checkpoints'] ?? array() );

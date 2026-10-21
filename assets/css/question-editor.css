@@ -1,5 +1,45 @@
 @import url("./puzzles.css");
 
+.ohmylms-type-menu-toggle {
+	justify-content: space-between;
+	max-width: 12rem;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.ohmylms-type-menu-panel {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	box-shadow: 0 8px 24px rgb(0 0 0 / 18%);
+	width: min(32rem, 90vw);
+	max-height: 60vh;
+	padding: 12px;
+	overflow-y: auto;
+}
+
+.ohmylms-type-menu-panel h3 {
+	margin: 12px 0 4px;
+	font-size: 11px;
+	text-transform: uppercase;
+	color: #757575;
+}
+
+.ohmylms-type-menu-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
+	gap: 4px;
+}
+
+.ohmylms-type-menu-grid .components-button {
+	justify-content: flex-start;
+	height: auto;
+	min-height: 32px;
+	white-space: normal;
+	text-align: left;
+}
+
 .ohmylms-grid-lists,
 .ohmylms-grid-key-rows {
 	display: grid;
@@ -730,4 +770,9 @@
 
 .ohmylms-choice-card.ohmylms-compact-choice textarea {
 	padding: 0;
+}
+
+.ohmylms-editor-field-label {
+	margin: 12px 0 4px;
+	font-weight: 600;
 }

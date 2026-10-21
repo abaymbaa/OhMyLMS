@@ -28,6 +28,9 @@
 		'discussion-board',
 		'slide',
 		'interactive-video',
+		'spin-wheel',
+		'gameshow',
+		'hangman',
 	];
 	const button = ( text, action ) => {
 		const node = el( 'button', { type: 'button', text } );
@@ -48,6 +51,190 @@
 		wrapper.appendChild( input );
 		root.appendChild( wrapper );
 		return input;
+	}
+	/**
+	 * Coordinate graph on a JSXGraph board. Learners click the board (or type x and y)
+	 * to place points; points can be dragged and snap to quarter units. Line mode
+	 * keeps two points and draws the line through them. The answer is the same JSON
+	 * list of { x, y } points the server has always graded.
+	 * @param root
+	 * @param config
+	 * @param instance
+	 */
+	function graph( root, config, instance ) {
+		const min = Number( config.min ?? -5 );
+		const max = Number( config.max ?? 5 );
+		const line = config.mode === 'line';
+		const limit = line ? 2 : 50;
+		const hint = el( 'p', {
+			class: 'ohmylms-vis-hint',
+			text: line
+				? __(
+						'Click the graph to place two points. The line through them is your answer. Drag a point to move it.',
+						'ohmylms'
+					)
+				: __(
+						'Click the graph to place a point. Drag a point to move it.',
+						'ohmylms'
+					),
+		} );
+		const box = el( 'div', {
+			class: 'ohmylms-jsxgraph jxgbox',
+			id: 'ohmylms-jxg-' + instance,
+			role: 'img',
+			'aria-label': __( 'Coordinate graph', 'ohmylms' ),
+		} );
+		const readout = el( 'p', {
+			class: 'ohmylms-vis-readout',
+			'aria-live': 'polite',
+			text: __( 'No points placed yet.', 'ohmylms' ),
+		} );
+		const points = [];
+		let board = null;
+		const snap = ( value ) => Math.round( value * 4 ) / 4;
+		const inRange = ( value ) => value >= min && value <= max;
+		const write = () => {
+			const list = points.map( ( point ) => ( {
+				x: snap( point.X() ),
+				y: snap( point.Y() ),
+			} ) );
+			setAnswer(
+				root,
+				'points',
+				list.length ? JSON.stringify( list ) : ''
+			);
+			readout.textContent = list.length
+				? list
+						.map(
+							( point ) => '(' + point.x + ', ' + point.y + ')'
+						)
+						.join( '  ' )
+				: __( 'No points placed yet.', 'ohmylms' );
+		};
+		const place = ( x, y ) => {
+			if (
+				! board ||
+				points.length >= limit ||
+				! inRange( x ) ||
+				! inRange( y )
+			) {
+				return;
+			}
+			const point = board.create( 'point', [ snap( x ), snap( y ) ], {
+				name: '',
+				size: 5,
+				fillColor: '#7153c6',
+				strokeColor: '#432474',
+				highlightFillColor: '#e8a317',
+				snapToGrid: true,
+				snapSizeX: 0.25,
+				snapSizeY: 0.25,
+				showInfobox: true,
+			} );
+			point.on( 'up', write );
+			points.push( point );
+			if ( line && points.length === 2 ) {
+				board.create( 'line', points, {
+					strokeColor: '#7153c6',
+					strokeWidth: 3,
+					straightFirst: true,
+					straightLast: true,
+					fixed: true,
+					highlight: false,
+				} );
+			}
+			write();
+		};
+		const start = () => {
+			if ( board || ! window.JXG ) {
+				return;
+			}
+			board = window.JXG.JSXGraph.initBoard( box.id, {
+				boundingbox: [ min, max, max, min ],
+				axis: true,
+				grid: true,
+				showCopyright: false,
+				showNavigation: false,
+				pan: { enabled: false },
+				zoom: { enabled: false },
+			} );
+			board.on( 'down', ( event ) => {
+				if (
+					board
+						.getAllObjectsUnderMouse( event )
+						.some( ( object ) => object.elType === 'point' )
+				) {
+					return;
+				}
+				const coords = board.getUsrCoordsOfMouse( event );
+				place( coords[ 0 ], coords[ 1 ] );
+			} );
+		};
+		const undo = button( __( 'Undo last point', 'ohmylms' ), () => {
+			const last = points.pop();
+			if ( last && board ) {
+				board.removeObject( last );
+				board.fullUpdate();
+				if ( line && points.length < 2 ) {
+					board.objectsList
+						.filter( ( object ) => object.elType === 'line' )
+						.forEach( ( object ) => board.removeObject( object ) );
+				}
+				write();
+			}
+		} );
+		const clear = button( __( 'Clear', 'ohmylms' ), () => {
+			while ( points.length ) {
+				board.removeObject( points.pop() );
+			}
+			board.objectsList
+				.filter( ( object ) => object.elType === 'line' )
+				.forEach( ( object ) => board.removeObject( object ) );
+			write();
+		} );
+		// Typed coordinates are the keyboard and screen reader route.
+		const xField = el( 'input', {
+			type: 'number',
+			step: '0.25',
+			'aria-label': __( 'x value', 'ohmylms' ),
+		} );
+		const yField = el( 'input', {
+			type: 'number',
+			step: '0.25',
+			'aria-label': __( 'y value', 'ohmylms' ),
+		} );
+		const add = button( __( 'Add point', 'ohmylms' ), () => {
+			if ( xField.value !== '' && yField.value !== '' ) {
+				place( Number( xField.value ), Number( yField.value ) );
+				xField.value = '';
+				yField.value = '';
+			}
+		} );
+		const typed = el( 'div', { class: 'ohmylms-graph-typed' }, [
+			el( 'span', { text: __( 'Or type a point:', 'ohmylms' ) } ),
+			xField,
+			yField,
+			add,
+		] );
+		root.append(
+			hint,
+			box,
+			readout,
+			el( 'div', { class: 'ohmylms-graph-actions' }, [ undo, clear ] ),
+			typed
+		);
+		// The board needs a visible box to measure, so it starts when the question is shown.
+		if ( 'IntersectionObserver' in window ) {
+			const watcher = new window.IntersectionObserver( ( entries ) => {
+				if ( entries.some( ( entry ) => entry.isIntersecting ) ) {
+					watcher.disconnect();
+					start();
+				}
+			} );
+			watcher.observe( box );
+		} else {
+			start();
+		}
 	}
 	function plot( root, config, drawing ) {
 		const canvas = el( 'canvas', {
@@ -664,8 +851,12 @@
 	function build( root, type, config ) {
 		const instance = ++instanceId;
 		root.classList.add( 'ohmylms-extended-question' );
-		if ( [ 'graphing', 'draw' ].includes( type ) ) {
-			plot( root, config, type === 'draw' );
+		if ( type === 'graphing' ) {
+			graph( root, config, instance );
+			return;
+		}
+		if ( type === 'draw' ) {
+			plot( root, config, true );
 			return;
 		}
 		if ( [ 'audio-response', 'video-response' ].includes( type ) ) {
@@ -719,6 +910,15 @@
 			return;
 		}
 		if ( type === 'hot-text' ) {
+			root.appendChild(
+				el( 'p', {
+					class: 'ohmylms-vis-hint',
+					text: __(
+						'Tap every answer that fits. Tap again to undo.',
+						'ohmylms'
+					),
+				} )
+			);
 			( config.tokens || [] ).forEach( ( token ) => {
 				const item = button( token.text, () => {
 					const selected =
@@ -729,6 +929,253 @@
 				item.setAttribute( 'aria-pressed', 'false' );
 				root.appendChild( item );
 			} );
+			return;
+		}
+		if ( type === 'spin-wheel' ) {
+			const cards = config.cards || [];
+			const used = new Set();
+			const colors = [
+				'#7153c6',
+				'#e8a317',
+				'#2b8fd9',
+				'#d9436a',
+				'#2fb67a',
+			];
+			const step = 360 / Math.max( 1, cards.length );
+			let turns = 0;
+			const stage = el( 'div', { class: 'ohmylms-wheel-stage' } );
+			const wheel = el( 'div', {
+				class: 'ohmylms-spin-wheel',
+				role: 'img',
+				'aria-label': sprintf(
+					/* translators: %d: number of cards on the wheel. */
+					__( 'Wheel with %d cards', 'ohmylms' ),
+					cards.length
+				),
+			} );
+			wheel.style.background =
+				'conic-gradient(' +
+				cards
+					.map(
+						( card, index ) =>
+							colors[ index % colors.length ] +
+							' ' +
+							index * step +
+							'deg ' +
+							( index + 1 ) * step +
+							'deg'
+					)
+					.join( ',' ) +
+				')';
+			stage.append(
+				wheel,
+				el( 'span', {
+					class: 'ohmylms-wheel-pointer',
+					'aria-hidden': 'true',
+				} )
+			);
+			const result = el( 'div', {
+				class: 'ohmylms-spin-result',
+				role: 'status',
+				'aria-live': 'polite',
+				text: __( 'Spin to draw a card.', 'ohmylms' ),
+			} );
+			const history = el( 'ol', { class: 'ohmylms-spin-history' } );
+			const spin = button( __( 'Spin the wheel', 'ohmylms' ), () => {
+				const left = cards.filter( ( card ) => ! used.has( card.id ) );
+				if ( ! left.length ) {
+					return;
+				}
+				const card = left[ Math.floor( Math.random() * left.length ) ];
+				const index = cards.indexOf( card );
+				used.add( card.id );
+				turns += 1;
+				// Land the pointer on the middle of the drawn card's slice.
+				wheel.style.setProperty(
+					'--ohmylms-spin',
+					360 * ( turns * 3 ) - ( index * step + step / 2 ) + 'deg'
+				);
+				result.textContent = card.text;
+				history.appendChild( el( 'li', { text: card.text } ) );
+				setAnswer( root, 'spun', String( used.size ) );
+				spin.disabled = used.size >= cards.length;
+				if ( spin.disabled ) {
+					spin.textContent = __( 'All cards drawn', 'ohmylms' );
+				}
+			} );
+			spin.classList.add( 'ohmylms-activity-button' );
+			root.classList.add( 'ohmylms-activity' );
+			root.append( stage, spin, result, history );
+			return;
+		}
+		if ( type === 'gameshow' ) {
+			const total = Math.max( 5, Number( config.seconds ) || 20 );
+			let remaining = total;
+			root.classList.add( 'ohmylms-activity' );
+			const clock = el( 'p', {
+				class: 'ohmylms-gameshow-clock',
+				role: 'timer',
+				text: sprintf(
+					/* translators: %d: seconds left. */
+					__( '%d seconds left', 'ohmylms' ),
+					remaining
+				),
+			} );
+			const bar = el( 'div', { class: 'ohmylms-gameshow-bar' }, [
+				el( 'span' ),
+			] );
+			root.append( clock, bar );
+			const cards = ( config.choices || [] ).map( ( choice, index ) => {
+				const card = el( 'button', {
+					type: 'button',
+					class: 'ohmylms-gameshow-choice',
+					'aria-pressed': 'false',
+				} );
+				card.append(
+					el( 'span', {
+						class: 'ohmylms-gameshow-key',
+						text: String.fromCharCode( 65 + index ),
+					} ),
+					el( 'span', { text: choice.text } )
+				);
+				card.addEventListener( 'click', () => {
+					cards.forEach( ( other ) =>
+						other.setAttribute(
+							'aria-pressed',
+							String( other === card )
+						)
+					);
+					setAnswer( root, 'choice', choice.id );
+				} );
+				root.appendChild( card );
+				return card;
+			} );
+			const startTimer = () => {
+				const timer = window.setInterval( () => {
+					if ( ! root.isConnected ) {
+						window.clearInterval( timer );
+						return;
+					}
+					remaining -= 1;
+					bar.firstChild.style.width =
+						( remaining / total ) * 100 + '%';
+					if ( remaining <= 0 ) {
+						window.clearInterval( timer );
+						cards.forEach( ( card ) => {
+							card.disabled = true;
+						} );
+						clock.textContent = __( 'Time is up', 'ohmylms' );
+						return;
+					}
+					clock.textContent = sprintf(
+						/* translators: %d: seconds left. */
+						__( '%d seconds left', 'ohmylms' ),
+						remaining
+					);
+				}, 1000 );
+			};
+			bar.firstChild.style.width = '100%';
+			// The clock runs from the moment the learner can see the question.
+			if ( 'IntersectionObserver' in window ) {
+				const watcher = new window.IntersectionObserver(
+					( entries ) => {
+						if (
+							entries.some( ( entry ) => entry.isIntersecting )
+						) {
+							watcher.disconnect();
+							startTimer();
+						}
+					}
+				);
+				watcher.observe( root );
+			} else {
+				startTimer();
+			}
+			return;
+		}
+		if ( type === 'hangman' ) {
+			const max = Math.max( 1, Number( config.max_misses ) || 6 );
+			const guessed = [];
+			root.classList.add( 'ohmylms-activity' );
+			const shape = el( 'p', {
+				class: 'ohmylms-hangman-shape',
+				'aria-label': __( 'Word to guess', 'ohmylms' ),
+				text: ( config.shape || '' ).split( '' ).join( ' ' ),
+			} );
+			const status = el( 'p', {
+				role: 'status',
+				'aria-live': 'polite',
+				text: sprintf(
+					/* translators: %d: wrong letters allowed. */
+					__(
+						'Pick the letters you think are in the word. More than %d wrong letters fails the question.',
+						'ohmylms'
+					),
+					max
+				),
+			} );
+			const keyboard = el( 'div', {
+				class: 'ohmylms-hangman-keys',
+				role: 'group',
+				'aria-label': __( 'Letters', 'ohmylms' ),
+			} );
+			const keys = new Map();
+			const guess = ( letter ) => {
+				if ( guessed.includes( letter ) ) {
+					return;
+				}
+				guessed.push( letter );
+				const key = keys.get( letter );
+				if ( key ) {
+					key.setAttribute( 'aria-pressed', 'true' );
+					key.disabled = true;
+				}
+				setAnswer( root, 'guesses', guessed.join( '' ) );
+				status.textContent = sprintf(
+					/* translators: %s: letters chosen so far. */
+					__( 'Chosen: %s', 'ohmylms' ),
+					guessed.join( ' ' )
+				);
+			};
+			const alphabets = [
+				[ __( 'Latin', 'ohmylms' ), 'abcdefghijklmnopqrstuvwxyz' ],
+				[
+					__( 'Cyrillic', 'ohmylms' ),
+					'абвгдеёжзийклмноөпрстуүфхцчшщъыьэюя',
+				],
+			];
+			const fill = ( letters ) => {
+				keyboard.textContent = '';
+				keys.clear();
+				[ ...letters ].forEach( ( letter ) => {
+					const key = button( letter.toUpperCase(), () =>
+						guess( letter )
+					);
+					key.setAttribute(
+						'aria-pressed',
+						String( guessed.includes( letter ) )
+					);
+					key.disabled = guessed.includes( letter );
+					keys.set( letter, key );
+					keyboard.appendChild( key );
+				} );
+			};
+			const tabs = el( 'div', { class: 'ohmylms-hangman-tabs' } );
+			alphabets.forEach( ( [ label, letters ], index ) => {
+				const tab = button( label, () => {
+					tabs.querySelectorAll( 'button' ).forEach( ( other ) =>
+						other.setAttribute(
+							'aria-pressed',
+							String( other === tab )
+						)
+					);
+					fill( letters );
+				} );
+				tab.setAttribute( 'aria-pressed', String( index === 0 ) );
+				tabs.appendChild( tab );
+			} );
+			fill( alphabets[ 0 ][ 1 ] );
+			root.append( shape, status, tabs, keyboard );
 			return;
 		}
 		if ( type === 'poll' ) {
@@ -774,6 +1221,17 @@
 			return;
 		}
 		if ( type === 'match-table-grid' ) {
+			root.appendChild(
+				el( 'p', {
+					class: 'ohmylms-vis-hint',
+					text: config.multiple
+						? __(
+								'Tick every column that fits each row.',
+								'ohmylms'
+							)
+						: __( 'Pick one column for each row.', 'ohmylms' ),
+				} )
+			);
 			const table = el( 'table', { class: 'ohmylms-match-grid' } ),
 				head = el( 'tr', {}, [
 					el( 'th', { text: __( 'Item', 'ohmylms' ) } ),

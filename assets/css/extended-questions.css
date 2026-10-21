@@ -65,3 +65,247 @@ body.ohmylms-diagram-open { overflow: hidden; }
 .ohmylms-extended-question .ohmylms-video-frame { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 
 .ohmylms-extended-question .ohmylms-video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+
+.ohmylms-spin-wheel {
+	--ohmylms-spin: 0deg;
+	width: 12rem;
+	height: 12rem;
+	border: 4px solid #7153c6;
+	border-radius: 50%;
+	background: conic-gradient(#7153c6, #e8c14b, #4b9fe8, #7153c6);
+	transform: rotate(var(--ohmylms-spin));
+	transition: transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.ohmylms-hangman-shape {
+	font-family: monospace;
+	font-size: 1.8rem;
+	letter-spacing: 0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.ohmylms-spin-wheel,
+	.ohmylms-gameshow-bar span {
+		transition: none;
+	}
+}
+
+.ohmylms-activity {
+	display: grid;
+	gap: 14px;
+	justify-items: center;
+	text-align: center;
+}
+
+.ohmylms-wheel-stage {
+	position: relative;
+	width: min(18rem, 80vw);
+	aspect-ratio: 1;
+}
+
+.ohmylms-wheel-stage .ohmylms-spin-wheel {
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-width: 6px;
+}
+
+.ohmylms-wheel-pointer {
+	position: absolute;
+	top: -6px;
+	left: 50%;
+	width: 0;
+	height: 0;
+	border-right: 12px solid transparent;
+	border-left: 12px solid transparent;
+	border-top: 22px solid #432474;
+	transform: translateX(-50%);
+}
+
+.ohmylms-activity .ohmylms-activity-button {
+	padding: 12px 36px;
+	border: 0;
+	border-radius: 999px;
+	background: #7153c6;
+	color: #fff;
+	font: inherit;
+	font-size: 1.1rem;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ohmylms-activity .ohmylms-activity-button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.ohmylms-activity .ohmylms-spin-result {
+	min-width: 60%;
+	padding: 16px 24px;
+	border: 2px solid #7153c6;
+	border-radius: 12px;
+	background: #f6f1ff;
+	font-size: 1.5rem;
+}
+
+.ohmylms-spin-history {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin: 0;
+	padding: 0;
+	list-style-position: inside;
+	color: #646970;
+}
+
+.ohmylms-gameshow-clock {
+	margin: 0;
+	font-size: 1.1rem;
+	font-weight: 700;
+}
+
+.ohmylms-gameshow-bar {
+	width: 100%;
+	height: 10px;
+	border-radius: 999px;
+	background: #e6e0f5;
+	overflow: hidden;
+}
+
+.ohmylms-gameshow-bar span {
+	display: block;
+	width: 100%;
+	height: 100%;
+	background: #7153c6;
+	transition: width 1s linear;
+}
+
+.ohmylms-gameshow-choice {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	padding: 14px 18px;
+	border: 2px solid #d9d0f0;
+	border-radius: 12px;
+	background: #fff;
+	font: inherit;
+	font-size: 1.15rem;
+	text-align: left;
+	cursor: pointer;
+}
+
+.ohmylms-gameshow-choice[aria-pressed="true"] {
+	border-color: #7153c6;
+	background: #f1ebff;
+}
+
+.ohmylms-gameshow-choice:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.ohmylms-gameshow-key {
+	display: grid;
+	place-items: center;
+	flex: none;
+	width: 2rem;
+	height: 2rem;
+	border-radius: 8px;
+	background: #7153c6;
+	color: #fff;
+	font-weight: 700;
+}
+
+.ohmylms-hangman-keys {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	justify-content: center;
+	max-width: 34rem;
+}
+
+.ohmylms-hangman-tabs {
+	display: flex;
+	gap: 6px;
+}
+
+.ohmylms-hangman-keys button,
+.ohmylms-hangman-tabs button {
+	min-width: 2.4rem;
+	padding: 8px 10px;
+	border: 2px solid #d9d0f0;
+	border-radius: 8px;
+	background: #fff;
+	font: inherit;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ohmylms-hangman-keys button[aria-pressed="true"],
+.ohmylms-hangman-tabs button[aria-pressed="true"] {
+	border-color: #7153c6;
+	background: #7153c6;
+	color: #fff;
+}
+
+.ohmylms-jsxgraph {
+	width: 100%;
+	max-width: 640px;
+	height: 400px;
+	border: 1px solid #cfd6e0;
+	border-radius: 8px;
+	touch-action: none;
+}
+
+.ohmylms-graph-actions,
+.ohmylms-graph-typed {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin-top: 8px;
+}
+
+.ohmylms-extended-question .ohmylms-graph-typed input {
+	width: 5rem;
+}
+
+.ohmylms-graph-actions button,
+.ohmylms-graph-typed button {
+	padding: 6px 14px;
+	border: 2px solid #d0d7de;
+	border-radius: 999px;
+	background: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ohmylms-extended-question > button[aria-pressed] {
+	margin: 0 8px 8px 0;
+	padding: 10px 18px;
+	border: 2px solid #d9d0f0;
+	border-radius: 12px;
+	background: #fff;
+	font: inherit;
+	font-size: 1.1rem;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-extended-question > button[aria-pressed="true"] {
+	border-color: #7153c6;
+	background: #7153c6;
+	color: #fff;
+}
+
+.ohmylms-extended-question .ohmylms-match-grid input {
+	width: 1.4rem;
+	height: 1.4rem;
+}
+
+.ohmylms-extended-question .ohmylms-match-grid tbody tr:nth-child(odd) {
+	background: #f6f1ff;
+}
+

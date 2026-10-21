@@ -155,6 +155,16 @@ export function describeExpected( question ) {
 			)
 			.join( ', ' );
 	}
+	if ( settings.type === 'gameshow' ) {
+		return (
+			( settings.choices || [] ).find(
+				( choice ) => choice.id === settings.correct
+			)?.text || ''
+		);
+	}
+	if ( settings.type === 'hangman' ) {
+		return ( settings.accepted || [] ).join( ', ' );
+	}
 	if ( settings.type === 'interactive-video' ) {
 		return ( settings.checkpoints || [] )
 			.map(

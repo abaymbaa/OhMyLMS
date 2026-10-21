@@ -166,6 +166,9 @@ registerAnswerValidator( 'match-table-grid', ( root ) => {
 	'discussion-board',
 	'slide',
 	'interactive-video',
+	'spin-wheel',
+	'gameshow',
+	'hangman',
 ].forEach( ( type ) =>
 	registerAnswerValidator( type, ( root ) =>
 		Array.from( root.querySelectorAll( 'input[data-answer-key]' ) ).some(

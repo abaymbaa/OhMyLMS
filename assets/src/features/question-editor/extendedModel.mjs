@@ -12,6 +12,9 @@ export const EXTENDED_TYPES = [
 	[ 'word-cloud', 'Word cloud' ],
 	[ 'discussion-board', 'Discussion board' ],
 	[ 'interactive-video', 'Interactive video' ],
+	[ 'spin-wheel', 'Spin the wheel' ],
+	[ 'gameshow', 'Gameshow quiz' ],
+	[ 'hangman', 'Hangman' ],
 ];
 export const isExtendedType = ( type ) =>
 	EXTENDED_TYPES.some( ( [ id ] ) => id === type );
@@ -29,7 +32,7 @@ export const isSettingsAddonType = (
 	! isExtendedType( type ) &&
 	manifest?.[ type ]?.editor?.format === 'ohmylms-settings';
 export const isUngradedType = ( type ) =>
-	[ 'poll', 'word-cloud' ].includes( type );
+	[ 'poll', 'word-cloud', 'spin-wheel' ].includes( type );
 
 /**
  * Work out how an interactive video link should be played.
@@ -210,6 +213,25 @@ export function extendedDefaults( type ) {
 					{ id: 'c2', text: 'No' },
 				],
 			};
+		case 'spin-wheel':
+			return {
+				cards: [
+					{ id: 'c1', text: 'Card 1' },
+					{ id: 'c2', text: 'Card 2' },
+					{ id: 'c3', text: 'Card 3' },
+				],
+			};
+		case 'gameshow':
+			return {
+				choices: [
+					{ id: 'c1', text: 'Answer 1' },
+					{ id: 'c2', text: 'Answer 2' },
+				],
+				correct: 'c1',
+				seconds: 20,
+			};
+		case 'hangman':
+			return { accepted: [ 'word' ], max_misses: 6 };
 		case 'interactive-video':
 			return {
 				video_url: '',
@@ -242,6 +264,9 @@ export function extendedPublicView( type, settings ) {
 			'audio-response': [ 'max_seconds' ],
 			'video-response': [ 'max_seconds', 'sources' ],
 			poll: [ 'choices' ],
+			'spin-wheel': [ 'cards' ],
+			gameshow: [ 'choices', 'seconds' ],
+			hangman: [ 'max_misses' ],
 			'interactive-video': [ 'video_url' ],
 		}[ type ] || [];
 	const view = structuredClone(
@@ -262,6 +287,12 @@ export function extendedPublicView( type, settings ) {
 			y,
 		} ) );
 		delete view.distractors;
+	}
+	if ( type === 'hangman' ) {
+		view.shape = String( ( settings.accepted || [] )[ 0 ] || '' )
+			.normalize( 'NFD' )
+			.replace( /\p{M}/gu, '' )
+			.replace( /[\p{L}\p{N}]/gu, '_' );
 	}
 	if ( type === 'interactive-video' ) {
 		view.checkpoints = ( settings.checkpoints || [] ).map(
@@ -301,6 +332,25 @@ export function extendedIssues( type, settings = {} ) {
 			) )
 	) {
 		return [ 'video' ];
+	}
+	if ( type === 'spin-wheel' && ( settings.cards || [] ).length < 2 ) {
+		return [ 'cards' ];
+	}
+	if (
+		type === 'gameshow' &&
+		( ( settings.choices || [] ).length < 2 ||
+			( settings.choices || [] ).length > 6 ||
+			! ( settings.choices || [] ).some(
+				( choice ) => choice.id === settings.correct
+			) )
+	) {
+		return [ 'choices' ];
+	}
+	if (
+		type === 'hangman' &&
+		! ( settings.accepted || [] ).some( ( word ) => /\p{L}/u.test( word ) )
+	) {
+		return [ 'word' ];
 	}
 	if (
 		type === 'hot-text' &&

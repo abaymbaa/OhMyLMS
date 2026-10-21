@@ -15,7 +15,7 @@ test( 'each question type creates the existing assessment data schema', () => {
 		assert.equal( patch.settings.type, type );
 		assert.equal(
 			patch.settings.score.value,
-			[ 'poll', 'word-cloud' ].includes( type ) ? 0 : 1
+			[ 'poll', 'word-cloud', 'spin-wheel' ].includes( type ) ? 0 : 1
 		);
 		assert.ok( Array.isArray( patch.questions ) );
 		if ( type === 'true-false' )
@@ -144,4 +144,22 @@ test( 'changing response type preserves form settings but resets type-specific a
 	] );
 	assert.deepEqual( patch.settings.template.constraints, [ 'a>2' ] );
 	assert.deepEqual( patch.settings.template.set, [] );
+} );
+
+test( 'activity question types keep answer keys out of the learner view', async () => {
+	const { extendedPublicView, extendedIssues, extendedDefaults } =
+		await import( '../../assets/src/features/question-editor/extendedModel.mjs' );
+	const game = extendedDefaults( 'gameshow' );
+	assert.equal( extendedPublicView( 'gameshow', game ).correct, undefined );
+	assert.deepEqual( extendedIssues( 'gameshow', game ), [] );
+	assert.deepEqual( extendedIssues( 'gameshow', { ...game, correct: 'x' } ), [
+		'choices',
+	] );
+	const word = extendedPublicView( 'hangman', { accepted: [ 'Ab c-1' ] } );
+	assert.equal( word.shape, '__ _-_' );
+	assert.equal( word.accepted, undefined );
+	assert.deepEqual(
+		extendedIssues( 'spin-wheel', { cards: [ { id: 'a', text: 'A' } ] } ),
+		[ 'cards' ]
+	);
 } );
