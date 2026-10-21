@@ -84,8 +84,8 @@
 	outline-offset: -3px;
 }
 
-.ohmylms-puzzle .ohmylms-puzzle-grid .ohmylms-puzzle-cell input[type="text"],
-.ohmylms-puzzle .ohmylms-puzzle-grid .ohmylms-puzzle-cell button {
+.ohmylms-puzzle .ohmylms-puzzle-grid .ohmylms-puzzle-cell input[type="text"][data-puzzle-cell],
+.ohmylms-puzzle .ohmylms-puzzle-grid .ohmylms-puzzle-cell button[data-puzzle-cell] {
 	box-sizing: border-box;
 	width: 100%;
 	min-width: 0;
@@ -95,7 +95,9 @@
 	border: 0;
 	border-radius: 0;
 	background: transparent;
-	color: inherit;
+	color: #172033;
+	box-shadow: none;
+	line-height: 1;
 	font-size: clamp(16px, 2vw, 22px);
 	text-align: center;
 }

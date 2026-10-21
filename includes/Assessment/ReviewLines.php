@@ -35,6 +35,10 @@ final class ReviewLines {
 			return self::strings( (array) call_user_func( $definition['review_given'], $given, $settings ) );
 		}
 		switch ( $type ) {
+			case 'crossword':
+				return self::crossword_lines( $settings, $given );
+			case 'wordsearch':
+				return self::wordsearch_lines( $settings, $given );
 			case 'categorize':
 				$labels = self::labels( $settings['buckets'] ?? array(), 'label' );
 				$lines  = array();
@@ -113,6 +117,14 @@ final class ReviewLines {
 			return self::strings( (array) call_user_func( $definition['review_expected'], $settings ) );
 		}
 		switch ( $type ) {
+			case 'crossword':
+			case 'wordsearch':
+				$lines = array();
+				foreach ( (array) ( $settings['entries'] ?? array() ) as $entry ) {
+					$word    = implode( '', WordPuzzle::letters( $entry['answer'] ) );
+					$lines[] = 'crossword' === $type || ! empty( $settings['with_clues'] ) ? $entry['clue'] . ': ' . $word : $word;
+				}
+				return $lines;
 			case 'categorize':
 				return self::strings( Interactive::expected( $type, $settings ) );
 			case 'dropdown-blanks':
@@ -152,6 +164,86 @@ final class ReviewLines {
 				return $points ? array( self::points( $points ) ) : array();
 		}
 		return null;
+	}
+
+	/**
+	 * Reconstruct each crossword word from the learner's cells, keeping gaps visible.
+	 *
+	 * @param array $settings Frozen layout and clues.
+	 * @param array $given    Cell answers.
+	 * @return string[] Readable clue and answer pairs.
+	 */
+	private static function crossword_lines( array $settings, array $given ) {
+		if ( ! array_filter( $given, 'is_scalar' ) ) {
+			return array();
+		}
+		$lines = array();
+		foreach ( (array) ( $settings['entries'] ?? array() ) as $entry ) {
+			$word   = '';
+			$filled = false;
+			foreach ( WordPuzzle::cells( $entry ) as $cell ) {
+				$value  = $given[ $cell ] ?? '';
+				$value  = is_scalar( $value ) ? WordPuzzle::letters( (string) $value ) : array();
+				$letter = $value[0] ?? '';
+				$filled = $filled || '' !== $letter;
+				$word  .= '' !== $letter ? $letter : '_';
+			}
+			$lines[] = $entry['clue'] . ': ' . ( $filled ? $word : __( 'Not answered', 'ohmylms' ) );
+		}
+		return $lines;
+	}
+
+	/**
+	 * Show found words instead of internal wordsearch path coordinates.
+	 *
+	 * @param array $settings Frozen grid and entries.
+	 * @param array $given    Selected endpoint pairs.
+	 * @return string[] Words, with clues when enabled.
+	 */
+	private static function wordsearch_lines( array $settings, array $given ) {
+		$targets = array();
+		foreach ( (array) ( $settings['entries'] ?? array() ) as $entry ) {
+			$cells = WordPuzzle::cells( $entry );
+			$targets[ WordPuzzle::path_key( reset( $cells ) . ':' . end( $cells ) ) ] = $entry;
+		}
+		$lines = array();
+		$seen  = array();
+		$size  = (int) ( $settings['size'] ?? 0 );
+		foreach ( $given as $path ) {
+			if ( ! is_scalar( $path ) || '' === (string) $path ) {
+				continue;
+			}
+			if ( ! preg_match( '/\Ar(\d{1,2})c(\d{1,2}):r(\d{1,2})c(\d{1,2})\z/', (string) $path, $match ) ) {
+				$lines[] = __( 'Invalid selection', 'ohmylms' );
+				continue;
+			}
+			$key = WordPuzzle::path_key( (string) $path );
+			if ( isset( $seen[ $key ] ) ) {
+				continue;
+			}
+			$seen[ $key ] = true;
+			if ( isset( $targets[ $key ] ) ) {
+				$entry   = $targets[ $key ];
+				$word    = implode( '', WordPuzzle::letters( $entry['answer'] ) );
+				$lines[] = ! empty( $settings['with_clues'] ) ? $entry['clue'] . ': ' . $word : $word;
+				continue;
+			}
+			list( , $r1, $c1, $r2, $c2 ) = array_map( 'intval', $match );
+			$length                      = max( abs( $r2 - $r1 ), abs( $c2 - $c1 ) );
+			if ( min( $r1, $c1, $r2, $c2 ) < 0 || max( $r1, $c1, $r2, $c2 ) >= $size || $length < 1 || ( $r1 !== $r2 && $c1 !== $c2 && abs( $r2 - $r1 ) !== abs( $c2 - $c1 ) ) ) {
+				$lines[] = __( 'Invalid selection', 'ohmylms' );
+				continue;
+			}
+			$word = '';
+			for ( $index = 0; $index <= $length; ++$index ) {
+				$row   = $r1 + ( $r2 <=> $r1 ) * $index;
+				$col   = $c1 + ( $c2 <=> $c1 ) * $index;
+				$word .= $settings['grid'][ $row ][ $col ] ?? '';
+			}
+			/* translators: %s: letters selected in the wordsearch. */
+			$lines[] = sprintf( __( '%s (not a target word)', 'ohmylms' ), $word );
+		}
+		return $lines;
 	}
 
 	/**

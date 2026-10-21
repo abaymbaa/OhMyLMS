@@ -6,6 +6,7 @@ function __( $value, $domain = '' ) {
 }
 require dirname( __DIR__, 2 ) . '/includes/Extensions/Registry.php';
 require dirname( __DIR__, 2 ) . '/includes/Assessment/ReviewLines.php';
+require dirname( __DIR__, 2 ) . '/includes/Assessment/WordPuzzle.php';
 
 use OhMyLMS\Assessment\ReviewLines;
 use OhMyLMS\Extensions\Registry;
@@ -68,6 +69,28 @@ $check( 'video expected', ReviewLines::expected( 'interactive-video', $video ), 
 
 $check( 'graph given', ReviewLines::given( 'graphing', array( 'points' => '[{"x":1,"y":2},{"x":3,"y":4}]' ), array() ), array( '(1, 2), (3, 4)' ) );
 $check( 'graph line expected', ReviewLines::expected( 'graphing', array( 'mode' => 'line', 'points' => array( array( 'x' => 0, 'y' => 0 ), array( 'x' => 1, 'y' => 2 ) ) ) ), array( 'A line through (0, 0) and (1, 2)' ) );
+
+$puzzle = array(
+	'size' => 4,
+	'with_clues' => true,
+	'entries' => array(
+		array( 'id' => 'w1', 'answer' => 'CAT', 'clue' => 'A pet', 'row' => 0, 'col' => 0, 'direction' => 'across' ),
+		array( 'id' => 'w2', 'answer' => 'HAT', 'clue' => 'Headwear', 'row' => 1, 'col' => 0, 'direction' => 'across' ),
+	),
+	'grid' => array( array( 'C', 'A', 'T', 'X' ), array( 'H', 'A', 'T', 'X' ), array( 'X', 'X', 'X', 'X' ), array( 'X', 'X', 'X', 'X' ) ),
+);
+$check( 'crossword reconstructs partial words', ReviewLines::given( 'crossword', array( 'r0c0' => 'c', 'r0c2' => 't' ), $puzzle ), array( 'A pet: C_T', 'Headwear: Not answered' ) );
+$check( 'crossword preserves wrong letters', ReviewLines::given( 'crossword', array( 'r0c0' => 'D', 'r0c1' => 'O', 'r0c2' => 'G' ), $puzzle ), array( 'A pet: DOG', 'Headwear: Not answered' ) );
+$check( 'crossword empty answers', ReviewLines::given( 'crossword', array(), $puzzle ), array() );
+$check( 'crossword expected readable', ReviewLines::expected( 'crossword', $puzzle ), array( 'A pet: CAT', 'Headwear: HAT' ) );
+$check( 'wordsearch reverse path and deduplication', ReviewLines::given( 'wordsearch', array( 'p0' => 'r0c2:r0c0', 'p1' => 'r0c0:r0c2', 'p2' => 'r1c0:r1c2' ), $puzzle ), array( 'A pet: CAT', 'Headwear: HAT' ) );
+$check( 'wordsearch wrong selection', ReviewLines::given( 'wordsearch', array( 'p0' => 'r2c0:r2c2' ), $puzzle ), array( 'XXX (not a target word)' ) );
+$check( 'wordsearch invalid selections', ReviewLines::given( 'wordsearch', array( 'p0' => 'r0c0:r9c9', 'p1' => 'r0c0:r1c2', 'p2' => 'invalid', 'p3' => '', 'p4' => array() ), $puzzle ), array( 'Invalid selection', 'Invalid selection', 'Invalid selection' ) );
+$puzzle['with_clues'] = false;
+$check( 'wordsearch without clues', ReviewLines::given( 'wordsearch', array( 'p0' => 'r0c0:r0c2' ), $puzzle ), array( 'CAT' ) );
+$check( 'wordsearch expected without clues', ReviewLines::expected( 'wordsearch', $puzzle ), array( 'CAT', 'HAT' ) );
+$puzzle['entries'][0]['answer'] = 'үүл';
+$check( 'unicode crossword review', ReviewLines::given( 'crossword', array( 'r0c0' => 'ү', 'r0c1' => 'ү', 'r0c2' => 'л' ), $puzzle ), array( 'A pet: ҮҮЛ', 'Headwear: Not answered' ) );
 
 $check( 'add-on callbacks given', ReviewLines::given( 'demo-addon', array( 'q' => 'b' ), array() ), array( 'You chose b' ) );
 $check( 'add-on callbacks expected', ReviewLines::expected( 'demo-addon', array( 'right' => 'a' ) ), array( 'The answer is a' ) );
