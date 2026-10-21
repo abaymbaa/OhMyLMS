@@ -13,7 +13,7 @@ import { StructuredEditor } from './MathEditors';
 import { questionTypePatch } from './questionBlocks.mjs';
 import { QuestionMediaUpload } from './QuestionMediaUpload';
 import { DiagramPopup } from './DiagramPopup';
-import { videoSource } from './extendedModel.mjs';
+import { CHOICE_GAME_TYPES, videoSource } from './extendedModel.mjs';
 /**
  * Explain what a pasted video link will do.
  * @param link The saved video link.
@@ -699,6 +699,53 @@ export function ExtendedEditor( {
 					</Button>
 				</>
 			) }
+			{ [
+				'open-box',
+				'speaking-cards',
+				'flip-tiles',
+				'flashcards',
+			].includes( type ) && (
+				<>
+					<p className="ohmylms-editor-field-label">
+						{ __(
+							'Cards (one per line: front | back)',
+							'ohmylms'
+						) }
+					</p>
+					<RichContentControl
+						compact
+						html={ false }
+						label={ __( 'Cards', 'ohmylms' ) }
+						help={ __(
+							'Write the front, then | and the back. The back is optional for Open the box and Speaking cards. Learners are not graded.',
+							'ohmylms'
+						) }
+						value={ rows( 'cards' )
+							.map( ( card ) =>
+								card.back
+									? card.text + ' | ' + card.back
+									: card.text
+							)
+							.join( '\n' ) }
+						onChange={ ( text ) =>
+							set( {
+								cards: text
+									.split( '\n' )
+									.map( ( line, index ) => {
+										const [ front, ...rest ] =
+											line.split( '|' );
+										const back = rest.join( '|' ).trim();
+										return {
+											id: 'c' + ( index + 1 ),
+											text: front.trim(),
+											...( back ? { back } : {} ),
+										};
+									} ),
+							} )
+						}
+					/>
+				</>
+			) }
 			{ type === 'spin-wheel' && (
 				<>
 					<p className="ohmylms-editor-field-label">
@@ -728,7 +775,7 @@ export function ExtendedEditor( {
 					/>
 				</>
 			) }
-			{ type === 'gameshow' && (
+			{ CHOICE_GAME_TYPES.includes( type ) && (
 				<>
 					<p className="ohmylms-editor-field-label">
 						{ __(

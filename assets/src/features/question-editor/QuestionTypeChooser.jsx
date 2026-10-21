@@ -4,28 +4,17 @@ import { __ } from '@wordpress/i18n';
 import { QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
 
 const ACTIVITIES = [
-	[ 'open-box', __( 'Open the box', 'ohmylms' ), 'matching' ],
-	[ 'speaking-cards', __( 'Speaking cards', 'ohmylms' ), 'statement' ],
-	[ 'flip-tiles', __( 'Flip tiles', 'ohmylms' ), 'matching' ],
 	[ 'find-match', __( 'Find the match', 'ohmylms' ), 'matching' ],
 	[ 'pair-or-no-pair', __( 'Pair or No Pair', 'ohmylms' ), 'matching' ],
 	[ 'balloon-pop', __( 'Balloon pop', 'ohmylms' ), 'matching' ],
-	[
-		'timed-true-false',
-		__( 'Timed True or false', 'ohmylms' ),
-		'true-false',
-	],
 	[ 'win-or-lose', __( 'Win or lose quiz', 'ohmylms' ), 'single-choice' ],
 	[ 'maze-chase', __( 'Maze chase', 'ohmylms' ), 'single-choice' ],
-	[ 'flying-fruit', __( 'Flying fruit', 'ohmylms' ), 'single-choice' ],
-	[ 'whack-a-mole', __( 'Whack-a-mole', 'ohmylms' ), 'single-choice' ],
 	[ 'airplane', __( 'Airplane', 'ohmylms' ), 'single-choice' ],
 	[ 'speed-sorting', __( 'Speed sorting', 'ohmylms' ), 'categorize' ],
 	[ 'word-magnets', __( 'Word magnets', 'ohmylms' ), 'build-expression' ],
 	[ 'image-quiz', __( 'Image quiz', 'ohmylms' ), 'single-choice' ],
 	[ 'spell-word', __( 'Spell the word', 'ohmylms' ), 'text-entry' ],
 	[ 'memory-recall', __( 'Watch and memorize', 'ohmylms' ), 'matching' ],
-	[ 'flashcards', __( 'Flashcards', 'ohmylms' ), 'matching' ],
 	[ 'memory-pairs', __( 'Matching Pairs', 'ohmylms' ), 'matching' ],
 ];
 
@@ -77,7 +66,18 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 		],
 		[
 			__( 'Activities and games', 'ohmylms' ),
-			formats( [ 'spin-wheel', 'gameshow', 'hangman' ] ),
+			formats( [
+				'spin-wheel',
+				'gameshow',
+				'hangman',
+				'open-box',
+				'speaking-cards',
+				'flip-tiles',
+				'flashcards',
+				'timed-true-false',
+				'whack-a-mole',
+				'flying-fruit',
+			] ),
 		],
 		[
 			__( 'Mathematics', 'ohmylms' ),

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { isUngradedType } from '../../assets/src/features/question-editor/extendedModel.mjs';
 import {
 	QUESTION_BLOCK_TYPES,
 	questionBlockName,
@@ -15,7 +16,7 @@ test( 'each question type creates the existing assessment data schema', () => {
 		assert.equal( patch.settings.type, type );
 		assert.equal(
 			patch.settings.score.value,
-			[ 'poll', 'word-cloud', 'spin-wheel' ].includes( type ) ? 0 : 1
+			isUngradedType( type ) ? 0 : 1
 		);
 		assert.ok( Array.isArray( patch.questions ) );
 		if ( type === 'true-false' )

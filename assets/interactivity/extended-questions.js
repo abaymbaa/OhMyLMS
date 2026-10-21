@@ -31,6 +31,13 @@
 		'spin-wheel',
 		'gameshow',
 		'hangman',
+		'open-box',
+		'speaking-cards',
+		'flip-tiles',
+		'flashcards',
+		'timed-true-false',
+		'whack-a-mole',
+		'flying-fruit',
 	];
 	const button = ( text, action ) => {
 		const node = el( 'button', { type: 'button', text } );
@@ -52,6 +59,257 @@
 		root.appendChild( wrapper );
 		return input;
 	}
+	/**
+	 * Ungraded card activities. Every card is public content, so nothing here
+	 * hides an answer key; the answer only records that the learner took part.
+	 * @param root
+	 * @param type
+	 * @param config
+	 */
+	function deck( root, type, config ) {
+		const cards = config.cards || [];
+		const seen = new Set();
+		root.classList.add( 'ohmylms-activity' );
+		const progress = el( 'p', {
+			class: 'ohmylms-deck-progress',
+			role: 'status',
+			'aria-live': 'polite',
+		} );
+		const mark = ( card ) => {
+			seen.add( card.id );
+			setAnswer( root, 'seen', String( seen.size ) );
+			progress.textContent = sprintf(
+				/* translators: 1: cards seen, 2: total cards. */
+				__( '%1$d of %2$d cards seen', 'ohmylms' ),
+				seen.size,
+				cards.length
+			);
+		};
+		if ( type === 'open-box' || type === 'flip-tiles' ) {
+			const hint = el( 'p', {
+				class: 'ohmylms-vis-hint',
+				text:
+					type === 'open-box'
+						? __( 'Choose a box to open it.', 'ohmylms' )
+						: __(
+								'Tap a tile to flip it. Tap again to flip back.',
+								'ohmylms'
+							),
+			} );
+			const grid = el( 'div', { class: 'ohmylms-deck-grid' } );
+			cards.forEach( ( card, index ) => {
+				const tile = el( 'button', {
+					type: 'button',
+					class: 'ohmylms-deck-tile',
+					'aria-pressed': 'false',
+					text: String( index + 1 ),
+				} );
+				let shown = false;
+				tile.addEventListener( 'click', () => {
+					shown = ! shown;
+					tile.setAttribute( 'aria-pressed', String( shown ) );
+					tile.classList.toggle( 'is-open', shown );
+					if ( type === 'open-box' ) {
+						tile.textContent = card.text;
+						tile.disabled = true;
+					} else {
+						tile.textContent = shown
+							? card.back || card.text
+							: card.text || String( index + 1 );
+					}
+					mark( card );
+				} );
+				if ( type === 'flip-tiles' ) {
+					tile.textContent = card.text;
+				}
+				grid.appendChild( tile );
+			} );
+			root.append( hint, grid, progress );
+			return;
+		}
+		if ( type === 'speaking-cards' ) {
+			const order = [];
+			const shown = el( 'div', {
+				class: 'ohmylms-spin-result',
+				role: 'status',
+				'aria-live': 'polite',
+				text: __( 'Draw a card to begin.', 'ohmylms' ),
+			} );
+			const draw = button( __( 'Draw a card', 'ohmylms' ), () => {
+				const left = cards.filter( ( card ) => ! seen.has( card.id ) );
+				if ( ! left.length ) {
+					return;
+				}
+				const card = left[ Math.floor( Math.random() * left.length ) ];
+				order.push( card );
+				shown.textContent = card.text;
+				mark( card );
+				draw.disabled = seen.size >= cards.length;
+				if ( draw.disabled ) {
+					draw.textContent = __( 'All cards drawn', 'ohmylms' );
+				}
+			} );
+			draw.classList.add( 'ohmylms-activity-button' );
+			root.append( draw, shown, progress );
+			return;
+		}
+		// Flashcards: one card at a time, tap to reveal the back.
+		let index = 0;
+		let showBack = false;
+		const face = el( 'button', {
+			type: 'button',
+			class: 'ohmylms-flashcard',
+			'aria-live': 'polite',
+		} );
+		const paint = () => {
+			const card = cards[ index ];
+			face.textContent = showBack ? card.back || card.text : card.text;
+			face.classList.toggle( 'is-back', showBack );
+			face.setAttribute(
+				'aria-label',
+				( showBack
+					? __( 'Back', 'ohmylms' )
+					: __( 'Front', 'ohmylms' ) ) +
+					': ' +
+					face.textContent
+			);
+			previous.disabled = index === 0;
+			next.disabled = index === cards.length - 1;
+			mark( card );
+		};
+		face.addEventListener( 'click', () => {
+			showBack = ! showBack;
+			paint();
+		} );
+		const previous = button( __( 'Previous card', 'ohmylms' ), () => {
+			index = Math.max( 0, index - 1 );
+			showBack = false;
+			paint();
+		} );
+		const next = button( __( 'Next card', 'ohmylms' ), () => {
+			index = Math.min( cards.length - 1, index + 1 );
+			showBack = false;
+			paint();
+		} );
+		root.append(
+			el( 'p', {
+				class: 'ohmylms-vis-hint',
+				text: __( 'Tap the card to turn it over.', 'ohmylms' ),
+			} ),
+			face,
+			el( 'div', { class: 'ohmylms-graph-actions' }, [ previous, next ] ),
+			progress
+		);
+		if ( cards.length ) {
+			paint();
+		}
+	}
+
+	/**
+	 * Timed answer-pick games. The learner only chooses an answer; the server
+	 * holds the key and does the grading, as for the gameshow quiz.
+	 * @param root
+	 * @param type
+	 * @param config
+	 */
+	function pick( root, type, config ) {
+		const total = Math.max( 5, Number( config.seconds ) || 20 );
+		let remaining = total;
+		root.classList.add( 'ohmylms-activity', 'is-' + type );
+		const clock = el( 'p', {
+			class: 'ohmylms-gameshow-clock',
+			role: 'timer',
+			text: sprintf(
+				/* translators: %d: seconds left. */
+				__( '%d seconds left', 'ohmylms' ),
+				remaining
+			),
+		} );
+		const bar = el( 'div', { class: 'ohmylms-gameshow-bar' }, [
+			el( 'span' ),
+		] );
+		const hints = {
+			'timed-true-false': __(
+				'Choose True or False before the time runs out.',
+				'ohmylms'
+			),
+			'whack-a-mole': __(
+				'Tap the right answer when it pops up.',
+				'ohmylms'
+			),
+			'flying-fruit': __(
+				'Tap the answer you want as it floats past.',
+				'ohmylms'
+			),
+		};
+		const pickField = el( 'div', { class: 'ohmylms-pick-field' } );
+		const buttons = ( config.choices || [] ).map( ( choice, index ) => {
+			const target = el( 'button', {
+				type: 'button',
+				class: 'ohmylms-pick-target',
+				'aria-pressed': 'false',
+				text: choice.text,
+			} );
+			target.style.setProperty( '--ohmylms-slot', String( index ) );
+			target.style.setProperty(
+				'--ohmylms-count',
+				String( ( config.choices || [] ).length )
+			);
+			target.addEventListener( 'click', () => {
+				buttons.forEach( ( other ) =>
+					other.setAttribute(
+						'aria-pressed',
+						String( other === target )
+					)
+				);
+				setAnswer( root, 'choice', choice.id );
+			} );
+			pickField.appendChild( target );
+			return target;
+		} );
+		root.append(
+			el( 'p', { class: 'ohmylms-vis-hint', text: hints[ type ] } ),
+			clock,
+			bar,
+			pickField
+		);
+		const startTimer = () => {
+			const timer = window.setInterval( () => {
+				if ( ! root.isConnected ) {
+					window.clearInterval( timer );
+					return;
+				}
+				remaining -= 1;
+				bar.firstChild.style.width = ( remaining / total ) * 100 + '%';
+				if ( remaining <= 0 ) {
+					window.clearInterval( timer );
+					buttons.forEach( ( target ) => {
+						target.disabled = true;
+					} );
+					clock.textContent = __( 'Time is up', 'ohmylms' );
+					return;
+				}
+				clock.textContent = sprintf(
+					/* translators: %d: seconds left. */
+					__( '%d seconds left', 'ohmylms' ),
+					remaining
+				);
+			}, 1000 );
+		};
+		bar.firstChild.style.width = '100%';
+		if ( 'IntersectionObserver' in window ) {
+			const watcher = new window.IntersectionObserver( ( entries ) => {
+				if ( entries.some( ( entry ) => entry.isIntersecting ) ) {
+					watcher.disconnect();
+					startTimer();
+				}
+			} );
+			watcher.observe( root );
+		} else {
+			startTimer();
+		}
+	}
+
 	/**
 	 * Coordinate graph on a JSXGraph board. Learners click the board (or type x and y)
 	 * to place points; points can be dragged and snap to quarter units. Line mode
@@ -851,6 +1109,25 @@
 	function build( root, type, config ) {
 		const instance = ++instanceId;
 		root.classList.add( 'ohmylms-extended-question' );
+		if (
+			[
+				'open-box',
+				'speaking-cards',
+				'flip-tiles',
+				'flashcards',
+			].includes( type )
+		) {
+			deck( root, type, config );
+			return;
+		}
+		if (
+			[ 'timed-true-false', 'whack-a-mole', 'flying-fruit' ].includes(
+				type
+			)
+		) {
+			pick( root, type, config );
+			return;
+		}
 		if ( type === 'graphing' ) {
 			graph( root, config, instance );
 			return;
