@@ -116,3 +116,13 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 }
+
+.ohmylms-activity-equation-editor {
+	margin-bottom: 16px;
+	padding-left: 8px;
+	border-left: 4px solid var(--ohmylms-activity-color, #2563eb);
+}
+
+code.ohmylms-activity-field {
+	overflow-wrap: anywhere;
+}

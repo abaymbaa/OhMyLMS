@@ -37,19 +37,18 @@ function element( tag, className, doc, attributes = null ) {
 /**
  * Mount the function-graph activity: the board on the left, equations on the right.
  *
- * @param {Element}               container         Empty host element.
- * @param {Object}                rawConfig         Activity configuration.
- * @param {Object}                options           Mount options.
- * @param {Object}                options.labels    Translated interface text.
- * @param {string}                options.fonts     MathLive font directory URL.
- * @param {function(Object):void} options.onChange  Called with the edited configuration (authoring only).
- * @param {boolean}               options.authoring Whether edits belong to the saved configuration.
+ * @param {Element} container       Empty host element.
+ * @param {Object}  rawConfig       Activity configuration.
+ * @param {Object}  options         Mount options.
+ * @param {Object}  options.labels  Translated interface text.
+ * @param {string}  options.fonts   MathLive font directory URL.
+ * @param {boolean} options.preview Show equations as text only; the editor changes them in its sidebar.
  * @return {{update: function(Object): void, destroy: function(): void}} Handle.
  */
 export function mountFunctionGraph( container, rawConfig, options = {} ) {
 	const doc = container.ownerDocument;
 	const labels = { ...LABELS, ...( options.labels || {} ) };
-	const authoring = !! options.authoring;
+	const preview = !! options.preview;
 	let config = normalizeConfig( rawConfig );
 	if ( options.fonts ) {
 		MathfieldElement.fontsDirectory = options.fonts;
@@ -82,6 +81,8 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 
 	const { xMin, xMax, yMin, yMax } = config.view;
 	const board = JXG.JSXGraph.initBoard( id, {
+		// The editor canvas is an iframe, so the board must look up its container there.
+		document: doc,
 		boundingBox: [ xMin, yMax, xMax, yMin ],
 		axis: true,
 		grid: true,
@@ -93,20 +94,6 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 	} );
 	const values = {};
 	const entries = new Map();
-
-	const emit = () => {
-		if ( authoring && options.onChange ) {
-			config = {
-				...config,
-				functions: [ ...entries.values() ].map( ( entry ) => ( {
-					id: entry.id,
-					latex: entry.latex,
-					color: entry.color,
-				} ) ),
-			};
-			options.onChange( config );
-		}
-	};
 
 	/**
 	 * Recompile after a typing or parameter-list change; a failed parse keeps the previous curve.
@@ -149,14 +136,13 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 		entries.delete( entry.id );
 		refreshControls();
 		board.update();
-		emit();
 	};
 
 	const refreshControls = () => {
 		const canAdd =
-			( authoring || config.allowAdd ) && entries.size < MAX_FUNCTIONS;
+			! preview && config.allowAdd && entries.size < MAX_FUNCTIONS;
 		addButton.hidden = ! canAdd;
-		const canRemove = ( authoring || config.allowAdd ) && entries.size > 1;
+		const canRemove = ! preview && config.allowAdd && entries.size > 1;
 		entries.forEach( ( entry ) => {
 			entry.remove.hidden = ! canRemove;
 		} );
@@ -174,16 +160,6 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 		const swatch = element( 'span', 'ohmylms-activity-swatch', doc, {
 			'aria-hidden': 'true',
 		} );
-		const field = new MathfieldElement();
-		field.className = 'ohmylms-activity-field';
-		field.setAttribute( 'aria-label', labels.equation );
-		field.mathVirtualKeyboardPolicy = 'auto';
-		field.smartMode = false;
-		field.readOnly = ! authoring && ! config.allowEdit;
-		field.setValue( entry.latex, {
-			format: 'latex',
-			silenceNotifications: true,
-		} );
 		entry.error = element( 'p', 'ohmylms-activity-error', doc, {
 			role: 'status',
 		} );
@@ -195,16 +171,34 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 		} );
 		entry.remove.textContent = '×';
 		entry.remove.addEventListener( 'click', () => removeEntry( entry ) );
-		field.addEventListener( 'input', () => {
-			entry.latex = field.getValue( 'latex' );
-			compile( entry );
-			board.update();
-			emit();
-		} );
+		let field;
+		if ( preview ) {
+			// MathLive cannot style itself inside the editor iframe, so show the source text.
+			field = element( 'code', 'ohmylms-activity-field', doc );
+			field.textContent = entry.latex || '…';
+		} else {
+			field = new MathfieldElement();
+			field.className = 'ohmylms-activity-field';
+			field.setAttribute( 'aria-label', labels.equation );
+			field.mathVirtualKeyboardPolicy = 'auto';
+			field.smartMode = false;
+			field.readOnly = ! config.allowEdit;
+			field.setValue( entry.latex, {
+				format: 'latex',
+				silenceNotifications: true,
+			} );
+			field.addEventListener( 'input', () => {
+				entry.latex = field.getValue( 'latex' );
+				compile( entry );
+				board.update();
+			} );
+		}
 		entry.item.append( swatch, field, entry.remove, entry.error );
 		rowsNode.append( entry.item );
-		// MathLive only accepts menu changes once the field is in the document.
-		field.menuItems = [];
+		if ( ! preview ) {
+			// MathLive only accepts menu changes once the field is in the document.
+			field.menuItems = [];
+		}
 		entry.curve = board.create(
 			'functiongraph',
 			[ ( x ) => ( entry.fn ? entry.fn( x, values ) : NaN ) ],
@@ -263,7 +257,6 @@ export function mountFunctionGraph( container, rawConfig, options = {} ) {
 			.pop()
 			.item.querySelector( 'math-field' )
 			?.focus();
-		emit();
 	} );
 
 	renderParams();

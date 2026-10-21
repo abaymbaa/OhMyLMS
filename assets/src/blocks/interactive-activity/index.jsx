@@ -9,8 +9,15 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { MathfieldElement } from 'mathlive';
 import metadata from './block.json';
-import { DEFAULT_CONFIG, MAX_PARAMS, normalizeConfig } from './config.mjs';
+import {
+	COLORS,
+	DEFAULT_CONFIG,
+	MAX_FUNCTIONS,
+	MAX_PARAMS,
+	normalizeConfig,
+} from './config.mjs';
 import { mountFunctionGraph } from './function-graph.mjs';
 
 /**
@@ -53,24 +60,65 @@ function NumberControl( { label, value, onChange } ) {
 }
 
 /**
- * Live preview that is also the authoring surface for the starting equations.
+ * MathLive field for the sidebar. The editor canvas is an iframe that MathLive cannot style,
+ * so equations are edited here in the main window and shown as text in the canvas.
  *
- * @param {Object}                props        Preview properties.
- * @param {Object}                props.config Normalized configuration.
- * @param {function(Object):void} props.onEdit Save an edited configuration.
+ * @param {Object}                props          Field properties.
+ * @param {string}                props.label    Accessible label.
+ * @param {string}                props.value    Saved LaTeX.
+ * @param {function(string):void} props.onChange Save LaTeX.
+ * @return {Element} Field host.
+ */
+function EquationField( { label, value, onChange } ) {
+	const host = useRef( null );
+	const field = useRef( null );
+	const latest = useRef( onChange );
+	latest.current = onChange;
+	useEffect( () => {
+		MathfieldElement.fontsDirectory = window.ohmylmsActivity?.fonts;
+		MathfieldElement.soundsDirectory = null;
+		MathfieldElement.computeEngine = null;
+		const math = new MathfieldElement();
+		math.className = 'ohmylms-activity-field';
+		math.setAttribute( 'aria-label', label );
+		math.mathVirtualKeyboardPolicy = 'auto';
+		math.smartMode = false;
+		math.setValue( value, { format: 'latex', silenceNotifications: true } );
+		math.addEventListener( 'input', () =>
+			latest.current( math.getValue( 'latex' ) )
+		);
+		host.current.append( math );
+		math.menuItems = [];
+		field.current = math;
+		return () => math.remove();
+		// Created once; later saved values are pushed in below.
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+	useEffect( () => {
+		if ( field.current && field.current.getValue( 'latex' ) !== value ) {
+			field.current.setValue( value, {
+				format: 'latex',
+				silenceNotifications: true,
+			} );
+		}
+	}, [ value ] );
+	return <div ref={ host } />;
+}
+
+/**
+ * Live preview of the learner view; its equations are edited in the sidebar.
+ *
+ * @param {Object} props        Preview properties.
+ * @param {Object} props.config Normalized configuration.
  * @return {Element} Preview host.
  */
-function ActivityPreview( { config, onEdit } ) {
+function ActivityPreview( { config } ) {
 	const host = useRef( null );
 	const handle = useRef( null );
-	const latest = useRef( onEdit );
-	latest.current = onEdit;
 	useEffect( () => {
 		handle.current = mountFunctionGraph( host.current, config, {
-			authoring: true,
+			preview: true,
 			labels: labels(),
-			fonts: window.ohmylmsActivity?.fonts,
-			onChange: ( next ) => latest.current( next ),
 		} );
 		return () => handle.current.destroy();
 		// Mounted once; later edits go through update().
@@ -105,6 +153,35 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 				position === index ? { ...param, [ key ]: value } : param
 			),
 		} );
+	const setFunction = ( index, latex ) =>
+		save( {
+			...config,
+			functions: config.functions.map( ( item, position ) =>
+				position === index ? { ...item, latex } : item
+			),
+		} );
+	const addFunction = () => {
+		let number = config.functions.length + 1;
+		while (
+			config.functions.some( ( item ) => item.id === `f${ number }` )
+		) {
+			number++;
+		}
+		const color =
+			COLORS.find(
+				( candidate ) =>
+					! config.functions.some(
+						( item ) => item.color === candidate
+					)
+			) || COLORS[ config.functions.length % COLORS.length ];
+		save( {
+			...config,
+			functions: [
+				...config.functions,
+				{ id: `f${ number }`, latex: '', color },
+			],
+		} );
+	};
 	const usedNames = config.params.map( ( param ) => param.name );
 	const freeName = 'abcdfghijklmnopqrstuvwyz'
 		.split( '' )
@@ -112,6 +189,45 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 	return (
 		<div { ...blockProps }>
 			<InspectorControls>
+				<PanelBody title={ __( 'Equations', 'ohmylms' ) }>
+					{ config.functions.map( ( item, index ) => (
+						<div
+							key={ item.id }
+							className="ohmylms-activity-equation-editor"
+							style={ { '--ohmylms-activity-color': item.color } }
+						>
+							<EquationField
+								label={ __( 'Equation', 'ohmylms' ) }
+								value={ item.latex }
+								onChange={ ( latex ) =>
+									setFunction( index, latex )
+								}
+							/>
+							{ config.functions.length > 1 && (
+								<Button
+									variant="link"
+									isDestructive
+									onClick={ () =>
+										save( {
+											...config,
+											functions: config.functions.filter(
+												( other, position ) =>
+													position !== index
+											),
+										} )
+									}
+								>
+									{ __( 'Remove function', 'ohmylms' ) }
+								</Button>
+							) }
+						</div>
+					) ) }
+					{ config.functions.length < MAX_FUNCTIONS && (
+						<Button variant="secondary" onClick={ addFunction }>
+							{ __( 'Add function', 'ohmylms' ) }
+						</Button>
+					) }
+				</PanelBody>
 				<PanelBody title={ __( 'Graph window', 'ohmylms' ) }>
 					{ [
 						[ 'xMin', __( 'x minimum', 'ohmylms' ) ],
@@ -128,12 +244,12 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 					) ) }
 				</PanelBody>
 				<PanelBody
-					title={ __( 'Parameters (sliders)', 'ohmylms' ) }
-					initialOpen={ false }
+					title={ __( 'Variables (sliders)', 'ohmylms' ) }
+					initialOpen
 				>
 					<p>
 						{ __(
-							'Use a parameter name as a letter in an equation, for example a x^2 + b.',
+							'Use a variable name as a letter in an equation, for example a x^2 + b.',
 							'ohmylms'
 						) }
 					</p>
@@ -171,7 +287,7 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 									} )
 								}
 							>
-								{ __( 'Remove parameter', 'ohmylms' ) }
+								{ __( 'Remove variable', 'ohmylms' ) }
 							</Button>
 						</div>
 					) ) }
@@ -194,7 +310,7 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 								} )
 							}
 						>
-							{ __( 'Add parameter', 'ohmylms' ) }
+							{ __( 'Add variable', 'ohmylms' ) }
 						</Button>
 					) }
 				</PanelBody>
@@ -218,7 +334,7 @@ export function InteractiveActivityEdit( { attributes, setAttributes } ) {
 					/>
 				</PanelBody>
 			</InspectorControls>
-			<ActivityPreview config={ config } onEdit={ save } />
+			<ActivityPreview config={ config } />
 		</div>
 	);
 }
