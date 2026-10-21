@@ -133,8 +133,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 	} );
 	const toggle = nodes( tree ).find(
 		( node ) =>
-			node.type === 'toggle' &&
-			node.props.label === 'Variable'
+			node.type === 'toggle' && node.props[ 'aria-label' ] === 'Variables'
 	);
 	toggle.props.onChange( true );
 	assert.equal( opened, true );
@@ -167,7 +166,7 @@ test( 'shared block preserves equations without showing prompt or answer format 
 		.find(
 			( node ) =>
 				node.type === 'toggle' &&
-				node.props.label === 'Variable'
+				node.props[ 'aria-label' ] === 'Variables'
 		)
 		.props.onChange( false );
 	assert.equal( opened, false );

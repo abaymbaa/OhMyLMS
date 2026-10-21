@@ -7,6 +7,7 @@ import { parseInlineBlankPrompt } from './inlineBlanks.mjs';
 import { NumericalEditor, StructuredEditor } from './MathEditors';
 import {
 	BuildExpressionEditor,
+	TextEntryEditor,
 	CategorizeEditor,
 	DropdownBlanksEditor,
 	ExpressionEditor,
@@ -130,6 +131,7 @@ export function BankAnswerFields( {
 		categorize: CategorizeEditor,
 		'multi-blank': MultiBlankEditor,
 		'build-expression': BuildExpressionEditor,
+		'text-entry': TextEntryEditor,
 		expression: ExpressionEditor,
 		'number-line': NumberLineEditor,
 		'shade-model': ShadeModelEditor,

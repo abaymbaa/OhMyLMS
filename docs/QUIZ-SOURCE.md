@@ -1,5 +1,7 @@
 # Quiz and question source — 2026-09-23
 
+Historical implementation record. As of 21 October 2026, the form-based QuizEditor is removed and its public factory redirects to Gutenberg. See [current authoring](GUTENBERG-AUTHORING.md).
+
 The source build now uses 17 named React components from `assets/src/features/quizzes/`. It is enabled in the isolated WordPress test site. The math site still uses the shipped JavaScript.
 
 ## What is implemented

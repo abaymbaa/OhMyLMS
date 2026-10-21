@@ -1,0 +1,123 @@
+/* Course builder: where the course stands, and room below the content for the assistant button. */
+.ohmylms-course-save-status {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	justify-content: flex-end;
+	padding: 6px 24px 0;
+	color: #50575e;
+	font-size: 13px;
+}
+
+.ohmylms-course-builder-content {
+	padding-bottom: 96px;
+}
+
+.ohmylms-course-content-tools {
+	margin: 16px 0;
+	padding: 12px 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.ohmylms-course-content-tools summary {
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-course-content-fields {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+	margin: 12px 0;
+}
+
+.ohmylms-course-content-results {
+	max-height: 240px;
+	overflow: auto;
+}
+
+.ohmylms-course-content-row {
+	display: flex;
+	gap: 12px;
+	align-items: center;
+	justify-content: space-between;
+	padding: 6px 0;
+	border-bottom: 1px solid #f0f0f1;
+}
+
+.ohmylms-course-readiness {
+	margin: 16px 0;
+	padding: 12px 16px;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #d63638;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.ohmylms-course-readiness[data-ready="true"] {
+	border-left-color: #00a32a;
+}
+
+.ohmylms-course-readiness summary {
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-course-readiness-table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.ohmylms-course-readiness-table th,
+.ohmylms-course-readiness-table td {
+	padding: 6px 8px;
+	border-bottom: 1px solid #f0f0f1;
+	text-align: left;
+}
+
+.ohmylms-objective-bulk {
+	display: flex;
+	gap: 8px;
+	margin-bottom: 8px;
+}
+
+.ohmylms-objectives-details > summary {
+	margin-bottom: 8px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-build-choices {
+	display: grid;
+	gap: 16px;
+	padding: 8px 4px 16px;
+}
+
+.ohmylms-build-choices section {
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.ohmylms-build-choices h4 {
+	margin: 0 0 4px;
+}
+
+.ohmylms-course-badge {
+	display: inline-block;
+	align-self: flex-start;
+	padding: 1px 8px;
+	border-radius: 10px;
+	background: #e8eaff;
+	color: #3858e9;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.ohmylms-course-badge.is-muted {
+	background: #f0f0f1;
+	color: #50575e;
+}

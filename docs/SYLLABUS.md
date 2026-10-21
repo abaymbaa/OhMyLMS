@@ -254,3 +254,12 @@ The integration suite refuses any database other than `ohmylms_source_test`. It 
 - Lessons attach to a whole chapter in the editor. Attaching to chosen skills of the course is supported by the API (`skill_ids` on an attachment) but the app has no screen for it since the Content Hub Catalog tab was removed. Lessons tagged to a skill belong to the skill, and are not attached to the course automatically.
 - Games are not built yet; only the slot for them exists.
 - Strings added after the last catalog refresh are not yet in `languages/ohmylms.pot` or the Mongolian translation; see "Translations" in [DEVELOPMENT.md](DEVELOPMENT.md).
+
+
+## Single skills workspace
+
+Syllabuses and roadmaps use one outline and detail workspace. Compact skill names and connection counts appear in the outline; search matches names, codes and objective statements while preserving folder context. Connection filters include unconnected skills and each relationship type. Checkboxes select multiple skills for a folder move; successfully moved items are removed from the selection, and a failed move stops the batch. The skill detail pane edits names, bilingual objectives, codes, folders and resources.
+
+Roadmap connections are edited in the selected skill pane with source names, directional types and notes together. Connect skill searches the configured source syllabuses with pagination. Individual edits and removals include the saved pair revision; stale writes are rejected. Required-together creation selects at least two objectives from one source; existing groups use the complete-group editor. Unsaved connection forms block skill selection and bulk-tool navigation until saved or discarded. The optional focused diagram opens connection editing directly.
+
+Bulk edit opens the existing spreadsheet as a secondary full-screen tool, preserving paste/import and save/discard behavior. The former Outline/Mind map/Spreadsheet switch and separate visual-editor entry have been removed from the workspace. Existing map and studio modules remain available to other consumers. These changes do not alter skill IDs, source evidence or completion rules.

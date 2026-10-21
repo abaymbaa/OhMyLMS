@@ -1,3 +1,4 @@
+import { WorkspaceConnections } from './WorkspaceConnections';
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { SkillObjectiveFields } from './SkillObjectiveFields';
@@ -102,9 +103,14 @@ export function SkillPane( { node } ) {
 			/>
 			<header className="ohmylms-ws-pane-head">
 				<div className="ohmylms-ws-pane-title">
-					<SkillObjectiveFields
-						key={ skill.term_id }
-						skill={ skill }
+					<SaveField
+						id={ `ohmylms-ws-skill-name-${ skill.term_id }` }
+						label={ __( 'Skill name', 'ohmylms' ) }
+						value={ skill.name }
+						validate={ ( text ) => check( text, 'name' ) }
+						onSave={ ( text ) =>
+							w.actions.saveSkill( skill, { name: text.trim() } )
+						}
 					/>
 					<RowMenu
 						label={ __( 'Skill actions', 'ohmylms' ) }
@@ -150,68 +156,85 @@ export function SkillPane( { node } ) {
 						] }
 					/>
 				</div>
-				<div className="ohmylms-ws-meta">
-					<SaveField
-						id={ `ohmylms-ws-skill-code-${ skill.term_id }` }
-						label={ __( 'Code', 'ohmylms' ) }
-						help={ __(
-							'For example C1.1.1. Codes are unique within the syllabus.',
+				<p className="ohmylms-workspace-objective-summary">
+					{ skill.objective || skill.description }
+				</p>
+				<details className="ohmylms-workspace-skill-settings">
+					<summary>
+						{ __(
+							'Edit objective, translations and settings',
 							'ohmylms'
 						) }
-						value={ skill.code }
-						validate={ ( text ) => check( text, 'code' ) }
-						onSave={ ( text ) =>
+					</summary>
+					<SkillObjectiveFields
+						key={ skill.term_id }
+						skill={ skill }
+					/>
+					<div className="ohmylms-ws-meta">
+						<SaveField
+							id={ `ohmylms-ws-skill-code-${ skill.term_id }` }
+							label={ __( 'Code', 'ohmylms' ) }
+							help={ __(
+								'For example C1.1.1. Codes are unique within the syllabus.',
+								'ohmylms'
+							) }
+							value={ skill.code }
+							validate={ ( text ) => check( text, 'code' ) }
+							onSave={ ( text ) =>
+								w.actions.saveSkill( skill, {
+									code: text.trim(),
+								} )
+							}
+						/>
+						<SelectControl
+							label={ __( 'Folder', 'ohmylms' ) }
+							value={ parent.parentKey }
+							options={ [
+								...[ ...w.tree.index.values() ]
+									.filter(
+										( entry ) =>
+											entry.kind === 'content' &&
+											entry.depth > 0
+									)
+									.map( ( entry ) => ( {
+										value: entry.key,
+										label: topicLabel( entry.content ),
+									} ) ),
+							] }
+							disabled={ w.pending }
+							onChange={ ( value ) =>
+								w.actions.moveSkillToTopic(
+									groupId,
+									skill.term_id,
+									Number( value.slice( 2 ) )
+								)
+							}
+							__nextHasNoMarginBottom
+						/>
+					</div>
+					<SkillCategoryChoices
+						settings={ w.outline.settings }
+						selected={ appearance.category }
+						disabled={ w.pending }
+						onSelect={ ( category ) =>
 							w.actions.saveSkill( skill, {
-								code: text.trim(),
+								category,
 							} )
 						}
 					/>
-					<SelectControl
-						label={ __( 'Folder', 'ohmylms' ) }
-						value={ parent.parentKey }
-						options={ [
-							...[ ...w.tree.index.values() ]
-								.filter(
-									( entry ) =>
-										entry.kind === 'content' &&
-										entry.depth > 0
-								)
-								.map( ( entry ) => ( {
-									value: entry.key,
-									label: topicLabel( entry.content ),
-								} ) ),
-						] }
-						disabled={ w.pending }
-						onChange={ ( value ) =>
-							w.actions.moveSkillToTopic(
-								groupId,
-								skill.term_id,
-								Number( value.slice( 2 ) )
-							)
-						}
-						__nextHasNoMarginBottom
-					/>
-				</div>
-				<SkillCategoryChoices
-					settings={ w.outline.settings }
-					selected={ appearance.category }
-					disabled={ w.pending }
-					onSelect={ ( category ) =>
-						w.actions.saveSkill( skill, {
-							category,
-						} )
-					}
-				/>
-				<p className="ohmylms-ext-muted">
-					{ sprintf(
-						/* translators: %s: skill or linked content name. */ __(
-							'Skills are shared. Taking “%s” out of this folder keeps it in the skill library.',
-							'ohmylms'
-						),
-						skill.name
-					) }
-				</p>
+					<p className="ohmylms-ext-muted">
+						{ sprintf(
+							/* translators: %s: skill or linked content name. */ __(
+								'Skills are shared. Taking “%s” out of this folder keeps it in the skill library.',
+								'ohmylms'
+							),
+							skill.name
+						) }
+					</p>
+				</details>
 			</header>
+
+			<WorkspaceConnections key={ skill.term_id } skill={ skill } />
 
 			<section
 				className="ohmylms-ws-incourse"

@@ -103,3 +103,32 @@ test( 'empty roots, unmatched search and leaf-only syllabuses have valid bounds'
 	assert.equal( only.edges.length, 0 );
 	assert.ok( only.height >= MAP_CARD.height );
 } );
+
+test( 'saved connections remain attached to shared skill placements and enlarged cards do not overlap', () => {
+	const connected = structuredClone( outline );
+	connected.contents[ 1 ].groups[ 0 ].skills[ 0 ].connections = [
+		{
+			id: 1,
+			specific_id: 200,
+			shared_id: 100,
+			relation: 'broader',
+			specific: { id: 200, name: 'Source objective' },
+		},
+	];
+	const connectedTree = buildOutline( connected );
+	const map = layoutSyllabusMap( connectedTree.root, new Set(), '', label );
+	assert.ok( map.cardHeight > MAP_CARD.height );
+	assert.equal(
+		connectedTree.index.get( 's:10:100' ).skill.connections[ 0 ].specific
+			.name,
+		'Source objective'
+	);
+	for ( const first of map.nodes ) {
+		assert.ok( first.y + map.cardHeight <= map.height );
+		for ( const second of map.nodes ) {
+			if ( first !== second && first.x === second.x ) {
+				assert.ok( Math.abs( first.y - second.y ) >= map.cardHeight );
+			}
+		}
+	}
+} );

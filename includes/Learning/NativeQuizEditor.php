@@ -26,6 +26,32 @@ final class NativeQuizEditor {
 		add_filter( 'rest_prepare_post_type', array( __CLASS__, 'editor_viewability' ), 10, 2 );
 		add_action( 'init', array( __CLASS__, 'register_reference' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_settings' ) );
+		add_filter( 'allowed_block_types_all', array( __CLASS__, 'quiz_blocks' ), 10, 2 );
+	}
+
+	/**
+	 * Keep the quiz editor's block inserter to what a quiz uses. Site blocks of the plugin (registration,
+	 * sign in, dashboards, checkout, buy buttons, membership lists) do not belong in a quiz and buried the
+	 * question block; text, media and question blocks stay.
+	 *
+	 * @param bool|string[]            $allowed Allowed block names, or true for all.
+	 * @param \WP_Block_Editor_Context $context Editor context.
+	 * @return bool|string[]
+	 */
+	public static function quiz_blocks( $allowed, $context ) {
+		$post = isset( $context->post ) ? $context->post : null;
+		if ( ! $post || 'ohmylms-quiz' !== $post->post_type || false === $allowed ) {
+			return $allowed;
+		}
+		$keep  = array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK, 'ohmylms/question-player' );
+		$names = array();
+		foreach ( \WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type ) {
+			if ( 0 === strpos( $name, 'ohmylms/' ) && ! in_array( $name, $keep, true ) && false === strpos( $name, 'math' ) ) {
+				continue;
+			}
+			$names[] = $name;
+		}
+		return is_array( $allowed ) ? array_values( array_intersect( $allowed, $names ) ) : $names;
 	}
 
 	/** Register quiz configuration on the atomic native post save. */

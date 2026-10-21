@@ -2,6 +2,80 @@
 @import url(./syllabus-mindmap.css);
 
 
+.ohmylms-workspace-skill-settings > summary {
+	padding: 12px 0;
+	color: #3858e9;
+	cursor: pointer;
+}
+
+.ohmylms-workspace-objective-summary {
+	line-height: 1.6;
+	margin: 12px 0;
+}
+
+.ohmylms-unified-workspace :where(.ohmylms-ws-pane-title > .ohmylms-ws-field) {
+	flex: 1;
+	min-width: 0;
+}
+
+.ohmylms-workspace-filters {
+	display: grid;
+	gap: 10px;
+	padding: 12px;
+}
+
+.ohmylms-ws-connection-count {
+	display: block;
+	font-size: 11px;
+	font-weight: 400;
+	color: #646970;
+}
+
+.ohmylms-workspace-connection-head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.ohmylms-workspace-connection-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.ohmylms-workspace-connection-list > li {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+	padding: 14px 0;
+	border-bottom: 1px solid #dcdcde;
+}
+
+.ohmylms-workspace-connection-list p {
+	margin: 4px 0;
+}
+
+.ohmylms-workspace-connection-list .components-button {
+	flex-shrink: 0;
+}
+
+.ohmylms-workspace-connection-form {
+	padding: 16px 0;
+}
+
+.ohmylms-workspace-connections {
+	margin: 16px 0 28px;
+	min-width: 0;
+}
+
+.ohmylms-workspace-connections .ohmylms-studio-canvas {
+	min-height: 420px;
+}
+
+
 /*
  * Shared layout for OhMyLMS admin pages added through the extension SDK (Question bank,
  * Skills, Performance and others). Mirrors the native screens: 40px side gutter, a 20px
@@ -3805,3 +3879,42 @@ button.ohmylms-quiz-skill-chip:focus-visible {
 	display: none !important;
 }
 
+.ohmylms-skill-connections {
+	display: grid;
+	gap: 6px;
+	margin-top: 6px;
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.5;
+	text-align: start;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-skill-connection {
+	display: block;
+}
+
+.ohmylms-skill-connection .ohmylms-relationship-badge {
+	display: inline-block;
+	margin-inline-start: 4px;
+	padding: 1px 5px;
+	border: 1px solid #cbd5e1;
+	border-radius: 4px;
+	background: #f1f5f9;
+	color: #334155;
+	font-size: 11px;
+}
+
+.ohmylms-syllabus-map-card > .ohmylms-skill-connections {
+	flex: 0 1 96px;
+	min-height: 0;
+	margin: 0 10px 6px;
+	overflow: auto;
+}
+
+.ohmylms-syllabus-sheet .ohmylms-skill-connections {
+	min-width: 210px;
+	max-width: 360px;
+	padding: 8px;
+}

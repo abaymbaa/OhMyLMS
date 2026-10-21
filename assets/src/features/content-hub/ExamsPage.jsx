@@ -5,12 +5,14 @@ import {
 	isValidElement,
 	useEffect,
 	useId,
+	useRef,
 	useState,
 } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { approveQuestion } from '../question-bank/api.mjs';
 import { ExamPaperDialog } from './ExamPaperDialog.jsx';
+import { ImportDialog } from './ImportDialog.jsx';
 
 /**
  * Associate each repeated question/part control with its own accessible label.
@@ -36,6 +38,11 @@ const api = ( path, data ) =>
 		path: `/ohmylms/v1/${ path }`,
 		...( data ? { method: 'POST', data } : {} ),
 	} );
+const targets = () => ( {
+	exam: __( 'Exam', 'ohmylms' ),
+	quiz: __( 'Quiz', 'ohmylms' ),
+	questions: __( 'Questions', 'ohmylms' ),
+} );
 const states = () => ( {
 	queued: __( 'Checking PDF', 'ohmylms' ),
 	failed: __( 'PDF check failed', 'ohmylms' ),
@@ -115,16 +122,25 @@ function SkillSearch( { onPick } ) {
 	);
 }
 
-/** PDF papers become reviewed bank questions and an exam on the shared quiz engine. */
-export function ExamsPage() {
+/**
+ * PDF papers become reviewed bank questions and an exam on the shared quiz engine.
+ * @param root0
+ * @param root0.reviewOnly Show only the review window of one import.
+ * @param root0.jobId      Import to open for review.
+ * @param root0.onClosed   Called when that review window is closed.
+ */
+export function ExamsPage( {
+	reviewOnly = false,
+	jobId = 0,
+	onClosed = null,
+} ) {
+	const [ importing, setImporting ] = useState( false );
 	const [ jobs, setJobs ] = useState( [] );
 	const [ exams, setExams ] = useState( [] );
 	const [ paperExam, setPaperExam ] = useState( null );
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );
-	const [ paper, setPaper ] = useState( null );
-	const [ scheme, setScheme ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ dirty, setDirty ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
@@ -185,6 +201,21 @@ export function ExamsPage() {
 	useEffect( () => {
 		refresh().catch( ( failure ) => setError( failure.message ) );
 	}, [] );
+	const opened = useRef( false );
+	useEffect( () => {
+		if ( job ) {
+			opened.current = true;
+		} else if ( opened.current ) {
+			opened.current = false;
+			onClosed?.();
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Only a change of job matters here.
+	}, [ job ] );
+	useEffect( () => {
+		if ( jobId ) {
+			run( () => load( jobId ) );
+		}
+	}, [ jobId ] );
 	useEffect( () => {
 		if ( ! job || ! [ 'queued', 'extracting' ].includes( job.state ) ) {
 			return undefined;
@@ -273,13 +304,24 @@ export function ExamsPage() {
 			: '';
 	return (
 		<section className="ohmylms-exams">
-			<h2>{ __( 'Exams', 'ohmylms' ) }</h2>
-			<p>
-				{ __(
-					'Upload an exam paper, review every extracted question, then create an exam using the quiz player.',
-					'ohmylms'
-				) }
-			</p>
+			{ ! reviewOnly && (
+				<>
+					<h2>{ __( 'Exams', 'ohmylms' ) }</h2>
+					<p>
+						{ __(
+							'Create an exam from an uploaded paper or a question file, then publish it and mark it with the quiz player.',
+							'ohmylms'
+						) }
+					</p>
+					<Button
+						variant="primary"
+						disabled={ busy || dirty }
+						onClick={ () => setImporting( true ) }
+					>
+						{ __( 'Import', 'ohmylms' ) }
+					</Button>
+				</>
+			) }
 			{ error && (
 				<Notice status="error" onRemove={ () => setError( '' ) }>
 					{ error }
@@ -291,87 +333,46 @@ export function ExamsPage() {
 				</Notice>
 			) }
 			{ busy && <Spinner /> }
-			<form
-				onSubmit={ ( event ) => {
-					event.preventDefault();
-					run( async () => {
-						const body = new FormData();
-						body.append( 'file', paper );
-						if ( scheme ) {
-							body.append( 'mark_scheme', scheme );
-						}
-						const next = await window.wp.apiFetch( {
-							path: '/ohmylms/v1/exam-imports',
-							method: 'POST',
-							body,
-						} );
-						await load( next.id );
-						await refresh();
-					} );
-				} }
-			>
-				<ExamField>
-					{ __( 'Question paper PDF', 'ohmylms' ) }
-					<input
-						type="file"
-						accept="application/pdf,.pdf"
-						required
-						onChange={ ( event ) =>
-							setPaper( event.target.files[ 0 ] || null )
-						}
-					/>
-				</ExamField>
-				<ExamField>
-					{ __( 'Mark scheme PDF (optional)', 'ohmylms' ) }
-					<input
-						type="file"
-						accept="application/pdf,.pdf"
-						onChange={ ( event ) =>
-							setScheme( event.target.files[ 0 ] || null )
-						}
-					/>
-				</ExamField>
-				<Button
-					variant="primary"
-					type="submit"
-					disabled={ busy || dirty || ! paper }
-				>
-					{ __( 'Upload PDFs', 'ohmylms' ) }
-				</Button>
-			</form>
-			<h3>{ __( 'Your PDF imports', 'ohmylms' ) }</h3>
-			<Button
-				variant="secondary"
-				disabled={ busy }
-				onClick={ () => run( refresh ) }
-			>
-				{ __( 'Refresh imports', 'ohmylms' ) }
-			</Button>
-			<ul>
-				{ jobs.map( ( entry ) => (
-					<li key={ entry.id }>
-						<Button
-							variant="link"
-							disabled={ busy || dirty }
-							onClick={ () =>
-								run( async () => {
-									const saved = exams.find(
-										( exam ) => exam.job_id === entry.id
-									);
-									if ( saved ) {
-										setPaperExam( saved );
-									} else {
-										await load( entry.id );
+			{ ! reviewOnly && (
+				<>
+					<h3>{ __( 'Your imports', 'ohmylms' ) }</h3>
+					<Button
+						variant="secondary"
+						disabled={ busy }
+						onClick={ () => run( refresh ) }
+					>
+						{ __( 'Refresh imports', 'ohmylms' ) }
+					</Button>
+					<ul>
+						{ jobs.map( ( entry ) => (
+							<li key={ entry.id }>
+								<Button
+									variant="link"
+									disabled={ busy || dirty }
+									onClick={ () =>
+										run( async () => {
+											const saved = exams.find(
+												( exam ) =>
+													exam.job_id === entry.id
+											);
+											if ( saved ) {
+												setPaperExam( saved );
+											} else {
+												await load( entry.id );
+											}
+										} )
 									}
-								} )
-							}
-						>
-							{ entry.source.name }
-						</Button>{ ' ' }
-						— { states()[ entry.state ] || entry.state }
-					</li>
-				) ) }
-			</ul>
+								>
+									{ entry.source.name }
+								</Button>{ ' ' }
+								—{ ' ' }
+								{ targets()[ entry.target ] || targets().exam }{ ' ' }
+								· { states()[ entry.state ] || entry.state }
+							</li>
+						) ) }
+					</ul>
+				</>
+			) }
 			{ job && (
 				<Modal
 					title={ __( 'Review imported paper', 'ohmylms' ) }
@@ -1096,83 +1097,49 @@ export function ExamsPage() {
 										'ohmylms'
 									) }
 								</Button>
-								{ ! job.exam_id && (
+								{ job.target === 'questions' && (
+									<p>
+										<a href="#/content-hub/question-bank">
+											{ __(
+												'Open the Question Bank',
+												'ohmylms'
+											) }
+										</a>
+									</p>
+								) }
+								{ job.target === 'quiz' && job.quiz_id && (
+									<p>
+										<a
+											href={ `#/quiz-edit/${ job.quiz_id }` }
+										>
+											{ __(
+												'Open the draft quiz',
+												'ohmylms'
+											) }
+										</a>
+									</p>
+								) }
+								{ job.target === 'quiz' && ! job.quiz_id && (
 									<form
 										onSubmit={ ( event ) => {
 											event.preventDefault();
 											run( async () => {
-												await api( 'exams', {
-													job_id: job.id,
-													...header,
-												} );
+												await api(
+													`exam-imports/${ job.id }/quiz`,
+													{
+														title: header.title,
+													}
+												);
 												await load( job.id );
-												await refresh();
 											} );
 										} }
 									>
 										<h3>
-											{ __( 'Exam details', 'ohmylms' ) }
+											{ __( 'Quiz details', 'ohmylms' ) }
 										</h3>
 										{ field(
-											__( 'Exam title', 'ohmylms' ),
+											__( 'Quiz title', 'ohmylms' ),
 											'title'
-										) }
-										<ExamField>
-											{ __(
-												'Duration (minutes)',
-												'ohmylms'
-											) }
-											<input
-												type="number"
-												min="1"
-												max="1440"
-												required
-												value={
-													header.duration_minutes
-												}
-												onChange={ ( event ) =>
-													setHeader( {
-														...header,
-														duration_minutes:
-															Number(
-																event.target
-																	.value
-															),
-													} )
-												}
-											/>
-										</ExamField>
-										{ field(
-											__( 'Board', 'ohmylms' ),
-											'board'
-										) }
-										{ field(
-											__( 'Qualification', 'ohmylms' ),
-											'qualification'
-										) }
-										{ field(
-											__( 'Subject code', 'ohmylms' ),
-											'subject_code'
-										) }
-										{ field(
-											__( 'Paper', 'ohmylms' ),
-											'paper'
-										) }
-										{ field(
-											__( 'Variant', 'ohmylms' ),
-											'variant'
-										) }
-										{ field(
-											__( 'Session', 'ohmylms' ),
-											'session'
-										) }
-										{ field(
-											__( 'Calculator rule', 'ohmylms' ),
-											'calculator'
-										) }
-										{ field(
-											__( 'Instructions', 'ohmylms' ),
-											'instructions'
 										) }
 										<Button
 											variant="primary"
@@ -1180,94 +1147,221 @@ export function ExamsPage() {
 											disabled={ busy }
 										>
 											{ __(
-												'Create draft exam',
+												'Create draft quiz',
 												'ohmylms'
 											) }
 										</Button>
 									</form>
 								) }
+								{ ( ! job.target || job.target === 'exam' ) &&
+									! job.exam_id && (
+										<form
+											onSubmit={ ( event ) => {
+												event.preventDefault();
+												run( async () => {
+													await api( 'exams', {
+														job_id: job.id,
+														...header,
+													} );
+													await load( job.id );
+													await refresh();
+												} );
+											} }
+										>
+											<h3>
+												{ __(
+													'Exam details',
+													'ohmylms'
+												) }
+											</h3>
+											{ field(
+												__( 'Exam title', 'ohmylms' ),
+												'title'
+											) }
+											<ExamField>
+												{ __(
+													'Duration (minutes)',
+													'ohmylms'
+												) }
+												<input
+													type="number"
+													min="1"
+													max="1440"
+													required
+													value={
+														header.duration_minutes
+													}
+													onChange={ ( event ) =>
+														setHeader( {
+															...header,
+															duration_minutes:
+																Number(
+																	event.target
+																		.value
+																),
+														} )
+													}
+												/>
+											</ExamField>
+											{ field(
+												__( 'Board', 'ohmylms' ),
+												'board'
+											) }
+											{ field(
+												__(
+													'Qualification',
+													'ohmylms'
+												),
+												'qualification'
+											) }
+											{ field(
+												__( 'Subject code', 'ohmylms' ),
+												'subject_code'
+											) }
+											{ field(
+												__( 'Paper', 'ohmylms' ),
+												'paper'
+											) }
+											{ field(
+												__( 'Variant', 'ohmylms' ),
+												'variant'
+											) }
+											{ field(
+												__( 'Session', 'ohmylms' ),
+												'session'
+											) }
+											{ field(
+												__(
+													'Calculator rule',
+													'ohmylms'
+												),
+												'calculator'
+											) }
+											{ field(
+												__( 'Instructions', 'ohmylms' ),
+												'instructions'
+											) }
+											<Button
+												variant="primary"
+												type="submit"
+												disabled={ busy }
+											>
+												{ __(
+													'Create draft exam',
+													'ohmylms'
+												) }
+											</Button>
+										</form>
+									) }
 							</>
 						) }
 					</section>
 				</Modal>
 			) }
-			<h3>{ __( 'Your exams', 'ohmylms' ) }</h3>
-			<ul>
-				{ exams.map( ( exam ) => (
-					<li key={ exam.id }>
-						<strong>{ exam.title }</strong> —{ ' ' }
-						{ exam.status === 'publish'
-							? __( 'Published', 'ohmylms' )
-							: __( 'Draft', 'ohmylms' ) }{ ' ' }
-						· { exam.question_ids.length }{ ' ' }
-						{ __( 'questions', 'ohmylms' ) } · { exam.total_marks }{ ' ' }
-						{ __( 'marks', 'ohmylms' ) }
-						<Button
-							variant="secondary"
-							onClick={ () => setPaperExam( exam ) }
-						>
-							{ __( 'Review paper', 'ohmylms' ) }
-						</Button>
-						{ exam.status === 'draft' ? (
-							<Button
-								variant="primary"
-								disabled={ busy }
-								onClick={ () =>
-									run( async () => {
-										await api(
-											`exams/${ exam.id }/publish`,
-											{}
-										);
-										await refresh();
-									} )
-								}
-							>
-								{ __( 'Publish exam', 'ohmylms' ) }
-							</Button>
-						) : (
-							<>
-								<a
-									href={ exam.url }
-									target="_blank"
-									rel="noreferrer"
-								>
-									{ __( 'Open exam player', 'ohmylms' ) }
-								</a>
+			{ ! reviewOnly && (
+				<>
+					<h3>{ __( 'Your exams', 'ohmylms' ) }</h3>
+					<ul>
+						{ exams.map( ( exam ) => (
+							<li key={ exam.id }>
+								<strong>{ exam.title }</strong> —{ ' ' }
+								{ exam.status === 'publish'
+									? __( 'Published', 'ohmylms' )
+									: __( 'Draft', 'ohmylms' ) }{ ' ' }
+								· { exam.question_ids.length }{ ' ' }
+								{ __( 'questions', 'ohmylms' ) } ·{ ' ' }
+								{ exam.total_marks }{ ' ' }
+								{ __( 'marks', 'ohmylms' ) }
 								<Button
 									variant="secondary"
-									disabled={ busy || exam.released }
-									onClick={ () =>
-										run( async () => {
-											await api(
-												`exams/${ exam.id }/release`,
-												{}
-											);
-											await refresh();
-										} )
-									}
+									onClick={ () => setPaperExam( exam ) }
 								>
-									{ exam.released
-										? __( 'Results released', 'ohmylms' )
-										: __(
-												'Release results and mark scheme',
+									{ __( 'Review paper', 'ohmylms' ) }
+								</Button>
+								{ exam.status === 'draft' ? (
+									<Button
+										variant="primary"
+										disabled={ busy }
+										onClick={ () =>
+											run( async () => {
+												await api(
+													`exams/${ exam.id }/publish`,
+													{}
+												);
+												await refresh();
+											} )
+										}
+									>
+										{ __( 'Publish exam', 'ohmylms' ) }
+									</Button>
+								) : (
+									<>
+										<a
+											href={ exam.url }
+											target="_blank"
+											rel="noreferrer"
+										>
+											{ __(
+												'Open exam player',
 												'ohmylms'
 											) }
-								</Button>
-							</>
-						) }
-						<a href={ `#/quiz-report/${ exam.quiz_id }` }>
-							{ __( 'Teacher marking and reports', 'ohmylms' ) }
-						</a>
-						<p>
-							{ __(
-								'Embed in a lesson or WordPress page:',
-								'ohmylms'
-							) }{ ' ' }
-							<code>{ `[ohmylms_exam exam="${ exam.id }"]` }</code>
-						</p>
-					</li>
-				) ) }
-			</ul>
+										</a>
+										<Button
+											variant="secondary"
+											disabled={ busy || exam.released }
+											onClick={ () =>
+												run( async () => {
+													await api(
+														`exams/${ exam.id }/release`,
+														{}
+													);
+													await refresh();
+												} )
+											}
+										>
+											{ exam.released
+												? __(
+														'Results released',
+														'ohmylms'
+													)
+												: __(
+														'Release results and mark scheme',
+														'ohmylms'
+													) }
+										</Button>
+									</>
+								) }
+								<a href={ `#/quiz-report/${ exam.quiz_id }` }>
+									{ __(
+										'Teacher marking and reports',
+										'ohmylms'
+									) }
+								</a>
+								<p>
+									{ __(
+										'Embed in a lesson or WordPress page:',
+										'ohmylms'
+									) }{ ' ' }
+									<code>{ `[ohmylms_exam exam="${ exam.id }"]` }</code>
+								</p>
+							</li>
+						) ) }
+					</ul>
+				</>
+			) }
+			{ importing && (
+				<ImportDialog
+					initialTarget="exam"
+					onClose={ () => setImporting( false ) }
+					onJob={ ( id ) => {
+						setImporting( false );
+						run( async () => {
+							await load( id );
+							await refresh();
+						} );
+					} }
+				/>
+			) }
 			{ paperExam && (
 				<ExamPaperDialog
 					exam={ paperExam }

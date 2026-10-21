@@ -175,6 +175,8 @@ final class Jobs {
 		$job = array(
 			'document'    => $doc,
 			'mark_scheme' => $mark_scheme,
+			'target'      => self::target( $request['target'] ?? '' ),
+			'skills'      => self::skill_tokens( $request['default_skills'] ?? '' ),
 			'state'       => 'queued',
 			'attempts'    => 0,
 			'error'       => '',
@@ -192,6 +194,28 @@ final class Jobs {
 	}
 
 	/**
+	 * Skill references (#ID) from a list of skill IDs, at most 20.
+	 *
+	 * @param mixed $value IDs or #IDs separated by commas, semicolons or spaces.
+	 * @return string Tokens such as "#12;#40", or an empty string.
+	 */
+	public static function skill_tokens( $value ) {
+		preg_match_all( '/\d+/', is_scalar( $value ) ? (string) $value : '', $found );
+		$ids = array_slice( array_unique( array_filter( array_map( 'absint', $found[0] ) ) ), 0, 20 );
+		return $ids ? '#' . implode( ';#', $ids ) : '';
+	}
+
+	/**
+	 * What a finished import becomes: an exam (the default), a quiz, or question bank drafts only.
+	 *
+	 * @param mixed $target Requested target.
+	 * @return string exam|quiz|questions.
+	 */
+	public static function target( $target ) {
+		return is_string( $target ) && in_array( $target, array( 'quiz', 'questions' ), true ) ? $target : 'exam';
+	}
+
+	/**
 	 * Safe job metadata, excluding document handles, hashes and filesystem paths.
 	 *
 	 * @param int   $id Job ID.
@@ -202,6 +226,7 @@ final class Jobs {
 		return array(
 			'id'         => (int) $id,
 			'state'      => $job['state'],
+			'target'     => self::target( $job['target'] ?? '' ),
 			'attempts'   => $job['attempts'],
 			'error'      => $job['error'],
 			'updated_at' => $job['updated_at'],

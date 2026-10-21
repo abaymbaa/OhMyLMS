@@ -1,8 +1,8 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
+import { ImportButton } from '../content-hub/ImportButton';
 import {
 	ExportIcon,
-	QuizImportButton,
 	useAddQuiz,
 	useExportQuiz,
 } from '../content-hub/QuizActions';
@@ -543,7 +543,7 @@ export function createQuizList( readRuntime ) {
 							showAddButton={ ! 0 }
 							addButtonConfig={ addQuiz }
 						>
-							<QuizImportButton />
+							<ImportButton target="quiz" />
 						</YG>
 						<Ea
 							isBorderless={ ! 0 }

@@ -20,10 +20,10 @@ Interactive::enqueue();
 ohmylms_enqueue_interactivity_module( 'ohmylms/questions' );
 ?>
 <div class="ohmylms-interactive ohmylms-build-expression" data-wp-on--change="ohmylms/quiz::actions.answerChanged" data-ohmylms-interactive="build-expression" data-field-name="<?php echo esc_attr( Interactive::field_name( $attempt, $question ) ); ?>" data-question-id="<?php echo esc_attr( $question['id'] ); ?>">
-	<div class="ohmylms-build-answer" role="list" aria-label="<?php esc_attr_e( 'Your answer', 'ohmylms' ); ?>"></div>
-	<div class="ohmylms-build-bank" role="list" aria-label="<?php esc_attr_e( 'Available tiles', 'ohmylms' ); ?>">
+	<div class="ohmylms-build-answer" role="group" aria-label="<?php esc_attr_e( 'Your answer', 'ohmylms' ); ?>"></div>
+	<div class="ohmylms-build-bank" role="group" aria-label="<?php esc_attr_e( 'Available tiles', 'ohmylms' ); ?>">
 		<?php foreach ( (array) ( $settings['tiles'] ?? array() ) as $tile ) { ?>
-			<button type="button" class="ohmylms-tile" role="listitem" data-tile="<?php echo esc_attr( $tile ); ?>"><?php echo esc_html( $tile ); ?></button>
+			<button type="button" class="ohmylms-tile" data-tile="<?php echo esc_attr( $tile ); ?>"><?php echo ' ' === $tile ? esc_html__( 'Space', 'ohmylms' ) : esc_html( $tile ); ?></button>
 		<?php } ?>
 	</div>
 	<noscript><p><?php esc_html_e( 'This question needs JavaScript to build the answer.', 'ohmylms' ); ?></p></noscript>

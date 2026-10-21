@@ -50,6 +50,7 @@ const scope = {
 	CategorizeEditor: 'categorize',
 	MultiBlankEditor: 'multi-blank',
 	BuildExpressionEditor: 'build-expression',
+	TextEntryEditor: 'text-entry',
 	ExpressionEditor: 'expression',
 	NumberLineEditor: 'NumberLine',
 	ShadeModelEditor: 'ShadeModel',

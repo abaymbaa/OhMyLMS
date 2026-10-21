@@ -1,3 +1,4 @@
+import { SkillConnections } from './SkillConnections';
 /** @jsx createElement */
 import { createElement, useEffect, useRef, useState } from '@wordpress/element';
 import { Button, Notice, TextareaControl } from '@wordpress/components';
@@ -39,6 +40,9 @@ export function SyllabusSpreadsheet( {
 	pending = false,
 } ) {
 	const [ rows, setRows ] = useState( () => syllabusSheetRows( outline ) );
+	const showConnections =
+		outline.syllabus.item_type === 'roadmap' ||
+		rows.some( ( row ) => row.skill?.connections?.length );
 	const baseline = useRef( rows );
 	const [ busy, setBusy ] = useState( false );
 	const [ notice, setNotice ] = useState( null );
@@ -327,6 +331,9 @@ export function SyllabusSpreadsheet( {
 			<div className="ohmylms-sheet-scroll">
 				<table
 					ref={ table }
+					className={
+						showConnections ? 'has-skill-connections' : undefined
+					}
 					aria-label={ __( 'Syllabus spreadsheet', 'ohmylms' ) }
 				>
 					<thead>
@@ -336,6 +343,16 @@ export function SyllabusSpreadsheet( {
 									{ label }
 								</th>
 							) ) }
+							{ showConnections && (
+								<>
+									<th scope="col">
+										{ __( 'Connected skills', 'ohmylms' ) }
+									</th>
+									<th scope="col">
+										{ __( 'Connection types', 'ohmylms' ) }
+									</th>
+								</>
+							) }
 							<th scope="col">{ __( 'Actions', 'ohmylms' ) }</th>
 						</tr>
 					</thead>
@@ -384,6 +401,22 @@ export function SyllabusSpreadsheet( {
 										/>
 									</td>
 								) ) }
+								{ showConnections && (
+									<>
+										<td>
+											<SkillConnections
+												skill={ row.skill }
+												part="names"
+											/>
+										</td>
+										<td>
+											<SkillConnections
+												skill={ row.skill }
+												part="types"
+											/>
+										</td>
+									</>
+								) }
 								<td>
 									{ row.contentId && (
 										<SpreadsheetActions

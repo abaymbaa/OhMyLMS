@@ -1,6 +1,12 @@
 import { createElement, useState } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Dashicon } from '@wordpress/components';
+import {
+	Button,
+	Dashicon,
+	TextControl,
+	SelectControl,
+} from '@wordpress/components';
+import { relationshipLabels } from './relationships.mjs';
 import { AddContentMenu } from './AddContentMenu';
 import { QuickAdd, KindIcon } from './WorkspaceParts';
 import {
@@ -22,7 +28,7 @@ function label( node, language ) {
 	}
 	return skillLabel( {
 		...node.skill,
-		name: skillText( node.skill, language ),
+		name: skillText( node.skill, language, 'name' ),
 	} );
 }
 
@@ -37,7 +43,10 @@ function label( node, language ) {
  * @param root0.drag
  */
 function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
-	const isOpen = open.has( node.key );
+	if ( drag.matches && ! drag.matches.has( node.key ) ) {
+		return null;
+	}
+	const isOpen = Boolean( drag.matches ) || open.has( node.key );
 	const nested = visibleChildren( node, drag.settings ).length > 0;
 	const kind = {
 		content: 'topic',
@@ -72,6 +81,21 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 				onDragOver={ ( event ) => drag.over( event, node ) }
 				onDrop={ ( event ) => drag.drop( event, node ) }
 			>
+				{ node.kind === 'skill' && (
+					<input
+						type="checkbox"
+						aria-label={ sprintf(
+							/* translators: %s: skill name. */ __(
+								'Select %s for bulk move',
+								'ohmylms'
+							),
+							label( node, drag.language )
+						) }
+						checked={ drag.selectedSkills.includes( node.key ) }
+						disabled={ drag.pending }
+						onChange={ () => drag.toggleSelected( node.key ) }
+					/>
+				) }
 				<button
 					type="button"
 					className="ohmylms-ws-drag-handle"
@@ -146,6 +170,17 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
 					/>
 					<span className="ohmylms-ws-node-label">
 						{ label( node, drag.language ) }
+						{ node.kind === 'skill' && (
+							<span className="ohmylms-ws-connection-count">
+								{ sprintf(
+									/* translators: %d: number of connections. */ __(
+										'%d connections',
+										'ohmylms'
+									),
+									node.skill.connections?.length || 0
+								) }
+							</span>
+						) }
 					</span>
 					{ counts && (
 						<span className="ohmylms-ws-node-count">
@@ -221,6 +256,7 @@ function Branch( { node, selected, open, onSelect, onToggle, drag } ) {
  * @param root0.onAddSkill
  * @param root0.onAddTopic
  * @param root0.onReorder
+ * @param root0.onMoveSelected
  * @param root0.language
  * @param root0.settings
  * @param root0.collapsed
@@ -239,6 +275,7 @@ export function WorkspaceSidebar( {
 	onAddSkill,
 	onAddTopic,
 	onReorder,
+	onMoveSelected,
 	settings,
 	language,
 	collapsed,
@@ -246,6 +283,11 @@ export function WorkspaceSidebar( {
 	pending,
 	onSpreadsheet,
 } ) {
+	const [ selectedSkills, setSelectedSkills ] = useState( [] );
+	const [ destination, setDestination ] = useState( '' );
+	const [ moving, setMoving ] = useState( false );
+	const [ search, setSearch ] = useState( '' );
+	const [ connectionFilter, setConnectionFilter ] = useState( '' );
 	const [ adding, setAdding ] = useState( '' );
 	const [ dragged, setDragged ] = useState( '' );
 	const [ target, setTarget ] = useState( null );
@@ -269,9 +311,47 @@ export function WorkspaceSidebar( {
 		}
 		return fraction > 0.5;
 	};
+	let matches = null;
+	if ( search.trim() || connectionFilter ) {
+		matches = new Set();
+		for ( const entry of tree.index.values() ) {
+			const connections = entry.skill?.connections || [];
+			if (
+				entry.kind !== 'skill' ||
+				! `${ label( entry, language ) } ${ skillText( entry.skill, language ) }`
+					.toLowerCase()
+					.includes( search.trim().toLowerCase() )
+			) {
+				continue;
+			}
+			if (
+				connectionFilter === 'none'
+					? connections.length > 0
+					: connectionFilter &&
+						! connections.some(
+							( link ) => link.relation === connectionFilter
+						)
+			) {
+				continue;
+			}
+			let current = entry;
+			while ( current ) {
+				matches.add( current.key );
+				current = tree.index.get( current.parentKey );
+			}
+		}
+	}
 	const drag = {
+		matches,
+		selectedSkills,
+		toggleSelected: ( key ) =>
+			setSelectedSkills( ( current ) =>
+				current.includes( key )
+					? current.filter( ( item ) => item !== key )
+					: [ ...current, key ]
+			),
 		language,
-		pending,
+		pending: pending || moving,
 		target,
 		tree,
 		settings,
@@ -507,6 +587,114 @@ export function WorkspaceSidebar( {
 					onDragOver={ ( event ) => drag.over( event, tree.root ) }
 					onDrop={ ( event ) => drag.drop( event, tree.root ) }
 				>
+					<div className="ohmylms-workspace-filters">
+						<TextControl
+							label={ __( 'Search skills', 'ohmylms' ) }
+							type="search"
+							value={ search }
+							onChange={ setSearch }
+							__nextHasNoMarginBottom
+						/>
+						<SelectControl
+							label={ __( 'Connections', 'ohmylms' ) }
+							value={ connectionFilter }
+							onChange={ setConnectionFilter }
+							options={ [
+								{
+									value: '',
+									label: __( 'All skills', 'ohmylms' ),
+								},
+								{
+									value: 'none',
+									label: __( 'No connections', 'ohmylms' ),
+								},
+								...Object.entries( relationshipLabels() ).map(
+									( [ value, text ] ) => ( {
+										value,
+										label: text,
+									} )
+								),
+							] }
+							__nextHasNoMarginBottom
+						/>
+						{ selectedSkills.length > 0 && (
+							<div>
+								<p>
+									{ sprintf(
+										/* translators: %d: selected skill count. */ __(
+											'%d skills selected',
+											'ohmylms'
+										),
+										selectedSkills.length
+									) }
+								</p>
+								<SelectControl
+									label={ __(
+										'Move selected skills to',
+										'ohmylms'
+									) }
+									value={ destination }
+									disabled={ pending || moving }
+									onChange={ setDestination }
+									options={ [
+										{
+											value: '',
+											label: __(
+												'Choose folder',
+												'ohmylms'
+											),
+										},
+										...[ ...tree.index.values() ]
+											.filter(
+												( item ) =>
+													item.kind === 'group'
+											)
+											.map( ( item ) => ( {
+												value: String( item.id ),
+												label: `${ tree.index.get( item.parentKey )?.content?.name || '' } / ${ item.group.name }`,
+											} ) ),
+									] }
+								/>
+								<Button
+									variant="secondary"
+									disabled={
+										pending || moving || ! destination
+									}
+									isBusy={ moving }
+									onClick={ async () => {
+										setMoving( true );
+										try {
+											const moved = await onMoveSelected(
+												selectedSkills,
+												Number( destination )
+											);
+											setSelectedSkills( ( current ) =>
+												current.filter(
+													( key ) =>
+														! moved.includes( key )
+												)
+											);
+										} finally {
+											setMoving( false );
+										}
+									} }
+								>
+									{ __( 'Move selected', 'ohmylms' ) }
+								</Button>
+								<Button
+									disabled={ moving }
+									onClick={ () => setSelectedSkills( [] ) }
+								>
+									{ __( 'Clear selection', 'ohmylms' ) }
+								</Button>
+							</div>
+						) }
+						{ matches?.size === 0 && (
+							<p role="status">
+								{ __( 'No matching skills.', 'ohmylms' ) }
+							</p>
+						) }
+					</div>
 					{ dragged &&
 						tree.index.get( dragged )?.kind !== 'skill' && (
 							<button

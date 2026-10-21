@@ -108,6 +108,9 @@ function describeVisualExpected( s ) {
 }
 export function describeExpected( question ) {
 	const settings = question?.settings || {};
+	if ( settings.type === 'text-entry' ) {
+		return ( settings.accepted || [] ).join( ' / ' );
+	}
 	if ( settings.type === 'graphing' ) {
 		return ( settings.points || [] )
 			.map( ( point ) => `(${ point.x }, ${ point.y })` )

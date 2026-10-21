@@ -56,8 +56,9 @@ final class QuestionPlayerBlock {
 		$ids    = static function ( $values ) {
 			return array_slice( array_values( array_unique( array_filter( array_map( 'absint', is_array( $values ) ? $values : array() ) ) ) ), 0, 30 );
 		};
-		$graded = ! isset( $attributes['graded'] ) || true === $attributes['graded'];
-		return array(
+		$mode   = in_array( $attributes['activityMode'] ?? '', array( 'flashcards', 'memory-pairs', 'hangman', 'spell-word' ), true ) ? $attributes['activityMode'] : 'standard';
+		$graded = 'standard' === $mode && ( ! isset( $attributes['graded'] ) || true === $attributes['graded'] );
+		$result = array(
 			'source'        => 'random' === ( $attributes['source'] ?? '' ) ? 'random' : 'selected',
 			'questionIds'   => $ids( $attributes['questionIds'] ?? array() ),
 			'skillIds'      => $ids( $attributes['skillIds'] ?? array() ),
@@ -65,6 +66,10 @@ final class QuestionPlayerBlock {
 			'graded'        => $graded,
 			'affectsSkills' => $graded && true === ( $attributes['affectsSkills'] ?? false ),
 		);
+		if ( 'standard' !== $mode ) {
+			$result['activityMode'] = $mode;
+		}
+		return $result;
 	}
 
 	/**
@@ -206,7 +211,7 @@ final class QuestionPlayerBlock {
 				'args'                => array(
 					'operation' => array(
 						'type'     => 'string',
-						'enum'     => array( 'start', 'resume', 'submit' ),
+						'enum'     => array( 'start', 'resume', 'submit', 'study' ),
 						'required' => true,
 					),
 					'session'   => array(
@@ -263,7 +268,8 @@ final class QuestionPlayerBlock {
 			)
 		);
 		foreach ( $posts as $post ) {
-			if ( QuestionPlayer::eligible( $post->ID, get_current_user_id() ) ) {
+			$snapshot = QuestionPlayer::eligible( $post->ID, get_current_user_id() );
+			if ( $snapshot && ( ! in_array( $request['activityMode'], array( 'flashcards', 'memory-pairs' ), true ) || 'matching' === $snapshot->get_type() ) && ( ! in_array( $request['activityMode'], array( 'hangman', 'spell-word' ), true ) || \OhMyLMS\Practice\WordActivity::answers( $snapshot ) ) ) {
 				$result[] = array(
 					'id'    => (int) $post->ID,
 					'title' => get_the_title( $post ),
@@ -290,6 +296,15 @@ final class QuestionPlayerBlock {
 		if ( 'start' === $request['operation'] ) {
 			return QuestionPlayer::start( $placement );
 		}
-		return QuestionPlayer::resume( $placement, (string) $request['session'], 'submit' === $request['operation'] ? $request['attempt'] ?? array() : null );
+		return QuestionPlayer::resume(
+			$placement,
+			(string) $request['session'],
+			'submit' === $request['operation'] ? $request['attempt'] ?? array() : null,
+			'study' === $request['operation'] ? array(
+				'card'     => $request['card'],
+				'value'    => $request['value'] ?? '',
+				'revision' => $request['revision'],
+			) : null
+		);
 	}
 }

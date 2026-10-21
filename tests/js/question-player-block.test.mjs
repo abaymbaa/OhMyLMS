@@ -36,6 +36,7 @@ test( 'the saved block contains references and outcome switches without assessme
 		'count',
 		'graded',
 		'affectsSkills',
+		'activityMode',
 	] );
 	assert.equal( block.attributes.graded.default, true );
 	assert.equal( block.attributes.affectsSkills.default, false );

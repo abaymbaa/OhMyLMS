@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
 	INTERACTIVE_TYPES,
+	languageTiles,
 	blankIds,
 	interactiveDefaults,
 	interactiveIssues,
@@ -43,7 +44,11 @@ test( 'choosing a type creates its default settings and no answer rows', () => {
 		assert.equal( patch.settings.type, type );
 		assert.deepEqual( patch.questions, [] );
 	}
-	const dropdown = questionTypePatch( { settings: {} }, 'dropdown-blanks', 1 );
+	const dropdown = questionTypePatch(
+		{ settings: {} },
+		'dropdown-blanks',
+		1
+	);
 	assert.deepEqual(
 		dropdown.settings.slots.map( ( slot ) => slot.id ),
 		[ '1', '2' ]
@@ -111,16 +116,41 @@ test( 'tiles are typed as words and orders as lines', () => {
 } );
 
 test( 'authors are warned about incomplete questions', () => {
-	assert.deepEqual( interactiveIssues( 'dropdown-blanks', interactiveDefaults( 'dropdown-blanks' ) ), [] );
-	assert.ok( interactiveIssues( 'categorize', interactiveDefaults( 'categorize' ) ).includes( 'groups' ) );
-	assert.deepEqual( interactiveIssues( 'multi-blank', interactiveDefaults( 'multi-blank' ) ), [] );
-	assert.ok( interactiveIssues( 'build-expression', interactiveDefaults( 'build-expression' ) ).includes( 'tiles' ) );
+	assert.deepEqual(
+		interactiveIssues(
+			'dropdown-blanks',
+			interactiveDefaults( 'dropdown-blanks' )
+		),
+		[]
+	);
+	assert.ok(
+		interactiveIssues(
+			'categorize',
+			interactiveDefaults( 'categorize' )
+		).includes( 'groups' )
+	);
+	assert.deepEqual(
+		interactiveIssues(
+			'multi-blank',
+			interactiveDefaults( 'multi-blank' )
+		),
+		[]
+	);
+	assert.ok(
+		interactiveIssues(
+			'build-expression',
+			interactiveDefaults( 'build-expression' )
+		).includes( 'tiles' )
+	);
 	const question = {
 		name: 'Pick',
 		settings: { type: 'build-expression', correct: [ '1', '+', '2' ] },
 	};
 	assert.ok( ! questionPreviewIssues( question ).includes( 'tiles' ) );
-	assert.equal( questionPreviewModel( question ).interactive.correct.length, 3 );
+	assert.equal(
+		questionPreviewModel( question ).interactive.correct.length,
+		3
+	);
 } );
 
 test( 'reports describe the expected answer of each new type', () => {
@@ -157,11 +187,16 @@ test( 'math expression questions start valid and warn when the answer is empty',
 	const defaults = interactiveDefaults( 'expression' );
 	assert.equal( defaults.form, 'any' );
 	assert.deepEqual( interactiveIssues( 'expression', defaults ), [] );
-	assert.deepEqual( interactiveIssues( 'expression', { answer: '  ' } ), [ 'answer' ] );
+	assert.deepEqual( interactiveIssues( 'expression', { answer: '  ' } ), [
+		'answer',
+	] );
 	const patch = questionTypePatch( { settings: {} }, 'expression', 1 );
 	assert.deepEqual( patch.questions, [] );
 	assert.equal( patch.settings.answer, defaults.answer );
-	assert.equal( interactiveDefaults( 'build-expression' ).equivalence, false );
+	assert.equal(
+		interactiveDefaults( 'build-expression' ).equivalence,
+		false
+	);
 	assert.deepEqual(
 		interactiveIssues( 'multi-blank', {
 			layout: 'inline',
@@ -180,7 +215,11 @@ test( 'math expression questions start valid and warn when the answer is empty',
 	);
 	assert.equal(
 		describeExpected( {
-			settings: { type: 'expression', answer: 'x=2', alternatives: [ 'x=-2' ] },
+			settings: {
+				type: 'expression',
+				answer: 'x=2',
+				alternatives: [ 'x=-2' ],
+			},
 		} ),
 		'x=2  or  x=-2'
 	);
@@ -198,47 +237,160 @@ test( 'every visual type starts valid and is warned about when broken', () => {
 	];
 	for ( const type of visual ) {
 		assert.ok( INTERACTIVE_TYPES.includes( type ), type );
-		assert.deepEqual( interactiveIssues( type, interactiveDefaults( type ) ), [], type );
+		assert.deepEqual(
+			interactiveIssues( type, interactiveDefaults( type ) ),
+			[],
+			type
+		);
 		const patch = questionTypePatch( { settings: {} }, type, 1 );
 		assert.deepEqual( patch.questions, [], type );
 		assert.equal( patch.settings.type, type );
 	}
-	assert.ok( interactiveIssues( 'number-line', { min: 0, max: 10, step: 1, target: 11 } ).includes( 'target' ) );
-	assert.ok( interactiveIssues( 'number-line', { min: 5, max: 5, step: 1, target: 5 } ).includes( 'range' ) );
-	assert.ok( interactiveIssues( 'number-line', { min: 0, max: 1000, step: 1, target: 5 } ).includes( 'step' ) );
-	assert.ok( interactiveIssues( 'shade-model', { parts: 4, answer: 5 } ).includes( 'shaded' ) );
-	assert.ok( interactiveIssues( 'count-blocks', { places: [ 'hundreds' ], target: 243 } ).includes( 'target' ) );
-	assert.ok( interactiveIssues( 'count-blocks', { places: [], target: 5 } ).includes( 'places' ) );
-	assert.ok( interactiveIssues( 'set-clock', { hour: 13, minute: 0 } ).includes( 'time' ) );
-	assert.ok( interactiveIssues( 'make-amount', { denominations: [ 1000, 500 ], target: 750 } ).includes( 'target' ) );
-	assert.ok( interactiveIssues( 'build-chart', { categories: [ { id: 'a', label: 'A' } ], max: 10, step: 1, values: {} } ).includes( 'values' ) );
-	assert.ok( interactiveIssues( 'grid-build', { rows: 3, cols: 3, constraints: {} } ).includes( 'conditions' ) );
-	assert.ok( interactiveIssues( 'grid-build', { rows: 3, cols: 3, constraints: { area: 12 } } ).includes( 'area' ) );
+	assert.ok(
+		interactiveIssues( 'number-line', {
+			min: 0,
+			max: 10,
+			step: 1,
+			target: 11,
+		} ).includes( 'target' )
+	);
+	assert.ok(
+		interactiveIssues( 'number-line', {
+			min: 5,
+			max: 5,
+			step: 1,
+			target: 5,
+		} ).includes( 'range' )
+	);
+	assert.ok(
+		interactiveIssues( 'number-line', {
+			min: 0,
+			max: 1000,
+			step: 1,
+			target: 5,
+		} ).includes( 'step' )
+	);
+	assert.ok(
+		interactiveIssues( 'shade-model', { parts: 4, answer: 5 } ).includes(
+			'shaded'
+		)
+	);
+	assert.ok(
+		interactiveIssues( 'count-blocks', {
+			places: [ 'hundreds' ],
+			target: 243,
+		} ).includes( 'target' )
+	);
+	assert.ok(
+		interactiveIssues( 'count-blocks', { places: [], target: 5 } ).includes(
+			'places'
+		)
+	);
+	assert.ok(
+		interactiveIssues( 'set-clock', { hour: 13, minute: 0 } ).includes(
+			'time'
+		)
+	);
+	assert.ok(
+		interactiveIssues( 'make-amount', {
+			denominations: [ 1000, 500 ],
+			target: 750,
+		} ).includes( 'target' )
+	);
+	assert.ok(
+		interactiveIssues( 'build-chart', {
+			categories: [ { id: 'a', label: 'A' } ],
+			max: 10,
+			step: 1,
+			values: {},
+		} ).includes( 'values' )
+	);
+	assert.ok(
+		interactiveIssues( 'grid-build', {
+			rows: 3,
+			cols: 3,
+			constraints: {},
+		} ).includes( 'conditions' )
+	);
+	assert.ok(
+		interactiveIssues( 'grid-build', {
+			rows: 3,
+			cols: 3,
+			constraints: { area: 12 },
+		} ).includes( 'area' )
+	);
 } );
 
 test( 'amounts and chart bars are edited without losing consistency', () => {
-	assert.deepEqual( parseAmounts( '5000, 1000 ;500 500 abc -3 2.5 100' ), [ 5000, 1000, 500, 100 ] );
-	const added = addCategory( { categories: [ { id: 'a', label: 'A' } ], values: { a: 3 } } );
+	assert.deepEqual(
+		parseAmounts( '5000, 1000 ;500 500 abc -3 2.5 100' ),
+		[ 5000, 1000, 500, 100 ]
+	);
+	const added = addCategory( {
+		categories: [ { id: 'a', label: 'A' } ],
+		values: { a: 3 },
+	} );
 	assert.equal( added.categories.length, 2 );
 	assert.equal( added.values[ added.categories[ 1 ].id ], 0 );
 	const removed = removeCategory( { ...added }, 'a' );
-	assert.deepEqual( Object.keys( removed.values ), [ added.categories[ 1 ].id ] );
+	assert.deepEqual( Object.keys( removed.values ), [
+		added.categories[ 1 ].id,
+	] );
 } );
 
 test( 'reports describe the expected answer of every visual type', () => {
 	const expected = ( settings ) => describeExpected( { settings } );
 	assert.equal( expected( { type: 'number-line', target: 3.5 } ), '3.5' );
-	assert.equal( expected( { type: 'fill-level', target: 750, unit: 'ml' } ), '750 ml' );
-	assert.equal( expected( { type: 'shade-model', answer: 3, parts: 8 } ), '3 / 8' );
-	assert.equal( expected( { type: 'count-blocks', target: 243 } ), '243' );
-	assert.equal( expected( { type: 'set-clock', hour: 3, minute: 5 } ), '3:05' );
-	assert.equal( expected( { type: 'make-amount', target: 3500, symbol: '₮' } ), '3500 ₮' );
 	assert.equal(
-		expected( { type: 'build-chart', categories: [ { id: 'a', label: 'Cats' } ], values: { a: 4 } } ),
+		expected( { type: 'fill-level', target: 750, unit: 'ml' } ),
+		'750 ml'
+	);
+	assert.equal(
+		expected( { type: 'shade-model', answer: 3, parts: 8 } ),
+		'3 / 8'
+	);
+	assert.equal( expected( { type: 'count-blocks', target: 243 } ), '243' );
+	assert.equal(
+		expected( { type: 'set-clock', hour: 3, minute: 5 } ),
+		'3:05'
+	);
+	assert.equal(
+		expected( { type: 'make-amount', target: 3500, symbol: '₮' } ),
+		'3500 ₮'
+	);
+	assert.equal(
+		expected( {
+			type: 'build-chart',
+			categories: [ { id: 'a', label: 'Cats' } ],
+			values: { a: 4 },
+		} ),
 		'Cats = 4'
 	);
 	assert.equal(
-		expected( { type: 'grid-build', constraints: { area: 12, perimeter: 14, rectangle: true } } ),
+		expected( {
+			type: 'grid-build',
+			constraints: { area: 12, perimeter: 14, rectangle: true },
+		} ),
 		'area 12, perimeter 14, rectangle'
 	);
+} );
+test( 'language tiles preserve repeated letters, graphemes and words', () => {
+	assert.deepEqual( languageTiles( 'үүл', 'letters' ), [ 'ү', 'ү', 'л' ] );
+	assert.deepEqual( languageTiles( 'e\u0301', 'letters' ), [ 'é' ] );
+	assert.deepEqual( languageTiles( 'I see a cloud', 'words' ), [
+		'I',
+		'see',
+		'a',
+		'cloud',
+	] );
+	assert.equal( languageTiles( '👩‍🏫', 'letters' ).length, 1 );
+} );
+test( 'automatic text answers require bounded accepted text', () => {
+	assert.deepEqual(
+		interactiveIssues( 'text-entry', interactiveDefaults( 'text-entry' ) ),
+		[]
+	);
+	for ( const accepted of [ [], [ '' ], [ {} ], Array( 51 ).fill( 'a' ) ] ) {
+		assert.ok( interactiveIssues( 'text-entry', { accepted } ).length );
+	}
 } );

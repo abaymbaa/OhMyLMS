@@ -1,5 +1,6 @@
 import {
 	createElement,
+	Fragment,
 	useContext,
 	useEffect,
 	useState,
@@ -26,6 +27,7 @@ import {
 import { createsCycle, flattenTree, skillTree } from './model.mjs';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
+import { ImportButton } from '../content-hub/ImportButton';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
 const EMPTY = {
 	id: 0,
@@ -90,16 +92,19 @@ export function SkillsPage() {
 				'ohmylms'
 			) }
 			actions={
-				<Button
-					variant="primary"
-					onClick={ () =>
-						setEditing( {
-							...EMPTY,
-						} )
-					}
-				>
-					{ __( 'Add skill', 'ohmylms' ) }
-				</Button>
+				<Fragment>
+					<ImportButton target="questions" withSkills />{ ' ' }
+					<Button
+						variant="primary"
+						onClick={ () =>
+							setEditing( {
+								...EMPTY,
+							} )
+						}
+					>
+						{ __( 'Add skill', 'ohmylms' ) }
+					</Button>
+				</Fragment>
 			}
 		>
 			{ error && (

@@ -35,7 +35,7 @@ Existing quiz documents are synthesized on read. When placements differ from sav
 
 Native screens expose the registry and API helpers and fire the established `ohmylms:extensions-ready` event. The existing `ohmylms_enqueue_extension_scripts` hook receives the native bundle handle on those screens. Registered quiz editor panels receive `{ quizId, native: true, hash }`; extensions that directly access the retired form store must adapt their panels to the native document/API context.
 
-The former form builders remain behind the temporary `OHMYLMS_FORM_AUTHORING` constant for stabilization and public factory compatibility. Normal navigation does not offer an editor choice. Defining this constant as true restores the former authoring routes and question forms. Remove the rollback implementation only after the stabilization release and extension compatibility review; shared answer controls and public API shims remain in use.
+The former quiz form editor has been removed. Quiz creation and former quiz routes always open Gutenberg, including when `OHMYLMS_FORM_AUTHORING` is enabled. The public `createQuizEditor` factory remains as a redirect adapter for existing integrations. Shared answer controls, API helpers and exported editor utilities remain for compatibility. The temporary constant still controls standalone question forms; it cannot restore the removed quiz editor.
 
 ## Verification
 

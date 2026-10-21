@@ -24,7 +24,7 @@ defined( 'ABSPATH' ) || exit;
  * build-expression correct = tiles in order; distractors = extra tiles; alternatives = other valid orders
  */
 final class Interactive {
-	const TYPES = array( 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', ...Visual::TYPES );
+	const TYPES = array( 'text-entry', 'dropdown-blanks', 'categorize', 'multi-blank', 'build-expression', 'expression', ...Visual::TYPES );
 
 	/** Marker such as {1} or {b2} inside a prompt or table cell. */
 	const MARKER = '/\{([a-z0-9_-]{1,20})\}/i';
@@ -88,6 +88,8 @@ final class Interactive {
 			return Visual::public_view( $type, $settings ); }
 		$view = array();
 		switch ( $type ) {
+			case 'text-entry':
+				return array( 'max_length' => 2000 );
 			case 'dropdown-blanks':
 				$view['text']  = (string) ( $settings['text'] ?? '' );
 				$view['slots'] = array();
@@ -164,6 +166,8 @@ final class Interactive {
 		if ( Visual::handles( $type ) ) {
 			return Visual::expected( $type, $settings ); }
 		switch ( $type ) {
+			case 'text-entry':
+				return array_values( (array) ( $settings['accepted'] ?? array() ) );
 			case 'dropdown-blanks':
 				return array_map(
 					static function ( $slot ) {
@@ -202,6 +206,8 @@ final class Interactive {
 		if ( Visual::handles( $type ) ) {
 			return Visual::has_key( $type, $settings ); }
 		switch ( $type ) {
+			case 'text-entry':
+				return isset( $settings['accepted'] );
 			case 'dropdown-blanks':
 				foreach ( (array) ( $settings['slots'] ?? array() ) as $slot ) {
 					if ( isset( $slot['answer'] ) || isset( $slot['answers'] ) ) {
@@ -228,6 +234,7 @@ final class Interactive {
 		$settings = (array) ( $question['settings'] ?? array() );
 		if ( self::has_key( $type, $settings ) ) {
 			$private = array(
+				'text-entry'       => array( 'accepted', 'case_sensitive', 'collapse_whitespace', 'ignore_punctuation' ),
 				'dropdown-blanks'  => array( 'dropdown_grading_version', 'partial_credit' ),
 				'categorize'       => array( 'key' ),
 				'multi-blank'      => array( 'blanks' ),
@@ -267,7 +274,7 @@ final class Interactive {
 	/** Registered once so the practice runner can depend on the controls. */
 	public static function register_assets() {
 		if ( ! wp_script_is( 'ohmylms-interactive', 'registered' ) ) {
-			wp_register_script( 'ohmylms-interactive', plugins_url( 'assets/js/interactive-controls.js', OHMYLMS_FILE ), array(), OHMYLMS_VERSION, true ); }
+			wp_register_script( 'ohmylms-interactive', plugins_url( 'assets/js/interactive-controls.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/interactive-controls.js' ), true ); }
 		if ( ! wp_script_is( 'ohmylms-interactive-visual', 'registered' ) ) {
 			wp_register_script( 'ohmylms-interactive-visual', plugins_url( 'assets/js/interactive-visual.js', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), OHMYLMS_VERSION, true ); }
 		if ( ! wp_style_is( 'ohmylms-interactive', 'registered' ) ) {
@@ -299,6 +306,8 @@ final class Interactive {
 		if ( Visual::handles( $type ) ) {
 			return Visual::grade( $type, $answer, $settings ); }
 		switch ( $type ) {
+			case 'text-entry':
+				return TextEntry::grade( $answer, $settings );
 			case 'dropdown-blanks':
 				return self::grade_dropdown( $answer, $settings );
 			case 'categorize':
@@ -546,6 +555,8 @@ final class Interactive {
 		if ( Visual::handles( $type ) ) {
 			return Visual::validate_settings( $type, $settings ); }
 		switch ( $type ) {
+			case 'text-entry':
+				return TextEntry::validate_settings( $settings );
 			case 'dropdown-blanks':
 				if ( isset( $settings['dropdown_grading_version'] ) && 2 !== $settings['dropdown_grading_version'] ) {
 					return __( 'Unsupported dropdown grading version.', 'ohmylms' );
@@ -621,6 +632,9 @@ final class Interactive {
 				}
 				return true;
 			case 'build-expression':
+				if ( isset( $settings['tile_mode'] ) && ( ! in_array( $settings['tile_mode'], array( 'math', 'words', 'letters' ), true ) || count( (array) ( $settings['correct'] ?? array() ) ) > 128 || ( 'math' !== $settings['tile_mode'] && ! empty( $settings['equivalence'] ) ) ) ) {
+					return __( 'Choose a supported tile mode with at most 128 answer tiles. Language tiles use exact sequence grading.', 'ohmylms' );
+				}
 				$correct = array_map( 'strval', (array) ( $settings['correct'] ?? array() ) );
 				if ( count( $correct ) < 2 || in_array( '', $correct, true ) ) {
 					return __( 'Enter the correct tiles in order (at least two).', 'ohmylms' ); }

@@ -141,158 +141,183 @@ export function CourseObjectives( { courseId } ) {
 							) }
 						</p>
 					) : (
-						<div className="ohmylms-objectives-table-wrap">
-							<table className="widefat striped">
-								<caption className="screen-reader-text">
-									{ __(
-										'Selected syllabus objectives and existing course content connections',
+						<details
+							className="ohmylms-objectives-details"
+							open={ data.mappings.length <= 5 }
+						>
+							<summary>
+								{ sprintf(
+									/* translators: 1: objectives, 2: objectives with content. */
+									__(
+										'%1$d objectives, %2$d with content linked',
 										'ohmylms'
-									) }
-								</caption>
-								<thead>
-									<tr>
-										<th scope="col">
-											{ __( 'Objective', 'ohmylms' ) }
-										</th>
-										<th scope="col">
-											{ __(
-												'Syllabus / edition',
-												'ohmylms'
-											) }
-										</th>
-										<th scope="col">
-											{ __(
-												'Linked content',
-												'ohmylms'
-											) }
-										</th>
-										<th scope="col">
-											{ __( 'Actions', 'ohmylms' ) }
-										</th>
-									</tr>
-								</thead>
-								<tbody>
-									{ data.mappings.map( ( row ) => {
-										const syllabus = data.syllabuses.find(
-											( item ) =>
-												item.id === row.syllabus_id
-										);
-										const lessons = row.content.filter(
-											( item ) => item.type === 'lesson'
-										).length;
-										const assessments =
-											row.content.length - lessons;
-										return (
-											<tr key={ objectiveKey( row ) }>
-												<td>
-													<strong>
-														{ row.code ||
-															`#${ row.term_id }` }{ ' ' }
-														·{ ' ' }
-														{ row.name ||
-															__(
-																'Unavailable objective',
-																'ohmylms'
-															) }
-													</strong>
-													<p>{ row.objective }</p>
-													<small>{ row.topic }</small>
-													{ row.missing && (
-														<p role="status">
-															{ __(
-																'This objective was removed from its source syllabus. Remove this mapping or choose a replacement.',
-																'ohmylms'
-															) }
-														</p>
-													) }
-												</td>
-												<td>
-													{ syllabus
-														? syllabusLabel(
-																syllabus
-															)
-														: __(
-																'Unavailable syllabus',
-																'ohmylms'
-															) }
-												</td>
-												<td>
-													{ row.content.length ? (
-														<details>
-															<summary>
-																{ sprintf(
-																	/* translators: 1: lessons, 2: assessment activities. */ __(
-																		'Lessons: %1$d · assessment activities: %2$d',
-																		'ohmylms'
-																	),
-																	lessons,
-																	assessments
+									),
+									data.mappings.length,
+									data.mappings.filter(
+										( row ) => row.content.length
+									).length
+								) }
+							</summary>
+							<div className="ohmylms-objectives-table-wrap">
+								<table className="widefat striped">
+									<caption className="screen-reader-text">
+										{ __(
+											'Selected syllabus objectives and existing course content connections',
+											'ohmylms'
+										) }
+									</caption>
+									<thead>
+										<tr>
+											<th scope="col">
+												{ __( 'Objective', 'ohmylms' ) }
+											</th>
+											<th scope="col">
+												{ __(
+													'Syllabus / edition',
+													'ohmylms'
+												) }
+											</th>
+											<th scope="col">
+												{ __(
+													'Linked content',
+													'ohmylms'
+												) }
+											</th>
+											<th scope="col">
+												{ __( 'Actions', 'ohmylms' ) }
+											</th>
+										</tr>
+									</thead>
+									<tbody>
+										{ data.mappings.map( ( row ) => {
+											const syllabus =
+												data.syllabuses.find(
+													( item ) =>
+														item.id ===
+														row.syllabus_id
+												);
+											const lessons = row.content.filter(
+												( item ) =>
+													item.type === 'lesson'
+											).length;
+											const assessments =
+												row.content.length - lessons;
+											return (
+												<tr key={ objectiveKey( row ) }>
+													<td>
+														<strong>
+															{ row.code ||
+																`#${ row.term_id }` }{ ' ' }
+															·{ ' ' }
+															{ row.name ||
+																__(
+																	'Unavailable objective',
+																	'ohmylms'
 																) }
-															</summary>
-															<ul>
-																{ row.content.map(
-																	(
-																		item
-																	) => (
-																		<li
-																			key={
-																				item.id
-																			}
-																		>
-																			{
-																				item.title
-																			}
-																		</li>
-																	)
+														</strong>
+														<p>{ row.objective }</p>
+														<small>
+															{ row.topic }
+														</small>
+														{ row.missing && (
+															<p role="status">
+																{ __(
+																	'This objective was removed from its source syllabus. Remove this mapping or choose a replacement.',
+																	'ohmylms'
 																) }
-															</ul>
-														</details>
-													) : (
-														__(
-															'No content linked',
-															'ohmylms'
-														)
-													) }
-												</td>
-												<td>
-													<Button
-														variant="tertiary"
-														isDestructive
-														disabled={ busy }
-														label={ sprintf(
-															/* translators: %s: objective name. */ __(
-																'Remove objective: %s',
-																'ohmylms'
-															),
-															row.name ||
-																row.term_id
+															</p>
 														) }
-														onClick={ () =>
-															save(
-																data.mappings.filter(
-																	( item ) =>
-																		objectiveKey(
-																			item
-																		) !==
-																		objectiveKey(
-																			row
-																		)
+													</td>
+													<td>
+														{ syllabus
+															? syllabusLabel(
+																	syllabus
 																)
+															: __(
+																	'Unavailable syllabus',
+																	'ohmylms'
+																) }
+													</td>
+													<td>
+														{ row.content.length ? (
+															<details>
+																<summary>
+																	{ sprintf(
+																		/* translators: 1: lessons, 2: assessment activities. */ __(
+																			'Lessons: %1$d · assessment activities: %2$d',
+																			'ohmylms'
+																		),
+																		lessons,
+																		assessments
+																	) }
+																</summary>
+																<ul>
+																	{ row.content.map(
+																		(
+																			item
+																		) => (
+																			<li
+																				key={
+																					item.id
+																				}
+																			>
+																				{
+																					item.title
+																				}
+																			</li>
+																		)
+																	) }
+																</ul>
+															</details>
+														) : (
+															__(
+																'No content linked',
+																'ohmylms'
 															)
-														}
-													>
-														{ __(
-															'Remove',
-															'ohmylms'
 														) }
-													</Button>
-												</td>
-											</tr>
-										);
-									} ) }
-								</tbody>
-							</table>
-						</div>
+													</td>
+													<td>
+														<Button
+															variant="tertiary"
+															isDestructive
+															disabled={ busy }
+															label={ sprintf(
+																/* translators: %s: objective name. */ __(
+																	'Remove objective: %s',
+																	'ohmylms'
+																),
+																row.name ||
+																	row.term_id
+															) }
+															onClick={ () =>
+																save(
+																	data.mappings.filter(
+																		(
+																			item
+																		) =>
+																			objectiveKey(
+																				item
+																			) !==
+																			objectiveKey(
+																				row
+																			)
+																	)
+																)
+															}
+														>
+															{ __(
+																'Remove',
+																'ohmylms'
+															) }
+														</Button>
+													</td>
+												</tr>
+											);
+										} ) }
+									</tbody>
+								</table>
+							</div>
+						</details>
 					) }
 					<p className="description">
 						{ __(

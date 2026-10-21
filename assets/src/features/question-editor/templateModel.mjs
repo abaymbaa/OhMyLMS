@@ -94,6 +94,8 @@ export function parseLines( text ) {
  */
 export function setPathSuggestions( type ) {
 	switch ( type ) {
+		case 'text-entry':
+			return [ 'accepted.0' ];
 		case 'numerical':
 		case 'expression':
 		case 'shade-model':

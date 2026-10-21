@@ -123,6 +123,22 @@ export function createCourseListItem( readRuntime ) {
 								) }
 							</Controls.TextWP>
 						</v.Link>
+						{ Number( course?.syllabus_id ) > 0 && (
+							<span className="ohmylms-course-badge">
+								{ ( 0, I18n.__ )( 'Syllabus', 'ohmylms' ) }
+							</span>
+						) }
+						{ course?.status === 'draft' &&
+							[ 'Untitled', 'Untitled Course' ].includes(
+								course?.name
+							) && (
+								<span className="ohmylms-course-badge is-muted">
+									{ ( 0, I18n.__ )(
+										'Unnamed draft',
+										'ohmylms'
+									) }
+								</span>
+							) }
 						<Controls.FlexWP
 							align={ 'center' }
 							justify={ 'flex-start' }

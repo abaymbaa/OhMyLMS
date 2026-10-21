@@ -6,6 +6,7 @@ import './NativeQuestionSettings';
 import { createElement, useEffect, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { registerPlugin } from '@wordpress/plugins';
+import { useBlankPlaceholderTitle } from './useBlankPlaceholderTitle';
 import { PluginDocumentSettingPanel } from '@wordpress/editor';
 // eslint-disable-next-line @wordpress/no-unsafe-wp-apis -- Core exposes the post editor back-button SlotFill under this name; the settings panel retains a return link if unavailable.
 import { __experimentalMainDashboardButton as EditorBackButton } from '@wordpress/edit-post';
@@ -167,6 +168,7 @@ function LessonMedia( { label, value, mediaType, onChange } ) {
  * @return {Element|null} Lesson panels.
  */
 function LessonSettings() {
+	useBlankPlaceholderTitle();
 	const { postType, postId, settings } = useSelect(
 		( select ) => ( {
 			postType: select( 'core/editor' ).getCurrentPostType(),

@@ -43,6 +43,9 @@ export function SkillPicker( {
 } ) {
 	const [ search, setSearch ] = useState( '' );
 	const [ results, setResults ] = useState( null );
+	const [ page, setPage ] = useState( 1 );
+	const [ pages, setPages ] = useState( 1 );
+	const [ more, setMore ] = useState( false );
 	const [ selected, setSelected ] = useState(
 		() => new Map( initial.map( ( skill ) => [ skill.id, skill ] ) )
 	);
@@ -93,6 +96,8 @@ export function SkillPicker( {
 			searchTargets( { type: 'skill', search, course: courseId } )
 				.then( ( data ) => {
 					if ( id === latest.current ) {
+						setPage( 1 );
+						setPages( data.pages || 1 );
 						setResults(
 							( data.items || [] ).map( ( row ) => ( {
 								id: row.id,
@@ -115,6 +120,34 @@ export function SkillPicker( {
 		}, 250 );
 		return () => clearTimeout( timer );
 	}, [ search, courseId ] );
+
+	async function loadMore() {
+		setMore( true );
+		try {
+			const data = await searchTargets( {
+				type: 'skill',
+				search,
+				course: courseId,
+				page: page + 1,
+			} );
+			setPage( page + 1 );
+			setPages( data.pages || pages );
+			setResults( ( current ) => [
+				...( current || [] ),
+				...( data.items || [] ).map( ( row ) => ( {
+					id: row.id,
+					name: row.title,
+					code: row.code,
+					questions: row.questions,
+				} ) ),
+			] );
+		} catch ( cause ) {
+			setError(
+				cause.message || __( 'Could not load skills.', 'ohmylms' )
+			);
+		}
+		setMore( false );
+	}
 
 	const toggle = ( skill, checked ) =>
 		setSelected( ( current ) => {
@@ -255,6 +288,16 @@ export function SkillPicker( {
 							{ ( results || [] )
 								.filter( ( skill ) => ! placed.has( skill.id ) )
 								.map( ( skill ) => skillCheckbox( skill ) ) }
+							{ page < pages && (
+								<Button
+									variant="link"
+									isBusy={ more }
+									disabled={ more }
+									onClick={ loadMore }
+								>
+									{ __( 'Show more skills', 'ohmylms' ) }
+								</Button>
+							) }
 						</div>
 					</details>
 				) }

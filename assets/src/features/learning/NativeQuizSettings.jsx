@@ -18,6 +18,7 @@ import { downloadText } from '../content-hub/quizExchange.mjs';
 import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { saveQuizForPreview } from './quizPreview.mjs';
+import { useBlankPlaceholderTitle } from './useBlankPlaceholderTitle';
 
 /**
  * Open a fresh player session after the native document and bank edits are saved.
@@ -153,6 +154,7 @@ function QuizPreviewAction() {
  * @return {Element|null} Native quiz sidebar.
  */
 function NativeQuizSettings() {
+	useBlankPlaceholderTitle();
 	const { postType, postId } = useSelect(
 		( getStore ) => ( {
 			postType: getStore( 'core/editor' ).getCurrentPostType(),
@@ -177,7 +179,7 @@ function NativeQuizSettings() {
 			>
 				<p>
 					{ __(
-						'Use the block inserter to add paragraphs, headings, images and Ohmylms Question blocks. Question edits save automatically. Use Gutenberg’s Save button to save the quiz. Drag question blocks or use Gutenberg’s move controls to set their order.',
+						'Use the block inserter to add paragraphs, headings, images and OhMyLMS Question blocks. Question edits save automatically. Use Gutenberg’s Save button to save the quiz. Drag question blocks or use Gutenberg’s move controls to set their order.',
 						'ohmylms'
 					) }
 				</p>

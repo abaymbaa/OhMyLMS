@@ -324,6 +324,7 @@ final class Catalog {
 			'chapters'            => self::chapters( $course_id ),
 			'skills'              => $skills,
 			'attachments'         => $attachments,
+			'readiness'           => CourseProgram::readiness_report( $draft, (int) $course_id ),
 		);
 	}
 
@@ -573,14 +574,20 @@ final class Catalog {
 			$placed = 'skill' === $type ? array_map( 'intval', array_column( $draft['outcomes'], 'term_id' ) ) : array_map( 'intval', array_column( $draft['items'], 'content_id' ) );
 		}
 		if ( 'skill' === $type ) {
+			$per   = 40;
+			$page  = max( 1, (int) $page );
+			$query = array(
+				'taxonomy'   => Taxonomy::NAME,
+				'hide_empty' => false,
+				'search'     => (string) $search,
+				'exclude'    => $placed,
+			);
+			$total = (int) get_terms( $query + array( 'fields' => 'count' ) );
 			$terms = get_terms(
-				array(
-					'taxonomy'   => Taxonomy::NAME,
-					'hide_empty' => false,
-					'search'     => (string) $search,
-					'orderby'    => 'name',
-					'number'     => 40,
-					'exclude'    => $placed,
+				$query + array(
+					'orderby' => 'name',
+					'number'  => $per,
+					'offset'  => ( $page - 1 ) * $per,
 				)
 			);
 			return array(
@@ -595,7 +602,8 @@ final class Catalog {
 					},
 					is_array( $terms ) ? $terms : array()
 				),
-				'pages' => 1,
+				'pages' => max( 1, (int) ceil( $total / $per ) ),
+				'total' => $total,
 			);
 		}
 		$post_type = self::post_type( $type );

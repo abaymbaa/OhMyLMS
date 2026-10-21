@@ -41,6 +41,7 @@ import {
 } from './model.mjs';
 import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
+import { ImportButton } from '../content-hub/ImportButton';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
 import { QuestionForm } from '../question-editor/QuestionForm';
@@ -371,7 +372,8 @@ function QuestionsTab() {
 							}
 						>
 							{ __( 'New question', 'ohmylms' ) }
-						</Button>
+						</Button>{ ' ' }
+						<ImportButton target="questions" />
 					</div>
 				</div>
 				{ error && (

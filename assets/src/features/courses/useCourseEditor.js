@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from '@wordpress/element';
+import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { loadCourse, saveCourseWithChapters, updateCourse } from './api.mjs';
@@ -28,8 +28,24 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 	const [ saving, setSaving ] = useState( false );
 	const [ error, setError ] = useState( null );
 	const [ autoSave, setAutoSave ] = useState( false );
+	const [ savedKey, setSavedKey ] = useState( null );
+	const [ failedKey, setFailedKey ] = useState( null );
+	const [ savedAt, setSavedAt ] = useState( null );
 	const inFlight = useRef( false );
 	const generation = useRef( 0 );
+	// What a save would write: the title, the description and the units with their content.
+	const currentKey = useMemo(
+		() =>
+			JSON.stringify( [
+				state.course?.name,
+				state.course?.description,
+				orderedChapters( state.chapters ),
+			] ),
+		[ state.course?.name, state.course?.description, state.chapters ]
+	);
+	const dirty = ! loading && savedKey !== null && savedKey !== currentKey;
+	const latestKey = useRef( currentKey );
+	latestKey.current = currentKey;
 	const latestCourse = useRef( state.course );
 	latestCourse.current = state.course;
 	useEffect( () => {
@@ -84,6 +100,7 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 			return false;
 		}
 		const current = generation.current;
+		const submittedKey = latestKey.current;
 		inFlight.current = true;
 		setSaving( true );
 		setError( null );
@@ -102,6 +119,9 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 			actions.setCourse(
 				mergeSavedCourse( saved, state.course, latestCourse.current )
 			);
+			setSavedKey( submittedKey );
+			setFailedKey( null );
+			setSavedAt( new Date() );
 			if ( ! silent ) {
 				const message =
 					section === 'settings'
@@ -146,6 +166,7 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 			return true;
 		} catch ( cause ) {
 			if ( current === generation.current ) {
+				setFailedKey( submittedKey );
 				setError(
 					cause.message || __( 'Could not save course.', 'ohmylms' )
 				);
@@ -159,6 +180,44 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 			}
 		}
 	}
+	// The baseline is whatever was loaded, so only later edits count as unsaved.
+	useEffect( () => {
+		if ( ! loading ) {
+			setSavedKey( latestKey.current );
+		}
+	}, [ loading, courseId ] );
+	// Drafts save themselves shortly after an edit; a live course is never changed silently.
+	useEffect( () => {
+		const editable = [ 'draft', 'auto-draft', 'pending' ].includes(
+			state.course?.status
+		);
+		if (
+			! dirty ||
+			saving ||
+			! editable ||
+			failedKey === currentKey ||
+			enableSpin
+		) {
+			return undefined;
+		}
+		const timer = setTimeout( () => {
+			save( 'draft', undefined, undefined, { silent: true } );
+		}, 800 );
+		return () => clearTimeout( timer );
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- Restart the timer on each edit.
+	}, [ dirty, currentKey, saving, failedKey, state.course?.status ] );
+	// Never lose edits to a tab close or a full-page jump (the quiz and lesson editors are separate pages).
+	useEffect( () => {
+		if ( ! dirty ) {
+			return undefined;
+		}
+		const warn = ( event ) => {
+			event.preventDefault();
+			event.returnValue = '';
+		};
+		window.addEventListener( 'beforeunload', warn );
+		return () => window.removeEventListener( 'beforeunload', warn );
+	}, [ dirty ] );
 	useEffect( () => {
 		if ( autoSave && ! loading ) {
 			save( undefined, undefined, undefined, {
@@ -186,6 +245,8 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 		actions,
 		loading,
 		saving,
+		dirty,
+		savedAt,
 		error,
 		save,
 		setAutoSave,

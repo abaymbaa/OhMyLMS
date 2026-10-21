@@ -1,6 +1,7 @@
 /** Pure helpers for the interactive question types (dropdown sentence, sorting, multi-blank, tiles). */
 import { dropdownAnswers } from './dropdownModel.mjs';
 export const INTERACTIVE_TYPES = [
+	'text-entry',
 	'dropdown-blanks',
 	'categorize',
 	'multi-blank',
@@ -48,6 +49,13 @@ export function markerIds( text ) {
  */
 export function interactiveDefaults( type ) {
 	switch ( type ) {
+		case 'text-entry':
+			return {
+				accepted: [ 'Answer' ],
+				case_sensitive: false,
+				collapse_whitespace: true,
+				ignore_punctuation: false,
+			};
 		case 'dropdown-blanks':
 			return {
 				text: 'The slope is {1}, so the line {2}.',
@@ -323,6 +331,20 @@ export function interactiveIssues( type, settings = {} ) {
 		return [];
 	}
 	const issues = [];
+	if (
+		type === 'text-entry' &&
+		( ! Array.isArray( settings.accepted ) ||
+			! settings.accepted.length ||
+			settings.accepted.length > 50 ||
+			settings.accepted.some(
+				( answer ) =>
+					typeof answer !== 'string' ||
+					! answer.trim() ||
+					answer.length > 2000
+			) )
+	) {
+		issues.push( 'accepted' );
+	}
 	if ( type === 'dropdown-blanks' ) {
 		const slots = settings.slots || [];
 		if ( ! markerIds( settings.text ).length || ! slots.length ) {
@@ -572,4 +594,25 @@ export function visualIssues( type, s ) {
 		}
 	}
 	return issues;
+}
+
+/**
+ * Tokenize language tiles without splitting combining marks or repeated letters.
+ * @param {string} text Authored answer.
+ * @param {string} mode Tile mode.
+ * @return {Array} Tiles in answer order.
+ */
+export function languageTiles( text, mode = 'words' ) {
+	const value = String( text || '' ).normalize( 'NFC' );
+	if ( mode !== 'letters' ) {
+		return tilesFromText( value );
+	}
+	if ( typeof Intl.Segmenter === 'function' ) {
+		return [
+			...new Intl.Segmenter( undefined, {
+				granularity: 'grapheme',
+			} ).segment( value ),
+		].map( ( part ) => part.segment );
+	}
+	return value.match( /\P{M}\p{M}*|\p{M}+/gu ) || [];
 }

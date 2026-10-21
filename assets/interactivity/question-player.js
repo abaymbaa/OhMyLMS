@@ -31,11 +31,12 @@ export function mountPlayer( root ) {
 		error.textContent = text;
 		error.hidden = ! text;
 	};
-	const request = async ( operation, form = null ) => {
+	const request = async ( operation, form = null, extra = {} ) => {
 		if ( busy ) {
 			return;
 		}
 		busy = true;
+		const focusedCard = document.activeElement?.dataset?.cardId;
 		message();
 		root.setAttribute( 'aria-busy', 'true' );
 		start.disabled = true;
@@ -48,6 +49,9 @@ export function mountPlayer( root ) {
 			);
 			body.set( 'operation', operation );
 			body.set( 'session', session );
+			for ( const [ key, value ] of Object.entries( extra ) ) {
+				body.set( key, value );
+			}
 			const response = await fetch( config.endpoint, {
 				method: 'POST',
 				credentials: 'same-origin',
@@ -63,7 +67,19 @@ export function mountPlayer( root ) {
 			}
 			session = data.session;
 			remember( session );
-			render( data );
+			await render( data );
+			if ( focusedCard ) {
+				const cards = [ ...stage.querySelectorAll( '[data-card-id]' ) ];
+				const target =
+					cards.find(
+						( card ) =>
+							card.dataset.cardId === focusedCard &&
+							! card.disabled
+					) || cards.find( ( card ) => ! card.disabled );
+				(
+					target || stage.querySelector( 'button:not(:disabled)' )
+				)?.focus();
+			}
 		} catch ( failure ) {
 			message(
 				failure.message ||
@@ -99,7 +115,7 @@ export function mountPlayer( root ) {
 		node.addEventListener( 'click', action );
 		return node;
 	};
-	const render = ( data ) => {
+	const render = async ( data ) => {
 		cleanups.forEach( ( cleanup ) => cleanup() );
 		cleanups = [];
 		stage.replaceChildren();
@@ -115,6 +131,33 @@ export function mountPlayer( root ) {
 					'ohmylms-question-player-preview'
 				)
 			);
+		}
+		if ( [ 'hangman', 'spell-word' ].includes( data.activityMode ) ) {
+			const { renderWord } = await import( './word-player.js' );
+			renderWord(
+				stage,
+				data,
+				( card, value ) =>
+					request( 'study', null, {
+						card,
+						value,
+						revision: data.revision,
+					} ),
+				() => request( 'start' )
+			);
+			stage.querySelector( 'input, button' )?.focus();
+			return;
+		}
+		if ( data.activityMode ) {
+			const { renderStudy } = await import( './study-player.js' );
+			renderStudy(
+				stage,
+				data,
+				( card, revision ) =>
+					request( 'study', null, { card, revision } ),
+				() => request( 'start' )
+			);
+			return;
 		}
 		if ( data.status === 'complete' ) {
 			const heading = element(

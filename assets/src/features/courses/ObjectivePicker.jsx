@@ -11,9 +11,11 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import {
+	defaultSyllabusId,
 	filterObjectives,
 	objectiveKey,
 	objectiveRequest,
+	rememberSyllabus,
 	syllabusLabel,
 } from './objectives.mjs';
 
@@ -35,8 +37,8 @@ export function ObjectivePicker( {
 	onClose,
 	onSave,
 } ) {
-	const [ syllabusId, setSyllabusId ] = useState(
-		String( data.syllabuses[ 0 ]?.id || '' )
+	const [ syllabusId, setSyllabusId ] = useState( () =>
+		defaultSyllabusId( data.syllabuses, data.mappings, window.localStorage )
 	);
 	const [ rows, setRows ] = useState( null );
 	const [ loadError, setLoadError ] = useState( '' );
@@ -69,6 +71,21 @@ export function ObjectivePicker( {
 	const saved = new Set( data.mappings.map( objectiveKey ) );
 	const available = filterObjectives( rows || [], search, topic );
 	const limitReached = data.mappings.length + selected.size >= data.limit;
+	const choosable = available.filter(
+		( row ) => ! saved.has( objectiveKey( row ) )
+	);
+	function selectShown() {
+		setSelected( ( current ) => {
+			const next = new Map( current );
+			for ( const row of choosable ) {
+				if ( data.mappings.length + next.size >= data.limit ) {
+					break;
+				}
+				next.set( objectiveKey( row ), row );
+			}
+			return next;
+		} );
+	}
 	function toggle( row, checked ) {
 		setSelected( ( current ) => {
 			const next = new Map( current );
@@ -110,6 +127,7 @@ export function ObjectivePicker( {
 				} ) ) }
 				disabled={ busy }
 				onChange={ ( value ) => {
+					rememberSyllabus( value, window.localStorage );
 					setSyllabusId( value );
 					setTopic( '' );
 				} }
@@ -145,6 +163,44 @@ export function ObjectivePicker( {
 					className="ohmylms-objective-results"
 					aria-busy={ ! rows && ! loadError }
 				>
+					{ rows && choosable.length > 0 && (
+						<div className="ohmylms-objective-bulk">
+							<Button
+								variant="secondary"
+								size="small"
+								disabled={ busy || limitReached }
+								onClick={ selectShown }
+							>
+								{ topic
+									? sprintf(
+											/* translators: %d: number of objectives in the chosen topic. */
+											__(
+												'Select all %d in this topic',
+												'ohmylms'
+											),
+											choosable.length
+										)
+									: sprintf(
+											/* translators: %d: number of objectives shown. */
+											__(
+												'Select all %d shown',
+												'ohmylms'
+											),
+											choosable.length
+										) }
+							</Button>
+							{ selected.size > 0 && (
+								<Button
+									variant="tertiary"
+									size="small"
+									disabled={ busy }
+									onClick={ () => setSelected( new Map() ) }
+								>
+									{ __( 'Clear selection', 'ohmylms' ) }
+								</Button>
+							) }
+						</div>
+					) }
 					{ ! rows && ! loadError && <Spinner /> }
 					{ rows && ! available.length && (
 						<p>

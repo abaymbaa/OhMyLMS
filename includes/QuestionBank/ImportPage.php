@@ -9,7 +9,7 @@ namespace OhMyLMS\QuestionBank;
 
 defined( 'ABSPATH' ) || exit;
 
-/** OhMyLMS -> Import questions. */
+/** Question review and bulk import page (no submenu entry; imports start in Content Hub > Import). */
 final class ImportPage {
 
 	const SLUG      = 'ohmylms-import-questions';
@@ -21,9 +21,12 @@ final class ImportPage {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 32 );
 	}
 
-	/** Add the page under the OhMyLMS menu. */
+	/**
+	 * Keep the page reachable without a menu entry: importing now lives in Content Hub > Import,
+	 * and this page remains for reviewing questions that AI assistants added.
+	 */
 	public static function menu() {
-		add_submenu_page( 'ohmylms', __( 'Import questions', 'ohmylms' ), __( 'Import questions', 'ohmylms' ), 'edit_posts', self::SLUG, array( __CLASS__, 'render' ) );
+		add_submenu_page( 'options.php', __( 'Review imported questions', 'ohmylms' ), __( 'Review imported questions', 'ohmylms' ), 'edit_posts', self::SLUG, array( __CLASS__, 'render' ) );
 	}
 
 	/**

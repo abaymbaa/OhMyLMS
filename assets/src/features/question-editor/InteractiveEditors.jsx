@@ -20,9 +20,9 @@ import {
 import { listToNumbers, numbersToList } from '../question-bank/model.mjs';
 import {
 	blankIds,
+	languageTiles,
 	nextId,
 	removeBucket,
-	sequencesFromText,
 	syncBlanks,
 	syncSlots,
 	tilesFromText,
@@ -917,17 +917,52 @@ export function MultiBlankEditor( {
  * @param root0.onChange
  */
 export function BuildExpressionEditor( { value, onChange } ) {
+	const mode = value.tile_mode || 'math';
+	const separator = mode === 'letters' ? '' : ' ';
+	const parse = ( text ) =>
+		mode === 'math' ? tilesFromText( text ) : languageTiles( text, mode );
 	return (
 		<div className="ohmylms-interactive-editor">
+			<SelectControl
+				label={ __( 'Build from', 'ohmylms' ) }
+				help={ __(
+					'Changing mode converts the answer and clears distractors and alternative orders. Use Undo to restore the previous definition.',
+					'ohmylms'
+				) }
+				value={ mode }
+				options={ [
+					{ value: 'math', label: __( 'Math tiles', 'ohmylms' ) },
+					{
+						value: 'words',
+						label: __( 'Words (sentence ordering)', 'ohmylms' ),
+					},
+					{
+						value: 'letters',
+						label: __( 'Letters (anagram)', 'ohmylms' ),
+					},
+				] }
+				onChange={ ( tileMode ) =>
+					onChange( {
+						tile_mode: tileMode,
+						correct: languageTiles(
+							( value.correct || [] ).join( separator ),
+							tileMode
+						),
+						distractors: [],
+						alternatives: [],
+						equivalence: false,
+					} )
+				}
+			/>
 			<ParsedField
 				label={ __(
-					'Correct tiles in order (separate tiles with spaces)',
+					'Correct answer (letters are split automatically in anagram mode)',
 					'ohmylms'
 				) }
 				help={ __( 'Example: 3 x + 4 = 10', 'ohmylms' ) }
 				value={ value.correct }
-				format={ ( list ) => ( list || [] ).join( ' ' ) }
-				parse={ tilesFromText }
+				format={ ( list ) => ( list || [] ).join( separator ) }
+				parse={ parse }
 				onChange={ ( correct ) =>
 					onChange( {
 						correct,
@@ -940,8 +975,8 @@ export function BuildExpressionEditor( { value, onChange } ) {
 					'ohmylms'
 				) }
 				value={ value.distractors }
-				format={ ( list ) => ( list || [] ).join( ' ' ) }
-				parse={ tilesFromText }
+				format={ ( list ) => ( list || [] ).join( separator ) }
+				parse={ parse }
 				onChange={ ( distractors ) =>
 					onChange( {
 						distractors,
@@ -960,28 +995,34 @@ export function BuildExpressionEditor( { value, onChange } ) {
 				) }
 				value={ value.alternatives }
 				format={ ( list ) =>
-					( list || [] ).map( ( s ) => s.join( ' ' ) ).join( '\n' )
+					( list || [] )
+						.map( ( s ) => s.join( separator ) )
+						.join( '\n' )
 				}
-				parse={ sequencesFromText }
+				parse={ ( text ) =>
+					text.split( /\r?\n/ ).filter( Boolean ).map( parse )
+				}
 				onChange={ ( alternatives ) =>
 					onChange( {
 						alternatives,
 					} )
 				}
 			/>
-			<CheckboxControl
-				label={ __(
-					'Also accept equivalent expressions (for example 3x+4 for 4+3x)',
-					'ohmylms'
-				) }
-				checked={ !! value.equivalence }
-				onChange={ ( equivalence ) =>
-					onChange( {
-						equivalence,
-					} )
-				}
-			/>
-			{ value.equivalence && (
+			{ mode === 'math' && (
+				<CheckboxControl
+					label={ __(
+						'Also accept equivalent expressions (for example 3x+4 for 4+3x)',
+						'ohmylms'
+					) }
+					checked={ !! value.equivalence }
+					onChange={ ( equivalence ) =>
+						onChange( {
+							equivalence,
+						} )
+					}
+				/>
+			) }
+			{ mode === 'math' && value.equivalence && (
 				<FormSelect
 					value={ value.form }
 					onChange={ ( form ) =>
@@ -1004,6 +1045,18 @@ export function BuildExpressionEditor( { value, onChange } ) {
 export function InteractivePreview( { type, settings = {} } ) {
 	const _controlId = useId();
 	const [ picked, setPicked ] = useState( [] );
+	if ( type === 'text-entry' ) {
+		return (
+			<label htmlFor={ `${ _controlId }-text-entry` }>
+				{ __( 'Your answer', 'ohmylms' ) }
+				<input
+					id={ `${ _controlId }-text-entry` }
+					type="text"
+					maxLength={ 2000 }
+				/>
+			</label>
+		);
+	}
 	if ( VISUAL_TYPES.includes( type ) ) {
 		return <VisualPreview type={ type } settings={ settings } />;
 	}
@@ -1166,13 +1219,18 @@ export function InteractivePreview( { type, settings = {} } ) {
 								)
 							}
 						>
-							{ tile.text }
+							{ tile.text === ' ' ? '␣' : tile.text }
 						</button>
 					) ) }
 				</div>
 				<div className="ohmylms-build-bank">
 					{ tiles
-						.filter( ( tile ) => ! picked.includes( tile ) )
+						.filter(
+							( tile ) =>
+								! picked.some(
+									( placed ) => placed.index === tile.index
+								)
+						)
 						.reverse()
 						.map( ( tile ) => (
 							<button
@@ -1183,7 +1241,7 @@ export function InteractivePreview( { type, settings = {} } ) {
 									setPicked( [ ...picked, tile ] )
 								}
 							>
-								{ tile.text }
+								{ tile.text === ' ' ? '␣' : tile.text }
 							</button>
 						) ) }
 				</div>
@@ -1191,4 +1249,54 @@ export function InteractivePreview( { type, settings = {} } ) {
 		);
 	}
 	return null;
+}
+
+/**
+ * Accepted text answers using explicit automatic comparison rules.
+ * @param root0
+ * @param root0.value
+ * @param root0.onChange
+ */
+export function TextEntryEditor( { value, onChange } ) {
+	return (
+		<div className="ohmylms-interactive-editor">
+			<ParsedField
+				multiline
+				label={ __( 'Accepted answers (one per line)', 'ohmylms' ) }
+				value={ value.accepted }
+				format={ ( list ) => ( list || [] ).join( '\n' ) }
+				parse={ ( text ) =>
+					text.split( /\r?\n/ ).filter( ( line ) => line.trim() )
+				}
+				onChange={ ( accepted ) => onChange( { accepted } ) }
+			/>
+			<CheckboxControl
+				label={ __( 'Case-sensitive answers', 'ohmylms' ) }
+				checked={ !! value.case_sensitive }
+				onChange={ ( caseSensitive ) =>
+					onChange( { case_sensitive: caseSensitive } )
+				}
+			/>
+			<CheckboxControl
+				label={ __( 'Treat repeated spaces as one', 'ohmylms' ) }
+				checked={ !! value.collapse_whitespace }
+				onChange={ ( collapse ) =>
+					onChange( { collapse_whitespace: collapse } )
+				}
+			/>
+			<CheckboxControl
+				label={ __( 'Ignore punctuation', 'ohmylms' ) }
+				checked={ !! value.ignore_punctuation }
+				onChange={ ( ignore ) =>
+					onChange( { ignore_punctuation: ignore } )
+				}
+			/>
+			<p>
+				{ __(
+					'Leading and trailing spaces are ignored. Only the accepted answers and these rules determine correctness.',
+					'ohmylms'
+				) }
+			</p>
+		</div>
+	);
 }

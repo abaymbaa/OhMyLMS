@@ -167,9 +167,23 @@
 
 .ohmylms-choice-card-header .ohmylms-rich-content-control > [role="textbox"] {
 	min-height: 50px;
-	padding-top: 14px;
+	padding: 0;
 	border-bottom-color: #8c8f94;
 	background: #f8f9fa;
+}
+
+.ohmylms-choice-card-header
+	.ohmylms-rich-content-control
+	> [role="textbox"]
+	> :first-child {
+	margin-top: 0;
+}
+
+.ohmylms-choice-card-header
+	.ohmylms-rich-content-control
+	> [role="textbox"]
+	> :last-child {
+	margin-bottom: 0;
 }
 
 .ohmylms-choice-card-header select {
@@ -235,6 +249,20 @@
 	margin-top: 12px;
 	padding-top: 8px;
 	border-top: 1px solid #dcdcde;
+}
+
+.ohmylms-choice-variables {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.ohmylms-choice-variables .components-toggle-control :where(label:empty) {
+	display: none;
+}
+
+.ohmylms-choice-card-footer .ohmylms-choice-variables > .components-button {
+	padding: 0;
 }
 
 .ohmylms-choice-card-footer .components-base-control {
@@ -696,4 +724,8 @@
 
 .ohmylms-choice-card .ohmylms-interactive-row[open] > summary {
  margin-bottom: 12px;
+}
+
+.ohmylms-choice-card.ohmylms-compact-choice textarea {
+	padding: 0;
 }

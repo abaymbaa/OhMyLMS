@@ -1,10 +1,7 @@
-// Form-specific authoring checks explicitly exercise the stabilization rollback path.
-const {useFormAuthoring}=require('./helpers/form-authoring.cjs');
 // Assessment engine end-to-end checks on the isolated test site: exam page breaks, autosave and
 // resume, keyboard and mobile use, lesson checks with guest claim, skill practice, the school
 // portal skill views, and the skills/question bank admin pages.
 const { test, expect } = require('@playwright/test');
-test.beforeEach(async ({page}) => { await useFormAuthoring(page); });
 const fs = require('node:fs');
 const path = require('node:path');
 const { execFileSync } = require('node:child_process');
@@ -60,16 +57,22 @@ test('author adds a page break and publishes the exam', async ({ page }) => {
   const errors = trackErrors(page);
   await login(page, admin().username, admin().password);
   await page.goto(`/wp-admin/admin.php?page=ohmylms#/quiz-edit/${state.quiz}`);
-  await page
-    .getByRole('button', { name: 'Assessment settings (exam, sections, timing)' })
-    .click();
+  await page.waitForURL((url) => url.pathname.endsWith('/post.php'));
+  await page.waitForFunction(() => window.wp?.plugins?.getPlugin('ohmylms-native-quiz-settings'));
+  await page.evaluate(() => wp.data.dispatch('core/edit-post').openGeneralSidebar('edit-post/document'));
+  const assessmentPanel = page.getByRole('button', {name: 'Assessment and pools', exact: true});
+  await expect(assessmentPanel).toBeVisible();
+  if ((await assessmentPanel.getAttribute('aria-expanded')) !== 'true') await assessmentPanel.click();
   const breaks = page.getByRole('checkbox', { name: 'Start on a new page' });
   await expect(breaks).toHaveCount(2);
   await breaks.nth(1).check();
   await page.getByRole('button', { name: 'Save assessment settings' }).click();
   await expect(page.getByText('Assessment settings saved').first()).toBeVisible();
-  await page.getByRole('button', { name: 'Publish', exact: true }).click();
-  await expect(page.getByText('Published revision 2').first()).toBeVisible();
+  await page.evaluate(async () => {
+    wp.data.dispatch('core/editor').editPost({status: 'publish'});
+    await wp.data.dispatch('core/editor').savePost();
+  });
+  await expect.poll(() => page.evaluate(() => wp.data.select('core/editor').getCurrentPost().status)).toBe('publish');
   expect(errors).toEqual([]);
 });
 

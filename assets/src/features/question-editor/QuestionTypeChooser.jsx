@@ -23,6 +23,7 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 				'multiple-choice',
 				'true-false',
 				'short-text',
+				'text-entry',
 				'long-text',
 				'fill-in-the-blank',
 				'statement',
@@ -34,6 +35,7 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 			__( 'Interactive and responses', 'ohmylms' ),
 			formats( [
 				'reorder',
+				'build-expression',
 				'matching',
 				'dropdown-blanks',
 				'categorize',
@@ -47,13 +49,7 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 		],
 		[
 			__( 'Mathematics', 'ohmylms' ),
-			formats( [
-				'numerical',
-				'structured',
-				'build-expression',
-				'expression',
-				'graphing',
-			] ),
+			formats( [ 'numerical', 'structured', 'expression', 'graphing' ] ),
 		],
 		[
 			__( 'Visual learning', 'ohmylms' ),
@@ -76,8 +72,15 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 			formats( [ 'passage', 'interactive-video' ] ),
 		],
 	];
-	const matches = ( [ , label ] ) =>
-		label.toLowerCase().includes( search.toLowerCase().trim() );
+	const matches = ( [ id, label ] ) => {
+		const keywords =
+			id === 'build-expression'
+				? ' anagram letters spelling sentence words tiles'
+				: '';
+		return ( label + keywords )
+			.toLowerCase()
+			.includes( search.toLowerCase().trim() );
+	};
 	return createElement(
 		Modal,
 		{

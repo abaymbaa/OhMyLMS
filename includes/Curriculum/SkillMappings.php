@@ -60,6 +60,7 @@ final class SkillMappings {
 			'group_uuid'  => $row['group_uuid'] ?? '',
 			'note'        => (string) $row['note'],
 			'updated_at'  => $row['updated_at'],
+			'revision'    => self::revision( $row ),
 		);
 	}
 
@@ -84,6 +85,40 @@ final class SkillMappings {
 			'maps_to'     => array_map( array( __CLASS__, 'describe' ), $up ),
 			'mapped_from' => array_map( array( __CLASS__, 'describe' ), $down ),
 		);
+	}
+
+	/**
+	 * Describe both directions for a set of placed skills in one mapping read.
+	 *
+	 * @param array $term_ids Placed skill IDs.
+	 * @return array Mapping descriptions indexed by placed skill ID.
+	 */
+	public static function connections_for_skills( array $term_ids ) {
+		$term_ids = array_values( array_filter( array_map( 'intval', $term_ids ) ) );
+		if ( ! $term_ids ) {
+			return array();
+		}
+		$rows = self::all( $term_ids );
+		if ( $rows ) {
+			get_terms(
+				array(
+					'taxonomy'   => Taxonomy::NAME,
+					'include'    => array_unique( array_merge( array_column( $rows, 'specific_term_id' ), array_column( $rows, 'shared_term_id' ) ) ),
+					'hide_empty' => false,
+					'number'     => 0,
+				)
+			);
+		}
+		$connections = array_fill_keys( $term_ids, array() );
+		foreach ( $rows as $row ) {
+			$mapping = self::describe( $row );
+			foreach ( array( $mapping['specific_id'], $mapping['shared_id'] ) as $term_id ) {
+				if ( isset( $connections[ $term_id ] ) ) {
+					$connections[ $term_id ][] = $mapping;
+				}
+			}
+		}
+		return $connections;
 	}
 
 	/** Every mapping, optionally limited to a set of skill IDs on either side. */

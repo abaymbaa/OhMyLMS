@@ -1,3 +1,4 @@
+import { SkillConnections } from './SkillConnections';
 import {
 	createElement,
 	useEffect,
@@ -88,7 +89,7 @@ export function SyllabusMindmap() {
 		if ( selected ) {
 			center(
 				selected.x + MAP_CARD.width / 2,
-				selected.y + MAP_CARD.height / 2
+				selected.y + ( layout.cardHeight || MAP_CARD.height ) / 2
 			);
 		}
 	};
@@ -105,7 +106,7 @@ export function SyllabusMindmap() {
 		if ( selected ) {
 			center(
 				selected.x + MAP_CARD.width / 2,
-				selected.y + MAP_CARD.height / 2
+				selected.y + ( layout.cardHeight || MAP_CARD.height ) / 2
 			);
 		}
 	}, [ layout, w.selected, query, w.skillLanguage, center ] );
@@ -469,8 +470,14 @@ export function SyllabusMindmap() {
 						>
 							{ layout.edges.map( ( { from, to } ) => {
 								const x = from.x + MAP_CARD.width;
-								const y = from.y + MAP_CARD.height / 2;
-								const endY = to.y + MAP_CARD.height / 2;
+								const y =
+									from.y +
+									( layout.cardHeight || MAP_CARD.height ) /
+										2;
+								const endY =
+									to.y +
+									( layout.cardHeight || MAP_CARD.height ) /
+										2;
 								return (
 									<path
 										key={ to.node.key }
@@ -493,7 +500,8 @@ export function SyllabusMindmap() {
 									left: x,
 									top: y,
 									width: MAP_CARD.width,
-									height: MAP_CARD.height,
+									height:
+										layout.cardHeight || MAP_CARD.height,
 								} }
 							>
 								{ target?.key === node.key && (
@@ -538,6 +546,9 @@ export function SyllabusMindmap() {
 									/>
 									<span>{ label( node ) }</span>
 								</button>
+								{ node.kind === 'skill' && (
+									<SkillConnections skill={ node.skill } />
+								) }
 								<div className="ohmylms-syllabus-map-node-actions">
 									{ node.parentKey && (
 										<button

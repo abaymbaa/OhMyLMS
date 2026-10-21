@@ -40,6 +40,7 @@ class QuestionImportController extends RestController {
 						'update_existing' => array( 'type' => 'boolean' ),
 						'skip_invalid'    => array( 'type' => 'boolean' ),
 						'bank_id'         => array( 'type' => 'integer' ),
+						'default_skills'  => array( 'type' => 'string' ),
 					),
 				),
 			)
@@ -70,6 +71,7 @@ class QuestionImportController extends RestController {
 				'approve'         => rest_sanitize_boolean( $request->get_param( 'approve' ) ),
 				'update_existing' => ! $request->has_param( 'update_existing' ) || rest_sanitize_boolean( $request->get_param( 'update_existing' ) ),
 				'skip_invalid'    => rest_sanitize_boolean( $request->get_param( 'skip_invalid' ) ),
+				'default_skills'  => \OhMyLMS\ExamImport\Jobs::skill_tokens( $request->get_param( 'default_skills' ) ),
 			)
 		);
 		return is_wp_error( $report ) ? $report : rest_ensure_response( $report );

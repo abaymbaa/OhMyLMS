@@ -126,6 +126,7 @@ final class QuestionTypes {
 	 */
 	public static function register_interactive() {
 		$labels = array(
+			'text-entry'       => __( 'Type the answer (automatic)', 'ohmylms' ),
 			'dropdown-blanks'  => __( 'Dropdown in a sentence', 'ohmylms' ),
 			'categorize'       => __( 'Sort into groups', 'ohmylms' ),
 			'multi-blank'      => __( 'Multi-blank / table', 'ohmylms' ),

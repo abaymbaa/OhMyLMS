@@ -2,8 +2,11 @@
 import { createElement, Fragment, useEffect } from '@wordpress/element';
 import { useCourseEditor } from './useCourseEditor';
 import { useCourseIntegrations } from './useCourseIntegrations';
-import { courseEditPath } from './model.mjs';
+import { courseEditPath, orderedChapters } from './model.mjs';
 import { CourseObjectives } from './CourseObjectives';
+import { CourseSaveStatus } from './CourseSaveStatus';
+import { CourseContentTools } from './CourseContentTools';
+import { CourseReadiness } from './CourseReadiness';
 
 /**
  * Course orchestration with the existing controls, routes and data store.
@@ -93,6 +96,42 @@ export function createCourseEditor( readRuntime ) {
 				{ contextHolder }
 				<div
 					className={ `ohmylms-course-builder-wrapper ohmylms-steps-${ totalSteps }` }
+					// Leaving a course that was never touched removes it again; the server checks it is truly blank.
+					onClickCapture={ ( event ) => {
+						if (
+							event.target.closest?.(
+								'.ohmylms-back-button-wrapper'
+							) &&
+							! editor.dirty &&
+							! editor.saving &&
+							course?.status === 'draft' &&
+							[ 'Untitled', 'Untitled Course' ].includes(
+								course?.name
+							) &&
+							! ( course?.description || '' ).trim()
+						) {
+							window.wp
+								.apiFetch( {
+									path: `/ohmylms/v1/courses/${ courseId }/discard-if-blank`,
+									method: 'POST',
+								} )
+								.catch( () => {} );
+						}
+					} }
+					// A name still holding its "Untitled" default is selected on focus, so typing replaces it.
+					onFocusCapture={ ( event ) => {
+						const field = event.target;
+						if (
+							field.matches?.(
+								'input[type="text"], input:not([type]), textarea'
+							) &&
+							[ 'Untitled', 'Untitled Course' ].includes(
+								field.value
+							)
+						) {
+							field.select();
+						}
+					} }
 				>
 					<Toolbar
 						activeStep={ step }
@@ -120,6 +159,15 @@ export function createCourseEditor( readRuntime ) {
 							{ editor.error }
 						</p>
 					) }
+					{ ! editor.loading && course && (
+						<CourseSaveStatus
+							dirty={ editor.dirty }
+							saving={ editor.saving }
+							savedAt={ editor.savedAt }
+							status={ course.status }
+							onSave={ editor.save }
+						/>
+					) }
 					<div
 						className="ohmylms-course-builder-content"
 						aria-busy={ editor.loading || editor.saving }
@@ -139,14 +187,41 @@ export function createCourseEditor( readRuntime ) {
 													<Fragment>
 														<Curriculum
 															objectivesPanel={
-																<CourseObjectives
-																	key={
-																		courseId
-																	}
-																	courseId={
-																		courseId
-																	}
-																/>
+																<Fragment>
+																	<CourseObjectives
+																		key={
+																			courseId
+																		}
+																		courseId={
+																			courseId
+																		}
+																	/>
+																	<CourseReadiness
+																		courseId={
+																			courseId
+																		}
+																	/>
+																	<CourseContentTools
+																		courseId={
+																			courseId
+																		}
+																		units={ orderedChapters(
+																			editor.chapters
+																		).map(
+																			(
+																				chapter
+																			) => ( {
+																				id: chapter.id,
+																				name:
+																					chapter.name ||
+																					chapter.title,
+																			} )
+																		) }
+																		actions={
+																			editor.actions
+																		}
+																	/>
+																</Fragment>
 															}
 															handleAutomation={
 																dialogs.openAutomation

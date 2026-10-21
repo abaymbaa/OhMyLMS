@@ -15,7 +15,7 @@ test.beforeEach( async ( { page } ) => {
 	await page.goto( '/wp-admin/admin.php?page=ohmylms' );
 } );
 
-test( 'rollback authoring preserves existing question types and saves quiz and prompt edits', async ( {
+test( 'former quiz routes always open Gutenberg and preserve existing question types despite rollback settings', async ( {
 	page,
 } ) => {
 	const errors = [];
@@ -81,38 +81,30 @@ test( 'rollback authoring preserves existing question types and saves quiz and p
 		await page.goto(
 			`/wp-admin/admin.php?page=ohmylms#/quiz-edit/${ fixture.quiz.id }`
 		);
+		await page.waitForURL(
+			( url ) =>
+				url.pathname.endsWith( '/post.php' ) &&
+				url.searchParams.get( 'post' ) === String( fixture.quiz.id )
+		);
+		await page.waitForFunction( () =>
+			window.wp?.plugins?.getPlugin( 'ohmylms-native-quiz-settings' )
+		);
+		const canvas = page.frameLocator( 'iframe[name="editor-canvas"]' );
 		await expect(
-			page.getByRole( 'region', { name: /^Question \d+$/ } )
-		).toHaveCount( 10 );
-		await page
-			.getByRole( 'textbox', {
-				name: 'Quick edit question 1',
+			canvas.getByRole( 'textbox', {
+				name: 'Question statement',
 				exact: true,
 			} )
-			.fill( 'Edited rollback question prompt' );
-		await expect
-			.poll( () =>
-				page.evaluate( async ( id ) => {
-					const saved = await wp.apiFetch( {
-						path: `/ohmylms/v1/quiz/${ id }`,
-					} );
-					return saved.content[ 0 ].description;
-				}, fixture.quiz.id )
-			)
-			.toContain( 'Edited rollback question prompt' );
-		await page
-			.getByRole( 'tab', { name: 'Quiz introduction', exact: true } )
-			.click();
-		await expect( page.getByPlaceholder( 'Enter Quiz Title' ) ).toHaveValue(
-			'Source quiz fixture'
-		);
-		await page
-			.getByPlaceholder( 'Enter Quiz Title' )
-			.fill( 'Saved rollback quiz' );
-		await page
-			.getByRole( 'region', { name: 'Quiz form editor' } )
-			.getByRole( 'button', { name: 'Save', exact: true } )
-			.click();
+		).toHaveCount( 10, { timeout: 20000 } );
+		await expect(
+			page.getByRole( 'region', { name: 'Quiz form editor' } )
+		).toHaveCount( 0 );
+		await page.evaluate( async () => {
+			wp.data
+				.dispatch( 'core/editor' )
+				.editPost( { title: 'Saved Gutenberg quiz' } );
+			await wp.data.dispatch( 'core/editor' ).savePost();
+		} );
 		await expect
 			.poll( () =>
 				page.evaluate(
@@ -125,11 +117,14 @@ test( 'rollback authoring preserves existing question types and saves quiz and p
 					fixture.quiz.id
 				)
 			)
-			.toBe( 'Saved rollback quiz' );
+			.toBe( 'Saved Gutenberg quiz' );
 		await page.reload();
 		await expect(
-			page.getByRole( 'region', { name: /^Question \d+$/ } )
-		).toHaveCount( 10 );
+			canvas.getByRole( 'textbox', {
+				name: 'Question statement',
+				exact: true,
+			} )
+		).toHaveCount( 10, { timeout: 20000 } );
 		const saved = await page.evaluate(
 			( id ) => wp.apiFetch( { path: `/ohmylms/v1/quiz/${ id }` } ),
 			fixture.quiz.id

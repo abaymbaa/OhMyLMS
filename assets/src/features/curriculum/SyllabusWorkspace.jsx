@@ -8,8 +8,15 @@ import {
 	useState,
 } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { Button, Dashicon, Notice, Spinner } from '@wordpress/components';
+import {
+	Button,
+	Dashicon,
+	Modal,
+	Notice,
+	Spinner,
+} from '@wordpress/components';
 import * as api from './api.mjs';
+import { categoryAppearance } from './categoryAppearance.mjs';
 import { WorkspaceContext } from './context';
 import { ImportDialog } from './ImportDialog';
 import { SkillPane } from './SkillPane';
@@ -32,10 +39,7 @@ import {
 import { useCourseCatalog } from './useCourseCatalog';
 import { useSyllabusWorkspace } from './useSyllabusWorkspace';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
-import { SkillStudio } from './SkillStudio';
-import { StudioGroupEditor } from './StudioGroupEditor';
 import { SyllabusSpreadsheet } from './SyllabusSpreadsheet';
-import { SyllabusMindmap } from './SyllabusMindmap';
 
 function countsLine( totals ) {
 	const { contents, skills } = totalsParts( totals );
@@ -68,9 +72,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const [ open, setOpen ] = useState( () => new Set() );
 	const [ collapsed, setCollapsed ] = useState( false );
 	const [ importing, setImporting ] = useState( false );
-	const [ studioOpen, setStudioOpen ] = useState( false );
-	const [ view, setView ] = useState( 'outline' );
-	const [ sheetDetails, setSheetDetails ] = useState( false );
+	const [ sheetOpen, setSheetOpen ] = useState( false );
 	const [ sheetState, setSheetState ] = useState( {
 		dirty: false,
 		busy: false,
@@ -79,9 +81,6 @@ export function SyllabusWorkspace( { syllabusId } ) {
 		( dirty, busy ) => setSheetState( { dirty, busy } ),
 		[]
 	);
-	const sheetOpen = view === 'spreadsheet';
-	const mindmapOpen = view === 'mindmap';
-	const [ groupMapping, setGroupMapping ] = useState( null );
 	const [ sourceState, setSourceState ] = useState( {
 		dirty: false,
 		busy: false,
@@ -96,12 +95,6 @@ export function SyllabusWorkspace( { syllabusId } ) {
 		sourceState.busy ||
 		sheetState.dirty ||
 		sheetState.busy;
-	const changeView = ( next ) => {
-		if ( ! viewLocked ) {
-			setView( next );
-			setSheetDetails( false );
-		}
-	};
 	const remembered = useRef( '' );
 	const started = useRef( false );
 	const main = useRef( null );
@@ -152,7 +145,15 @@ export function SyllabusWorkspace( { syllabusId } ) {
 		}
 	}, [ active ] );
 
-	const select = useCallback( ( key ) => setSelected( key ), [] );
+	const select = useCallback(
+		( key ) => {
+			if ( sourceState.dirty || sourceState.busy ) {
+				return;
+			}
+			setSelected( key );
+		},
+		[ sourceState.dirty, sourceState.busy ]
+	);
 	const toggle = useCallback(
 		( key ) =>
 			setOpen( ( previous ) => {
@@ -236,15 +237,13 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	};
 	return (
 		<WorkspaceContext.Provider value={ value }>
-			<div
-				className={ `ohmylms-ws${ mindmapOpen ? ' is-mindmap-view' : '' }${ sheetOpen ? ' is-spreadsheet-view' : '' }` }
-			>
+			<div className="ohmylms-ws ohmylms-unified-workspace">
 				<header className="ohmylms-ws-header">
 					<a
 						className="ohmylms-ws-back"
-						aria-disabled={ sheetState.dirty || sheetState.busy }
+						aria-disabled={ viewLocked }
 						onClick={ ( event ) => {
-							if ( sheetState.dirty || sheetState.busy ) {
+							if ( viewLocked ) {
 								event.preventDefault();
 							}
 						} }
@@ -261,7 +260,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 								onClick={ () => {
 									if ( ! viewLocked ) {
 										select( tree.root.key );
-										changeView( 'outline' );
+										setSheetOpen( false );
 									}
 								} }
 								aria-label={ sprintf(
@@ -274,7 +273,10 @@ export function SyllabusWorkspace( { syllabusId } ) {
 							</a>
 						</h1>
 						<p>
-							{ __( 'Syllabus', 'ohmylms' ) } ·{ ' ' }
+							{ outline.syllabus.item_type === 'roadmap'
+								? __( 'Roadmap', 'ohmylms' )
+								: __( 'Syllabus', 'ohmylms' ) }{ ' ' }
+							·{ ' ' }
 							{ countsLine( {
 								contents:
 									shownCounts.topics + shownCounts.chapters,
@@ -285,70 +287,13 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						</p>
 					</div>
 					<div className="ohmylms-ws-header-actions">
-						<div
-							className="ohmylms-ws-view-switch"
-							role="group"
-							aria-label={ __( 'Syllabus view', 'ohmylms' ) }
-						>
-							{ [
-								{
-									key: 'outline',
-									label: __( 'Outline', 'ohmylms' ),
-								},
-								{
-									key: 'mindmap',
-									label: __( 'Mind map', 'ohmylms' ),
-								},
-								{
-									key: 'spreadsheet',
-									label: __( 'Spreadsheet', 'ohmylms' ),
-								},
-							].map( ( option ) => (
-								<Button
-									key={ option.key }
-									variant={
-										view === option.key
-											? 'primary'
-											: 'secondary'
-									}
-									aria-pressed={ view === option.key }
-									disabled={
-										viewLocked && view !== option.key
-									}
-									onClick={ () => changeView( option.key ) }
-								>
-									{ option.label }
-								</Button>
-							) ) }
-						</div>
 						<Button
-							variant="primary"
-							href={ `#/content-hub/curriculum/syllabus/${ syllabusId }` }
+							variant="secondary"
 							disabled={ viewLocked }
-							onClick={ () => {
-								if ( ! viewLocked ) {
-									select( tree.root.key );
-									changeView( 'outline' );
-								}
-							} }
+							onClick={ () => setSheetOpen( true ) }
 						>
-							{ __( 'Skills', 'ohmylms' ) }
+							{ __( 'Bulk edit', 'ohmylms' ) }
 						</Button>
-						{ outline.syllabus.item_type === 'roadmap' && (
-							<Button
-								variant="secondary"
-								disabled={
-									ws.pending ||
-									sourceState.dirty ||
-									sourceState.busy ||
-									sheetState.dirty ||
-									sheetState.busy
-								}
-								onClick={ () => setStudioOpen( true ) }
-							>
-								{ __( 'Open visual editor', 'ohmylms' ) }
-							</Button>
-						) }
 						<Button
 							variant="secondary"
 							disabled={ viewLocked }
@@ -392,144 +337,119 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						<Button
 							variant="primary"
 							href={ `#${ CURRICULUM_PATH }` }
-							disabled={ sheetState.dirty || sheetState.busy }
+							disabled={ viewLocked }
 						>
 							{ __( 'Done', 'ohmylms' ) }
 						</Button>
 					</div>
 				</header>
-				{ sheetOpen && ws.notice && (
-					<div className="ohmylms-ws-status" aria-live="polite">
-						<Notice
-							status={ ws.notice.kind }
-							onRemove={ ws.dismiss }
-						>
-							{ ws.notice.text }
-						</Notice>
-					</div>
-				) }
-				<div
-					className={ `ohmylms-ws-body${ mindmapOpen ? ' has-mindmap' : '' }${ sheetOpen ? ' has-spreadsheet' : '' }${ sheetOpen && sheetDetails ? ' has-sheet-details' : '' }` }
-				>
-					{ sheetOpen && (
-						<SyllabusSpreadsheet
-							outline={ outline }
-							onSaved={ ws.adopt }
-							onStateChange={ onSheetState }
-							tree={ tree }
-							actions={ actions }
-							pending={
-								ws.pending ||
-								sourceState.dirty ||
-								sourceState.busy
-							}
-							onOpen={ ( key ) => {
-								select( key );
-								setSheetDetails( true );
-							} }
-						/>
-					) }
-					{ ! sheetOpen &&
-						( mindmapOpen ? (
-							<SyllabusMindmap />
-						) : (
-							<WorkspaceSidebar
-								onSpreadsheet={
-									sourceState.dirty || sourceState.busy
-										? undefined
-										: () => changeView( 'spreadsheet' )
-								}
-								language={ skillLanguage }
-								tree={ tree }
-								selected={ active }
-								open={ open }
-								onSelect={ select }
-								onToggle={ toggle }
-								onOpenAll={ () =>
-									setOpen(
-										new Set(
-											[ ...tree.index.values() ]
-												.filter(
-													( entry ) =>
-														entry.children.length
-												)
-												.map( ( entry ) => entry.key )
+				<div className="ohmylms-ws-body">
+					<WorkspaceSidebar
+						language={ skillLanguage }
+						tree={ tree }
+						selected={ active }
+						open={ open }
+						onSelect={ select }
+						onToggle={ toggle }
+						onOpenAll={ () =>
+							setOpen(
+								new Set(
+									[ ...tree.index.values() ]
+										.filter(
+											( entry ) => entry.children.length
 										)
-									)
+										.map( ( entry ) => entry.key )
+								)
+							)
+						}
+						onCloseAll={ () =>
+							setOpen( new Set( [ tree.root.key ] ) )
+						}
+						onAddSkill={ ( itemId, data ) => {
+							if ( node.kind === 'group' ) {
+								return actions.addSkill( node.id, data );
+							}
+							if ( node.kind === 'skill' ) {
+								return actions.addSkill( node.groupId, data );
+							}
+							return actions.addSkillInTopic( itemId, data );
+						} }
+						onAddTopic={ ( itemId, data ) =>
+							actions.addTopic( itemId, data, {
+								open: false,
+							} )
+						}
+						onReorder={ actions.reorderOutline }
+						onMoveSelected={ async ( keys, destination ) => {
+							const moved = [];
+							for ( const key of keys ) {
+								const entry = tree.index.get( key );
+								if ( ! entry || entry.kind !== 'skill' ) {
+									continue;
 								}
-								onCloseAll={ () =>
-									setOpen( new Set( [ tree.root.key ] ) )
-								}
-								onAddSkill={ ( itemId, data ) => {
-									if ( node.kind === 'group' ) {
-										return actions.addSkill(
-											node.id,
-											data
+								if ( entry.groupId !== destination ) {
+									const result = await ws.run( async () => {
+										const inherited = categoryAppearance(
+											entry.skill,
+											outline.settings,
+											tree.index.get( entry.parentKey )
+												?.group
+										).category;
+										if (
+											! entry.skill.category &&
+											inherited
+										) {
+											await api.updateSkill(
+												syllabusId,
+												entry.id,
+												{ category: inherited }
+											);
+										}
+										return api.moveSkill(
+											syllabusId,
+											entry.groupId,
+											entry.id,
+											destination,
+											999999
 										);
+									} );
+									if ( ! result ) {
+										break;
 									}
-									if ( node.kind === 'skill' ) {
-										return actions.addSkill(
-											node.groupId,
-											data
-										);
-									}
-									return actions.addSkillInTopic(
-										itemId,
-										data
-									);
-								} }
-								onAddTopic={ ( itemId, data ) =>
-									actions.addTopic( itemId, data, {
-										open: false,
-									} )
 								}
-								onReorder={ actions.reorderOutline }
-								settings={ outline.settings }
-								collapsed={ collapsed }
-								onCollapse={ () =>
-									setCollapsed( ( state ) => ! state )
-								}
-								pending={ ws.pending }
-							/>
-						) ) }
-					{ ( ! sheetOpen || sheetDetails ) && (
-						<main className="ohmylms-ws-main" ref={ main }>
-							{ sheetOpen && (
-								<Button
-									variant="secondary"
-									disabled={
-										sourceState.dirty || sourceState.busy
-									}
-									onClick={ () => setSheetDetails( false ) }
+								moved.push( key );
+							}
+							return moved;
+						} }
+						settings={ outline.settings }
+						collapsed={ collapsed }
+						onCollapse={ () =>
+							setCollapsed( ( state ) => ! state )
+						}
+						pending={ viewLocked }
+					/>
+					<main className="ohmylms-ws-main" ref={ main }>
+						<div className="ohmylms-ws-status" aria-live="polite">
+							{ ws.notice && (
+								<Notice
+									key={ ws.notice.id }
+									status={ ws.notice.kind }
+									onRemove={ ws.dismiss }
 								>
-									{ __( 'Close details', 'ohmylms' ) }
-								</Button>
+									{ ws.notice.text }
+								</Notice>
 							) }
-							<div
-								className="ohmylms-ws-status"
-								aria-live="polite"
-							>
-								{ ws.notice && (
-									<Notice
-										key={ ws.notice.id }
-										status={ ws.notice.kind }
-										onRemove={ ws.dismiss }
-									>
-										{ ws.notice.text }
-									</Notice>
-								) }
-							</div>
-							{ node.kind === 'content' && (
-								<TopicPane key={ node.key } node={ node } />
-							) }
-							{ node.kind === 'group' && (
-								<ChapterPane key={ node.key } node={ node } />
-							) }
-							{ node.kind === 'skill' && (
-								<SkillPane key={ node.key } node={ node } />
-							) }
-						</main>
-					) }
+						</div>
+						{ node.kind === 'content' && (
+							<TopicPane key={ node.key } node={ node } />
+						) }
+						{ node.kind === 'group' && (
+							<ChapterPane key={ node.key } node={ node } />
+						) }
+						{ node.kind === 'skill' && (
+							<SkillPane key={ node.key } node={ node } />
+						) }
+					</main>
 				</div>
 				{ importing && (
 					<ImportDialog
@@ -544,29 +464,43 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						} }
 					/>
 				) }
-				{ studioOpen && (
-					<SkillStudio
-						roadmapId={ syllabusId }
-						subject={ outline.settings.subject || 'Mathematics' }
-						initialSkill={
-							node.kind === 'skill'
-								? { id: node.id, name: node.skill.name }
-								: null
-						}
-						sources={ outline.roadmap_sources }
-						onClose={ () => setStudioOpen( false ) }
-						onChanged={ ws.reload }
-						onEditGroup={ ( row, mapping ) =>
-							setGroupMapping( mapping )
-						}
-					/>
-				) }
-				{ groupMapping && (
-					<StudioGroupEditor
-						mapping={ groupMapping }
-						onClose={ () => setGroupMapping( null ) }
-						onChanged={ ws.reload }
-					/>
+				{ sheetOpen && (
+					<Modal
+						title={ __( 'Bulk edit skills', 'ohmylms' ) }
+						isFullScreen
+						shouldCloseOnClickOutside={ false }
+						onRequestClose={ () => {
+							if ( ! sheetState.dirty && ! sheetState.busy ) {
+								setSheetOpen( false );
+							}
+						} }
+					>
+						<p>
+							{ __(
+								'Save or discard changes before returning to the workspace.',
+								'ohmylms'
+							) }
+						</p>
+						<SyllabusSpreadsheet
+							outline={ outline }
+							onSaved={ ws.adopt }
+							onStateChange={ onSheetState }
+							tree={ tree }
+							actions={ actions }
+							pending={ ws.pending }
+							onOpen={ ( key ) => {
+								select( key );
+								setSheetOpen( false );
+							} }
+						/>
+						<Button
+							variant="secondary"
+							disabled={ viewLocked }
+							onClick={ () => setSheetOpen( false ) }
+						>
+							{ __( 'Return to workspace', 'ohmylms' ) }
+						</Button>
+					</Modal>
 				) }
 			</div>
 		</WorkspaceContext.Provider>

@@ -1,11 +1,11 @@
 # Quiz and question modules
 
-Default authoring now runs through `includes/Learning/NativeQuizEditor.php`, `NativeQuestionEditor.php`, their REST controllers, and `assets/src/features/learning/Native*` components. See [Gutenberg authoring](GUTENBERG-AUTHORING.md). Form factories below remain compatibility interfaces during stabilization; shared answer and validation controls remain active in Gutenberg.
+Default authoring now runs through `includes/Learning/NativeQuizEditor.php`, `NativeQuestionEditor.php`, their REST controllers, and `assets/src/features/learning/Native*` components. See [Gutenberg authoring](GUTENBERG-AUTHORING.md). The former quiz form editor is removed; its public factory redirects to Gutenberg. Shared answer and validation controls and exported utilities remain available for compatibility.
 
 | Module | Implementation | Responsibility |
 | --- | --- | --- |
 | Quiz player | `assets/interactivity/quiz-player/` | Learner navigation, required answers, submission, timer, matching and reorder interactions |
-| Quiz editor | `assets/src/features/quiz-editor/` | Quiz loading/saving/publishing, introduction/settings, question ordering and bank placement |
+| Quiz authoring | `assets/src/features/learning/NativeQuiz*` | Gutenberg settings, bank placement and legacy-route redirect; `quiz-editor/` retains public compatibility utilities |
 | Question editor | `assets/src/features/question-editor/` | Question canvas/settings, answer editors, form workspace, preview and custom editor adapter |
 | Question bank | `assets/src/features/question-bank/` | Search, creation dialogs, approval, versions, sharing and skill links |
 

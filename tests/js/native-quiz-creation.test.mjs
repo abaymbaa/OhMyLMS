@@ -13,7 +13,7 @@ const { code } = transformSync( source, {
 	presets: [ [ '@babel/preset-react', { pragma: 'createElement' } ] ],
 } );
 
-function authoring( nativeUrl ) {
+function authoring( nativeUrl, formAuthoring = false ) {
 	const calls = [];
 	const location = {
 		hash: '#/content-hub/quizzes',
@@ -27,7 +27,11 @@ function authoring( nativeUrl ) {
 		'editPath',
 		code + '; return useAddQuiz;'
 	)(
-		{ location, alert: ( message ) => calls.push( [ 'error', message ] ) },
+		{
+			location,
+			ohmylmsAssessment: { formAuthoring },
+			alert: ( message ) => calls.push( [ 'error', message ] ),
+		},
 		( value ) => [ value, () => {} ],
 		( text ) => text,
 		async ( type, name ) => {
@@ -64,4 +68,44 @@ test( 'an unavailable native editor reports the problem without silently opening
 	assert.equal( view.calls[ 1 ][ 0 ], 'error' );
 	assert.match( view.calls[ 1 ][ 1 ], /draft remains/ );
 	assert.equal( view.location.hash, '#/content-hub/quizzes' );
+} );
+
+test( 'retired editor arguments and rollback settings cannot restore quiz form authoring', async () => {
+	const view = authoring( 'native-only', true );
+	await view.useAddQuiz( false ).onClick();
+	assert.deepEqual( view.calls[ 1 ], [ 'native', 'native-only' ] );
+	assert.equal( view.location.hash, '#/content-hub/quizzes' );
+} );
+
+test( 'the public quiz editor factory always forwards the selected quiz and chapter to Gutenberg', () => {
+	const source = fs
+		.readFileSync(
+			'assets/src/features/quiz-editor/QuizEditor.jsx',
+			'utf8'
+		)
+		.replace( /^import [\s\S]*?;$/gm, '' )
+		.replace( /export /g, '' );
+	const { code } = transformSync( source, {
+		configFile: false,
+		babelrc: false,
+		presets: [ [ '@babel/preset-react', { pragma: 'createElement' } ] ],
+	} );
+	const NativeQuizRoute = () => {};
+	const factory = new Function(
+		'createElement',
+		'useSelect',
+		'NativeQuizRoute',
+		'window',
+		code + ';return createQuizEditor;'
+	)(
+		( component, props ) => ( { component, props } ),
+		( select ) => select( () => ( { getSelectedQuizId: () => 42 } ) ),
+		NativeQuizRoute,
+		{ ohmylmsAssessment: { formAuthoring: true } }
+	);
+	const Editor = factory( () => ( { T: { default: 'quiz-store' } } ) );
+	assert.deepEqual( Editor( { chapterId: 9 } ), {
+		component: NativeQuizRoute,
+		props: { id: 42, chapterId: 9 },
+	} );
 } );

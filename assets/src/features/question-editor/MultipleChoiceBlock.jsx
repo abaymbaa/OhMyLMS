@@ -303,36 +303,45 @@ export function MultipleChoiceFields( {
 								}
 								__nextHasNoMarginBottom
 							/>
-							<ToggleControl
-								label={ __( 'Variable', 'ohmylms' ) }
-								checked={ !! question.settings.template }
-								onChange={ ( enabled ) => {
-									const { template, ...settings } =
-										question.settings;
-									onChange( {
-										settings: enabled
-											? {
-													...settings,
-													template:
-														template ||
-														defaultTemplate(),
-												}
-											: settings,
-									} );
-									setVariablesOpen( enabled );
-								} }
-								__nextHasNoMarginBottom
-							/>
-							{ question.settings.template && (
-								<Button
-									variant="tertiary"
-									aria-haspopup="dialog"
-									aria-expanded={ variablesOpen }
-									onClick={ () => setVariablesOpen( true ) }
-								>
-									{ __( 'Edit variables', 'ohmylms' ) }
-								</Button>
-							) }
+							<div className="ohmylms-choice-variables">
+								<ToggleControl
+									label={
+										question.settings.template
+											? undefined
+											: __( 'Variables', 'ohmylms' )
+									}
+									aria-label={ __( 'Variables', 'ohmylms' ) }
+									checked={ !! question.settings.template }
+									onChange={ ( enabled ) => {
+										const { template, ...settings } =
+											question.settings;
+										onChange( {
+											settings: enabled
+												? {
+														...settings,
+														template:
+															template ||
+															defaultTemplate(),
+													}
+												: settings,
+										} );
+										setVariablesOpen( enabled );
+									} }
+									__nextHasNoMarginBottom
+								/>
+								{ question.settings.template && (
+									<Button
+										variant="link"
+										aria-haspopup="dialog"
+										aria-expanded={ variablesOpen }
+										onClick={ () =>
+											setVariablesOpen( true )
+										}
+									>
+										{ __( 'Variables', 'ohmylms' ) }
+									</Button>
+								) }
+							</div>
 							{ variablesOpen && question.settings.template && (
 								<Modal
 									title={ __(
@@ -441,7 +450,7 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 	}
 	registerBlockType( MULTIPLE_CHOICE_BLOCK, {
 		apiVersion: 3,
-		title: __( 'Ohmylms Question', 'ohmylms' ),
+		title: __( 'OhMyLMS Question', 'ohmylms' ),
 		category: 'text',
 		icon: 'welcome-learn-more',
 		attributes: {

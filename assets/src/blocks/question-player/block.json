@@ -7,21 +7,43 @@
 	"description": "Play selected bank questions or a random set from skills.",
 	"textdomain": "ohmylms",
 	"attributes": {
-		"source": { "type": "string", "default": "selected" },
+		"source": {
+			"type": "string",
+			"default": "selected"
+		},
 		"questionIds": {
 			"type": "array",
-			"items": { "type": "integer" },
+			"items": {
+				"type": "integer"
+			},
 			"default": []
 		},
 		"skillIds": {
 			"type": "array",
-			"items": { "type": "integer" },
+			"items": {
+				"type": "integer"
+			},
 			"default": []
 		},
-		"count": { "type": "integer", "default": 5 },
-		"graded": { "type": "boolean", "default": true },
-		"affectsSkills": { "type": "boolean", "default": false }
+		"count": {
+			"type": "integer",
+			"default": 5
+		},
+		"graded": {
+			"type": "boolean",
+			"default": true
+		},
+		"affectsSkills": {
+			"type": "boolean",
+			"default": false
+		},
+		"activityMode": {
+			"type": "string",
+			"default": "standard"
+		}
 	},
-	"supports": { "html": false },
+	"supports": {
+		"html": false
+	},
 	"editorScript": "ohmylms-question-player-block"
 }

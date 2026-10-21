@@ -4,9 +4,21 @@ Adds past papers or any other questions to the question bank from CSV or JSON. E
 checked first (a dry run); nothing is written until you ask for it. Uploading the same rows
 again updates the same questions instead of creating duplicates.
 
-Where: **OhMyLMS > Import questions** (admin page), or `POST /wp-json/ohmylms/v1/question-bank/import`.
+Where: the **Import** button on the Content Hub Question Bank tab (choose Questions, then a CSV or JSON file), or `POST /wp-json/ohmylms/v1/question-bank/import`.
 Who: anyone who can edit posts. Each question is saved through the same writer the question
 editor uses, so ownership, bank permissions, validation, versioning and skill mapping all apply.
+
+## One import dialog
+
+The **Import** button on the Quizzes, Question Bank, Exams, Curriculum and Skills tabs, and in a course when you attach a quiz, opens one dialog. Choose what the file becomes (the tab you are on is chosen for you), then the file:
+
+| Import as | PDF | CSV or JSON |
+|---|---|---|
+| Questions | Read by the AI converter, reviewed, saved as bank drafts | Checked row by row, then added to the Question Bank |
+| Quiz | Read and reviewed, then linked into a new draft quiz | A quiz file made with Export, or the simple quiz CSV |
+| Exam | Read and reviewed, then a timed exam on the quiz player | Rows are saved as secure bank drafts, then the same exam details step |
+
+On the Curriculum and Skills tabs the dialog also offers **Choose skills**: the skills chosen are given to every question in the file (or PDF) that names none. In a course, only a quiz can be imported, and it is added to the attach list. PDF imports need the exam converter enabled under Settings > AI tools. Questions an AI assistant added wait for approval on a separate review page (admin.php?page=ohmylms-import-questions), which has no menu entry. REST: `POST /exam-imports` takes a `target` and optional `default_skills` of `exam` (default), `quiz` or `questions`; `POST /exam-imports/rows` turns CSV or JSON rows into a committed job; `POST /exam-imports/{id}/quiz` makes the quiz from a committed quiz job.
 
 ## Row format
 

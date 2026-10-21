@@ -96,3 +96,23 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+.ohmylms-import .ohmylms-import-target {
+	display: block;
+	padding: 10px 12px;
+	border: 1px solid var(--ohmylms-admin-border, #ddd);
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.ohmylms-import .ohmylms-import-target input[type="radio"] {
+	display: inline-block;
+	width: auto;
+	margin: 0 6px 0 0;
+}
+
+.ohmylms-import form {
+	margin: 0;
+	padding: 0;
+	border: 0;
+}

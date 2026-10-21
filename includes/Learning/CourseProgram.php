@@ -432,6 +432,72 @@ final class CourseProgram {
 		return $errors;
 	}
 
+	/**
+	 * The same checks as readiness(), grouped for a person: what is missing per skill and which resources
+	 * are still unpublished, so an author can see the gap before trying to publish.
+	 *
+	 * @param array $program   Draft program.
+	 * @param int   $course_id Course ID.
+	 * @return array{ready:bool,completion:string[],resources:array,skills:array}
+	 */
+	public static function readiness_report( array $program, $course_id = 0 ) {
+		$syllabus  = $course_id > 0 && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
+		$rules     = Mastery::rules();
+		$completion = self::completion_readiness( $program, $syllabus );
+		$resources = array();
+		foreach ( $program['items'] as $item ) {
+			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
+				$resources[] = array(
+					'content_id' => (int) $item['content_id'],
+					'type'       => (string) $item['type'],
+					'title'      => get_the_title( $item['content_id'] ),
+					'status'     => (string) get_post_status( $item['content_id'] ),
+				);
+			}
+		}
+		$skills = array();
+		foreach ( $syllabus ? array() : $program['outcomes'] as $outcome ) {
+			if ( empty( $outcome['required'] ) ) {
+				continue;
+			}
+			$pool     = self::pool( $program, $outcome['term_id'] );
+			$families = array_unique(
+				array_map(
+					static function ( $row ) {
+						return $row['family_id'] ?: 'q:' . $row['question_id'];
+					},
+					$pool
+				)
+			);
+			$questions = count( array_unique( array_column( $pool, 'question_id' ) ) );
+			$term      = get_term( $outcome['term_id'], Taxonomy::NAME );
+			$valid     = $term && ! is_wp_error( $term );
+			$skills[]  = array(
+				'term_id'         => (int) $outcome['term_id'],
+				'name'            => $valid ? $term->name : __( 'Unavailable skill', 'ohmylms' ),
+				'code'            => $valid ? (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ) : '',
+				'target'          => (string) $outcome['target'],
+				'chapter_id'      => (int) ( $outcome['chapter_id'] ?? 0 ),
+				'questions'       => $questions,
+				'questions_need'  => (int) $rules[ $outcome['target'] . '_min' ],
+				'families'        => count( $families ),
+				'families_need'   => (int) $rules[ $outcome['target'] . '_families' ],
+				'ready'           => $questions >= $rules[ $outcome['target'] . '_min' ] && count( $families ) >= $rules[ $outcome['target'] . '_families' ],
+			);
+		}
+		return array(
+			'ready'      => ! $completion && ! $resources && ! array_filter(
+				$skills,
+				static function ( $row ) {
+					return ! $row['ready'];
+				}
+			),
+			'completion' => $completion,
+			'resources'  => $resources,
+			'skills'     => $skills,
+		);
+	}
+
 	public static function save( $course_id, array $data, $publish = false, $apply_existing = false ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -450,6 +516,7 @@ final class CourseProgram {
 				array(
 					'status' => 409,
 					'errors' => $errors,
+					'report' => self::readiness_report( $program, $course_id ),
 				)
 			); }
 		if ( ! $publish ) {

@@ -177,13 +177,15 @@ final class Syllabus {
 			) as $term ) {
 				$terms[ (int) $term->term_id ] = $term; }
 		}
-		$skills_of = array();
+		$connections = SkillMappings::connections_for_skills( $term_ids );
+		$skills_of   = array();
 		foreach ( $placements as $placement ) {
 			$term = $terms[ (int) $placement['term_id'] ] ?? null;
 			if ( ! $term ) {
 				continue; }
 			$skills_of[ (int) $placement['group_id'] ][] = array(
 				'term_id'           => (int) $term->term_id,
+				'connections'       => $connections[ (int) $term->term_id ] ?? array(),
 				'name'              => self::text( $term->name ),
 				'objective'         => \OhMyLMS\Skills\Objectives::get( $term ),
 				'code'              => (string) get_term_meta( $term->term_id, self::CODE_META, true ),
@@ -644,6 +646,12 @@ final class Syllabus {
 				$created = self::create_term( $root, $fields['name'], $fields['code'], $fields['description'], $fields['category'] ?? '' );
 				if ( is_wp_error( $created ) ) {
 					return $created; }
+				$item = Items::get( $syllabus_id );
+				if ( ! is_wp_error( $item ) && 'roadmap' === ( $item['item_type'] ?? '' ) ) {
+					$settings = SyllabusSettings::get( $syllabus_id );
+					update_term_meta( $created['term_id'], Comparison::SUBJECT_META, $settings['subject'] ?? '' );
+					update_term_meta( $created['term_id'], Comparison::ROADMAP_META, (int) $syllabus_id );
+				}
 				if ( isset( $fields['translations'] ) ) {
 					$saved = \OhMyLMS\Skills\Translations::save( $created['term_id'], $fields['translations'] );
 					if ( is_wp_error( $saved ) ) {

@@ -1,4 +1,4 @@
-/** Exercise the retained rollback forms without changing the site's default editor. */
+/** Simulate the legacy flag; quiz routes must still open Gutenberg. */
 exports.useFormAuthoring = async ( page ) => {
 	await page.addInitScript( () => {
 		let configuration;

@@ -11,6 +11,7 @@ import {
 	TextControl,
 } from '@wordpress/components';
 import { createContent, searchTargets } from './api.mjs';
+import { ImportButton } from './ImportButton.jsx';
 import { DEFAULT_PASS_PERCENT } from './catalogModel.mjs';
 const typeOptions = () => [
 	{
@@ -207,6 +208,25 @@ export function AttachDialog( {
 				>
 					{ __( 'Create draft', 'ohmylms' ) }
 				</Button>
+				{ type === 'quiz' && (
+					<ImportButton
+						target="quiz"
+						targets={ [ 'quiz' ] }
+						onQuiz={ ( quiz ) => {
+							const row = {
+								id: quiz.id,
+								type: 'quiz',
+								title: quiz.name,
+								status: 'draft',
+							};
+							setResults( ( current ) => [
+								row,
+								...( current || [] ),
+							] );
+							choose( row, true );
+						} }
+					/>
+				) }
 			</details>
 			<RadioControl
 				label={ __( 'Attach to', 'ohmylms' ) }

@@ -80,10 +80,12 @@ final class QuestionPlayer {
 	 */
 	public static function start( array $placement ) {
 		global $wpdb;
-		$settings  = $placement['settings'];
-		$author_id = (int) $placement['post']->post_author;
-		$student   = get_current_user_id();
-		$ids       = $settings['questionIds'];
+		$settings   = $placement['settings'];
+		$mode       = $settings['activityMode'] ?? 'standard';
+		$pair_count = 0;
+		$author_id  = (int) $placement['post']->post_author;
+		$student    = get_current_user_id();
+		$ids        = $settings['questionIds'];
 		if ( 'random' === $settings['source'] ) {
 			$ids = array();
 			foreach ( $settings['skillIds'] as $skill_id ) {
@@ -106,6 +108,29 @@ final class QuestionPlayer {
 				}
 				continue;
 			}
+			if ( in_array( $mode, array( 'hangman', 'spell-word' ), true ) ) {
+				if ( ! WordActivity::answers( $snapshot ) ) {
+					if ( 'random' === $settings['source'] ) {
+						continue;
+					}
+					return self::error( __( 'Word games need automatic text answers or letter tiles, containing letters and at most 64 characters per answer.', 'ohmylms' ) );
+				}
+			} elseif ( 'standard' !== $mode ) {
+				if ( 'matching' !== $snapshot->get_type() ) {
+					if ( 'random' === $settings['source'] ) {
+						continue; }
+					return self::error( __( 'Study modes require matching questions. Choose matching questions or use the standard mode.', 'ohmylms' ) );
+				}
+				foreach ( $snapshot->get_questions() as $option ) {
+					if ( '' === trim( (string) $option['answer'] ) || '' === trim( (string) ( $option['matching_data']['label'] ?? '' ) ) ) {
+						return self::error( __( 'Study cards need text on both sides of each pair.', 'ohmylms' ) );
+					}
+				}
+				$pair_count += count( $snapshot->get_questions() );
+				if ( $pair_count > 24 ) {
+					return self::error( __( 'Study activities support at most 24 pairs. Select fewer matching questions.', 'ohmylms' ) );
+				}
+			}
 			$versions[] = $snapshot->get_version_id();
 			if ( 'random' === $settings['source'] && count( $versions ) >= $settings['count'] ) {
 				break;
@@ -114,12 +139,16 @@ final class QuestionPlayer {
 		if ( ! $versions ) {
 			return self::error( __( 'There are no approved questions available for this player.', 'ohmylms' ), 409 );
 		}
+		if ( 'memory-pairs' === $mode && $pair_count < 2 ) {
+			return self::error( __( 'Matching pairs needs at least two pairs.', 'ohmylms' ) );
+		}
 		$policy = array(
 			'post_id'        => (int) $placement['post']->ID,
 			'key'            => $placement['key'],
-			'graded'         => $settings['graded'],
-			'affects_skills' => $settings['affectsSkills'] && ! $placement['preview'],
+			'graded'         => 'standard' === $mode && $settings['graded'],
+			'affects_skills' => 'standard' === $mode && $settings['affectsSkills'] && ! $placement['preview'],
 			'preview'        => $placement['preview'],
+			'activity_mode'  => $mode,
 		);
 		$uuid   = wp_generate_uuid4();
 		try {
@@ -162,9 +191,10 @@ final class QuestionPlayer {
 	 * @param array      $placement Authorized placement.
 	 * @param string     $uuid Session UUID.
 	 * @param array|null $attempt Posted answer tree, or null for resume.
+	 * @param array|null $activity Study reveal action, or null for standard delivery.
 	 * @return array|\WP_Error Learner state.
 	 */
-	public static function resume( array $placement, $uuid, $attempt = null ) {
+	public static function resume( array $placement, $uuid, $attempt = null, $activity = null ) {
 		global $wpdb;
 		$session = Sessions::get( $uuid );
 		if ( ! $session || 'question-player' !== $session['mode'] || ! Sessions::owns( $session, array( 'student_id' => get_current_user_id() ) ) || (int) $session['lesson_id'] !== (int) $placement['post']->ID || ( $session['policy']['key'] ?? '' ) !== $placement['key'] ) {
@@ -175,6 +205,13 @@ final class QuestionPlayer {
 			if ( ! self::eligible( (int) $item['question_id'], (int) $placement['post']->post_author, get_current_user_id() ) ) {
 				return self::error( __( 'A question is no longer available. Ask the author to update this player.', 'ohmylms' ), 403 );
 			}
+		}
+		if ( 'standard' !== ( $session['policy']['activity_mode'] ?? 'standard' ) ) {
+			$handler = in_array( $session['policy']['activity_mode'], array( 'hangman', 'spell-word' ), true ) ? WordActivity::class : StudyActivity::class;
+			return null !== $activity ? $handler::act( $session, $items, $activity ) : $handler::view( $session, $items );
+		}
+		if ( null !== $activity ) {
+			return self::error( __( 'This player does not use study cards.', 'ohmylms' ) );
 		}
 		if ( null === $attempt || 'complete' === $session['status'] ) {
 			return self::view( $session );
@@ -327,7 +364,11 @@ final class QuestionPlayer {
 	 * @return array Player state; private answers and keys never enter an active view.
 	 */
 	private static function view( array $session ) {
-		$items  = Sessions::items( $session['id'] );
+		$items = Sessions::items( $session['id'] );
+		if ( 'standard' !== ( $session['policy']['activity_mode'] ?? 'standard' ) ) {
+			$handler = in_array( $session['policy']['activity_mode'], array( 'hangman', 'spell-word' ), true ) ? WordActivity::class : StudyActivity::class;
+			return $handler::view( $session, $items );
+		}
 		$result = array(
 			'session'       => $session['uuid'],
 			'status'        => $session['status'],

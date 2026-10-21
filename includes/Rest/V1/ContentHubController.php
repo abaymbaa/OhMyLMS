@@ -47,6 +47,42 @@ class ContentHubController extends RestController {
 				),
 			)
 		);
+		register_rest_route(
+			$this->namespace,
+			'/courses/from-syllabus',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'syllabus_choices' ),
+					'permission_callback' => array( $this, 'author' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'course_from_syllabus' ),
+					'permission_callback' => array( $this, 'author' ),
+					'args'                => array(
+						'syllabus_id' => array(
+							'type'     => 'integer',
+							'required' => true,
+						),
+						'title'       => array( 'type' => 'string' ),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/courses/(?P<id>\d+)/discard-if-blank',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => function ( WP_REST_Request $request ) {
+						return array( 'discarded' => \OhMyLMS\Learning\BlankDraft::discard( (int) $request['id'] ) );
+					},
+					'permission_callback' => $course,
+				),
+			)
+		);
 		$base = '/content-hub';
 		register_rest_route(
 			$this->namespace,
@@ -191,6 +227,29 @@ class ContentHubController extends RestController {
 		if ( ! Schema::ready() ) {
 			return Catalog::error( __( 'Learning storage is unavailable.', 'ohmylms' ), 503, 'ohmylms_learning_unavailable' ); }
 		return current_user_can( 'edit_posts' ) ? true : Catalog::error( __( 'Sorry, you are not allowed to manage content.', 'ohmylms' ), rest_authorization_required_code(), 'ohmylms_rest_forbidden' );
+	}
+
+	/**
+	 * The syllabuses a course can be made from.
+	 *
+	 * @return array
+	 */
+	public function syllabus_choices() {
+		return CurriculumSchema::ready() ? \OhMyLMS\Curriculum\CourseObjectives::syllabuses() : array();
+	}
+
+	/**
+	 * Make a draft course from a syllabus: a unit for each domain, with its skills linked.
+	 *
+	 * @param WP_REST_Request $request Request with the syllabus and an optional title.
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public function course_from_syllabus( WP_REST_Request $request ) {
+		if ( ! CurriculumSchema::ready() ) {
+			return Catalog::error( __( 'Curriculum storage is unavailable.', 'ohmylms' ), 503 );
+		}
+		$course = \OhMyLMS\Curriculum\CourseFromSyllabus::create( (int) $request['syllabus_id'], (string) $request['title'] );
+		return is_wp_error( $course ) ? $course : new \WP_REST_Response( $course, 201 );
 	}
 
 	/**

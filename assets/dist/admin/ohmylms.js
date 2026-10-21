@@ -15114,43 +15114,7 @@
           return r;
         }
         var pp = window.ohmylms.extensions.quizComponents.QuizEditor(() => ({
-          Br,
-          D,
-          Ec,
-          Ge,
-          Gs,
-          I,
-          Nu,
-          Od,
-          Qs,
-          Rd,
-          React,
-          Rt,
-          T,
-          W,
-          Wr,
-          Yc,
-          _,
-          _m,
-          _s,
-          b,
-          bm,
-          dp,
-          f,
-          g,
-          ip,
-          nd,
-          np,
-          op,
-          rm,
-          sp,
-          up,
-          y,
-          yd,
-          ym,
-          z,
-          za,
-          zd
+          T
         }));
         const fp = (0, g.memo)(pp);
         function vp(e) {

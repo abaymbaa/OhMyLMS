@@ -1,6 +1,7 @@
 /** @jsx createElement */
 import {
 	createElement,
+	Fragment,
 	useContext,
 	useEffect,
 	useMemo,
@@ -10,6 +11,7 @@ import {
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { Button, Notice, Spinner, TextControl } from '@wordpress/components';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
+import { ImportButton } from '../content-hub/ImportButton';
 import { AddItemRow } from './AddItemRow';
 import { CurriculumContext } from './context';
 import { HubContext } from '../content-hub/context';
@@ -416,12 +418,15 @@ export function CurriculumPage() {
 				'ohmylms'
 			) }
 			actions={
-				<Button
-					variant="primary"
-					onClick={ () => actions.startAdd( 0 ) }
-				>
-					{ __( 'Add top-level item', 'ohmylms' ) }
-				</Button>
+				<Fragment>
+					<ImportButton target="questions" withSkills />{ ' ' }
+					<Button
+						variant="primary"
+						onClick={ () => actions.startAdd( 0 ) }
+					>
+						{ __( 'Add top-level item', 'ohmylms' ) }
+					</Button>
+				</Fragment>
 			}
 		>
 			<p>

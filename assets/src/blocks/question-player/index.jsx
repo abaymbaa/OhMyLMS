@@ -1,6 +1,6 @@
 /** @jsx createElement */
 import { createElement, useEffect, useState } from '@wordpress/element';
-import { registerBlockType } from '@wordpress/blocks';
+import { registerBlockType, registerBlockVariation } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import {
 	Button,
@@ -31,8 +31,15 @@ if ( ! window.ohmylmsNativeLesson ) {
  * @return {Element} Bank picker and settings.
  */
 export function QuestionPlayerEdit( { attributes, setAttributes } ) {
-	const { source, questionIds, skillIds, count, graded, affectsSkills } =
-		attributes;
+	const {
+		source,
+		questionIds,
+		skillIds,
+		count,
+		graded,
+		affectsSkills,
+		activityMode = 'standard',
+	} = attributes;
 	const [ search, setSearch ] = useState( '' );
 	const [ items, setItems ] = useState( [] );
 	const [ labels, setLabels ] = useState( {} );
@@ -47,7 +54,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 		const timer = setTimeout( async () => {
 			setLoading( true );
 			try {
-				const base = `/ohmylms/v1/question-player/choices?kind=${ kind }`;
+				const base = `/ohmylms/v1/question-player/choices?kind=${ kind }&activityMode=${ activityMode }`;
 				const [ found, chosen ] = await Promise.all( [
 					apiFetch( {
 						path: `${ base }&search=${ encodeURIComponent( search ) }`,
@@ -84,7 +91,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 			active = false;
 			clearTimeout( timer );
 		};
-	}, [ kind, search, selection ] );
+	}, [ kind, search, selection, activityMode ] );
 	return (
 		<div { ...useBlockProps() }>
 			<Placeholder
@@ -102,6 +109,61 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 						<Notice status="error" isDismissible={ false }>
 							{ error }
 						</Notice>
+					) }
+					<SelectControl
+						label={ __( 'Play mode', 'ohmylms' ) }
+						value={ activityMode }
+						options={ [
+							{
+								value: 'hangman',
+								label: __( 'Hangman', 'ohmylms' ),
+							},
+							{
+								value: 'spell-word',
+								label: __( 'Spell the word', 'ohmylms' ),
+							},
+							{
+								value: 'standard',
+								label: __( 'Standard questions', 'ohmylms' ),
+							},
+							{
+								value: 'flashcards',
+								label: __(
+									'Flashcards (matching questions)',
+									'ohmylms'
+								),
+							},
+							{
+								value: 'memory-pairs',
+								label: __(
+									'Matching pairs (memory game)',
+									'ohmylms'
+								),
+							},
+						] }
+						onChange={ ( value ) =>
+							setAttributes( {
+								activityMode: value,
+								graded: value === 'standard' && graded,
+								affectsSkills:
+									value === 'standard' && affectsSkills,
+							} )
+						}
+					/>
+					{ activityMode !== 'standard' && (
+						<p>
+							{ [ 'hangman', 'spell-word' ].includes(
+								activityMode
+							)
+								? __(
+										'Choose automatic text answers or Build from tiles questions in Letters mode. Use a clue that does not reveal the answer. Answers must contain letters and be at most 64 characters. Six mistakes end a round. Progress is saved without grades or skill updates.',
+										'ohmylms'
+									)
+								: __(
+										'Choose matching questions, up to 24 pairs. Study progress is saved; reveals and game points never affect grades or skill performance.',
+										'ohmylms'
+									) }
+						</p>
 					) }
 					<SelectControl
 						label={ __( 'Question source', 'ohmylms' ) }
@@ -242,6 +304,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 					) }
 					<ToggleControl
 						label={ __( 'Grade responses', 'ohmylms' ) }
+						disabled={ activityMode !== 'standard' }
 						checked={ graded }
 						help={ __(
 							'Show a score and save results for students. Turn off for an ungraded activity.',
@@ -260,7 +323,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 							'ohmylms'
 						) }
 						checked={ graded && affectsSkills }
-						disabled={ ! graded }
+						disabled={ ! graded || activityMode !== 'standard' }
 						help={ __(
 							'When enabled, graded student responses contribute to the questions’ linked skills. Instructor previews never count.',
 							'ohmylms'
@@ -276,3 +339,27 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 }
 
 registerBlockType( metadata, { edit: QuestionPlayerEdit, save: () => null } );
+
+for ( const [ name, title, icon ] of [
+	[ 'hangman', __( 'OhMyLMS Hangman', 'ohmylms' ), 'editor-spellcheck' ],
+	[
+		'spell-word',
+		__( 'OhMyLMS Spell the word', 'ohmylms' ),
+		'editor-textcolor',
+	],
+	[ 'flashcards', __( 'OhMyLMS Flashcards', 'ohmylms' ), 'index-card' ],
+	[ 'memory-pairs', __( 'OhMyLMS Matching Pairs', 'ohmylms' ), 'grid-view' ],
+] ) {
+	registerBlockVariation( metadata.name, {
+		name,
+		title,
+		icon,
+		description: __(
+			'Study matching question pairs with saved progress.',
+			'ohmylms'
+		),
+		attributes: { activityMode: name, graded: false, affectsSkills: false },
+		isActive: [ 'activityMode' ],
+		scope: [ 'inserter' ],
+	} );
+}

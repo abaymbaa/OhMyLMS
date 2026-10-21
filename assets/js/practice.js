@@ -216,6 +216,7 @@
 		if (
 			window.OhMyLMSInteractive &&
 			[
+				'text-entry',
 				'dropdown-blanks',
 				'categorize',
 				'multi-blank',

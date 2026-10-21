@@ -33,6 +33,11 @@ export function layoutSyllabusMap( root, collapsed, query, label ) {
 	if ( ! root || ( needle && ! retain( root ) ) ) {
 		return { nodes, edges, width: 0, height: 0 };
 	}
+	const hasConnections = ( node ) =>
+		node.skill?.connections?.length > 0 ||
+		node.children.some( hasConnections );
+	const cardHeight = MAP_CARD.height + ( hasConnections( root ) ? 96 : 0 );
+	const rowHeight = MAP_CARD.row + cardHeight - MAP_CARD.height;
 	let row = 0;
 	let maxDepth = 0;
 	const visit = ( node, depth ) => {
@@ -54,7 +59,7 @@ export function layoutSyllabusMap( root, collapsed, query, label ) {
 		);
 		positioned.y = descendants.length
 			? ( descendants[ 0 ].y + descendants.at( -1 ).y ) / 2
-			: MAP_CARD.padding + row++ * MAP_CARD.row;
+			: MAP_CARD.padding + row++ * rowHeight;
 		for ( const child of descendants ) {
 			edges.push( { from: positioned, to: child } );
 		}
@@ -64,9 +69,9 @@ export function layoutSyllabusMap( root, collapsed, query, label ) {
 	return {
 		nodes,
 		edges,
+		cardHeight,
 		width:
 			MAP_CARD.padding * 2 + maxDepth * MAP_CARD.column + MAP_CARD.width,
-		height:
-			MAP_CARD.padding * 2 + ( row - 1 ) * MAP_CARD.row + MAP_CARD.height,
+		height: MAP_CARD.padding * 2 + ( row - 1 ) * rowHeight + cardHeight,
 	};
 }

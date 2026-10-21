@@ -749,6 +749,8 @@ final class BulkImport {
 				'update_existing' => true,
 				'skip_invalid'    => false,
 				'review'          => false,
+				// Skills given to every row that names none, e.g. the skill an import was started from.
+				'default_skills'  => '',
 			),
 			$options
 		);
@@ -764,6 +766,15 @@ final class BulkImport {
 			return AccessPolicy::denied( __( 'You cannot add questions to that bank.', 'ohmylms' ) );
 		}
 		$rows       = array_map( array( __CLASS__, 'normalize_row' ), $raw_rows );
+		$defaults   = self::list_of( $options['default_skills'], ';,|' );
+		if ( $defaults ) {
+			foreach ( $rows as &$default_row ) {
+				if ( ! $default_row['skills'] ) {
+					$default_row['skills'] = $defaults;
+				}
+			}
+			unset( $default_row );
+		}
 		$type_known = static function ( $type ) {
 			return (bool) Registry::get( 'question', $type );
 		};

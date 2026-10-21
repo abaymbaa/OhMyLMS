@@ -1,6 +1,6 @@
 # Full Gutenberg quiz and question authoring migration
 
-Status: implementation delivered in this workspace, 20 October 2026. Gutenberg is the default authoring path. The temporary rollback implementation is retained for the stabilization release. See [current behavior and compatibility](GUTENBERG-AUTHORING.md). The original phased plan below records the migration scope and its release gates.
+Status: implementation delivered in this workspace, 20 October 2026. Gutenberg is the default authoring path. The former quiz editor and its rollback route were removed on 21 October 2026; the standalone question-form rollback remains. See [current behavior and compatibility](GUTENBERG-AUTHORING.md). The original phased plan below records the migration scope and its release gates.
 
 ## Outcome
 

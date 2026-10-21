@@ -35,7 +35,16 @@ final class Workflow {
 				'callback'            => array( __CLASS__, 'skills' ),
 			)
 		);
-		foreach ( array( 'extract', 'review', 'commit' ) as $operation ) {
+		register_rest_route(
+			'ohmylms/v1',
+			'/exam-imports/rows',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => array( Jobs::class, 'permission' ),
+				'callback'            => array( __CLASS__, 'rows' ),
+			)
+		);
+		foreach ( array( 'extract', 'review', 'commit', 'quiz' ) as $operation ) {
 			register_rest_route(
 				'ohmylms/v1',
 				'/exam-imports/(?P<id>\d+)/' . $operation,
@@ -58,7 +67,7 @@ final class Workflow {
 		if ( ! Jobs::permission( $request ) || ! is_string( $request['search'] ) ) {
 			return self::denied();
 		}
-		return \OhMyLMS\QuestionBank\SkillCatalogue::search( mb_substr( sanitize_text_field( $request['search'] ), 0, 1000 ), 1, 10 );
+		return \OhMyLMS\QuestionBank\SkillCatalogue::search( mb_substr( sanitize_text_field( $request['search'] ), 0, 1000 ), max( 1, (int) $request['page'] ), 10 );
 	}
 
 	/**
@@ -68,7 +77,7 @@ final class Workflow {
 	 * @return array Review data.
 	 */
 	public static function detail( array $job ) {
-		return array_intersect_key( $job, array_flip( array( 'inventory', 'draft_inventory', 'draft', 'draft_revision', 'suggestions', 'cursor', 'usage', 'question_ids', 'version_ids', 'exam_id' ) ) ) + array(
+		return array_intersect_key( $job, array_flip( array( 'inventory', 'draft_inventory', 'draft', 'draft_revision', 'suggestions', 'cursor', 'usage', 'question_ids', 'version_ids', 'exam_id', 'quiz_id' ) ) ) + array(
 			'has_mark_scheme' => ! empty( $job['mark_scheme'] ),
 			'draft_revision'  => 0,
 			'draft'           => array(),
@@ -312,7 +321,7 @@ final class Workflow {
 						'number'   => $row['number'],
 						'type'     => 'structured',
 						'question' => $row['question'],
-						'skills'   => $row['skills'],
+						'skills'   => '' !== trim( (string) $row['skills'] ) ? $row['skills'] : (string) ( $job['skills'] ?? '' ),
 						'parts'    => $row['parts'],
 					);
 				}
@@ -342,7 +351,9 @@ final class Workflow {
 							$job['question_ids'] = array_map( 'intval', array_column( $saved['rows'], 'id' ) );
 							$job['version_ids']  = array();
 							foreach ( $job['question_ids'] as $question_id ) {
-								\OhMyLMS\QuestionBank\BankAttributes::write( $question_id, array( 'secure' => 1 ) );
+								if ( 'exam' === Jobs::target( $job['target'] ?? '' ) ) {
+									\OhMyLMS\QuestionBank\BankAttributes::write( $question_id, array( 'secure' => 1 ) );
+								}
 								$job['version_ids'][ $question_id ] = (int) \OhMyLMS\QuestionBank\VersionPublisher::identity( $question_id )['current_version_id'];
 							}
 							if ( count( $job['question_ids'] ) !== count( $rows ) || in_array( 0, $job['question_ids'], true ) ) {
@@ -358,6 +369,185 @@ final class Workflow {
 				return Jobs::status( $request );
 			}
 		);
+	}
+
+	/**
+	 * Link committed question drafts into a new draft quiz, in paper order.
+	 *
+	 * @param \WP_REST_Request $request Job ID and quiz title.
+	 * @return array|\WP_Error Job status, with the new quiz ID.
+	 */
+	public static function quiz( $request ) {
+		if ( ! Jobs::permission( $request ) ) {
+			return self::denied();
+		}
+		return Jobs::locked(
+			$request['id'],
+			static function () use ( $request ) {
+				global $wpdb;
+				$id = (int) $request['id'];
+				clean_post_cache( $id );
+				$job = get_post_meta( $id, Jobs::META, true );
+				if ( ! empty( $job['quiz_id'] ) && get_post( $job['quiz_id'] ) ) {
+					return Jobs::status( $request );
+				}
+				if ( ! is_array( $job ) || 'quiz' !== Jobs::target( $job['target'] ?? '' ) || 'committed' !== $job['state'] || empty( $job['question_ids'] ) ) {
+					return new \WP_Error( 'exam_review', __( 'Commit all reviewed question drafts first.', 'ohmylms' ), array( 'status' => 409 ) );
+				}
+				$title = is_string( $request['title'] ) ? sanitize_text_field( $request['title'] ) : '';
+				if ( '' === trim( $title ) ) {
+					return new \WP_Error( 'exam_header', __( 'Provide a quiz title.', 'ohmylms' ), array( 'status' => 400 ) );
+				}
+				try {
+					Transaction::run(
+						static function () use ( $wpdb, &$job, $id, $title ) {
+							$route = new \WP_REST_Request( 'POST', '/ohmylms/v1/quiz' );
+							$route->set_body_params(
+								array(
+									'name'   => $title,
+									'status' => 'draft',
+								)
+							);
+							$response = rest_do_request( $route );
+							$quiz     = $response->get_status() < 300 ? (int) ( $response->get_data()['id'] ?? 0 ) : 0;
+							if ( ! $quiz ) {
+								throw new \RuntimeException( 'Quiz creation failed.' );
+							}
+							foreach ( $job['question_ids'] as $index => $question_id ) {
+								// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Atomic ordered links to existing question identities.
+								if ( ! $wpdb->insert(
+									$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
+									array(
+										'quiz_id'      => $quiz,
+										'question_id'  => $question_id,
+										'order_number' => $index,
+									)
+								) ) {
+									throw new \RuntimeException( 'Quiz question placement failed.' );
+								}
+							}
+							update_post_meta( $quiz, '_ohmylms_version_pins', $job['version_ids'] );
+							$job['quiz_id'] = $quiz;
+							self::save( $id, $job );
+						}
+					);
+				} catch ( \Throwable $error ) {
+					return new \WP_Error( 'exam_quiz', __( 'The quiz could not be created. Retry after reloading.', 'ohmylms' ), array( 'status' => 500 ) );
+				}
+				return Jobs::status( $request );
+			}
+		);
+	}
+
+	/**
+	 * Turn question rows (CSV, JSON or pasted text) into a committed import job, so an exam or quiz is
+	 * made with the same details form and creation step as a reviewed PDF.
+	 *
+	 * @param \WP_REST_Request $request Rows or text, format, target and source name.
+	 * @return \WP_REST_Response|\WP_Error Job status.
+	 */
+	public static function rows( $request ) {
+		if ( ! Jobs::permission( $request ) ) {
+			return self::denied();
+		}
+		$input = $request['rows'];
+		if ( null === $input ) {
+			$input = is_string( $request['text'] ) ? $request['text'] : '';
+		}
+		$rows = BulkImport::parse( $input, is_string( $request['format'] ) ? sanitize_key( $request['format'] ) : 'auto' );
+		if ( is_wp_error( $rows ) ) {
+			return $rows;
+		}
+		$skip   = rest_sanitize_boolean( $request['skip_invalid'] );
+		$skills = Jobs::skill_tokens( $request['default_skills'] ?? '' );
+		$dry    = BulkImport::run( $rows, array( 'default_skills' => $skills ) );
+		if ( is_wp_error( $dry ) ) {
+			return $dry;
+		}
+		if ( $dry['counts']['error'] && ! $skip ) {
+			return new \WP_Error(
+				'exam_questions',
+				__( 'Nothing was imported because some rows have errors. Fix them, or skip invalid rows.', 'ohmylms' ),
+				array(
+					'status' => 400,
+					'rows'   => $dry['rows'],
+				)
+			);
+		}
+		$target = Jobs::target( $request['target'] );
+		$name   = is_string( $request['name'] ) && '' !== trim( $request['name'] ) ? mb_substr( sanitize_text_field( $request['name'] ), 0, 190 ) : __( 'Imported questions', 'ohmylms' );
+		$id     = 0;
+		try {
+			Transaction::run(
+				static function () use ( $rows, $skip, $skills, $target, $name, &$id ) {
+					$saved        = ErrorException::raise(
+						BulkImport::run(
+							$rows,
+							array(
+								'dry_run'        => false,
+								'skip_invalid'   => $skip,
+								'default_skills' => $skills,
+							)
+						)
+					);
+					$question_ids = array();
+					foreach ( $saved['rows'] as $row ) {
+						if ( 'error' !== $row['status'] && ! empty( $row['id'] ) ) {
+							$question_ids[] = (int) $row['id'];
+						}
+					}
+					if ( ! $question_ids ) {
+						throw new \RuntimeException( 'No questions were imported.' );
+					}
+					$version_ids = array();
+					foreach ( $question_ids as $question_id ) {
+						if ( 'exam' === $target ) {
+							\OhMyLMS\QuestionBank\BankAttributes::write( $question_id, array( 'secure' => 1 ) );
+						}
+						$version_ids[ $question_id ] = (int) \OhMyLMS\QuestionBank\VersionPublisher::identity( $question_id )['current_version_id'];
+					}
+					$id = ErrorException::raise(
+						wp_insert_post(
+							array(
+								'post_type'   => Jobs::TYPE,
+								'post_status' => 'private',
+								'post_author' => get_current_user_id(),
+								'post_title'  => $name,
+							),
+							true
+						)
+					);
+					self::save(
+						$id,
+						array(
+							'document'       => array(
+								'id'    => '',
+								'name'  => $name,
+								'bytes' => 0,
+							),
+							'mark_scheme'    => null,
+							'target'         => $target,
+							'state'          => 'committed',
+							'attempts'       => 0,
+							'error'          => '',
+							'inventory'      => array(
+								'title'            => $name,
+								'duration_minutes' => 60,
+							),
+							'draft'          => array(),
+							'draft_revision' => 0,
+							'question_ids'   => $question_ids,
+							'version_ids'    => $version_ids,
+						)
+					);
+				}
+			);
+		} catch ( \Throwable $error ) {
+			return new \WP_Error( 'exam_commit', __( 'The questions could not be imported. Nothing was changed.', 'ohmylms' ), array( 'status' => 500 ) );
+		}
+		$status       = new \WP_REST_Request( 'GET', '/ohmylms/v1/exam-imports/' . $id );
+		$status['id'] = $id;
+		return new \WP_REST_Response( Jobs::status( $status ), 201 );
 	}
 
 	/**

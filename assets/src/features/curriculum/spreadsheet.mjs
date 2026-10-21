@@ -63,6 +63,7 @@ export function syllabusSheetRows( outline ) {
 					...entry,
 					key: `g${ group.id }s${ skill.term_id }`,
 					termId: skill.term_id,
+					skill,
 					topic: skill.name,
 				} );
 			}

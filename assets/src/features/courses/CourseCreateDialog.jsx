@@ -2,6 +2,7 @@ import { createElement, useRef, useState } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { createCourse } from './api.mjs';
+import { CourseBuildChoices } from './CourseBuildChoices';
 export function createCourseCreateDialog( readRuntime ) {
 	return function CourseCreateDialog( { isOpen, onClose } ) {
 		const {
@@ -9,7 +10,6 @@ export function createCourseCreateDialog( readRuntime ) {
 			I: Controls,
 			QG: { A: Modal },
 			JG: CourseTypes,
-			tU: BuildTypes,
 			f: Router,
 		} = readRuntime();
 		const integrations = useSelect(
@@ -140,35 +140,13 @@ export function createCourseCreateDialog( readRuntime ) {
 					/>
 				) }
 				{ step === 2 && (
-					<BuildTypes
-						onBack={ () =>
-							hasCohort ? setStep( 1 ) : onClose()
-						}
-						handleCreateCourse={ create }
-						showBackButton={ false }
-						courseType={ courseType }
+					<CourseBuildChoices
 						loading={ loading }
-						text={
-							<Controls.HeadingWP
-								level={ 3 }
-								weight={ 600 }
-								style={ {
-									maxWidth: '410px',
-									margin: '0 auto',
-									fontSize: '22px',
-								} }
-							>
-								{ courseType === 'self-paced'
-									? __(
-											"You're creating a Self-Paced course. How would you like to start?",
-											'ohmylms'
-										)
-									: __(
-											"You're creating a Cohort-based course. How would you like to begin?",
-											'ohmylms'
-										) }
-							</Controls.HeadingWP>
-						}
+						onScratch={ create }
+						onCreated={ ( course ) => {
+							navigate( `/course-edit/${ course.id }/content` );
+							onClose();
+						} }
 					/>
 				) }
 			</Modal>

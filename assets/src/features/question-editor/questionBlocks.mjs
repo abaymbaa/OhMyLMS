@@ -17,10 +17,11 @@ import {
 	isInteractiveType,
 } from './interactiveModel.mjs';
 export const QUESTION_BLOCK_TYPES = [
-	[ 'single-choice', 'Multiple select' ],
+	[ 'single-choice', 'Single choice' ],
 	[ 'multiple-choice', 'Multiple select' ],
 	[ 'true-false', 'True / false' ],
 	[ 'short-text', 'Short answer' ],
+	[ 'text-entry', 'Type the answer (automatic)' ],
 	[ 'long-text', 'Long answer' ],
 	[ 'fill-in-the-blank', 'Fill in the blank' ],
 	[ 'statement', 'Statement' ],

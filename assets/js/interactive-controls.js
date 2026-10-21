@@ -250,6 +250,9 @@
 				};
 			}
 		);
+		answer.setAttribute( 'role', 'group' );
+		bank.setAttribute( 'role', 'group' );
+		tiles.forEach( function ( tile ) { tile.button.removeAttribute( 'role' ); } );
 		var placed = [];
 
 		function sync( silent ) {
@@ -264,8 +267,7 @@
 				var button = el( 'button', {
 					type: 'button',
 					class: 'ohmylms-tile is-placed',
-					role: 'listitem',
-					text: tile.text,
+					text: tile.text === ' ' ? '␣' : tile.text,
 				} );
 				button.addEventListener( 'click', function () {
 					placed.splice( placed.indexOf( tile ), 1 );
@@ -589,6 +591,8 @@
 		} else if ( widgets[ type ] ) {
 			widgets[ type ].build( root, settings );
 			root.setAttribute( 'data-enhanced', '1' );
+		} else if ( type === 'text-entry' ) {
+ root.appendChild( el( 'input', { type: 'text', 'data-answer-key': 'text', 'aria-label': 'Your answer', maxlength: '2000', class: 'ohmylms-text-input' } ) );
 		} else if ( type === 'expression' ) {
 			root.appendChild(
 				el( 'input', {
@@ -634,7 +638,7 @@
 							class: 'ohmylms-tile',
 							role: 'listitem',
 							'data-tile': text,
-							text: text,
+							text: text === ' ' ? '␣' : text,
 						} );
 					} )
 				)

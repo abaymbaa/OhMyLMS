@@ -130,3 +130,15 @@
 		flex-wrap: wrap;
 	}
 }
+
+.ohmylms-syllabus-sheet table.has-skill-connections {
+	min-width: 1400px;
+}
+
+.ohmylms-syllabus-sheet table.has-skill-connections th:nth-child(5) {
+	width: 260px;
+}
+
+.ohmylms-syllabus-sheet table.has-skill-connections th:nth-child(6) {
+	width: 180px;
+}
