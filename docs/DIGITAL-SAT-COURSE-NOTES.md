@@ -50,3 +50,20 @@ One chain handles every quiz, exam, practice session and lesson check, so there 
   - Hinted answers and repeats are kept but do not count. There is no probability score. An optional 0 to 100 score and a Khan-style model can be switched on and sit beside these levels.
 - **Where it shows.** `student_skill_state` caches each learner's level per skill. Learners see it on their dashboard and subject skills view, teachers in the skill report and Performance page, and Recommendations picks what to practise next.
 - **Why the 3 questions and 2 families per skill requirement.** It is the smallest pool that can reach *proficient* without repeating a question or a family, so the course cannot be published with a skill no learner could ever master. Mastered needs at least 5 questions from 3 families, so for real use each skill needs a bigger pool than this course now has.
+
+## What was changed in response (2026-10-21)
+
+1. **Unsaved work.** The course builder now saves a draft by itself 0.8 seconds after an edit, shows "Saving…", "You have unsaved changes" or "All changes saved at …" under the toolbar with a Save draft button (a live course shows Update course and is never changed silently), and warns before a tab close or full-page jump while edits are unsaved. The slug follows the title because the title now saves early.
+2. **Existing content.** A panel above the units, "Add existing content or import a quiz", adds existing lessons, quizzes and assignments to a chosen unit and imports a quiz file straight into it. The Attach content window used from syllabus screens also gained quiz import.
+3. **Readiness.** A panel in the builder shows whether the course is ready for learners: unpublished resources, completion rules, and for each required skill its approved questions and families against what it needs, with an Add questions button that opens the import dialog with that skill chosen. The server report is `readiness_report()` and is returned with the catalog and with a failed publish.
+4. **Starting a course.** The dialog offers Start from scratch, From a syllabus (a unit per domain, every skill linked and placed, no content created; `POST /courses/from-syllabus`) and From a quiz file.
+5. **Course list.** Syllabus items carry a Syllabus badge and untouched drafts an Unnamed draft badge.
+6. **Objective picker.** It opens on the edition the course already uses, then the last one you chose; has Select all shown / in this topic and Clear selection; the objectives table collapses to a one-line summary once there are more than five.
+7. **Empty drafts.** Clicking Exit in the builder removes the course if it is still completely untouched (default title, no description, image, objectives, skills, content, learners); the server decides (`POST /courses/{id}/discard-if-blank`).
+8. **"Untitled".** Quiz and lesson editors blank the stored "Untitled" so the title placeholder shows; a name still holding "Untitled" is selected when you click into it in the course builder.
+9. **Assistant button.** The builder leaves 96px of room below its content.
+10. **Quiz editor.** The block inserter no longer lists the plugin's site blocks (registration, sign in, dashboards, checkout, buy buttons, membership list); the question block is named "OhMyLMS Question".
+11. **Skill search.** Skill choices page ("Show more skills", 40 at a time) and the question-paper skill search takes a page. Not done: flagging which uncoded skills are the same skill as a coded one (the library has no reliable link to show).
+12. **Course 509.** Its four quizzes are now also in its units in the builder (they had been attached only through the catalog).
+
+Still open: the course builder's own Add Content dialog (recovered runtime code) still only creates new content; the new panel is the way to add existing content. Publishing a course for learners still needs its Preview step.
