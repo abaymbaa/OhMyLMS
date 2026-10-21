@@ -52,6 +52,10 @@
 		"revealSeconds": {
 			"type": "integer",
 			"default": 30
+		},
+		"roundSeconds": {
+			"type": "integer",
+			"default": 30
 		}
 	},
 	"supports": {

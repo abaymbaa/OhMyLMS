@@ -1,6 +1,6 @@
 # Wordwall template audit and OhMyLMS implementation plan
 
-Prepared 2026-10-21. Status: first delivery, Hangman, Spell the word, Crossword, Wordsearch and Watch and memorize practice mode implemented; remaining phases proposed. See [first-delivery behavior and limits](WORDWALL-ACTIVITIES.md). The implementation extends Build from tiles for letters/words instead of introducing a duplicate word-builder type.
+Prepared 2026-10-21. All 34 catalogue entries now have a core question format, extended block or practice mode. See [implemented activities and explicit limits](ALL-ACTIVITIES.md) and [earlier delivery behavior](WORDWALL-ACTIVITIES.md). Advanced Wordwall themes, settings, physics and services are outside this core delivery. The implementation extends existing blocks wherever compatible.
 
 ## Evidence and scope
 
@@ -34,40 +34,40 @@ Default new game activities to practice. Accuracy, game points, time, hints and 
 
 | # | Wordwall template | OhMyLMS coverage and required work | Delivery |
 | --- | --- | --- | --- |
-| 1 | Anagram | Reorder/tile foundations exist; add Unicode-aware letter construction | `word-builder`, anagram mode |
-| 2 | Spin the wheel | No dedicated wheel; reuse selected question/prompt pool | Teacher-led wheel mode; no marks for random selection |
-| 3 | Open the box | No box reveal; reuse content/question items | Box-reveal mode |
-| 4 | Unjumble | `reorder` and `build-expression` provide foundations | Sentence-order mode; optional accepted-order support without changing old scoring |
-| 5 | Matching pairs | `matching` defines pairs; concealed memory-board play is missing | Memory-pairs mode over matching content |
+| 1 | Anagram | Implemented Unicode letter construction in Build from tiles | Letters mode of `build-expression` |
+| 2 | Spin the wheel | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `spin-wheel` Question Player mode |
+| 3 | Open the box | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `open-box` Question Player mode |
+| 4 | Unjumble | Implemented sentence ordering in Build from tiles; reorder remains available | Words mode of `build-expression` |
+| 5 | Matching pairs | Implemented concealed matching board with saved reveals and matches | `memory-pairs` Question Player mode |
 | 6 | Quiz | Choice interactions and quiz player exist | Reuse; verify compatible choice configuration |
 | 7 | Group sort | `categorize` exists | Reuse; add drag/tap/keyboard presentation where absent |
 | 8 | Match up | `matching` exists | Reuse matching, including keyboard alternative |
-| 9 | Flash cards | Paired content exists; dedicated reveal/study cycle is missing | Flashcard study mode; reveal and self-rating are not automatic correctness |
-| 10 | Speaking cards | Statement/passage/manual-response foundations exist | Random prompt deck; optional teacher-marked response |
+| 9 | Flash cards | Implemented saved front/back study cards | `flashcards` Question Player mode |
+| 10 | Speaking cards | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `speaking-cards` Question Player mode |
 | 11 | Complete the sentence | `fill-in-the-blank` supports drag blanks; dropdown and multi-blank also exist | Reuse blank engine; verify distractors and repeated words |
-| 12 | Find the match | Matching/choice content exists; eliminate-as-matched play missing | Elimination matching mode |
-| 13 | Gameshow quiz | Choice questions exist; lifelines/rounds/game points missing | Gameshow mode |
-| 14 | Type the answer | `short-text` is manual; exact auto-marking exists within blanks but lacks a clear dedicated format | Add `text-entry` using shared normalization, without reinterpreting historical short-text |
+| 12 | Find the match | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `find-match` Question Player mode |
+| 13 | Gameshow quiz | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `gameshow` Question Player mode |
+| 14 | Type the answer | Implemented automatic accepted-answer text entry | `text-entry` question type |
 | 15 | Spell the word | Dedicated spelling player now reuses existing word answers | Implemented `spell-word` Question Player mode over text-entry and letter tiles; typed input |
-| 16 | Flip tiles | No dedicated zoom/flip board | Reuse study deck, tile layout |
+| 16 | Flip tiles | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `flip-tiles` Question Player mode |
 | 17 | Wordsearch | Generated frozen letter grid, words/clues and endpoint selection implemented | `wordsearch` question type |
-| 18 | Labelled diagram | `labeling` exists, currently selection controls rather than pin dragging | Extend existing labeling player with normalized target coordinates and drag/tap/keyboard input |
+| 18 | Labelled diagram | Existing `labeling` extended with draggable label bank, tap/keyboard placement, menus and restore | Existing image/pin builder and grader retained; distractor authoring added. Timers/leaderboards remain proposed |
 | 19 | Hangman | Server-checked letter guesses, six mistakes and saved progress | Implemented `hangman` Question Player mode over text-entry and letter tiles |
 | 20 | Crossword | Connected generator, word/clue builder and keyboard grid implemented | `crossword` question type |
-| 21 | True or false | `true-false` exists; timed stream is different | Timed binary-choice mode |
-| 22 | Maze chase | Choice content exists; movement/collision game missing | Maze mode; accessible stationary answer alternative |
-| 23 | Flying fruit | Choice content exists; moving-target game missing | Moving-target mode |
-| 24 | Balloon pop | Matching content exists; motion and drop mechanics missing | Balloon matching mode |
-| 25 | Pair or No Pair | Matching defines correct pairs; generated pair verification missing | Pair-verification mode with explicit correct/incorrect pair sampling |
+| 21 | True or false | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `timed-true-false` Question Player mode |
+| 22 | Maze chase | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `maze-chase` Question Player mode |
+| 23 | Flying fruit | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `flying-fruit` Question Player mode |
+| 24 | Balloon pop | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `balloon-pop` Question Player mode |
+| 25 | Pair or No Pair | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `pair-or-no-pair` Question Player mode |
 | 26 | Rank order | `reorder` exists | Reuse; preserve current grading unless an author explicitly selects a newer policy |
-| 27 | Whack-a-mole | Choice/set-classification foundations exist; repeated target gameplay missing | Target-classification mode with sufficient correct items and distractors |
-| 28 | Airplane | Choice content exists; navigation/collision game missing | Flight mode with keyboard/touch and stationary alternative |
-| 29 | Image quiz | Image prompts/choices exist; progressive concealment and buzzer missing | Image-reveal mode, with frozen image and timed reveal state |
-| 30 | Speed sorting | `categorize` exists; speed/lives game loop missing | Timed sorting mode |
+| 27 | Whack-a-mole | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `whack-a-mole` Question Player mode |
+| 28 | Airplane | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `airplane` Question Player mode |
+| 29 | Image quiz | Implemented timed tile reveal, saved buzzer, answer review and practice points | `image-quiz` Question Player mode over image single-choice questions; lives/leaderboards remain proposed |
+| 30 | Speed sorting | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `speed-sorting` Question Player mode |
 | 31 | Watch and memorize | Implemented timed observation, hidden recall and saved practice feedback over matching fronts | `memory-recall` Question Player mode; dedicated question family remains proposed |
-| 32 | Win or lose quiz | Choice grading exists; wagering is missing | Practice-only confidence/wager mode; game stake cannot change academic marks |
-| 33 | Maths generator | Variables/formulas, numerical/expression questions and seeded instances exist | Authoring wizard over existing template engine; not a new answer type |
-| 34 | Word magnets | Reorder/tile interaction partly covers constrained ordering; free arrangement missing | Token-board mode; ordered answers use sequence grading, free composition is ungraded/manual |
+| 32 | Win or lose quiz | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `win-or-lose` Question Player mode |
+| 33 | Maths generator | Implemented seven topic presets with bounded ranges over the existing numerical variable engine | Numerical editor → Maths generator |
+| 34 | Word magnets | Implemented core practice activity; see [current catalogue](ALL-ACTIVITIES.md) for source requirements and limits | `word-magnets` Question Player mode |
 
 ## Five new families: editor, player, response and grading
 

@@ -1,3 +1,4 @@
+import { MathsGenerator } from './MathsGenerator';
 import { QUESTION_BLOCK_TYPES, questionTypePatch } from './questionBlocks.mjs';
 /** @jsx createElement */
 import { createElement } from '@wordpress/element';
@@ -23,33 +24,51 @@ import {
  * @param root0
  * @param root0.value
  * @param root0.onChange
+ * @param root0.onGenerate
  */
-export function NumericalEditor( { value, onChange } ) {
+export function NumericalEditor( { value, onChange, onGenerate } ) {
 	return (
 		<div className="ohmylms-numerical-editor">
-			<TextControl
-				type="number"
-				step="any"
-				label={ __( 'Correct answer', 'ohmylms' ) }
-				value={ value.answer ?? '' }
-				onChange={ ( answer ) =>
-					onChange( {
-						answer: answer === '' ? undefined : Number( answer ),
-					} )
-				}
-			/>
-			<TextControl
-				label={ __(
-					'Other accepted answers (comma separated, optional)',
-					'ohmylms'
-				) }
-				value={ numbersToList( value.answers ) }
-				onChange={ ( text ) =>
-					onChange( {
-						answers: listToNumbers( text ),
-					} )
-				}
-			/>
+			{ onGenerate && (
+				<MathsGenerator value={ value } onGenerate={ onGenerate } />
+			) }
+			{ value.maths_generator && value.template?.variables?.length ? (
+				<p>
+					{ __(
+						'The correct answer is calculated for each generated question. Preview the question to inspect a sample.',
+						'ohmylms'
+					) }
+				</p>
+			) : (
+				<>
+					<TextControl
+						type="number"
+						step="any"
+						label={ __( 'Correct answer', 'ohmylms' ) }
+						value={ value.answer ?? '' }
+						onChange={ ( answer ) =>
+							onChange( {
+								answer:
+									answer === ''
+										? undefined
+										: Number( answer ),
+							} )
+						}
+					/>
+					<TextControl
+						label={ __(
+							'Other accepted answers (comma separated, optional)',
+							'ohmylms'
+						) }
+						value={ numbersToList( value.answers ) }
+						onChange={ ( text ) =>
+							onChange( {
+								answers: listToNumbers( text ),
+							} )
+						}
+					/>
+				</>
+			) }
 			<div
 				style={ {
 					display: 'flex',

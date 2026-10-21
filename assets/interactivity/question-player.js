@@ -132,6 +132,25 @@ export function mountPlayer( root ) {
 				)
 			);
 		}
+		if ( data.gameFamily ) {
+			const moduleUrl = new URL( './game-player.mjs', import.meta.url );
+			moduleUrl.search = new URL( import.meta.url ).search;
+			const { renderGame } = await import( moduleUrl.href );
+			cleanups.push(
+				renderGame(
+					stage,
+					data,
+					( card, value = '' ) =>
+						request( 'study', null, {
+							card,
+							value,
+							revision: data.revision,
+						} ),
+					() => request( 'start' )
+				)
+			);
+			return;
+		}
 		if ( [ 'hangman', 'spell-word' ].includes( data.activityMode ) ) {
 			const { renderWord } = await import( './word-player.js' );
 			renderWord(
@@ -150,7 +169,19 @@ export function mountPlayer( root ) {
 		}
 		if ( data.activityMode === 'image-quiz' ) {
 			const { renderImageQuiz } = await import( './image-player.js' );
-			cleanups.push( renderImageQuiz( stage, data, ( card, value = '' ) => request( 'study', null, { card, value, revision: data.revision } ), () => request( 'start' ) ) );
+			cleanups.push(
+				renderImageQuiz(
+					stage,
+					data,
+					( card, value = '' ) =>
+						request( 'study', null, {
+							card,
+							value,
+							revision: data.revision,
+						} ),
+					() => request( 'start' )
+				)
+			);
 			return;
 		}
 		if ( data.activityMode === 'memory-recall' ) {

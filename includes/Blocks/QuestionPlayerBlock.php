@@ -32,7 +32,8 @@ final class QuestionPlayerBlock {
 		}
 		$asset = require $asset_file;
 		wp_register_script( 'ohmylms-question-player-block', plugins_url( 'assets/dist/admin/question-player-block.js', OHMYLMS_FILE ), $asset['dependencies'], $asset['version'], true );
-		wp_register_script_module( 'ohmylms/question-player', plugins_url( 'assets/interactivity/question-player.js', OHMYLMS_FILE ), array( 'ohmylms/interactivity', 'ohmylms/questions' ), (string) filemtime( OHMYLMS_DIR . '/assets/interactivity/question-player.js' ) );
+		$player_version = max( filemtime( OHMYLMS_DIR . '/assets/interactivity/question-player.js' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/game-player.mjs' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/arcade-player.mjs' ) );
+		wp_register_script_module( 'ohmylms/question-player', plugins_url( 'assets/interactivity/question-player.js', OHMYLMS_FILE ), array( 'ohmylms/interactivity', 'ohmylms/questions' ), (string) $player_version );
 		register_block_type( OHMYLMS_DIR . '/assets/src/blocks/question-player', array( 'render_callback' => array( __CLASS__, 'render' ) ) );
 	}
 
@@ -56,7 +57,7 @@ final class QuestionPlayerBlock {
 		$ids    = static function ( $values ) {
 			return array_slice( array_values( array_unique( array_filter( array_map( 'absint', is_array( $values ) ? $values : array() ) ) ) ), 0, 30 );
 		};
-		$mode   = in_array( $attributes['activityMode'] ?? '', array( 'flashcards', 'memory-pairs', 'hangman', 'spell-word', 'memory-recall', 'image-quiz' ), true ) ? $attributes['activityMode'] : 'standard';
+		$mode   = in_array( $attributes['activityMode'] ?? '', array_merge( array_keys( \OhMyLMS\Practice\ActivityModes::MODES ), array( 'flashcards', 'memory-pairs', 'hangman', 'spell-word', 'memory-recall', 'image-quiz' ) ), true ) ? $attributes['activityMode'] : 'standard';
 		$graded = 'standard' === $mode && ( ! isset( $attributes['graded'] ) || true === $attributes['graded'] );
 		$result = array(
 			'source'        => 'random' === ( $attributes['source'] ?? '' ) ? 'random' : 'selected',
@@ -72,6 +73,9 @@ final class QuestionPlayerBlock {
 		if ( 'memory-recall' === $mode ) {
 			$result['rememberCount'] = max( 1, min( 10, (int) ( $attributes['rememberCount'] ?? 2 ) ) );
 			$result['studySeconds']  = max( 5, min( 120, (int) ( $attributes['studySeconds'] ?? 10 ) ) );
+		}
+		if ( \OhMyLMS\Practice\ActivityModes::family( $mode ) ) {
+			$result['roundSeconds'] = max( 10, min( 180, (int) ( $attributes['roundSeconds'] ?? 30 ) ) );
 		}
 		if ( 'image-quiz' === $mode ) {
 			$result['revealSeconds'] = max( 10, min( 120, (int) ( $attributes['revealSeconds'] ?? 30 ) ) );
@@ -160,6 +164,7 @@ final class QuestionPlayerBlock {
 		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/question-player' );
 		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/questions' );
 		wp_enqueue_style( 'ohmylms-question-player', plugins_url( 'assets/css/question-player.css', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/question-player.css' ) );
+		wp_enqueue_style( 'ohmylms-game-player', plugins_url( 'assets/css/game-player.css', OHMYLMS_FILE ), array( 'ohmylms-question-player' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/game-player.css' ) );
 		$config = array(
 			'endpoint' => rest_url( 'ohmylms/v1/question-player/' . $post_id . '/' . self::key( $settings ) ),
 			'nonce'    => wp_create_nonce( 'wp_rest' ),
@@ -276,7 +281,7 @@ final class QuestionPlayerBlock {
 		);
 		foreach ( $posts as $post ) {
 			$snapshot = QuestionPlayer::eligible( $post->ID, get_current_user_id() );
-			if ( $snapshot && ( 'image-quiz' !== $request['activityMode'] || \OhMyLMS\Practice\ImageActivity::compatible( $snapshot ) ) && ( ! in_array( $request['activityMode'], array( 'flashcards', 'memory-pairs', 'memory-recall' ), true ) || 'matching' === $snapshot->get_type() ) && ( ! in_array( $request['activityMode'], array( 'hangman', 'spell-word' ), true ) || \OhMyLMS\Practice\WordActivity::answers( $snapshot ) ) ) {
+			if ( $snapshot && ( ! \OhMyLMS\Practice\ActivityModes::family( $request['activityMode'] ?? '' ) || \OhMyLMS\Practice\ActivityModes::compatible( $request['activityMode'], $snapshot ) ) && ( 'image-quiz' !== $request['activityMode'] || \OhMyLMS\Practice\ImageActivity::compatible( $snapshot ) ) && ( ! in_array( $request['activityMode'], array( 'flashcards', 'memory-pairs', 'memory-recall' ), true ) || 'matching' === $snapshot->get_type() ) && ( ! in_array( $request['activityMode'], array( 'hangman', 'spell-word' ), true ) || \OhMyLMS\Practice\WordActivity::answers( $snapshot ) ) ) {
 				$result[] = array(
 					'id'    => (int) $post->ID,
 					'title' => get_the_title( $post ),

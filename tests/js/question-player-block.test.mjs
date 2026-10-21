@@ -40,6 +40,7 @@ test( 'the saved block contains references and outcome switches without assessme
 		'rememberCount',
 		'studySeconds',
 		'revealSeconds',
+		'roundSeconds',
 	] );
 	assert.equal( block.attributes.graded.default, true );
 	assert.equal( block.attributes.affectsSkills.default, false );

@@ -157,8 +157,15 @@ final class ExtendedQuestions {
 			}
 		}
 		if ( 'labeling' === $type ) {
-			$targets = $settings['targets'] ?? array();
-			$valid   = $valid && self::valid_rows( $targets, 'answer' ) && self::valid_points( $targets, 50, 0, 100 );
+			$targets     = $settings['targets'] ?? array();
+			$valid       = $valid && self::valid_rows( $targets, 'answer' ) && self::valid_points( $targets, 50, 0, 100 );
+			$distractors = $settings['distractors'] ?? array();
+			$valid       = $valid && is_array( $distractors ) && 50 >= count( $distractors );
+			if ( $valid ) {
+				foreach ( $distractors as $label ) {
+					$valid = $valid && is_string( $label ) && '' !== trim( $label ) && 20000 >= strlen( $label );
+				}
+			}
 		}
 		if ( 'hotspot' === $type ) {
 			$zones = $settings['zones'] ?? array();

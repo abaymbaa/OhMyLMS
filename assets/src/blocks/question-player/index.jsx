@@ -18,6 +18,46 @@ import metadata from './block.json';
 import { addSelection, moveSelection } from './model.mjs';
 import { installNativeCanvasRecovery } from '../../features/learning/nativeCanvas.mjs';
 
+const activities = [
+	[ 'spin-wheel', __( 'Spin the wheel', 'ohmylms' ), 'deck' ],
+	[ 'open-box', __( 'Open the box', 'ohmylms' ), 'deck' ],
+	[ 'speaking-cards', __( 'Speaking cards', 'ohmylms' ), 'deck' ],
+	[ 'flip-tiles', __( 'Flip tiles', 'ohmylms' ), 'deck' ],
+	[ 'find-match', __( 'Find the match', 'ohmylms' ), 'match' ],
+	[ 'pair-or-no-pair', __( 'Pair or No Pair', 'ohmylms' ), 'match' ],
+	[ 'balloon-pop', __( 'Balloon pop', 'ohmylms' ), 'match' ],
+	[ 'gameshow', __( 'Gameshow quiz', 'ohmylms' ), 'choice' ],
+	[ 'timed-true-false', __( 'Timed True or false', 'ohmylms' ), 'choice' ],
+	[ 'win-or-lose', __( 'Win or lose quiz', 'ohmylms' ), 'choice' ],
+	[ 'maze-chase', __( 'Maze chase', 'ohmylms' ), 'choice' ],
+	[ 'flying-fruit', __( 'Flying fruit', 'ohmylms' ), 'choice' ],
+	[ 'whack-a-mole', __( 'Whack-a-mole', 'ohmylms' ), 'choice' ],
+	[ 'airplane', __( 'Airplane', 'ohmylms' ), 'choice' ],
+	[ 'speed-sorting', __( 'Speed sorting', 'ohmylms' ), 'sort' ],
+	[ 'word-magnets', __( 'Word magnets', 'ohmylms' ), 'magnets' ],
+];
+const familyHelp = {
+	deck: __(
+		'Use approved Matching questions for two-sided cards, or Statements for prompts (except Flip tiles, which needs Matching). Random draws do not repeat until the deck is exhausted.',
+		'ohmylms'
+	),
+	match: __(
+		'Use Matching questions with distinct prompts and answer labels. Include at least two pairs. Find the match eliminates answers; Pair or No Pair tests real and mismatched pairs; Balloon pop drops the selected label onto the prompt.',
+		'ohmylms'
+	),
+	choice: __(
+		'Use Single choice or True/false questions with 2–6 text-labelled choices and one correct answer. Timed True or false requires True/false. Game points, timers and confidence stakes are practice feedback only. Arcade games include stationary keyboard and touch alternatives.',
+		'ohmylms'
+	),
+	sort: __(
+		'Use Sort into groups questions with 2–8 groups. Each item appears in a timed round.',
+		'ohmylms'
+	),
+	magnets: __(
+		'Use Build from tiles in Words mode. Learners arrange the words freely on a board. Positions are saved; composition is ungraded.',
+		'ohmylms'
+	),
+};
 if ( ! window.ohmylmsNativeLesson ) {
 	installNativeCanvasRecovery();
 }
@@ -39,6 +79,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 		graded,
 		affectsSkills,
 		activityMode = 'standard',
+		roundSeconds = 30,
 		revealSeconds = 30,
 		rememberCount = 2,
 		studySeconds = 10,
@@ -117,7 +158,14 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 						label={ __( 'Play mode', 'ohmylms' ) }
 						value={ activityMode }
 						options={ [
-							{ value: 'image-quiz', label: __( 'Image quiz', 'ohmylms' ) },
+							...activities.map( ( [ value, label ] ) => ( {
+								value,
+								label,
+							} ) ),
+							{
+								value: 'image-quiz',
+								label: __( 'Image quiz', 'ohmylms' ),
+							},
 							{
 								value: 'memory-recall',
 								label: __( 'Watch and memorize', 'ohmylms' ),
@@ -158,10 +206,63 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 							} )
 						}
 					/>
+					{ activities.some( ( [ id ] ) => id === activityMode ) && (
+						<>
+							<p>
+								{
+									familyHelp[
+										activities.find(
+											( [ id ] ) => id === activityMode
+										)[ 2 ]
+									]
+								}
+							</p>
+							{ ! [ 'deck', 'magnets' ].includes(
+								activities.find(
+									( [ id ] ) => id === activityMode
+								)[ 2 ]
+							) && (
+								<RangeControl
+									label={ __(
+										'Round time (seconds)',
+										'ohmylms'
+									) }
+									min={ 10 }
+									max={ 180 }
+									value={ roundSeconds }
+									onChange={ ( value ) =>
+										setAttributes( { roundSeconds: value } )
+									}
+								/>
+							) }
+							<p>
+								{ __(
+									'At most 100 content items per run. Save and preview the page to play.',
+									'ohmylms'
+								) }
+							</p>
+						</>
+					) }
 					{ activityMode === 'image-quiz' && (
 						<>
-							<p>{ __( 'Choose single-choice questions with a main image, 2�6 answers and one correct choice. Add the image in the question editor and approve the question. Images reveal gradually; buzz to answer. Faster correct answers earn practice points only. Variable questions are not supported.', 'ohmylms' ) }</p>
-							<RangeControl label={ __( 'Image reveal time (seconds)', 'ohmylms' ) } min={ 10 } max={ 120 } value={ revealSeconds } onChange={ ( value ) => setAttributes( { revealSeconds: value } ) } />
+							<p>
+								{ __(
+									'Choose single-choice questions with a main image, 2–6 answers and one correct choice. Add the image in the question editor and approve the question. Images reveal gradually; buzz to answer. Faster correct answers earn practice points only. Variable questions are not supported.',
+									'ohmylms'
+								) }
+							</p>
+							<RangeControl
+								label={ __(
+									'Image reveal time (seconds)',
+									'ohmylms'
+								) }
+								min={ 10 }
+								max={ 120 }
+								value={ revealSeconds }
+								onChange={ ( value ) =>
+									setAttributes( { revealSeconds: value } )
+								}
+							/>
 						</>
 					) }
 					{ activityMode === 'memory-recall' && (
@@ -196,7 +297,11 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 						</>
 					) }
 					{ activityMode !== 'standard' &&
-						activityMode !== 'memory-recall' && activityMode !== 'image-quiz' && (
+						activityMode !== 'memory-recall' &&
+						activityMode !== 'image-quiz' &&
+						! activities.some(
+							( [ id ] ) => id === activityMode
+						) && (
 							<p>
 								{ [ 'hangman', 'spell-word' ].includes(
 									activityMode
@@ -387,6 +492,14 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 registerBlockType( metadata, { edit: QuestionPlayerEdit, save: () => null } );
 
 for ( const [ name, title, icon ] of [
+	...activities.map( ( [ id, label ] ) => [
+		id,
+		sprintf(
+			/* translators: %s: activity name. */ __( 'OhMyLMS %s', 'ohmylms' ),
+			label
+		),
+		'games',
+	] ),
 	[ 'image-quiz', __( 'OhMyLMS Image quiz', 'ohmylms' ), 'format-image' ],
 	[ 'hangman', __( 'OhMyLMS Hangman', 'ohmylms' ), 'editor-spellcheck' ],
 	[

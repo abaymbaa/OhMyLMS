@@ -84,6 +84,9 @@ final class QuestionPlayer {
 		$mode          = $settings['activityMode'] ?? 'standard';
 		$pair_count    = 0;
 		$recall_labels = array();
+		$game_count    = 0;
+		$game_backs    = array();
+		$game_fronts   = array();
 		$author_id     = (int) $placement['post']->post_author;
 		$student       = get_current_user_id();
 		$ids           = $settings['questionIds'];
@@ -109,7 +112,33 @@ final class QuestionPlayer {
 				}
 				continue;
 			}
-			if ( in_array( $mode, array( 'hangman', 'spell-word' ), true ) ) {
+			if ( ActivityModes::family( $mode ) ) {
+				if ( ! ActivityModes::compatible( $mode, $snapshot ) ) {
+					if ( 'random' === $settings['source'] ) {
+						continue;
+					}
+					return self::error( __( 'This question does not support the chosen activity. Use the compatible content described in the player editor.', 'ohmylms' ) );
+				}
+				$family     = ActivityModes::family( $mode );
+				$additional = in_array( $family, array( 'deck', 'match' ), true ) && 'matching' === $snapshot->get_type() ? count( $snapshot->get_questions() ) : ( 'sort' === $family ? count( $snapshot->get_settings()['items'] ) : ( 'magnets' === $family ? count( $snapshot->get_settings()['tiles'] ) : 1 ) );
+				$fronts     = $game_fronts;
+				$backs      = $game_backs;
+				if ( 'match' === $family ) {
+					foreach ( $snapshot->get_questions() as $option ) {
+						$fronts[] = RecallActivity::label( $option['answer'] );
+						$backs[]  = RecallActivity::label( $option['matching_data']['label'] );
+					}
+				}
+				if ( $game_count + $additional > 100 || count( array_unique( $backs ) ) !== count( $backs ) || count( array_unique( $fronts ) ) !== count( $fronts ) ) {
+					if ( 'random' === $settings['source'] ) {
+						continue;
+					}
+					return self::error( __( 'Activities support at most 100 items. Matching games need distinct prompts and answer labels across the selected questions.', 'ohmylms' ) );
+				}
+				$game_count += $additional;
+				$game_fronts = $fronts;
+				$game_backs  = $backs;
+			} elseif ( in_array( $mode, array( 'hangman', 'spell-word' ), true ) ) {
 				if ( ! WordActivity::answers( $snapshot ) ) {
 					if ( 'random' === $settings['source'] ) {
 						continue;
@@ -121,7 +150,7 @@ final class QuestionPlayer {
 					if ( 'random' === $settings['source'] ) {
 						continue;
 					}
-					return self::error( __( 'Image quiz needs single-choice questions with a main image, 2–6 choices and exactly one correct answer. Variable questions are not supported.', 'ohmylms' ) );
+					return self::error( __( 'Image quiz needs single-choice questions with a main image, 2â€“6 choices and exactly one correct answer. Variable questions are not supported.', 'ohmylms' ) );
 				}
 			} elseif ( 'standard' !== $mode ) {
 				if ( 'matching' !== $snapshot->get_type() ) {
@@ -172,6 +201,9 @@ final class QuestionPlayer {
 		}
 		if ( 'image-quiz' === $mode ) {
 			$policy['reveal_seconds'] = $settings['revealSeconds'];
+		}
+		if ( ActivityModes::family( $mode ) ) {
+			$policy['round_seconds'] = $settings['roundSeconds'];
 		}
 		$uuid = wp_generate_uuid4();
 		try {
@@ -228,6 +260,9 @@ final class QuestionPlayer {
 			if ( ! self::eligible( (int) $item['question_id'], (int) $placement['post']->post_author, get_current_user_id() ) ) {
 				return self::error( __( 'A question is no longer available. Ask the author to update this player.', 'ohmylms' ), 403 );
 			}
+		}
+		if ( ActivityModes::family( $session['policy']['activity_mode'] ?? '' ) ) {
+			return null !== $activity ? GameActivity::act( $session, $items, $activity ) : GameActivity::view( $session, $items );
 		}
 		if ( 'image-quiz' === ( $session['policy']['activity_mode'] ?? '' ) ) {
 			return null !== $activity ? ImageActivity::act( $session, $items, $activity ) : ImageActivity::view( $session, $items );
@@ -394,6 +429,9 @@ final class QuestionPlayer {
 	 */
 	private static function view( array $session ) {
 		$items = Sessions::items( $session['id'] );
+		if ( ActivityModes::family( $session['policy']['activity_mode'] ?? '' ) ) {
+			return GameActivity::view( $session, $items );
+		}
 		if ( 'image-quiz' === ( $session['policy']['activity_mode'] ?? '' ) ) {
 			return ImageActivity::view( $session, $items );
 		}

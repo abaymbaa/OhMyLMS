@@ -76,9 +76,13 @@ export function QuestionTypeChooser( { onSelect, onClose } ) {
 	];
 	const matches = ( [ id, label ] ) => {
 		const keywords =
-			id === 'build-expression'
-				? ' anagram letters spelling sentence words tiles'
-				: '';
+			{
+				'build-expression':
+					' anagram letters spelling sentence words tiles',
+				labeling: ' labelled diagram labeled diagram pins labels drag',
+				numerical:
+					' maths generator arithmetic fractions percentages algebra',
+			}[ id ] || '';
 		return ( label + keywords )
 			.toLowerCase()
 			.includes( search.toLowerCase().trim() );

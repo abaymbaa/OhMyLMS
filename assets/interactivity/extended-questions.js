@@ -6,6 +6,11 @@
 		return;
 	}
 	const { el, setAnswer } = api.util;
+	const diagramModule = new URL(
+		'./diagram-labels.mjs',
+		document.currentScript.src
+	);
+	diagramModule.search = new URL( document.currentScript.src ).search;
 	const { __, sprintf } = window.wp.i18n;
 	let instanceId = 0;
 	const types = [
@@ -852,7 +857,9 @@
 				const height = image.naturalHeight || 1;
 				const scale = Math.min(
 					( window.innerWidth - 32 ) / width,
-					( window.innerHeight - 96 ) / height,
+					( window.innerHeight -
+						( type === 'labeling' ? 300 : 96 ) ) /
+						height,
 					4
 				);
 				image.style.width = Math.round( width * scale ) + 'px';
@@ -861,17 +868,42 @@
 			const onKey = ( event ) => {
 				if ( event.key === 'Escape' ) {
 					setFull( false );
+				} else if ( event.key === 'Tab' && type === 'labeling' ) {
+					const controls = Array.from(
+						box.querySelectorAll( 'button:not(:disabled), select' )
+					).filter( ( node ) => node.getClientRects().length );
+					const index = controls.indexOf( document.activeElement );
+					if ( event.shiftKey && index <= 0 ) {
+						event.preventDefault();
+						controls.at( -1 )?.focus();
+					} else if (
+						! event.shiftKey &&
+						index === controls.length - 1
+					) {
+						event.preventDefault();
+						controls[ 0 ]?.focus();
+					}
 				}
 			};
 			function setFull( on ) {
 				box.classList.toggle( 'ohmylms-diagram-full', on );
 				document.body.classList.toggle( 'ohmylms-diagram-open', on );
 				if ( on ) {
+					box.setAttribute( 'role', 'dialog' );
+					box.setAttribute( 'aria-modal', 'true' );
+					box.setAttribute(
+						'aria-label',
+						__( 'Question diagram', 'ohmylms' )
+					);
 					window.addEventListener( 'keydown', onKey );
 					window.addEventListener( 'resize', fit );
+					closeFull.focus();
 				} else {
+					box.removeAttribute( 'role' );
+					box.removeAttribute( 'aria-modal' );
 					window.removeEventListener( 'keydown', onKey );
 					window.removeEventListener( 'resize', fit );
+					enlarge.focus();
 				}
 				fit();
 			}
@@ -879,6 +911,23 @@
 			root.appendChild( enlarge );
 			if ( type === 'labeling' ) {
 				( config.targets || [] ).forEach( ( target ) => {
+					let input = Array.from(
+						root.querySelectorAll( 'input[data-answer-key]' )
+					).find(
+						( answerField ) =>
+							answerField.dataset.answerKey === target.id
+					);
+					if ( ! input ) {
+						input = el( 'input', {
+							type: 'hidden',
+							'data-answer-key': target.id,
+							name: root.dataset.namePrefix
+								? `${ root.dataset.namePrefix }[${ target.id }]`
+								: null,
+						} );
+						root.appendChild( input );
+					}
+
 					const select = el( 'select', {
 						'aria-label':
 							__( 'Diagram label', 'ohmylms' ) + ' ' + target.id,
@@ -900,11 +949,25 @@
 							el( 'option', { value: choice, text: choice } )
 						)
 					);
-					select.addEventListener( 'change', () =>
-						setAnswer( root, target.id, select.value )
-					);
+					select.value = input.value;
+					select.addEventListener( 'change', () => {
+						input.value = select.value;
+						root.dataset.touched = '1';
+						input.dispatchEvent(
+							new Event( 'change', { bubbles: true } )
+						);
+					} );
 					stage.appendChild( select );
 				} );
+				import( diagramModule.href )
+					.then( ( { buildDiagramLabels } ) => {
+						if ( root.isConnected ) {
+							buildDiagramLabels( root, stage, config );
+						}
+					} )
+					.catch( () => {
+						// The original label menus remain usable if the enhancement cannot load.
+					} );
 			} else {
 				const pin = el( 'span', {
 					class: 'ohmylms-hotspot-pin',

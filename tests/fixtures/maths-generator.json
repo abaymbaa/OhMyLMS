@@ -1,0 +1,304 @@
+{
+  "addition": {
+    "prompt": "{{a}} + {{b}} = ?",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "addition",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "a+b"
+          }
+        ]
+      }
+    }
+  },
+  "subtraction": {
+    "prompt": "{{a}} − {{b}} = ?",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "subtraction",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          }
+        ],
+        "constraints": [
+          "a>=b"
+        ],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "a-b"
+          }
+        ]
+      }
+    }
+  },
+  "multiplication": {
+    "prompt": "{{a}} × {{b}} = ?",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "multiplication",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "a*b"
+          }
+        ]
+      }
+    }
+  },
+  "division": {
+    "prompt": "{{c}} ÷ {{b}} = ?",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "division",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "c",
+            "type": "expr",
+            "expr": "a*b",
+            "places": 0
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "a"
+          }
+        ]
+      }
+    }
+  },
+  "percentage": {
+    "prompt": "{{a}}% of {{b}} = ?",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "percentage",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "a*b/100"
+          }
+        ]
+      }
+    }
+  },
+  "fractions": {
+    "prompt": "{{a}}/{{d}} + {{b}}/{{d}} = ? (decimal answer)",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "fractions",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "d",
+            "type": "int",
+            "min": 2,
+            "max": 12,
+            "step": 1
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "(a+b)/d"
+          }
+        ]
+      }
+    }
+  },
+  "algebra": {
+    "prompt": "{{a}}x + {{b}} = {{a*c+b}}. Find x.",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "algebra",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "a",
+            "type": "int",
+            "min": 1,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "int",
+            "min": 1,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "c",
+            "type": "int",
+            "min": 2,
+            "max": 9,
+            "step": 1
+          }
+        ],
+        "constraints": [],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "c"
+          }
+        ]
+      }
+    }
+  }
+}

@@ -163,6 +163,14 @@ export function BankAnswerFields( {
 		return (
 			<NumericalEditor
 				value={ settings }
+				onGenerate={ ( preset ) =>
+					onChange( {
+						name: preset.prompt,
+						description: preset.prompt,
+						settings: { ...settings, ...preset.settings },
+						questions: [],
+					} )
+				}
 				onChange={ ( patch ) =>
 					onChange( {
 						settings: {

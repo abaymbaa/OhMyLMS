@@ -88,11 +88,11 @@ final class ImageActivity {
 				);
 				if ( 'review' === $phase ) {
 					$choice['correct']  = ! empty( $option['is_correct'] );
-					$choice['selected'] = $choice['id'] === ( $state['selected'] ?? '' );
+					$choice['selected'] = ( $state['selected'] ?? '' ) === $choice['id'];
 				}
 				$choices[] = $choice;
 			}
-			$view['choices'] = Interactive::shuffled( $choices, $session['uuid'] . ':image:' . $index );
+			$view['choices'] = Interactive::shuffled( $choices, hash_hmac( 'sha256', $session['uuid'] . ':image:' . $index, wp_salt( 'auth' ) ) );
 		}
 		if ( 'review' === $phase ) {
 			$view['correct']     = ! empty( $state['correct'] );
@@ -157,7 +157,7 @@ final class ImageActivity {
 						$state['round_points'] = $state['correct'] ? max( 1, 36 - $state['revealed'] ) : 0;
 						$state['points']      += $state['round_points'];
 						$state['phase']        = 'review';
-					} elseif ( 'next' === $command && 'review' === $phase && $state['index'] + 1 < count( $items ) ) {
+					} elseif ( 'next' === $command && 'review' === $phase && count( $items ) > $state['index'] + 1 ) {
 						$state = array(
 							'revision' => $state['revision'],
 							'index'    => $state['index'] + 1,
@@ -169,7 +169,7 @@ final class ImageActivity {
 					}
 					++$state['revision'];
 					$policy['activity_state'] = $state;
-					$complete                 = 'review' === $state['phase'] && $state['index'] + 1 === count( $items );
+					$complete                 = 'review' === $state['phase'] && count( $items ) === $state['index'] + 1;
 					$update                   = array(
 						'policy' => wp_json_encode( $policy ),
 						'status' => $complete ? 'complete' : 'active',

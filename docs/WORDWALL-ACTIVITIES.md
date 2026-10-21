@@ -54,4 +54,30 @@ Existing type IDs, mathematical tile grading, manual short-answer semantics, cou
 
 Checks include language-token tests (Mongolian repeated letters and combining marks), bounded automatic-answer checks, frozen publish/player grading, private-answer projection, reveal/resume, stale and forged actions, completion without grade events, and browser playback. Use the dedicated disposable migration database for `tests/php/wordwall-integration.php`; that suite refuses other databases and rolls its fixtures back. The browser spec `tests/browser/wordwall-activities.spec.cjs` is restricted to the disposable server at port 8100 and checks the native authoring controls plus learner playback. `tests/browser/word-games.spec.cjs` additionally checks both word modes, repeated Cyrillic letters, multi-round advancement, mistake limits, refresh recovery, completion and restart.
 
-Later delivery: image reveal, draggable labeling, teacher tools, maths-generator wizard and arcade modes. See the full audit matrix for scope and sequencing.
+The remaining core teacher tools, matching modes, timed games, arcade adaptations, Word magnets and Maths generator are now implemented. See [the complete activity catalogue](ALL-ACTIVITIES.md) for source requirements, controls, scoring and explicit limits.
+
+## Labelled diagram: existing Labeling block extended
+
+Use the existing **Labeling** question type (also searchable by “labelled diagram”, “labeled diagram” and “pins”). Choose a diagram image, enter the correct label for each target, then click or drag the numbered pins in the editor. The full-screen pin editor also supports arrow-key positioning. Optional **Distractor labels** add unused choices to the label bank.
+
+The learner can drag a label onto a numbered pin, click a label then a pin, or use Enter/Space on these same buttons. Delete/Backspace on a pin clears its label; Escape cancels a selection. **Use label menus** provides native dropdown controls. Filled pins show their selected labels, and the status reports completion without exposing correctness. Labels remain reusable, preserving historical repeated-label definitions. Clearing, replacing and menu changes all write the original `target ID → label text` response.
+
+The enlarged diagram includes its label bank, menus and clear action. Escape closes it and returns focus to the enlarge button; Tab stays inside the enlarged view. The drag enhancement loads only when a Labeling widget appears, with versioned URLs. If it cannot load, the original diagram menus still submit answers.
+
+Native hidden answer fields exist before JavaScript loads, allowing quiz autosave to restore responses even while the enhancement loads. The controls synchronize with `ohmylms:answer-restored`. Standalone Question Player placements also keep a tab-local draft scoped to the issued session and question; starting a new run gives a fresh draft. Existing frozen image references, public target coordinates, shuffled/sorted label bank, all-or-nothing grading and reports remain in use. The target-to-correct-label map stays private until authorized review. This extends the response type rather than introducing another activity mode or grader.
+
+Based on [Wordwall’s Labelled Diagram guide](https://wordwall.zendesk.com/hc/en-gb/articles/360015809077--How-to-create-a-Labelled-Diagram-activity). Wordwall timers, immediate correctness checks and leaderboards are outside this delivery; feedback follows the existing assessment/player policy.
+
+Validation: `tests/php/diagram-labels-integration.php` covers safe public projection, bounded distractors, pre-rendered restore fields, frozen grading after draft edits, incomplete/incorrect placements and existing reports. `tests/browser/diagram-labels.spec.cjs` covers native Gutenberg save/reopen, pin adjustment, distractors, drag, keyboard and tap input, menu fallback, refresh, enlarged view, mobile and grading.
+
+## Image quiz
+
+Choose **Image quiz** in Question Player → Play mode, or insert **OhMyLMS Image quiz**. It reuses approved single-choice bank questions: add a main image, 2–6 answer choices (text and/or images), and exactly one correct answer in the existing question editor. Variable questions are excluded. The picker filters compatible questions; launches recheck compatibility and access. Random skill pools skip incompatible questions.
+
+The image loads before Reveal image becomes available. A 6×6 cover opens progressively over 10–120 seconds (default 30). Buzz pauses the reveal and opens the choices. Each round accepts one answer, shows feedback, then proceeds to the next image. Skip image handles unavailable pictures for zero points. Desktop and mobile use keyboard-operable buttons.
+
+The server saves the start time, paused tile count, round, revision and total practice points. Refresh preserves progress; repeated actions cannot award points twice. Correct answers earn `max(1, 36 − tiles revealed at buzz)` points; incorrect/skipped rounds earn zero. Active responses omit correctness and option database IDs. Keys appear only in that round’s review. Media uses the existing version snapshots. Concealment is a visual practice mechanic: the image URL remains visible to the browser.
+
+This follows [Wordwall’s Image Quiz guide](https://wordwall.zendesk.com/hc/en-gb/articles/360015997958--How-to-create-an-Image-Quiz-activity) for image entry, timed reveal, buzzer and choice flow. Lives, leaderboards, automatic next-round transitions, alternate layouts and theme presets remain future work. Practice points never create grade events or skill evidence.
+
+Validation: `tests/php/image-activity-integration.php` covers phase gates, timing, private answers, invalid/repeated actions, scoring and absence of academic events in a rolled-back disposable database transaction. `tests/browser/image-quiz.spec.cjs` covers saved buzzer state, multiple rounds, full reveal, feedback, desktop/mobile layouts and native block controls.

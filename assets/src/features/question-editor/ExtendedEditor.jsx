@@ -4,6 +4,7 @@ import { createElement, useState } from '@wordpress/element';
 import {
 	Button,
 	CheckboxControl,
+	FormTokenField,
 	SelectControl,
 	TextControl,
 } from '@wordpress/components';
@@ -567,6 +568,18 @@ export function ExtendedEditor( {
 			) }
 			{ type === 'labeling' && (
 				<>
+					<p>
+						{ __(
+							'Learners drag labels onto the numbered pins, or use tap and keyboard controls. Move the pins on the diagram and enter the correct label for each pin below.',
+							'ohmylms'
+						) }
+					</p>
+					<FormTokenField
+						label={ __( 'Distractor labels', 'ohmylms' ) }
+						value={ value.distractors || [] }
+						onChange={ ( distractors ) => set( { distractors } ) }
+						__experimentalShowHowTo={ true }
+					/>
 					{ rows( 'targets' ).map( ( target, index ) => (
 						<fieldset
 							key={ target.id }

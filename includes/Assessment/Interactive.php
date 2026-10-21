@@ -284,9 +284,10 @@ final class Interactive {
 		wp_enqueue_script( 'ohmylms-interactive-visual' );
 		wp_enqueue_script( 'ohmylms-puzzle-loader', plugins_url( 'assets/js/puzzle-loader.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), max( filemtime( OHMYLMS_DIR . '/assets/js/puzzle-loader.js' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/puzzles.mjs' ) ), true );
 		wp_enqueue_style( 'ohmylms-puzzles', plugins_url( 'assets/css/puzzles.css', OHMYLMS_FILE ), array(), filemtime( OHMYLMS_DIR . '/assets/css/puzzles.css' ) );
-		wp_enqueue_script( 'ohmylms-extended-questions', plugins_url( 'assets/interactivity/extended-questions.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/extended-questions.js' ), true );
+		wp_enqueue_script( 'ohmylms-extended-questions', plugins_url( 'assets/interactivity/extended-questions.js', OHMYLMS_FILE ), array( 'ohmylms-interactive', 'wp-i18n' ), max( filemtime( OHMYLMS_DIR . '/assets/interactivity/extended-questions.js' ), filemtime( OHMYLMS_DIR . '/assets/interactivity/diagram-labels.mjs' ) ), true );
 		wp_localize_script( 'ohmylms-extended-questions', 'ohmylmsResponseMedia', ResponseMedia::script_data() );
 		wp_enqueue_style( 'ohmylms-extended-questions', plugins_url( 'assets/css/extended-questions.css', OHMYLMS_FILE ), array( 'ohmylms-interactive' ), filemtime( OHMYLMS_DIR . '/assets/css/extended-questions.css' ) );
+		wp_enqueue_style( 'ohmylms-diagram-labels', plugins_url( 'assets/css/diagram-labels.css', OHMYLMS_FILE ), array( 'ohmylms-extended-questions' ), filemtime( OHMYLMS_DIR . '/assets/css/diagram-labels.css' ) );
 		wp_enqueue_style( 'ohmylms-interactive' );
 	}
 
