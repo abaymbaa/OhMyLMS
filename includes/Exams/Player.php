@@ -16,13 +16,6 @@ defined( 'ABSPATH' ) || exit;
 
 /** Personalized exam and source documents are never publicly cached. */
 final class Player {
-	/**
-	 * Set while the exam document renders.
-	 *
-	 * @var bool
-	 */
-	private static $rendering = false;
-
 	/** Register navigation, embeds and document authorization. */
 	public static function init() {
 		add_action( 'template_redirect', array( __CLASS__, 'document' ), 20 );
@@ -90,28 +83,8 @@ final class Player {
 		$id = self::query_id( 'ohmylms_exam' );
 		if ( $id ) {
 			$context['returnUrl'] = self::url( $id );
-			if ( self::rendering() ) {
-				$context += array(
-					'marked'        => (object) array(),
-					'visited'       => (object) array( 1 => true ),
-					'markText'      => __( 'Mark for review', 'ohmylms' ),
-					'markedText'    => __( 'Marked for review', 'ohmylms' ),
-					/* translators: %d: number of questions without an answer. */
-					'confirmSubmit' => __( '%d questions have no answer yet. Submit the exam anyway?', 'ohmylms' ),
-				);
-				$context['nextText'] = __( 'Save and Next', 'ohmylms' );
-			}
 		}
 		return $context;
-	}
-
-	/**
-	 * Whether the exam document is being rendered, so the shared form uses the exam design.
-	 *
-	 * @return bool Exam shell active.
-	 */
-	public static function rendering() {
-		return self::$rendering;
 	}
 
 	/**
@@ -254,7 +227,6 @@ final class Player {
 		wp_enqueue_script( 'ohmylms-frontend' );
 		\OhMyLMS\Assessment\MathLive::enqueue();
 		wp_enqueue_style( 'ohmylms-exam-player', plugins_url( 'assets/css/exam-player.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/exam-player.css' ) );
-		self::$rendering = true;
 		ob_start();
 		if ( $error ) {
 			echo '<p role="alert">' . esc_html( $error->get_error_message() ) . '</p>';
@@ -304,8 +276,7 @@ final class Player {
 				echo '<button type="submit" name="ohmylms_exam_start" value="1">' . esc_html__( 'Start exam', 'ohmylms' ) . '</button></form>';
 			}
 		}
-		$body            = ob_get_clean();
-		self::$rendering = false;
+		$body = ob_get_clean();
 		?><!doctype html>
 		<html <?php language_attributes(); ?>>
 		<head><meta charset="<?php bloginfo( 'charset' ); ?>"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title><?php echo esc_html( get_the_title( $id ) ); ?></title><?php wp_head(); ?></head>

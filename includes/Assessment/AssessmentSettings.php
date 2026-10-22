@@ -18,8 +18,7 @@ defined( 'ABSPATH' ) || exit;
  * per-student accommodations (extra time). They are frozen into published revisions.
  */
 final class AssessmentSettings {
-	const META  = '_ohmylms_assessment_settings';
-	const KINDS = array( 'quiz', 'exam', 'practice' );
+	const META = '_ohmylms_assessment_settings';
 	// How the assessment is presented: a short quiz, a unit test, or a course challenge (mixed-skill checks).
 	const STYLES   = array( 'quiz', 'unit-test', 'course-challenge' );
 	const FEEDBACK = array( 'immediate', 'after_close', 'manual' );
@@ -58,7 +57,7 @@ final class AssessmentSettings {
 		$settings = array_merge( self::get( $quiz_id ), array_intersect_key( $input, self::defaults() ) );
 		if ( ! empty( $input['preset'] ) && 'exam' === $input['preset'] ) {
 			$settings = array_merge( $settings, self::exam_preset() ); }
-		if ( ! in_array( $settings['kind'], self::KINDS, true ) ) {
+		if ( ! in_array( $settings['kind'], Profiles::kinds(), true ) ) {
 			return self::invalid( __( 'Unknown assessment kind.', 'ohmylms' ) ); }
 		if ( ! in_array( $settings['style'], self::STYLES, true ) ) {
 			return self::invalid( __( 'Unknown assessment style.', 'ohmylms' ) ); }

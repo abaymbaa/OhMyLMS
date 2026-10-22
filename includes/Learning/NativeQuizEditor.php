@@ -43,11 +43,8 @@ final class NativeQuizEditor {
 		if ( ! $post || 'ohmylms-quiz' !== $post->post_type || false === $allowed ) {
 			return $allowed;
 		}
-		$keep = array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK, 'ohmylms/question-player' );
-		if ( \OhMyLMS\Exams\Composer::exam_for_quiz( $post->ID ) ) {
-			// The question player and its game variations are practice placements, not exam questions.
-			$keep = array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK );
-		}
+		// The assessment kind's profile may narrow the blocks (an exam offers questions only).
+		$keep  = \OhMyLMS\Assessment\Profiles::of( $post->ID )['blocks'] ?? array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK, 'ohmylms/question-player' );
 		$names = array();
 		foreach ( \WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type ) {
 			if ( 0 === strpos( $name, 'ohmylms/' ) && ! in_array( $name, $keep, true ) && false === strpos( $name, 'math' ) ) {

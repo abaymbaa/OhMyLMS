@@ -5,15 +5,17 @@ import { PluginDocumentSettingPanel } from '@wordpress/editor';
 import { Button, Notice, TextareaControl } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
+import { registerProfilePanel } from './ProfilePanel';
 
 /**
  * Exam controls in the quiz editor: learner instructions and publication. The questions, sections,
  * time limit and marks are the quiz's own, so they are edited with the quiz tools beside this panel.
  *
- * @return {Element|null} Panel, or nothing when this quiz is not an exam.
+ * @param {Object} root0      Component properties.
+ * @param {Object} root0.data Exam id, status, player URL and instructions from the exam profile.
+ * @return {Element|null} Panel, or nothing when this quiz has no exam record.
  */
-export function NativeExamPanel() {
-	const exam = window.ohmylmsNativeLesson?.exam;
+export function NativeExamPanel( { data: exam } ) {
 	const [ instructions, setInstructions ] = useState(
 		exam?.instructions || ''
 	);
@@ -29,7 +31,7 @@ export function NativeExamPanel() {
 		};
 	}, [] );
 	const { savePost } = useDispatch( 'core/editor' );
-	if ( ! exam ) {
+	if ( ! exam?.id ) {
 		return null;
 	}
 	const published = status === 'publish';
@@ -149,3 +151,5 @@ export function NativeExamPanel() {
 		</PluginDocumentSettingPanel>
 	);
 }
+
+registerProfilePanel( 'exam', NativeExamPanel );

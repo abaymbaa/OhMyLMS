@@ -53,18 +53,18 @@ if ( $attempt_context ) {
 
 $player_template = \OhMyLMS\Quiz\PlayerTemplates::resolve( $settings['player_template'] ?? \OhMyLMS\Quiz\PlayerTemplates::DEFAULT_TEMPLATE );
 $player_template = \OhMyLMS\Student\PlayerContext::quiz_template( $player_template );
-$is_exam_shell   = \OhMyLMS\Exams\Player::rendering();
-if ( $is_exam_shell ) {
-	$player_template = 'exam';
+// The assessment kind's profile can fix the design and the layout (an exam always uses the exam dashboard).
+$assessment_profile = \OhMyLMS\Assessment\Profiles::of( get_the_ID() );
+if ( '' !== $assessment_profile['player_template'] ) {
+	$player_template = \OhMyLMS\Quiz\PlayerTemplates::resolve( $assessment_profile['player_template'] );
 }
 \OhMyLMS\Quiz\PlayerTemplates::enqueue( $player_template );
 $quiz_layout = is_array( $settings ) && isset( $settings['layout'] ) ? $settings['layout'] : 'one_question_per_page';
 if ( ! in_array( $quiz_layout, array( 'one_question_per_page', 'all_questions_in_one_page', 'number_of_questions_per_page' ), true ) ) {
 	$quiz_layout = 'one_question_per_page';
 }
-if ( $is_exam_shell ) {
-	// The question palette and Save and Next flow need one question per page.
-	$quiz_layout = 'one_question_per_page';
+if ( '' !== $assessment_profile['layout'] ) {
+	$quiz_layout = $assessment_profile['layout'];
 }
 $layout_class             = '';
 $questions_per_group      = '';
