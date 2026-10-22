@@ -38,6 +38,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Engagement\StreakHooks::init();
 \OhMyLMS\Engagement\XpHooks::init();
 \OhMyLMS\Performance\Bootstrap::init();
+\OhMyLMS\Curriculum\AiAnalysis::init();
 \OhMyLMS\Practice\Dashboard::init();
 \OhMyLMS\Learning\Bootstrap::init();
 \OhMyLMS\Learning\NativeLessonEditor::init();

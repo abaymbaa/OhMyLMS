@@ -6,6 +6,7 @@ import { SelectControl } from '@wordpress/components';
 import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
 import { SkillCategoryChoices } from './SkillCategoryChoices';
+import { SkillPlacementFields } from './SkillPlacementFields';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { validateSkill, groupLabel } from './syllabus.mjs';
 import { Breadcrumb, MESSAGES, RowMenu, SaveField } from './WorkspaceParts';
@@ -212,6 +213,7 @@ export function SkillPane( { node } ) {
 							__nextHasNoMarginBottom
 						/>
 					</div>
+					<SkillPlacementFields skillId={ skill.term_id } />
 					<SkillCategoryChoices
 						settings={ w.outline.settings }
 						selected={ appearance.category }

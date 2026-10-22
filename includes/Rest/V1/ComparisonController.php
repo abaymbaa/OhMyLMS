@@ -133,6 +133,14 @@ class ComparisonController extends RestController {
 			'/syllabus-comparison/shared-skills/save'     => array( 'POST', 'save_shared' ),
 			'/syllabus-comparison/mapping'                => array( 'PUT', 'save_mapping' ),
 			'/syllabus-comparison/mapping/remove'         => array( 'POST', 'remove_mapping' ),
+			'/syllabus-comparison/skill-placement'        => array( 'GET', 'skill_placement' ),
+			'/syllabus-comparison/ai/runs'                => array( 'GET,POST', 'ai_runs' ),
+			'/syllabus-comparison/ai/runs/(?P<id>\d+)'    => array( 'GET', 'ai_run' ),
+			'/syllabus-comparison/ai/runs/(?P<id>\d+)/step' => array( 'POST', 'ai_step' ),
+			'/syllabus-comparison/ai/runs/(?P<id>\d+)/cancel' => array( 'POST', 'ai_cancel' ),
+			'/syllabus-comparison/ai/runs/(?P<id>\d+)/accept-confident' => array( 'POST', 'ai_accept_confident' ),
+			'/syllabus-comparison/ai/suggestions'         => array( 'GET', 'ai_suggestions' ),
+			'/syllabus-comparison/ai/suggestions/review'  => array( 'POST', 'ai_review' ),
 		) as $route => $handler ) {
 			register_rest_route(
 				$this->namespace,
@@ -153,6 +161,113 @@ class ComparisonController extends RestController {
 				'permission_callback' => array( Access::class, 'learner' ),
 			)
 		);
+	}
+
+	/**
+	 * Domains and grades a shared skill can be placed in, and whether AI analysis can run.
+	 *
+	 * @return mixed
+	 */
+	public function skill_placement() {
+		$grades = array();
+		for ( $grade = 1; $grade <= Comparison::MAX_GRADE; $grade++ ) {
+			$grades[] = array(
+				'value' => $grade,
+				'label' => Comparison::grade_label( $grade ),
+			);
+		}
+		return rest_ensure_response(
+			array(
+				'domains'      => Comparison::domains(),
+				'grades'       => $grades,
+				'ai_available' => \OhMyLMS\Curriculum\AiAnalysis::available(),
+			)
+		);
+	}
+
+	/**
+	 * List recent AI analyses, or start one.
+	 *
+	 * @param WP_REST_Request $request kind, syllabus_id, subject, include_mapped.
+	 * @return mixed
+	 */
+	public function ai_runs( WP_REST_Request $request ) {
+		if ( 'POST' === $request->get_method() ) {
+			return rest_ensure_response( \OhMyLMS\Curriculum\AiAnalysis::start( $request->get_params() ) );
+		}
+		return rest_ensure_response( \OhMyLMS\Curriculum\AiAnalysis::runs( $request->get_params() ) );
+	}
+
+	/**
+	 * One AI analysis.
+	 *
+	 * @param WP_REST_Request $request Run ID.
+	 * @return mixed
+	 */
+	public function ai_run( WP_REST_Request $request ) {
+		$run = \OhMyLMS\Curriculum\AiAnalysis::run( (int) $request['id'] );
+		return $run ? rest_ensure_response( $run ) : Access::error( 'ohmylms_ai_analysis_missing', __( 'Analysis not found.', 'ohmylms' ), 404 );
+	}
+
+	/**
+	 * Advance an AI analysis by one slice; the review screen calls this while it is open.
+	 *
+	 * @param WP_REST_Request $request Run ID.
+	 * @return mixed
+	 */
+	public function ai_step( WP_REST_Request $request ) {
+		$run = \OhMyLMS\Curriculum\AiAnalysis::step( (int) $request['id'] );
+		return $run ? rest_ensure_response( $run ) : Access::error( 'ohmylms_ai_analysis_missing', __( 'Analysis not found.', 'ohmylms' ), 404 );
+	}
+
+	/**
+	 * Stop an AI analysis.
+	 *
+	 * @param WP_REST_Request $request Run ID.
+	 * @return mixed
+	 */
+	public function ai_cancel( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\AiAnalysis::cancel( (int) $request['id'] ) );
+	}
+
+	/**
+	 * Accept the confident suggestions of a run.
+	 *
+	 * @param WP_REST_Request $request Run ID and min_confidence.
+	 * @return mixed
+	 */
+	public function ai_accept_confident( WP_REST_Request $request ) {
+		$min = $request->get_param( 'min_confidence' );
+		if ( ! is_numeric( $min ) || (float) $min < 0.5 || (float) $min > 1 ) {
+			return Access::error( 'ohmylms_ai_analysis_invalid', __( 'Choose a confidence between 0.5 and 1.', 'ohmylms' ) );
+		}
+		return rest_ensure_response( \OhMyLMS\Curriculum\AiAnalysis::accept_confident( (int) $request['id'], (float) $min ) );
+	}
+
+	/**
+	 * AI suggestions to review.
+	 *
+	 * @param WP_REST_Request $request Filters.
+	 * @return mixed
+	 */
+	public function ai_suggestions( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Curriculum\AiAnalysis::suggestions( $request->get_params() ) );
+	}
+
+	/**
+	 * Accept or reject AI suggestions.
+	 *
+	 * @param WP_REST_Request $request ids, action and optional overrides.
+	 * @return mixed
+	 */
+	public function ai_review( WP_REST_Request $request ) {
+		$ids       = $request->get_param( 'ids' );
+		$action    = (string) $request->get_param( 'action' );
+		$overrides = $request->get_param( 'overrides' );
+		if ( ! is_array( $ids ) || ! $ids || count( $ids ) > 200 || ! in_array( $action, array( 'accept', 'reject' ), true ) || ( null !== $overrides && ! is_array( $overrides ) ) ) {
+			return Access::error( 'ohmylms_ai_analysis_invalid', __( 'Choose up to 200 suggestions and accept or reject them.', 'ohmylms' ) );
+		}
+		return rest_ensure_response( array( 'results' => \OhMyLMS\Curriculum\AiAnalysis::review( $ids, $action, (array) $overrides ) ) );
 	}
 
 	/**

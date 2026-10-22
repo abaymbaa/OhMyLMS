@@ -6,6 +6,8 @@ Canvas correction on 2026-10-15: switching shared skills previously rendered sta
 
 Open **Content Hub → Curriculum** and click a Roadmap name or **Edit** to open its syllabus editor directly. Existing `#/content-hub/curriculum/compare?roadmap=ID` bookmarks still open that same workspace. The old three-column comparison screen is retired; the general comparison address now offers a roadmap picker.
 
+Shared skills carry a domain and grade band, and AI can analyse a syllabus and suggest mappings and new shared skills for review: see [AI skill analysis](AI-SKILL-ANALYSIS.md).
+
 A shared skill is a reusable, assessable ability with a stable taxonomy ID and UUID. Roadmaps reference the same IDs in learning order without copying skills, content or historical evidence.
 
 ## Workflow

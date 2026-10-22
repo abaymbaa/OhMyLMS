@@ -24,7 +24,8 @@ final class Schema {
 	// 5: combined coverage groups retain explicit required membership.
 	// 6: Course Bundles were stored as "tracks": their tables and columns are renamed, keeping every row.
 	// 7: course_links holds advisory course-to-course links (sub-courses, prerequisites, "get ready for").
-	const VERSION = '7';
+	// 8: mappings record where they came from (source, confidence); AI analysis runs and their suggestions await review.
+	const VERSION = '8';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
 	public static function table( $name ) {
@@ -46,8 +47,12 @@ final class Schema {
 			// Curriculum membership of courses, skills, question banks and quizzes/exams (many to many).
 			'curriculum_links'      => 'item_id bigint unsigned NOT NULL, object_type varchar(20) NOT NULL, object_id bigint unsigned NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY link (item_id,object_type,object_id), KEY object (object_type,object_id)',
 			// Explicit, directional links from a curriculum-specific skill to a shared skill.
-			'skill_mappings'        => "specific_term_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, relation varchar(20) NOT NULL DEFAULT 'equivalent', group_uuid char(36) NOT NULL DEFAULT '', note text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY mapping (specific_term_id,shared_term_id), KEY shared (shared_term_id)",
+			'skill_mappings'        => "specific_term_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, relation varchar(20) NOT NULL DEFAULT 'equivalent', group_uuid char(36) NOT NULL DEFAULT '', note text NULL, source varchar(20) NOT NULL DEFAULT 'manual', confidence decimal(4,3) NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY mapping (specific_term_id,shared_term_id), KEY shared (shared_term_id)",
 			'skill_mapping_groups'  => 'uuid char(36) NOT NULL, source_id bigint unsigned NOT NULL, shared_term_id bigint unsigned NOT NULL, member_ids text NOT NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY shared (shared_term_id)',
+			// AI analysis of a syllabus or of shared skills, run in slices; see Curriculum\AiAnalysis.
+			'ai_analysis_runs'      => "uuid char(36) NOT NULL, kind varchar(20) NOT NULL, syllabus_id bigint unsigned NOT NULL DEFAULT 0, subject varchar(100) NOT NULL DEFAULT '', status varchar(20) NOT NULL DEFAULT 'queued', total int unsigned NOT NULL DEFAULT 0, processed int unsigned NOT NULL DEFAULT 0, suggested int unsigned NOT NULL DEFAULT 0, failures int unsigned NOT NULL DEFAULT 0, model varchar(100) NOT NULL DEFAULT '', error text NULL, queue longtext NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY status (status,id)",
+			// One AI suggestion awaiting a person: a mapping, a new shared skill, a domain and grade band, or a prerequisite.
+			'ai_suggestions'        => "run_id bigint unsigned NOT NULL, kind varchar(20) NOT NULL, specific_term_id bigint unsigned NOT NULL DEFAULT 0, shared_term_id bigint unsigned NOT NULL DEFAULT 0, relation varchar(20) NOT NULL DEFAULT '', payload longtext NULL, confidence decimal(4,3) NOT NULL DEFAULT 0, reason text NULL, status varchar(20) NOT NULL DEFAULT 'pending', result_term_id bigint unsigned NOT NULL DEFAULT 0, reviewed_by bigint unsigned NOT NULL DEFAULT 0, reviewed_at datetime NULL, created_at datetime NOT NULL, KEY run (run_id,status), KEY objective_status (specific_term_id,status), KEY review (status,kind,confidence)",
 			// Course Bundles: named groupings of courses and curriculum items.
 			'bundles'               => "uuid char(36) NOT NULL, title varchar(190) NOT NULL, description text NULL, status varchar(20) NOT NULL DEFAULT 'draft', position int unsigned NOT NULL DEFAULT 0, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, published_at datetime NULL, UNIQUE KEY uuid (uuid), KEY status_position (status,position)",
 			'bundle_items'          => 'bundle_id bigint unsigned NOT NULL, item_type varchar(20) NOT NULL, item_id bigint unsigned NOT NULL, position int unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY member (bundle_id,item_type,item_id), KEY bundle_position (bundle_id,position), KEY object (item_type,item_id)',

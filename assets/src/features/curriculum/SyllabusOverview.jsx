@@ -6,6 +6,7 @@ import { useWorkspace } from './context';
 import { SaveField, Tag } from './WorkspaceParts';
 import { CURRICULUM_PATH } from './workspace.mjs';
 import { RoadmapSources } from './RoadmapSources';
+import { AiAnalysisPanel } from './AiAnalysisPanel';
 
 /** Profile and publishing controls edited directly on the syllabus home. */
 export function SyllabusOverview() {
@@ -43,6 +44,23 @@ export function SyllabusOverview() {
 	return (
 		<Fragment>
 			{ w.outline.syllabus.item_type === 'roadmap' && <RoadmapSources /> }
+			<section className="ohmylms-syllabus-settings-card">
+				<h3>{ __( 'AI analysis', 'ohmylms' ) }</h3>
+				<AiAnalysisPanel
+					sources={
+						w.outline.syllabus.item_type === 'roadmap'
+							? w.outline.roadmap_sources || []
+							: [
+									{
+										id: w.outline.syllabus.id,
+										name: w.outline.syllabus.name,
+									},
+								]
+					}
+					subject={ profile.subject || '' }
+					onChanged={ w.reload }
+				/>
+			</section>
 			<section className="ohmylms-syllabus-settings-card">
 				<h3>{ __( 'Syllabus profile', 'ohmylms' ) }</h3>
 				<div className="ohmylms-ws-meta">

@@ -35,7 +35,9 @@ final class Client {
 	}
 
 	/**
-	 * @param array $request [ 'system' => string, 'user' => string, 'max_tokens' => int (optional) ]
+	 * @param array $request [ 'system' => string, 'user' => string, 'max_tokens' => int (optional),
+	 *                        'long' => bool (optional: an administrator tool that needs a longer reply and
+	 *                        more time than learner help; up to 6000 tokens and 120 seconds) ]
 	 * @return array{text:string,input_tokens:int,output_tokens:int}|\WP_Error
 	 */
 	public static function complete( array $request ) {
@@ -44,12 +46,13 @@ final class Client {
 		$provider = self::provider( $settings['provider'] );
 		if ( ! $provider || '' === $settings['model'] || '' === $key ) {
 			return new \WP_Error( 'ohmylms_ai_unconfigured', __( 'AI feedback is not set up.', 'ohmylms' ), array( 'status' => 503 ) ); }
-		$request['max_tokens'] = min( (int) ( $request['max_tokens'] ?? $settings['max_tokens'] ), (int) $settings['max_tokens'] );
+		$long                  = ! empty( $request['long'] );
+		$request['max_tokens'] = min( (int) ( $request['max_tokens'] ?? $settings['max_tokens'] ), $long ? 6000 : (int) $settings['max_tokens'] );
 		$http                  = $provider->request( $settings, $key, $request );
 		$response              = wp_remote_post(
 			$http['url'],
 			array(
-				'timeout'     => (int) $settings['timeout'],
+				'timeout'     => $long ? max( 120, (int) $settings['timeout'] ) : (int) $settings['timeout'],
 				'redirection' => 0,
 				'headers'     => $http['headers'],
 				'body'        => wp_json_encode( $http['body'], JSON_UNESCAPED_UNICODE ),

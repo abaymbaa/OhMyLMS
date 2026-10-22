@@ -408,3 +408,20 @@
 	padding: 8px 0;
 }
 
+
+/* AI analysis: run controls, progress and the review queue. */
+.ohmylms-ai-analysis { display: grid; gap: 12px; padding: 12px 0; }
+.ohmylms-ai-controls { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 12px; }
+.ohmylms-ai-help, .ohmylms-ai-reason, .ohmylms-ai-meta, .ohmylms-ai-gloss { margin: 4px 0 0; color: #50575e; font-size: 12px; }
+.ohmylms-ai-gloss { font-style: italic; }
+.ohmylms-ai-run { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.ohmylms-ai-run progress { width: 220px; }
+.ohmylms-ai-failures, .ohmylms-ai-wait { color: #b32d2e; }
+.ohmylms-ai-bulk { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ohmylms-ai-suggestions td { vertical-align: top; }
+.ohmylms-ai-kind { display: inline-block; margin-bottom: 4px; padding: 1px 8px; border-radius: 999px; background: #f0f0f1; font-size: 12px; font-weight: 600; }
+.ohmylms-ai-kind.is-new_skill { background: #fcf0e3; color: #8a4b00; }
+.ohmylms-ai-kind.is-mapping { background: #e5f0fa; color: #0a4b78; }
+.ohmylms-ai-kind.is-placement { background: #e7f6ec; color: #00632a; }
+.ohmylms-ai-placement, .ohmylms-skill-placement { display: flex; flex-wrap: wrap; gap: 8px; }
+.ohmylms-ai-placement .components-base-control { min-width: 140px; }

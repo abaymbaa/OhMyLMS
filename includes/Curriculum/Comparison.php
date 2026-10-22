@@ -18,6 +18,85 @@ final class Comparison {
 	const TOPIC_META   = '_ohmylms_shared_topic';
 	const ROADMAP_META = '_ohmylms_shared_created_for_roadmap';
 	const OPTION       = 'ohmylms_subject_syllabuses';
+	// Where a shared skill sits in the subject: its domain and the grades it is usually learned in.
+	const DOMAIN_META     = '_ohmylms_shared_domain';
+	const GRADE_FROM_META = '_ohmylms_shared_grade_from';
+	const GRADE_TO_META   = '_ohmylms_shared_grade_to';
+	// Grades 1 to 12, then 13 for work beyond grade 12 (the second year of A level and similar).
+	const MAX_GRADE = 13;
+
+	/**
+	 * Domains a shared skill can belong to, keyed by id. Extend with `ohmylms_skill_domains`.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function domains() {
+		$domains  = array(
+			'number'       => __( 'Number', 'ohmylms' ),
+			'algebra'      => __( 'Algebra', 'ohmylms' ),
+			'functions'    => __( 'Functions and graphs', 'ohmylms' ),
+			'geometry'     => __( 'Geometry', 'ohmylms' ),
+			'measurement'  => __( 'Measurement', 'ohmylms' ),
+			'trigonometry' => __( 'Trigonometry', 'ohmylms' ),
+			'vectors'      => __( 'Vectors and matrices', 'ohmylms' ),
+			'statistics'   => __( 'Statistics', 'ohmylms' ),
+			'probability'  => __( 'Probability', 'ohmylms' ),
+			'calculus'     => __( 'Calculus', 'ohmylms' ),
+			'mechanics'    => __( 'Mechanics', 'ohmylms' ),
+			'discrete'     => __( 'Discrete mathematics', 'ohmylms' ),
+		);
+		$filtered = apply_filters( 'ohmylms_skill_domains', $domains );
+		$result   = array();
+		foreach ( is_array( $filtered ) ? $filtered : $domains as $id => $label ) {
+			if ( is_string( $id ) && preg_match( '/^[a-z][a-z0-9-]{0,39}$/', $id ) ) {
+				$result[ $id ] = (string) $label;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Name of a grade on the band scale.
+	 *
+	 * @param int $grade 1 to 13.
+	 * @return string
+	 */
+	public static function grade_label( $grade ) {
+		$grade = (int) $grade;
+		if ( $grade >= self::MAX_GRADE ) {
+			return __( 'Beyond grade 12', 'ohmylms' );
+		}
+		/* translators: %d: school grade. */
+		return $grade > 0 ? sprintf( __( 'Grade %d', 'ohmylms' ), $grade ) : '';
+	}
+
+	/**
+	 * Check a domain and grade band. Empty values mean "not set yet".
+	 *
+	 * @param mixed $domain     Domain id or empty.
+	 * @param mixed $grade_from First grade or 0.
+	 * @param mixed $grade_to   Last grade or 0.
+	 * @return array|\WP_Error domain, grade_from, grade_to.
+	 */
+	public static function placement( $domain, $grade_from, $grade_to ) {
+		$domain = sanitize_key( (string) $domain );
+		$from   = (int) $grade_from;
+		$to     = (int) $grade_to;
+		if ( '' !== $domain && ! isset( self::domains()[ $domain ] ) ) {
+			return Access::error( 'ohmylms_shared_invalid', __( 'Choose one of the listed domains.', 'ohmylms' ) );
+		}
+		if ( $from && ! $to ) {
+			$to = $from;
+		}
+		if ( $from < 0 || $to < 0 || $from > self::MAX_GRADE || $to > self::MAX_GRADE || ( $from && $to < $from ) || ( ! $from && $to ) ) {
+			return Access::error( 'ohmylms_shared_invalid', __( 'Grades run from 1 to 12, or 13 for beyond grade 12, and the last grade cannot come before the first.', 'ohmylms' ) );
+		}
+		return array(
+			'domain'     => $domain,
+			'grade_from' => $from,
+			'grade_to'   => $to,
+		);
+	}
 
 	/**
 	 * Return syllabus selectors with their stored version and curriculum path.
@@ -94,9 +173,12 @@ final class Comparison {
 			return null;
 		}
 		$skill['topic']    = (string) get_term_meta( $id, self::TOPIC_META, true );
-		$skill['subject']  = (string) get_term_meta( $id, self::SUBJECT_META, true );
-		$skill['mappings'] = SkillMappings::for_skill( $id );
-		$skill['revision'] = self::revision( array( $skill['name'], $skill['description'], $skill['topic'], $skill['subject'], $skill['mappings'] ) );
+		$skill['subject']    = (string) get_term_meta( $id, self::SUBJECT_META, true );
+		$skill['domain']     = (string) get_term_meta( $id, self::DOMAIN_META, true );
+		$skill['grade_from'] = (int) get_term_meta( $id, self::GRADE_FROM_META, true );
+		$skill['grade_to']   = (int) get_term_meta( $id, self::GRADE_TO_META, true );
+		$skill['mappings']   = SkillMappings::for_skill( $id );
+		$skill['revision']   = self::revision( array( $skill['name'], $skill['description'], $skill['topic'], $skill['subject'], $skill['domain'], $skill['grade_from'], $skill['grade_to'], $skill['mappings'] ) );
 		return $skill;
 	}
 
@@ -117,6 +199,32 @@ final class Comparison {
 		);
 		if ( empty( $params['subject'] ) ) {
 			unset( $args['meta_value'] );
+		}
+		// Narrow by domain, and by a grade the skill's band includes.
+		$meta = array();
+		if ( ! empty( $params['domain'] ) ) {
+			$meta[] = array(
+				'key'   => self::DOMAIN_META,
+				'value' => sanitize_key( (string) $params['domain'] ),
+			);
+		}
+		if ( ! empty( $params['grade'] ) ) {
+			$grade  = (int) $params['grade'];
+			$meta[] = array(
+				'key'     => self::GRADE_FROM_META,
+				'value'   => $grade,
+				'compare' => '<=',
+				'type'    => 'NUMERIC',
+			);
+			$meta[] = array(
+				'key'     => self::GRADE_TO_META,
+				'value'   => $grade,
+				'compare' => '>=',
+				'type'    => 'NUMERIC',
+			);
+		}
+		if ( $meta ) {
+			$args['meta_query'] = array_merge( array( 'relation' => 'AND' ), $meta ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Bounded admin search.
 		}
 		if ( ! empty( $params['roadmap_id'] ) ) {
 			$roadmap = Roadmaps::get( absint( $params['roadmap_id'] ) );
@@ -192,6 +300,15 @@ final class Comparison {
 		$description = sanitize_textarea_field( $data['description'] ?? '' );
 		$topic       = sanitize_text_field( $data['topic'] ?? '' );
 		$subject     = sanitize_text_field( $data['subject'] ?? '' );
+		$current   = $id ? self::shared_skill( $id ) : null;
+		$placement = self::placement(
+			array_key_exists( 'domain', $data ) ? $data['domain'] : ( $current['domain'] ?? '' ),
+			array_key_exists( 'grade_from', $data ) ? $data['grade_from'] : ( $current['grade_from'] ?? 0 ),
+			array_key_exists( 'grade_to', $data ) ? $data['grade_to'] : ( $current['grade_to'] ?? 0 )
+		);
+		if ( is_wp_error( $placement ) ) {
+			return $placement;
+		}
 		if ( '' === $name || mb_strlen( $subject ) > 100 || mb_strlen( $name ) > 190 || mb_strlen( $description ) > 2000 || mb_strlen( $topic ) > 100 ) {
 			return Access::error( 'ohmylms_shared_invalid', __( 'Enter a name up to 190 characters, a scope up to 2000 characters and a topic up to 100 characters.', 'ohmylms' ) );
 		}
@@ -232,6 +349,7 @@ final class Comparison {
 			$id = (int) $result['term_id'];
 			update_term_meta( $id, self::SUBJECT_META, $subject );
 			update_term_meta( $id, self::TOPIC_META, $topic );
+			self::store_placement( $id, $placement );
 			if ( $creating && $roadmap_id ) {
 				update_term_meta( $id, self::ROADMAP_META, $roadmap_id );
 			}
@@ -239,6 +357,18 @@ final class Comparison {
 		} finally {
 			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
 		}
+	}
+
+	/**
+	 * Store a checked domain and grade band on a skill.
+	 *
+	 * @param int   $id        Skill ID.
+	 * @param array $placement From placement().
+	 */
+	public static function store_placement( $id, array $placement ) {
+		update_term_meta( $id, self::DOMAIN_META, $placement['domain'] );
+		update_term_meta( $id, self::GRADE_FROM_META, $placement['grade_from'] );
+		update_term_meta( $id, self::GRADE_TO_META, $placement['grade_to'] );
 	}
 
 	/**
