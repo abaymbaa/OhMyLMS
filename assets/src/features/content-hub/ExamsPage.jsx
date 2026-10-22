@@ -11,6 +11,8 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { approveQuestion } from '../question-bank/api.mjs';
+import { NewExamDialog } from './NewExamDialog.jsx';
+import { examEditorHref } from './examEditor.mjs';
 import { ExamPaperDialog } from './ExamPaperDialog.jsx';
 import { ImportDialog } from './ImportDialog.jsx';
 
@@ -138,6 +140,7 @@ export function ExamsPage( {
 	const [ jobs, setJobs ] = useState( [] );
 	const [ exams, setExams ] = useState( [] );
 	const [ paperExam, setPaperExam ] = useState( null );
+	const [ creating, setCreating ] = useState( false );
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );
@@ -315,6 +318,13 @@ export function ExamsPage( {
 					</p>
 					<Button
 						variant="primary"
+						disabled={ busy || dirty }
+						onClick={ () => setCreating( true ) }
+					>
+						{ __( 'New exam', 'ohmylms' ) }
+					</Button>{ ' ' }
+					<Button
+						variant="secondary"
 						disabled={ busy || dirty }
 						onClick={ () => setImporting( true ) }
 					>
@@ -1272,12 +1282,26 @@ export function ExamsPage( {
 								{ __( 'questions', 'ohmylms' ) } ·{ ' ' }
 								{ exam.total_marks }{ ' ' }
 								{ __( 'marks', 'ohmylms' ) }
-								<Button
-									variant="secondary"
-									onClick={ () => setPaperExam( exam ) }
-								>
-									{ __( 'Review paper', 'ohmylms' ) }
-								</Button>
+								{ exam.composed ? (
+									exam.status === 'draft' && (
+										<Button
+											variant="secondary"
+											href={ examEditorHref( exam ) }
+										>
+											{ __(
+												'Edit questions',
+												'ohmylms'
+											) }
+										</Button>
+									)
+								) : (
+									<Button
+										variant="secondary"
+										onClick={ () => setPaperExam( exam ) }
+									>
+										{ __( 'Review paper', 'ohmylms' ) }
+									</Button>
+								) }
 								{ exam.status === 'draft' ? (
 									<Button
 										variant="primary"
@@ -1361,6 +1385,9 @@ export function ExamsPage( {
 						} );
 					} }
 				/>
+			) }
+			{ creating && (
+				<NewExamDialog onClose={ () => setCreating( false ) } />
 			) }
 			{ paperExam && (
 				<ExamPaperDialog

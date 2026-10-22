@@ -53,9 +53,17 @@ if ( $attempt_context ) {
 
 $player_template = \OhMyLMS\Quiz\PlayerTemplates::resolve( $settings['player_template'] ?? \OhMyLMS\Quiz\PlayerTemplates::DEFAULT_TEMPLATE );
 $player_template = \OhMyLMS\Student\PlayerContext::quiz_template( $player_template );
+$is_exam_shell   = \OhMyLMS\Exams\Player::rendering();
+if ( $is_exam_shell ) {
+	$player_template = 'exam';
+}
 \OhMyLMS\Quiz\PlayerTemplates::enqueue( $player_template );
 $quiz_layout = is_array( $settings ) && isset( $settings['layout'] ) ? $settings['layout'] : 'one_question_per_page';
 if ( ! in_array( $quiz_layout, array( 'one_question_per_page', 'all_questions_in_one_page', 'number_of_questions_per_page' ), true ) ) {
+	$quiz_layout = 'one_question_per_page';
+}
+if ( $is_exam_shell ) {
+	// The question palette and Save and Next flow need one question per page.
 	$quiz_layout = 'one_question_per_page';
 }
 $layout_class             = '';
@@ -290,7 +298,19 @@ if ( $attempt_context ) {
 
 		<?php
 		$player_total_pages = max( 1, 'all_questions_in_one_page' === $quiz_layout ? 1 : ( 'number_of_questions_per_page' === $quiz_layout ? $totalGroups : $supported_question_count ) );
-		\OhMyLMS\Quiz\PlayerTemplates::part( 'progress', $player_template, array( 'total_pages' => $player_total_pages, 'layout' => $quiz_layout ) );
+		$player_sections = array();
+		foreach ( $questions as $section_index => $section_question ) {
+			$player_sections[ $section_index + 1 ] = (string) ( $section_question['section'] ?? '' );
+		}
+		\OhMyLMS\Quiz\PlayerTemplates::part(
+			'progress',
+			$player_template,
+			array(
+				'total_pages' => $player_total_pages,
+				'layout'      => $quiz_layout,
+				'sections'    => $player_sections,
+			)
+		);
 		?>
 	<form action="" method="post">
 		<?php
@@ -354,6 +374,7 @@ if ( $attempt_context ) {
 									'ordinal'        => $count,
 									'question_count' => $supported_question_count,
 									'marks'          => max( 0, (float) ( $question['settings']['score']['value'] ?? 0 ) ),
+									'section'        => (string) ( $question['section'] ?? '' ),
 								)
 							);
 							?>
@@ -415,6 +436,7 @@ if ( $attempt_context ) {
 			<div class="ohmylms-container">
 				<div class="ohmylms-footer-wrapper">
 					<div class="ohmylms-quiz-footer-left">
+						<?php \OhMyLMS\Quiz\PlayerTemplates::part( 'footer', $player_template, array() ); ?>
 						<?php if ( empty( $ohmylms_player_preview ) && ! empty( ohmylms_get_next_content_permalink( get_the_ID() ) ) ) { ?>
 							<a href="<?php echo ohmylms_get_next_content_permalink( get_the_ID() ); ?>" class="skiptop-next">
 								<?php echo esc_html__( 'Skip to Next Lesson', 'ohmylms' ); ?>

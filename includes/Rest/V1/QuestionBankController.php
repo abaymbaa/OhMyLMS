@@ -13,6 +13,7 @@ use OhMyLMS\QuestionBank\AccessPolicy;
 use OhMyLMS\QuestionBank\BankAttributes;
 use OhMyLMS\QuestionBank\Banks;
 use OhMyLMS\QuestionBank\DraftWriter;
+use OhMyLMS\QuestionBank\RowExporter;
 use OhMyLMS\QuestionBank\SkillMap;
 use OhMyLMS\QuestionBank\Usage;
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -38,6 +39,17 @@ class QuestionBankController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'search' ),
+					'permission_callback' => array( $this, 'author_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/question-bank/export',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'export_rows' ),
 					'permission_callback' => array( $this, 'author_permission' ),
 				),
 			)
@@ -346,6 +358,34 @@ class QuestionBankController extends RestController {
 	// ---- Lifecycle ----
 
 	/** Approve a version for shared use and practice (default: the current version). */
+	/**
+	 * Export questions as import rows (CSV or JSON), chosen by ID or as the questions of one quiz.
+	 *
+	 * @param WP_REST_Request $request ids (list or comma-separated) or quiz_id, format (json or csv), label.
+	 * @return array|WP_Error filename, mime, content, count and warnings.
+	 */
+	public function export_rows( WP_REST_Request $request ) {
+		$quiz_id  = absint( $request['quiz_id'] );
+		$sections = array();
+		$label    = is_string( $request['label'] ) ? sanitize_text_field( $request['label'] ) : '';
+		if ( $quiz_id ) {
+			if ( OHMYLMS_QUIZ_CPT !== get_post_type( $quiz_id ) || ! AccessPolicy::can_edit_quiz( $quiz_id ) ) {
+				return AccessPolicy::denied( __( 'You are not allowed to export this quiz.', 'ohmylms' ) );
+			}
+			$ids   = array_map( 'intval', array_column( ohmylms_get_quiz( $quiz_id )->get_questions(), 'id' ) );
+			$label = '' !== $label ? $label : get_the_title( $quiz_id );
+			foreach ( (array) \OhMyLMS\Assessment\AssessmentSettings::get( $quiz_id )['sections'] as $section ) {
+				foreach ( (array) ( $section['questions'] ?? array() ) as $question_id ) {
+					$sections[ (int) $question_id ] = (string) ( $section['title'] ?? '' );
+				}
+			}
+		} else {
+			$ids = $request['ids'];
+			$ids = is_array( $ids ) ? $ids : preg_split( '/[\s,]+/', (string) $ids );
+		}
+		return RowExporter::export( array_map( 'absint', (array) $ids ), 'csv' === $request['format'] ? 'csv' : 'json', $label, $sections );
+	}
+
 	public function approve( WP_REST_Request $request ) {
 		global $wpdb;
 		$question_id = (int) $request['id'];

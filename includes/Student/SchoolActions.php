@@ -10,6 +10,7 @@ namespace OhMyLMS\Student;
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Schools\Service;
 use OhMyLMS\Schools\Lifecycle;
+use OhMyLMS\Schools\Settings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -92,6 +93,9 @@ final class SchoolActions {
 			case 'update_school':
 				Service::update_school( $school_id, $data );
 				return array( 'message' => __( 'School details saved.', 'ohmylms' ) );
+			case 'update_design':
+				Settings::save( $school_id, $data );
+				return array( 'message' => __( 'School design saved.', 'ohmylms' ) );
 			case 'remove_member':
 				Service::need( 'yes' === ( $data['confirm'] ?? '' ), 'Confirm removing this person from the school.' );
 				Service::remove_member( $school_id, absint( $data['member_id'] ?? 0 ) );
@@ -171,12 +175,15 @@ final class SchoolActions {
 				throw new \RuntimeException( 'Invalid request.', 400 );
 			}
 			$data = array();
-			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm', 'learning_id', 'attempt_id', 'score', 'from_year', 'to_year' ) as $key ) {
+			foreach ( array( 'name', 'timezone', 'member_id', 'label', 'starts_at', 'ends_at', 'subject', 'grade', 'academic_year_id', 'class_id', 'external_student_id', 'role', 'email', 'student_user_id', 'invitation_id', 'guardian_link_id', 'confirm', 'learning_id', 'attempt_id', 'score', 'from_year', 'to_year', 'accent', 'remove_logo', 'reset_accent' ) as $key ) {
 				$data[ $key ] = isset( $_POST[ $key ] ) && is_string( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			}
 			$data['csv']  = isset( $_POST['csv'] ) && is_string( $_POST['csv'] ) ? sanitize_textarea_field( wp_unslash( $_POST['csv'] ) ) : '';
 			$data['note'] = isset( $_POST['note'] ) && is_string( $_POST['note'] ) ? sanitize_textarea_field( wp_unslash( $_POST['note'] ) ) : '';
-			$flash        = self::apply( $operation, $school_id, $data );
+			if ( 'update_design' === $operation ) {
+				$data['logo_id'] = self::upload_logo( $school_id );
+			}
+			$flash = self::apply( $operation, $school_id, $data );
 			if ( ! empty( $flash['school_id'] ) ) {
 				$school_id = (int) $flash['school_id'];
 			}
@@ -193,6 +200,50 @@ final class SchoolActions {
 		}
 		wp_safe_redirect( $return_url );
 		exit;
+	}
+
+	/**
+	 * Store an uploaded school logo in the media library and return its attachment ID.
+	 *
+	 * Authorizes the school first, so only its administrators can upload. Raster images only (no SVG), 1 MB at most.
+	 *
+	 * @param int $school_id School ID.
+	 * @return int Attachment ID, or 0 when no file was sent.
+	 * @throws \RuntimeException For an unauthorized, oversized or non-image upload.
+	 */
+	private static function upload_logo( $school_id ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce checked in handle(); wp_handle_upload validates the file and type.
+		$file = isset( $_FILES['logo'] ) && is_array( $_FILES['logo'] ) ? $_FILES['logo'] : array();
+		if ( empty( $file['name'] ) || UPLOAD_ERR_NO_FILE === ( $file['error'] ?? UPLOAD_ERR_NO_FILE ) ) {
+			return 0;
+		}
+		Access::require_access( Access::school( absint( $school_id ) ) );
+		Service::need( UPLOAD_ERR_OK === $file['error'] && (int) $file['size'] <= MB_IN_BYTES, 'The logo must be an image of 1 MB or less.' );
+		require_once ABSPATH . 'wp-admin/includes/file.php';
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+		$uploaded = wp_handle_upload(
+			$file,
+			array(
+				'test_form' => false,
+				'mimes'     => array(
+					'jpg|jpeg|jpe' => 'image/jpeg',
+					'png'          => 'image/png',
+					'webp'         => 'image/webp',
+				),
+			)
+		);
+		Service::need( empty( $uploaded['error'] ) && ! empty( $uploaded['file'] ), 'The logo must be a JPG, PNG or WebP image.' );
+		$id = wp_insert_attachment(
+			array(
+				'post_mime_type' => $uploaded['type'],
+				'post_title'     => sanitize_text_field( 'School logo ' . $school_id ),
+				'post_status'    => 'inherit',
+			),
+			$uploaded['file']
+		);
+		Service::need( $id && ! is_wp_error( $id ), 'Unable to save the logo.' );
+		wp_update_attachment_metadata( $id, wp_generate_attachment_metadata( $id, $uploaded['file'] ) );
+		return (int) $id;
 	}
 
 	/**

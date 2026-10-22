@@ -63,6 +63,10 @@ export function createQuizPlayer( {
 			};
 		}
 	};
+	// Exam palette bookkeeping: which questions the learner has opened.
+	const visit = ( context ) => {
+		context.visited = { ...context.visited, [ context.page ]: true };
+	};
 	const rootOf = () =>
 		getElement().ref.closest( '[data-wp-interactive="ohmylms/quiz"]' );
 	return {
@@ -91,10 +95,111 @@ export function createQuizPlayer( {
 					return;
 				}
 				c.page++;
+				visit( c );
 				emit( root, 'quiz-navigated', {
 					quizId: c.quizId,
 					page: c.page,
 				} );
+			} ),
+			// Exam palette: jump to any question without validating the one being left.
+			goTo: withSyncEvent( ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				const c = getContext(),
+					root = rootOf();
+				const target = Number( c.questionNumber );
+				if (
+					c.submitting ||
+					! target ||
+					target === c.page ||
+					target > c.totalPages ||
+					! emit(
+						root,
+						'quiz-before-navigate',
+						{ quizId: c.quizId, page: target },
+						true
+					)
+				) {
+					return;
+				}
+				c.page = target;
+				visit( c );
+				emit( root, 'quiz-navigated', {
+					quizId: c.quizId,
+					page: c.page,
+				} );
+			} ),
+			toggleMarkCurrent: withSyncEvent( ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				const c = getContext();
+				c.marked = {
+					...c.marked,
+					[ c.page ]: ! c.marked?.[ c.page ],
+				};
+			} ),
+			// Empty the current question through the same input events a learner would fire,
+			// so autosave and answered tracking stay correct.
+			clearCurrent: withSyncEvent( ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				const c = getContext(),
+					box =
+						rootOf().querySelectorAll( '.ohmylms-quiz-box' )[
+							c.page - 1
+						];
+				if ( ! box ) {
+					return;
+				}
+				box.querySelectorAll(
+					'input:not([type=hidden]),textarea,select'
+				).forEach( ( field ) => {
+					if ( field.matches( '[type=checkbox],[type=radio]' ) ) {
+						field.checked = false;
+					} else if ( field.matches( 'select' ) ) {
+						field.selectedIndex = 0;
+					} else {
+						field.value = '';
+					}
+					field.dispatchEvent(
+						new Event( 'input', { bubbles: true } )
+					);
+					field.dispatchEvent(
+						new Event( 'change', { bubbles: true } )
+					);
+				} );
+				box.querySelectorAll( 'math-field' ).forEach( ( field ) => {
+					field.value = '';
+				} );
+				c.answered = { ...c.answered, [ c.page ]: false };
+			} ),
+			// "Review and Submit": confirm when questions are blank, then submit the form normally.
+			reviewSubmit: withSyncEvent( ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				const c = getContext();
+				if ( c.submitting ) {
+					return;
+				}
+				const answered = Object.values( c.answered || {} ).filter(
+					Boolean
+				).length;
+				const blank = Math.max( 0, c.totalPages - answered );
+				if (
+					blank &&
+					c.confirmSubmit &&
+					// A native dialog blocks until answered, which is what a final submit needs.
+					// eslint-disable-next-line no-alert
+					! window.confirm(
+						c.confirmSubmit.replace( '%d', String( blank ) )
+					)
+				) {
+					return;
+				}
+				rootOf()
+					.querySelector( '.ohmylms-quiz-form' )
+					?.closest( 'form' )
+					?.requestSubmit();
 			} ),
 			previous: withSyncEvent( ( event ) => {
 				event.preventDefault();
@@ -114,6 +219,7 @@ export function createQuizPlayer( {
 					return;
 				}
 				c.page--;
+				visit( c );
 				emit( root, 'quiz-navigated', {
 					quizId: c.quizId,
 					page: c.page,

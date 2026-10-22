@@ -7,6 +7,7 @@
 
 use OhMyLMS\Schools\Service;
 use OhMyLMS\Schools\Lifecycle;
+use OhMyLMS\Schools\Settings;
 use OhMyLMS\Student\Hub;
 use OhMyLMS\Student\SchoolActions;
 use OhMyLMS\Student\SchoolWorkspace;
@@ -361,6 +362,37 @@ $school_page = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 					</select>
 				</div>
 				<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Save changes', 'ohmylms' ); ?></button></p>
+			</form>
+		</section>
+		<?php
+		$school_own    = Settings::overrides( $school_id );
+		$school_accent = Settings::get( 'accent', $school_id );
+		$school_logo   = Settings::get( 'logo', $school_id, 'school' );
+		?>
+		<section class="oml-hub-card oml-hub-settings-card">
+			<h2><?php esc_html_e( 'School design', 'ohmylms' ); ?></h2>
+			<p class="oml-hub-muted"><?php esc_html_e( 'Choose your own colour and logo for this school. Anything you leave unchanged uses the site default.', 'ohmylms' ); ?></p>
+			<form method="post" action="<?php echo esc_url( $school_post ); ?>" enctype="multipart/form-data" autocomplete="off">
+				<?php SchoolActions::fields( 'update_design', $school_id, 'school-settings' ); ?>
+				<div class="oml-hub-field">
+					<label for="ssd-accent"><?php esc_html_e( 'Accent colour', 'ohmylms' ); ?></label>
+					<input id="ssd-accent" name="accent" type="color" value="<?php echo esc_attr( $school_accent ); ?>">
+					<small><?php echo isset( $school_own['accent'] ) ? esc_html__( 'Custom colour for this school.', 'ohmylms' ) : esc_html__( 'Using the site default.', 'ohmylms' ); ?></small>
+				</div>
+				<?php if ( isset( $school_own['accent'] ) ) : ?>
+					<div class="oml-hub-field"><label><input type="checkbox" name="reset_accent" value="1"> <?php esc_html_e( 'Go back to the site colour', 'ohmylms' ); ?></label></div>
+				<?php endif; ?>
+				<div class="oml-hub-field">
+					<label for="ssd-logo"><?php esc_html_e( 'Logo (JPG, PNG or WebP, up to 1 MB)', 'ohmylms' ); ?></label>
+					<?php if ( '' !== $school_logo ) : ?>
+						<img src="<?php echo esc_url( $school_logo ); ?>" alt="" width="48" height="48" decoding="async">
+					<?php endif; ?>
+					<input id="ssd-logo" name="logo" type="file" accept="image/jpeg,image/png,image/webp">
+				</div>
+				<?php if ( isset( $school_own['logo'] ) ) : ?>
+					<div class="oml-hub-field"><label><input type="checkbox" name="remove_logo" value="1"> <?php esc_html_e( 'Remove our logo and use the site logo', 'ohmylms' ); ?></label></div>
+				<?php endif; ?>
+				<p class="oml-hub-actions"><button type="submit" class="oml-hub-button"><?php esc_html_e( 'Save design', 'ohmylms' ); ?></button></p>
 			</form>
 		</section>
 	<?php endif; ?>

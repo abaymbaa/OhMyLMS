@@ -294,7 +294,8 @@ final class BulkImport {
 			/* translators: %s: question type. */
 			$errors[] = sprintf( __( 'Question type "%s" is not available.', 'ohmylms' ), $row['type'] );
 		}
-		if ( '' === $row['question'] && 'fill-in-the-blank' !== $row['type'] ) {
+		// Types described by their own settings can carry all their content there, so the stem may be empty.
+		if ( '' === $row['question'] && in_array( $row['type'], array( 'single-choice', 'multiple-choice', 'true-false', 'numerical' ), true ) ) {
 			$errors[] = __( 'The question text is empty.', 'ohmylms' );
 		}
 		if ( ! in_array( $row['difficulty'], self::DIFFICULTIES, true ) ) {
@@ -347,6 +348,19 @@ final class BulkImport {
 				return self::build_structured( $row );
 			case 'single-choice':
 			case 'multiple-choice':
+				if ( is_array( $row['options_raw'] ) && $row['options_raw'] ) {
+					// Full option rows (images, odd characters) take the place of the answers and correct columns.
+					$options = self::clean_options( $row['options_raw'], $errors );
+					$right   = count( array_filter( array_column( $options, 'is_correct' ) ) );
+					if ( count( $options ) < 2 || count( $options ) > 12 ) {
+						$errors[] = __( 'Provide between 2 and 12 answers.', 'ohmylms' );
+					} elseif ( ! $right ) {
+						$errors[] = __( 'Mark the correct answer.', 'ohmylms' );
+					} elseif ( 'single-choice' === $row['type'] && $right > 1 ) {
+						$errors[] = __( 'A single-choice question has exactly one correct answer.', 'ohmylms' );
+					}
+					break;
+				}
 				if ( count( $answers ) < 2 || count( $answers ) > 12 ) {
 					$errors[] = __( 'Provide between 2 and 12 answers.', 'ohmylms' );
 					break;
@@ -369,6 +383,13 @@ final class BulkImport {
 				$options = self::options( $answers, array_keys( $chosen ) );
 				break;
 			case 'true-false':
+				if ( is_array( $row['options_raw'] ) && $row['options_raw'] ) {
+					$options = self::clean_options( $row['options_raw'], $errors );
+					if ( 2 !== count( $options ) || 1 !== count( array_filter( array_column( $options, 'is_correct' ) ) ) ) {
+						$errors[] = __( 'A true/false question has exactly two answers, one of them correct.', 'ohmylms' );
+					}
+					break;
+				}
 				$answers = $answers ? $answers : array( __( 'True', 'ohmylms' ), __( 'False', 'ohmylms' ) );
 				$token   = strtolower( $row['correct'][0] ?? '' );
 				if ( in_array( $token, array( 't', 'true', 'yes', '1', 'a' ), true ) ) {
@@ -421,11 +442,44 @@ final class BulkImport {
 				$settings = is_array( $row['settings'] ) ? $row['settings'] : array();
 				$options  = is_array( $row['options_raw'] ) ? $row['options_raw'] : array();
 		}
+		if ( in_array( $row['type'], array( 'single-choice', 'multiple-choice', 'true-false', 'numerical', 'fill-in-the-blank' ), true ) && is_array( $row['settings'] ) ) {
+			// Settings beyond what the columns express (hints, partial credit, randomization) are kept; the columns win.
+			$settings += array_diff_key( $row['settings'], array_flip( array( 'type', 'score', 'explanation' ) ) );
+		}
 		return array(
 			'options'  => $options,
 			'settings' => $settings,
 			'errors'   => $errors,
 		);
+	}
+
+	/**
+	 * Option rows given as JSON, reduced to the fields the writer accepts.
+	 *
+	 * @param array    $raw Option rows from the options_raw field.
+	 * @param string[] $errors Problems found, added to.
+	 * @return array[]
+	 */
+	private static function clean_options( array $raw, array &$errors ) {
+		$options = array();
+		foreach ( array_values( $raw ) as $index => $option ) {
+			if ( ! is_array( $option ) || ! is_scalar( $option['answer'] ?? '' ) ) {
+				$errors[] = __( 'Each option must be an object with answer text.', 'ohmylms' );
+				return array();
+			}
+			$clean = array(
+				'answer'       => (string) ( $option['answer'] ?? '' ),
+				'is_correct'   => ! empty( $option['is_correct'] ) && 'false' !== $option['is_correct'],
+				'order_number' => $index + 1,
+			);
+			foreach ( array( 'thumbnail_id', 'image_url', 'matching_data' ) as $field ) {
+				if ( isset( $option[ $field ] ) && '' !== $option[ $field ] && array() !== $option[ $field ] ) {
+					$clean[ $field ] = $option[ $field ];
+				}
+			}
+			$options[] = $clean;
+		}
+		return $options;
 	}
 
 	/**

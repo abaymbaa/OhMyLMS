@@ -17,6 +17,13 @@ defined( 'ABSPATH' ) || exit;
 $user        = wp_get_current_user();
 $parent_mode = ! empty( $parent_mode );
 $school_mode = ! empty( $school_mode );
+// A school can override the site accent and logo for everyone working in that school.
+$hub_school_id = $school_mode && SchoolWorkspace::current() ? (int) SchoolWorkspace::current()['id'] : \OhMyLMS\Schools\Settings::school_for_user();
+$hub_style = '--hub-accent:' . $config['accent'];
+if ( $hub_school_id ) {
+	$hub_own_accent = \OhMyLMS\Schools\Settings::overrides( $hub_school_id )['accent'] ?? '';
+	$hub_style      = '' !== $hub_own_accent ? \OhMyLMS\Schools\Settings::style( $hub_own_accent ) : $hub_style;
+}
 $hub_role    = $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : ( $school_mode ? 'school' : 'learner' ) );
 $hub_url     = $teacher_mode ? array( TeacherWorkspace::class, 'url' ) : ( $parent_mode ? array( ParentWorkspace::class, 'url' ) : ( $school_mode ? array( SchoolWorkspace::class, 'url' ) : array( Hub::class, 'url' ) ) );
 ?>
@@ -50,7 +57,7 @@ $hub_icon  = static function ( $key ) use ( $hub_icons ) {
 $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home' ) ) );
 ?>
 <div class="ohmylms ohmylms-page">
-	<section class="ohmylms-student-hub" data-layout="<?php echo esc_attr( $config['layout'] ); ?>" data-role="<?php echo esc_attr( $hub_role ); ?>" data-section="<?php echo esc_attr( $section ); ?>" data-view="<?php echo esc_attr( $view ); ?>" data-theme="light" style="--hub-accent:<?php echo esc_attr( $config['accent'] ); ?>">
+	<section class="ohmylms-student-hub" data-layout="<?php echo esc_attr( $config['layout'] ); ?>" data-role="<?php echo esc_attr( $hub_role ); ?>" data-section="<?php echo esc_attr( $section ); ?>" data-view="<?php echo esc_attr( $view ); ?>" data-theme="light" style="<?php echo esc_attr( $hub_style ); ?>">
 		<?php
 		// Apply the saved theme before first paint so navigating does not flash the light default.
 		wp_print_inline_script_tag( "try{var t=localStorage.getItem('ohmylms-hub-theme');if(t==='system'||t==='dark'||t==='light'){document.currentScript.parentElement.dataset.theme=t;}}catch(e){}" );
@@ -59,6 +66,10 @@ $hub_main  = array_values( array_diff( $config['tabs'], array( 'account', 'home'
 			<div class="oml-hub-rail-head">
 				<a class="oml-hub-brand" href="<?php echo esc_url( $hub_url( $teacher_mode ? 'classes' : ( $parent_mode ? 'family' : ( $school_mode ? 'school-overview' : '' ) ) ) ); ?>"><?php
 				$hub_logo = \OhMyLMS\Design\HubIcons::logo_markup( $school_mode ? 'school' : ( $teacher_mode ? 'teacher' : ( $parent_mode ? 'parent' : 'learner' ) ) );
+				$hub_own  = $hub_school_id ? \OhMyLMS\Schools\Settings::overrides( $hub_school_id ) : array();
+				if ( ! empty( $hub_own['logo'] ) ) {
+					$hub_logo = '<img class="oml-hub-logo oml-hub-logo--custom" src="' . esc_url( (string) wp_get_attachment_image_url( $hub_own['logo'], 'thumbnail' ) ) . '" alt="" width="28" height="28" decoding="async">';
+				}
 				echo '' !== $hub_logo ? $hub_logo : '<span class="oml-hub-logo" aria-hidden="true">✦</span>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in HubIcons::logo_markup().
 				?><span><?php echo esc_html( $config['title'] ); ?></span></a>
 				<button type="button" class="oml-hub-rail-close" data-hub-rail-close aria-label="<?php esc_attr_e( 'Close menu', 'ohmylms' ); ?>">&times;</button>

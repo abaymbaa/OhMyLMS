@@ -277,7 +277,7 @@ final class NativeLessonEditor {
 	public static function return_url() {
 		// Navigation only: this parameter never changes lesson data.
 		$screen   = get_current_screen();
-		$fallback = $screen && 'ohmylms-quiz' === $screen->post_type ? '/content-hub/quizzes' : ( $screen && 'ohmylms-question' === $screen->post_type ? '/question-bank' : '/content-hub/lessons' );
+		$fallback = $screen && 'ohmylms-quiz' === $screen->post_type ? ( \OhMyLMS\Exams\Composer::exam_for_quiz( get_the_ID() ) ? '/content-hub/exams' : '/content-hub/quizzes' ) : ( $screen && 'ohmylms-question' === $screen->post_type ? '/question-bank' : '/content-hub/lessons' );
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only editor navigation.
 		$route = isset( $_GET['ohmylms_return'] ) ? wp_sanitize_redirect( wp_unslash( $_GET['ohmylms_return'] ) ) : $fallback;
 		if ( ! preg_match( '#^/(?:content-hub|course-edit|question-bank)(?:/|$)#', $route ) || preg_match( '/[\r\n]/', $route ) ) {
@@ -318,6 +318,26 @@ final class NativeLessonEditor {
 		return (string) get_edit_post_link( $lesson_id, 'raw' );
 	}
 
+	/**
+	 * The exam a quiz document belongs to, for the exam panel in the quiz editor.
+	 *
+	 * @param int $quiz_id Quiz ID.
+	 * @return array|null Exam data, or null for an ordinary quiz.
+	 */
+	private static function exam_context( $quiz_id ) {
+		$exam_id = \OhMyLMS\Exams\Composer::exam_for_quiz( $quiz_id );
+		if ( ! $exam_id ) {
+			return null;
+		}
+		$exam = \OhMyLMS\Exams\Library::view( $exam_id );
+		return array(
+			'id'           => $exam_id,
+			'status'       => $exam['status'],
+			'url'          => $exam['url'],
+			'instructions' => $exam['instructions'],
+		);
+	}
+
 	/** Enqueue only the settings extension on native lesson screens. */
 	public static function enqueue() {
 		$screen = get_current_screen();
@@ -349,6 +369,7 @@ final class NativeLessonEditor {
 				'newQuestionUrl' => admin_url( 'post-new.php?post_type=ohmylms-question' ),
 				'bankUrl'        => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
 				'chapterId'      => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
+				'exam'           => 'ohmylms-quiz' === $screen->post_type ? self::exam_context( get_the_ID() ) : null,
 			)
 		);
 	}
