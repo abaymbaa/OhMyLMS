@@ -442,10 +442,21 @@ function MapLegend( { map } ) {
 				</Fragment>
 			) }
 			<li>
-				{ __(
-					'Select a skill to light up what it builds on and what builds on it.',
-					'ohmylms'
-				) }
+				<span
+					className="ohmylms-map-swatch is-before"
+					aria-hidden="true"
+				/>
+				{ __( 'What the selected skill builds on', 'ohmylms' ) }
+			</li>
+			<li>
+				<span
+					className="ohmylms-map-swatch is-after"
+					aria-hidden="true"
+				/>
+				{ __( 'What builds on it', 'ohmylms' ) }
+			</li>
+			<li>
+				{ __( 'Select a skill to light up its chain.', 'ohmylms' ) }
 			</li>
 		</ul>
 	);

@@ -377,6 +377,7 @@
 }
 
 .ohmylms-skill-map-scroll {
+	position: relative;
 	overflow-x: auto;
 	border: 1px solid #e4e4e7;
 	border-radius: 12px;
@@ -419,7 +420,9 @@
 	font-variant-numeric: tabular-nums;
 }
 
+/* Positioned, so the hidden level text stays inside the scrolling frame. */
 .ohmylms-map-chip {
+	position: relative;
 	display: block;
 	margin: 0 0 4px;
 	padding: 3px 8px;

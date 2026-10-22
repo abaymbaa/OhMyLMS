@@ -495,11 +495,14 @@
 .ohmylms-map-cell-skill.ohmylms-map-mastered,
 .ohmylms-map-swatch.ohmylms-map-mastered { background: #e7f6ec; }
 
-.ohmylms-map-cell-skill.is-selected { border-color: var(--wp-admin-theme-color, #3858e9); box-shadow: 0 0 0 2px var(--wp-admin-theme-color, #3858e9); font-weight: 600; }
+/* Chain states use outlines, so the syllabus marker (an inset shadow) stays visible. */
+.ohmylms-map-cell-skill.is-selected { outline: 3px solid var(--wp-admin-theme-color, #3858e9); outline-offset: 1px; font-weight: 600; }
 
-.ohmylms-map-cell-skill.is-before { border-color: #8a4b00; box-shadow: inset 0 -3px 0 #dba617; }
+.ohmylms-map-cell-skill.is-before,
+.ohmylms-map-swatch.is-before { outline: 2px solid #dba617; outline-offset: 1px; }
 
-.ohmylms-map-cell-skill.is-after { border-color: #4a2a8a; box-shadow: inset 0 -3px 0 #8c5ed6; }
+.ohmylms-map-cell-skill.is-after,
+.ohmylms-map-swatch.is-after { outline: 2px solid #8c5ed6; outline-offset: 1px; }
 
 .ohmylms-map-cell-skill.is-dimmed { opacity: 0.4; }
 
