@@ -12,6 +12,7 @@ import { BankPicker } from '../question-bank/BankPicker';
 import { AssessmentSettingsPanel } from '../assessment/AssessmentSettingsPanel';
 import { NativeExtensionPanels } from './NativeExtensionPanels';
 import { NativeQuizConfiguration } from './NativeQuizConfiguration';
+import { NativeExamPanel } from './NativeExamPanel';
 import { createBlock } from '@wordpress/blocks';
 import { exportQuiz } from '../content-hub/api.mjs';
 import { downloadText } from '../content-hub/quizExchange.mjs';
@@ -172,6 +173,7 @@ function NativeQuizSettings() {
 	return (
 		<>
 			<QuizPreviewAction />
+			<NativeExamPanel />
 			<PluginDocumentSettingPanel
 				name="ohmylms-native-quiz"
 				title={ __( 'Quiz authoring', 'ohmylms' ) }

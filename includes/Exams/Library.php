@@ -102,9 +102,15 @@ final class Library {
 	 */
 	public static function view( $id ) {
 		$data = (array) get_post_meta( $id, self::META, true );
+		$live = ! empty( $data['composed'] ) && 'publish' !== get_post_status( $id );
+		if ( $live ) {
+			// A draft written in OhMyLMS reads its questions, time limit and title from the Gutenberg quiz.
+			$snapshot = Composer::snapshot( $id );
+			$data     = array_merge( $data, $snapshot );
+		}
 		return array(
 			'id'               => (int) $id,
-			'title'            => get_the_title( $id ),
+			'title'            => $live ? $snapshot['title'] : get_the_title( $id ),
 			'status'           => get_post_status( $id ),
 			'url'              => Player::url( $id ),
 			'preview_url'      => \OhMyLMS\Assessment\PreviewPlayer::url( $data['quiz_id'] ),
@@ -117,6 +123,8 @@ final class Library {
 			'source_pages'     => $data['source_pages'],
 			'released'         => AssessmentSettings::get( $data['quiz_id'] )['released'],
 			'composed'         => ! empty( $data['composed'] ),
+			'editor_url'       => ! empty( $data['composed'] ) ? (string) get_edit_post_link( (int) $data['quiz_id'], 'raw' ) : '',
+			'instructions'     => (string) ( $data['instructions'] ?? '' ),
 		);
 	}
 
@@ -372,10 +380,11 @@ final class Library {
 				$data = get_post_meta( $id, self::META, true );
 				if ( ! empty( $data['composed'] ) ) {
 					// The author of a builder exam is its reviewer: check completeness, then approve the pinned versions.
-					$problems = Composer::problems( Composer::document( $id ) );
+					$problems = Composer::problems( $id );
 					if ( $problems ) {
 						return self::error( 'incomplete', implode( ' ', $problems ), 409 );
 					}
+					Composer::refresh( $id );
 					$approved = Composer::approve( $id );
 					if ( is_wp_error( $approved ) ) {
 						return $approved;

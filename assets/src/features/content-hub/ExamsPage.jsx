@@ -11,7 +11,8 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { approveQuestion } from '../question-bank/api.mjs';
-import { ExamBuilder } from './ExamBuilder.jsx';
+import { NewExamDialog } from './NewExamDialog.jsx';
+import { examEditorHref } from './examEditor.mjs';
 import { ExamPaperDialog } from './ExamPaperDialog.jsx';
 import { ImportDialog } from './ImportDialog.jsx';
 
@@ -139,7 +140,7 @@ export function ExamsPage( {
 	const [ jobs, setJobs ] = useState( [] );
 	const [ exams, setExams ] = useState( [] );
 	const [ paperExam, setPaperExam ] = useState( null );
-	const [ builder, setBuilder ] = useState( null );
+	const [ creating, setCreating ] = useState( false );
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );
@@ -318,7 +319,7 @@ export function ExamsPage( {
 					<Button
 						variant="primary"
 						disabled={ busy || dirty }
-						onClick={ () => setBuilder( { id: 0 } ) }
+						onClick={ () => setCreating( true ) }
 					>
 						{ __( 'New exam', 'ohmylms' ) }
 					</Button>{ ' ' }
@@ -1285,12 +1286,10 @@ export function ExamsPage( {
 									exam.status === 'draft' && (
 										<Button
 											variant="secondary"
-											onClick={ () =>
-												setBuilder( { id: exam.id } )
-											}
+											href={ examEditorHref( exam ) }
 										>
 											{ __(
-												'Edit in builder',
+												'Edit questions',
 												'ohmylms'
 											) }
 										</Button>
@@ -1387,16 +1386,8 @@ export function ExamsPage( {
 					} }
 				/>
 			) }
-			{ builder && (
-				<ExamBuilder
-					examId={ builder.id }
-					onClose={ ( changed ) => {
-						setBuilder( null );
-						if ( changed ) {
-							run( refresh );
-						}
-					} }
-				/>
+			{ creating && (
+				<NewExamDialog onClose={ () => setCreating( false ) } />
 			) }
 			{ paperExam && (
 				<ExamPaperDialog
