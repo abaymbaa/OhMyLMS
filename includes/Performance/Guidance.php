@@ -135,6 +135,25 @@ final class Guidance {
 		return $result;
 	}
 
+	/**
+	 * The learner's level on each skill, pooled the same way as guidance: an objective with an
+	 * equivalent mapping counts as its shared skill. Used by the student skill map.
+	 *
+	 * @param int $student_id Learner.
+	 * @return array<int,string> Skill => level, for skills the learner has started.
+	 */
+	public static function levels( $student_id ) {
+		if ( ! (int) $student_id || ! Schema::ready() ) {
+			return array();
+		}
+		$states = self::states( (int) $student_id );
+		$levels = array();
+		foreach ( GuidanceModel::pooled( $states, self::pool( array_keys( $states ) ) ) as $skill => $entry ) {
+			$levels[ $skill ] = $entry['level'];
+		}
+		return $levels;
+	}
+
 	/** Forget results computed earlier in this request (after evidence changes, and in tests). */
 	public static function flush() {
 		self::$cache = array();
@@ -211,9 +230,9 @@ final class Guidance {
 				),
 			)
 		);
-		$ids  = is_wp_error( $terms ) ? array() : array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) );
-		$ids  = array_values( array_unique( array_merge( $ids, array_keys( $pooled ) ) ) );
-		$info = array();
+		$ids   = is_wp_error( $terms ) ? array() : array_map( 'intval', wp_list_pluck( $terms, 'term_id' ) );
+		$ids   = array_values( array_unique( array_merge( $ids, array_keys( $pooled ) ) ) );
+		$info  = array();
 		update_termmeta_cache( $ids );
 		foreach ( $ids as $id ) {
 			// A mapped objective is represented by its shared skill.

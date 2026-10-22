@@ -113,7 +113,8 @@ Storage: curriculum schema 8 adds `ai_analysis_runs`, `ai_suggestions`, and `sou
 3. Guidance on the performance engine: strength by area, next steps (help, reviews, skills ready to learn),
    reviews covered by work on skills that include them, and readiness per syllabus. Done; see
    [performance](PERFORMANCE.md#guidance).
-4. Visual coherence map (domains × grades), syllabus comparison view, student skill map.
+4. Visual coherence map (domains × grades), syllabus comparison view, student skill map. Done; see
+   [skill map](SKILL-MAP.md).
 5. Adaptive placement test.
 
 ## Tests

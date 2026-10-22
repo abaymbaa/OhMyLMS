@@ -51,6 +51,20 @@ final class PerformanceTools {
 				array( 'student_id' ),
 				false,
 			),
+			'get_student_skill_map'    => array(
+				'GET',
+				'/reports/skills/students/{student_id}/map',
+				'The skill map of one learner: the subjects they have started (most started skills first) and, for one subject, its shared skills by domain and grade with the level of the learner on each (an objective with an equivalent mapping counts as its shared skill) and their strength per domain. subject picks the subject; empty picks the one with most started skills. Read only.',
+				array(
+					'student_id' => $id,
+					'subject'    => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+				),
+				array( 'student_id' ),
+				false,
+			),
 			'get_skill_report'         => array(
 				'GET',
 				'/reports/skills',

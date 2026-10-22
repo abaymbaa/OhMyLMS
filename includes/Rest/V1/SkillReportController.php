@@ -76,6 +76,24 @@ class SkillReportController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/map',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'skill_map' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+					'args'                => array(
+						'subject' => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/reports/skills/students/(?P<student>[\d]+)/insight',
 			array(
 				array(
@@ -288,6 +306,18 @@ class SkillReportController extends RestController {
 	public function guidance( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'] ) );
+	}
+
+	/**
+	 * The learner's skill map: the subjects they have started and, for one, the shared skills by
+	 * domain and grade with their levels. A summary, so guardians see it too.
+	 *
+	 * @param WP_REST_Request $request Request with student and subject.
+	 * @return \WP_REST_Response
+	 */
+	public function skill_map( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		return rest_ensure_response( \OhMyLMS\Curriculum\SkillMap::for_student( (int) $request['student'], (string) $request['subject'] ) );
 	}
 
 	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */

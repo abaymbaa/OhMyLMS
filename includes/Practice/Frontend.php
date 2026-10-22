@@ -72,11 +72,15 @@ final class Frontend {
 		$student  = get_current_user_id();
 		$skills   = Evidence::summary( $student );
 		$guidance = \OhMyLMS\Performance\Snapshot::guidance( $student, 5 );
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only choice of which subject to draw.
+		$subject   = isset( $_GET['skill_map_subject'] ) ? sanitize_text_field( wp_unslash( $_GET['skill_map_subject'] ) ) : '';
+		$skill_map = \OhMyLMS\Curriculum\SkillMap::for_student( $student, $subject );
 		ob_start();
 		?>
 		<section class="ohmylms-skill-progress" aria-labelledby="ohmylms-skill-progress-title">
 			<h2 id="ohmylms-skill-progress-title"><?php esc_html_e( 'My skills', 'ohmylms' ); ?></h2>
 			<?php echo self::guidance( $guidance ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped guidance markup. ?>
+			<?php echo self::skill_map( $skill_map ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped skill map markup. ?>
 			<?php if ( ! $skills ) { ?>
 				<p><?php esc_html_e( 'Answer quiz questions, lesson checks or practice to see your skills here.', 'ohmylms' ); ?></p>
 			<?php } else { ?>
@@ -130,6 +134,87 @@ final class Frontend {
 				</div>
 				<?php wp_enqueue_script( 'ohmylms-performance-note', plugins_url( 'assets/js/performance-note.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/performance-note.js' ), true ); ?>
 			<?php } ?>
+		</section>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render the learner's skill map: a subject's shared skills by domain and grade, each marked with
+	 * the learner's level.
+	 *
+	 * @param array $data From SkillMap::for_student().
+	 * @return string Escaped HTML, empty when the learner has not started any mapped subject.
+	 */
+	private static function skill_map( array $data ) {
+		$map = $data['map'];
+		if ( ! $map || ! $map['domains'] || ! $map['grades'] ) {
+			return '';
+		}
+		$levels = (array) $map['student']['levels'];
+		$cells  = array();
+		foreach ( $map['skills'] as $skill ) {
+			if ( $skill['domain'] && $skill['grade_from'] ) {
+				$cells[ $skill['domain'] ][ $skill['grade_from'] ][] = $skill;
+			}
+		}
+		$areas = array_column( $map['student']['areas'], null, 'domain' );
+		ob_start();
+		?>
+		<section class="ohmylms-skill-map" aria-labelledby="ohmylms-skill-map-title">
+			<h3 id="ohmylms-skill-map-title"><?php esc_html_e( 'My skill map', 'ohmylms' ); ?></h3>
+			<?php if ( count( $data['subjects'] ) > 1 ) { ?>
+				<nav class="ohmylms-skill-map-subjects" aria-label="<?php esc_attr_e( 'Subjects', 'ohmylms' ); ?>">
+					<?php foreach ( $data['subjects'] as $subject ) { ?>
+						<a href="<?php echo esc_url( add_query_arg( 'skill_map_subject', rawurlencode( $subject['subject'] ) ) . '#ohmylms-skill-map-title' ); ?>" <?php echo $subject['subject'] === $map['subject'] ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $subject['subject'] ); ?></a>
+					<?php } ?>
+				</nav>
+			<?php } ?>
+			<p>
+				<?php
+				/* translators: %s: subject name. */
+				echo esc_html( sprintf( __( 'Every %s skill by area and the grade it is usually learned in, marked with how far you have got.', 'ohmylms' ), $map['subject'] ) );
+				?>
+			</p>
+			<ul class="ohmylms-skill-map-legend">
+				<?php foreach ( \OhMyLMS\Performance\Levels::SCALE as $level ) { ?>
+					<li><span class="ohmylms-map-chip ohmylms-map-<?php echo esc_attr( $level ); ?>" aria-hidden="true"></span><?php echo esc_html( \OhMyLMS\Performance\Levels::label( $level ) ); ?></li>
+				<?php } ?>
+			</ul>
+			<div class="ohmylms-skill-map-scroll" tabindex="0" role="region" aria-labelledby="ohmylms-skill-map-title">
+				<table class="ohmylms-skill-map-table">
+					<thead>
+						<tr>
+							<th scope="col"><?php esc_html_e( 'Area', 'ohmylms' ); ?></th>
+							<?php foreach ( $map['grades'] as $grade ) { ?>
+								<th scope="col"><?php echo esc_html( $grade['label'] ); ?></th>
+							<?php } ?>
+						</tr>
+					</thead>
+					<tbody>
+						<?php foreach ( $map['domains'] as $domain ) { ?>
+							<tr>
+								<th scope="row">
+									<?php echo esc_html( $domain['label'] ); ?>
+									<?php if ( isset( $areas[ $domain['id'] ] ) ) { ?>
+										<span class="ohmylms-skill-map-strength"><?php echo esc_html( $areas[ $domain['id'] ]['strength'] . '/100' ); ?></span>
+									<?php } ?>
+								</th>
+								<?php foreach ( $map['grades'] as $grade ) { ?>
+									<td>
+										<?php
+										foreach ( $cells[ $domain['id'] ][ $grade['value'] ] ?? array() as $skill ) {
+											$level = $levels[ $skill['id'] ] ?? 'not-started';
+											?>
+											<span class="ohmylms-map-chip ohmylms-map-<?php echo esc_attr( $level ); ?>"><?php echo esc_html( $skill['name'] ); ?><span class="screen-reader-text"> (<?php echo esc_html( \OhMyLMS\Performance\Levels::label( $level ) ); ?>)</span></span>
+										<?php } ?>
+									</td>
+								<?php } ?>
+							</tr>
+						<?php } ?>
+					</tbody>
+				</table>
+			</div>
 		</section>
 		<?php
 		return ob_get_clean();
