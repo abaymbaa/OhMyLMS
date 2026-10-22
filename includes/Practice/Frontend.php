@@ -10,7 +10,6 @@ use OhMyLMS\Assessment\Engine;
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Mastery;
-use OhMyLMS\Skills\Recommendations;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -70,16 +69,19 @@ final class Frontend {
 			return ''; }
 		Evidence::process( 50 );
 		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
-		$student         = get_current_user_id();
-		$skills          = Evidence::summary( $student );
-		$recommendations = Recommendations::for_student( $student, 5 );
+		$student  = get_current_user_id();
+		$skills   = Evidence::summary( $student );
+		$guidance = \OhMyLMS\Performance\Snapshot::guidance( $student, 5 );
 		ob_start();
 		?>
 		<section class="ohmylms-skill-progress" aria-labelledby="ohmylms-skill-progress-title">
 			<h2 id="ohmylms-skill-progress-title"><?php esc_html_e( 'My skills', 'ohmylms' ); ?></h2>
+			<?php echo self::guidance( $guidance ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped guidance markup. ?>
 			<?php if ( ! $skills ) { ?>
 				<p><?php esc_html_e( 'Answer quiz questions, lesson checks or practice to see your skills here.', 'ohmylms' ); ?></p>
 			<?php } else { ?>
+				<h3><?php esc_html_e( 'All my skills', 'ohmylms' ); ?></h3>
+				<div class="ohmylms-skill-table-wrap">
 				<table class="ohmylms-skill-table">
 					<thead><tr><th><?php esc_html_e( 'Skill', 'ohmylms' ); ?></th><th><?php esc_html_e( 'Level', 'ohmylms' ); ?></th>
 					<?php
@@ -117,29 +119,7 @@ final class Frontend {
 					<?php } ?>
 					</tbody>
 				</table>
-			<?php } ?>
-			<?php if ( $recommendations ) { ?>
-				<h3><?php esc_html_e( 'Suggested next steps', 'ohmylms' ); ?></h3>
-				<ul class="ohmylms-recommendations">
-					<?php
-					foreach ( $recommendations as $item ) {
-						if ( ! $item['skill'] ) {
-							continue; }
-						?>
-						<li class="ohmylms-recommendation-<?php echo esc_attr( $item['type'] ); ?>">
-							<strong><?php echo esc_html( $item['skill']['name'] ); ?></strong> — <?php echo esc_html( $item['message'] ); ?>
-							<?php
-							foreach ( $item['lessons'] as $lesson ) {
-								?>
-								<a href="<?php echo esc_url( $lesson['url'] ); ?>"><?php echo esc_html( $lesson['title'] ); ?></a><?php } ?>
-							<?php
-							foreach ( $item['prerequisites'] as $prerequisite ) {
-								?>
-								<a href="<?php echo esc_url( add_query_arg( 'ohmylms_practice', $prerequisite['id'], home_url( '/' ) ) ); ?>"><?php /* translators: %s: prerequisite skill name. */ echo esc_html( sprintf( __( 'Practice %s', 'ohmylms' ), $prerequisite['name'] ) ); ?></a><?php } ?>
-							<a href="<?php echo esc_url( add_query_arg( 'ohmylms_practice', $item['skill']['id'], home_url( '/' ) ) ); ?>"><?php esc_html_e( 'Practice', 'ohmylms' ); ?></a>
-						</li>
-					<?php } ?>
-				</ul>
+				</div>
 			<?php } ?>
 			<?php if ( $skills && \OhMyLMS\Performance\Insights::available() ) { ?>
 				<div class="ohmylms-ai-note" data-ohmylms-note data-url="<?php echo esc_url( rest_url( 'ohmylms/v1/reports/skills/students/' . $student . '/insight' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>">
@@ -151,6 +131,161 @@ final class Frontend {
 				<?php wp_enqueue_script( 'ohmylms-performance-note', plugins_url( 'assets/js/performance-note.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/performance-note.js' ), true ); ?>
 			<?php } ?>
 		</section>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * Render the learner's guidance: next steps, strength by area, readiness and covered reviews.
+	 *
+	 * @param array $guidance From Snapshot::guidance().
+	 * @return string Escaped HTML, empty when there is nothing to suggest yet.
+	 */
+	private static function guidance( array $guidance ) {
+		if ( ! $guidance['next_steps'] && ! $guidance['areas'] && ! $guidance['readiness'] && ! $guidance['reviews']['covered'] ) {
+			return '';
+		}
+		$practice = static function ( $id ) {
+			return add_query_arg( 'ohmylms_practice', (int) $id, home_url( '/' ) );
+		};
+		$date     = static function ( $value ) {
+			return wp_date( get_option( 'date_format' ), strtotime( $value . ' UTC' ) );
+		};
+		$names    = static function ( array $skills ) {
+			return wp_sprintf( '%l', wp_list_pluck( $skills, 'name' ) );
+		};
+		ob_start();
+		?>
+		<div class="ohmylms-guidance">
+			<?php if ( $guidance['next_steps'] ) { ?>
+				<section class="ohmylms-guidance-card ohmylms-guidance-next" aria-labelledby="ohmylms-guidance-next-title">
+					<h3 id="ohmylms-guidance-next-title"><?php esc_html_e( 'Suggested next steps', 'ohmylms' ); ?></h3>
+					<ul class="ohmylms-recommendations">
+						<?php foreach ( $guidance['next_steps'] as $item ) { ?>
+							<li class="ohmylms-recommendation ohmylms-recommendation-<?php echo esc_attr( $item['type'] ); ?>">
+								<span class="ohmylms-recommendation-kind">
+									<?php
+									$kinds = array(
+										'help'   => __( 'Needs help', 'ohmylms' ),
+										'review' => __( 'Review', 'ohmylms' ),
+										'ready'  => __( 'Ready to learn', 'ohmylms' ),
+									);
+									echo esc_html( $kinds[ $item['type'] ] ?? '' );
+									?>
+								</span>
+								<strong><?php echo esc_html( $item['skill']['name'] ); ?></strong>
+								<p><?php echo esc_html( $item['message'] ); ?></p>
+								<?php if ( 'review' === $item['type'] && $item['covered_by'] ) { ?>
+									<p class="ohmylms-recommendation-note">
+										<?php
+										/* translators: 1: skill names, 2: percentage of a review. */
+										echo esc_html( sprintf( __( 'Your work on %1$s already counted for %2$d%% of this review.', 'ohmylms' ), $names( $item['covered_by'] ), (int) round( $item['credit'] * 100 ) ) );
+										?>
+									</p>
+								<?php } elseif ( 'ready' === $item['type'] && $item['prerequisites'] ) { ?>
+									<p class="ohmylms-recommendation-note">
+										<?php
+										/* translators: %s: skill names. */
+										echo esc_html( sprintf( __( 'Builds on %s.', 'ohmylms' ), $names( $item['prerequisites'] ) ) );
+										?>
+									</p>
+								<?php } ?>
+								<span class="ohmylms-recommendation-links">
+									<?php if ( $item['practice_id'] ) { ?>
+										<a class="ohmylms-button" href="<?php echo esc_url( $practice( $item['practice_id'] ) ); ?>"><?php esc_html_e( 'Practice', 'ohmylms' ); ?></a>
+									<?php } ?>
+									<?php foreach ( $item['lessons'] as $lesson ) { ?>
+										<a href="<?php echo esc_url( $lesson['url'] ); ?>"><?php echo esc_html( $lesson['title'] ); ?></a>
+									<?php } ?>
+									<?php
+									foreach ( 'help' === $item['type'] ? $item['prerequisites'] : array() as $prerequisite ) {
+										if ( empty( $prerequisite['practice_id'] ) ) {
+											continue;
+										}
+										?>
+										<a href="<?php echo esc_url( $practice( $prerequisite['practice_id'] ) ); ?>"><?php /* translators: %s: prerequisite skill name. */ echo esc_html( sprintf( __( 'Practice %s', 'ohmylms' ), $prerequisite['name'] ) ); ?></a>
+									<?php } ?>
+								</span>
+							</li>
+						<?php } ?>
+					</ul>
+				</section>
+			<?php } ?>
+			<?php if ( $guidance['areas'] ) { ?>
+				<section class="ohmylms-guidance-card" aria-labelledby="ohmylms-guidance-areas-title">
+					<h3 id="ohmylms-guidance-areas-title"><?php esc_html_e( 'Strength by area', 'ohmylms' ); ?></h3>
+					<ul class="ohmylms-guidance-bars">
+						<?php foreach ( $guidance['areas'] as $area ) { ?>
+							<li class="ohmylms-area-<?php echo esc_attr( $area['band'] ); ?>">
+								<span class="ohmylms-guidance-bar-label">
+									<strong><?php echo esc_html( $area['label'] ); ?></strong>
+									<span><?php echo esc_html( $area['strength'] . '/100' ); ?></span>
+								</span>
+								<span class="ohmylms-guidance-meter" aria-hidden="true"><span style="width:<?php echo esc_attr( (string) (int) $area['strength'] ); ?>%"></span></span>
+								<span class="ohmylms-guidance-bar-detail">
+									<?php
+									$detail = sprintf(
+										/* translators: %d: number of skills. */
+										_n( '%d skill started', '%d skills started', $area['started'], 'ohmylms' ),
+										$area['started']
+									);
+									if ( $area['grade_label'] ) {
+										/* translators: 1: skills started, 2: grade name such as "Grade 8". */
+										$detail = sprintf( __( '%1$s · proficient up to %2$s', 'ohmylms' ), $detail, $area['grade_label'] );
+									}
+									echo esc_html( $detail );
+									?>
+								</span>
+							</li>
+						<?php } ?>
+					</ul>
+				</section>
+			<?php } ?>
+			<?php if ( $guidance['readiness'] ) { ?>
+				<section class="ohmylms-guidance-card" aria-labelledby="ohmylms-guidance-ready-title">
+					<h3 id="ohmylms-guidance-ready-title"><?php esc_html_e( 'Readiness', 'ohmylms' ); ?></h3>
+					<ul class="ohmylms-guidance-bars">
+						<?php foreach ( $guidance['readiness'] as $readiness ) { ?>
+							<li>
+								<span class="ohmylms-guidance-bar-label">
+									<strong><?php echo esc_html( $readiness['syllabus']['name'] ); ?></strong>
+									<span><?php /* translators: %d: percentage. */ echo esc_html( sprintf( __( '%d%% ready', 'ohmylms' ), $readiness['percent'] ) ); ?></span>
+								</span>
+								<span class="ohmylms-guidance-meter" aria-hidden="true"><span style="width:<?php echo esc_attr( (string) (int) $readiness['percent'] ); ?>%"></span></span>
+								<span class="ohmylms-guidance-bar-detail">
+									<?php
+									/* translators: 1: objectives ready, 2: all objectives, 3: objectives in progress. */
+									echo esc_html( sprintf( __( '%1$d of %2$d objectives ready, %3$d in progress', 'ohmylms' ), $readiness['ready'], $readiness['total'], $readiness['learning'] ) );
+									if ( $readiness['gaps'] ) {
+										echo '<br>';
+										/* translators: %s: objective names. */
+										echo esc_html( sprintf( __( 'Next to learn: %s', 'ohmylms' ), $names( $readiness['gaps'] ) ) );
+									}
+									?>
+								</span>
+							</li>
+						<?php } ?>
+					</ul>
+				</section>
+			<?php } ?>
+			<?php if ( $guidance['reviews']['covered'] ) { ?>
+				<section class="ohmylms-guidance-card" aria-labelledby="ohmylms-guidance-covered-title">
+					<h3 id="ohmylms-guidance-covered-title"><?php esc_html_e( 'Reviews covered by your other work', 'ohmylms' ); ?></h3>
+					<p><?php esc_html_e( 'Harder skills use these ones, so practising them kept these fresh.', 'ohmylms' ); ?></p>
+					<ul class="ohmylms-guidance-covered">
+						<?php foreach ( $guidance['reviews']['covered'] as $review ) { ?>
+							<li>
+								<strong><?php echo esc_html( $review['skill']['name'] ); ?></strong>
+								<?php
+								/* translators: 1: skill names, 2: date of the next review. */
+								echo esc_html( sprintf( __( 'Kept fresh by %1$s. Next review: %2$s.', 'ohmylms' ), $names( $review['covered_by'] ), $date( $review['next_due_at'] ) ) );
+								?>
+							</li>
+						<?php } ?>
+					</ul>
+				</section>
+			<?php } ?>
+		</div>
 		<?php
 		return ob_get_clean();
 	}

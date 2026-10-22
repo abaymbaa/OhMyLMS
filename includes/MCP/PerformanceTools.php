@@ -36,6 +36,21 @@ final class PerformanceTools {
 				array( 'student_id' ),
 				false,
 			),
+			'get_student_guidance'     => array(
+				'GET',
+				'/reports/skills/students/{student_id}/guidance',
+				'Guidance for one learner, read from their skill levels and the shared skill library: strength (0-100) per domain with the highest grade reached at proficient; next steps (help with struggling skills, reviews that are due, skills whose prerequisites are all proficient); reviews already covered by later work on skills that include them (credit 0-1 from "includes" link weights); and readiness (0-100) for each syllabus they have started, with the objectives still to learn. Read only.',
+				array(
+					'student_id' => $id,
+					'limit'      => array(
+						'type'    => 'integer',
+						'minimum' => 1,
+						'maximum' => 20,
+					),
+				),
+				array( 'student_id' ),
+				false,
+			),
 			'get_skill_report'         => array(
 				'GET',
 				'/reports/skills',

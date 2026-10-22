@@ -57,6 +57,25 @@ class SkillReportController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/guidance',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'guidance' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+					'args'                => array(
+						'limit' => array(
+							'type'    => 'integer',
+							'minimum' => 1,
+							'maximum' => 20,
+							'default' => 6,
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/reports/skills/students/(?P<student>[\d]+)/insight',
 			array(
 				array(
@@ -258,6 +277,17 @@ class SkillReportController extends RestController {
 				'evidence'        => $evidence,
 			)
 		);
+	}
+
+	/**
+	 * Guidance from the learner's skill states. It is a summary, so guardians see it too.
+	 *
+	 * @param WP_REST_Request $request Request with student and limit.
+	 * @return \WP_REST_Response
+	 */
+	public function guidance( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'] ) );
 	}
 
 	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */
