@@ -465,6 +465,54 @@
 	}
 }
 
+.ohmylms-placement-page {
+	box-sizing: border-box;
+	max-width: 760px;
+	margin: 32px auto;
+	padding: 0 16px;
+}
+
+.ohmylms-placement-grade {
+	display: block;
+	max-width: 100%;
+	margin-top: 4px;
+}
+
+.ohmylms-placement-areas,
+.ohmylms-placement-start,
+.ohmylms-placement-summary ul {
+	margin: 0 0 12px;
+	padding-left: 1.2em;
+}
+
+.ohmylms-placement-areas li,
+.ohmylms-placement-start li,
+.ohmylms-placement-summary li {
+	margin: 0 0 6px;
+}
+
+.ohmylms-placement-start a {
+	margin-left: 4px;
+}
+
+.ohmylms-placement-summary {
+	margin: 0 0 24px;
+}
+
+.ohmylms-placement-when,
+.ohmylms-placement-grades,
+.ohmylms-placement-first {
+	display: block;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+
+.ohmylms-placement-link {
+	display: inline-block;
+	margin-top: 4px;
+	font-size: 0.9em;
+}
+
 .ohmylms-autosave-status {
 	font-size: 0.85em;
 	color: var(--ohmylms-body-text-color, #52525b);
@@ -804,6 +852,11 @@
 	font-weight: 700;
 	line-height: 14px;
 	content: "\2713";
+}
+
+.ohmylms-practice-dots li.is-done {
+	border-color: #71717a;
+	background: #71717a;
 }
 
 .ohmylms-practice-dots li.is-help {

@@ -461,6 +461,7 @@
 			right: i18n.dotRight || 'Right first time',
 			help: i18n.dotHelp || 'Right with help',
 			wrong: i18n.dotWrong || 'Not right',
+			done: i18n.dotDone || 'Answered',
 			current: i18n.dotCurrent || 'Current question',
 			left: i18n.dotLeft || 'Not answered yet',
 		};
@@ -612,7 +613,9 @@
 			var skip = el( 'button', {
 				type: 'button',
 				class: 'ohmylms-button outline ohmylms-practice-skip',
-				text: i18n.skip || 'Skip',
+				text: state.placement
+					? i18n.dontKnow || i18n.skip
+					: i18n.skip || 'Skip',
 			} );
 			skip.addEventListener( 'click', function () {
 				if ( skip.disabled || check.disabled ) return;
@@ -653,6 +656,11 @@
 				response: collect(),
 			} )
 				.then( function ( result ) {
+					// A placement test shows no feedback: it moves straight on.
+					if ( state.placement ) {
+						show( result.session );
+						return;
+					}
 					if ( window.ohmylmsRememberPractice )
 						window.ohmylmsRememberPractice( result );
 					if ( result.retry ) {
@@ -917,7 +925,92 @@
 		return card;
 	}
 
+	function renderPlacement( state ) {
+		stage.innerHTML = '';
+		var result = state.placement.result;
+		var title = el( 'h3', {
+			class: 'ohmylms-practice-summary',
+			tabindex: '-1',
+			text: format( i18n.placementTitle, state.placement.subject ),
+		} );
+		stage.appendChild( title );
+		if ( result ) {
+			stage.appendChild(
+				el( 'p', {
+					text: format(
+						i18n.placementSummary,
+						result.known,
+						result.total
+					),
+				} )
+			);
+			var areas = el( 'ul', { class: 'ohmylms-placement-areas' } );
+			result.domains.forEach( function ( domain ) {
+				areas.appendChild(
+					el( 'li', {}, [
+						el( 'strong', { text: domain.label + ': ' } ),
+						document.createTextNode(
+							( domain.grade_label
+								? format(
+										i18n.placementGrade,
+										domain.grade_label
+									)
+								: i18n.placementBeginning ) +
+								' ' +
+								format(
+									i18n.placementCount,
+									domain.known,
+									domain.total
+								)
+						),
+					] )
+				);
+			} );
+			stage.appendChild( areas );
+			stage.appendChild( el( 'h4', { text: i18n.placementStartTitle } ) );
+			if ( result.start.length ) {
+				var starts = el( 'ul', { class: 'ohmylms-placement-start' } );
+				result.start.forEach( function ( skill ) {
+					starts.appendChild(
+						el( 'li', {}, [
+							document.createTextNode( skill.name + ' ' ),
+							skill.practice_url
+								? el( 'a', {
+										href: skill.practice_url,
+										text: i18n.practice,
+									} )
+								: null,
+						] )
+					);
+				} );
+				stage.appendChild( starts );
+			} else {
+				stage.appendChild(
+					el( 'p', { text: i18n.placementNothingLeft } )
+				);
+			}
+			stage.appendChild(
+				el( 'p', {
+					class: 'ohmylms-practice-notice',
+					text: i18n.placementNote,
+				} )
+			);
+		}
+		var again = el( 'button', {
+			type: 'button',
+			class: 'ohmylms-button',
+			text: i18n.placementAgain,
+		} );
+		again.addEventListener( 'click', start );
+		stage.appendChild( again );
+		title.focus();
+	}
+
 	function renderSummary( state ) {
+		if ( state.placement ) {
+			renderPlacement( state );
+			return;
+		}
 		stage.innerHTML = '';
 		var lessonResult = state.style === 'lesson';
 		var summary = el( 'p', {
@@ -1044,6 +1137,8 @@
 
 	function show( state ) {
 		session = state;
+		var intro = root.querySelector( '.ohmylms-placement-intro' );
+		if ( intro ) intro.hidden = true;
 		remembered( state.status === 'active' ? state.uuid : null );
 		if ( state.status === 'active' && state.current )
 			renderQuestion( state );
@@ -1058,6 +1153,16 @@
 		ready
 			.then( function ( guest ) {
 				token = guest;
+				if ( root.dataset.placement ) {
+					var grade = root.querySelector(
+						'.ohmylms-placement-grade'
+					);
+					return request( 'placement/sessions', {
+						subject: root.dataset.placement,
+						grade: grade ? Number( grade.value ) || 0 : 0,
+						item_limit: Number( root.dataset.items ) || 15,
+					} );
+				}
 				return request( 'practice/sessions', {
 					term_id: Number( root.dataset.skill ),
 					item_limit: Number( root.dataset.items ) || 10,

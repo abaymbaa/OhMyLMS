@@ -175,12 +175,12 @@ final class Settings {
 
 	/**
 	 * The activities whose answers can feed skills: the registered assessment kinds, practice, inline
-	 * checks and the question player.
+	 * checks, the question player and placement tests.
 	 *
 	 * @return string[]
 	 */
 	public static function surfaces() {
-		return array_values( array_unique( array_merge( Profiles::kinds(), array( 'practice', 'inline', 'question-player' ) ) ) );
+		return array_values( array_unique( array_merge( Profiles::kinds(), array( 'practice', 'inline', 'question-player', 'placement' ) ) ) );
 	}
 
 	/**

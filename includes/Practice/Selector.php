@@ -128,8 +128,39 @@ final class Selector {
 
 	/** Every eligible question for a skill and its sub-skills. */
 	public static function pool( $term_id ) {
+		$terms = array_merge( array( (int) $term_id ), array_map( 'intval', get_term_children( (int) $term_id, Taxonomy::NAME ) ?: array() ) );
+		return self::eligible( $terms );
+	}
+
+	/**
+	 * Eligible questions of many skills in one query, grouped by the skill each is mapped to (no
+	 * sub-skills). Used by the placement test, which looks across a whole subject.
+	 *
+	 * @param int[] $term_ids Skills.
+	 * @return array<int,array[]> Skill => questions, as pool() returns them.
+	 */
+	public static function pools( array $term_ids ) {
+		$terms  = array_values( array_unique( array_filter( array_map( 'intval', $term_ids ) ) ) );
+		$result = array();
+		foreach ( array_chunk( $terms, 500 ) as $chunk ) {
+			foreach ( self::eligible( $chunk ) as $row ) {
+				$result[ (int) $row['primary_term_id'] ][] = $row;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Approved, non-secure, auto-marked questions whose primary skill is one of the terms.
+	 *
+	 * @param int[] $terms Skills.
+	 * @return array[]
+	 */
+	private static function eligible( array $terms ) {
 		global $wpdb;
-		$terms        = array_merge( array( (int) $term_id ), array_map( 'intval', get_term_children( (int) $term_id, Taxonomy::NAME ) ?: array() ) );
+		if ( ! $terms ) {
+			return array();
+		}
 		$placeholders = implode( ',', array_fill( 0, count( $terms ), '%d' ) );
 		$manual       = array_keys(
 			array_filter(

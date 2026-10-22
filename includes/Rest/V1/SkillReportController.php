@@ -94,6 +94,17 @@ class SkillReportController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/placement',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'placement' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/reports/skills/students/(?P<student>[\d]+)/insight',
 			array(
 				array(
@@ -318,6 +329,16 @@ class SkillReportController extends RestController {
 	public function skill_map( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		return rest_ensure_response( \OhMyLMS\Curriculum\SkillMap::for_student( (int) $request['student'], (string) $request['subject'] ) );
+	}
+
+	/**
+	 * The learner's latest placement in each subject: working grade per domain and where to start.
+	 *
+	 * @param WP_REST_Request $request Request with student.
+	 * @return \WP_REST_Response
+	 */
+	public function placement( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Placement\Placement::results( (int) $request['student'] ) );
 	}
 
 	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */

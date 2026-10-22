@@ -194,7 +194,8 @@ class PracticeController extends RestController {
 
 	private function session( WP_REST_Request $request ) {
 		$session = Sessions::get( (string) $request['uuid'] );
-		if ( ! $session || 'skill' !== $session['mode'] || ! Sessions::owns( $session, $this->owner( $request ) ) ) {
+		// Placement tests run through the same routes; they belong to a logged-in learner.
+		if ( ! $session || ! in_array( $session['mode'], array( 'skill', \OhMyLMS\Placement\Placement::MODE ), true ) || ! Sessions::owns( $session, $this->owner( $request ) ) ) {
 			return new WP_Error( 'ohmylms_practice_missing', __( 'Practice session not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );

@@ -65,6 +65,16 @@ final class PerformanceTools {
 				array( 'student_id' ),
 				false,
 			),
+			'get_student_placement'    => array(
+				'GET',
+				'/reports/skills/students/{student_id}/placement',
+				'The latest adaptive placement test result of one learner in each subject: how many of the subject skills the test placed as known, the working grade per domain (the highest grade with enough skills known; empty means start from the beginning), and the skills to start with. Questions answered in the test count as skill evidence; skills the test only estimated are not levels. Read only.',
+				array(
+					'student_id' => $id,
+				),
+				array( 'student_id' ),
+				false,
+			),
 			'get_skill_report'         => array(
 				'GET',
 				'/reports/skills',

@@ -115,7 +115,7 @@ Storage: curriculum schema 8 adds `ai_analysis_runs`, `ai_suggestions`, and `sou
    [performance](PERFORMANCE.md#guidance).
 4. Visual coherence map (domains × grades), syllabus comparison view, student skill map. Done; see
    [skill map](SKILL-MAP.md).
-5. Adaptive placement test.
+5. Adaptive placement test. Done; see [placement test](PLACEMENT-TEST.md).
 
 ## Tests
 
