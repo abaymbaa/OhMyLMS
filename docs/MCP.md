@@ -376,6 +376,8 @@ Two tools (ability IDs `ohmylms/list-unit-skills` and `ohmylms/create-skill-asse
 
 The same builder is available to people on **OhMyLMS -> Skill assessments** and as `POST /ohmylms/v1/skill-assessments`.
 
+`export_questions` writes questions back out as the import rows (CSV or JSON, every question type): `ids` (up to 200) or `quiz_id`, optional `format` (`json` default, `csv`) and `label`. It is read-only and returns `filename`, `mime`, `content`, `count` and `warnings` (questions without a skill, which `import_questions` refuses). The file holds every answer key. See [question bulk import](QUESTION-BULK-IMPORT.md).
+
 ## Exams
 
 Four tools let an assistant prepare an exam as a draft. They call the exam routes the Exams tab uses, so

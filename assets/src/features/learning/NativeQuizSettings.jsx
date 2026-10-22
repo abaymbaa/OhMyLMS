@@ -13,6 +13,7 @@ import { AssessmentSettingsPanel } from '../assessment/AssessmentSettingsPanel';
 import { NativeExtensionPanels } from './NativeExtensionPanels';
 import { NativeQuizConfiguration } from './NativeQuizConfiguration';
 import { NativeExamPanel } from './NativeExamPanel';
+import { ExportRowsButtons } from '../content-hub/ExportRowsButtons';
 import { createBlock } from '@wordpress/blocks';
 import { exportQuiz } from '../content-hub/api.mjs';
 import { downloadText } from '../content-hub/quizExchange.mjs';
@@ -228,6 +229,24 @@ function NativeQuizSettings() {
 				>
 					{ __( 'Export quiz', 'ohmylms' ) }
 				</Button>
+				<ExportRowsButtons
+					quizId={ postId }
+					beforeExport={ async () => {
+						if (
+							! ( await saveQuizForPreview( {
+								editor: select( 'core/editor' ),
+								savePost,
+							} ) )
+						) {
+							throw new Error(
+								__(
+									'Save the quiz before exporting.',
+									'ohmylms'
+								)
+							);
+						}
+					} }
+				/>
 				{ error && (
 					<Notice status="error" onRemove={ () => setError( '' ) }>
 						{ error }

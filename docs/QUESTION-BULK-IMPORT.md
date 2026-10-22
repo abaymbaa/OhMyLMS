@@ -136,3 +136,36 @@ checks remain authoritative. Newly imported PDF questions default to **Exam only
 `ohmylms_question_bank_resolve_scope`. Resolved references are limited to skills, banks,
 courses and quizzes; empty scopes return no questions. Discovery currently lists at most
 100 editable courses and resolves at most 5,000 references in a scope.
+
+## Export: every question type, CSV or JSON
+
+Questions can be written back out as the same rows the importer reads, so a file can move between sites, be
+edited in a spreadsheet and be imported again. Every registered question type is covered.
+
+Where: **Export questions (CSV)** and **(JSON)** in the quiz editor's *Quiz authoring* panel (this is also where
+an exam's questions are edited) and on the Question Bank tab (the questions on the current page); or
+`GET /wp-json/ohmylms/v1/question-bank/export?format=csv|json` with `ids=1,2,3` (up to 200) or `quiz_id=ID`,
+optional `label`. The MCP tool `export_questions` uses the same route. Only people who can edit a question can
+export it, because the file holds every answer key.
+
+How types are written:
+
+- Single choice, multiple choice, true/false, numerical and fill-in-the-blank use the readable columns above
+  (`answers`, `correct`, `tolerance`, `unit`, `marks`, `explanation`). Settings beyond those columns (hints,
+  partial credit, randomization) go in `settings`. Answers that contain `|` or carry images are written as
+  `options_raw` instead, and the importer accepts `options_raw` for these types.
+- Structured questions write `parts`, with each part's skills in its own `skills` field.
+- Every other type (graphing, hotspot, crossword, the activities and games, and so on) is written as its full
+  `settings` and its `options_raw` rows. Their stem may be empty, because the content is in `settings`.
+- In CSV, lists and objects are JSON cells. The file starts with a byte-order mark so spreadsheets read UTF-8.
+- Rows are identified by the exam name (`label`, default the quiz title) and the question number, so importing
+  the same file again updates the questions it created. Quiz sections are written to `section`.
+- Skills are written by code. A code shared by more than one skill is written as its UUID instead, because the
+  importer refuses an ambiguous code.
+- A question with no skill still exports, with a warning naming it. The importer refuses questions without
+  skills, so add one before importing the file.
+
+`tests/php/question-rows-integration.php` creates one question of every type, exports it as JSON and as CSV,
+imports the file and requires each copy to store the same type, title, settings, options, skills, difficulty and
+family. What is not exported: the media of an answer option on another site's media library, the bank a
+question belongs to, version history and approval.

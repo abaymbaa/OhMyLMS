@@ -12,6 +12,7 @@ use OhMyLMS\MCP\QuestionBankTools;
 use OhMyLMS\MCP\Server;
 use OhMyLMS\QuestionBank\BulkImport;
 use OhMyLMS\QuestionBank\ReviewQueue;
+use OhMyLMS\QuestionBank\RowExporter;
 use OhMyLMS\QuestionBank\SkillCatalogue;
 
 defined( 'ABSPATH' ) || exit;
@@ -65,6 +66,25 @@ class QuestionBankToolsController extends RestController {
 				$parent = $request->has_param( 'parent_id' ) ? absint( $request->get_param( 'parent_id' ) ) : -1;
 				$found  = SkillCatalogue::search( (string) $request->get_param( 'search' ), $page, $per, $parent );
 				return $this->paged( $found['items'], $found['total'], $per );
+			case 'export_questions':
+				$ids      = array_map( 'absint', (array) $request->get_param( 'ids' ) );
+				$sections = array();
+				$label    = sanitize_text_field( (string) $request->get_param( 'label' ) );
+				$quiz_id  = absint( $request->get_param( 'quiz_id' ) );
+				if ( $quiz_id ) {
+					if ( OHMYLMS_QUIZ_CPT !== get_post_type( $quiz_id ) ) {
+						return new \WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
+					}
+					$ids   = array_map( 'intval', array_column( ohmylms_get_quiz( $quiz_id )->get_questions(), 'id' ) );
+					$label = '' !== $label ? $label : get_the_title( $quiz_id );
+					foreach ( (array) \OhMyLMS\Assessment\AssessmentSettings::get( $quiz_id )['sections'] as $section ) {
+						foreach ( (array) ( $section['questions'] ?? array() ) as $question_id ) {
+							$sections[ (int) $question_id ] = (string) ( $section['title'] ?? '' );
+						}
+					}
+				}
+				$file = RowExporter::export( $ids, 'csv' === $request->get_param( 'format' ) ? 'csv' : 'json', $label, $sections );
+				return is_wp_error( $file ) ? $file : rest_ensure_response( $file );
 			case 'import_questions':
 				$rows = BulkImport::parse( (array) $request->get_param( 'rows' ) );
 				if ( is_wp_error( $rows ) ) {

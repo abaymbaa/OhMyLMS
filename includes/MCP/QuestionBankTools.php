@@ -95,6 +95,36 @@ final class QuestionBankTools {
 				array(),
 				true,
 			),
+			'export_questions'          => array(
+				'GET',
+				'/export',
+				'Export questions as import rows, in CSV or JSON, for every question type. Choose them by ids (up to 200) or give quiz_id to export that quiz\'s questions in order, with their sections. The content holds every answer key. Re-importing the file with import_questions creates the questions again; warnings list questions that have no skill, which the importer refuses until one is added. label names the exam written into the rows.',
+				array(
+					'ids'     => array(
+						'type'     => 'array',
+						'minItems' => 1,
+						'maxItems' => 200,
+						'items'    => array(
+							'type'    => 'integer',
+							'minimum' => 1,
+						),
+					),
+					'quiz_id' => array(
+						'type'    => 'integer',
+						'minimum' => 1,
+					),
+					'format'  => array(
+						'type' => 'string',
+						'enum' => array( 'json', 'csv' ),
+					),
+					'label'   => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+				),
+				array(),
+				true,
+			),
 			'review_questions'          => array(
 				'POST',
 				'/review',

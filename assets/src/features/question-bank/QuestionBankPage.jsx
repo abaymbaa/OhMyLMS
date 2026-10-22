@@ -42,6 +42,7 @@ import {
 import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
 import { ImportButton } from '../content-hub/ImportButton';
+import { ExportRowsButtons } from '../content-hub/ExportRowsButtons';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
 import { QuestionForm } from '../question-editor/QuestionForm';
@@ -374,6 +375,10 @@ function QuestionsTab() {
 							{ __( 'New question', 'ohmylms' ) }
 						</Button>{ ' ' }
 						<ImportButton target="questions" />
+						<ExportRowsButtons
+							ids={ result.items.map( ( item ) => item.id ) }
+							label={ __( 'Question bank', 'ohmylms' ) }
+						/>
 					</div>
 				</div>
 				{ error && (
