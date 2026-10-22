@@ -109,7 +109,7 @@ Storage: curriculum schema 8 adds `ai_analysis_runs`, `ai_suggestions`, and `sou
 ## Next phases
 
 2. Prerequisite and "encompasses" links between shared skills, AI-proposed through the same review queue. Done.
-3. Guidance on the performance engine: domain strength, skills ready to learn, reviews with implicit credit,
+3. Done: see [GUIDANCE.md](GUIDANCE.md). Guidance on the performance engine: domain strength, skills ready to learn, reviews with implicit credit,
    exam readiness, and short personal practice paths.
 4. Visual coherence map (domains × grades), syllabus comparison view, student skill map.
 5. Adaptive placement test.

@@ -40,6 +40,7 @@ run on every tool call. No API keys for model providers are stored by WordPress.
 
 | Tool | Arguments |
 | --- | --- |
+| `get_student_guidance` | What a learner should do next: strength by area, a personal path, ready skills, reviews (minus covered ones), gaps, readiness for a target. See [guidance](GUIDANCE.md) |
 | `get_student_skills`, `get_skill_report`, `get_performance_settings`, `set_performance_settings`, `write_student_skill_note` | A learner's skills, a course or class matrix, how levels are decided, and an AI teacher note. Levels are read-only. See [performance tracking](PERFORMANCE.md) |
 | `get_skill_placement_options`, `start_syllabus_analysis`, `advance_syllabus_analysis`, `list_skill_suggestions`, `review_skill_suggestions`, `get_skill_links`, `save_skill_link` | AI analysis of syllabuses, links between shared skills, and the review queue. See [AI skill analysis](AI-SKILL-ANALYSIS.md) |
 | `list_courses`, `list_lessons`, `list_quizzes`, `list_questions` | Optional `page` (>=1), `per_page` (1–20), `search` (<=200 characters) |

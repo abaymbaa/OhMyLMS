@@ -38,6 +38,15 @@ export const rebuildStudent = ( studentId, fetch = request ) =>
  * @param audience
  * @param fetch
  */
+/**
+ * What a learner should do next on the shared skill library.
+ * @param studentId
+ * @param fetch
+ */
+export const loadGuidance = ( studentId, fetch = request ) =>
+	fetch( {
+		path: `/ohmylms/v1/reports/skills/students/${ studentId }/guidance`,
+	} );
 export const askInsight = (
 	studentId,
 	audience = 'teacher',

@@ -61,6 +61,80 @@ final class Frontend {
 	}
 
 	/**
+	 * The learner's next steps and domain strengths on the shared skill library, or nothing when the
+	 * library is empty.
+	 *
+	 * @param int $student Learner.
+	 * @return string Escaped HTML.
+	 */
+	public static function guidance( $student ) {
+		$guide = \OhMyLMS\Guidance\Guidance::for_student( (int) $student );
+		if ( ! $guide['path'] && ! array_filter( array_column( $guide['domains'], 'started' ) ) ) {
+			return '';
+		}
+		$types = array(
+			'review'   => __( 'Review', 'ohmylms' ),
+			'fix'      => __( 'Fix first', 'ohmylms' ),
+			'continue' => __( 'Keep going', 'ohmylms' ),
+			'learn'    => __( 'Learn next', 'ohmylms' ),
+		);
+		ob_start();
+		?>
+		<div class="ohmylms-guidance">
+			<?php if ( $guide['path'] ) { ?>
+				<h3><?php esc_html_e( 'Your next steps', 'ohmylms' ); ?></h3>
+				<ol class="ohmylms-guidance-path">
+					<?php foreach ( $guide['path'] as $step ) { ?>
+						<li class="is-<?php echo esc_attr( $step['type'] ); ?>">
+							<span class="ohmylms-guidance-type"><?php echo esc_html( $types[ $step['type'] ] ?? $step['type'] ); ?></span>
+							<strong><?php echo esc_html( $step['name'] ); ?></strong>
+							<span class="ohmylms-skill-level ohmylms-skill-<?php echo esc_attr( $step['level'] ); ?>"><?php echo esc_html( $step['level_label'] ); ?></span>
+							<?php if ( $step['reviews'] ) { ?>
+								<span class="ohmylms-guidance-also">
+									<?php
+									/* translators: %s: names of skills that this practice also reviews. */
+									echo esc_html( sprintf( __( 'Also reviews %s', 'ohmylms' ), implode( ', ', array_column( $step['reviews'], 'name' ) ) ) );
+									?>
+								</span>
+							<?php } ?>
+							<?php if ( $step['practice_url'] ) { ?>
+								<a class="ohmylms-button" href="<?php echo esc_url( $step['practice_url'] ); ?>"><?php esc_html_e( 'Practice', 'ohmylms' ); ?></a>
+							<?php } ?>
+						</li>
+					<?php } ?>
+				</ol>
+			<?php } ?>
+			<?php if ( $guide['domains'] ) { ?>
+				<h3><?php esc_html_e( 'Strength by area', 'ohmylms' ); ?></h3>
+				<ul class="ohmylms-guidance-domains">
+					<?php foreach ( $guide['domains'] as $domain ) { ?>
+						<li>
+							<span class="ohmylms-guidance-domain"><?php echo esc_html( $domain['label'] ); ?></span>
+							<span class="ohmylms-guidance-bar" role="img" aria-label="<?php echo esc_attr( sprintf( /* translators: 1: area, 2: strength percentage. */ __( '%1$s: %2$d%%', 'ohmylms' ), $domain['label'], $domain['strength'] ) ); ?>"><span style="width:<?php echo (int) $domain['strength']; ?>%"></span></span>
+							<span class="ohmylms-guidance-value">
+								<?php
+								/* translators: 1: strength percentage, 2: proficient skills, 3: skills in the area. */
+								echo esc_html( sprintf( __( '%1$d%% · %2$d of %3$d proficient', 'ohmylms' ), $domain['strength'], $domain['proficient'], $domain['skills'] ) );
+								?>
+							</span>
+						</li>
+					<?php } ?>
+				</ul>
+			<?php } ?>
+			<?php if ( $guide['covered'] ) { ?>
+				<p class="ohmylms-guidance-covered">
+					<?php
+					/* translators: %s: names of skills whose review is already covered. */
+					echo esc_html( sprintf( __( 'No separate review needed for %s: your recent work on harder skills already practised them.', 'ohmylms' ), implode( ', ', array_column( $guide['covered'], 'name' ) ) ) );
+					?>
+				</p>
+			<?php } ?>
+		</div>
+		<?php
+		return (string) ob_get_clean();
+	}
+
+	/**
 	 * Render the skill dashboard.
 	 *
 	 * @return string Escaped HTML.
@@ -77,6 +151,7 @@ final class Frontend {
 		?>
 		<section class="ohmylms-skill-progress" aria-labelledby="ohmylms-skill-progress-title">
 			<h2 id="ohmylms-skill-progress-title"><?php esc_html_e( 'My skills', 'ohmylms' ); ?></h2>
+			<?php echo self::guidance( $student ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped while built. ?>
 			<?php if ( ! $skills ) { ?>
 				<p><?php esc_html_e( 'Answer quiz questions, lesson checks or practice to see your skills here.', 'ohmylms' ); ?></p>
 			<?php } else { ?>

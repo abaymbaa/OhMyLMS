@@ -57,6 +57,17 @@ class SkillReportController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/guidance',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'guidance' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/reports/skills/students/(?P<student>[\d]+)/insight',
 			array(
 				array(
@@ -256,6 +267,28 @@ class SkillReportController extends RestController {
 				'recommendations' => Recommendations::for_student( $student ),
 				'insights'        => Insights::available(),
 				'evidence'        => $evidence,
+			)
+		);
+	}
+
+	/**
+	 * Where the learner stands on the shared skills and what to do next: domain strength, a short
+	 * personal path, skills ready to learn, reviews (minus those covered by harder work), gaps and,
+	 * with a target syllabus, readiness.
+	 *
+	 * @param WP_REST_Request $request Learner, and optional subject, grade and target.
+	 * @return mixed
+	 */
+	public function guidance( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		return rest_ensure_response(
+			\OhMyLMS\Guidance\Guidance::for_student(
+				(int) $request['student'],
+				array(
+					'subject' => (string) $request['subject'],
+					'grade'   => absint( $request['grade'] ),
+					'target'  => absint( $request['target'] ),
+				)
 			)
 		);
 	}

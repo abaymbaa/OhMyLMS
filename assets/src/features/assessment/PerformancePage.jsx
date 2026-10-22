@@ -16,6 +16,7 @@ import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import {
 	askInsight,
 	loadCourses,
+	loadGuidance,
 	loadSkillMatrix,
 	loadStudentSkills,
 	rebuildStudent,
@@ -158,6 +159,12 @@ function StudentSkills( { student, courseId, unitId, onClose } ) {
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ note, setNote ] = useState( null );
+	const [ guide, setGuide ] = useState( null );
+	useEffect( () => {
+		loadGuidance( student.id )
+			.then( setGuide )
+			.catch( () => setGuide( null ) );
+	}, [ student.id ] );
 	const [ writing, setWriting ] = useState( false );
 	const writeNote = () => {
 		setWriting( true );
@@ -185,6 +192,75 @@ function StudentSkills( { student, courseId, unitId, onClose } ) {
 				<Spinner />
 			) : (
 				<Fragment>
+					{ guide && guide.path.length > 0 && (
+						<Fragment>
+							<h3>{ __( 'Next steps', 'ohmylms' ) }</h3>
+							<ol>
+								{ guide.path.map( ( step ) => (
+									<li key={ step.id }>
+										<strong>
+											{
+												{
+													review: __(
+														'Review',
+														'ohmylms'
+													),
+													fix: __(
+														'Fix first',
+														'ohmylms'
+													),
+													continue: __(
+														'Keep going',
+														'ohmylms'
+													),
+													learn: __(
+														'Learn next',
+														'ohmylms'
+													),
+												}[ step.type ]
+											}
+										</strong>
+										: { step.name } ({ step.level_label })
+										{ step.reviews.length > 0 &&
+											` · ${ sprintf(
+												/* translators: %s: skills this step also reviews. */
+												__(
+													'also reviews %s',
+													'ohmylms'
+												),
+												step.reviews
+													.map(
+														( item ) => item.name
+													)
+													.join( ', ' )
+											) }` }
+									</li>
+								) ) }
+							</ol>
+						</Fragment>
+					) }
+					{ guide && guide.domains.length > 0 && (
+						<Fragment>
+							<h3>{ __( 'Strength by area', 'ohmylms' ) }</h3>
+							<ul>
+								{ guide.domains.map( ( domain ) => (
+									<li key={ domain.domain }>
+										{ sprintf(
+											/* translators: 1: area, 2: strength percentage, 3: proficient skills, 4: skills in the area. */
+											__(
+												'%1$s: %2$d%% · %3$d of %4$d proficient',
+												'ohmylms'
+											),
+											domain.label,
+											domain.strength,
+											domain.proficient,
+											domain.skills
+										) }
+									</li>
+								) ) }
+							</ul>
+						</Fragment>
+					) }
 					<h3>{ __( 'Skills', 'ohmylms' ) }</h3>
 					<ul>
 						{ data.skills.map( ( skill ) => (

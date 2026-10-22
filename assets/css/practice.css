@@ -101,6 +101,24 @@
 
 .ohmylms-skill-mastered { background: #dcfce7; color: #166534; }
 
+/* Guidance: next steps and strength by area. */
+.ohmylms-guidance { margin: 0 0 1.5em; }
+.ohmylms-guidance-path { margin: 0 0 1em; padding: 0; list-style: none; counter-reset: step; }
+.ohmylms-guidance-path li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+.ohmylms-guidance-path li::before { counter-increment: step; content: counter(step); display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #eef2ff; color: #3730a3; font-weight: 700; font-size: 13px; }
+.ohmylms-guidance-path .ohmylms-button { margin-left: auto; }
+.ohmylms-guidance-type { padding: 1px 8px; border-radius: 999px; background: #f4f4f5; font-size: 12px; font-weight: 600; }
+.is-review .ohmylms-guidance-type { background: #fef3c7; color: #92400e; }
+.is-fix .ohmylms-guidance-type { background: #fee2e2; color: #991b1b; }
+.is-continue .ohmylms-guidance-type { background: #dbeafe; color: #1e40af; }
+.is-learn .ohmylms-guidance-type { background: #dcfce7; color: #166534; }
+.ohmylms-guidance-also, .ohmylms-guidance-covered, .ohmylms-guidance-value { color: #52525b; font-size: 13px; }
+.ohmylms-guidance-domains { margin: 0 0 1em; padding: 0; list-style: none; }
+.ohmylms-guidance-domains li { display: grid; grid-template-columns: minmax(120px, 180px) 1fr auto; align-items: center; gap: 10px; padding: 4px 0; }
+.ohmylms-guidance-bar { height: 10px; border-radius: 999px; background: #e5e7eb; overflow: hidden; }
+.ohmylms-guidance-bar span { display: block; height: 100%; background: #4f46e5; }
+@media (max-width: 600px) { .ohmylms-guidance-domains li { grid-template-columns: 1fr; gap: 4px; } }
+
 .ohmylms-skill-review {
 	margin-left: 6px;
 	font-size: 0.85em;
@@ -492,3 +510,4 @@
 	max-width: 100%;
 	height: auto;
 }
+@media (max-width: 600px) { .ohmylms-skill-table { display: block; overflow-x: auto; } }

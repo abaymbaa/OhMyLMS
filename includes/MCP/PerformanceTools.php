@@ -74,6 +74,26 @@ final class PerformanceTools {
 				array( 'policy' ),
 				false,
 			),
+			'get_student_guidance'       => array(
+				'GET',
+				'/reports/skills/students/{student_id}/guidance',
+				'What one learner should do next, from their levels on the shared skill library: strength per domain (0-100), a short personal path of steps (review, fix a weak prerequisite, continue a started skill, or learn a new one; a step may also review included skills), the skills ready to learn (every prerequisite Proficient), reviews due (minus those already covered by work on skills that include them), gaps behind skills the learner is stuck on and, with target (a syllabus id, such as an exam), the share of its skills already Proficient. subject narrows the library; grade sets the highest grade in scope (default the learner\'s profile grade).',
+				array(
+					'student_id' => $id,
+					'subject'    => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+					'grade'      => array(
+						'type'    => 'integer',
+						'minimum' => 1,
+						'maximum' => 13,
+					),
+					'target'     => $id,
+				),
+				array( 'student_id' ),
+				true,
+			),
 			'write_student_skill_note' => array(
 				'POST',
 				'/reports/skills/students/{student_id}/insight',
