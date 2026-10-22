@@ -1,4 +1,4 @@
-# AI skill analysis (phase 1 of the skill graph)
+# AI skill analysis (phases 1 and 2 of the skill graph)
 
 You enter a syllabus's objectives, then ask AI to analyse them. The AI places every objective in a domain and
 grade band, matches it to the shared skills it covers, and proposes a new shared skill where none fits. Every
@@ -62,6 +62,28 @@ name, domain and grades; a mapping's relationship; a placement's domain and grad
 
 Only `equivalent` mappings pool assessment evidence, as before.
 
+## Links between shared skills (phase 2)
+
+Shared skills are linked in two directed, loop-free ways (`Curriculum\SkillEdges`, table `skill_edges`):
+
+- **Needs first (prerequisite):** skill A needs skill B before it can be started. The link joins A's prerequisite
+  list, which recommendations already read, so loops and unknown skills are refused as before. The edge table keeps
+  who suggested it (`manual` or `ai`), the confidence and the reason.
+- **Includes (encompasses):** practising skill A also practises skill B, by a **weight** from 0.05 to 1 (the share
+  of B a typical problem on A uses). The guidance engine (phase 3) will use these weights to give partial review
+  credit, so a learner who works advanced skills needs fewer separate reviews of the skills inside them.
+
+**Suggest prerequisites and links** in the AI analysis panel starts a `links` run over the subject's placed shared
+skills (those with grades), earliest grades first, skipping skills that already have prerequisites unless asked.
+For each skill the AI sees a short list of candidates: skills learned no later than it, found by keyword ranking
+and topped up with the nearest earlier skills of its domain. It may choose at most three direct prerequisites and
+three included skills with weights; anything outside the skill's own candidates is discarded. Suggestions arrive
+in the same review queue (kind `link`): **Needs first** or **Includes**, with the weight editable before accepting.
+Place skills in domains and grades first: unplaced skills are not linked.
+
+Each shared skill's settings show **Skill links**: what it needs first, what it includes (with the weight) and what
+includes it, marked **AI** with the confidence when AI suggested them, each removable.
+
 ## API and MCP
 
 Under `/ohmylms/v1/syllabus-comparison` (administrators):
@@ -69,21 +91,24 @@ Under `/ohmylms/v1/syllabus-comparison` (administrators):
 | Route | Purpose |
 | --- | --- |
 | `GET skill-placement` | Domains, grades, whether AI is connected |
-| `GET/POST ai/runs` | List runs (`syllabus_id`), or start one (`kind` syllabus with `syllabus_id`, or placement with `subject`; `include_mapped`) |
+| `GET/POST ai/runs` | List runs (`syllabus_id`, and `subject` to add that subject's library-wide runs), or start one (`kind` syllabus with `syllabus_id`; placement or links with `subject`; `include_mapped`, `include_linked`) |
 | `GET ai/runs/{id}`, `POST ai/runs/{id}/step`, `POST ai/runs/{id}/cancel` | Follow, advance, stop |
 | `POST ai/runs/{id}/accept-confident` | Accept at or above `min_confidence` (0.5–1) |
 | `GET ai/suggestions` | Review queue: `run_id`, `status` (pending, accepted, rejected, all), `kind`, `min_confidence`, `page` |
-| `POST ai/suggestions/review` | `ids`, `action` (accept or reject), optional `overrides` per id |
+| `POST ai/suggestions/review` | `ids`, `action` (accept or reject), optional `overrides` per id (for links: `weight`, `shared_id`) |
+| `GET skill-links/{id}` | A shared skill's prerequisites, included skills and the skills that include it |
+| `POST skill-links` | Add a link: `skill_id`, `other_id`, `type` (prerequisite, or encompasses with `weight`) |
+| `POST skill-links/remove` | Remove a link: `skill_id`, `other_id`, `type` |
 
 MCP tools: `get_skill_placement_options`, `start_syllabus_analysis`, `advance_syllabus_analysis`,
-`list_skill_suggestions`, `review_skill_suggestions`.
+`list_skill_suggestions`, `review_skill_suggestions`, `get_skill_links`, `save_skill_link`.
 
-Storage (curriculum schema 8): `ai_analysis_runs`, `ai_suggestions`, and `source` and `confidence` on
-`skill_mappings`.
+Storage: curriculum schema 8 adds `ai_analysis_runs`, `ai_suggestions`, and `source` and `confidence` on
+`skill_mappings`; schema 9 adds `skill_edges`.
 
 ## Next phases
 
-2. Prerequisite and "encompasses" links between shared skills, AI-proposed through the same review queue.
+2. Prerequisite and "encompasses" links between shared skills, AI-proposed through the same review queue. Done.
 3. Guidance on the performance engine: domain strength, skills ready to learn, reviews with implicit credit,
    exam readiness, and short personal practice paths.
 4. Visual coherence map (domains × grades), syllabus comparison view, student skill map.

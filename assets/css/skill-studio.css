@@ -423,5 +423,10 @@
 .ohmylms-ai-kind.is-new_skill { background: #fcf0e3; color: #8a4b00; }
 .ohmylms-ai-kind.is-mapping { background: #e5f0fa; color: #0a4b78; }
 .ohmylms-ai-kind.is-placement { background: #e7f6ec; color: #00632a; }
+.ohmylms-ai-kind.is-link { background: #efe9fb; color: #4a2a8a; }
+.ohmylms-skill-links ul { margin: 4px 0 12px; padding: 0; list-style: none; }
+.ohmylms-skill-links li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px; padding: 2px 0; }
+.ohmylms-skill-links .ohmylms-ai-meta { margin: 0; }
+.ohmylms-link-ai { padding: 0 6px; border-radius: 999px; background: #efe9fb; color: #4a2a8a; font-size: 11px; font-weight: 600; }
 .ohmylms-ai-placement, .ohmylms-skill-placement { display: flex; flex-wrap: wrap; gap: 8px; }
 .ohmylms-ai-placement .components-base-control { min-width: 140px; }

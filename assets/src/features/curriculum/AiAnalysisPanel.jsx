@@ -23,7 +23,9 @@ import {
 	percent,
 	progress,
 	proposes,
+	skillSummary,
 	waitsForProposal,
+	weightPercent,
 } from './aiAnalysis.mjs';
 
 const RELATIONS = [ 'equivalent', 'broader', 'narrower', 'related' ];
@@ -66,10 +68,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 			);
 	}, [] );
 	useEffect( () => {
-		if ( ! syllabusId ) {
-			return;
-		}
-		readComparison( 'ai/runs', { syllabus_id: syllabusId } )
+		readComparison( 'ai/runs', { syllabus_id: syllabusId || 0, subject } )
 			.then( ( rows ) => {
 				setRuns( rows );
 				setRun( ( current ) =>
@@ -79,7 +78,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 				);
 			} )
 			.catch( () => setRuns( [] ) );
-	}, [ syllabusId, reload ] );
+	}, [ syllabusId, subject, reload ] );
 	// Keep advancing an active run while the panel is open; WP-Cron finishes it otherwise.
 	useEffect( () => {
 		if ( ! isActive( run ) ) {
@@ -128,7 +127,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 		try {
 			const started = await writeComparison(
 				'ai/runs',
-				kind === 'placement'
+				kind === 'placement' || kind === 'links'
 					? { kind, subject }
 					: {
 							kind,
@@ -340,6 +339,15 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 						'ohmylms'
 					) }
 				</Button>
+				<Button
+					variant="secondary"
+					disabled={
+						busy || ! options.ai_available || isActive( run )
+					}
+					onClick={ () => start( 'links' ) }
+				>
+					{ __( 'Suggest prerequisites and links', 'ohmylms' ) }
+				</Button>
 			</div>
 			<p className="ohmylms-ai-help">
 				{ __(
@@ -468,7 +476,9 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 										__nextHasNoMarginBottom
 									/>
 								</th>
-								<th>{ __( 'Objective', 'ohmylms' ) }</th>
+								<th>
+									{ __( 'Objective or skill', 'ohmylms' ) }
+								</th>
 								<th>{ __( 'Suggestion', 'ohmylms' ) }</th>
 								<th>{ __( 'Confidence', 'ohmylms' ) }</th>
 								<th />
@@ -526,9 +536,17 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 												</div>
 											</Fragment>
 										) : (
-											<strong>
-												{ row.shared?.name }
-											</strong>
+											<Fragment>
+												<strong>
+													{ row.skill?.name ||
+														row.shared?.name }
+												</strong>
+												<div className="ohmylms-ai-meta">
+													{ skillSummary(
+														row.skill || row.shared
+													) }
+												</div>
+											</Fragment>
 										) }
 									</td>
 									<td>
@@ -549,6 +567,17 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 														'Domain and grades',
 														'ohmylms'
 													),
+													link:
+														row.relation ===
+														'encompasses'
+															? __(
+																	'Includes',
+																	'ohmylms'
+																)
+															: __(
+																	'Needs first',
+																	'ohmylms'
+																),
 												}[ row.kind ]
 											}
 										</span>
@@ -579,7 +608,9 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 												) }
 											</Fragment>
 										) : (
-											<div>{ proposes( row ) }</div>
+											row.kind !== 'link' && (
+												<div>{ proposes( row ) }</div>
+											)
 										) }
 										{ row.kind === 'mapping' && (
 											<SelectControl
@@ -612,6 +643,55 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 												row,
 												row.placement
 											) }
+										{ row.kind === 'link' && (
+											<Fragment>
+												<div>
+													<strong>
+														{ row.shared?.name }
+													</strong>
+													<div className="ohmylms-ai-meta">
+														{ skillSummary(
+															row.shared
+														) }
+													</div>
+												</div>
+												{ row.relation ===
+													'encompasses' && (
+													<TextControl
+														type="number"
+														min="0.05"
+														max="1"
+														step="0.05"
+														label={ sprintf(
+															/* translators: %d: percentage of the included skill practised. */
+															__(
+																'Weight (practising this skill covers %d%% of the included one)',
+																'ohmylms'
+															),
+															weightPercent(
+																edits[ row.id ]
+																	?.weight ??
+																	row.weight
+															)
+														) }
+														value={
+															edits[ row.id ]
+																?.weight ??
+															row.weight ??
+															0.5
+														}
+														onChange={ ( value ) =>
+															edit(
+																row.id,
+																'weight',
+																Number( value )
+															)
+														}
+														__nextHasNoMarginBottom
+													/>
+												) }
+											</Fragment>
+										) }
 										{ waitsForProposal( row ) && (
 											<p className="ohmylms-ai-wait">
 												{ __(

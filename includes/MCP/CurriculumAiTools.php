@@ -34,11 +34,11 @@ final class CurriculumAiTools {
 			'start_syllabus_analysis'     => array(
 				'POST',
 				'/syllabus-comparison/ai/runs',
-				'Start an AI analysis. kind "syllabus" (with syllabus_id) places each objective in a domain and grade band, then suggests the shared skills it maps to or proposes new shared skills; by default only unmapped objectives, include_mapped analyses all. kind "placement" (with subject) suggests a domain and grades for shared skills that have none. Suggestions wait for review; call advance_syllabus_analysis until the status is done.',
+				'Start an AI analysis. kind "syllabus" (with syllabus_id) places each objective in a domain and grade band, then suggests the shared skills it maps to or proposes new shared skills; by default only unmapped objectives, include_mapped analyses all. kind "placement" (with subject) suggests a domain and grades for shared skills that have none. kind "links" (with subject) suggests prerequisites and encompassed simpler skills for placed shared skills; by default only skills without prerequisites, include_linked analyses all. Suggestions wait for review; call advance_syllabus_analysis until the status is done.',
 				array(
 					'kind'           => array(
 						'type' => 'string',
-						'enum' => array( 'syllabus', 'placement' ),
+						'enum' => array( 'syllabus', 'placement', 'links' ),
 					),
 					'syllabus_id'    => $id,
 					'subject'        => array(
@@ -46,6 +46,7 @@ final class CurriculumAiTools {
 						'maxLength' => 100,
 					),
 					'include_mapped' => array( 'type' => 'boolean' ),
+					'include_linked' => array( 'type' => 'boolean' ),
 				),
 				array( 'kind' ),
 				false,
@@ -70,7 +71,7 @@ final class CurriculumAiTools {
 					),
 					'kind'           => array(
 						'type' => 'string',
-						'enum' => array( 'new_skill', 'mapping', 'placement' ),
+						'enum' => array( 'new_skill', 'mapping', 'placement', 'link' ),
 					),
 					'min_confidence' => array(
 						'type'    => 'number',
@@ -80,6 +81,34 @@ final class CurriculumAiTools {
 				),
 				array(),
 				true,
+			),
+			'get_skill_links'             => array(
+				'GET',
+				'/syllabus-comparison/skill-links/{id}',
+				'The links of a shared skill: its prerequisites, the simpler skills it encompasses (with a weight from 0 to 1: how much of that skill is practised by working this one) and the skills that encompass it, each with who suggested it (manual or ai) and the confidence.',
+				array( 'id' => $id ),
+				array( 'id' ),
+				false,
+			),
+			'save_skill_link'             => array(
+				'POST',
+				'/syllabus-comparison/skill-links',
+				'Add a link between two shared skills. type "prerequisite": skill_id needs other_id first (refused when it would form a loop). type "encompasses": practising skill_id also practises other_id, with a weight from 0.05 to 1.',
+				array(
+					'skill_id' => $id,
+					'other_id' => $id,
+					'type'     => array(
+						'type' => 'string',
+						'enum' => array( 'prerequisite', 'encompasses' ),
+					),
+					'weight'   => array(
+						'type'    => 'number',
+						'minimum' => 0.05,
+						'maximum' => 1,
+					),
+				),
+				array( 'skill_id', 'other_id', 'type' ),
+				false,
 			),
 			'review_skill_suggestions'    => array(
 				'POST',

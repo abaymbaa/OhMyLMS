@@ -7,6 +7,7 @@ import { useWorkspace } from './context';
 import { SkillResources } from './SkillResources';
 import { SkillCategoryChoices } from './SkillCategoryChoices';
 import { SkillPlacementFields } from './SkillPlacementFields';
+import { SkillLinks } from './SkillLinks';
 import { syllabusReturnPath } from '../content-hub/editorNavigation.mjs';
 import { validateSkill, groupLabel } from './syllabus.mjs';
 import { Breadcrumb, MESSAGES, RowMenu, SaveField } from './WorkspaceParts';
@@ -214,6 +215,7 @@ export function SkillPane( { node } ) {
 						/>
 					</div>
 					<SkillPlacementFields skillId={ skill.term_id } />
+					<SkillLinks skillId={ skill.term_id } />
 					<SkillCategoryChoices
 						settings={ w.outline.settings }
 						selected={ appearance.category }

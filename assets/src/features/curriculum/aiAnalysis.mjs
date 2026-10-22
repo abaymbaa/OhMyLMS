@@ -78,6 +78,24 @@ export function proposes( suggestion ) {
 }
 
 /**
+ * The weight of an encompassing link kept within the allowed range, as a percentage.
+ * @param {number} weight 0.05 to 1.
+ * @return {number} Percent, 5 to 100.
+ */
+export const weightPercent = ( weight ) =>
+	Math.round( Math.max( 0.05, Math.min( 1, Number( weight ) || 0 ) ) * 100 );
+
+/**
+ * A skill's grade band and domain on one line, for lists of linked skills.
+ * @param {Object} skill Skill with domain, grade_from and grade_to.
+ * @return {string} Text such as "algebra · Grades 7–8".
+ */
+export const skillSummary = ( skill ) =>
+	[ skill?.domain, gradeBand( skill?.grade_from, skill?.grade_to ) ]
+		.filter( Boolean )
+		.join( ' · ' );
+
+/**
  * Whether a mapping suggestion has to wait for the new skill it points to.
  * @param {Object} suggestion Suggestion from the server.
  * @return {boolean} Waiting.

@@ -134,6 +134,9 @@ class ComparisonController extends RestController {
 			'/syllabus-comparison/mapping'                => array( 'PUT', 'save_mapping' ),
 			'/syllabus-comparison/mapping/remove'         => array( 'POST', 'remove_mapping' ),
 			'/syllabus-comparison/skill-placement'        => array( 'GET', 'skill_placement' ),
+			'/syllabus-comparison/skill-links/(?P<id>\d+)' => array( 'GET', 'skill_links' ),
+			'/syllabus-comparison/skill-links'            => array( 'POST', 'save_skill_link' ),
+			'/syllabus-comparison/skill-links/remove'     => array( 'POST', 'remove_skill_link' ),
 			'/syllabus-comparison/ai/runs'                => array( 'GET,POST', 'ai_runs' ),
 			'/syllabus-comparison/ai/runs/(?P<id>\d+)'    => array( 'GET', 'ai_run' ),
 			'/syllabus-comparison/ai/runs/(?P<id>\d+)/step' => array( 'POST', 'ai_step' ),
@@ -183,6 +186,49 @@ class ComparisonController extends RestController {
 				'ai_available' => \OhMyLMS\Curriculum\AiAnalysis::available(),
 			)
 		);
+	}
+
+	/**
+	 * Prerequisites and encompassed skills of a shared skill.
+	 *
+	 * @param WP_REST_Request $request Skill ID.
+	 * @return mixed
+	 */
+	public function skill_links( WP_REST_Request $request ) {
+		$id = (int) $request['id'];
+		return \OhMyLMS\Curriculum\SkillEdges::is_shared( $id ) ? rest_ensure_response( \OhMyLMS\Curriculum\SkillEdges::for_skill( $id ) ) : Access::error( 'ohmylms_shared_missing', __( 'Shared skill not found.', 'ohmylms' ), 404 );
+	}
+
+	/**
+	 * Add a prerequisite or encompassing link by hand.
+	 *
+	 * @param WP_REST_Request $request skill_id, other_id, type and, for encompasses, weight.
+	 * @return mixed
+	 */
+	public function save_skill_link( WP_REST_Request $request ) {
+		$skill = absint( $request['skill_id'] );
+		$other = absint( $request['other_id'] );
+		$type  = (string) $request['type'];
+		if ( 'prerequisite' === $type ) {
+			$saved = \OhMyLMS\Curriculum\SkillEdges::add_prerequisite( $skill, $other );
+		} elseif ( 'encompasses' === $type && is_numeric( $request['weight'] ) ) {
+			$saved = \OhMyLMS\Curriculum\SkillEdges::add_encompass( $skill, $other, (float) $request['weight'] );
+		} else {
+			return Access::error( 'ohmylms_edge_invalid', __( 'Choose prerequisite, or encompasses with a weight from 0.05 to 1.', 'ohmylms' ) );
+		}
+		return is_wp_error( $saved ) ? $saved : rest_ensure_response( \OhMyLMS\Curriculum\SkillEdges::for_skill( $skill ) );
+	}
+
+	/**
+	 * Remove a prerequisite or encompassing link.
+	 *
+	 * @param WP_REST_Request $request skill_id, other_id and type.
+	 * @return mixed
+	 */
+	public function remove_skill_link( WP_REST_Request $request ) {
+		$skill   = absint( $request['skill_id'] );
+		$removed = \OhMyLMS\Curriculum\SkillEdges::remove( $skill, absint( $request['other_id'] ), (string) $request['type'] );
+		return is_wp_error( $removed ) ? $removed : rest_ensure_response( \OhMyLMS\Curriculum\SkillEdges::for_skill( $skill ) );
 	}
 
 	/**

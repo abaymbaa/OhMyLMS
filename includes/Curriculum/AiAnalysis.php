@@ -21,6 +21,8 @@ defined( 'ABSPATH' ) || exit;
  *    shared skills it maps to, or proposes a new shared skill when none fits. Proposed skills are
  *    offered to later objectives of the same run, so a library grows from the first syllabuses.
  *  - placement: suggests a domain and grade band for shared skills that have none.
+ *  - links: suggests the prerequisites of each placed shared skill and the simpler skills it
+ *    encompasses (see SkillEdges).
  *
  * Runs advance a slice at a time (from the review screen while it is open, and from WP-Cron), so no
  * request waits on many AI calls. The AI never changes the curriculum: each suggestion waits until a
@@ -29,11 +31,12 @@ defined( 'ABSPATH' ) || exit;
  */
 final class AiAnalysis {
 
-	const KINDS        = array( 'syllabus', 'placement' );
+	const KINDS        = array( 'syllabus', 'placement', 'links' );
 	const HOOK         = 'ohmylms_ai_analysis_step';
 	const SLICE        = array(
 		'syllabus'  => 8,
 		'placement' => 20,
+		'links'     => 10,
 	);
 	const TRIES        = 3;
 	const HINT_DOMAIN  = '_ohmylms_ai_domain';
@@ -45,6 +48,7 @@ final class AiAnalysis {
 		'new_skill' => 0,
 		'mapping'   => 1,
 		'placement' => 2,
+		'link'      => 3,
 	);
 
 	/** Hook the background step. */
@@ -88,15 +92,21 @@ final class AiAnalysis {
 		if ( $active ) {
 			return Access::error( 'ohmylms_ai_analysis_active', __( 'An analysis of this is already running. Wait for it or cancel it.', 'ohmylms' ), 409, array( 'run' => self::run( $active ) ) );
 		}
-		$queue = 'syllabus' === $kind ? self::objective_queue( $syllabus, ! empty( $params['include_mapped'] ) ) : self::placement_queue( $subject );
+		if ( 'links' === $kind ) {
+			$queue = self::links_queue( $subject, ! empty( $params['include_linked'] ) );
+		} else {
+			$queue = 'syllabus' === $kind ? self::objective_queue( $syllabus, ! empty( $params['include_mapped'] ) ) : self::placement_queue( $subject );
+		}
 		if ( is_wp_error( $queue ) ) {
 			return $queue;
 		}
 		if ( ! $queue ) {
-			return Access::error(
-				'ohmylms_ai_analysis_empty',
-				'syllabus' === $kind ? __( 'Every objective of this syllabus is already mapped. Include mapped objectives to analyse them again.', 'ohmylms' ) : __( 'Every shared skill already has a domain and grades.', 'ohmylms' )
+			$empty = array(
+				'syllabus'  => __( 'Every objective of this syllabus is already mapped. Include mapped objectives to analyse them again.', 'ohmylms' ),
+				'placement' => __( 'Every shared skill already has a domain and grades.', 'ohmylms' ),
+				'links'     => __( 'No shared skill is ready: place skills in a domain and grades first, or include skills that already have prerequisites.', 'ohmylms' ),
 			);
+			return Access::error( 'ohmylms_ai_analysis_empty', $empty[ $kind ] );
 		}
 		$now = current_time( 'mysql', true );
 		$wpdb->insert(
@@ -151,7 +161,12 @@ final class AiAnalysis {
 				'updated_at' => current_time( 'mysql', true ),
 			);
 			if ( $slice ) {
-				$made = 'syllabus' === $row['kind'] ? self::analyse_objectives( $row, $slice ) : self::analyse_placements( $row, $slice );
+				$made = array(
+					'syllabus'  => 'analyse_objectives',
+					'placement' => 'analyse_placements',
+					'links'     => 'analyse_links',
+				)[ $row['kind'] ];
+				$made = self::$made( $row, $slice );
 				if ( is_wp_error( $made ) ) {
 					$tries = (int) ( $queue['tries'] ?? 0 ) + 1;
 					if ( $tries >= self::TRIES ) {
@@ -256,15 +271,21 @@ final class AiAnalysis {
 	/**
 	 * Recent runs, newest first.
 	 *
-	 * @param array $params Optional syllabus_id.
+	 * @param array $params Optional syllabus_id and subject (adds the subject's placement and links runs).
 	 * @return array[]
 	 */
 	public static function runs( array $params = array() ) {
 		global $wpdb;
 		$syllabus = absint( $params['syllabus_id'] ?? 0 );
-		$ids      = $syllabus
-			? $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE syllabus_id=%d ORDER BY id DESC LIMIT 20', self::runs_table(), $syllabus ) )
-			: $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i ORDER BY id DESC LIMIT 20', self::runs_table() ) );
+		$subject  = isset( $params['subject'] ) ? sanitize_text_field( (string) $params['subject'] ) : null;
+		if ( null !== $subject ) {
+			// A syllabus's own runs, and the library-wide runs (placement, links) of its subject.
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE ( syllabus_id>0 AND syllabus_id=%d ) OR ( syllabus_id=0 AND subject=%s ) ORDER BY id DESC LIMIT 20', self::runs_table(), $syllabus, $subject ) );
+		} elseif ( $syllabus ) {
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE syllabus_id=%d ORDER BY id DESC LIMIT 20', self::runs_table(), $syllabus ) );
+		} else {
+			$ids = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i ORDER BY id DESC LIMIT 20', self::runs_table() ) );
+		}
 		return array_values( array_filter( array_map( array( __CLASS__, 'run' ), array_map( 'intval', $ids ) ) ) );
 	}
 
@@ -298,7 +319,7 @@ final class AiAnalysis {
 		$sql   = implode( ' AND ', $where );
 		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE $sql", $args ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
 		$page  = max( 1, absint( $params['page'] ?? 1 ) );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE $sql ORDER BY FIELD(kind,'new_skill','mapping','placement'), confidence DESC, id LIMIT 30 OFFSET %d", array_merge( $args, array( ( $page - 1 ) * 30 ) ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE $sql ORDER BY FIELD(kind,'new_skill','mapping','placement','link'), confidence DESC, id LIMIT 30 OFFSET %d", array_merge( $args, array( ( $page - 1 ) * 30 ) ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
 		return array(
 			'items' => array_map( array( __CLASS__, 'describe' ), $rows ),
 			'total' => $total,
@@ -541,6 +562,87 @@ final class AiAnalysis {
 	}
 
 	/**
+	 * Suggest prerequisites and encompassed skills for one slice of shared skills.
+	 *
+	 * @param array $run Run row.
+	 * @param int[] $ids Shared skill IDs.
+	 * @return int|\WP_Error Suggestions made.
+	 */
+	private static function analyse_links( array $run, array $ids ) {
+		$catalog = self::catalog( (string) $run['subject'] );
+		$items   = array();
+		$allowed = array();
+		foreach ( $ids as $id ) {
+			if ( ! isset( $catalog[ $id ] ) ) {
+				continue;
+			}
+			$skill               = $catalog[ $id ] + array( 'id' => $id );
+			$skill['candidates'] = array();
+			foreach ( AiAnalysisModel::link_candidates( $skill, $catalog ) as $other ) {
+				$skill['candidates'][] = self::candidate( (string) $other, $catalog[ $other ] );
+			}
+			$skill['grades'] = self::candidate( (string) $id, $skill )['grades'];
+			$items[]         = $skill;
+			$allowed[ $id ]  = array_column( $skill['candidates'], 'id' );
+		}
+		if ( ! $items ) {
+			return 0;
+		}
+		$reply = self::ask( AiAnalysisModel::links_prompt( array( 'subject' => $run['subject'] ), $items ), 4500 );
+		if ( is_wp_error( $reply ) ) {
+			return $reply;
+		}
+		$made = 0;
+		foreach ( AiAnalysisModel::parse_links( $reply, $allowed ) as $id => $links ) {
+			foreach ( array(
+				'prerequisite' => $links['prerequisites'],
+				'encompasses'  => $links['encompasses'],
+			) as $type => $list ) {
+				foreach ( $list as $link ) {
+					$made += self::suggest_link( (int) $run['id'], $id, (int) $link['skill'], $type, $link );
+				}
+			}
+		}
+		return $made;
+	}
+
+	/**
+	 * Record a link suggestion unless the link exists or is already waiting.
+	 *
+	 * @param int    $run_id Run.
+	 * @param int    $skill  The skill that needs or encompasses another.
+	 * @param int    $other  The other skill.
+	 * @param string $type   prerequisite or encompasses.
+	 * @param array  $link   confidence, reason and, for encompasses, weight.
+	 * @return int 1 when recorded.
+	 */
+	private static function suggest_link( $run_id, $skill, $other, $type, array $link ) {
+		global $wpdb;
+		if ( 'prerequisite' === $type && in_array( $other, Taxonomy::prerequisites( $skill ), true ) ) {
+			return 0;
+		}
+		if ( 'encompasses' === $type && $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE type='encompasses' AND skill_id=%d AND other_id=%d", SkillEdges::table(), $skill, $other ) ) ) {
+			return 0;
+		}
+		if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE kind='link' AND status='pending' AND specific_term_id=%d AND shared_term_id=%d AND relation=%s", self::suggestions_table(), $skill, $other, $type ) ) ) {
+			return 0;
+		}
+		self::insert(
+			array(
+				'run_id'           => $run_id,
+				'kind'             => 'link',
+				'specific_term_id' => $skill,
+				'shared_term_id'   => $other,
+				'relation'         => $type,
+				'payload'          => 'encompasses' === $type ? wp_json_encode( array( 'weight' => $link['weight'] ) ) : '',
+				'confidence'       => $link['confidence'],
+				'reason'           => $link['reason'],
+			)
+		);
+		return 1;
+	}
+
+	/**
 	 * Send one analysis prompt.
 	 *
 	 * @param array $messages system and user.
@@ -616,6 +718,17 @@ final class AiAnalysis {
 			}
 			Comparison::store_placement( (int) $row['shared_term_id'], $placement );
 			self::close( (int) $row['id'], 'accepted', (int) $row['shared_term_id'] );
+			return true;
+		}
+		if ( 'link' === $row['kind'] ) {
+			$other = isset( $overrides['shared_id'] ) ? absint( $overrides['shared_id'] ) : (int) $row['shared_term_id'];
+			$saved = 'encompasses' === $row['relation']
+				? SkillEdges::add_encompass( (int) $row['specific_term_id'], $other, (float) ( $overrides['weight'] ?? ( $payload['weight'] ?? 0.5 ) ), self::SOURCE_AI, (float) $row['confidence'], (string) $row['reason'] )
+				: SkillEdges::add_prerequisite( (int) $row['specific_term_id'], $other, self::SOURCE_AI, (float) $row['confidence'], (string) $row['reason'] );
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
+			}
+			self::close( (int) $row['id'], 'accepted', $other );
 			return true;
 		}
 		$run = self::run( (int) $row['run_id'] );
@@ -734,6 +847,8 @@ final class AiAnalysis {
 		$shared    = (int) $row['shared_term_id'] ? Comparison::shared_skill( (int) $row['shared_term_id'] ) : null;
 		$proposal  = ! empty( $payload['proposal'] ) ? self::row( (int) $payload['proposal'] ) : null;
 		$proposed  = $proposal ? json_decode( (string) $proposal['payload'], true ) : null;
+		$is_link   = 'link' === $row['kind'];
+		$skill     = $is_link && (int) $row['specific_term_id'] ? Comparison::shared_skill( (int) $row['specific_term_id'] ) : null;
 		return array(
 			'id'         => (int) $row['id'],
 			'run_id'     => (int) $row['run_id'],
@@ -742,7 +857,9 @@ final class AiAnalysis {
 			'relation'   => $row['relation'],
 			'confidence' => (float) $row['confidence'],
 			'reason'     => (string) $row['reason'],
-			'objective'  => $objective ? array(
+			'skill'      => $skill ? array_intersect_key( $skill, array_flip( array( 'id', 'name', 'description', 'topic', 'domain', 'grade_from', 'grade_to' ) ) ) : null,
+			'weight'     => $is_link && isset( $payload['weight'] ) ? (float) $payload['weight'] : null,
+			'objective'  => $objective && ! $is_link ? array(
 				'id'         => (int) $row['specific_term_id'],
 				'name'       => $objective['name'],
 				'code'       => (string) get_term_meta( (int) $row['specific_term_id'], Syllabus::CODE_META, true ),
@@ -783,6 +900,30 @@ final class AiAnalysis {
 			}
 		}
 		return array_slice( $ids, 0, 2000 );
+	}
+
+	/**
+	 * Placed shared skills to link: those without prerequisites, or all.
+	 *
+	 * @param string $subject        Subject, or all.
+	 * @param bool   $include_linked Include skills that already have prerequisites.
+	 * @return int[]
+	 */
+	private static function links_queue( $subject, $include_linked ) {
+		$ids = array();
+		foreach ( self::catalog( $subject ) as $id => $skill ) {
+			if ( $skill['grade_from'] && ( $include_linked || ! Taxonomy::prerequisites( $id ) ) ) {
+				$ids[] = (int) $id;
+			}
+		}
+		// Earliest grades first, so a skill's prerequisites are linked before the skills that need them.
+		usort(
+			$ids,
+			static function ( $a, $b ) {
+				return (int) get_term_meta( $a, Comparison::GRADE_FROM_META, true ) <=> (int) get_term_meta( $b, Comparison::GRADE_FROM_META, true );
+			}
+		);
+		return array_slice( $ids, 0, 3000 );
 	}
 
 	/**

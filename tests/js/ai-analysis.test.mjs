@@ -7,7 +7,9 @@ import {
 	percent,
 	progress,
 	proposes,
+	skillSummary,
 	waitsForProposal,
+	weightPercent,
 } from '../../assets/src/features/curriculum/aiAnalysis.mjs';
 
 test( 'a run is advanced only while queued or running, and its progress is bounded', () => {
@@ -54,6 +56,18 @@ test( 'each kind of suggestion says what it proposes', () => {
 		} ),
 		'Area'
 	);
+} );
+
+test( 'link weights and linked skills read as percentages and short summaries', () => {
+	assert.equal( weightPercent( 0.6 ), 60 );
+	assert.equal( weightPercent( 7 ), 100 );
+	assert.equal( weightPercent( 0 ), 5 );
+	assert.equal(
+		skillSummary( { domain: 'algebra', grade_from: 7, grade_to: 8 } ),
+		'algebra · Grades 7–8'
+	);
+	assert.equal( skillSummary( { domain: '', grade_from: 0 } ), '' );
+	assert.equal( skillSummary( null ), '' );
 } );
 
 test( 'a mapping to an unaccepted proposal waits, and only edited suggestions send overrides', () => {

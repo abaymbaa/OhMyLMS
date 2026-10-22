@@ -30,7 +30,7 @@ function call_api( $method, $path, array $data = array() ) {
 }
 
 // A fake provider: places objectives and judges candidates from the prompt it is sent.
-$calls = array( 'classify' => 0, 'match' => 0, 'fail' => false );
+$calls = array( 'classify' => 0, 'match' => 0, 'links' => 0, 'fail' => false );
 $answer = static function ( $body ) use ( &$calls ) {
 	$system = (string) $body['system'];
 	$user   = (string) $body['messages'][0]['content'];
@@ -41,6 +41,28 @@ $answer = static function ( $body ) use ( &$calls ) {
 		foreach ( $found as $row ) {
 			$geometry  = (bool) preg_match( '/triangle|area/i', $row[2] );
 			$results[] = array( 'id' => (int) $row[1], 'domain' => $geometry ? 'geometry' : 'algebra', 'grade_from' => 7, 'grade_to' => $geometry ? 7 : 8, 'gloss' => $geometry ? 'Find the area of a triangle' : 'Solve linear equations in one variable', 'confidence' => 0.9 );
+		}
+		return array( 'results' => $results );
+	}
+	if ( false !== strpos( $system, 'dependency graph' ) ) {
+		++$calls['links'];
+		$results = array();
+		foreach ( preg_split( '/(?=^Skill \d+: )/m', $user ) as $block ) {
+			if ( ! preg_match( '/^Skill (\d+): ([^|]*)/', $block, $head ) ) { continue; }
+			preg_match_all( '/^  - (\d+): ([^|]*)/m', $block, $candidates, PREG_SET_ORDER );
+			$ids = array(); foreach ( $candidates as $candidate ) { $ids[ trim( $candidate[2] ) ] = $candidate[1]; }
+			$row = array( 'id' => (int) $head[1], 'prerequisites' => array(), 'encompasses' => array() );
+			$linear = null; $expand = null;
+			foreach ( $ids as $name => $id ) { if ( 0 === strpos( $name, 'Solve linear equations' ) ) { $linear = $id; } if ( 0 === strpos( $name, 'Expand brackets' ) ) { $expand = $id; } }
+			if ( false !== strpos( $head[2], 'quadratic' ) && $linear ) {
+				$row['prerequisites'][] = array( 'skill' => $linear, 'confidence' => 0.9, 'reason' => 'Needs linear equations first.' );
+				$row['encompasses'][]   = array( 'skill' => $linear, 'weight' => 0.5, 'confidence' => 0.8, 'reason' => 'Uses them while solving.' );
+				if ( $expand ) { $row['encompasses'][] = array( 'skill' => $expand, 'weight' => 0.6, 'confidence' => 0.85, 'reason' => 'Expanding is part of it.' ); }
+			}
+			if ( false !== strpos( $head[2], 'Expand brackets' ) && $linear ) {
+				$row['prerequisites'][] = array( 'skill' => $linear, 'confidence' => 0.85, 'reason' => 'Needs linear equations first.' );
+			}
+			$results[] = $row;
 		}
 		return array( 'results' => $results );
 	}
@@ -190,10 +212,58 @@ try {
 	ok( 400 === call_api( 'POST', 'ai/runs', array( 'kind' => 'nonsense' ) )->get_status() && 404 === call_api( 'POST', 'ai/runs', array( 'kind' => 'syllabus', 'syllabus_id' => 999999 ) )->get_status(), 'run input is checked' );
 	ok( count( call_api( 'GET', 'ai/runs', array( 'syllabus_id' => $syllabus ) )->get_data() ) === 3, 'runs list by syllabus' );
 
+	// ---- Links between shared skills ----
+	$expand = Comparison::save_shared( 0, array( 'name' => 'Expand brackets ' . $tag, 'subject' => 'Mathematics ' . $tag, 'domain' => 'algebra', 'grade_from' => 8 ) ); $terms[] = $expand['id'];
+	$unplaced = Comparison::save_shared( 0, array( 'name' => 'Unplaced skill ' . $tag, 'subject' => 'Mathematics ' . $tag ) ); $terms[] = $unplaced['id'];
+	$edges_before = $calls['links'];
+	$link_run = call_api( 'POST', 'ai/runs', array( 'kind' => 'links', 'subject' => 'Mathematics ' . $tag ) );
+	ok( 200 === $link_run->get_status(), 'a links run starts: ' . wp_json_encode( $link_run->get_data() ) );
+	$link_run = $link_run->get_data(); $runs[] = $link_run['id'];
+	ok( 4 === $link_run['total'], 'only placed skills are linked (the unplaced one waits): ' . wp_json_encode( $link_run ) );
+	$link_run = AiAnalysis::step( $link_run['id'] );
+	ok( 'done' === $link_run['status'] && 1 === $calls['links'] - $edges_before, 'one call for the slice: ' . wp_json_encode( $link_run ) );
+	$pending = call_api( 'GET', 'ai/suggestions', array( 'run_id' => $link_run['id'], 'kind' => 'link' ) )->get_data();
+	ok( 4 === $pending['total'], 'four link suggestions: ' . wp_json_encode( $pending ) );
+	$by_type = array(); foreach ( $pending['items'] as $row ) { $by_type[ $row['relation'] ][] = $row; }
+	ok( 2 === count( $by_type['prerequisite'] ) && 2 === count( $by_type['encompasses'] ), 'two prerequisites and two encompass links' );
+	$first = $by_type['encompasses'][0];
+	ok( $quad['id'] === $first['skill']['id'] && in_array( $first['weight'], array( 0.5, 0.6 ), true ) && ! empty( $first['shared']['name'] ), 'a link suggestion names both skills and the weight: ' . wp_json_encode( $first ) );
+	$rejected_link = $by_type['encompasses'][1];
+	call_api( 'POST', 'ai/suggestions/review', array( 'ids' => array( $rejected_link['id'] ), 'action' => 'reject' ) );
+	$accepted_link = $by_type['encompasses'][0];
+	$result = call_api( 'POST', 'ai/suggestions/review', array( 'ids' => array( $accepted_link['id'] ), 'action' => 'accept', 'overrides' => array( $accepted_link['id'] => array( 'weight' => 0.7 ) ) ) )->get_data();
+	ok( 'accepted' === $result['results'][ $accepted_link['id'] ]['status'], 'an encompass link is accepted: ' . wp_json_encode( $result ) );
+	$accepted_all = call_api( 'POST', 'ai/runs/' . $link_run['id'] . '/accept-confident', array( 'min_confidence' => 0.8 ) )->get_data();
+	ok( 2 === $accepted_all['accepted'] && 0 === $accepted_all['failed'], 'the confident prerequisites are accepted: ' . wp_json_encode( $accepted_all ) );
+	$links = call_api( 'GET', 'skill-links/' . $quad['id'] )->get_data();
+	ok( $linear['id'] === $links['prerequisites'][0]['id'] && 'ai' === $links['prerequisites'][0]['source'] && 0.9 === $links['prerequisites'][0]['confidence'], 'the prerequisite joins the skill and records AI: ' . wp_json_encode( $links ) );
+	ok( \OhMyLMS\Skills\Taxonomy::prerequisites( $quad['id'] ) === array( $linear['id'] ), 'the skill\'s own prerequisite list is the source of truth recommendations read' );
+	ok( 1 === count( $links['encompasses'] ) && 0.7 === $links['encompasses'][0]['weight'] && $expand['id'] === $links['encompasses'][0]['id'], 'the reviewer\'s weight is kept: ' . wp_json_encode( $links['encompasses'] ) );
+	ok( 1 === count( call_api( 'GET', 'skill-links/' . $expand['id'] )->get_data()['encompassed_by'] ), 'the other side lists what encompasses it' );
+	ok( array( $quad['id'] => array( $expand['id'] => 0.7 ) ) === \OhMyLMS\Curriculum\SkillEdges::encompasses_many( array( $quad['id'], $linear['id'] ) ), 'the guidance engine reads weights in one query' );
+	ok( 409 === call_api( 'POST', 'skill-links', array( 'skill_id' => $expand['id'], 'other_id' => $quad['id'], 'type' => 'encompasses', 'weight' => 0.5 ) )->get_status(), 'an encompass loop is refused' );
+	ok( 400 === call_api( 'POST', 'skill-links', array( 'skill_id' => $linear['id'], 'other_id' => $quad['id'], 'type' => 'prerequisite' ) )->get_status(), 'a prerequisite loop is refused' );
+	ok( 400 === call_api( 'POST', 'skill-links', array( 'skill_id' => $quad['id'], 'other_id' => $quad['id'], 'type' => 'encompasses', 'weight' => 1 ) )->get_status(), 'a skill cannot encompass itself' );
+	ok( 400 === call_api( 'POST', 'skill-links', array( 'skill_id' => $quad['id'], 'other_id' => $linear['id'], 'type' => 'encompasses' ) )->get_status(), 'an encompass link needs a weight' );
+	ok( 404 === call_api( 'POST', 'skill-links', array( 'skill_id' => $quad['id'], 'other_id' => $objectives[0], 'type' => 'prerequisite' ) )->get_status(), 'only shared skills are linked' );
+	$manual = call_api( 'POST', 'skill-links', array( 'skill_id' => $quad['id'], 'other_id' => $expand['id'], 'type' => 'prerequisite' ) )->get_data();
+	ok( 2 === count( $manual['prerequisites'] ) && 'manual' === $manual['prerequisites'][1]['source'], 'a manual prerequisite is recorded as manual: ' . wp_json_encode( $manual ) );
+	$again_links = call_api( 'POST', 'ai/runs', array( 'kind' => 'links', 'subject' => 'Mathematics ' . $tag ) )->get_data(); $runs[] = $again_links['id'];
+	ok( 2 === $again_links['total'], 'skills that already have prerequisites are skipped: ' . wp_json_encode( $again_links ) );
+	call_api( 'POST', 'ai/runs/' . $again_links['id'] . '/cancel' );
+	ok( 0 === call_api( 'GET', 'ai/suggestions', array( 'run_id' => $link_run['id'], 'kind' => 'link' ) )->get_data()['total'], 'nothing is left pending' );
+	$removed = call_api( 'POST', 'skill-links/remove', array( 'skill_id' => $quad['id'], 'other_id' => $expand['id'], 'type' => 'encompasses' ) )->get_data();
+	ok( 0 === count( $removed['encompasses'] ) && 2 === count( $removed['prerequisites'] ), 'a link is removed on request' );
+	$removed = call_api( 'POST', 'skill-links/remove', array( 'skill_id' => $quad['id'], 'other_id' => $expand['id'], 'type' => 'prerequisite' ) )->get_data();
+	ok( 1 === count( $removed['prerequisites'] ) && \OhMyLMS\Skills\Taxonomy::prerequisites( $quad['id'] ) === array( $linear['id'] ), 'removing a prerequisite also clears the skill\'s list' );
+	ok( 404 === call_api( 'GET', 'skill-links/' . $objectives[0] )->get_status(), 'links are read for shared skills only' );
+
 	// ---- MCP ----
 	$tools   = \OhMyLMS\MCP\CurriculumAiTools::definitions();
 	$execute = new ReflectionMethod( \OhMyLMS\MCP\Abilities::class, 'execute' );
 	$execute->setAccessible( true );
+	$mcp_links = $execute->invoke( null, 'get_skill_links', \OhMyLMS\MCP\CurriculumAiTools::definitions()['get_skill_links'], array( 'id' => $quad['id'] ) );
+	ok( ! is_wp_error( $mcp_links ) && 1 === count( $mcp_links['data']['prerequisites'] ), 'MCP reads a skill\'s links' );
 	$options = $execute->invoke( null, 'get_skill_placement_options', $tools['get_skill_placement_options'], array() );
 	$listed  = $execute->invoke( null, 'list_skill_suggestions', $tools['list_skill_suggestions'], array( 'run_id' => $placing['id'], 'status' => 'all' ) );
 	ok( ! is_wp_error( $options ) && isset( $options['data']['domains']['algebra'] ) && ! is_wp_error( $listed ) && 1 === $listed['data']['total'], 'MCP tools read placement options and suggestions' );
@@ -202,7 +272,7 @@ try {
 	// ---- Only administrators ----
 	$learner = wp_create_user( 'ai-analysis-' . $tag, wp_generate_password(), 'ai-analysis-' . $tag . '@example.org' ); $users[] = $learner;
 	wp_set_current_user( $learner );
-	foreach ( array( array( 'GET', 'ai/runs' ), array( 'POST', 'ai/runs' ), array( 'GET', 'ai/suggestions' ), array( 'POST', 'ai/suggestions/review' ), array( 'GET', 'skill-placement' ) ) as $route ) {
+	foreach ( array( array( 'GET', 'ai/runs' ), array( 'POST', 'ai/runs' ), array( 'GET', 'ai/suggestions' ), array( 'POST', 'ai/suggestions/review' ), array( 'GET', 'skill-placement' ), array( 'GET', 'skill-links/1' ), array( 'POST', 'skill-links' ), array( 'POST', 'skill-links/remove' ) ) as $route ) {
 		ok( in_array( call_api( $route[0], $route[1], array( 'ids' => array( 1 ), 'action' => 'accept' ) )->get_status(), array( 401, 403 ), true ), 'a learner reached ' . $route[1] );
 	}
 	wp_set_current_user( $admin );
@@ -217,7 +287,7 @@ try {
 		$wpdb->delete( Schema::table( 'ai_analysis_runs' ), array( 'id' => $id ) );
 		wp_clear_scheduled_hook( AiAnalysis::HOOK, array( $id ) );
 	}
-	foreach ( $terms as $id ) { $wpdb->delete( SkillMappings::table(), array( 'specific_term_id' => $id ) ); }
+	foreach ( $terms as $id ) { $wpdb->delete( SkillMappings::table(), array( 'specific_term_id' => $id ) ); $wpdb->delete( \OhMyLMS\Curriculum\SkillEdges::table(), array( 'skill_id' => $id ) ); $wpdb->delete( \OhMyLMS\Curriculum\SkillEdges::table(), array( 'other_id' => $id ) ); }
 	foreach ( $items as $id ) { $item = Items::get( $id ); if ( $item ) { $course = $item['course_id']; $root = $item['skill_root_id']; Items::delete( $id, 'delete', true ); if ( $course ) { wp_delete_post( $course, true ); } if ( $root ) { wp_delete_term( $root, Taxonomy::NAME ); } } }
 	foreach ( $terms as $id ) { wp_delete_term( $id, Taxonomy::NAME ); }
 	require_once ABSPATH . 'wp-admin/includes/user.php';
