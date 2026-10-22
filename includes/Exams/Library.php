@@ -25,6 +25,7 @@ final class Library {
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
+		Profile::init();
 		Player::init();
 		Composer::init();
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'styles' ) );
