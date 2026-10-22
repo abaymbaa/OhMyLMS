@@ -79,3 +79,26 @@ which questions each accepts:
 and the question player block convert into each other (block toolbar, *Change block type*) when one question is
 chosen, keeping the same question; a kind that does not allow the `practice` delivery offers neither.
 `tests/php/delivery-policy-integration.php` covers the rules.
+
+### Two learner runtimes, kept on purpose
+
+The `inline` and `practice` deliveries have their own learner scripts, and they are not merged:
+
+| | Inline check (`Practice/Inline.php`, `inline-check.js`) | Question player (`QuestionPlayer.php`, `question-player.js`) |
+| --- | --- | --- |
+| Learners | Logged-in learners and guests (a guest's answers stay in the browser and can be saved to an account later) | Logged-in learners |
+| Shape | One question with immediate feedback and retries; every answer is kept, only the first counts as first-try evidence | A frozen run of chosen or skill-drawn questions with Previous/Next and a final score; also the activity and game modes |
+| Authority | A signed token for that question version and lesson, made on each page load | The saved block settings |
+
+They share the practice session tables, `Sessions` grading, the approved snapshots and `DeliveryPolicy`. Merging the
+scripts would mean teaching the player guests, retries and lesson scope, which puts learner evidence and the guest
+trust model at risk for little saved code.
+
+### Exams and practice
+
+Publishing an exam makes its questions exam-only (secure), so a practice set or inline check that uses one stops
+working. `Composer::warnings()` finds those uses (`DeliveryPolicy::other_uses()`, which scans page, post and lesson
+content for question player blocks, inline question blocks and `[ohmylms_question]` shortcodes). The exam summary
+lists them as `warnings`, and publishing answers with HTTP 409 `exam_overlap` until the request repeats with
+`confirm_overlap`; the editor's Exam panel shows a **Publish anyway** button. Use a separate copy of a question for
+the exam to keep the original playable in practice.

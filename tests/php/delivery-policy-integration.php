@@ -119,4 +119,75 @@ delivery_check( isset( $gone['code'] ) && 'exam_questions' === $gone['code'], 'A
 $added = delivery_call( 'POST', "exams/{$exam['id']}/questions", array( 'question_ids' => array( $manual ) ) );
 delivery_check( array( $manual ) === array_map( 'intval', $added['question_ids'] ), 'A teacher-marked question can be added to an exam.' );
 
+// Publishing an exam makes its questions exam-only: warn about practice sets and inline checks that use them.
+$shared  = delivery_question();
+$spare   = delivery_question();
+delivery_call( 'POST', "question-bank/$shared/approve" );
+$uuid    = \OhMyLMS\QuestionBank\VersionPublisher::identity( $shared, false )['uuid'];
+$player  = wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_status'  => 'draft',
+		'post_title'   => 'Overlap practice page',
+		'post_content' => '<!-- wp:ohmylms/question-player {"source":"selected","questionIds":[' . $shared . ']} /-->',
+	)
+);
+$inline  = wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_status'  => 'draft',
+		'post_title'   => 'Overlap inline page',
+		'post_content' => '<!-- wp:ohmylms/shared-multiple-choice {"questionId":' . $shared . ',"delivery":"inline"} /-->[ohmylms_question uuid="' . $uuid . '"]',
+	)
+);
+$quizzed = wp_insert_post(
+	array(
+		'post_type'    => 'page',
+		'post_status'  => 'draft',
+		'post_title'   => 'Quiz slot is not an overlap',
+		'post_content' => '<!-- wp:ohmylms/shared-multiple-choice {"questionId":' . $spare . ',"delivery":"quiz"} /-->',
+	)
+);
+$uses = DeliveryPolicy::other_uses( array( $shared, $spare ) );
+$kinds = array_map(
+	static function ( $use ) {
+		return $use['post_id'] . ':' . $use['delivery'];
+	},
+	$uses[ $shared ]
+);
+sort( $kinds );
+$expected = array( $player . ':practice', $inline . ':inline' );
+sort( $expected );
+delivery_check( $kinds === $expected, 'Practice sets and inline checks (block and shortcode) are found: ' . wp_json_encode( $kinds ) );
+delivery_check( array() === $uses[ $spare ], 'A question only used in a quiz slot has no other uses.' );
+
+$trial = delivery_call(
+	'POST',
+	'exams/compose',
+	array(
+		'title'            => 'Overlap exam',
+		'duration_minutes' => 10,
+	)
+);
+delivery_call( 'POST', "exams/{$trial['id']}/questions", array( 'question_ids' => array( $shared, $spare ) ) );
+$listing = delivery_call( 'GET', 'exams' );
+$mine    = array_values(
+	array_filter(
+		$listing['items'],
+		static function ( $item ) use ( $trial ) {
+			return (int) $item['id'] === (int) $trial['id'];
+		}
+	)
+)[0];
+delivery_check( 2 === count( $mine['warnings'] ) && false !== strpos( $mine['warnings'][0], 'Question 1' ), 'The exam summary lists what publishing would break.' );
+$refused = delivery_call( 'POST', "exams/{$trial['id']}/publish" );
+delivery_check( 'exam_overlap' === ( $refused['code'] ?? '' ) && 2 === count( $refused['data']['warnings'] ), 'Publishing asks for confirmation first.' );
+delivery_check( 'draft' === get_post_status( $trial['id'] ) && DeliveryPolicy::allows( $shared, DeliveryPolicy::PRACTICE ), 'A refused publish changes nothing.' );
+$done = delivery_call( 'POST', "exams/{$trial['id']}/publish", array( 'confirm_overlap' => true ) );
+delivery_check( 'publish' === ( $done['status'] ?? '' ), 'Confirming publishes the exam.' );
+delivery_check( ! DeliveryPolicy::allows( $shared, DeliveryPolicy::PRACTICE ) && ! DeliveryPolicy::allows( $shared, DeliveryPolicy::INLINE ), 'The exam question is now exam-only, as warned.' );
+foreach ( array( $player, $inline, $quizzed ) as $page ) {
+	wp_delete_post( $page, true );
+}
+
 echo "Delivery policy: {$checks} checks passed.\n";

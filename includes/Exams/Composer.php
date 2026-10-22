@@ -263,6 +263,31 @@ final class Composer {
 	}
 
 	/**
+	 * Places that would lose a question when the exam is published. Publishing makes its questions
+	 * exam-only, so a practice set or inline check that uses one can no longer play it.
+	 *
+	 * @param int $id Exam ID.
+	 * @return string[] Messages, empty when nothing else uses the exam's questions.
+	 */
+	public static function warnings( $id ) {
+		$snapshot = self::snapshot( $id );
+		$uses     = DeliveryPolicy::other_uses( $snapshot['question_ids'] );
+		$messages = array();
+		foreach ( array_values( $snapshot['question_ids'] ) as $index => $question_id ) {
+			foreach ( $uses[ $question_id ] ?? array() as $use ) {
+				$messages[] = sprintf(
+					/* translators: 1: question number, 2: page or lesson title, 3: practice set or inline check. */
+					__( 'Question %1$d is also used in "%2$s" (%3$s). Publishing the exam makes it exam-only, so it stops working there.', 'ohmylms' ),
+					$index + 1,
+					$use['title'],
+					DeliveryPolicy::PRACTICE === $use['delivery'] ? __( 'practice set', 'ohmylms' ) : __( 'inline check', 'ohmylms' )
+				);
+			}
+		}
+		return $messages;
+	}
+
+	/**
 	 * Copy the quiz's current questions, time limit and title into the exam record, and mark the
 	 * questions secure like imported exam questions.
 	 *

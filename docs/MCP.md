@@ -387,7 +387,7 @@ question's current version and freezes the exam.
 
 | Tool | Arguments |
 | --- | --- |
-| `list_exams` | Optional `page`. Returns your exams with `status`, `duration_minutes`, `total_marks`, `question_ids`, `quiz_id`, and for exams written in OhMyLMS `editor_url` and `problems` (what still blocks publishing; an empty list means ready for a person to publish). |
+| `list_exams` | Optional `page`. Returns your exams with `status`, `duration_minutes`, `total_marks`, `question_ids`, `quiz_id`, and for exams written in OhMyLMS `editor_url` `problems` (what still blocks publishing; an empty list means ready for a person to publish) and `warnings` (practice sets and inline checks that publishing would make stop working; the person confirms when publishing). |
 | `create_exam` | `title` (up to 190 characters), `duration_minutes` (1–1440). Creates an empty draft; returns `id`, `quiz_id` and `editor_url`. |
 | `set_exam_instructions` | `id`, `instructions` (up to 4000 characters). Replaces the text learners read first. Draft exams only. |
 | `add_exam_questions` | `id`, `question_ids` (1–50). Places existing bank questions at the end of a draft exam in the order given; questions already in the exam keep their place. |

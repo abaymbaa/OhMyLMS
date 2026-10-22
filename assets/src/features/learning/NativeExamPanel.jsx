@@ -23,6 +23,7 @@ export function NativeExamPanel( { data: exam } ) {
 	const [ busy, setBusy ] = useState( false );
 	const [ notice, setNotice ] = useState( '' );
 	const [ error, setError ] = useState( '' );
+	const [ warnings, setWarnings ] = useState( [] );
 	const { dirty, locked } = useSelect( ( getStore ) => {
 		const editor = getStore( 'core/editor' );
 		return {
@@ -40,8 +41,9 @@ export function NativeExamPanel( { data: exam } ) {
 		setError( '' );
 		setNotice( '' );
 		try {
-			await action();
-			setNotice( done );
+			if ( ( await action() ) !== false ) {
+				setNotice( done );
+			}
 		} catch ( failure ) {
 			setError(
 				failure.message ||
@@ -72,6 +74,33 @@ export function NativeExamPanel( { data: exam } ) {
 			data: { instructions },
 		} );
 	};
+	// Publishing makes the exam's questions exam-only, so practice sets and inline checks that use them
+	// stop working. The server says so first; confirming sends the publish again.
+	const publish = ( confirm ) =>
+		run(
+			async () => {
+				await saveAll();
+				try {
+					await apiFetch( {
+						path: `/ohmylms/v1/exams/${ exam.id }/publish`,
+						method: 'POST',
+						data: { confirm_overlap: confirm },
+					} );
+				} catch ( failure ) {
+					if ( failure.code === 'exam_overlap' ) {
+						setWarnings(
+							failure.data?.warnings || [ failure.message ]
+						);
+						return false;
+					}
+					throw failure;
+				}
+				setWarnings( [] );
+				setStatus( 'publish' );
+				return true;
+			},
+			__( 'Exam published.', 'ohmylms' )
+		);
 	return (
 		<PluginDocumentSettingPanel
 			name="ohmylms-native-exam"
@@ -101,6 +130,28 @@ export function NativeExamPanel( { data: exam } ) {
 					{ error }
 				</Notice>
 			) }
+			{ warnings.length > 0 && (
+				<Notice status="warning" isDismissible={ false }>
+					<ul>
+						{ warnings.map( ( warning ) => (
+							<li key={ warning }>{ warning }</li>
+						) ) }
+					</ul>
+					<Button
+						variant="primary"
+						disabled={ busy }
+						onClick={ () => publish( true ) }
+					>
+						{ __( 'Publish anyway', 'ohmylms' ) }
+					</Button>{ ' ' }
+					<Button
+						variant="tertiary"
+						onClick={ () => setWarnings( [] ) }
+					>
+						{ __( 'Cancel', 'ohmylms' ) }
+					</Button>
+				</Notice>
+			) }
 			{ notice && (
 				<Notice status="success" onRemove={ () => setNotice( '' ) }>
 					{ notice }
@@ -122,20 +173,7 @@ export function NativeExamPanel( { data: exam } ) {
 					<Button
 						variant="primary"
 						disabled={ busy || locked }
-						onClick={ () =>
-							run(
-								async () => {
-									await saveAll();
-									await apiFetch( {
-										path: `/ohmylms/v1/exams/${ exam.id }/publish`,
-										method: 'POST',
-										data: {},
-									} );
-									setStatus( 'publish' );
-								},
-								__( 'Exam published.', 'ohmylms' )
-							)
-						}
+						onClick={ () => publish( false ) }
 					>
 						{ __( 'Publish exam', 'ohmylms' ) }
 					</Button>

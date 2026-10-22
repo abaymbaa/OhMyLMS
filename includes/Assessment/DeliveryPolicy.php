@@ -91,4 +91,64 @@ final class DeliveryPolicy {
 		}
 		return $snapshot;
 	}
+
+	/**
+	 * Practice sets and inline checks that already use these questions, found in page, post and lesson
+	 * content. Publishing an exam marks its questions exam-only, which removes them from those places.
+	 *
+	 * @param int[] $question_ids Question IDs.
+	 * @return array[] Uses keyed by question ID; each use has post_id, title and delivery.
+	 */
+	public static function other_uses( array $question_ids ) {
+		global $wpdb;
+		$ids  = array_values( array_unique( array_filter( array_map( 'intval', $question_ids ) ) ) );
+		$uses = array_fill_keys( $ids, array() );
+		if ( ! $ids ) {
+			return $uses;
+		}
+		$uuids = array();
+		foreach ( $ids as $id ) {
+			$identity = VersionPublisher::identity( $id, false );
+			if ( $identity ) {
+				$uuids[ strtolower( (string) $identity['uuid'] ) ] = $id;
+			}
+		}
+		$posts = $wpdb->get_results( $wpdb->prepare( "SELECT ID, post_title, post_content FROM {$wpdb->posts} WHERE post_status NOT IN ('trash', 'auto-draft') AND post_type NOT IN (%s, 'revision') AND (post_content LIKE %s OR post_content LIKE %s OR post_content LIKE %s) LIMIT 500", OHMYLMS_QUESTION_CPT, '%wp:ohmylms/question-player%', '%wp:ohmylms/shared-multiple-choice%', '%[ohmylms_question%' ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Read-only scan at publish time.
+		foreach ( (array) $posts as $post ) {
+			$found = array();
+			$stack = parse_blocks( $post['post_content'] );
+			while ( $stack ) {
+				$block = array_shift( $stack );
+				$stack = array_merge( $stack, (array) ( $block['innerBlocks'] ?? array() ) );
+				$attrs = (array) ( $block['attrs'] ?? array() );
+				if ( 'ohmylms/question-player' === ( $block['blockName'] ?? '' ) ) {
+					foreach ( (array) ( $attrs['questionIds'] ?? array() ) as $question_id ) {
+						$found[ (int) $question_id ][ self::PRACTICE ] = true;
+					}
+				} elseif ( 'ohmylms/shared-multiple-choice' === ( $block['blockName'] ?? '' ) && self::QUIZ !== ( $attrs['delivery'] ?? 'inline' ) ) {
+					$found[ (int) ( $attrs['questionId'] ?? 0 ) ][ self::INLINE ] = true;
+				}
+			}
+			if ( false !== strpos( $post['post_content'], '[ohmylms_question' ) && preg_match_all( '/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i', $post['post_content'], $matches ) ) {
+				foreach ( $matches[0] as $uuid ) {
+					if ( isset( $uuids[ strtolower( $uuid ) ] ) ) {
+						$found[ $uuids[ strtolower( $uuid ) ] ][ self::INLINE ] = true;
+					}
+				}
+			}
+			foreach ( $found as $question_id => $deliveries ) {
+				if ( ! isset( $uses[ $question_id ] ) ) {
+					continue;
+				}
+				foreach ( array_keys( $deliveries ) as $delivery ) {
+					$uses[ $question_id ][] = array(
+						'post_id'  => (int) $post['ID'],
+						'title'    => '' !== (string) $post['post_title'] ? (string) $post['post_title'] : (string) $post['ID'],
+						'delivery' => $delivery,
+					);
+				}
+			}
+		}
+		return $uses;
+	}
 }
