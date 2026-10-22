@@ -20,14 +20,12 @@ class WP_Error {
 }
 require dirname(__DIR__, 2) . '/includes/MCP/Server.php';
 require dirname(__DIR__, 2) . '/includes/MCP/Abilities.php';
-require dirname(__DIR__, 2) . '/includes/MCP/ComparisonTools.php';
-require dirname(__DIR__, 2) . '/includes/MCP/CourseObjectiveTools.php';
 require dirname(__DIR__, 2) . '/includes/Extensions/Registry.php';
 require dirname(__DIR__, 2) . '/includes/Learning/NativeLessonEditor.php';
-require dirname(__DIR__, 2) . '/includes/MCP/AuthoringTools.php';
-require dirname(__DIR__, 2) . '/includes/MCP/QuestionBankTools.php';
-require dirname(__DIR__, 2) . '/includes/MCP/SkillAssessmentTools.php';
-require dirname(__DIR__, 2) . '/includes/MCP/CourseStructureTools.php';
+// Every tool family, so a new one never makes this test fail for want of a require.
+foreach (glob(dirname(__DIR__, 2) . '/includes/MCP/*Tools.php') as $tools_file) {
+    require_once $tools_file;
+}
 use OhMyLMS\MCP\Server;
 use OhMyLMS\MCP\Abilities;
 function mcp_addon_check($condition, $message) { if (!$condition) throw new RuntimeException($message); }
@@ -47,7 +45,8 @@ mcp_addon_check(Server::enabled() && Server::manifest([])['mcp']['is_enable'] ==
 Server::register_server($adapter);
 mcp_addon_check($adapter->calls === 1, 'Enabled add-on creates a server.');
 Abilities::register();
-mcp_addon_check(count($GLOBALS['mcp_abilities']) === 50, 'Enabled MCP preserves existing abilities and adds the structure tools.');
+$tool_count = count(Server::tools());
+mcp_addon_check($tool_count >= 50 && count($GLOBALS['mcp_abilities']) === $tool_count, 'Enabled MCP registers one ability for every tool: ' . count($GLOBALS['mcp_abilities']) . ' of ' . $tool_count);
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/save-lesson']['meta']['annotations']['destructive'], 'Existing published lesson edits are accurately marked as writes.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-lesson-objectives']['meta']['annotations']['readonly'], 'Lesson mapping reads remain read-only.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-objectives']['meta']['annotations']['readonly'], 'Course objective reads are read-only.');
@@ -58,7 +57,7 @@ mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/list-courses']['meta']['annot
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-skill-mapping']['meta']['annotations']['readonly'], 'Mapping writes are accurately annotated.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/remove-skill-mapping']['meta']['annotations']['destructive'], 'Mapping removals are accurately annotated.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/create-shared-skill-roadmap']['meta']['annotations']['idempotent'], 'Roadmap creation is not presented as idempotent.');
-mcp_addon_check(count(array_unique(array_keys(Server::tools()))) === 50 && count(Abilities::names()) === 50, 'Tool names stay unique after merging every tool family.');
+mcp_addon_check(count(array_unique(array_keys(Server::tools()))) === $tool_count && count(Abilities::names()) === $tool_count, 'Tool names stay unique after merging every tool family.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-program']['meta']['annotations']['readonly'], 'Program reads are read-only.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-course-program']['meta']['annotations']['readonly'], 'Program writes are writes.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['meta']['annotations']['destructive'], 'Unit deletion is marked destructive.');

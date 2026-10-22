@@ -70,11 +70,17 @@ final class Frontend {
 			return ''; }
 		Evidence::process( 50 );
 		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
-		$student  = get_current_user_id();
-		$skills   = Evidence::summary( $student );
-		$guidance = \OhMyLMS\Performance\Snapshot::guidance( $student, 5 );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only choice of which subject to draw.
-		$subject   = isset( $_GET['skill_map_subject'] ) ? sanitize_text_field( wp_unslash( $_GET['skill_map_subject'] ) ) : '';
+		$student = get_current_user_id();
+		$skills  = Evidence::summary( $student );
+		// One subject for the whole page; skill_map_subject is the older name of the same choice.
+		$subject = '';
+		foreach ( array( 'skills_subject', 'skill_map_subject' ) as $subject_key ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only choice of which subject to show.
+			if ( '' === $subject && isset( $_GET[ $subject_key ] ) ) {
+				$subject = sanitize_text_field( wp_unslash( $_GET[ $subject_key ] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only choice of which subject to show.
+			}
+		}
+		$guidance  = \OhMyLMS\Performance\Snapshot::guidance( $student, 5, $subject );
 		$skill_map = \OhMyLMS\Curriculum\SkillMap::for_student( $student, $subject );
 		ob_start();
 		?>
@@ -168,7 +174,7 @@ final class Frontend {
 			<?php if ( count( $data['subjects'] ) > 1 ) { ?>
 				<nav class="ohmylms-skill-map-subjects" aria-label="<?php esc_attr_e( 'Subjects', 'ohmylms' ); ?>">
 					<?php foreach ( $data['subjects'] as $subject ) { ?>
-						<a href="<?php echo esc_url( add_query_arg( 'skill_map_subject', rawurlencode( $subject['subject'] ) ) . '#ohmylms-skill-map-title' ); ?>" <?php echo $subject['subject'] === $map['subject'] ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $subject['subject'] ); ?></a>
+						<a href="<?php echo esc_url( add_query_arg( 'skills_subject', rawurlencode( $subject['subject'] ) ) . '#ohmylms-skill-map-title' ); ?>" <?php echo $subject['subject'] === $map['subject'] ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $subject['subject'] ); ?></a>
 					<?php } ?>
 				</nav>
 			<?php } ?>
@@ -229,7 +235,8 @@ final class Frontend {
 	 * @return string Escaped HTML, empty when there is nothing to suggest yet.
 	 */
 	private static function guidance( array $guidance ) {
-		if ( ! $guidance['next_steps'] && ! $guidance['areas'] && ! $guidance['readiness'] && ! $guidance['reviews']['covered'] ) {
+		$nothing = ! $guidance['next_steps'] && ! $guidance['areas'] && ! $guidance['readiness'] && ! $guidance['reviews']['covered'];
+		if ( $nothing && count( $guidance['subjects'] ) < 2 ) {
 			return '';
 		}
 		$practice = static function ( $id ) {
@@ -242,6 +249,20 @@ final class Frontend {
 			return wp_sprintf( '%l', wp_list_pluck( $skills, 'name' ) );
 		};
 		ob_start();
+		if ( count( $guidance['subjects'] ) > 1 ) {
+			?>
+			<nav class="ohmylms-skill-map-subjects ohmylms-guidance-subjects" aria-label="<?php esc_attr_e( 'Show guidance for', 'ohmylms' ); ?>">
+				<a href="<?php echo esc_url( remove_query_arg( array( 'skills_subject', 'skill_map_subject' ) ) ); ?>" <?php echo '' === $guidance['subject'] ? 'aria-current="page"' : ''; ?>><?php esc_html_e( 'All subjects', 'ohmylms' ); ?></a>
+				<?php foreach ( $guidance['subjects'] as $name ) { ?>
+					<a href="<?php echo esc_url( add_query_arg( 'skills_subject', rawurlencode( $name ), remove_query_arg( 'skill_map_subject' ) ) ); ?>" <?php echo $name === $guidance['subject'] ? 'aria-current="page"' : ''; ?>><?php echo esc_html( $name ); ?></a>
+				<?php } ?>
+			</nav>
+			<?php
+		}
+		if ( $nothing ) {
+			echo '<p>' . esc_html__( 'Nothing to suggest in this subject yet.', 'ohmylms' ) . '</p>';
+			return ob_get_clean();
+		}
 		?>
 		<div class="ohmylms-guidance">
 			<?php if ( $guidance['next_steps'] ) { ?>

@@ -100,7 +100,7 @@ final class Guests {
 					$list = implode( ',', $ids );
 					$wpdb->query( $wpdb->prepare( "UPDATE $sessions SET student_id=%d, claimed_at=%s WHERE id IN ($list)", $user_id, current_time( 'mysql', true ) ) );
 					$events    = Schema::table( 'grade_events' );
-					$event_ids = array_map( 'intval', $wpdb->get_col( "SELECT id FROM $events WHERE source_type IN ('practice','inline') AND student_id=0 AND source_id IN ($list)" ) );
+					$event_ids = array_map( 'intval', $wpdb->get_col( "SELECT id FROM $events WHERE source_type IN ('practice','inline','placement') AND student_id=0 AND source_id IN ($list)" ) );
 					if ( $event_ids ) {
 						$wpdb->query( $wpdb->prepare( "UPDATE $events SET student_id=%d WHERE id IN (" . implode( ',', $event_ids ) . ')', $user_id ) );
 						Evidence::release_waiting( $event_ids );

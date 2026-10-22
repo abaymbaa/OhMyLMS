@@ -9,7 +9,8 @@ depends on the answers so far, and the prerequisite links between shared skills
 My skills lists **Placement tests** for every subject with shared skills: **Take the placement test**, or, once
 taken, the working grade per area, the skills to start with and **Take it again**. The test opens at
 `?ohmylms_placement=SUBJECT`, or anywhere with the shortcode `[ohmylms_placement subject="Mathematics" items="15"]`.
-Learners must be signed in.
+Guests can take it too, with the same guest credential as practice (questions from public practice skills only).
+When they log in on the same device, the test and its answers become theirs, as guest practice does.
 
 The learner says which grade they are in (or "I am not sure"), then answers up to 15 questions (5 to 30 with
 `items`). There are no hints, no tutor, no retries and no feedback until the end: the test measures what the learner
@@ -53,9 +54,9 @@ test as the placement and never becomes a skill level. Placement tests earn no X
 
 | Route | Access | Purpose |
 | --- | --- | --- |
-| `POST /placement/sessions` | signed-in learners | `subject`, `grade` (0–13), `item_limit` (5–30): starts a test; returns the practice session state |
-| `GET /placement/subjects` | signed-in learners | Subjects with a test, and where to take it |
-| `GET /practice/sessions/{uuid}`, `POST …/answer`, `POST …/skip` | the learner | Run the test; `hint` and `ai` are refused |
+| `POST /placement/sessions` | signed-in learners, guests (guest credential header) | `subject`, `grade` (0–13), `item_limit` (5–30): starts a test; returns the practice session state |
+| `GET /placement/subjects` | signed-in learners, guests | Subjects with a test, and where to take it |
+| `GET /practice/sessions/{uuid}`, `POST …/answer`, `POST …/skip` | the learner or guest who started it | Run the test; `hint` and `ai` are refused |
 | `GET /reports/skills/students/{id}/placement` | as the student report | Latest result per subject |
 
 MCP: `get_student_placement`.

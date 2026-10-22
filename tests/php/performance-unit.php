@@ -324,4 +324,13 @@ check( 44 === $readiness['percent'], 'readiness percent: ' . $readiness['percent
 check( array( 4, 201 ) === $readiness['gaps'], 'gaps list started objectives first' );
 check( 0 === GuidanceModel::readiness( array(), $pooled, array() )['percent'], 'an empty syllabus is 0% ready' );
 
+// Placement tests: placed-known skills meet prerequisites and are not suggested; start skills lead.
+$placed = GuidanceModel::ready( $pooled, $info, $areas, array( 4, 7 ), array( 9 ) );
+check( 9 === $placed[0]['skill'] && $placed[0]['placement'] && array() === $placed[0]['prerequisites'], 'a skill the placement said to start with comes first, even with no prerequisites' );
+check( ! in_array( 7, array_column( $placed, 'skill' ), true ) && ! in_array( 4, array_column( $placed, 'skill' ), true ), 'placed-known skills are not suggested' );
+$met = GuidanceModel::ready( $pooled, $info, $areas, array( 4 ) );
+check( in_array( 7, array_column( $met, 'skill' ), true ) && ! $met[0]['placement'], 'a placed-known prerequisite counts as met' );
+$steps = GuidanceModel::next_steps( array(), array(), $placed, 1 );
+check( 'placement' === $steps[0]['reason'] && '' === GuidanceModel::next_steps( array(), array(), $ready, 1 )[0]['reason'], 'ready steps say when a placement suggested them' );
+
 echo $checks . " performance unit checks passed.\n";

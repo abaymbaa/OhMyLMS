@@ -10,6 +10,7 @@ namespace OhMyLMS\Rest\V1;
 use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Placement\Placement;
 use OhMyLMS\Placement\PlacementModel;
+use OhMyLMS\Practice\Guests;
 use OhMyLMS\Practice\Sessions;
 use WP_Error;
 use WP_REST_Request;
@@ -70,15 +71,20 @@ class PlacementController extends RestController {
 	}
 
 	/**
-	 * Placement tests are for signed-in learners on sites with practice switched on.
+	 * Placement tests are for signed-in learners and for guests with the guest credential practice
+	 * uses, on sites with practice switched on.
 	 *
+	 * @param WP_REST_Request $request Request.
 	 * @return true|WP_Error
 	 */
-	public function learner_permission() {
+	public function learner_permission( WP_REST_Request $request ) {
 		if ( ! \OhMyLMS\Assessment\Schema::ready() || ! \OhMyLMS\Assessment\Engine::practice() ) {
 			return new WP_Error( 'ohmylms_practice_disabled', __( 'Practice is not available.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		return is_user_logged_in() ? true : new WP_Error( 'ohmylms_placement_login', __( 'Log in to take a placement test.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+		if ( is_user_logged_in() || Guests::from_request( $request ) ) {
+			return true;
+		}
+		return new WP_Error( 'ohmylms_guest_required', __( 'Start a guest session or log in.', 'ohmylms' ), array( 'status' => 401 ) );
 	}
 
 	/**
@@ -88,7 +94,9 @@ class PlacementController extends RestController {
 	 * @return \WP_REST_Response|WP_Error
 	 */
 	public function start( WP_REST_Request $request ) {
-		$session = Placement::start( get_current_user_id(), (string) $request['subject'], (int) $request['grade'], (int) $request['item_limit'] );
+		$guest   = is_user_logged_in() ? null : Guests::from_request( $request );
+		$owner   = $guest ? array( 'guest_id' => (int) $guest['id'] ) : array( 'student_id' => get_current_user_id() );
+		$session = Placement::start( $owner, (string) $request['subject'], (int) $request['grade'], (int) $request['item_limit'] );
 		if ( is_wp_error( $session ) ) {
 			return $session;
 		}

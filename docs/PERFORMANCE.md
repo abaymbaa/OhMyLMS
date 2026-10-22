@@ -85,10 +85,16 @@ skill takes the best level any member reached and the latest answer.
   not started whose prerequisites are all proficient (earliest grade first, weaker areas first among equal grades).
   Each step names the skill to practise (the skill itself, or a mapped objective that has practice questions) and
   up to two lessons.
+- **Placement tests.** Skills the learner's latest [placement test](PLACEMENT-TEST.md) placed as known count as met
+  prerequisites (they are never suggested, and never become levels), and the skills it said to start with come
+  first among ready skills, marked "Your placement test suggests starting here".
 - **Readiness.** For each syllabus the learner has started, the share of its objectives they have (proficient or
   above counts fully, familiar half, attempted a fifth), the counts, and the next objectives to learn.
 
-My skills shows all four above the skill table. REST: `GET /reports/skills/students/{id}/guidance` (`limit` of
+My skills shows all four above the skill table. A learner with several subjects can narrow the whole page to one
+(`?skills_subject=`; `subject` on the REST route); the teacher's student report (Skill performance, a learner's
+details) shows the same guidance and their placement tests. The school hub's class report does not: it reports
+recorded class learning only. REST: `GET /reports/skills/students/{id}/guidance` (`limit` of
 next steps, 1-20), with the same access as the student report; guardians see it too, since it is a summary. MCP:
 `get_student_guidance`.
 

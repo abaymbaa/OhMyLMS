@@ -920,16 +920,28 @@ function SyllabusComparison( { subjects } ) {
 					{ ( result.unmapped_a.length > 0 ||
 						result.unmapped_b.length > 0 ) && (
 						<Notice status="info" isDismissible={ false }>
-							{ sprintf(
-								/* translators: 1: count, 2: syllabus, 3: count, 4: syllabus. */
-								__(
-									'%1$d objectives of %2$s and %3$d of %4$s are not mapped to a shared skill yet, so they are left out. Map them, or analyse the syllabus with AI, for a full comparison.',
-									'ohmylms'
-								),
-								result.unmapped_a.length,
-								nameA,
-								result.unmapped_b.length,
-								nameB
+							{ [
+								[ result.unmapped_a.length, nameA ],
+								[ result.unmapped_b.length, nameB ],
+							]
+								.filter( ( [ count ] ) => count > 0 )
+								.map( ( [ count, name ] ) =>
+									sprintf(
+										/* translators: 1: number of objectives, 2: syllabus name. */
+										_n(
+											'%1$d objective of %2$s is not mapped to a shared skill yet.',
+											'%1$d objectives of %2$s are not mapped to a shared skill yet.',
+											count,
+											'ohmylms'
+										),
+										count,
+										name
+									)
+								)
+								.join( ' ' ) }{ ' ' }
+							{ __(
+								'They are left out. Map them, or analyse the syllabus with AI, for a full comparison.',
+								'ohmylms'
 							) }
 						</Notice>
 					) }

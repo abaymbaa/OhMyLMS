@@ -38,20 +38,31 @@ final class Guidance {
 	private static $cache = array();
 
 	/**
+	 * Lookups that do not depend on the learner, kept for the request (a class report reads many).
+	 *
+	 * @var array<string,mixed>
+	 */
+	private static $shared = array();
+
+	/**
 	 * Everything the learner's guidance shows.
 	 *
-	 * @param int $student_id Learner.
-	 * @param int $limit      Most next steps.
-	 * @return array areas, next_steps, reviews (due, covered, fresh), readiness, review_after_days.
+	 * @param int    $student_id Learner.
+	 * @param int    $limit      Most next steps.
+	 * @param string $subject    Only this subject's shared skills and syllabuses; empty for all.
+	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps, reviews (due, covered, fresh), readiness, review_after_days.
 	 */
-	public static function for_student( $student_id, $limit = 6 ) {
+	public static function for_student( $student_id, $limit = 6, $subject = '' ) {
 		$student_id = (int) $student_id;
-		$key        = $student_id . ':' . (int) $limit;
+		$subject    = (string) $subject;
+		$key        = $student_id . ':' . (int) $limit . ':' . $subject;
 		if ( isset( self::$cache[ $key ] ) ) {
 			return self::$cache[ $key ];
 		}
 		$days   = max( 1, (int) ( Mastery::rules()['review_after_days'] ?? 7 ) );
 		$result = array(
+			'subject'           => $subject,
+			'subjects'          => array(),
 			'areas'             => array(),
 			'next_steps'        => array(),
 			'reviews'           => array(
@@ -74,11 +85,36 @@ final class Guidance {
 		$pool   = self::pool( array_merge( array_keys( $states ), $objectives ) );
 		$pooled = GuidanceModel::pooled( $states, $pool );
 		$info   = self::library( $pooled, $pool );
-		$links  = self::encompasses( array_keys( $pooled ) );
-
+		foreach ( array_keys( $pooled ) as $skill ) {
+			$name = self::subject_of( $skill );
+			if ( '' !== $name ) {
+				$result['subjects'][ $name ] = true;
+			}
+		}
+		$result['subjects'] = array_keys( $result['subjects'] );
+		sort( $result['subjects'] );
+		if ( '' !== $subject ) {
+			// One subject: its shared skills, and the syllabuses chosen for it.
+			$in         = static function ( $skill ) use ( $subject ) {
+				return self::subject_of( $skill ) === $subject;
+			};
+			$pooled     = array_filter( $pooled, $in, ARRAY_FILTER_USE_KEY );
+			$info       = array_filter( $info, $in, ARRAY_FILTER_USE_KEY );
+			$chosen     = (array) ( get_option( Comparison::OPTION, array() )[ $subject ] ?? array() );
+			$syllabuses = array_values(
+				array_filter(
+					$syllabuses,
+					static function ( $syllabus ) use ( $chosen ) {
+						return in_array( $syllabus['id'], array_map( 'intval', $chosen ), true );
+					}
+				)
+			);
+		}
+		$links   = self::encompasses( array_keys( $pooled ) );
+		$placed  = \OhMyLMS\Placement\Placement::assumed( $student_id, $subject );
 		$areas   = GuidanceModel::areas( $pooled, $info );
 		$reviews = GuidanceModel::reviews( $pooled, $links, time(), $days );
-		$ready   = GuidanceModel::ready( $pooled, $info, $areas );
+		$ready   = GuidanceModel::ready( $pooled, $info, $areas, $placed['known'], $placed['start'] );
 		$steps   = GuidanceModel::next_steps( $pooled, $reviews, $ready, $limit );
 
 		$domains = Comparison::domains();
@@ -156,7 +192,18 @@ final class Guidance {
 
 	/** Forget results computed earlier in this request (after evidence changes, and in tests). */
 	public static function flush() {
-		self::$cache = array();
+		self::$cache  = array();
+		self::$shared = array();
+	}
+
+	/**
+	 * The subject a shared skill belongs to.
+	 *
+	 * @param int $skill Skill.
+	 * @return string Empty for skills outside the shared library.
+	 */
+	private static function subject_of( $skill ) {
+		return (string) get_term_meta( (int) $skill, Comparison::SUBJECT_META, true );
 	}
 
 	/**
@@ -291,6 +338,9 @@ final class Guidance {
 		if ( ! CurriculumSchema::ready() ) {
 			return array();
 		}
+		if ( isset( self::$shared['syllabuses'] ) ) {
+			return self::$shared['syllabuses'];
+		}
 		$result = array();
 		foreach ( array_slice( Comparison::syllabuses(), 0, self::MAX_SYLLABUSES ) as $syllabus ) {
 			$rows = Comparison::objectives( (int) $syllabus['id'] );
@@ -305,6 +355,7 @@ final class Guidance {
 				'objectives' => array_map( 'intval', array_column( $rows, 'term_id' ) ),
 			);
 		}
+		self::$shared['syllabuses'] = $result;
 		return $result;
 	}
 
@@ -331,6 +382,7 @@ final class Guidance {
 			'prerequisites' => array(),
 			'credit'        => 0.0,
 			'covered_by'    => array(),
+			'reason'        => '',
 		);
 		if ( 'help' === $step['type'] ) {
 			$item['message'] = __( 'Recent answers on this skill had errors. Revisiting the lesson or a prerequisite may help.', 'ohmylms' );
@@ -346,7 +398,8 @@ final class Guidance {
 			$item['credit']     = $step['credit'];
 			$item['covered_by'] = self::covered_by( $step['covered_by'] );
 		} else {
-			$item['message']       = __( 'You are ready to start this skill.', 'ohmylms' );
+			$item['reason']        = (string) ( $step['reason'] ?? '' );
+			$item['message']       = 'placement' === $item['reason'] ? __( 'Your placement test suggests starting here.', 'ohmylms' ) : __( 'You are ready to start this skill.', 'ohmylms' );
 			$item['lessons']       = self::lessons( array( $step['skill'] ) );
 			$item['prerequisites'] = array_values( array_filter( array_map( array( __CLASS__, 'skill' ), $step['prerequisites'] ) ) );
 		}

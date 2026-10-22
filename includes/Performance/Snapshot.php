@@ -161,12 +161,13 @@ final class Snapshot {
 	 * Guidance for a learner: strength by area, next steps, reviews covered by other work and
 	 * readiness for each syllabus they have started (see Guidance).
 	 *
-	 * @param int $student_id Learner ID.
-	 * @param int $limit      Most next steps.
+	 * @param int    $student_id Learner ID.
+	 * @param int    $limit      Most next steps.
+	 * @param string $subject    One subject, or empty for all.
 	 * @return array
 	 */
-	public static function guidance( $student_id, $limit = 6 ) {
-		return Guidance::for_student( (int) $student_id, (int) $limit );
+	public static function guidance( $student_id, $limit = 6, $subject = '' ) {
+		return Guidance::for_student( (int) $student_id, (int) $limit, (string) $subject );
 	}
 
 	/**

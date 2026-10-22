@@ -34,21 +34,23 @@ final class Placement {
 	const MODE = 'placement';
 
 	/**
-	 * Start a placement test for a learner.
+	 * Start a placement test for a learner, or for a guest, whose test becomes the learner's when they
+	 * sign in on the same device (Guests::claim).
 	 *
-	 * @param int    $student_id Learner.
-	 * @param string $subject    Subject.
-	 * @param int    $grade      Grade the learner says they are in, or 0.
-	 * @param int    $limit      Most questions.
+	 * @param array  $owner   student_id, or guest_id.
+	 * @param string $subject Subject.
+	 * @param int    $grade   Grade the learner says they are in, or 0.
+	 * @param int    $limit   Most questions.
 	 * @return array|\WP_Error The new session row.
 	 */
-	public static function start( $student_id, $subject, $grade = 0, $limit = 0 ) {
+	public static function start( array $owner, $subject, $grade = 0, $limit = 0 ) {
 		global $wpdb;
-		$student_id = (int) $student_id;
+		$student_id = (int) ( $owner['student_id'] ?? 0 );
+		$guest_id   = $student_id ? 0 : (int) ( $owner['guest_id'] ?? 0 );
 		$subject    = sanitize_text_field( (string) $subject );
 		$grade      = (int) $grade;
-		if ( ! $student_id ) {
-			return new \WP_Error( 'ohmylms_placement_login', __( 'Log in to take a placement test.', 'ohmylms' ), array( 'status' => 401 ) );
+		if ( ! $student_id && ! $guest_id ) {
+			return new \WP_Error( 'ohmylms_placement_login', __( 'Log in or start as a guest to take a placement test.', 'ohmylms' ), array( 'status' => 401 ) );
 		}
 		if ( ! Schema::ready() || ! Engine::practice() ) {
 			return new \WP_Error( 'ohmylms_practice_disabled', __( 'Practice is not available.', 'ohmylms' ), array( 'status' => 404 ) );
@@ -57,14 +59,14 @@ final class Placement {
 			return new \WP_Error( 'ohmylms_placement_grade', __( 'Choose a grade from the list.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 		$graph   = self::graph( $subject );
-		$askable = self::askable( $student_id, $graph );
+		$askable = self::askable( self::owner( $student_id, $guest_id ), $graph );
 		if ( ! $askable ) {
 			return new \WP_Error( 'ohmylms_placement_empty', __( 'There are no placement questions for this subject yet.', 'ohmylms' ), array( 'status' => 409 ) );
 		}
 		$session = array(
 			'uuid'       => wp_generate_uuid4(),
 			'student_id' => $student_id,
-			'guest_id'   => 0,
+			'guest_id'   => $guest_id,
 			'mode'       => self::MODE,
 			'term_id'    => 0,
 			'course_id'  => 0,
@@ -114,7 +116,7 @@ final class Placement {
 			if ( ! $skill ) {
 				break;
 			}
-			$question = self::question( (int) $session['student_id'], (array) $state['askable'][ $skill ], $used );
+			$question = self::question( self::owner( (int) $session['student_id'], (int) $session['guest_id'] ), (array) $state['askable'][ $skill ], $used );
 			if ( $question ) {
 				return Sessions::add_item( (int) $session['id'], (int) $question['version_id'], count( $used ) + 1, null, array( 'placement_skill' => $skill ) );
 			}
@@ -175,6 +177,29 @@ final class Placement {
 	}
 
 	/**
+	 * What the learner's latest placement tests say, for guidance: the skills placed as known and
+	 * the skills to start with. Neither is a level.
+	 *
+	 * @param int    $student_id Learner.
+	 * @param string $subject    One subject, or empty for every subject.
+	 * @return array{known:int[],start:int[]}
+	 */
+	public static function assumed( $student_id, $subject = '' ) {
+		$assumed = array(
+			'known' => array(),
+			'start' => array(),
+		);
+		foreach ( self::results( $student_id ) as $result ) {
+			if ( '' !== (string) $subject && $result['subject'] !== $subject ) {
+				continue;
+			}
+			$assumed['known'] = array_merge( $assumed['known'], $result['known_ids'] );
+			$assumed['start'] = array_merge( $assumed['start'], array_column( $result['start'], 'id' ) );
+		}
+		return $assumed;
+	}
+
+	/**
 	 * Subjects a placement test can be taken in: those with placed shared skills.
 	 *
 	 * @return string[]
@@ -230,7 +255,7 @@ final class Placement {
 	 *
 	 * @param array $state   Placement state with result.
 	 * @param array $session Session row.
-	 * @return array known, total, asked, right, domains (domain, label, known, total, grade, grade_label), start (id, name, practice_id, practice_url), session.
+	 * @return array known_ids, known, total, asked, right, domains (domain, label, known, total, grade, grade_label), start (id, name, practice_id, practice_url), session.
 	 */
 	private static function describe( array $state, array $session ) {
 		$result  = $state['result'];
@@ -257,13 +282,14 @@ final class Placement {
 			);
 		}
 		return array(
-			'known'   => count( $result['known'] ),
-			'total'   => count( $result['known'] ) + count( $result['unknown'] ) + count( $result['unsure'] ),
-			'asked'   => (int) ( $result['asked'] ?? 0 ),
-			'right'   => (int) ( $result['right'] ?? 0 ),
-			'domains' => $domains,
-			'start'   => $start,
-			'session' => $session['uuid'],
+			'known_ids' => array_map( 'intval', $result['known'] ),
+			'known'     => count( $result['known'] ),
+			'total'     => count( $result['known'] ) + count( $result['unknown'] ) + count( $result['unsure'] ),
+			'asked'     => (int) ( $result['asked'] ?? 0 ),
+			'right'     => (int) ( $result['right'] ?? 0 ),
+			'domains'   => $domains,
+			'start'     => $start,
+			'session'   => $session['uuid'],
 		);
 	}
 
@@ -324,11 +350,11 @@ final class Placement {
 	 * For each shared skill, the terms with questions the learner may see: the skill itself, then
 	 * objectives mapped to it as equivalent.
 	 *
-	 * @param int   $student_id Learner.
-	 * @param array $graph      Compact graph.
+	 * @param array $owner Learner or guest, as practice access reads it.
+	 * @param array $graph Compact graph.
 	 * @return array<int,int[]> Skill => terms, only skills with at least one.
 	 */
-	private static function askable( $student_id, array $graph ) {
+	private static function askable( array $owner, array $graph ) {
 		$skills = array_map( 'intval', array_keys( $graph ) );
 		if ( ! $skills ) {
 			return array();
@@ -346,7 +372,6 @@ final class Placement {
 			}
 		}
 		$pools   = Selector::pools( array_merge( ...array_values( $terms ) ) );
-		$owner   = array( 'student_id' => (int) $student_id );
 		$askable = array();
 		foreach ( $terms as $skill => $list ) {
 			foreach ( array_unique( $list ) as $term ) {
@@ -361,13 +386,12 @@ final class Placement {
 	/**
 	 * A question for a skill the learner has not seen in this test, standard difficulty first.
 	 *
-	 * @param int   $student_id Learner.
-	 * @param int[] $terms      Terms with questions for the skill.
-	 * @param int[] $used       Questions already used in the test.
+	 * @param array $owner Learner or guest.
+	 * @param int[] $terms Terms with questions for the skill.
+	 * @param int[] $used  Questions already used in the test.
 	 * @return array|null Pool row.
 	 */
-	private static function question( $student_id, array $terms, array $used ) {
-		$owner = array( 'student_id' => (int) $student_id );
+	private static function question( array $owner, array $terms, array $used ) {
 		$pools = Selector::pools( $terms );
 		$rows  = array();
 		foreach ( $terms as $term ) {
@@ -390,6 +414,17 @@ final class Placement {
 		);
 		$choices  = $standard ? $standard : $rows;
 		return $choices[ random_int( 0, count( $choices ) - 1 ) ];
+	}
+
+	/**
+	 * The owner array practice access expects.
+	 *
+	 * @param int $student_id Learner, or 0.
+	 * @param int $guest_id   Guest, or 0.
+	 * @return array
+	 */
+	private static function owner( $student_id, $guest_id ) {
+		return $student_id ? array( 'student_id' => (int) $student_id ) : array( 'guest_id' => (int) $guest_id );
 	}
 
 	/**

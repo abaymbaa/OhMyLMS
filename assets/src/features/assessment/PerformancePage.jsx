@@ -21,6 +21,7 @@ import {
 	rebuildStudent,
 } from './api.mjs';
 import { SkillMatrix } from './SkillMatrix';
+import { LearnerGuidance } from './LearnerGuidance';
 
 /**
  * Skill performance by course and unit: learners x skills, separate from grades.
@@ -232,18 +233,10 @@ function StudentSkills( { student, courseId, unitId, onClose } ) {
 							</Button>
 						</Fragment>
 					) }
-					{ data.recommendations.length > 0 && (
-						<Fragment>
-							<h3>{ __( 'Suggestions', 'ohmylms' ) }</h3>
-							<ul>
-								{ data.recommendations.map( ( item, index ) => (
-									<li key={ index }>
-										{ item.skill?.name }: { item.message }
-									</li>
-								) ) }
-							</ul>
-						</Fragment>
-					) }
+					<LearnerGuidance
+						studentId={ student.id }
+						courseId={ courseId }
+					/>
 					<h3>{ __( 'Recent evidence', 'ohmylms' ) }</h3>
 					<table className="widefat striped">
 						<thead>

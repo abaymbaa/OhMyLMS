@@ -114,6 +114,28 @@ try {
 	Guidance::flush();
 	ok( 2 === Snapshot::guidance( $learner, 10 )['reviews']['due'], 'without the link the review is due again' );
 
+	// ---- One subject at a time ----
+	$other_subject = 'Physics ' . $tag;
+	$force         = Comparison::save_shared( 0, array( 'name' => 'Forces ' . $tag, 'subject' => $other_subject, 'domain' => 'mechanics', 'grade_from' => 9, 'grade_to' => 9 ) );
+	$terms[]       = (int) $force['id'];
+	$state( (int) $force['id'], 'familiar', 1 );
+	Guidance::flush();
+	$all  = Snapshot::guidance( $learner, 10 );
+	$only = Snapshot::guidance( $learner, 10, $subject );
+	$phys = Snapshot::guidance( $learner, 10, $other_subject );
+	ok( array( 'Mathematics ' . $tag, $other_subject ) === $all['subjects'] && '' === $all['subject'] && in_array( 'mechanics', array_column( $all['areas'], 'domain' ), true ), 'all subjects together: ' . wp_json_encode( $all['subjects'] ) );
+	ok( $subject === $only['subject'] && ! in_array( 'mechanics', array_column( $only['areas'], 'domain' ), true ) && 1 === count( $only['readiness'] ), 'one subject leaves the others out' );
+	ok( array( 'mechanics' ) === array_column( $phys['areas'], 'domain' ) && array() === $phys['readiness'] && array() === $phys['next_steps'], 'the other subject has only its own skill and no syllabus' );
+
+	// ---- A placement test feeds ready skills ----
+	$wpdb->insert( AssessmentSchema::table( 'practice_sessions' ), array( 'uuid' => wp_generate_uuid4(), 'student_id' => $learner, 'mode' => 'placement', 'term_id' => 0, 'policy' => wp_json_encode( array( 'placement' => array( 'subject' => $subject, 'grade' => 8, 'graph' => array(), 'askable' => array(), 'result' => array( 'known' => array( $triangle ), 'unknown' => array(), 'unsure' => array(), 'domains' => array(), 'start' => array( $integers ) ) ) ) ), 'status' => 'complete', 'item_limit' => 5, 'started_at' => current_time( 'mysql', true ), 'completed_at' => current_time( 'mysql', true ) ) );
+	$placement_session = (int) $wpdb->insert_id;
+	Guidance::flush();
+	$placed = Snapshot::guidance( $learner, 10, $subject );
+	$ready  = array_values( array_filter( $placed['next_steps'], static function ( $step ) { return 'ready' === $step['type']; } ) );
+	ok( in_array( $pythag, array_column( array_column( $ready, 'skill' ), 'id' ), true ), 'a prerequisite the placement found known makes its skill ready: ' . wp_json_encode( array_column( array_column( $ready, 'skill' ), 'id' ) ) );
+	$wpdb->delete( AssessmentSchema::table( 'practice_sessions' ), array( 'id' => $placement_session ) );
+
 	// ---- REST and permissions ----
 	wp_set_current_user( $learner );
 	$own = guidance_get( $learner, array( 'limit' => 2 ) );
@@ -124,6 +146,7 @@ try {
 	ok( in_array( guidance_get( $learner )->get_status(), array( 401, 403 ), true ), 'guests cannot read it' );
 	wp_set_current_user( $admin );
 	ok( 200 === guidance_get( $learner )->get_status(), 'administrators read any learner' );
+	ok( array( 'mechanics' ) === array_column( guidance_get( $learner, array( 'subject' => $other_subject ) )->get_data()['areas'], 'domain' ), 'the route narrows to a subject' );
 	ok( isset( \OhMyLMS\MCP\Server::tools()['get_student_guidance'] ) && '/reports/skills/students/{student_id}/guidance' === \OhMyLMS\MCP\Server::tools()['get_student_guidance']['route'], 'the MCP server lists the guidance tool' );
 
 	// ---- My skills ----

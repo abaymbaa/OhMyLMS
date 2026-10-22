@@ -459,9 +459,12 @@ final class Sessions {
 		if ( $placement ) {
 			// No feedback during a placement test: it would teach the answers it is measuring.
 			self::issue( self::get( $session['uuid'] ) );
+			// The receipt lets a guest's device offer to claim the answer after login; it says nothing about the answer.
 			return array(
-				'item_id' => (int) $graded['item_id'],
-				'session' => self::state( self::get( $session['uuid'] ) ),
+				'item_id'       => (int) $graded['item_id'],
+				'receipt'       => $graded['receipt'],
+				'question_uuid' => $graded['question_uuid'],
+				'session'       => self::state( self::get( $session['uuid'] ) ),
 			);
 		}
 		// A wrong answer that may be tried again leaves the question open: nothing new is issued yet.

@@ -53,9 +53,6 @@ final class PlacementPage {
 		if ( '' === $subject || ! in_array( $subject, Placement::subjects(), true ) ) {
 			return '<p class="ohmylms-practice-notice">' . esc_html__( 'There is no placement test for this subject.', 'ohmylms' ) . '</p>';
 		}
-		if ( ! is_user_logged_in() ) {
-			return '<p class="ohmylms-practice-notice">' . esc_html__( 'Log in to take a placement test.', 'ohmylms' ) . ' <a href="' . esc_url( wp_login_url( (string) get_permalink() ) ) . '">' . esc_html__( 'Log in', 'ohmylms' ) . '</a></p>';
-		}
 		$limit = PlacementModel::limit( $attributes['items'] );
 		Frontend::runner_assets( self::strings() );
 		ob_start();
@@ -86,6 +83,12 @@ final class PlacementPage {
 				</p>
 			</div>
 			<noscript><p><?php esc_html_e( 'Enable JavaScript to take the placement test.', 'ohmylms' ); ?></p></noscript>
+			<?php if ( ! is_user_logged_in() ) { ?>
+				<p class="ohmylms-practice-guest">
+					<?php esc_html_e( 'You are taking the test as a guest. Log in on this device afterwards to keep your placement and the answers that count toward your skills.', 'ohmylms' ); ?>
+					<a href="<?php echo esc_url( wp_login_url( Placement::url( $subject ) ) ); ?>"><?php esc_html_e( 'Log in', 'ohmylms' ); ?></a>
+				</p>
+			<?php } ?>
 			<div class="ohmylms-practice-stage" aria-live="polite"></div>
 		</section>
 		<?php
@@ -153,16 +156,11 @@ final class PlacementPage {
 								<span class="ohmylms-placement-first">
 									<?php esc_html_e( 'Start with:', 'ohmylms' ); ?>
 									<?php
-									foreach ( $result['start'] as $index => $skill ) {
-										echo $index ? ', ' : ' ';
-										if ( $skill['practice_url'] ) {
-											?>
-											<a href="<?php echo esc_url( $skill['practice_url'] ); ?>"><?php echo esc_html( $skill['name'] ); ?></a>
-											<?php
-										} else {
-											echo esc_html( $skill['name'] );
-										}
+									$links = array();
+									foreach ( $result['start'] as $skill ) {
+										$links[] = $skill['practice_url'] ? '<a href="' . esc_url( $skill['practice_url'] ) . '">' . esc_html( $skill['name'] ) . '</a>' : esc_html( $skill['name'] );
 									}
+									echo implode( ', ', $links ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Each part escaped above.
 									?>
 								</span>
 							<?php } ?>

@@ -19,8 +19,9 @@ $checks = 0; $terms = array(); $users = array(); $posts = array();
 $admin = get_user_by( 'login', $config['username'] )->ID;
 $tag   = wp_generate_password( 6, false, false );
 function ok( $value, $message ) { global $checks; if ( ! $value ) { throw new RuntimeException( $message ); } ++$checks; }
-function rest( $method, $path, array $data = array() ) {
+function rest( $method, $path, array $data = array(), $guest = '' ) {
 	$request = new WP_REST_Request( $method, '/ohmylms/v1/' . $path );
+	if ( $guest ) { $request->set_header( \OhMyLMS\Practice\Guests::HEADER, $guest ); }
 	if ( 'GET' === $method ) { $request->set_query_params( $data ); }
 	elseif ( $data ) { $request->set_header( 'Content-Type', 'application/json' ); $request->set_body( wp_json_encode( $data ) ); }
 	return rest_do_request( $request );
@@ -63,7 +64,21 @@ try {
 
 	// ---- Access ----
 	wp_set_current_user( 0 );
-	ok( in_array( rest( 'POST', 'placement/sessions', array( 'subject' => $subject ) )->get_status(), array( 401, 403 ), true ), 'guests cannot take a test' );
+	ok( 401 === rest( 'POST', 'placement/sessions', array( 'subject' => $subject ) )->get_status(), 'without a guest credential nobody can start a test' );
+	// A guest takes the test, then signs in: the test becomes theirs.
+	$guest       = \OhMyLMS\Practice\Guests::create();
+	$guest_start = rest( 'POST', 'placement/sessions', array( 'subject' => $subject, 'item_limit' => 5 ), $guest['token'] );
+	ok( 201 === $guest_start->get_status(), 'a guest starts a test: ' . wp_json_encode( $guest_start->get_data() ) );
+	$guest_state = data( $guest_start );
+	$guest_right = array_column( $guest_state['current']['questions'], 'id', 'answer' )['Right'];
+	$guest_after = rest( 'POST', 'practice/sessions/' . $guest_state['uuid'] . '/answer', array( 'item_id' => $guest_state['current']['item_id'], 'response' => array( $guest_right ) ), $guest['token'] );
+	ok( 200 === $guest_after->get_status() && 1 === data( $guest_after )['session']['answered'], 'the guest answers through the practice routes' );
+	ok( 401 === rest( 'GET', 'practice/sessions/' . $guest_state['uuid'] )->get_status() && 404 === rest( 'GET', 'practice/sessions/' . $guest_state['uuid'], array(), \OhMyLMS\Practice\Guests::create()['token'] )->get_status(), 'another visitor or guest cannot open the guest test' );
+	$claimer = wp_create_user( 'placement-claim-' . $tag, wp_generate_password(), 'placement-claim-' . $tag . '@example.org' ); $users[] = $claimer;
+	ok( ! is_wp_error( \OhMyLMS\Practice\Guests::claim( $guest['token'], $claimer ) ), 'the guest signs in' );
+	$claimed = $wpdb->get_row( $wpdb->prepare( 'SELECT student_id, mode FROM %i WHERE uuid=%s', AssessmentSchema::table( 'practice_sessions' ), $guest_state['uuid'] ), ARRAY_A );
+	$moved   = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE source_type='placement' AND student_id=%d", AssessmentSchema::table( 'grade_events' ), $claimer ) );
+	ok( $claimer === (int) $claimed['student_id'] && 'placement' === $claimed['mode'] && 1 === $moved, 'the test and its graded answer move to the learner' );
 	$learner = wp_create_user( 'placement-' . $tag, wp_generate_password(), 'placement-' . $tag . '@example.org' ); $users[] = $learner;
 	$other   = wp_create_user( 'placement-other-' . $tag, wp_generate_password(), 'placement-other-' . $tag . '@example.org' ); $users[] = $other;
 	wp_set_current_user( $learner );
@@ -95,7 +110,7 @@ try {
 		}
 		$right    = array_column( $state['current']['questions'], 'id', 'answer' )['Right'];
 		$response = data( rest( 'POST', 'practice/sessions/' . $uuid . '/answer', array( 'item_id' => $item, 'response' => array( $right ) ) ) );
-		ok( ! isset( $response['feedback'] ) && ! isset( $response['correct'] ) && isset( $response['session'] ), 'no feedback during the test: ' . wp_json_encode( array_keys( $response ) ) );
+		ok( ! isset( $response['feedback'] ) && ! isset( $response['correct'] ) && isset( $response['session'] ) && 64 === strlen( (string) $response['receipt'] ), 'no feedback during the test, only a receipt: ' . wp_json_encode( array_keys( $response ) ) );
 		$state = $response['session'];
 	}
 	ok( 'complete' === $state['status'] && count( $asked ) <= 6 && count( $asked ) === count( array_unique( $asked ) ), 'one question per skill, within the limit: ' . wp_json_encode( $asked ) );

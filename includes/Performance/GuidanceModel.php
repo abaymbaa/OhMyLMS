@@ -212,21 +212,31 @@ final class GuidanceModel {
 	/**
 	 * Skills not started whose prerequisites are all proficient or mastered.
 	 *
-	 * @param array<int,array> $pooled Pooled skills.
-	 * @param array<int,array> $info   Skill => prerequisites (skill IDs), domain, grade_from.
-	 * @param array[]          $areas  Areas, so weaker domains come first among skills of the same grade.
-	 * @return array[] Each: skill, prerequisites, ordered by grade (earliest first), weaker area, then ID.
+	 * A placement test can add to this: skills it placed as known count as met prerequisites (they
+	 * are not levels, so they are never suggested themselves), and the skills it said to start with
+	 * come first, even when they need nothing first.
+	 *
+	 * @param array<int,array> $pooled    Pooled skills.
+	 * @param array<int,array> $info      Skill => prerequisites (skill IDs), domain, grade_from.
+	 * @param array[]          $areas     Areas, so weaker domains come first among skills of the same grade.
+	 * @param int[]            $known     Skills a placement test placed as known.
+	 * @param int[]            $preferred Skills a placement test said to start with.
+	 * @return array[] Each: skill, prerequisites, placement (bool), ordered placement first, then by grade (earliest first), weaker area, then ID.
 	 */
-	public static function ready( array $pooled, array $info, array $areas = array() ) {
-		$strength = array_column( $areas, 'strength', 'domain' );
-		$result   = array();
+	public static function ready( array $pooled, array $info, array $areas = array(), array $known = array(), array $preferred = array() ) {
+		$strength  = array_column( $areas, 'strength', 'domain' );
+		$known     = array_flip( array_map( 'intval', $known ) );
+		$preferred = array_flip( array_map( 'intval', $preferred ) );
+		$result    = array();
 		foreach ( $info as $skill => $details ) {
 			$prerequisites = array_values( array_map( 'intval', $details['prerequisites'] ?? array() ) );
-			if ( ! $prerequisites || isset( $pooled[ $skill ] ) ) {
+			$placement     = isset( $preferred[ $skill ] );
+			if ( ( ! $prerequisites && ! $placement ) || isset( $pooled[ $skill ] ) || isset( $known[ $skill ] ) ) {
 				continue;
 			}
 			foreach ( $prerequisites as $prerequisite ) {
-				if ( ! isset( $pooled[ $prerequisite ] ) || ! Levels::is_proficient( $pooled[ $prerequisite ]['level'] ) ) {
+				$met = isset( $known[ $prerequisite ] ) || ( isset( $pooled[ $prerequisite ] ) && Levels::is_proficient( $pooled[ $prerequisite ]['level'] ) );
+				if ( ! $met ) {
 					continue 2;
 				}
 			}
@@ -234,7 +244,8 @@ final class GuidanceModel {
 			$result[] = array(
 				'skill'         => (int) $skill,
 				'prerequisites' => $prerequisites,
-				'sort'          => array( $grade ? $grade : 99, $strength[ $details['domain'] ?? '' ] ?? 100, (int) $skill ),
+				'placement'     => $placement,
+				'sort'          => array( $placement ? 0 : 1, $grade ? $grade : 99, $strength[ $details['domain'] ?? '' ] ?? 100, (int) $skill ),
 			);
 		}
 		usort(
@@ -299,7 +310,7 @@ final class GuidanceModel {
 	 * @param array<int,array> $reviews Review states.
 	 * @param array[]          $ready   Ready skills, already ordered.
 	 * @param int              $limit   How many.
-	 * @return array[] Each: type (help, review or ready), skill, and for reviews credit and covered_by; for ready, prerequisites.
+	 * @return array[] Each: type (help, review or ready), skill, and for reviews credit and covered_by; for ready, prerequisites and reason (placement when a placement test suggested it).
 	 */
 	public static function next_steps( array $pooled, array $reviews, array $ready, $limit = 6 ) {
 		$help = array();
@@ -350,6 +361,7 @@ final class GuidanceModel {
 				'type'          => 'ready',
 				'skill'         => (int) $item['skill'],
 				'prerequisites' => $item['prerequisites'],
+				'reason'        => empty( $item['placement'] ) ? '' : 'placement',
 			);
 		}
 		return array_slice( $items, 0, max( 0, (int) $limit ) );

@@ -64,11 +64,16 @@ class SkillReportController extends RestController {
 					'callback'            => array( $this, 'guidance' ),
 					'permission_callback' => array( $this, 'student_permission' ),
 					'args'                => array(
-						'limit' => array(
+						'limit'   => array(
 							'type'    => 'integer',
 							'minimum' => 1,
 							'maximum' => 20,
 							'default' => 6,
+						),
+						'subject' => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
 				),
@@ -311,12 +316,12 @@ class SkillReportController extends RestController {
 	/**
 	 * Guidance from the learner's skill states. It is a summary, so guardians see it too.
 	 *
-	 * @param WP_REST_Request $request Request with student and limit.
+	 * @param WP_REST_Request $request Request with student, limit and subject.
 	 * @return \WP_REST_Response
 	 */
 	public function guidance( WP_REST_Request $request ) {
 		Evidence::process( 100 );
-		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'] ) );
+		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'], (string) $request['subject'] ) );
 	}
 
 	/**

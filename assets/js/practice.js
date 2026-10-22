@@ -658,6 +658,8 @@
 				.then( function ( result ) {
 					// A placement test shows no feedback: it moves straight on.
 					if ( state.placement ) {
+						if ( window.ohmylmsRememberPractice )
+							window.ohmylmsRememberPractice( result );
 						show( result.session );
 						return;
 					}
