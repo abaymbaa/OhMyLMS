@@ -27,6 +27,8 @@ function rest( $method, $path, array $query = array() ) {
 	$request->set_query_params( $query );
 	return rest_do_request( $request );
 }
+/** Response data as a client receives it (objects become arrays). */
+function data( $response ) { return json_decode( wp_json_encode( $response->get_data() ), true ); }
 
 try {
 	wp_set_current_user( $admin );
@@ -72,13 +74,13 @@ try {
 	update_option( Comparison::OPTION, array_merge( (array) $before, array( $subject => array( $grade9, $igcse ) ) ) );
 
 	// ---- Subjects ----
-	$subjects = array_column( rest( 'GET', 'syllabus-comparison/skill-map/subjects' )->get_data(), null, 'subject' );
+	$subjects = array_column( data( rest( 'GET', 'syllabus-comparison/skill-map/subjects' ) ), null, 'subject' );
 	ok( 8 === $subjects[ $subject ]['skills'] && array( $grade9, $igcse ) === array_column( $subjects[ $subject ]['syllabuses'], 'id' ), 'subjects list their skills and syllabuses: ' . wp_json_encode( $subjects[ $subject ] ?? null ) );
 
 	// ---- Coherence map ----
 	$response = rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject ) );
 	ok( 200 === $response->get_status(), 'map read: ' . wp_json_encode( $response->get_data() ) );
-	$map = $response->get_data();
+	$map = data( $response );
 	ok( array( 'number', 'algebra', 'geometry' ) === array_column( $map['domains'], 'id' ) && 'Algebra' === $map['domains'][1]['label'], 'domains in library order: ' . wp_json_encode( $map['domains'] ) );
 	ok( range( 5, 10 ) === array_column( $map['grades'], 'value' ) && 'Grade 5' === $map['grades'][0]['label'], 'grades from the first to the last used' );
 	ok( array( $loose ) === $map['unplaced'] && 8 === count( $map['skills'] ), 'unplaced skills are listed apart' );
@@ -92,7 +94,7 @@ try {
 	ok( 400 === rest( 'GET', 'syllabus-comparison/skill-map' )->get_status(), 'a subject is required' );
 
 	// ---- Syllabus overlay ----
-	$overlay = rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject, 'syllabus_id' => $grade9 ) )->get_data()['syllabus'];
+	$overlay = data( rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject, 'syllabus_id' => $grade9 ) ) )['syllabus'];
 	ok( $grade9 === $overlay['id'] && 5 === $overlay['objectives'] && 2 === $overlay['unmapped'], 'related and missing mappings count as unmapped: ' . wp_json_encode( $overlay ) );
 	ok( 3 === count( $overlay['covered'] ) && isset( $overlay['covered'][ $linear ], $overlay['covered'][ $quadratic ], $overlay['covered'][ $powers ] ), 'three skills taught: ' . wp_json_encode( $overlay['covered'] ) );
 	ok( 'narrower' === $overlay['covered'][ $powers ][0]['relation'] && ! isset( $overlay['covered'][ $triangle ] ), 'covering relations are kept; related ones do not cover' );
@@ -107,14 +109,15 @@ try {
 	$state( $quadratic, 'familiar' );
 	$state( $pythag, 'attempted' );
 	Guidance::flush();
-	$student = rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject, 'student_id' => $learner ) )->get_data()['student'];
+	$student = data( rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject, 'student_id' => $learner ) ) )['student'];
 	ok( 'mastered' === $student['levels'][ $linear ] && 'familiar' === $student['levels'][ $quadratic ] && ! isset( $student['levels'][ $objectives9[0] ] ), 'objective work shows on its shared skill: ' . wp_json_encode( $student ) );
 	ok( 5 === $student['counts']['not-started'] && 1 === $student['counts']['mastered'] && 'algebra' === $student['areas'][0]['domain'] && 75 === $student['areas'][0]['strength'], 'counts and strength per domain: ' . wp_json_encode( $student['areas'] ) );
 	ok( 404 === rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject, 'student_id' => 999999999 ) )->get_status(), 'an unknown learner is refused' );
 
 	wp_set_current_user( $learner );
 	$own = rest( 'GET', 'reports/skills/students/' . $learner . '/map' );
-	ok( 200 === $own->get_status() && array( array( 'subject' => $subject, 'started' => 3 ) ) === $own->get_data()['subjects'] && $subject === $own->get_data()['map']['subject'] && 'mastered' === $own->get_data()['map']['student']['levels'][ $linear ], 'a learner reads their own map: ' . wp_json_encode( $own->get_data()['subjects'] ) );
+	$mine = data( $own );
+	ok( 200 === $own->get_status() && array( array( 'subject' => $subject, 'started' => 3 ) ) === $mine['subjects'] && $subject === $mine['map']['subject'] && 'mastered' === $mine['map']['student']['levels'][ $linear ], 'a learner reads their own map: ' . wp_json_encode( $mine['subjects'] ) );
 	ok( 403 === rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject ) )->get_status() || 401 === rest( 'GET', 'syllabus-comparison/skill-map', array( 'subject' => $subject ) )->get_status(), 'learners cannot read the coherence map' );
 	ok( in_array( rest( 'GET', 'syllabus-comparison/compare', array( 'a' => $grade9, 'b' => $igcse ) )->get_status(), array( 401, 403 ), true ), 'learners cannot compare syllabuses' );
 	if ( \OhMyLMS\Practice\Frontend::enabled() ) {
@@ -124,14 +127,14 @@ try {
 	}
 	wp_set_current_user( $other );
 	ok( 403 === rest( 'GET', 'reports/skills/students/' . $learner . '/map' )->get_status(), 'another learner cannot read it' );
-	$empty = rest( 'GET', 'reports/skills/students/' . $other . '/map' )->get_data();
+	$empty = data( rest( 'GET', 'reports/skills/students/' . $other . '/map' ) );
 	ok( array() === $empty['subjects'] && null === $empty['map'], 'a learner with no skills has no map' );
 	wp_set_current_user( $admin );
 
 	// ---- Syllabus comparison ----
 	$compare = rest( 'GET', 'syllabus-comparison/compare', array( 'a' => $grade9, 'b' => $igcse ) );
 	ok( 200 === $compare->get_status(), 'compare read: ' . wp_json_encode( $compare->get_data() ) );
-	$result = $compare->get_data();
+	$result = data( $compare );
 	ok( array( $linear, $quadratic ) === $result['both'] && array( $powers ) === $result['only_a'] && array( $pythag ) === $result['only_b'], 'both, only A and only B: ' . wp_json_encode( array( $result['both'], $result['only_a'], $result['only_b'] ) ) );
 	ok( 50 === $result['overlap'] && array( $objectives9[3], $objectives9[4] ) === $result['unmapped_a'] && array() === $result['unmapped_b'], 'overlap and unmapped objectives' );
 	ok( 'Grade 9 ' . $tag === $result['a']['name'] && 5 === count( $result['a']['objectives'] ) && isset( $result['skills'][ $pythag ] ), 'the sides and skills are named' );
