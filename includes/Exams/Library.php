@@ -125,6 +125,8 @@ final class Library {
 			'composed'         => ! empty( $data['composed'] ),
 			'editor_url'       => ! empty( $data['composed'] ) ? (string) get_edit_post_link( (int) $data['quiz_id'], 'raw' ) : '',
 			'instructions'     => (string) ( $data['instructions'] ?? '' ),
+			// What still blocks publication, for a draft written in OhMyLMS.
+			'problems'         => $live ? Composer::problems( $id ) : array(),
 		);
 	}
 

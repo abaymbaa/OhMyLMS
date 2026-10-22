@@ -375,3 +375,23 @@ Two tools (ability IDs `ohmylms/list-unit-skills` and `ohmylms/create-skill-asse
   questions per skill (see section 9 of `docs/learner-experience/KHAN-ACTIVITIES.md`) and never creates questions.
 
 The same builder is available to people on **OhMyLMS -> Skill assessments** and as `POST /ohmylms/v1/skill-assessments`.
+
+## Exams
+
+Four tools let an assistant prepare an exam as a draft. They call the exam routes the Exams tab uses, so
+the same permission checks and rules apply. Nothing here publishes: a person opens the exam's `editor_url`
+(the Gutenberg quiz editor), reviews the questions and presses **Publish exam**, which approves each
+question's current version and freezes the exam.
+
+| Tool | Arguments |
+| --- | --- |
+| `list_exams` | Optional `page`. Returns your exams with `status`, `duration_minutes`, `total_marks`, `question_ids`, `quiz_id`, and for exams written in OhMyLMS `editor_url` and `problems` (what still blocks publishing; an empty list means ready for a person to publish). |
+| `create_exam` | `title` (up to 190 characters), `duration_minutes` (1–1440). Creates an empty draft; returns `id`, `quiz_id` and `editor_url`. |
+| `set_exam_instructions` | `id`, `instructions` (up to 4000 characters). Replaces the text learners read first. Draft exams only. |
+| `add_exam_questions` | `id`, `question_ids` (1–50). Places existing bank questions at the end of a draft exam in the order given; questions already in the exam keep their place. |
+
+Create questions first with `save_question` or `import_questions`, then place them with `add_exam_questions`.
+Ungraded activity types (poll, word-cloud, slide, spin-wheel, open-box, speaking-cards, flip-tiles,
+flashcards) add no marks and appear in `problems` until removed. Publishing is deliberately not a tool, as
+for `create_skill_assessment`. Reconnect or refresh tool discovery after installing the update, and add the
+four names to any explicit client allowlist. No new token is needed.

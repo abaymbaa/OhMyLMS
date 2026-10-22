@@ -10,7 +10,9 @@ namespace OhMyLMS\Exams;
 use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\ErrorException;
 use OhMyLMS\Assessment\ExtendedQuestions;
+use OhMyLMS\QuestionBank\AccessPolicy;
 use OhMyLMS\QuestionBank\BankAttributes;
+use OhMyLMS\QuestionBank\DraftWriter;
 use OhMyLMS\QuestionBank\ReviewQueue;
 use OhMyLMS\QuestionBank\VersionPublisher;
 use OhMyLMS\Utility\Transaction;
@@ -48,6 +50,55 @@ final class Composer {
 				'callback'            => array( __CLASS__, 'settings' ),
 			)
 		);
+		register_rest_route(
+			'ohmylms/v1',
+			'/exams/(?P<id>\d+)/questions',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => array( Library::class, 'permission' ),
+				'callback'            => array( __CLASS__, 'add_questions' ),
+			)
+		);
+	}
+
+	/**
+	 * Place existing bank questions at the end of a draft exam, in the order given. Questions already in
+	 * the exam keep their position.
+	 *
+	 * @param \WP_REST_Request $request Exam ID and question IDs.
+	 * @return array|\WP_Error Exam summary.
+	 */
+	public static function add_questions( $request ) {
+		$id   = (int) $request['id'];
+		$data = get_post_meta( $id, Library::META, true );
+		if ( ! is_array( $data ) || empty( $data['composed'] ) ) {
+			return self::error( 'composed', __( 'Questions can only be added to exams created in OhMyLMS.', 'ohmylms' ), 404 );
+		}
+		if ( 'publish' === get_post_status( $id ) ) {
+			return self::error( 'locked', __( 'This exam is published and can no longer be edited.', 'ohmylms' ), 409 );
+		}
+		$ids = is_array( $request['question_ids'] ) ? array_values( array_unique( array_filter( array_map( 'absint', $request['question_ids'] ) ) ) ) : array();
+		if ( ! $ids || count( $ids ) > 50 ) {
+			return self::error( 'questions', __( 'Provide between 1 and 50 question IDs.', 'ohmylms' ) );
+		}
+		foreach ( $ids as $question_id ) {
+			if ( OHMYLMS_QUESTION_CPT !== get_post_type( $question_id ) || ! AccessPolicy::can_use_question( $question_id ) ) {
+				/* translators: %d: question ID. */
+				return self::error( 'questions', sprintf( __( 'Question %d is unavailable to you.', 'ohmylms' ), $question_id ), 403 );
+			}
+		}
+		try {
+			Transaction::run(
+				static function () use ( $data, $ids ) {
+					foreach ( $ids as $question_id ) {
+						DraftWriter::link( (int) $data['quiz_id'], $question_id );
+					}
+				}
+			);
+		} catch ( \Throwable $error ) {
+			return self::error( 'storage', __( 'The questions could not be added. Nothing was changed.', 'ohmylms' ), 500 );
+		}
+		return Library::view( $id );
 	}
 
 	/**
