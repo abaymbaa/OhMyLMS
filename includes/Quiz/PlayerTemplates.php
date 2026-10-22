@@ -76,6 +76,10 @@ final class PlayerTemplates {
 	public static function choices() {
 		$choices = array();
 		foreach ( self::all() as $id => $definition ) {
+			// The exam design belongs to exams and is applied by the exam document, not chosen per quiz.
+			if ( 'exam' === $id ) {
+				continue;
+			}
 			$choices[] = array(
 				'value'       => $id,
 				'label'       => $definition['label'],

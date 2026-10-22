@@ -9,6 +9,7 @@ namespace OhMyLMS\Exams;
 
 use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\ErrorException;
+use OhMyLMS\Assessment\ExtendedQuestions;
 use OhMyLMS\QuestionBank\BankAttributes;
 use OhMyLMS\QuestionBank\ReviewQueue;
 use OhMyLMS\QuestionBank\VersionPublisher;
@@ -195,6 +196,13 @@ final class Composer {
 		}
 		if ( ! $snapshot['question_ids'] ) {
 			$problems[] = __( 'Add at least one question.', 'ohmylms' );
+		}
+		$data = (array) get_post_meta( $id, Library::META, true );
+		foreach ( array_values( ohmylms_get_quiz( (int) $data['quiz_id'] )->get_questions() ) as $index => $link ) {
+			if ( in_array( $link['settings']['type'] ?? '', ExtendedQuestions::UNSCORED_TYPES, true ) ) {
+				/* translators: 1: question number, 2: question type. */
+				$problems[] = sprintf( __( 'Question %1$d (%2$s) is an ungraded activity that adds no marks. Remove it from the exam.', 'ohmylms' ), $index + 1, $link['settings']['type'] );
+			}
 		}
 		if ( $snapshot['duration_minutes'] < 1 || $snapshot['duration_minutes'] > 1440 ) {
 			$problems[] = __( 'Turn on the time limit in Quiz settings (1 to 1440 minutes).', 'ohmylms' );
