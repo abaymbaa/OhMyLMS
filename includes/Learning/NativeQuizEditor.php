@@ -43,8 +43,11 @@ final class NativeQuizEditor {
 		if ( ! $post || 'ohmylms-quiz' !== $post->post_type || false === $allowed ) {
 			return $allowed;
 		}
-		// The assessment kind's profile may narrow the blocks (an exam offers questions only).
-		$keep  = \OhMyLMS\Assessment\Profiles::of( $post->ID )['blocks'] ?? array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK, 'ohmylms/question-player' );
+		// Question blocks always; the question player (practice runs) only when the kind allows that delivery.
+		$keep = array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK );
+		if ( \OhMyLMS\Assessment\Profiles::allows( $post->ID, \OhMyLMS\Assessment\DeliveryPolicy::PRACTICE ) ) {
+			$keep[] = 'ohmylms/question-player';
+		}
 		$names = array();
 		foreach ( \WP_Block_Type_Registry::get_instance()->get_all_registered() as $name => $type ) {
 			if ( 0 === strpos( $name, 'ohmylms/' ) && ! in_array( $name, $keep, true ) && false === strpos( $name, 'math' ) ) {

@@ -8,6 +8,7 @@
 namespace OhMyLMS\Exams;
 
 use OhMyLMS\Assessment\AssessmentSettings;
+use OhMyLMS\Assessment\DeliveryPolicy;
 use OhMyLMS\Assessment\ErrorException;
 use OhMyLMS\Assessment\ExtendedQuestions;
 use OhMyLMS\QuestionBank\AccessPolicy;
@@ -82,7 +83,7 @@ final class Composer {
 			return self::error( 'questions', __( 'Provide between 1 and 50 question IDs.', 'ohmylms' ) );
 		}
 		foreach ( $ids as $question_id ) {
-			if ( OHMYLMS_QUESTION_CPT !== get_post_type( $question_id ) || ! AccessPolicy::can_use_question( $question_id ) ) {
+			if ( ! DeliveryPolicy::allows( $question_id, DeliveryPolicy::QUIZ ) || ! AccessPolicy::can_use_question( $question_id ) ) {
 				/* translators: %d: question ID. */
 				return self::error( 'questions', sprintf( __( 'Question %d is unavailable to you.', 'ohmylms' ), $question_id ), 403 );
 			}

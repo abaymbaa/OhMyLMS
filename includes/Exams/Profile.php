@@ -7,7 +7,7 @@
 
 namespace OhMyLMS\Exams;
 
-use OhMyLMS\Learning\NativeQuizEditor;
+use OhMyLMS\Assessment\DeliveryPolicy;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -37,8 +37,8 @@ final class Profile {
 			'label'           => __( 'Exam', 'ohmylms' ),
 			'player_template' => 'exam',
 			'layout'          => 'one_question_per_page',
-			// Questions only: the question player and its games are practice, not exam content.
-			'blocks'          => array( NativeQuizEditor::QUESTION_BLOCK, NativeQuizEditor::REFERENCE_BLOCK ),
+			// Formal attempts only: practice runs and inline checks are not exam content.
+			'deliveries'      => array( DeliveryPolicy::QUIZ ),
 			'return_route'    => '/content-hub/exams',
 			'panel'           => 'exam',
 			'editor_data'     => array( __CLASS__, 'editor_data' ),

@@ -1,6 +1,10 @@
 /** @jsx createElement */
 import { createElement, useEffect, useState } from '@wordpress/element';
-import { registerBlockType, registerBlockVariation } from '@wordpress/blocks';
+import {
+	createBlock,
+	registerBlockType,
+	registerBlockVariation,
+} from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import {
 	Button,
@@ -489,7 +493,27 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 	);
 }
 
-registerBlockType( metadata, { edit: QuestionPlayerEdit, save: () => null } );
+registerBlockType( metadata, {
+	edit: QuestionPlayerEdit,
+	save: () => null,
+	// A practice set of exactly one chosen question is the same thing as a single question block.
+	transforms: {
+		to: [
+			{
+				type: 'block',
+				blocks: [ 'ohmylms/shared-multiple-choice' ],
+				isMatch: ( attributes ) =>
+					attributes.source === 'selected' &&
+					attributes.questionIds.length === 1,
+				transform: ( attributes ) =>
+					createBlock( 'ohmylms/shared-multiple-choice', {
+						questionId: attributes.questionIds[ 0 ],
+						delivery: 'inline',
+					} ),
+			},
+		],
+	},
+} );
 
 for ( const [ name, title, icon ] of [
 	...activities.map( ( [ id, label ] ) => [
