@@ -1351,6 +1351,24 @@
 	font: inherit;
 }
 
+.ohmylms-student-hub .oml-hub-field input[type="color"] {
+	width: 72px;
+	height: 44px;
+	padding: 4px;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-field input[type="checkbox"] {
+	width: auto;
+	margin-right: 8px;
+}
+
+.ohmylms-student-hub .oml-hub-field img {
+	align-self: flex-start;
+	border-radius: 8px;
+	object-fit: contain;
+}
+
 .ohmylms-student-hub .oml-hub-field small {
 	color: var(--hub-muted);
 }
