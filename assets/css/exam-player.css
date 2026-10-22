@@ -26,3 +26,21 @@
 		padding: 12px;
 	}
 }
+
+/* An exam in progress uses the full-width dashboard design instead of the centered shell. */
+.ohmylms-exam-shell.is-attempting {
+	max-width: none;
+	padding: 0;
+}
+
+.ohmylms-exam-shell.is-attempting > header {
+	display: none;
+}
+
+.ohmylms-exam-shell.is-attempting > p {
+	margin: 0;
+	padding: 8px 32px;
+	font-size: 13px;
+	background: #fff;
+	border-bottom: 1px solid var(--ohmylms-outline-color, #ddd);
+}

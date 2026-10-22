@@ -38,6 +38,10 @@ final class PlayerTemplates {
 				'label'       => __( 'Focus', 'ohmylms' ),
 				'description' => __( 'A calm dark stage with a single accent color.', 'ohmylms' ),
 			),
+			'exam'    => array(
+				'label'       => __( 'Exam', 'ohmylms' ),
+				'description' => __( 'A timed exam dashboard with a question palette, timer and progress overview. Used by exams.', 'ohmylms' ),
+			),
 		);
 		$registered = apply_filters( 'ohmylms_quiz_player_templates', $defaults );
 		$templates  = $defaults;
@@ -88,6 +92,9 @@ final class PlayerTemplates {
 	 */
 	public static function enqueue( $template ) {
 		wp_enqueue_style( 'ohmylms-player-templates', plugins_url( 'assets/css/quiz-player-templates.css', OHMYLMS_FILE ), array( 'ohmylms-frontend' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/quiz-player-templates.css' ) );
+		if ( 'exam' === self::resolve( $template ) ) {
+			wp_enqueue_style( 'ohmylms-exam-template', plugins_url( 'assets/css/exam-player-template.css', OHMYLMS_FILE ), array( 'ohmylms-player-templates' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/exam-player-template.css' ) );
+		}
 		$definition = self::all()[ self::resolve( $template ) ];
 		if ( ! empty( $definition['stylesheet'] ) ) {
 			wp_enqueue_style( $definition['stylesheet'] );
@@ -102,7 +109,7 @@ final class PlayerTemplates {
 	 * @param array  $args Escaped by the receiving template.
 	 */
 	public static function part( $part, $template, array $args ) {
-		if ( ! in_array( $part, array( 'header', 'progress', 'question-meta' ), true ) ) {
+		if ( ! in_array( $part, array( 'header', 'progress', 'question-meta', 'footer' ), true ) ) {
 			return;
 		}
 		$path = locate_template( 'ohmylms/quiz-player/' . self::resolve( $template ) . '/' . $part . '.php' );
@@ -112,6 +119,14 @@ final class PlayerTemplates {
 			load_template( $path, false, $args );
 			return;
 		}
-		ohmylms_get_template( 'quiz-player/' . $part . '.php', $args );
+		$resolved = self::resolve( $template );
+		// A design may ship its own part inside the plugin; the footer exists only for designs that add one.
+		if ( file_exists( OHMYLMS_DIR . '/templates/quiz-player/' . $resolved . '/' . $part . '.php' ) ) {
+			ohmylms_get_template( 'quiz-player/' . $resolved . '/' . $part . '.php', $args );
+			return;
+		}
+		if ( 'footer' !== $part ) {
+			ohmylms_get_template( 'quiz-player/' . $part . '.php', $args );
+		}
 	}
 }

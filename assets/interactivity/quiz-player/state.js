@@ -53,7 +53,8 @@ export function createPlayerState( getContext ) {
 		},
 		get nextLabel() {
 			const c = getContext();
-			return c.layout === 'one_question_per_page' && ! c.answered?.[ c.page ]
+			return c.layout === 'one_question_per_page' &&
+				! c.answered?.[ c.page ]
 				? c.skipText
 				: c.nextText;
 		},
@@ -66,6 +67,79 @@ export function createPlayerState( getContext ) {
 		get timerWidth() {
 			const c = getContext();
 			return `${ c.duration ? Math.max( 0, ( c.remaining / c.duration ) * 100 ) : 0 }%`;
+		},
+		// Exam palette: one button per question, each with its own `questionNumber` context.
+		get isCurrentQuestion() {
+			const c = getContext();
+			return c.page === c.questionNumber;
+		},
+		get ariaCurrent() {
+			const c = getContext();
+			return c.page === c.questionNumber ? 'step' : undefined;
+		},
+		get isQuestionAnswered() {
+			const c = getContext();
+			return !! c.answered?.[ c.questionNumber ];
+		},
+		get isQuestionMarked() {
+			const c = getContext();
+			return !! c.marked?.[ c.questionNumber ];
+		},
+		get isQuestionVisited() {
+			const c = getContext();
+			return !! (
+				c.visited?.[ c.questionNumber ] ||
+				c.answered?.[ c.questionNumber ]
+			);
+		},
+		get isCurrentMarked() {
+			const c = getContext();
+			return !! c.marked?.[ c.page ];
+		},
+		get currentMarkLabel() {
+			const c = getContext();
+			return c.marked?.[ c.page ] ? c.markedText : c.markText;
+		},
+		get answeredCount() {
+			return Object.values( getContext().answered || {} ).filter(
+				Boolean
+			).length;
+		},
+		get markedCount() {
+			return Object.values( getContext().marked || {} ).filter( Boolean )
+				.length;
+		},
+		get visitedCount() {
+			const c = getContext();
+			return new Set( [
+				...Object.keys( c.visited || {} ).filter(
+					( key ) => c.visited[ key ]
+				),
+				...Object.keys( c.answered || {} ).filter(
+					( key ) => c.answered[ key ]
+				),
+			] ).size;
+		},
+		get notVisitedCount() {
+			const c = getContext();
+			return Math.max( 0, c.totalPages - this.visitedCount );
+		},
+		get notAnsweredCount() {
+			return Math.max( 0, this.visitedCount - this.answeredCount );
+		},
+		get clockHours() {
+			const seconds = getContext().remaining;
+			return String( Math.floor( seconds / 3600 ) ).padStart( 2, '0' );
+		},
+		get clockMinutes() {
+			const seconds = getContext().remaining;
+			return String( Math.floor( ( seconds % 3600 ) / 60 ) ).padStart(
+				2,
+				'0'
+			);
+		},
+		get clockSeconds() {
+			return String( getContext().remaining % 60 ).padStart( 2, '0' );
 		},
 		get timeLabel() {
 			const seconds = getContext().remaining;

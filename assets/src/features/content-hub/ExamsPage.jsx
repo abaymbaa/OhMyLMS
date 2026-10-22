@@ -11,6 +11,7 @@ import {
 import { __, sprintf } from '@wordpress/i18n';
 import { Button, Modal, Notice, Spinner } from '@wordpress/components';
 import { approveQuestion } from '../question-bank/api.mjs';
+import { ExamBuilder } from './ExamBuilder.jsx';
 import { ExamPaperDialog } from './ExamPaperDialog.jsx';
 import { ImportDialog } from './ImportDialog.jsx';
 
@@ -138,6 +139,7 @@ export function ExamsPage( {
 	const [ jobs, setJobs ] = useState( [] );
 	const [ exams, setExams ] = useState( [] );
 	const [ paperExam, setPaperExam ] = useState( null );
+	const [ builder, setBuilder ] = useState( null );
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );
@@ -315,6 +317,13 @@ export function ExamsPage( {
 					</p>
 					<Button
 						variant="primary"
+						disabled={ busy || dirty }
+						onClick={ () => setBuilder( { id: 0 } ) }
+					>
+						{ __( 'New exam', 'ohmylms' ) }
+					</Button>{ ' ' }
+					<Button
+						variant="secondary"
 						disabled={ busy || dirty }
 						onClick={ () => setImporting( true ) }
 					>
@@ -1272,12 +1281,28 @@ export function ExamsPage( {
 								{ __( 'questions', 'ohmylms' ) } ·{ ' ' }
 								{ exam.total_marks }{ ' ' }
 								{ __( 'marks', 'ohmylms' ) }
-								<Button
-									variant="secondary"
-									onClick={ () => setPaperExam( exam ) }
-								>
-									{ __( 'Review paper', 'ohmylms' ) }
-								</Button>
+								{ exam.composed ? (
+									exam.status === 'draft' && (
+										<Button
+											variant="secondary"
+											onClick={ () =>
+												setBuilder( { id: exam.id } )
+											}
+										>
+											{ __(
+												'Edit in builder',
+												'ohmylms'
+											) }
+										</Button>
+									)
+								) : (
+									<Button
+										variant="secondary"
+										onClick={ () => setPaperExam( exam ) }
+									>
+										{ __( 'Review paper', 'ohmylms' ) }
+									</Button>
+								) }
 								{ exam.status === 'draft' ? (
 									<Button
 										variant="primary"
@@ -1359,6 +1384,17 @@ export function ExamsPage( {
 							await load( id );
 							await refresh();
 						} );
+					} }
+				/>
+			) }
+			{ builder && (
+				<ExamBuilder
+					examId={ builder.id }
+					onClose={ ( changed ) => {
+						setBuilder( null );
+						if ( changed ) {
+							run( refresh );
+						}
 					} }
 				/>
 			) }
