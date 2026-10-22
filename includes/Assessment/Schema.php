@@ -16,7 +16,7 @@ defined( 'ABSPATH' ) || exit;
  * compatibility anchor: new records are sidecars keyed by existing IDs.
  */
 final class Schema {
-	const VERSION = '4';
+	const VERSION = '5';
 	const OPTION  = 'ohmylms_assessment_schema';
 
 	public static function table( $name ) {
@@ -57,7 +57,10 @@ final class Schema {
 			// Reliable, replayable skill-evidence pipeline.
 			'evidence_outbox'      => "grade_event_id bigint unsigned NOT NULL, status varchar(20) NOT NULL DEFAULT 'pending', tries int unsigned NOT NULL DEFAULT 0, last_error text NULL, created_at datetime NOT NULL, processed_at datetime NULL, UNIQUE KEY grade_event (grade_event_id), KEY queue (status,id)",
 			'skill_evidence'       => "grade_event_id bigint unsigned NOT NULL, student_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, part_id varchar(40) NOT NULL DEFAULT 'p1', role varchar(20) NOT NULL DEFAULT 'primary', awarded decimal(12,4) NOT NULL DEFAULT 0, available decimal(12,4) NOT NULL DEFAULT 0, independent tinyint NOT NULL DEFAULT 1, first_try tinyint NOT NULL DEFAULT 1, difficulty varchar(20) NOT NULL DEFAULT 'standard', family_id varchar(64) NOT NULL DEFAULT '', source_type varchar(20) NOT NULL, source_id bigint unsigned NOT NULL, question_id bigint unsigned NOT NULL, version_id bigint unsigned NOT NULL, mapping_version int unsigned NOT NULL DEFAULT 1, evidence_at datetime NOT NULL, superseded tinyint NOT NULL DEFAULT 0, UNIQUE KEY contribution (grade_event_id,term_id,part_id), KEY student_skill (student_id,term_id,superseded)",
-			'student_skill_state'  => "student_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, level varchar(20) NOT NULL DEFAULT 'not-assessed', review_due tinyint NOT NULL DEFAULT 0, review_due_at datetime NULL, evidence_count int unsigned NOT NULL DEFAULT 0, independent_correct int unsigned NOT NULL DEFAULT 0, families int unsigned NOT NULL DEFAULT 0, score decimal(8,4) NOT NULL DEFAULT 0, last_evidence_at datetime NULL, updated_at datetime NOT NULL, UNIQUE KEY student_skill (student_id,term_id), KEY skill_level (term_id,level)",
+			// One row per learner and skill: the level the active policy decided, the 0-100 mastery score and the counts behind them (see Performance\Engine).
+			'student_skill_state'  => "student_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, level varchar(20) NOT NULL DEFAULT 'not-started', policy varchar(20) NOT NULL DEFAULT 'evidence', review_due tinyint NOT NULL DEFAULT 0, review_due_at datetime NULL, evidence_count int unsigned NOT NULL DEFAULT 0, independent_correct int unsigned NOT NULL DEFAULT 0, families int unsigned NOT NULL DEFAULT 0, accuracy decimal(8,4) NOT NULL DEFAULT 0, mastery decimal(5,2) NOT NULL DEFAULT 0, peak decimal(5,2) NOT NULL DEFAULT 0, scored int unsigned NOT NULL DEFAULT 0, correct int unsigned NOT NULL DEFAULT 0, struggling tinyint NOT NULL DEFAULT 0, milestones varchar(40) NOT NULL DEFAULT '', last_evidence_at datetime NULL, last_scored_at datetime NULL, updated_at datetime NOT NULL, UNIQUE KEY student_skill (student_id,term_id), KEY skill_level (term_id,level)",
+			// What each recent activity did to a level; derived, so it can be rebuilt from the evidence.
+			'skill_level_events'   => "student_id bigint unsigned NOT NULL, term_id bigint unsigned NOT NULL, source_type varchar(20) NOT NULL, source_id bigint unsigned NOT NULL, level_before varchar(20) NOT NULL, level_after varchar(20) NOT NULL, detail text NULL, created_at datetime NOT NULL, UNIQUE KEY source (student_id,term_id,source_type,source_id), KEY student_skill (student_id,term_id,id)",
 			// Pseudonymous guest sessions and their one-time claims.
 			'guest_sessions'       => 'token_hash char(64) NOT NULL, created_at datetime NOT NULL, expires_at datetime NOT NULL, claimed_by bigint unsigned NOT NULL DEFAULT 0, claimed_at datetime NULL, UNIQUE KEY token_hash (token_hash), KEY expires (expires_at)',
 		);

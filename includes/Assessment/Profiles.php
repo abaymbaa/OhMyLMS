@@ -166,6 +166,8 @@ final class Profiles {
 				'deliveries'      => DeliveryPolicy::ALL,
 				// Hash route of the list the author returns to from the editor.
 				'return_route'    => '/content-hub/quizzes',
+				// Whether answers count as skill evidence; the administrator can change it per kind.
+				'skills'          => true,
 				// Editor panel id and a callable giving it data, or empty for no panel.
 				'panel'           => '',
 				'editor_data'     => null,
@@ -182,6 +184,7 @@ final class Profiles {
 		$deliveries                 = is_array( $profile['deliveries'] ) ? array_values( array_intersect( DeliveryPolicy::ALL, $profile['deliveries'] ) ) : array();
 		$profile['deliveries']      = $deliveries ? $deliveries : DeliveryPolicy::ALL;
 		$profile['return_route']    = is_string( $profile['return_route'] ) && preg_match( '#^/(?:content-hub|course-edit|question-bank)(?:/|$)#', $profile['return_route'] ) ? $profile['return_route'] : '/content-hub/quizzes';
+		$profile['skills']          = (bool) $profile['skills'];
 		$profile['panel']           = is_string( $profile['panel'] ) ? sanitize_key( $profile['panel'] ) : '';
 		$profile['templates']       = is_array( $profile['templates'] ) ? $profile['templates'] : array();
 		return $profile;

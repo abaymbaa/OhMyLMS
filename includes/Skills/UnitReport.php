@@ -4,12 +4,14 @@
  *
  * Pure functions over plain arrays: a skill sits in the unit its program outcome or practice item
  * names (the program's chapter_id), with no schema change. Display levels are the Khan names from
- * MasteryDisplay. Nothing here reads or writes the database.
+ * Performance\Levels. Nothing here reads or writes the database.
  *
  * @package OhMyLMS
  */
 
 namespace OhMyLMS\Skills;
+
+use OhMyLMS\Performance\Levels;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -176,19 +178,19 @@ final class UnitReport {
 		if ( $total < self::MIN_COHORT ) {
 			return null;
 		}
-		$counts = array_fill_keys( MasteryDisplay::LEVELS, 0 );
+		$counts = array_fill_keys( Levels::SCALE, 0 );
 		$sum    = 0;
 		$strong = 0;
 		foreach ( $keys as $key ) {
 			$key = isset( $counts[ $key ] ) ? $key : 'not-started';
 			++$counts[ $key ];
-			$sum += MasteryDisplay::rank( $key );
-			if ( MasteryDisplay::is_proficient( $key ) ) {
+			$sum += Levels::rank( $key );
+			if ( Levels::is_proficient( $key ) ) {
 				++$strong;
 			}
 		}
 		return array(
-			'key'              => MasteryDisplay::LEVELS[ (int) round( $sum / $total ) ],
+			'key'              => Levels::SCALE[ (int) round( $sum / $total ) ],
 			'total'            => $total,
 			'counts'           => $counts,
 			'proficient_share' => (int) round( 100 * $strong / $total ),
@@ -211,15 +213,15 @@ final class UnitReport {
 		$sum    = 0;
 		$strong = 0;
 		foreach ( $keys as $key ) {
-			$key  = in_array( $key, MasteryDisplay::LEVELS, true ) ? $key : 'not-started';
-			$sum += MasteryDisplay::rank( $key );
-			if ( MasteryDisplay::is_proficient( $key ) ) {
+			$key  = in_array( $key, Levels::SCALE, true ) ? $key : 'not-started';
+			$sum += Levels::rank( $key );
+			if ( Levels::is_proficient( $key ) ) {
 				++$strong;
 			}
 		}
 		$share = 100 * $strong / $total;
 		return array(
-			'key'  => MasteryDisplay::LEVELS[ (int) round( $sum / $total ) ],
+			'key'  => Levels::SCALE[ (int) round( $sum / $total ) ],
 			'band' => $share >= self::BAND_MOST ? 'most' : ( $share < self::BAND_FEW ? 'few' : 'half' ),
 		);
 	}

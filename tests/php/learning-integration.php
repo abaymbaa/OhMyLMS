@@ -145,7 +145,7 @@ try {
     CompletionPolicy::award($student, $course);
     ok($events === 1, 'Completion event repeated');
     ok((int) $wpdb->get_var($wpdb->prepare('SELECT COUNT(*) FROM ' . Schema::table('awards') . ' WHERE enrollment_id=%d', $eid)) === 1, 'Award duplicated');
-    $wpdb->update(AssessmentSchema::table('student_skill_state'), ['level' => 'developing', 'review_due' => 1], ['student_id' => $student, 'term_id' => $skill]);
+    $wpdb->update(AssessmentSchema::table('student_skill_state'), ['level' => 'attempted', 'review_due' => 1], ['student_id' => $student, 'term_id' => $skill]);
     ok(CompletionPolicy::status($student, $course)['completed'], 'Review or skill decline revoked historical completion');
     wp_set_current_user($admin);
     $new_program = $program; $new_program['items'][] = item('lesson', created('lessons', ['name' => 'New requirement', 'type' => 'text', 'status' => 'publish']));

@@ -9,9 +9,9 @@ use OhMyLMS\Assessment\SkillAssessmentPage;
 use OhMyLMS\Quiz\AnswerReview;
 use OhMyLMS\Quiz\Intro;
 use OhMyLMS\Quiz\Submission;
-use OhMyLMS\Skills\Khan\Levels;
-use OhMyLMS\Skills\Khan\Schema as KhanSchema;
-use OhMyLMS\Skills\Khan\Settings;
+use OhMyLMS\Performance\Engine;
+use OhMyLMS\Performance\Settings;
+use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Taxonomy;
 
 global $wpdb;
@@ -87,7 +87,7 @@ ok(Intro::length($summary) === '3 questions · 3-6 minutes', 'Intro length wrong
 ok(Intro::length(['questions' => 1, 'minutes_min' => 20, 'minutes_max' => 20]) === '1 question · 20 minutes', 'A timed single question reads wrong');
 $html = Intro::render($quiz);
 ok(strpos($html, 'All set for the unit test?') !== false && strpos($html, '3 questions') !== false && strpos($html, 'Covers 3 skills.') !== false, 'Intro markup wrong');
-ok(strpos($html, 'move each skill') === false, 'The level sentence shows without the Khan model');
+ok(strpos($html, 'move each skill') === false, 'The level sentence shows without the step policy');
 ok(Intro::words('quiz')['title'] === 'Time for a quiz?' && strpos(Intro::words('course-challenge')['title'], 'course challenge') !== false, 'Intro wording wrong');
 // An ordinary single-skill quiz keeps its own start screen.
 [$plain_course, $plain_quiz] = course_with_quiz($admin, ['allow_attempts' => 3]);
@@ -101,9 +101,10 @@ $timed_summary = Intro::summary(ohmylms_get_quiz($timed_id));
 ok($timed_summary['timed'] && $timed_summary['minutes_min'] === 15 && $timed_summary['minutes_max'] === 15 && $timed_summary['style'] === 'quiz' && Intro::applies($timed_summary), 'A timed two-skill quiz summary wrong: ' . wp_json_encode($timed_summary));
 
 // ---- Taking it: each attempt draws one question per skill, then Khan levels move ----
-update_option(Settings::OPTION, ['model' => 'khan']);
-ok(KhanSchema::install() && Settings::enabled(), 'The Khan model did not turn on');
-ok(strpos(Intro::render($quiz), 'move each skill up or down one level') !== false, 'The intro does not mention levels with the Khan model');
+update_option(Settings::OPTION, ['policy' => 'steps']);
+ok(Settings::retries(), 'The step policy did not turn on');
+$level_of = static function ($student, $term) use ($wpdb) { return (string) $wpdb->get_var($wpdb->prepare('SELECT level FROM ' . OhMyLMS\Assessment\Schema::table('student_skill_state') . ' WHERE student_id=%d AND term_id=%d', $student, $term)) ?: 'not-started'; };
+ok(strpos(Intro::render($quiz), 'move each skill up or down one level') !== false, 'The intro does not mention levels with the step policy');
 enroll($learner, $course_id);
 as_user($learner);
 $attempt = Submission::start($quiz_id, $learner);
@@ -122,9 +123,10 @@ foreach ($views as $view) {
 }
 $result = Submission::submit($quiz_id, $attempt, $learner, $answers);
 ok(!is_wp_error($result), 'Submit failed: ' . (is_wp_error($result) ? $result->get_error_message() : ''));
-ok(Levels::current($learner, $skills['A']) === 'familiar' && Levels::current($learner, $skills['B']) === 'familiar', 'Right answers did not lift the skills to Familiar');
-ok(Levels::current($learner, $skills['C']) === 'attempted', 'The wrong answer did not leave the skill at Attempted');
-$changes = Levels::changes($learner, 'quiz', $attempt);
+Evidence::process();
+ok($level_of($learner, $skills['A']) === 'familiar' && $level_of($learner, $skills['B']) === 'familiar', 'Right answers did not lift the skills to Familiar');
+ok($level_of($learner, $skills['C']) === 'attempted', 'The wrong answer did not leave the skill at Attempted');
+$changes = Engine::changes($learner, 'quiz', $attempt);
 ok(count($changes) === 3 && array_unique(array_column($changes, 'before')) === ['not-started'], 'The level changes are wrong: ' . wp_json_encode($changes));
 // The result screen lists them.
 $rows = $quiz->get_all_quiz_attempts($learner, $course_id);
@@ -140,12 +142,13 @@ foreach (AttemptItems::delivery($second) as $view) {
     $answers[$view['id']] = [$tokens['Right']];
 }
 Submission::submit($quiz_id, $second, $learner, $answers);
-ok(Levels::current($learner, $skills['A']) === 'proficient' && Levels::current($learner, $skills['C']) === 'familiar', 'A second all-right attempt did not move each skill up one step');
-// Without the Khan model, the result screen has no level block.
-update_option(Settings::OPTION, ['model' => 'evidence']);
+Evidence::process();
+ok($level_of($learner, $skills['A']) === 'proficient' && $level_of($learner, $skills['C']) === 'familiar', 'A second all-right attempt did not move each skill up one step');
+// Whatever policy decides the levels, the result screen lists what the attempt did to them.
+update_option(Settings::OPTION, ['policy' => 'evidence']);
 $review = AnswerReview::render($quiz, (array) $quiz->get_all_quiz_attempts($learner, $course_id));
-ok(strpos($review, 'Skill levels') === false, 'Level changes show without the Khan model');
-$wpdb->delete(KhanSchema::table(), ['student_id' => $learner]);
+ok(strpos($review, 'Skill levels') !== false, 'Level changes are missing under the evidence policy');
+$wpdb->delete(OhMyLMS\Assessment\Schema::table('skill_level_events'), ['student_id' => $learner]);
 // ---- The unit's skills, for the authoring screen and the AI tools ----
 as_user($admin);
 $lesson = remember_post(wp_insert_post(['post_type' => OHMYLMS_LESSON_CPT, 'post_title' => "Unit lesson $run", 'post_status' => 'publish']));
@@ -203,12 +206,13 @@ $answers = [];
 foreach ($drawn as $view) {
     $answers[$view['id']] = ($view['settings']['type'] ?? '') === 'numerical' ? ['7'] : [array_column($view['questions'], 'id', 'answer')['Right']];
 }
-update_option(Settings::OPTION, ['model' => 'khan']);
+update_option(Settings::OPTION, ['policy' => 'steps']);
 $typed_result = Submission::submit($types_id, $typed, $learner, $answers);
 ok(!is_wp_error($typed_result), 'Submitting the mixed-type attempt failed');
-ok(Levels::current($learner, $mixed) === 'familiar', 'Both types right did not lift the skill: ' . Levels::current($learner, $mixed));
-update_option(Settings::OPTION, ['model' => 'evidence']);
-$wpdb->delete(KhanSchema::table(), ['student_id' => $learner]);
+Evidence::process();
+ok($level_of($learner, $mixed) === 'familiar', 'Both types right did not lift the skill: ' . $level_of($learner, $mixed));
+update_option(Settings::OPTION, ['policy' => 'evidence']);
+$wpdb->delete(OhMyLMS\Assessment\Schema::table('skill_level_events'), ['student_id' => $learner]);
 as_user($admin);
 
 // ---- The authoring screen ----

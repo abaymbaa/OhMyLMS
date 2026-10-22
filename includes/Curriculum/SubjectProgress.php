@@ -81,9 +81,9 @@ final class SubjectProgress {
 			);
 			foreach ( $syllabus['items'] as &$row ) {
 				$row['direct'] = $progress['direct'][ $row['term_id'] ] ?? null;
-				$level         = $row['direct']['level'] ?? 'not-assessed';
-				if ( 'not-assessed' === $level || 'developing' === $level ) {
-					$syllabus['audit'][ 'not-assessed' === $level ? 'unassessed' : 'developing' ][] = $row['term_id'];
+				$level         = $row['direct']['level'] ?? 'not-started';
+				if ( 'not-started' === $level || \OhMyLMS\Performance\Levels::is_developing( $level ) ) {
+					$syllabus['audit'][ 'not-started' === $level ? 'unassessed' : 'developing' ][] = $row['term_id'];
 				}
 				if ( ! metadata_exists( 'term', $row['term_id'], Comparison::SUBJECT_META ) ) {
 					if ( ! $row['maps_to'] ) {

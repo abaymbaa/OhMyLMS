@@ -40,6 +40,7 @@ run on every tool call. No API keys for model providers are stored by WordPress.
 
 | Tool | Arguments |
 | --- | --- |
+| `get_student_skills`, `get_skill_report`, `get_performance_settings`, `set_performance_settings`, `write_student_skill_note` | A learner's skills, a course or class matrix, how levels are decided, and an AI teacher note. Levels are read-only. See [performance tracking](PERFORMANCE.md) |
 | `list_courses`, `list_lessons`, `list_quizzes`, `list_questions` | Optional `page` (>=1), `per_page` (1–20), `search` (<=200 characters) |
 | `get_course`, `get_lesson`, `get_quiz`, `get_question` | Required positive integer `id` |
 | `get_course_chapters` | Required positive integer course `id` |

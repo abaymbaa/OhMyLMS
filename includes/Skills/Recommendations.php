@@ -11,6 +11,7 @@
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
+use OhMyLMS\Performance\Levels;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -34,7 +35,7 @@ final class Recommendations {
 		};
 		$items  = array();
 		foreach ( $states as $term_id => $state ) {
-			if ( 'developing' === $state['level'] && self::struggling( $student_id, $term_id ) ) {
+			if ( Levels::is_developing( $state['level'] ) && self::struggling( $student_id, $term_id ) ) {
 				$weak_prerequisites = array_values(
 					array_filter(
 						Taxonomy::prerequisites( $term_id ),

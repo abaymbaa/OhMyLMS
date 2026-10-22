@@ -45,9 +45,9 @@ $a = [$row(1, 10, true, 101, 'f1', 0), $row(2, 10, true, 102, 'f2', 1)];
 $b_duplicate = [$row(1, 20, true, 101, 'f1', 0)];
 $merged = Combined::merge(array_merge($a, $b_duplicate));
 check(count($merged) === 2, 'the same event and part collapses to one answer');
-check(Combined::evaluate(array_merge($a, $b_duplicate), $rules, $now)['level'] === 'developing', 'a duplicate must not lift two answers to proficient');
+check(Combined::evaluate(array_merge($a, $b_duplicate), $rules, $now)['level'] === 'familiar', 'a duplicate must not lift two answers to proficient');
 check(Combined::evaluate(array_merge($a, $b_duplicate, [$row(3, 20, true, 103, 'f3', 2)]), $rules, $now)['level'] === 'proficient', 'three distinct correct answers from several families are proficient');
-check(Combined::evaluate([], $rules, $now)['level'] === 'not-assessed', 'no evidence is not assessed');
+check(Combined::evaluate([], $rules, $now)['level'] === 'not-started', 'no evidence is not started');
 check(count(Combined::merge([$row(1, 10, true, 101, 'f1', 0, 'p1'), $row(1, 10, true, 101, 'f1', 0, 'p2')])) === 2, 'different parts of one event are different evidence');
 // A question answered again in another event is kept but is no longer a first try.
 $again = Combined::merge([$row(2, 20, true, 101, 'f1', 10), $row(1, 10, true, 101, 'f1', 0)]);
@@ -62,8 +62,8 @@ check($input === $copy, 'merging does not change its input');
 
 // Skill classification: strengths, gaps, in progress, and "Not assessed" is never a gap.
 check(Progress::classify('mastered', false) === 'strength' && Progress::classify('proficient', true) === 'strength', 'proficient and mastered are strengths');
-check(Progress::classify('developing', true) === 'gap' && Progress::classify('developing', false) === 'developing', 'developing with recent errors is a gap');
-check(Progress::classify('not-assessed', false) === 'not-assessed' && Progress::classify('not-assessed', true) === 'not-assessed', 'unassessed skills are never gaps');
+check(Progress::classify('familiar', true) === 'gap' && Progress::classify('attempted', false) === 'developing', 'developing with recent errors is a gap');
+check(Progress::classify('not-started', false) === 'not-assessed' && Progress::classify('not-started', true) === 'not-assessed', 'unassessed skills are never gaps');
 check(Progress::class_label('not-assessed') === 'Not assessed' && Progress::class_label('gap') === 'Needs practice', 'labels');
 check(Progress::mode_label('skill-based') === 'Skill-based' && Progress::mode_label('blended') === 'Blended' && Progress::mode_label('traditional') === 'Traditional', 'learning modes keep their names');
 $entries = [['classification' => 'strength'], ['classification' => 'gap'], ['classification' => 'gap'], ['classification' => 'developing'], ['classification' => 'not-assessed'], ['classification' => 'not-assessed']];

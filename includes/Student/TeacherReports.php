@@ -11,10 +11,7 @@ use OhMyLMS\Family\Schema as FamilySchema;
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Schools\ClassManagement;
 use OhMyLMS\Schools\Schema;
-use OhMyLMS\Skills\Khan\Levels;
-use OhMyLMS\Skills\Khan\Schema as KhanSchema;
-use OhMyLMS\Skills\Khan\Settings;
-use OhMyLMS\Skills\MasteryDisplay;
+use OhMyLMS\Performance\Levels;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -37,7 +34,7 @@ final class TeacherReports {
 		$students = ClassManagement::students( $class_id, '', $page );
 		$more     = count( $students ) > 20;
 		$students = array_slice( $students, 0, 20 );
-		$enabled  = Settings::enabled() && KhanSchema::ready() && FamilySchema::enabled();
+		$enabled  = \OhMyLMS\Assessment\Schema::ready() && FamilySchema::enabled();
 		$since    = gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS );
 		global $wpdb;
 		foreach ( $students as &$student ) {
@@ -50,7 +47,7 @@ final class TeacherReports {
 			$events = $wpdb->get_results(
 				$wpdb->prepare(
 					"SELECT k.term_id,k.detail FROM %i k JOIN %i p ON p.source_kind='quiz' AND p.source_id=k.source_id AND p.learner_user_id=k.student_id JOIN %i a ON a.id=p.assignment_id AND a.class_id=p.class_id AND a.school_id=p.school_id AND a.status='active' JOIN %i r ON r.assignment_id=a.id AND r.student_user_id=k.student_id WHERE k.source_type='quiz' AND k.student_id=%d AND p.origin='school' AND p.class_id=%d AND p.school_id=%d AND p.completed_at>=%s ORDER BY k.id LIMIT 1001",
-					KhanSchema::table(),
+					\OhMyLMS\Assessment\Schema::table( 'skill_level_events' ),
 					FamilySchema::table( 'activity' ),
 					Schema::table( 'learning_assignments' ),
 					Schema::table( 'assignment_recipients' ),
@@ -80,7 +77,7 @@ final class TeacherReports {
 				$student['skills'][ $term_id ] = array(
 					'name'        => $term->name,
 					'level'       => $level,
-					'label'       => MasteryDisplay::label( $level ),
+					'label'       => Levels::label( $level ),
 					'assessments' => ( $student['skills'][ $term_id ]['assessments'] ?? 0 ) + 1,
 				);
 			}

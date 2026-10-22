@@ -29,7 +29,7 @@ class EngagementController extends RestController {
 		if ( 'score' === $group ) {
 			return \OhMyLMS\Skills\Score::validate( $settings ); }
 		if ( 'mastery' === $group ) {
-			return \OhMyLMS\Skills\Khan\Settings::validate( $settings ); }
+			return \OhMyLMS\Performance\Settings::validate( $settings ); }
 		if ( 'streak' === $group ) {
 			$validated = \OhMyLMS\Engagement\StreakSettings::validate( $settings );
 			if ( is_wp_error( $validated ) ) {
@@ -182,7 +182,7 @@ class EngagementController extends RestController {
 		if ( 'score' === $group_id ) {
 			return rest_ensure_response( \OhMyLMS\Skills\Score::get() ); }
 		if ( 'mastery' === $group_id ) {
-			return rest_ensure_response( \OhMyLMS\Skills\Khan\Settings::get() ); }
+			return rest_ensure_response( \OhMyLMS\Performance\Settings::payload() ); }
 		$function_name = 'get_' . $group_id . '_default_settings';
 		$settings      = get_option( 'ohmylms_' . $group_id . '_settings' );
 		return rest_ensure_response( $settings );
@@ -218,8 +218,15 @@ class EngagementController extends RestController {
 		if ( in_array( $group_id, array( 'xp', 'score' ), true ) && $settings['enable'] && ! \OhMyLMS\Engagement\XpSchema::install() ) {
 			return new WP_Error( 'xp_schema', __( 'Could not install XP and mastery score storage.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
-		if ( 'mastery' === $group_id && 'khan' === $settings['model'] && ! \OhMyLMS\Skills\Khan\Schema::install() ) {
-			return new WP_Error( 'khan_schema', __( 'Could not install skill level storage.', 'ohmylms' ), array( 'status' => 500 ) );
+		if ( 'mastery' === $group_id ) {
+			// Skill tracking has its own option; a change of policy rebuilds the states in the background.
+			$saved = \OhMyLMS\Performance\Settings::save( $settings );
+			return is_wp_error( $saved ) ? $saved : rest_ensure_response(
+				array(
+					'success' => true,
+					'message' => __( 'Settings saved successfully.', 'ohmylms' ),
+				)
+			);
 		}
 		update_option( 'ohmylms_' . $group_id . '_settings', $settings );
 		if ( 'level' === $group_id ) {

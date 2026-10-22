@@ -117,8 +117,8 @@ $stamp           = static function ( $row ) {
 					<ul>
 						<?php
 						foreach ( $levels as $level ) :
-							$level_before = \OhMyLMS\Skills\MasteryDisplay::label( $level['before'] );
-							$level_after  = \OhMyLMS\Skills\MasteryDisplay::label( $level['after'] );
+							$level_before = \OhMyLMS\Performance\Levels::label( $level['before'] );
+							$level_after  = \OhMyLMS\Performance\Levels::label( $level['after'] );
 							?>
 							<li class="is-<?php echo esc_attr( $level['change'] ); ?>">
 								<strong><?php echo esc_html( $level['skill'] ); ?>:</strong>

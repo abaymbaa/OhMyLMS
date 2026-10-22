@@ -7,7 +7,6 @@
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
-use OhMyLMS\Engagement\XpSchema;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -48,7 +47,7 @@ final class Score {
 	}
 
 	public static function enabled() {
-		return ! empty( self::get()['enable'] ) && XpSchema::ready();
+		return ! empty( self::get()['enable'] );
 	}
 
 	/** The model's configuration with the administrator's tuning applied. */
@@ -132,62 +131,6 @@ final class Score {
 		return $by_id;
 	}
 
-	/** Recompute and store one learner's score for a skill. Called whenever evidence changes. */
-	public static function recompute( $student_id, $term_id ) {
-		global $wpdb;
-		if ( ! self::enabled() ) {
-			return null; }
-		$rows = self::rows( $student_id, $term_id );
-		$run  = ScoreModel::run( $rows, self::config() );
-		$last = null;
-		foreach ( $run['trace'] as $i => $step ) {
-			if ( $step['counted'] ) {
-				$last = $rows[ $i ]['evidence_at']; }
-		}
-		$table   = XpSchema::table( 'skill_scores' );
-		$stored  = $wpdb->get_row( $wpdb->prepare( "SELECT milestones FROM $table WHERE student_id=%d AND term_id=%d", $student_id, $term_id ), ARRAY_A );
-		$reached = array_keys(
-			array_filter(
-				ScoreModel::MEDALS,
-				static function ( $name, $at ) use ( $run ) {
-					return $run['peak'] >= $at - 1e-9;
-				},
-				ARRAY_FILTER_USE_BOTH
-			)
-		);
-		$known   = $stored && '' !== $stored['milestones'] ? array_map( 'intval', explode( ',', $stored['milestones'] ) ) : array();
-		$record  = array(
-			'student_id'     => (int) $student_id,
-			'term_id'        => (int) $term_id,
-			'score'          => $run['score'],
-			'peak'           => $run['peak'],
-			'scored'         => $run['scored'],
-			'correct'        => $run['correct'],
-			'struggling'     => $run['struggling'] ? 1 : 0,
-			'milestones'     => implode( ',', array_unique( array_merge( $known, $reached ) ) ),
-			'last_scored_at' => $last,
-			'updated_at'     => current_time( 'mysql', true ),
-		);
-		if ( $stored ) {
-			$wpdb->update(
-				$table,
-				$record,
-				array(
-					'student_id' => (int) $student_id,
-					'term_id'    => (int) $term_id,
-				)
-			);
-		} else {
-			$wpdb->insert( $table, $record );
-		}
-		// A medal is announced once, the first time that score is reached, even if it later slips.
-		foreach ( array_diff( $reached, $known ) as $at ) {
-			do_action( 'ohmylms_skill_score_milestone', (int) $student_id, (int) $term_id, (int) $at, ScoreModel::MEDALS[ $at ] );
-		}
-		do_action( 'ohmylms_skill_score_updated', (int) $student_id, (int) $term_id, $run['score'], $run );
-		return $record;
-	}
-
 	/**
 	 * Score before and after one practice session, from the same evidence, for the lesson summary.
 	 *
@@ -224,11 +167,11 @@ final class Score {
 	public static function describe( array $row, $now = null ) {
 		$config    = self::config();
 		$now       = $now ?: time();
-		$effective = ScoreModel::effective( (float) $row['score'], $row['last_scored_at'] ? strtotime( $row['last_scored_at'] . ' UTC' ) : null, $now, $config );
+		$effective = ScoreModel::effective( (float) $row['mastery'], $row['last_scored_at'] ? strtotime( $row['last_scored_at'] . ' UTC' ) : null, $now, $config );
 		$score     = $effective['score'];
 		return array(
 			'score'      => $score,
-			'stored'     => (float) $row['score'],
+			'stored'     => (float) $row['mastery'],
 			'band'       => ScoreModel::band_name( $score, $config['bands'] ),
 			'medal'      => ScoreModel::medal( (float) $row['peak'] ),
 			'unlocked'   => $score >= (int) $config['unlock'] - 1e-9,
@@ -247,8 +190,7 @@ final class Score {
 	}
 
 	/**
-	 * Every scored skill of several learners: three queries however many learners there are
-	 * (plus one recompute for each skill with evidence but no stored score yet).
+	 * Every scored skill of several learners: one query however many learners there are.
 	 *
 	 * @param int[] $student_ids Learner IDs.
 	 * @return array<int,array<int,array>> Learner => term => described score; every learner given is present.
@@ -260,15 +202,8 @@ final class Score {
 		if ( ! $students || ! self::enabled() ) {
 			return $result; }
 		$holders = implode( ',', array_fill( 0, count( $students ), '%d' ) );
-		$state   = $wpdb->get_results( $wpdb->prepare( "SELECT student_id, term_id FROM %i WHERE student_id IN ($holders)", array_merge( array( Schema::table( 'student_skill_state' ) ), $students ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- The IN list is only %d placeholders; fresh read.
-		$have    = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( "SELECT student_id, term_id FROM %i WHERE student_id IN ($holders)", array_merge( array( XpSchema::table( 'skill_scores' ) ), $students ) ), ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The IN list is only %d placeholders; fresh read.
-			$have[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = true; }
-		foreach ( $state as $row ) {
-			if ( empty( $have[ (int) $row['student_id'] ][ (int) $row['term_id'] ] ) ) {
-				self::recompute( (int) $row['student_id'], (int) $row['term_id'] ); }
-		}
-		foreach ( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE student_id IN ($holders)", array_merge( array( XpSchema::table( 'skill_scores' ) ), $students ) ), ARRAY_A ) as $row ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared -- The IN list is only %d placeholders; fresh read.
+		$rows    = $wpdb->get_results( $wpdb->prepare( "SELECT student_id, term_id, mastery, peak, scored, struggling, last_scored_at FROM %i WHERE student_id IN ($holders) AND scored>0", array_merge( array( Schema::table( 'student_skill_state' ) ), $students ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fresh read of the learners' own states.
+		foreach ( $rows as $row ) {
 			$result[ (int) $row['student_id'] ][ (int) $row['term_id'] ] = self::describe( $row ); }
 		return $result;
 	}

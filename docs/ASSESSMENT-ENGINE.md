@@ -86,7 +86,7 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   skills inform recommendations. Assisted (hinted) answers and repeats are recorded but do
   not count toward levels. A regrade supersedes the old contribution exactly once, even
   when the attempt total does not change.
-- **Mastery levels** (option `ohmylms_mastery_rules`): Not assessed → Developing →
+- **Mastery levels** are decided by one engine; see [PERFORMANCE.md](PERFORMANCE.md). The default evidence rules (option `ohmylms_mastery_rules`) read: Not started → Attempted → Familiar →
   Proficient (≥3 independent first-try correct from ≥2 families, ≥80% recent accuracy) →
   Mastered (≥5 from ≥3 families, ≥85%, plus a correct answer ≥24 h after first reaching
   proficiency). Review due is a separate flag after 14 days without evidence. No probability

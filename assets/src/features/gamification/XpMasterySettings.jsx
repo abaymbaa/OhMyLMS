@@ -123,7 +123,12 @@ export function XpMasterySettings() {
 					await window.wp.apiFetch( {
 						path: MASTERY_PATH,
 						method: 'POST',
-						data: mastery,
+						data: {
+							policy: mastery.policy,
+							surfaces: mastery.surfaces,
+							show_score: mastery.show_score,
+							ai_insights: mastery.ai_insights,
+						},
 					} );
 					// Saving answers with a status; read back what was stored (values are normalised on save).
 					const savedXp = await window.wp.apiFetch( {
@@ -170,34 +175,92 @@ export function XpMasterySettings() {
 				<div className="ohmylms-streak-settings__grid">
 					<section className="ohmylms-streak-settings__card">
 						<SelectControl
-							label={ __( 'Mastery model', 'ohmylms' ) }
-							value={ mastery.model }
-							options={ [
-								{
-									label: __(
-										'Evidence rules (default)',
-										'ohmylms'
-									),
-									value: 'evidence',
-								},
-								{
-									label: __(
-										'Khan Academy levels',
-										'ohmylms'
-									),
-									value: 'khan',
-								},
-							] }
+							label={ __(
+								'How skill levels are decided',
+								'ohmylms'
+							) }
+							value={ mastery.policy }
+							options={ ( mastery.policies || [] ).map(
+								( policy ) => ( {
+									label: policy.label,
+									value: policy.id,
+								} )
+							) }
 							onChange={ ( value ) =>
-								setMastery( { model: value } )
+								setMastery( { ...mastery, policy: value } )
 							}
 						/>
 						<p>
+							{
+								( mastery.policies || [] ).find(
+									( policy ) => policy.id === mastery.policy
+								)?.description
+							}
+						</p>
+						<p>
 							{ __(
-								'Khan Academy levels: an exercise sets a skill to Attempted (under 70% right first time), Familiar (70–99%) or Proficient (100%); a quiz or test moves each skill it covers up or down one step. A wrong practice answer can be tried again. Skills a learner already has keep their current level. Switching back keeps every record.',
+								'Every policy reads the same answers, so you can switch at any time: levels are rebuilt from the records in the background. The step policy also lets a learner try a wrong practice answer again.',
 								'ohmylms'
 							) }
 						</p>
+						<fieldset className="ohmylms-streak-settings__fields">
+							<legend>
+								{ __(
+									'Answers that count toward skills',
+									'ohmylms'
+								) }
+							</legend>
+							{ ( mastery.surface_options || [] ).map(
+								( surface ) => (
+									<ToggleControl
+										key={ surface.id }
+										label={ surface.label }
+										checked={
+											mastery.surfaces?.[ surface.id ] ??
+											surface.counts
+										}
+										onChange={ ( value ) =>
+											setMastery( {
+												...mastery,
+												surfaces: {
+													...mastery.surfaces,
+													[ surface.id ]: value,
+												},
+											} )
+										}
+									/>
+								)
+							) }
+						</fieldset>
+						<ToggleControl
+							label={ __(
+								'Show the mastery score beside the level',
+								'ohmylms'
+							) }
+							checked={ !! mastery.show_score }
+							onChange={ ( value ) =>
+								setMastery( { ...mastery, show_score: value } )
+							}
+						/>
+						<ToggleControl
+							label={ __( 'Write AI study notes', 'ohmylms' ) }
+							checked={ !! mastery.ai_insights }
+							disabled={ ! mastery.ai_ready }
+							onChange={ ( value ) =>
+								setMastery( { ...mastery, ai_insights: value } )
+							}
+							help={
+								mastery.ai_ready
+									? __(
+											'Learners and teachers can ask for a short note about a learner’s skills. The AI explains; it never changes a level or a score. Only skill names and numbers are sent.',
+											'ohmylms'
+										)
+									: __(
+											'Connect an AI provider under AI settings first.',
+											'ohmylms'
+										)
+							}
+						/>
 					</section>
 					<section className="ohmylms-streak-settings__card">
 						<ToggleControl

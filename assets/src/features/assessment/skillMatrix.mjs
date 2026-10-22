@@ -3,7 +3,7 @@
  * The server decides each cell's level; these only name, group and shape it for display.
  */
 
-/** Lowest to highest, as the server's MasteryDisplay. */
+/** Lowest to highest, as Performance Levels on the server. */
 export const MATRIX_LEVELS = [
 	'not-started',
 	'attempted',

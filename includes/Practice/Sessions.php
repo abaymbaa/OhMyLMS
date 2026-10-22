@@ -385,9 +385,9 @@ final class Sessions {
 			$state['notice'] = __( 'You have answered every available practice question for this skill. Ask your teacher for more, or come back later for a review.', 'ohmylms' );
 		}
 		if ( 'complete' === $session['status'] && (int) $session['student_id'] ) {
-			// With the Khan level rules on: what this practice did to the skill's level.
-			if ( \OhMyLMS\Skills\Khan\Settings::enabled() ) {
-				$state['levels'] = \OhMyLMS\Skills\Khan\Levels::changes( (int) $session['student_id'], 'practice', (int) $session['id'] ); }
+			// What this practice did to the skill's level: the evidence is written first so it is included.
+			\OhMyLMS\Skills\Evidence::process( 50 );
+			$state['levels'] = \OhMyLMS\Performance\Engine::changes( (int) $session['student_id'], 'practice', (int) $session['id'] );
 			$state['recommendations'] = Recommendations::for_student( (int) $session['student_id'], 3 );
 			// XP, the daily goal, the mastery score change and the streak, when those are on.
 			$reward = \OhMyLMS\Engagement\SessionReward::for_session( $session );
@@ -545,14 +545,14 @@ final class Sessions {
 	}
 
 	/**
-	 * Whether a wrong practice answer may be tried again: only with the Khan level rules on, and not in
+	 * Whether a wrong practice answer may be tried again: only with the step level policy, and not in
 	 * the fast-feedback lesson style, which has its own replay of misses.
 	 *
 	 * @param array $session Session row.
 	 * @return bool
 	 */
 	public static function retry_allowed( array $session ) {
-		return \OhMyLMS\Skills\Khan\Settings::enabled() && ( $session['policy']['style'] ?? '' ) !== 'lesson';
+		return \OhMyLMS\Performance\Settings::retries() && ( $session['policy']['style'] ?? '' ) !== 'lesson';
 	}
 
 	/**

@@ -6,7 +6,7 @@
  * @package OhMyLMS
  */
 
-use OhMyLMS\Skills\MasteryDisplay;
+use OhMyLMS\Performance\Snapshot;
 use OhMyLMS\Student\Hub;
 
 defined( 'ABSPATH' ) || exit;
@@ -89,7 +89,7 @@ $work_page       = max( 1, absint( get_query_var( 'current_page', 1 ) ) );
 
 <?php
 $work      = \OhMyLMS\Schools\Service::assignments( 0, 0, 0, $work_page, $class_id );
-$mastery   = MasteryDisplay::counts( get_current_user_id() );
+$mastery   = Snapshot::counts( get_current_user_id() );
 $levels    = array(
 	'attempted'  => __( 'Attempted', 'ohmylms' ),
 	'familiar'   => __( 'Familiar', 'ohmylms' ),

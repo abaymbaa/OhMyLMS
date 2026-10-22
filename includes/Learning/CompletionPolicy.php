@@ -44,7 +44,7 @@ final class CompletionPolicy {
 			if ( empty( $outcome['required'] ) ) {
 				continue; }
 			++$counts['outcomes']['total'];
-			$level  = $skills[ $outcome['term_id'] ]['level'] ?? 'not-assessed';
+			$level  = $skills[ $outcome['term_id'] ]['level'] ?? 'not-started';
 			$rank   = array_search( $level, Mastery::LEVELS, true );
 			$target = array_search( $outcome['target'], Mastery::LEVELS, true );
 			if ( false !== $rank && false !== $target && $rank >= $target ) {
@@ -131,7 +131,7 @@ final class CompletionPolicy {
 				foreach ( $rows as $row ) {
 					$grouped[ $row['term_id'] ][] = $row; }
 				foreach ( $terms as $term ) {
-					$skills[ $term ] = Mastery::evaluate( $grouped[ $term ] ?? array(), Mastery::rules(), time() ); }
+					$skills[ $term ] = \OhMyLMS\Performance\Engine::evaluate( $grouped[ $term ] ?? array(), time() ); }
 			}
 			$pending = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT o.id FROM ' . AssessmentSchema::table( 'evidence_outbox' ) . ' o JOIN ' . AssessmentSchema::table( 'grade_events' ) . ' g ON g.id=o.grade_event_id JOIN ' . AssessmentSchema::table( 'qb_version_skills' ) . " s ON s.version_id=g.version_id WHERE g.student_id=%d AND s.term_id IN ($ids) AND o.status IN ('pending','failed') LIMIT 1", $student_id ) );
 		}
@@ -149,7 +149,7 @@ final class CompletionPolicy {
 			$term                    = get_term( $outcome['term_id'], Taxonomy::NAME );
 			$outcome['name']         = $term && ! is_wp_error( $term ) ? $term->name : __( 'Unavailable skill', 'ohmylms' );
 			$outcome['state']        = $skills[ $outcome['term_id'] ] ?? array(
-				'level'          => 'not-assessed',
+				'level'          => 'not-started',
 				'review_due'     => 0,
 				'evidence_count' => 0,
 			);

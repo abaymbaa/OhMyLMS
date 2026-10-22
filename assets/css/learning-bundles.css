@@ -32,11 +32,11 @@
 
 .ohmylms-level-mastered, .ohmylms-level-proficient, .ohmylms-level-strength { background: #e8f5ee; border-color: #0b5a32; color: #0b4a2a; }
 
-.ohmylms-level-developing { background: #fff6e5; border-color: #8a5a00; color: #5c3b00; }
+.ohmylms-level-developing, .ohmylms-level-attempted, .ohmylms-level-familiar { background: #fff6e5; border-color: #8a5a00; color: #5c3b00; }
 
 .ohmylms-level-gap { background: #fdecea; border-color: #a12622; color: #7a1c19; }
 
-.ohmylms-level-not-assessed { background: #fff; border-style: dashed; color: #3b454a; }
+.ohmylms-level-not-assessed, .ohmylms-level-not-started { background: #fff; border-style: dashed; color: #3b454a; }
 
 .ohmylms-bundle-table-scroll { overflow-x: auto; }
 

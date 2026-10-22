@@ -115,8 +115,9 @@ export function quizIdFromHash( hash ) {
 
 /** Skill level display helpers. */
 const SHORT = {
-	'not-assessed': '–',
-	developing: 'D',
+	'not-started': '–',
+	attempted: 'A',
+	familiar: 'F',
 	proficient: 'P',
 	mastered: 'M',
 };

@@ -9,6 +9,9 @@
 
 namespace OhMyLMS\Skills;
 
+use OhMyLMS\Performance\Levels;
+use OhMyLMS\Performance\Snapshot;
+
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Learning\Catalog;
 use OhMyLMS\Learning\CourseProgram;
@@ -139,7 +142,7 @@ final class ReportData {
 		$groups   = UnitReport::group( $term_ids, $context['map'], $context['units'], __( 'Other skills', 'ohmylms' ) );
 		$learners = array();
 		$levels   = array();
-		$displays = MasteryDisplay::for_students( array_map( 'intval', $students ), $term_ids );
+		$displays = Snapshot::students( array_map( 'intval', $students ), $term_ids );
 		foreach ( $students as $id ) {
 			$user    = get_userdata( $id );
 			$display = $displays[ (int) $id ] ?? array();
@@ -149,14 +152,14 @@ final class ReportData {
 				$levels[ $term ][] = $key;
 				if ( isset( $rows[ $id ][ $term ] ) || 'not-started' !== $key ) {
 					$cells[ $term ] = ( $rows[ $id ][ $term ] ?? array(
-						'level'               => 'not-assessed',
+						'level'               => 'not-started',
 						'review_due'          => false,
 						'evidence'            => 0,
 						'independent_correct' => 0,
 						'families'            => 0,
 					) ) + array(
 						'display' => $key,
-						'label'   => MasteryDisplay::label( $key ),
+						'label'   => Levels::label( $key ),
 					);
 				}
 			}
@@ -177,8 +180,8 @@ final class ReportData {
 			$average[ $term ] = UnitReport::average( $levels[ $term ] ?? array() );
 		}
 		$display_levels = array();
-		foreach ( MasteryDisplay::LEVELS as $key ) {
-			$display_levels[ $key ] = MasteryDisplay::label( $key );
+		foreach ( Levels::SCALE as $key ) {
+			$display_levels[ $key ] = Levels::label( $key );
 		}
 		return array(
 			'skills'         => array_map(

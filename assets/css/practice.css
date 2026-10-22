@@ -95,7 +95,7 @@
 	color: var(--ohmylms-body-text-color, #3f3f46);
 }
 
-.ohmylms-skill-developing { background: #fef3c7; color: #92400e; }
+.ohmylms-skill-attempted, .ohmylms-skill-familiar { background: #fef3c7; color: #92400e; }
 
 .ohmylms-skill-proficient { background: #dbeafe; color: #1e40af; }
 

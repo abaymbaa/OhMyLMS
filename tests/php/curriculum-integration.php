@@ -389,7 +389,7 @@ try {
     foreach ([$strong, $weak, $partial] as $term) { Mastery::recompute($student, $term); }
     $state_rows = array_column(states($student), 'level', 'term_id');
     ok($state_rows[$strong] === 'proficient' || $state_rows[$strong] === 'mastered', 'Fixture: strong skill should be proficient: ' . wp_json_encode($state_rows));
-    ok($state_rows[$weak] === 'developing' && $state_rows[$partial] === 'developing' && !isset($state_rows[$untouched]), 'Fixture: other skills should be developing or unassessed');
+    ok($state_rows[$weak] === 'attempted' && $state_rows[$partial] === 'attempted' && !isset($state_rows[$untouched]), 'Fixture: other skills should be developing or unassessed');
     // Practice exists for the weak skill and the untouched skill (public catalog practice).
     foreach ([$weak, $untouched] as $term) {
         for ($i = 0; $i < 3; $i++) {
@@ -411,10 +411,10 @@ try {
     $by_term = []; foreach ($skill_view['skills'] as $entry) { $by_term[$entry['term_id']] = $entry; }
     ok(count($skill_view['skills']) === 5 && isset($by_term[$strong], $by_term[$weak], $by_term[$partial], $by_term[$untouched], $by_term[$nopool]), 'Skills of descendant items were not gathered once each: ' . count($skill_view['skills']));
     ok($by_term[$strong]['classification'] === 'strength' && $by_term[$strong]['practice_url'] === null, 'Strengths should not be queued for practice');
-    ok($by_term[$weak]['classification'] === 'gap' && $by_term[$weak]['level_label'] === 'Developing', 'A skill with repeated recent errors should be a gap');
+    ok($by_term[$weak]['classification'] === 'gap' && $by_term[$weak]['level_label'] === 'Attempted', 'A skill with repeated recent errors should be a gap');
     ok($by_term[$partial]['classification'] === 'developing', 'A skill with one answer is in progress, not a gap');
-    ok($by_term[$untouched]['level'] === 'not-assessed' && $by_term[$untouched]['level_label'] === 'Not assessed' && $by_term[$untouched]['classification'] === 'not-assessed' && $by_term[$untouched]['evidence_count'] === 0, 'Unassessed skills must read "Not assessed"');
-    ok($by_term[$nopool]['level'] === 'not-assessed' && $by_term[$nopool]['classification'] === 'not-assessed', 'A skill with no evidence should be not assessed');
+    ok($by_term[$untouched]['level'] === 'not-started' && $by_term[$untouched]['level_label'] === 'Not started' && $by_term[$untouched]['classification'] === 'not-assessed' && $by_term[$untouched]['evidence_count'] === 0, 'Unassessed skills must read "Not assessed"');
+    ok($by_term[$nopool]['level'] === 'not-started' && $by_term[$nopool]['classification'] === 'not-assessed', 'A skill with no evidence should be not assessed');
     ok($skill_view['skill_summary'] === ['total' => 5, 'strengths' => 1, 'gaps' => 1, 'developing' => 1, 'not_assessed' => 2], 'Skill summary wrong: ' . wp_json_encode($skill_view['skill_summary']));
     ok(strpos((string) $by_term[$weak]['practice_url'], 'ohmylms_practice=' . $weak) !== false && strpos((string) $by_term[$untouched]['practice_url'], 'ohmylms_practice=' . $untouched) !== false, 'Practice links missing where questions exist');
     ok($by_term[$nopool]['practice_url'] === null && $by_term[$partial]['practice_url'] === null, 'A practice link was offered with no questions to practise');
@@ -463,15 +463,15 @@ try {
     ok(count($group) === 1 && $group[0]['shared']['term_id'] === $shared, 'The shared skill did not appear in the combined view');
     $group = $group[0];
     ok($group['pooled_sources'] === 2, 'Only equivalent mappings should pool: ' . $group['pooled_sources']);
-    ok($group['evidence_count'] === 2 && $group['level'] === 'developing', 'The same graded answer was counted twice, or a related skill was pooled: ' . wp_json_encode([$group['evidence_count'], $group['level']]));
+    ok($group['evidence_count'] === 2 && $group['level'] === 'familiar', 'The same graded answer was counted twice, or a related skill was pooled: ' . wp_json_encode([$group['evidence_count'], $group['level']]));
     // Phase 2. A genuine extra answer under B lifts the pool to three distinct answers.
     evidence($student, $skill_b, 9200003, true, 8003, 'b1', $t + 120); Mastery::recompute($student, $skill_b);
     $group = view($combined_bundle, $student)['combined'][0];
     ok($group['evidence_count'] === 3 && in_array($group['level'], ['proficient', 'mastered'], true), 'Pooled level should reflect three distinct correct answers: ' . wp_json_encode([$group['evidence_count'], $group['level']]));
     $own = array_column(states($student), null, 'term_id');
-    ok($own[$skill_a]['level'] === 'developing' && $own[$skill_b]['level'] === 'developing' && $own[$related]['level'] === 'developing', 'Pooling must not change any skill\'s own level: ' . wp_json_encode($own));
+    ok($own[$skill_a]['level'] === 'familiar' && $own[$skill_b]['level'] === 'familiar' && $own[$related]['level'] === 'attempted', 'Pooling must not change any skill\'s own level: ' . wp_json_encode($own));
     $source_levels = array_column($group['sources'], 'level', 'term_id');
-    ok($source_levels[$skill_a] === 'developing' && $source_levels[$skill_b] === 'developing' && $source_levels[$related] === 'developing', 'Each source skill must keep its own level in the combined view');
+    ok($source_levels[$skill_a] === 'familiar' && $source_levels[$skill_b] === 'familiar' && $source_levels[$related] === 'attempted', 'Each source skill must keep its own level in the combined view');
     $by_source = array_column($group['sources'], null, 'term_id');
     ok($by_source[$skill_a]['note'] === 'Updated note.' && $by_source[$skill_b]['note'] === 'Syllabus B allows a calculator.' && $by_source[$skill_a]['relation'] === 'equivalent' && $by_source[$related]['relation'] === 'related', 'Differences and relations were not preserved');
     $context_a = array_column($by_source[$skill_a]['context'], 'version', 'code');
@@ -485,7 +485,7 @@ try {
     // Without any evidence, the shared skill reads Not assessed.
     $fresh = user(); enroll($fresh, $igcse_english);
     $fresh_group = view($combined_bundle, $fresh)['combined'][0];
-    ok($fresh_group['level'] === 'not-assessed' && $fresh_group['level_label'] === 'Not assessed' && $fresh_group['evidence_count'] === 0, 'An unassessed shared skill must read Not assessed');
+    ok($fresh_group['level'] === 'not-started' && $fresh_group['level_label'] === 'Not started' && $fresh_group['evidence_count'] === 0, 'An unassessed shared skill must read Not assessed');
     // Matching names alone never pool evidence.
     evidence($student, $same_a, 9200010, true, 8010, 'n1', $t); Mastery::recompute($student, $same_a);
     ok(!isset(array_column(states($student), null, 'term_id')[$same_b]), 'Evidence on one skill leaked to a skill with the same name');

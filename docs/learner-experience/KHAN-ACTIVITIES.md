@@ -1,3 +1,5 @@
+> The Khan level rules described here are now the `steps` policy of the unified skill tracking system; see [PERFORMANCE.md](../PERFORMANCE.md). The separate level log and the display class below no longer exist.
+
 # Khan Academy exercises, quizzes and tests: observed behaviour and OhMyLMS gaps
 
 Status (October 19, 2026): the observation (sections 1 to 4) is a reference; sections 5 to 11 record what was

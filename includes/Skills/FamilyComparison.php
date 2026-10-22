@@ -13,6 +13,8 @@
 
 namespace OhMyLMS\Skills;
 
+use OhMyLMS\Performance\Snapshot;
+
 use OhMyLMS\Schools\Schema as SchoolSchema;
 
 defined( 'ABSPATH' ) || exit;
@@ -44,8 +46,8 @@ final class FamilyComparison {
 		$levels = array();
 		$names  = array();
 		foreach ( $people as $id => $person ) {
-			$terms = MasteryDisplay::started_terms( $id );
-			foreach ( MasteryDisplay::for_student( $id, $terms ) as $term => $entry ) {
+			$terms = Snapshot::started_terms( $id );
+			foreach ( Snapshot::student( $id, $terms ) as $term => $entry ) {
 				$levels[ $id ][ $term ] = $entry['key'];
 				if ( ! isset( $names[ $term ] ) ) {
 					$skill = Taxonomy::describe( $term );
@@ -114,7 +116,7 @@ final class FamilyComparison {
 			return array();
 		}
 		$cohort  = array_fill_keys( $skills, array() );
-		$display = MasteryDisplay::for_students( $members, $skills );
+		$display = Snapshot::students( $members, $skills );
 		foreach ( $members as $member ) {
 			foreach ( $skills as $skill ) {
 				$cohort[ $skill ][] = $display[ $member ][ $skill ]['key'] ?? 'not-started';

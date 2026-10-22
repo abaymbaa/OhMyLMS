@@ -8,8 +8,8 @@
 use OhMyLMS\Family\Reports;
 use OhMyLMS\Family\Schema as FamilySchema;
 use OhMyLMS\Schools\Schema;
-use OhMyLMS\Skills\Khan\Schema as KhanSchema;
-use OhMyLMS\Skills\Khan\Settings;
+use OhMyLMS\Assessment\Schema as AssessmentSchema;
+use OhMyLMS\Performance\Settings;
 use OhMyLMS\Skills\Taxonomy;
 use OhMyLMS\Student\TeacherReports;
 
@@ -41,8 +41,7 @@ $check    = static function ( $value, $message ) use ( &$count ) {
 try {
 	ohmylms_school_report_fixture( $fixture );
 	FamilySchema::install();
-	KhanSchema::install();
-	update_option( Settings::OPTION, array( 'model' => 'khan' ) );
+	update_option( Settings::OPTION, array( 'policy' => 'steps' ) );
 	$learner     = $fixture['users'][2];
 	$teacher     = $fixture['users'][0];
 	$class       = $fixture['classes'][0];
@@ -78,7 +77,7 @@ try {
 		if ( 'quiz' === $kind ) {
 			$check(
 				false !== $wpdb->insert(
-					KhanSchema::table(),
+					AssessmentSchema::table( 'skill_level_events' ),
 					array(
 						'student_id'   => $learner,
 						'term_id'      => $term_id,
@@ -112,9 +111,10 @@ try {
 	$check( 'familiar' === $skill['level'] && 3 === $skill['assessments'], 'Class replay leaked home/global levels or lost ordering.' );
 	$check( 30 === TeacherReports::read( $class, 999 )['days'], 'Invalid period accepted.' );
 	$check( array() === TeacherReports::read( $class, 30, 10000 )['students'], 'Roster pagination was ignored.' );
-	update_option( Settings::OPTION, array( 'model' => 'evidence' ) );
-	$check( ! TeacherReports::read( $class )['enabled'], 'Khan report exposed under evidence mode.' );
-	update_option( Settings::OPTION, array( 'model' => 'khan' ) );
+	// The class report replays recorded assessment outcomes, whichever policy decides the levels.
+	update_option( Settings::OPTION, array( 'policy' => 'evidence' ) );
+	$check( TeacherReports::read( $class )['enabled'], 'The class report depends on the level policy.' );
+	update_option( Settings::OPTION, array( 'policy' => 'steps' ) );
 	$wpdb->update(
 		Schema::table( 'class_memberships' ),
 		array( 'status' => 'inactive' ),
@@ -220,7 +220,7 @@ try {
 	foreach ( $fixture['users'] ?? array() as $user_id ) {
 		$wpdb->delete( FamilySchema::table( 'activity' ), array( 'learner_user_id' => $user_id ) );
 		$wpdb->delete( FamilySchema::table( 'links' ), array( 'guardian_user_id' => $user_id ) );
-		$wpdb->delete( KhanSchema::table(), array( 'student_id' => $user_id ) );
+		$wpdb->delete( AssessmentSchema::table( 'skill_level_events' ), array( 'student_id' => $user_id ) );
 	}
 	if ( $term_id ) {
 		wp_delete_term( $term_id, Taxonomy::NAME );

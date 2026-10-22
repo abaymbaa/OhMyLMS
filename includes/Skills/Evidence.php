@@ -7,6 +7,8 @@
 namespace OhMyLMS\Skills;
 
 use OhMyLMS\Assessment\Schema;
+use OhMyLMS\Performance\Settings;
+use OhMyLMS\Performance\Snapshot;
 use OhMyLMS\QuestionBank\SkillMap;
 use OhMyLMS\QuestionBank\VersionPublisher;
 
@@ -70,6 +72,9 @@ final class Evidence {
 			return 'skipped'; }
 		if ( ! (int) $event['student_id'] ) {
 			return 'waiting'; }
+		// An activity the administrator switched off for skills contributes nothing.
+		if ( ! Settings::counts( (string) $event['source_type'], (int) $event['source_id'] ) ) {
+			return 'skipped'; }
 		$evidence = Schema::table( 'skill_evidence' );
 		$terms    = array();
 		if ( (int) $event['supersedes'] ) {
@@ -200,6 +205,7 @@ final class Evidence {
 		$student_id = (int) $student_id;
 		$wpdb->delete( Schema::table( 'skill_evidence' ), array( 'student_id' => $student_id ) );
 		$wpdb->delete( Schema::table( 'student_skill_state' ), array( 'student_id' => $student_id ) );
+		$wpdb->delete( Schema::table( 'skill_level_events' ), array( 'student_id' => $student_id ) );
 		$events = Schema::table( 'grade_events' );
 		$outbox = Schema::table( 'evidence_outbox' );
 		$wpdb->query( $wpdb->prepare( "UPDATE $outbox o JOIN $events e ON e.id=o.grade_event_id SET o.status='pending', o.tries=0 WHERE e.student_id=%d", $student_id ) );
@@ -249,34 +255,13 @@ final class Evidence {
 			wp_schedule_event( time() + 60, 'ohmylms_every_minute', 'ohmylms_process_evidence' ); }
 	}
 
-	/** Skill summary for one learner: state rows joined with skill details. */
+	/**
+	 * Skill summary for one learner. Kept for callers that know Evidence; see Performance\Snapshot::skills.
+	 *
+	 * @param int $student_id Learner.
+	 * @return array[]
+	 */
 	public static function summary( $student_id ) {
-		global $wpdb;
-		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'student_skill_state' ) . ' WHERE student_id=%d', (int) $student_id ), ARRAY_A );
-		$result = array();
-		// The 0-100 mastery score, when that is switched on, sits beside the evidence-based level.
-		$scores = Score::summary( (int) $student_id );
-		foreach ( $rows as $row ) {
-			$skill = Taxonomy::describe( (int) $row['term_id'] );
-			if ( ! $skill ) {
-				continue; }
-			$result[] = $skill + ( isset( $scores[ (int) $row['term_id'] ] ) ? array( 'mastery' => $scores[ (int) $row['term_id'] ] ) : array() ) + array(
-				'level'               => $row['level'],
-				'level_label'         => Mastery::label( $row['level'] ),
-				'review_due'          => (bool) $row['review_due'],
-				'evidence_count'      => (int) $row['evidence_count'],
-				'independent_correct' => (int) $row['independent_correct'],
-				'families'            => (int) $row['families'],
-				'recent_accuracy'     => (float) $row['score'],
-				'last_evidence_at'    => $row['last_evidence_at'],
-			);
-		}
-		usort(
-			$result,
-			static function ( $left, $right ) {
-				return strcmp( $left['name'], $right['name'] );
-			}
-		);
-		return $result;
+		return Snapshot::skills( (int) $student_id );
 	}
 }

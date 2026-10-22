@@ -84,7 +84,7 @@ $lesson = static function (array $rights, $style = 'lesson') use ($skill) {
     }
     return $state;
 };
-$stored_score = static function () use ($wpdb, $student, $skill) { return $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . XpSchema::table('skill_scores') . ' WHERE student_id=%d AND term_id=%d', $student, $skill), ARRAY_A); };
+$stored_score = static function () use ($wpdb, $student, $skill) { return $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . \OhMyLMS\Assessment\Schema::table('student_skill_state') . ' WHERE student_id=%d AND term_id=%d', $student, $skill), ARRAY_A); };
 
 // ---- Lesson 1: four right. XP 10 + 5; score 9 per answer in the learning band ----
 $one = $lesson([true, true, true, true]);
@@ -92,7 +92,7 @@ ok($one['status'] === 'complete' && $one['reward']['xp']['xp'] === 15 && $one['r
 ok($one['reward']['xp']['total'] === 15 && $one['reward']['xp']['today'] === 15 && $one['reward']['xp']['goal'] === 20 && $one['reward']['xp']['goal_met'] === false && $goals_met === [], 'Lesson 1 daily goal wrong');
 ok($one['reward']['score']['before'] === 0.0 && $one['reward']['score']['after'] === 36.0 && $one['reward']['score']['delta'] === 36.0 && $one['reward']['score']['unlock'] === 80 && $one['reward']['score']['skill'] === "XP skill $run", 'Lesson 1 score wrong: ' . wp_json_encode($one['reward']['score']));
 $row = $stored_score();
-ok((float) $row['score'] === 36.0 && (int) $row['scored'] === 4 && (int) $row['correct'] === 4 && $row['milestones'] === '', 'Stored score wrong: ' . wp_json_encode($row));
+ok((float) $row['mastery'] === 36.0 && (int) $row['scored'] === 4 && (int) $row['correct'] === 4 && $row['milestones'] === '', 'Stored score wrong: ' . wp_json_encode($row));
 $event = $wpdb->get_row($wpdb->prepare('SELECT * FROM ' . XpSchema::table('xp_events') . " WHERE student_id=%d AND event_key=%s", $student, 'practice:' . $one['uuid']), ARRAY_A);
 ok($event && (int) $event['xp'] === 15 && $event['local_date'] === '2026-10-07' && (int) $event['term_id'] === $skill && $event['source_type'] === 'practice', 'The XP event is wrong: ' . wp_json_encode($event));
 
@@ -133,7 +133,7 @@ ok($mixed['status'] === 'complete' && $mixed['replays'] === 1 && $mixed['reward'
 ok($mixed['reward']['score']['before'] === 90.0 && $mixed['reward']['score']['after'] === 96.0, 'The mixed lesson score is wrong (a miss at the floor, three rights, a replay right): ' . wp_json_encode($mixed['reward']['score']));
 ok($mixed['planned_right'] === 3 && Xp::earned($student, '2026-10-08') === $mixed['reward']['xp']['xp'], 'Lesson accuracy wrong');
 $expected = ScoreModel::run(array_map(static function ($row) { return $row; }, Score::rows($student, $skill)), Score::config());
-ok(abs($expected['score'] - (float) $stored_score()['score']) < 0.001, 'The stored score is not what the evidence gives');
+ok(abs($expected['score'] - (float) $stored_score()['mastery']) < 0.001, 'The stored score is not what the evidence gives');
 $after_mixed = $mixed['reward']['score']['after'];
 
 // ---- The week and the learner's own endpoint ----
@@ -179,12 +179,11 @@ ok(Xp::total($student) === $before_off && Xp::award($student, 'x', 'practice', 5
 $score_settings(['enable' => false]);
 ok(Score::summary($student) === [] && !isset(array_values(array_filter(Evidence::summary($student), static function ($s) use ($skill) { return (int) $s['id'] === $skill; }))[0]['mastery']) && !isset($lesson([true, true, true])['reward']['score']), 'The score did not switch off cleanly');
 
-// ---- Practice done while the score was off is scored on first read after it is switched on ----
-$stored_before = (float) $stored_score()['score'];
-$wpdb->delete(XpSchema::table('skill_scores'), ['student_id' => $student]);
+// ---- The score is kept up to date even while the feature is off, so switching it on shows it at once ----
+$stored_before = (float) $stored_score()['mastery'];
 $score_settings(['enable' => true]);
 $backfilled = Score::summary($student);
-ok(isset($backfilled[$skill]) && $backfilled[$skill]['scored'] > 0 && $backfilled[$skill]['stored'] > 0, 'Past practice was not scored when the feature was switched on');
+ok(isset($backfilled[$skill]) && $backfilled[$skill]['scored'] > 0 && abs($backfilled[$skill]['stored'] - $stored_before) < 0.001, 'The score kept while the feature was off was not shown when it was switched on');
 ok(abs($backfilled[$skill]['stored'] - ScoreModel::run(Score::rows($student, $skill), Score::config())['score']) < 0.001, 'The backfilled score differs from the evidence');
 
 // ---- Tuning is honoured: a band that gains more reaches the top sooner ----
@@ -198,6 +197,5 @@ $score_settings();
 $other = make_user('subscriber');
 ok(Score::summary($other) === [] && Xp::total($other) === 0 && Xp::summary($other)['today'] === 0, 'A new learner has XP or a score');
 $wpdb->delete(XpSchema::table('xp_events'), ['student_id' => $student]);
-$wpdb->delete(XpSchema::table('skill_scores'), ['student_id' => $student]);
 $wpdb->delete(StreakSchema::table('state'), ['user_id' => $student]);
 foreach (['days', 'activities', 'milestones'] as $name) { $wpdb->delete(StreakSchema::table($name), ['user_id' => $student]); }

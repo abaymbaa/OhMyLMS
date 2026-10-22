@@ -6,7 +6,7 @@
  * Run: php tests/php/unit-report-unit.php
  */
 define( 'ABSPATH', __DIR__ );
-require dirname( __DIR__, 2 ) . '/includes/Skills/MasteryDisplay.php';
+require dirname( __DIR__, 2 ) . '/includes/Performance/Levels.php';
 require dirname( __DIR__, 2 ) . '/includes/Skills/UnitReport.php';
 function check( $value, $message ) {
 	if ( ! $value ) {

@@ -661,7 +661,7 @@ function ClassSkills( { classroom, revision } ) {
 																	cell.review_due
 																)
 															: data.levels[
-																	'not-assessed'
+																	'not-started'
 																] }
 													</td>
 												);

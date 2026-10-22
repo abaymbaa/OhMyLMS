@@ -202,8 +202,8 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 
 			<ul class="oml-hub-legend" aria-label="<?php esc_attr_e( 'Skill mastery legend', 'ohmylms' ); ?>">
 				<?php if ( $hub_summary['skills'] && $hub_outline['enrolled'] ) : ?>
-					<?php foreach ( \OhMyLMS\Skills\MasteryDisplay::LEVELS as $hub_level ) : ?>
-						<li class="is-<?php echo esc_attr( $hub_level ); ?>"><span class="oml-hub-swatch" aria-hidden="true"></span><?php echo esc_html( \OhMyLMS\Skills\MasteryDisplay::label( $hub_level ) ); ?></li>
+					<?php foreach ( \OhMyLMS\Performance\Levels::SCALE as $hub_level ) : ?>
+						<li class="is-<?php echo esc_attr( $hub_level ); ?>"><span class="oml-hub-swatch" aria-hidden="true"></span><?php echo esc_html( \OhMyLMS\Performance\Levels::label( $hub_level ) ); ?></li>
 					<?php endforeach; ?>
 				<?php endif; ?>
 				<li><span class="oml-course-marker" aria-hidden="true">↯</span><?php esc_html_e( 'Quiz', 'ohmylms' ); ?></li>

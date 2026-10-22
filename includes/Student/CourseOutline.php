@@ -21,7 +21,8 @@ use OhMyLMS\Learning\CourseProgram;
 use OhMyLMS\Learning\LearningPath;
 use OhMyLMS\Learning\ProgramGroups;
 use OhMyLMS\Learning\Schema as LearningSchema;
-use OhMyLMS\Skills\MasteryDisplay;
+use OhMyLMS\Performance\Levels;
+use OhMyLMS\Performance\Snapshot;
 use OhMyLMS\Skills\Taxonomy;
 
 defined( 'ABSPATH' ) || exit;
@@ -98,7 +99,7 @@ final class CourseOutline {
 		foreach ( $state ? $program['outcomes'] : array() as $outcome ) {
 			$term_ids[] = (int) $outcome['term_id'];
 		}
-		$display = $enrollment ? MasteryDisplay::for_student( $student_id, $term_ids ) : array();
+		$display = $enrollment ? Snapshot::student( $student_id, $term_ids ) : array();
 
 		$units  = array();
 		$skills = array();
@@ -149,7 +150,7 @@ final class CourseOutline {
 			array_filter(
 				$skills,
 				static function ( $level ) {
-					return $level && MasteryDisplay::is_proficient( $level );
+					return $level && Levels::is_proficient( $level );
 				}
 			)
 		);
@@ -238,7 +239,7 @@ final class CourseOutline {
 				'level'    => $entry ? $entry['key'] : null,
 				'label'    => $entry ? $entry['label'] : '',
 				'score'    => $entry ? $entry['score'] : null,
-				'complete' => $entry && MasteryDisplay::is_proficient( $entry['key'] ),
+				'complete' => $entry && Levels::is_proficient( $entry['key'] ),
 				'required' => ! empty( $item['required'] ),
 				'url'      => $enrolled ? add_query_arg(
 					array(

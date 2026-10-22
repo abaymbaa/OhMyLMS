@@ -10,7 +10,7 @@ namespace OhMyLMS\Quiz;
 use OhMyLMS\Assessment\AssessmentSettings;
 use OhMyLMS\Assessment\Pools;
 use OhMyLMS\Assessment\Schema;
-use OhMyLMS\Skills\Khan;
+use OhMyLMS\Performance\Settings as PerformanceSettings;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -131,7 +131,7 @@ final class Intro {
 			<?php if ( $summary['skills'] > 0 ) : ?>
 				<p class="ohmylms-assessment-intro-skills">
 					<?php /* translators: %d: number of skills */ echo esc_html( sprintf( _n( 'Covers %d skill.', 'Covers %d skills.', $summary['skills'], 'ohmylms' ), $summary['skills'] ) ); ?>
-					<?php if ( Khan\Settings::enabled() ) : ?>
+					<?php if ( PerformanceSettings::retries() ) : ?>
 						<?php esc_html_e( 'Your answers can move each skill up or down one level.', 'ohmylms' ); ?>
 					<?php endif; ?>
 				</p>

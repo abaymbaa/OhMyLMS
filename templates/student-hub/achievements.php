@@ -8,13 +8,13 @@
 
 use OhMyLMS\Engagement\Badge;
 use OhMyLMS\Engagement\Xp;
-use OhMyLMS\Skills\MasteryDisplay;
+use OhMyLMS\Performance\Snapshot;
 use OhMyLMS\Student\Hub;
 
 defined( 'ABSPATH' ) || exit;
 
 $hub_user      = get_current_user_id();
-$hub_mastery   = MasteryDisplay::counts( $hub_user );
+$hub_mastery   = Snapshot::counts( $hub_user );
 $hub_levels    = array(
 	'attempted'  => __( 'Attempted', 'ohmylms' ),
 	'familiar'   => __( 'Familiar', 'ohmylms' ),

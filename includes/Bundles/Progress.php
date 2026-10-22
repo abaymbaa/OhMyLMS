@@ -14,6 +14,7 @@ use OhMyLMS\Curriculum\SkillMappings;
 use OhMyLMS\Learning\CompletionPolicy;
 use OhMyLMS\Learning\CourseProgram;
 use OhMyLMS\Learning\PracticeAccessPolicy;
+use OhMyLMS\Performance\Levels;
 use OhMyLMS\Practice\Selector;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Skills\Recommendations;
@@ -41,7 +42,7 @@ final class Progress {
 	public static function classify( $level, $struggling ) {
 		if ( in_array( $level, array( 'proficient', 'mastered' ), true ) ) {
 			return 'strength'; }
-		if ( 'developing' === $level ) {
+		if ( Levels::is_developing( $level ) ) {
 			return $struggling ? 'gap' : 'developing'; }
 		return 'not-assessed';
 	}
@@ -245,8 +246,8 @@ final class Progress {
 			if ( ! isset( $labels[ $term_id ] ) ) {
 				continue; }
 			$state               = $states[ $term_id ] ?? null;
-			$level               = $state ? $state['level'] : 'not-assessed';
-			$struggling          = 'developing' === $level && Recommendations::struggling( (int) $student, $term_id );
+			$level               = $state ? $state['level'] : 'not-started';
+			$struggling          = Levels::is_developing( $level ) && Recommendations::struggling( (int) $student, $term_id );
 			$class               = self::classify( $level, $struggling );
 			$entries[ $term_id ] = array(
 				'term_id'              => $term_id,
@@ -336,7 +337,7 @@ final class Progress {
 		}
 		$pooled_terms = array_values( array_unique( $pooled_terms ) );
 		$placeholders = implode( ',', array_fill( 0, count( $pooled_terms ), '%d' ) );
-		$evidence     = $wpdb->get_results( $wpdb->prepare( 'SELECT id, grade_event_id, term_id, part_id, question_id, awarded, available, independent, first_try, family_id, evidence_at FROM ' . AssessmentSchema::table( 'skill_evidence' ) . " WHERE student_id=%d AND term_id IN ($placeholders) AND role='primary' AND superseded=0 ORDER BY evidence_at, id", array_merge( array( (int) $student ), $pooled_terms ) ), ARRAY_A ) ?: array();
+		$evidence     = $wpdb->get_results( $wpdb->prepare( 'SELECT id, grade_event_id, term_id, part_id, question_id, awarded, available, independent, first_try, difficulty, family_id, source_type, source_id, evidence_at FROM ' . AssessmentSchema::table( 'skill_evidence' ) . " WHERE student_id=%d AND term_id IN ($placeholders) AND role='primary' AND superseded=0 ORDER BY evidence_at, id", array_merge( array( (int) $student ), $pooled_terms ) ), ARRAY_A ) ?: array();
 		$by_term      = array();
 		foreach ( $evidence as $row ) {
 			$by_term[ (int) $row['term_id'] ][] = $row; }
@@ -353,7 +354,7 @@ final class Progress {
 					continue; }
 				if ( 'equivalent' === $mapping['relation'] ) {
 					$rows = array_merge( $rows, $by_term[ $term ] ?? array() ); }
-				$level     = isset( $states[ $term ] ) ? $states[ $term ]['level'] : 'not-assessed';
+				$level     = isset( $states[ $term ] ) ? $states[ $term ]['level'] : 'not-started';
 				$sources[] = array(
 					'term_id'        => $term,
 					'name'           => $labels[ $term ]['name'],
@@ -376,7 +377,7 @@ final class Progress {
 					),
 				);
 			}
-			$state      = Combined::evaluate( $rows, $rules, time() );
+			$state      = Combined::state( $rows, time() );
 			$merged     = Combined::merge( $rows );
 			$combined[] = array(
 				'shared'         => array(

@@ -14,6 +14,7 @@ import {
 } from '@wordpress/components';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import {
+	askInsight,
 	loadCourses,
 	loadSkillMatrix,
 	loadStudentSkills,
@@ -156,6 +157,16 @@ export function PerformancePage() {
 function StudentSkills( { student, courseId, unitId, onClose } ) {
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
+	const [ note, setNote ] = useState( null );
+	const [ writing, setWriting ] = useState( false );
+	const writeNote = () => {
+		setWriting( true );
+		setError( '' );
+		askInsight( student.id, 'teacher' )
+			.then( setNote )
+			.catch( ( cause ) => setError( cause.message ) )
+			.finally( () => setWriting( false ) );
+	};
 	const load = () =>
 		loadStudentSkills( student.id, courseId, undefined, unitId )
 			.then( setData )
@@ -196,6 +207,31 @@ function StudentSkills( { student, courseId, unitId, onClose } ) {
 							</li>
 						) ) }
 					</ul>
+					{ data.insights && (
+						<Fragment>
+							<h3>{ __( 'AI note', 'ohmylms' ) }</h3>
+							{ note ? (
+								<p>{ note.text }</p>
+							) : (
+								<p>
+									{ __(
+										'A short AI-written summary of where this learner stands. It explains the levels; it never changes them.',
+										'ohmylms'
+									) }
+								</p>
+							) }
+							<Button
+								variant="secondary"
+								onClick={ writeNote }
+								isBusy={ writing }
+								disabled={ writing }
+							>
+								{ note
+									? __( 'Write again', 'ohmylms' )
+									: __( 'Write a note', 'ohmylms' ) }
+							</Button>
+						</Fragment>
+					) }
 					{ data.recommendations.length > 0 && (
 						<Fragment>
 							<h3>{ __( 'Suggestions', 'ohmylms' ) }</h3>

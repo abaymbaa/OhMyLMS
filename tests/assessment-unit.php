@@ -61,14 +61,14 @@ check(Scoring::display(4.25) === '4.25' && Scoring::display(5.0) === '5', 'displ
 $rules = ['window' => 8, 'proficient_min' => 3, 'proficient_families' => 2, 'proficient_accuracy' => 0.8, 'mastered_min' => 5, 'mastered_families' => 3, 'mastered_accuracy' => 0.85, 'review_gap_hours' => 24, 'review_after_days' => 14];
 $row = function ($ok, $family, $at, $independent = 1, $first = 1) { return ['awarded' => $ok ? 1 : 0, 'available' => 1, 'independent' => $independent, 'first_try' => $first, 'family_id' => $family, 'question_id' => crc32($family), 'evidence_at' => gmdate('Y-m-d H:i:s', $at)]; };
 $now = 2000000000;
-check(Mastery::evaluate([], $rules, $now)['level'] === 'not-assessed', 'no evidence');
-check(Mastery::evaluate([$row(0, 'a', $now)], $rules, $now)['level'] === 'developing', 'any evidence is developing');
+check(Mastery::evaluate([], $rules, $now)['level'] === 'not-started', 'no evidence');
+check(Mastery::evaluate([$row(0, 'a', $now)], $rules, $now)['level'] === 'attempted', 'any evidence is attempted');
 $same_family = [$row(1, 'a', $now - 30), $row(1, 'a', $now - 20), $row(1, 'a', $now - 10)];
-check(Mastery::evaluate($same_family, $rules, $now)['level'] === 'developing', 'one family is not proficiency');
+check(Mastery::evaluate($same_family, $rules, $now)['level'] === 'familiar', 'one family is familiar, not proficient');
 $retries = [$row(1, 'a', $now - 30, 1, 0), $row(1, 'b', $now - 20, 1, 0), $row(1, 'c', $now - 10, 1, 0)];
-check(Mastery::evaluate($retries, $rules, $now)['level'] === 'developing', 'repeats do not count');
+check(Mastery::evaluate($retries, $rules, $now)['level'] === 'attempted', 'repeats do not count');
 $mixed = [$row(1, 'a', $now - 50), $row(0, 'b', $now - 40), $row(1, 'c', $now - 30), $row(1, 'd', $now - 20), $row(0, 'e', $now - 10)];
-check(Mastery::evaluate($mixed, $rules, $now)['level'] === 'developing', '60% accuracy is not proficient');
+check(Mastery::evaluate($mixed, $rules, $now)['level'] === 'familiar', '60% accuracy is familiar, not proficient');
 // Mongolian (Cyrillic) answers: case and spacing ignored, letters preserved.
 check(S::normalize_text('  Х = 2 ') === S::normalize_text('х=2'), 'Cyrillic case-insensitive match');
 check(S::normalize_text('Өндөр') !== S::normalize_text('Ондор'), 'Cyrillic letters not folded');

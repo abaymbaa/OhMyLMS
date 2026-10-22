@@ -141,6 +141,15 @@ final class Frontend {
 					<?php } ?>
 				</ul>
 			<?php } ?>
+			<?php if ( $skills && \OhMyLMS\Performance\Insights::available() ) { ?>
+				<div class="ohmylms-ai-note" data-ohmylms-note data-url="<?php echo esc_url( rest_url( 'ohmylms/v1/reports/skills/students/' . $student . '/insight' ) ); ?>" data-nonce="<?php echo esc_attr( wp_create_nonce( 'wp_rest' ) ); ?>">
+					<h3><?php esc_html_e( 'My study note', 'ohmylms' ); ?></h3>
+					<p><?php esc_html_e( 'A short note written by AI about your skills. It explains your levels; it never changes them.', 'ohmylms' ); ?></p>
+					<p class="ohmylms-ai-note-text" role="status" aria-live="polite"></p>
+					<button type="button" class="ohmylms-button"><?php esc_html_e( 'Write my study note', 'ohmylms' ); ?></button>
+				</div>
+				<?php wp_enqueue_script( 'ohmylms-performance-note', plugins_url( 'assets/js/performance-note.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/performance-note.js' ), true ); ?>
+			<?php } ?>
 		</section>
 		<?php
 		return ob_get_clean();

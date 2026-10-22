@@ -32,6 +32,22 @@ export const rebuildStudent = ( studentId, fetch = request ) =>
 		path: `/ohmylms/v1/reports/skills/students/${ studentId }/rebuild`,
 		method: 'POST',
 	} );
+/**
+ * Ask for an AI-written note about a learner's skills. The AI only explains; levels never come from it.
+ * @param studentId
+ * @param audience
+ * @param fetch
+ */
+export const askInsight = (
+	studentId,
+	audience = 'teacher',
+	fetch = request
+) =>
+	fetch( {
+		path: `/ohmylms/v1/reports/skills/students/${ studentId }/insight`,
+		method: 'POST',
+		data: { audience },
+	} );
 export const loadPools = ( quizId, fetch = request ) =>
 	fetch( { path: `/ohmylms/v1/quiz/${ quizId }/pools` } );
 export const savePools = ( quizId, pools, fetch = request ) =>

@@ -13,7 +13,9 @@ use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Mastery;
-use OhMyLMS\Skills\MasteryDisplay;
+use OhMyLMS\Performance\Insights;
+use OhMyLMS\Performance\Levels;
+use OhMyLMS\Performance\Snapshot;
 use OhMyLMS\Skills\Recommendations;
 use OhMyLMS\Skills\ReportData;
 use OhMyLMS\Skills\Taxonomy;
@@ -50,6 +52,24 @@ class SkillReportController extends RestController {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'student' ),
 					'permission_callback' => array( $this, 'student_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/insight',
+			array(
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, 'insight' ),
+					'permission_callback' => array( $this, 'insight_permission' ),
+					'args'                => array(
+						'audience' => array(
+							'type'    => 'string',
+							'enum'    => Insights::AUDIENCES,
+							'default' => 'student',
+						),
+					),
 				),
 			)
 		);
@@ -175,11 +195,11 @@ class SkillReportController extends RestController {
 		$context = ReportData::context( $courses );
 		if ( $chapter && ! in_array( $chapter, array_column( $context['units'], 'id' ), true ) ) {
 			return new WP_Error( 'ohmylms_unit_unknown', __( 'This unit does not belong to the chosen course.', 'ohmylms' ), array( 'status' => 400 ) ); }
-		$display = MasteryDisplay::for_student( (int) $request['student'], array_column( $skills, 'id' ) );
+		$display = Snapshot::student( (int) $request['student'], array_column( $skills, 'id' ) );
 		foreach ( $skills as &$skill ) {
 			$skill['unit_id']       = (int) ( $context['map'][ $skill['id'] ] ?? 0 );
 			$skill['display']       = $display[ $skill['id'] ]['key'] ?? 'not-started';
-			$skill['display_label'] = $display[ $skill['id'] ]['label'] ?? MasteryDisplay::label( 'not-started' );
+			$skill['display_label'] = $display[ $skill['id'] ]['label'] ?? Levels::label( 'not-started' );
 		}
 		unset( $skill );
 		if ( $chapter ) {
@@ -234,9 +254,28 @@ class SkillReportController extends RestController {
 				'units'           => $view['units'],
 				'unit'            => $view['unit'],
 				'recommendations' => Recommendations::for_student( $student ),
+				'insights'        => Insights::available(),
 				'evidence'        => $evidence,
 			)
 		);
+	}
+
+	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */
+	public function insight_permission( WP_REST_Request $request ) {
+		$access = $this->student_access( $request );
+		if ( is_wp_error( $access ) ) {
+			return $access; }
+		$own = (int) $request['student'] === get_current_user_id();
+		if ( 'full' !== $access || ( 'student' === $request['audience'] ) !== $own ) {
+			return new WP_Error( 'ohmylms_forbidden', __( 'You cannot ask for this note.', 'ohmylms' ), array( 'status' => 403 ) ); }
+		return true;
+	}
+
+	/** An AI-written note about the learner's skills; the levels themselves never come from it. */
+	public function insight( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		$note = Insights::note( (int) $request['student'], (string) $request['audience'], get_current_user_id() );
+		return is_wp_error( $note ) ? $note : rest_ensure_response( $note );
 	}
 
 	public function rebuild( WP_REST_Request $request ) {

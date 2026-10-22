@@ -56,4 +56,15 @@ final class Combined {
 	public static function evaluate( array $rows, array $rules, $now ) {
 		return Mastery::evaluate( self::merge( $rows ), $rules, $now );
 	}
+
+	/**
+	 * The pooled state under the site's level policy (what a learner's own skill state would be).
+	 *
+	 * @param array[] $rows Pooled evidence rows.
+	 * @param int     $now  Timestamp.
+	 * @return array
+	 */
+	public static function state( array $rows, $now ) {
+		return \OhMyLMS\Performance\Engine::evaluate( self::merge( $rows ), $now );
+	}
 }
