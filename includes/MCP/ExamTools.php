@@ -26,7 +26,7 @@ final class ExamTools {
 			'list_exams'            => array(
 				'GET',
 				'/exams',
-				'List your exams, newest first, 20 per page. Each has id, title, status (draft or publish), duration_minutes, total_marks, question_ids, quiz_id and, for exams written in OhMyLMS, editor_url (the Gutenberg quiz editor where its questions are edited) and problems (what still blocks publishing; empty means ready for a person to publish).',
+				'List your exams, newest first, 20 per page. Each has id, title, status (draft or publish), duration_minutes, total_marks, question_ids, quiz_id and, for exams written in OhMyLMS, editor_url (the Gutenberg quiz editor where its questions are edited) problems (what still blocks publishing; empty means ready for a person to publish) and warnings (practice sets and inline checks that publishing would break; a person confirms when publishing).',
 				array(
 					'page' => array(
 						'type'    => 'integer',

@@ -7,6 +7,7 @@
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\AttemptItems;
+use OhMyLMS\Assessment\DeliveryPolicy;
 use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Extensions\QuestionTypes;
 use OhMyLMS\QuestionBank\SkillMap;
@@ -48,18 +49,7 @@ final class Inline {
 	private static function version_for( $uuid, &$preview ) {
 		$preview     = false;
 		$question_id = VersionPublisher::question_by_uuid( $uuid );
-		if ( ! $question_id || get_post_status( $question_id ) === \OhMyLMS\QuestionBank\Usage::ARCHIVED ) {
-			return null; }
-		$identity = VersionPublisher::identity( $question_id, false );
-		if ( ! $identity || (int) $identity['secure'] ) {
-			return null; }
-		if ( (int) $identity['approved_version_id'] ) {
-			return VersionPublisher::snapshot( (int) $identity['approved_version_id'] ); }
-		if ( current_user_can( 'edit_post', $question_id ) && (int) $identity['current_version_id'] ) {
-			$preview = true;
-			return VersionPublisher::snapshot( (int) $identity['current_version_id'] );
-		}
-		return null;
+		return $question_id ? DeliveryPolicy::snapshot( $question_id, DeliveryPolicy::INLINE, $preview ) : null;
 	}
 
 	public static function render( $uuid ) {

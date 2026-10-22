@@ -8,6 +8,7 @@
 namespace OhMyLMS\Practice;
 
 use OhMyLMS\Assessment\AttemptItems;
+use OhMyLMS\Assessment\DeliveryPolicy;
 use OhMyLMS\Assessment\GradeEvents;
 use OhMyLMS\Assessment\Grader;
 use OhMyLMS\Assessment\Schema;
@@ -41,33 +42,18 @@ final class QuestionPlayer {
 	 * @return \OhMyLMS\Assessment\QuestionSnapshot|null Eligible immutable snapshot.
 	 */
 	public static function eligible( $question_id, $author_id, $student_id = null ) {
-		if ( OHMYLMS_QUESTION_CPT !== get_post_type( $question_id ) || in_array( get_post_status( $question_id ), array( 'trash', 'auto-draft', Usage::ARCHIVED ), true ) ) {
+		$snapshot = DeliveryPolicy::snapshot( $question_id, DeliveryPolicy::PRACTICE );
+		if ( ! $snapshot ) {
 			return null;
 		}
 		$identity = VersionPublisher::identity( $question_id, false );
-		if ( ! $identity || ! empty( $identity['secure'] ) || empty( $identity['approved_version_id'] ) ) {
-			return null;
-		}
-		$bank_id = (int) ( $identity['bank_id'] ?? 0 );
+		$bank_id  = (int) ( $identity['bank_id'] ?? 0 );
 		if ( ! user_can( $author_id, 'edit_post', $question_id ) && ( ! $bank_id || ! Banks::can( $bank_id, 'use', $author_id ) ) ) {
 			return null;
 		}
 		$bank = $bank_id ? Banks::get( $bank_id ) : null;
 		if ( null !== $student_id && ! empty( $bank['course_id'] ) && ! user_can( $student_id, 'edit_post', (int) $bank['course_id'] ) && ! \OhMyLMS\Learning\CourseProgram::enrollment( $student_id, (int) $bank['course_id'] ) ) {
 			return null;
-		}
-		$snapshot = VersionPublisher::snapshot( (int) $identity['approved_version_id'] );
-		if ( ! $snapshot ) {
-			return null;
-		}
-		$definition = \OhMyLMS\Extensions\Registry::get( 'question', $snapshot->get_type() );
-		if ( ! $definition || empty( $definition['snapshot'] ) || ! empty( $definition['manual'] ) ) {
-			return null;
-		}
-		if ( in_array( $snapshot->get_type(), array( 'structured', 'passage' ), true ) ) {
-			if ( Structured::has_manual( $snapshot->get_settings() ) ) {
-				return null;
-			}
 		}
 		return $snapshot;
 	}

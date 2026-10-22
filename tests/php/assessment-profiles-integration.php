@@ -73,7 +73,7 @@ profiles_check( array() === array_diff( array( 'quiz', 'practice', 'exam' ), $ki
 profiles_check( 'quiz' === Profiles::get( 'no-such-kind' )['kind'], 'An unknown kind falls back to the plain quiz profile.' );
 $plain = profiles_quiz( 'Profiles plain quiz' );
 $quiz  = Profiles::of( $plain );
-profiles_check( 'quiz' === $quiz['kind'] && '' === $quiz['player_template'] && '' === $quiz['layout'] && null === $quiz['blocks'] && '/content-hub/quizzes' === $quiz['return_route'] && null === Profiles::editor( $plain ), 'A plain quiz keeps its own design and layout and adds nothing to the editor.' );
+profiles_check( 'quiz' === $quiz['kind'] && '' === $quiz['player_template'] && '' === $quiz['layout'] && array( 'quiz', 'inline', 'practice' ) === $quiz['deliveries'] && '/content-hub/quizzes' === $quiz['return_route'] && null === Profiles::editor( $plain ), 'A plain quiz keeps its own design and layout and adds nothing to the editor.' );
 
 // An exam is a quiz whose kind is exam.
 $request = new WP_REST_Request( 'POST', '/ohmylms/v1/exams/compose' );
@@ -91,7 +91,7 @@ $exam_q  = (int) $exam['quiz_id'];
 $profile = Profiles::of( $exam_q );
 profiles_check( 'exam' === AssessmentSettings::get( $exam_q )['kind'] && 'exam' === $profile['kind'], 'The exam backing quiz stores kind exam.' );
 profiles_check( 'exam' === $profile['player_template'] && 'one_question_per_page' === $profile['layout'] && '/content-hub/exams' === $profile['return_route'], 'The exam profile names its design, layout and return route.' );
-profiles_check( array( NativeQuizEditor::QUESTION_BLOCK, NativeQuizEditor::REFERENCE_BLOCK ) === $profile['blocks'], 'The exam profile offers question blocks only.' );
+profiles_check( array( 'quiz' ) === $profile['deliveries'] && ! Profiles::allows( $exam_q, 'practice' ) && Profiles::allows( $plain, 'practice' ), 'The exam allows formal attempts only; a quiz allows every delivery.' );
 $context = (object) array( 'post' => get_post( $exam_q ) );
 profiles_check( ! in_array( 'ohmylms/question-player', NativeQuizEditor::quiz_blocks( true, $context ), true ) && in_array( NativeQuizEditor::QUESTION_BLOCK, NativeQuizEditor::quiz_blocks( true, $context ), true ), 'The exam editor does not offer the question player.' );
 $context = (object) array( 'post' => get_post( $plain ) );
@@ -114,7 +114,7 @@ add_filter(
 			'label'           => 'Placement test',
 			'player_template' => 'paper',
 			'layout'          => 'all_questions_in_one_page',
-			'blocks'          => array( NativeQuizEditor::QUESTION_BLOCK ),
+			'deliveries'      => array( 'quiz', 'bogus' ),
 			'return_route'    => '/content-hub/quizzes',
 			'panel'           => 'placement',
 			'editor_data'     => static function ( $quiz_id ) {
@@ -137,6 +137,6 @@ profiles_check( ! is_wp_error( $saved ) && 'placement' === Profiles::of( $placem
 profiles_check( is_wp_error( AssessmentSettings::save( $placement, array( 'kind' => 'bogus' ) ) ), 'An unregistered kind is refused.' );
 $custom = Profiles::of( $placement );
 profiles_check( 'paper' === $custom['player_template'] && 'all_questions_in_one_page' === $custom['layout'] && true === Profiles::context( array( 'quizId' => $placement ) )['placement'] && 'placement' === Profiles::editor( $placement )['panel'], 'The new kind drives design, layout, context and editor panel.' );
-profiles_check( array( NativeQuizEditor::QUESTION_BLOCK ) === array_intersect( array( NativeQuizEditor::QUESTION_BLOCK, 'ohmylms/question-player' ), NativeQuizEditor::quiz_blocks( true, (object) array( 'post' => get_post( $placement ) ) ) ), 'The new kind narrows the editor blocks.' );
+profiles_check( array( 'quiz' ) === Profiles::of( $placement )['deliveries'] && array( NativeQuizEditor::QUESTION_BLOCK ) === array_intersect( array( NativeQuizEditor::QUESTION_BLOCK, 'ohmylms/question-player' ), NativeQuizEditor::quiz_blocks( true, (object) array( 'post' => get_post( $placement ) ) ) ), 'The new kind narrows the editor blocks through its deliveries; unknown deliveries are dropped.' );
 
 echo "Assessment profiles: {$checks} checks passed.\n";

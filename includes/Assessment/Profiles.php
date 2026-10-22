@@ -91,6 +91,17 @@ final class Profiles {
 	}
 
 	/**
+	 * Whether a quiz's kind allows a delivery.
+	 *
+	 * @param int    $quiz_id Quiz ID.
+	 * @param string $delivery quiz, inline or practice.
+	 * @return bool
+	 */
+	public static function allows( $quiz_id, $delivery ) {
+		return in_array( $delivery, self::of( $quiz_id )['deliveries'], true );
+	}
+
+	/**
 	 * What the quiz editor needs about a quiz's profile.
 	 *
 	 * @param int $quiz_id Quiz ID.
@@ -152,8 +163,8 @@ final class Profiles {
 				// Player design and layout this kind always uses; empty leaves them to each quiz.
 				'player_template' => '',
 				'layout'          => '',
-				// Blocks of this plugin the editor offers; null keeps the default set.
-				'blocks'          => null,
+				// Deliveries this kind's questions may use; the editor offers only the blocks that match.
+				'deliveries'      => DeliveryPolicy::ALL,
 				// Hash route of the list the author returns to from the editor.
 				'return_route'    => '/content-hub/quizzes',
 				// Editor panel id and a callable giving it data, or empty for no panel.
@@ -169,7 +180,8 @@ final class Profiles {
 		$profile['kind']            = $kind;
 		$profile['player_template'] = is_string( $profile['player_template'] ) ? sanitize_key( $profile['player_template'] ) : '';
 		$profile['layout']          = in_array( $profile['layout'], self::LAYOUTS, true ) ? $profile['layout'] : '';
-		$profile['blocks']          = is_array( $profile['blocks'] ) ? array_values( array_filter( $profile['blocks'], 'is_string' ) ) : null;
+		$deliveries                 = is_array( $profile['deliveries'] ) ? array_values( array_intersect( DeliveryPolicy::ALL, $profile['deliveries'] ) ) : array();
+		$profile['deliveries']      = $deliveries ? $deliveries : DeliveryPolicy::ALL;
 		$profile['return_route']    = is_string( $profile['return_route'] ) && preg_match( '#^/(?:content-hub|course-edit|question-bank)(?:/|$)#', $profile['return_route'] ) ? $profile['return_route'] : '/content-hub/quizzes';
 		$profile['panel']           = is_string( $profile['panel'] ) ? sanitize_key( $profile['panel'] ) : '';
 		$profile['templates']       = is_array( $profile['templates'] ) ? $profile['templates'] : array();

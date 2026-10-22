@@ -1,6 +1,10 @@
 /** @jsx createElement */
 import { createElement, useEffect, useRef, useState } from '@wordpress/element';
-import { getBlockType, registerBlockType } from '@wordpress/blocks';
+import {
+	createBlock,
+	getBlockType,
+	registerBlockType,
+} from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
 import {
 	Button,
@@ -459,6 +463,21 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 		},
 		usesContext: [ 'postId', 'postType' ],
 		supports: { html: false, reusable: false },
+		// The same question can be played as a practice set; the editor offers this only where that delivery is allowed.
+		transforms: {
+			to: [
+				{
+					type: 'block',
+					blocks: [ 'ohmylms/question-player' ],
+					isMatch: ( attributes ) => attributes.questionId > 0,
+					transform: ( attributes ) =>
+						createBlock( 'ohmylms/question-player', {
+							source: 'selected',
+							questionIds: [ attributes.questionId ],
+						} ),
+				},
+			],
+		},
 		edit: Edit,
 		save: () => null,
 	} );

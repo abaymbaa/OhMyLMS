@@ -128,6 +128,8 @@ final class Library {
 			'instructions'     => (string) ( $data['instructions'] ?? '' ),
 			// What still blocks publication, for a draft written in OhMyLMS.
 			'problems'         => $live ? Composer::problems( $id ) : array(),
+			// Practice sets and inline checks that publishing would break; publishing asks for confirmation.
+			'warnings'         => $live ? Composer::warnings( $id ) : array(),
 		);
 	}
 
@@ -376,16 +378,28 @@ final class Library {
 		if ( ! self::permission( $request ) || ! current_user_can( 'publish_posts' ) ) {
 			return self::error( 'permission', __( 'You cannot publish this exam.', 'ohmylms' ), 403 );
 		}
-		$id = (int) $request['id'];
+		$id      = (int) $request['id'];
+		$confirm = rest_sanitize_boolean( $request['confirm_overlap'] );
 		return Jobs::locked(
 			$id,
-			static function () use ( $id ) {
+			static function () use ( $id, $confirm ) {
 				$data = get_post_meta( $id, self::META, true );
 				if ( ! empty( $data['composed'] ) ) {
 					// The author of a builder exam is its reviewer: check completeness, then approve the pinned versions.
 					$problems = Composer::problems( $id );
 					if ( $problems ) {
 						return self::error( 'incomplete', implode( ' ', $problems ), 409 );
+					}
+					$warnings = $confirm ? array() : Composer::warnings( $id );
+					if ( $warnings ) {
+						return new \WP_Error(
+							'exam_overlap',
+							implode( ' ', $warnings ),
+							array(
+								'status'   => 409,
+								'warnings' => $warnings,
+							)
+						);
 					}
 					Composer::refresh( $id );
 					$approved = Composer::approve( $id );

@@ -8,6 +8,7 @@
 namespace OhMyLMS\Exams;
 
 use OhMyLMS\Assessment\AssessmentSettings;
+use OhMyLMS\Assessment\DeliveryPolicy;
 use OhMyLMS\Assessment\ErrorException;
 use OhMyLMS\Assessment\ExtendedQuestions;
 use OhMyLMS\QuestionBank\AccessPolicy;
@@ -82,7 +83,7 @@ final class Composer {
 			return self::error( 'questions', __( 'Provide between 1 and 50 question IDs.', 'ohmylms' ) );
 		}
 		foreach ( $ids as $question_id ) {
-			if ( OHMYLMS_QUESTION_CPT !== get_post_type( $question_id ) || ! AccessPolicy::can_use_question( $question_id ) ) {
+			if ( ! DeliveryPolicy::allows( $question_id, DeliveryPolicy::QUIZ ) || ! AccessPolicy::can_use_question( $question_id ) ) {
 				/* translators: %d: question ID. */
 				return self::error( 'questions', sprintf( __( 'Question %d is unavailable to you.', 'ohmylms' ), $question_id ), 403 );
 			}
@@ -259,6 +260,31 @@ final class Composer {
 			$problems[] = __( 'Turn on the time limit in Quiz settings (1 to 1440 minutes).', 'ohmylms' );
 		}
 		return $problems;
+	}
+
+	/**
+	 * Places that would lose a question when the exam is published. Publishing makes its questions
+	 * exam-only, so a practice set or inline check that uses one can no longer play it.
+	 *
+	 * @param int $id Exam ID.
+	 * @return string[] Messages, empty when nothing else uses the exam's questions.
+	 */
+	public static function warnings( $id ) {
+		$snapshot = self::snapshot( $id );
+		$uses     = DeliveryPolicy::other_uses( $snapshot['question_ids'] );
+		$messages = array();
+		foreach ( array_values( $snapshot['question_ids'] ) as $index => $question_id ) {
+			foreach ( $uses[ $question_id ] ?? array() as $use ) {
+				$messages[] = sprintf(
+					/* translators: 1: question number, 2: page or lesson title, 3: practice set or inline check. */
+					__( 'Question %1$d is also used in "%2$s" (%3$s). Publishing the exam makes it exam-only, so it stops working there.', 'ohmylms' ),
+					$index + 1,
+					$use['title'],
+					DeliveryPolicy::PRACTICE === $use['delivery'] ? __( 'practice set', 'ohmylms' ) : __( 'inline check', 'ohmylms' )
+				);
+			}
+		}
+		return $messages;
 	}
 
 	/**
