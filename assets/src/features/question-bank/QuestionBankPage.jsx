@@ -42,6 +42,7 @@ import {
 import { SkillMapEditor } from './SkillMapEditor';
 import { NewQuestionModal } from './NewQuestionModal';
 import { ImportButton } from '../content-hub/ImportButton';
+import { useHubAction } from '../content-hub/useHubAction.js';
 import { ExportRowsButtons } from '../content-hub/ExportRowsButtons';
 import { AdminCard, AdminPage } from '../../extensions/AdminPage';
 import { HubContext } from '../content-hub/context';
@@ -107,6 +108,16 @@ function QuestionsTab() {
 	const [ selected, setSelected ] = useState( null );
 	const [ creating, setCreating ] = useState( false );
 	const [ reload, setReload ] = useState( 0 );
+	const newQuestion = () =>
+		window.ohmylmsAssessment?.formAuthoring
+			? setCreating( true )
+			: window.location.assign(
+					new URL(
+						'post-new.php?post_type=ohmylms-question',
+						window.location.href
+					).href
+				);
+	useHubAction( { new: newQuestion } );
 	useEffect( () => {
 		window.wp
 			.apiFetch( { path: '/ohmylms/v1/question-bank-organisation' } )
@@ -359,19 +370,7 @@ function QuestionsTab() {
 							marginLeft: 'auto',
 						} }
 					>
-						<Button
-							variant="primary"
-							onClick={ () =>
-								window.ohmylmsAssessment?.formAuthoring
-									? setCreating( true )
-									: window.location.assign(
-											new URL(
-												'post-new.php?post_type=ohmylms-question',
-												window.location.href
-											).href
-										)
-							}
-						>
+						<Button variant="primary" onClick={ newQuestion }>
 							{ __( 'New question', 'ohmylms' ) }
 						</Button>{ ' ' }
 						<ImportButton target="questions" />

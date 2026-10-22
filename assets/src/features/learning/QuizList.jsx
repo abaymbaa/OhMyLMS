@@ -1,6 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { ImportButton } from '../content-hub/ImportButton';
+import { useHubAction } from '../content-hub/useHubAction.js';
 import {
 	ExportIcon,
 	useAddQuiz,
@@ -42,6 +43,8 @@ export function createQuizList( readRuntime ) {
 			z: Notifications,
 		} = readRuntime();
 		const addQuiz = useAddQuiz();
+		// Ctrl+K opens `#/content-hub/quizzes?action=new`.
+		useHubAction( { new: addQuiz.onClick } );
 		// `openNotificationWithIcon` is declared further down; it is read when an export finishes.
 		const quizExport = useExportQuiz( ( status, message ) =>
 			openNotificationWithIcon( status, message )

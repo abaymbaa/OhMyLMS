@@ -15,6 +15,7 @@ import { NewExamDialog } from './NewExamDialog.jsx';
 import { examEditorHref } from './examEditor.mjs';
 import { ExamPaperDialog } from './ExamPaperDialog.jsx';
 import { ImportDialog } from './ImportDialog.jsx';
+import { useHubAction } from './useHubAction.js';
 
 /**
  * Associate each repeated question/part control with its own accessible label.
@@ -141,6 +142,15 @@ export function ExamsPage( {
 	const [ exams, setExams ] = useState( [] );
 	const [ paperExam, setPaperExam ] = useState( null );
 	const [ creating, setCreating ] = useState( false );
+	// Ctrl+K opens `#/content-hub/exams?action=new` and `?action=import`.
+	useHubAction(
+		reviewOnly
+			? {}
+			: {
+					new: () => setCreating( true ),
+					import: () => setImporting( true ),
+				}
+	);
 	const [ job, setJob ] = useState( null );
 	const [ questions, setQuestions ] = useState( [] );
 	const [ selected, setSelected ] = useState( 0 );

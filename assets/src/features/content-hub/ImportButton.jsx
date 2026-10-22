@@ -4,6 +4,7 @@ import { Button } from '@wordpress/components';
 import { ImportDialog, IMPORT_TARGETS } from './ImportDialog.jsx';
 import { ExamsPage } from './ExamsPage.jsx';
 import { ImportIcon } from './QuizActions.jsx';
+import { useHubAction } from './useHubAction.js';
 
 /**
  * The Import button of the Quizzes, Question Bank, Exams, Curriculum and Skills screens, and of a
@@ -28,6 +29,8 @@ export function ImportButton( {
 } ) {
 	const [ open, setOpen ] = useState( false );
 	const [ jobId, setJobId ] = useState( 0 );
+	// Ctrl+K opens the tab's address with `?action=import`.
+	useHubAction( { import: () => setOpen( true ) } );
 	return (
 		<Fragment>
 			<Button
