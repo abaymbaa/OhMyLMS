@@ -105,17 +105,16 @@ final class Profiles {
 	 * What the quiz editor needs about a quiz's profile.
 	 *
 	 * @param int $quiz_id Quiz ID.
-	 * @return array|null id, panel and data, or null when the profile adds nothing to the editor.
+	 * @return array id, the deliveries the kind allows (the question blocks use them to offer sources), and the
+	 *               panel id and its data, empty when the profile adds no panel.
 	 */
 	public static function editor( $quiz_id ) {
 		$profile = self::of( $quiz_id );
-		if ( '' === $profile['panel'] ) {
-			return null;
-		}
 		return array(
-			'id'    => $profile['kind'],
-			'panel' => $profile['panel'],
-			'data'  => is_callable( $profile['editor_data'] ) ? (array) call_user_func( $profile['editor_data'], (int) $quiz_id ) : array(),
+			'id'         => $profile['kind'],
+			'deliveries' => $profile['deliveries'],
+			'panel'      => $profile['panel'],
+			'data'       => '' !== $profile['panel'] && is_callable( $profile['editor_data'] ) ? (array) call_user_func( $profile['editor_data'], (int) $quiz_id ) : array(),
 		);
 	}
 

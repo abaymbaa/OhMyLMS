@@ -6,6 +6,7 @@ import {
 	registerBlockVariation,
 } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
+import { useDispatch } from '@wordpress/data';
 import {
 	Button,
 	ComboboxControl,
@@ -21,6 +22,13 @@ import { __, sprintf } from '@wordpress/i18n';
 import metadata from './block.json';
 import { addSelection, moveSelection } from './model.mjs';
 import { installNativeCanvasRecovery } from '../../features/learning/nativeCanvas.mjs';
+import { QuestionSourceSwitch } from '../../features/question-editor/QuestionSourceSwitch';
+import {
+	allowedSources,
+	editorDeliveries,
+	fromPlayer,
+	playerSource,
+} from '../../features/question-editor/questionSource.mjs';
 
 const activities = [
 	[ 'spin-wheel', __( 'Spin the wheel', 'ohmylms' ), 'deck' ],
@@ -72,9 +80,16 @@ if ( ! window.ohmylmsNativeLesson ) {
  * @param {Object}                props               Block properties.
  * @param {Object}                props.attributes    Saved selection and outcome settings.
  * @param {function(Object):void} props.setAttributes Update block attributes.
+ * @param {string}                props.clientId      Block identity in the editor.
+ * @param {Object}                props.context       Post type and ID of the document.
  * @return {Element} Bank picker and settings.
  */
-export function QuestionPlayerEdit( { attributes, setAttributes } ) {
+export function QuestionPlayerEdit( {
+	attributes,
+	setAttributes,
+	clientId,
+	context = {},
+} ) {
 	const {
 		source,
 		questionIds,
@@ -88,6 +103,7 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 		rememberCount = 2,
 		studySeconds = 10,
 	} = attributes;
+	const { replaceBlocks } = useDispatch( 'core/block-editor' );
 	const [ search, setSearch ] = useState( '' );
 	const [ items, setItems ] = useState( [] );
 	const [ labels, setLabels ] = useState( {} );
@@ -147,6 +163,27 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 				label={ __( 'OhMyLMS Question Player', 'ohmylms' ) }
 			>
 				<div style={ { width: '100%' } }>
+					<QuestionSourceSwitch
+						source={ playerSource( attributes ) }
+						allowed={ allowedSources( {
+							postType: context.postType,
+							deliveries: editorDeliveries(),
+						} ) }
+						onChange={ ( next ) => {
+							const step = fromPlayer( next );
+							if ( step.action === 'question' ) {
+								replaceBlocks(
+									clientId,
+									createBlock(
+										'ohmylms/shared-multiple-choice'
+									)
+								);
+							} else {
+								setSearch( '' );
+								setAttributes( step.attributes );
+							}
+						} }
+					/>
 					<p>
 						{ __(
 							'Use approved, automatically marked bank questions. Students log in to play. Save this post and preview the page to try the player; instructor previews never update student performance.',
@@ -320,30 +357,6 @@ export function QuestionPlayerEdit( { attributes, setAttributes } ) {
 										) }
 							</p>
 						) }
-					<SelectControl
-						label={ __( 'Question source', 'ohmylms' ) }
-						value={ source }
-						options={ [
-							{
-								value: 'selected',
-								label: __(
-									'Choose specific questions',
-									'ohmylms'
-								),
-							},
-							{
-								value: 'random',
-								label: __(
-									'Random questions by skill',
-									'ohmylms'
-								),
-							},
-						] }
-						onChange={ ( value ) => {
-							setSearch( '' );
-							setAttributes( { source: value } );
-						} }
-					/>
 					<ComboboxControl
 						label={
 							source === 'random'

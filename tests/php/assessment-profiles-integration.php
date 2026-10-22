@@ -73,7 +73,7 @@ profiles_check( array() === array_diff( array( 'quiz', 'practice', 'exam' ), $ki
 profiles_check( 'quiz' === Profiles::get( 'no-such-kind' )['kind'], 'An unknown kind falls back to the plain quiz profile.' );
 $plain = profiles_quiz( 'Profiles plain quiz' );
 $quiz  = Profiles::of( $plain );
-profiles_check( 'quiz' === $quiz['kind'] && '' === $quiz['player_template'] && '' === $quiz['layout'] && array( 'quiz', 'inline', 'practice' ) === $quiz['deliveries'] && '/content-hub/quizzes' === $quiz['return_route'] && null === Profiles::editor( $plain ), 'A plain quiz keeps its own design and layout and adds nothing to the editor.' );
+profiles_check( 'quiz' === $quiz['kind'] && '' === $quiz['player_template'] && '' === $quiz['layout'] && array( 'quiz', 'inline', 'practice' ) === $quiz['deliveries'] && '/content-hub/quizzes' === $quiz['return_route'] && '' === Profiles::editor( $plain )['panel'] && array() === Profiles::editor( $plain )['data'], 'A plain quiz keeps its own design and layout and adds no editor panel.' );
 
 // An exam is a quiz whose kind is exam.
 $request = new WP_REST_Request( 'POST', '/ohmylms/v1/exams/compose' );
@@ -98,6 +98,7 @@ $context = (object) array( 'post' => get_post( $plain ) );
 profiles_check( in_array( 'ohmylms/question-player', NativeQuizEditor::quiz_blocks( true, $context ), true ), 'A plain quiz editor still offers the question player.' );
 $editor = Profiles::editor( $exam_q );
 profiles_check( 'exam' === $editor['panel'] && (int) $editor['data']['id'] === (int) $exam['id'], 'The exam editor panel receives the exam record.' );
+profiles_check( array( 'quiz' ) === $editor['deliveries'] && array( 'quiz', 'inline', 'practice' ) === Profiles::editor( $plain )['deliveries'], 'The editor is told which deliveries the kind allows, so the question block offers the right sources.' );
 $ctx = Profiles::context( array( 'quizId' => $exam_q ) );
 profiles_check( isset( $ctx['marked'], $ctx['visited'] ) && 'Save and Next' === $ctx['nextText'], 'The exam profile adds palette state to the player context.' );
 profiles_check( array( 'quizId' => $plain ) === Profiles::context( array( 'quizId' => $plain ) ), 'A plain quiz player context is unchanged.' );

@@ -776,3 +776,10 @@
 	margin: 12px 0 4px;
 	font-weight: 600;
 }
+
+.ohmylms-question-source {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin: 0 0 12px;
+}

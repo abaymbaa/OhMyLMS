@@ -75,10 +75,24 @@ which questions each accepts:
 | `practice` | A run of the question player | The approved version; not exam-only, not teacher-marked |
 
 `DeliveryPolicy::snapshot()`, `DeliveryPolicy::allows()` and `Profiles::allows()` are used by the question player
-(`QuestionPlayer::eligible`), the inline check, the exam builder and the editor's block list. The question block
-and the question player block convert into each other (block toolbar, *Change block type*) when one question is
-chosen, keeping the same question; a kind that does not allow the `practice` delivery offers neither.
+(`QuestionPlayer::eligible`), the inline check, the exam builder and the editor's block list. They also drive the editor's single Question block (below).
 `tests/php/delivery-policy-integration.php` covers the rules.
+
+### One Question block, three sources
+
+The editor has one inserter entry, **OhMyLMS Question**. A switch on the block chooses where the question comes
+from; the Question Player block is the same block in another state and no longer has its own inserter entry:
+
+| Source | Quiz or exam editor | Lesson or page editor |
+| --- | --- | --- |
+| **Write here** | Author a question as a quiz slot | Author a question that plays as an inline check |
+| **Pick from bank** | Opens the bank picker; the picked questions replace the blank card as quiz slots | Becomes a practice set of chosen bank questions |
+| **From skills** | A random practice set drawn from skills (only if the kind allows the `practice` delivery) | A random practice set drawn from skills |
+
+The switch is `QuestionSourceSwitch.jsx` and its rules are `questionSource.mjs`. Both blocks use it, so the two
+blocks read as one. The editor receives the deliveries its kind allows in `window.ohmylmsNativeLesson.profile`; an
+exam offers no skills source, and the standalone bank-question editor offers only **Write here**. A practice set of
+exactly one chosen question can also be changed back to a Question block from the block toolbar.
 
 ### Two learner runtimes, kept on purpose
 

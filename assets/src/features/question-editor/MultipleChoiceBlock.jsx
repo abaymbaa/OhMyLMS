@@ -6,6 +6,7 @@ import {
 	registerBlockType,
 } from '@wordpress/blocks';
 import { useBlockProps } from '@wordpress/block-editor';
+import { select, useDispatch } from '@wordpress/data';
 import {
 	Button,
 	Dropdown,
@@ -23,6 +24,13 @@ import { nativeQuestionTypes } from '../learning/nativeAuthoring.mjs';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { QuestionTypeMenu } from './QuestionTypeMenu';
 import { QuestionLivePreview } from './QuestionLivePreview';
+import { QuestionSourceSwitch } from './QuestionSourceSwitch';
+import {
+	allowedSources,
+	editorDeliveries,
+	fromQuestionBlock,
+} from './questionSource.mjs';
+import { BankPicker } from '../question-bank/BankPicker';
 import { TemplatePanel } from './TemplatePanel';
 import { defaultTemplate } from './templateModel.mjs';
 import { MathVariables } from '../math/MathInput';
@@ -34,6 +42,18 @@ import {
 import { loadMath, mathEnabled } from '../math/loader.mjs';
 
 export const MULTIPLE_CHOICE_BLOCK = 'ohmylms/shared-multiple-choice';
+
+/**
+ * Bank questions already placed in the open document, so the bank picker can skip them.
+ * @return {number[]} Question IDs.
+ */
+function blockQuestionIds() {
+	const collect = ( block ) =>
+		block.attributes?.questionId
+			? [ block.attributes.questionId ]
+			: ( block.innerBlocks || [] ).flatMap( collect );
+	return select( 'core/block-editor' ).getBlocks().flatMap( collect );
+}
 
 /**
  * Shared authoring controls. Assessment data stays in the versioned question writer.
@@ -447,8 +467,57 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 			}`,
 			contentEditable: false,
 		} );
+		const postType = props.context?.postType || '';
+		const allowed = allowedSources( {
+			postType,
+			deliveries: editorDeliveries(),
+		} );
+		const { replaceBlocks } = useDispatch( 'core/block-editor' );
+		const [ picking, setPicking ] = useState( false );
+		const choose = ( source ) => {
+			const step = fromQuestionBlock( source, { postType } );
+			if ( step.action === 'player' ) {
+				replaceBlocks(
+					props.clientId,
+					createBlock( 'ohmylms/question-player', step.attributes )
+				);
+			} else if ( step.action === 'pick' ) {
+				setPicking( true );
+			}
+		};
 		const content = <LessonEdit { ...props } />;
-		return <div { ...blockProps }>{ content }</div>;
+		return (
+			<div { ...blockProps }>
+				{ props.isSelected && (
+					<QuestionSourceSwitch
+						source="write"
+						allowed={ allowed }
+						onChange={ choose }
+					/>
+				) }
+				{ content }
+				{ picking && (
+					<BankPicker
+						quizId={ props.context?.postId }
+						existingIds={ blockQuestionIds() }
+						onClose={ () => setPicking( false ) }
+						onPick={ ( ids ) => {
+							// Questions picked for a quiz become its slots, in place of this blank card.
+							replaceBlocks(
+								props.clientId,
+								ids.map( ( questionId ) =>
+									createBlock( MULTIPLE_CHOICE_BLOCK, {
+										questionId,
+										delivery: 'quiz',
+									} )
+								)
+							);
+							setPicking( false );
+						} }
+					/>
+				) }
+			</div>
+		);
 	}
 	registerBlockType( MULTIPLE_CHOICE_BLOCK, {
 		apiVersion: 3,
@@ -463,21 +532,6 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 		},
 		usesContext: [ 'postId', 'postType' ],
 		supports: { html: false, reusable: false },
-		// The same question can be played as a practice set; the editor offers this only where that delivery is allowed.
-		transforms: {
-			to: [
-				{
-					type: 'block',
-					blocks: [ 'ohmylms/question-player' ],
-					isMatch: ( attributes ) => attributes.questionId > 0,
-					transform: ( attributes ) =>
-						createBlock( 'ohmylms/question-player', {
-							source: 'selected',
-							questionIds: [ attributes.questionId ],
-						} ),
-				},
-			],
-		},
 		edit: Edit,
 		save: () => null,
 	} );

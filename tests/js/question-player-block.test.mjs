@@ -72,6 +72,14 @@ test( 'authoring switches cannot leave skill effects enabled when grading is tur
 		useEffect: () => {},
 		useState: ( value ) => [ value, () => {} ],
 		useBlockProps: () => ( {} ),
+		useDispatch: () => ( { replaceBlocks: () => {} } ),
+		createBlock: ( name, attributes ) => ( { name, attributes } ),
+		QuestionSourceSwitch: 'source-switch',
+		allowedSources: () => [ 'write', 'bank', 'skills' ],
+		editorDeliveries: () => [ 'quiz', 'inline', 'practice' ],
+		fromPlayer: () => ( { action: 'set', attributes: {} } ),
+		playerSource: ( attributes ) =>
+			attributes.source === 'random' ? 'skills' : 'bank',
 		__: ( value ) => value,
 		sprintf: ( value ) => value,
 		Button: 'button',
@@ -118,6 +126,22 @@ test( 'authoring switches cannot leave skill effects enabled when grading is tur
 	assert.ok(
 		nodes( tree ).some(
 			( node ) => node.type === 'range' && node.props.max === 30
+		)
+	);
+	// The one source switch replaces the separate "Question source" select.
+	const sourceSwitch = nodes( tree ).find(
+		( node ) => node.type === 'source-switch'
+	);
+	assert.equal( sourceSwitch.props.source, 'skills' );
+	assert.deepEqual( sourceSwitch.props.allowed, [
+		'write',
+		'bank',
+		'skills',
+	] );
+	assert.ok(
+		! nodes( tree ).some(
+			( node ) =>
+				node.type === 'select' && node.props.label === 'Question source'
 		)
 	);
 } );

@@ -58,8 +58,10 @@
 			"default": 30
 		}
 	},
+	"usesContext": [ "postType", "postId" ],
 	"supports": {
-		"html": false
+		"html": false,
+		"inserter": false
 	},
 	"editorScript": "ohmylms-question-player-block"
 }
