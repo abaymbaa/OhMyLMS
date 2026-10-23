@@ -14,21 +14,7 @@ import {
 } from './interactiveModel.mjs';
 
 /**
- * A number field that stores a number, or nothing while empty.
- * @param value
- * @param onChange
- * @param extra
- */
-const number = ( value, onChange, extra = {} ) => ( {
-	type: 'number',
-	step: 'any',
-	value: value ?? '',
-	onChange: ( text ) => onChange( text === '' ? undefined : Number( text ) ),
-	...extra,
-} );
-
-/**
- * Like `number`, but a randomized question may also use a formula such as {{a+b}}.
+ * A number field that stores a number, or nothing while empty. A randomized question may also use a variable or formula such as {{a+b}}.
  * Numbers are stored as numbers; a formula (or a number still being typed) as text.
  * @param value
  * @param onChange
@@ -196,7 +182,7 @@ export function ShadeModelEditor( { value, onChange } ) {
 			/>
 			<TextControl
 				label={ __( 'Equal parts', 'ohmylms' ) }
-				{ ...number(
+				{ ...numberOrFormula(
 					value.parts,
 					( parts ) =>
 						onChange( {
@@ -211,7 +197,7 @@ export function ShadeModelEditor( { value, onChange } ) {
 			{ value.shape === 'grid' && (
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.cols,
 						( cols ) =>
 							onChange( {
@@ -229,7 +215,7 @@ export function ShadeModelEditor( { value, onChange } ) {
 					'Any parts count; the learner may shade any of them.',
 					'ohmylms'
 				) }
-				{ ...number(
+				{ ...numberOrFormula(
 					value.answer,
 					( answer ) =>
 						onChange( {
@@ -275,7 +261,7 @@ export function CountBlocksEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Number to build', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.target,
 						( target ) =>
 							onChange( {
@@ -289,7 +275,7 @@ export function CountBlocksEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Most blocks of one kind', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.max_per_place,
 						( _maxPerPlace ) =>
 							onChange( {
@@ -331,7 +317,7 @@ export function SetClockEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Hour (1–12)', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.hour,
 						( hour ) =>
 							onChange( {
@@ -346,7 +332,7 @@ export function SetClockEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Minutes (0–59)', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.minute,
 						( minute ) =>
 							onChange( {
@@ -361,7 +347,7 @@ export function SetClockEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Accepted error (minutes)', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.tolerance,
 						( tolerance ) =>
 							onChange( {
@@ -445,7 +431,7 @@ export function MakeAmountEditor( { value, onChange } ) {
 			/>
 			<TextControl
 				label={ __( 'Amount to make', 'ohmylms' ) }
-				{ ...number(
+				{ ...numberOrFormula(
 					value.target,
 					( target ) =>
 						onChange( {
@@ -485,7 +471,7 @@ export function BuildChartEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Chart maximum', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.max,
 						( max ) =>
 							onChange( {
@@ -498,7 +484,7 @@ export function BuildChartEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Step', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.step,
 						( step ) =>
 							onChange( {
@@ -538,7 +524,7 @@ export function BuildChartEditor( { value, onChange } ) {
 					/>
 					<TextControl
 						label={ __( 'Correct height', 'ohmylms' ) }
-						{ ...number(
+						{ ...numberOrFormula(
 							value.values?.[ category.id ],
 							( height ) =>
 								onChange( {
@@ -609,7 +595,7 @@ export function GridBuildEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Rows', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.rows,
 						( rows ) =>
 							onChange( {
@@ -624,7 +610,7 @@ export function GridBuildEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Columns', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						value.cols,
 						( cols ) =>
 							onChange( {
@@ -647,7 +633,7 @@ export function GridBuildEditor( { value, onChange } ) {
 			<div className="ohmylms-interactive-row">
 				<TextControl
 					label={ __( 'Area (squares)', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						constraints.area,
 						( area ) =>
 							set( {
@@ -661,7 +647,7 @@ export function GridBuildEditor( { value, onChange } ) {
 				/>
 				<TextControl
 					label={ __( 'Perimeter', 'ohmylms' ) }
-					{ ...number(
+					{ ...numberOrFormula(
 						constraints.perimeter,
 						( perimeter ) =>
 							set( {
@@ -740,7 +726,11 @@ export function VisualPreview( { type, settings = {} } ) {
 			config.table = ( settings.categories || [] ).map(
 				( category ) => ( {
 					label: category.label,
-					value: settings.values?.[ category.id ] ?? 0,
+					// A {{variable}} has no value yet, so the preview shows a bar of zero.
+					value:
+						typeof settings.values?.[ category.id ] === 'number'
+							? settings.values[ category.id ]
+							: 0,
 				} )
 			);
 		}

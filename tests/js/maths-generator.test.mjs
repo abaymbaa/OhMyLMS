@@ -71,3 +71,14 @@ test( 'pythagorean and quadratic presets build the answer from the construction'
 	assert.ok( quadratic.constraints.includes( 'abs(p)>=2' ) );
 	assert.equal( quadratic.set[ 0 ].expr, 'max(p,q)' );
 } );
+
+test( 'every number field of the visual question editors accepts a {{variable}}', () => {
+	const jsx = fs.readFileSync(
+		'assets/src/features/question-editor/VisualEditors.jsx',
+		'utf8'
+	);
+	assert.ok( ! /\.\.\.number\(/.test( jsx ), 'a plain number-only input is back' );
+	assert.ok( ( jsx.match( /\.\.\.numberOrFormula\(/g ) || [] ).length >= 20 );
+	// The live preview must not show a variable as a value.
+	assert.ok( jsx.includes( "typeof settings.values?.[ category.id ] === 'number'" ) );
+} );
