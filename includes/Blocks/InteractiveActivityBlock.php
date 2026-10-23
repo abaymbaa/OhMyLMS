@@ -30,6 +30,7 @@ final class InteractiveActivityBlock {
 			return;
 		}
 		$config = array( 'fonts' => plugins_url( 'assets/dist/mathlive/fonts', OHMYLMS_FILE ) );
+		\OhMyLMS\Assessment\Interactive::register_jsxgraph();
 		foreach ( array(
 			'ohmylms-interactive-activity-block' => array( 'interactive-activity-block', $editor ),
 			'ohmylms-interactive-activity-view'  => array( 'interactive-activity-view', $view ),
@@ -38,7 +39,6 @@ final class InteractiveActivityBlock {
 			wp_register_script( $handle, plugins_url( 'assets/dist/admin/' . $script[0] . '.js', OHMYLMS_FILE ), $asset['dependencies'], $asset['version'], true );
 		}
 		wp_add_inline_script( 'ohmylms-interactive-activity-block', 'window.ohmylmsActivity = ' . wp_json_encode( $config ) . ';', 'before' );
-		wp_register_style( 'ohmylms-jsxgraph', plugins_url( 'assets/dist/jsxgraph/jsxgraph.css', OHMYLMS_FILE ), array(), '1.14.1' );
 		wp_register_style( 'ohmylms-interactive-activity', plugins_url( 'assets/css/interactive-activity.css', OHMYLMS_FILE ), array( 'ohmylms-jsxgraph' ), (string) filemtime( OHMYLMS_DIR . '/assets/css/interactive-activity.css' ) );
 		register_block_type( OHMYLMS_DIR . '/assets/src/blocks/interactive-activity', array( 'render_callback' => array( __CLASS__, 'render' ) ) );
 	}

@@ -1,1 +1,1 @@
-<?php return array('dependencies' => array(), 'version' => 'b4438f3e2eece3edc7df');
+<?php return array('dependencies' => array('ohmylms-jsxgraph'), 'version' => '8e612a93aae8319d36c6');

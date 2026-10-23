@@ -370,7 +370,7 @@ function LessonChoiceEdit( {
 		);
 	} else if ( question.settings.type === 'graphing' ) {
 		incompleteMessage = __(
-			'Set a valid graph range and correct points to save.',
+			'Keep the axes between -100 and 100, put every expected point inside them, use a tolerance from 0 to 1, and give a line two different points.',
 			'ohmylms'
 		);
 	} else if ( question.settings.type === 'reorder' ) {

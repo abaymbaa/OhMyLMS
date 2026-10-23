@@ -93,3 +93,32 @@ test( 'teacher reports describe extended answers using frozen labels', () => {
 		'(2, 3)'
 	);
 } );
+
+test( 'a graphing question is only saveable when the server will accept it', async () => {
+	const { graphIsValid, extendedIssues } = await import(
+		'../../assets/src/features/question-editor/extendedModel.mjs'
+	);
+	const ok = { mode: 'points', min: -5, max: 5, points: [ { x: 2, y: 3 } ], tolerance: 0.25 };
+	assert.equal( graphIsValid( ok ), true );
+	assert.deepEqual( extendedIssues( 'graphing', ok ), [] );
+	for ( const bad of [
+		{ ...ok, points: [ { x: 9, y: 3 } ] },
+		{ ...ok, min: 5, max: 5 },
+		{ ...ok, min: -101 },
+		{ ...ok, max: 101 },
+		{ ...ok, tolerance: 2 },
+		{ ...ok, tolerance: -0.1 },
+		{ ...ok, points: [] },
+		{ ...ok, points: [ { x: '', y: 1 } ] },
+		{ ...ok, points: Array.from( { length: 51 }, () => ( { x: 1, y: 1 } ) ) },
+		{ ...ok, mode: 'line', points: [ { x: 1, y: 1 } ] },
+		{ ...ok, mode: 'line', points: [ { x: 1, y: 1 }, { x: 1, y: 1 } ] },
+	] ) {
+		assert.equal( graphIsValid( bad ), false, JSON.stringify( bad ) );
+		assert.deepEqual( extendedIssues( 'graphing', bad ), [ 'graph' ] );
+	}
+	assert.equal(
+		graphIsValid( { ...ok, mode: 'line', points: [ { x: 0, y: 1 }, { x: 1, y: 2 } ] } ),
+		true
+	);
+} );

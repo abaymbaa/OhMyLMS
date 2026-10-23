@@ -487,17 +487,19 @@ export function ExtendedEditor( {
 									}
 								/>
 							) ) }
-							<Button
-								onClick={ () =>
-									set( {
-										points: rows( 'points' ).filter(
-											( _, i ) => i !== index
-										),
-									} )
-								}
-							>
-								{ __( 'Remove point', 'ohmylms' ) }
-							</Button>
+							{ value.mode !== 'line' && (
+								<Button
+									onClick={ () =>
+										set( {
+											points: rows( 'points' ).filter(
+												( _, i ) => i !== index
+											),
+										} )
+									}
+								>
+									{ __( 'Remove point', 'ohmylms' ) }
+								</Button>
+							) }
 						</fieldset>
 					) ) }
 					{ value.mode !== 'line' && (

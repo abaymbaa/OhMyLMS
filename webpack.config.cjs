@@ -6,5 +6,5 @@ module.exports={
  devtool:'source-map',
  resolve:{extensions:['.js','.jsx','.mjs']},
  module:{rules:[{test:/\.[cm]?jsx?$/,exclude:/node_modules/,use:{loader:'babel-loader',options:{presets:[['@babel/preset-react',{runtime:'classic',pragma:'createElement'}]]}}}]},
- plugins:[new DependencyExtractionWebpackPlugin()],
+ plugins:[new DependencyExtractionWebpackPlugin({requestToExternal:(request)=>'jsxgraph'===request?'JXG':undefined,requestToHandle:(request)=>'jsxgraph'===request?'ohmylms-jsxgraph':undefined})],
 };

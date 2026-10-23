@@ -74,7 +74,19 @@ Eight types answer with a few numbers that the learner sets by dragging or tappi
 
 Every widget works with pointer, touch and keyboard, and the required-answer check passes once a widget has been touched (`data-touched`). The editor previews each question with the same script the learners get; `AdminAssets` loads it on the plugin's admin screens. To add a type: a case in `Visual`, a `build` function, and an editor in `question-editor/VisualEditors.jsx`.
 
-Not built from the spec: graphing and transformations (need JSXGraph), measuring with a protractor or ruler, labelling a diagram, and AI-graded explanations.
+### Graphing, labelling and hotspots
+
+Three more types are rules in `includes/Assessment/ExtendedQuestions.php`; the learner widgets are in `assets/interactivity/extended-questions.js`. All three are graded all-or-nothing (full marks or none) from the frozen settings.
+
+| Type | Author sets | Learner does | Graded |
+| --- | --- | --- | --- |
+| `graphing` | `mode` (`points` or `line`), `min` and `max` (within -100 to 100), `points` (up to 50; `line` needs exactly two different points), `tolerance` (0 to 1, default 0.25 of a unit) | Clicks the board or types x and y to place points, drags them (they snap to quarter units); in line mode two points draw the line through them | `points`: every expected point has its own learner point within `tolerance`, and the counts match. `line`: both learner points are different and lie within `tolerance` of the expected line |
+| `labeling` | `image_url` (http or https), `targets` (an id, the correct label and an x and y position as percentages, up to 50), optional `distractors` (up to 50 extra labels) | Drops a label on each target of the image | every target carries its correct label |
+| `hotspot` | `image_url`, `zones` (x, y and radius as percentages, up to 50, at least one) | Clicks the image once | the click is inside any zone |
+
+The graph is drawn with JSXGraph 1.14.1, only to draw the board: it never decides correctness, and the posted answer is a plain JSON list of `{ x, y }` points (`points`). The library is a bundled file, `assets/dist/jsxgraph/jsxgraphcore.js`, copied from `node_modules` by `tools/sync-admin-assets.mjs` and registered as the script `ohmylms-jsxgraph` (`Interactive::enqueue()`). The Function Graph block (`assets/src/blocks/interactive-activity`) reads the same copy, so the plugin carries one JSXGraph.
+
+Deliberately or not yet built: **transformations** (reflect, translate or rotate a shape on a board) are not built; **measuring with a protractor or ruler** is not built; **AI-graded explanations** are not built on purpose, since AI here only hints and explains and never grades, scores or changes mastery (`includes/AI/Settings.php`). Written, drawn, audio and video responses (`draw`, `audio-response`, `video-response`, `discussion-board`) are teacher-marked.
 ### Randomized template questions
 
 Any question can be turned into a template that draws new numbers every time it is issued ("Randomize numbers" panel in the question editor). The version stays one immutable row holding the template; each issue stores an integer **instance seed** and `QuestionSnapshot::instantiate( $seed )` produces the concrete question. Same seed, same numbers, so grading, review, reports and resume always see what the learner saw. Engine: `includes/Assessment/Template.php`.

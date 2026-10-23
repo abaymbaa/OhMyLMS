@@ -357,6 +357,58 @@ export function extendedPublicView( type, settings ) {
 	return view;
 }
 /**
+ * Whether a graphing question's settings pass the server's rules, so a save is never refused for them:
+ * axes inside -100 to 100 with the minimum below the maximum, one to fifty finite points inside the axes,
+ * a tolerance from 0 to 1, and for a line exactly two different points.
+ *
+ * @param {Object} settings Graphing settings.
+ * @return {boolean} True when the server will accept them.
+ */
+export function graphIsValid( settings = {} ) {
+	const min = Number( settings.min );
+	const max = Number( settings.max );
+	const points = Array.isArray( settings.points ) ? settings.points : [];
+	const tolerance = settings.tolerance ?? 0.25;
+	const finite = ( value ) =>
+		value !== '' && value !== null && Number.isFinite( Number( value ) );
+	if (
+		! finite( settings.min ) ||
+		! finite( settings.max ) ||
+		! ( min < max ) ||
+		min < -100 ||
+		max > 100
+	) {
+		return false;
+	}
+	if (
+		! points.length ||
+		points.length > 50 ||
+		points.some(
+			( point ) =>
+				! finite( point?.x ) ||
+				! finite( point?.y ) ||
+				Number( point.x ) < min ||
+				Number( point.x ) > max ||
+				Number( point.y ) < min ||
+				Number( point.y ) > max
+		)
+	) {
+		return false;
+	}
+	if ( ! finite( tolerance ) || Number( tolerance ) < 0 || Number( tolerance ) > 1 ) {
+		return false;
+	}
+	if ( settings.mode === 'line' ) {
+		return (
+			points.length === 2 &&
+			( Number( points[ 0 ].x ) !== Number( points[ 1 ].x ) ||
+				Number( points[ 0 ].y ) !== Number( points[ 1 ].y ) )
+		);
+	}
+	return true;
+}
+
+/**
  * Blocking authoring problems for new extended questions.
  * @param type
  * @param settings
@@ -403,11 +455,7 @@ export function extendedIssues( type, settings = {} ) {
 	) {
 		return [ 'tokens' ];
 	}
-	if (
-		type === 'graphing' &&
-		( ! ( settings.points || [] ).length ||
-			! ( Number( settings.max ) > Number( settings.min ) ) )
-	) {
+	if ( type === 'graphing' && ! graphIsValid( settings ) ) {
 		return [ 'graph' ];
 	}
 	if (
