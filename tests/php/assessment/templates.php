@@ -223,3 +223,32 @@ foreach (['quadratic-repeated', 'discriminant', 'pythagorean-leg', 'simultaneous
         ok($good, "The $kind answer does not follow from its numbers: " . wp_json_encode([$p, $answer]));
     }
 }
+
+// Topic presets: fractions, percentages, graphs, ratio and speed. The answer is rechecked from the drawn numbers.
+$gcd = static function ($x, $y) { while ($y) { [$x, $y] = [$y, $x % $y]; } return $x; };
+$topic_checks = [
+    'equivalent-fraction' => static function ($p, $answer) { return $p['a'] < $p['b'] && $p['a'] * $p['c'] == $answer * $p['b']; },
+    'simplify-fraction'   => static function ($p, $answer) use ($gcd) { return $p['n'] * $answer == $p['d'] * $p['a'] && 1 == $gcd((int) $p['a'], (int) $answer); },
+    'unlike-fractions'    => static function ($p, $answer) { return $p['b'] != $p['d'] && abs($answer / $p['p'] - ($p['a'] / $p['b'] + $p['c'] / $p['d'])) < 1e-9; },
+    'percent-increase'    => static function ($p, $answer) { return abs($answer - $p['o'] * (1 + $p['r'] / 100)) < 1e-9 && floor($answer) == $answer; },
+    'percent-decrease'    => static function ($p, $answer) { return abs($answer - $p['o'] * (1 - $p['r'] / 100)) < 1e-9 && floor($answer) == $answer; },
+    'reverse-percentage'  => static function ($p, $answer) { return abs($p['n'] - $answer * (1 - $p['r'] / 100)) < 1e-9 && floor($p['n']) == $p['n']; },
+    'simple-interest'     => static function ($p, $answer) { return abs($answer - $p['p'] * $p['r'] * $p['t'] / 100) < 1e-9; },
+    'gradient'            => static function ($p, $answer) { return $p['c'] != $p['a'] && abs(($p['f'] - $p['b']) / ($p['c'] - $p['a']) - $answer) < 1e-9 && $answer != 0; },
+    'y-intercept'         => static function ($p, $answer) { return abs($p['b'] - ($p['m'] * $p['a'] + $answer)) < 1e-9; },
+    'midpoint'            => static function ($p, $answer) { return abs(($p['a'] + $p['c']) / 2 - $answer) < 1e-9 && floor($answer) == $answer; },
+    'share-ratio'         => static function ($p, $answer) { return $p['a'] != $p['b'] && abs($p['t'] * $p['a'] / ($p['a'] + $p['b']) - $answer) < 1e-9 && floor($answer) == $answer; },
+    'speed'               => static function ($p, $answer) { return abs($p['d'] / $p['t'] - $answer) < 1e-9 && floor($answer) == $answer; },
+];
+foreach ($topic_checks as $kind => $check) {
+    $settings = $presets[$kind]['settings'];
+    ok(true === Template::validate($settings, '', $presets[$kind]['prompt'], []), "The $kind preset did not validate");
+    $seen = [];
+    for ($seed = 1; $seed <= 150; $seed++) {
+        $applied = Template::apply('', $presets[$kind]['prompt'], $settings, [], $seed);
+        ok($applied['ok'] && !$applied['errors'], "The $kind preset failed to draw at seed $seed");
+        ok($check($applied['params'], $applied['settings']['answer']), "The $kind answer does not follow from its numbers: " . wp_json_encode([$applied['params'], $applied['settings']['answer']]));
+        $seen[wp_json_encode($applied['params'])] = true;
+    }
+    ok(count($seen) >= 8, "The $kind preset repeats too often: " . count($seen));
+}

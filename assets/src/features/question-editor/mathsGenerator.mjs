@@ -1,3 +1,5 @@
+import { topicPreset } from './mathsTopics.mjs';
+
 /**
  * Create a bounded preset over the existing seeded template engine.
  *
@@ -145,8 +147,16 @@ export function mathsPreset( kind, min, max ) {
 				'{{a}}x + {{b}}y = {{p}} and {{c}}x + {{d}}y = {{q}}. Find x.';
 			expr = 'x';
 			break;
-		default:
-			return null;
+		default: {
+			const topic = topicPreset( kind, min, max );
+			if ( ! topic ) {
+				return null;
+			}
+			variables = topic.variables;
+			constraints = topic.constraints;
+			prompt = topic.prompt;
+			expr = topic.expr;
+		}
 	}
 	return {
 		prompt,

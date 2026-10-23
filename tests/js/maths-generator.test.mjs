@@ -32,7 +32,9 @@ test( 'maths presets use the shared private variable and answer contract', () =>
 					variable.type === 'expr' ||
 					variable.min > 0 ||
 					kind.startsWith( 'quadratic' ) ||
-					kind === 'discriminant'
+					[ 'discriminant', 'gradient', 'y-intercept', 'midpoint' ].includes(
+						kind
+					)
 			)
 		);
 	}
@@ -94,4 +96,33 @@ test( 'repeated-root, discriminant, missing-side and simultaneous presets are bu
 	const simultaneous = mathsPreset( 'simultaneous', 2, 9 ).settings.template;
 	assert.deepEqual( simultaneous.constraints, [ 'a*d-b*c!=0' ] );
 	assert.equal( simultaneous.set[ 0 ].expr, 'x' );
+} );
+
+test( 'topic presets are built from the answer and refuse ranges that are too small', () => {
+	const kinds = [
+		'equivalent-fraction',
+		'simplify-fraction',
+		'unlike-fractions',
+		'percent-increase',
+		'percent-decrease',
+		'reverse-percentage',
+		'simple-interest',
+		'gradient',
+		'y-intercept',
+		'midpoint',
+		'share-ratio',
+		'speed',
+	];
+	for ( const kind of kinds ) {
+		const preset = mathsPreset( kind, 2, 9 );
+		assert.ok( preset, kind );
+		assert.ok( preset.prompt.includes( '{{' ), kind );
+		assert.equal( preset.settings.template.set[ 0 ].path, 'answer' );
+	}
+	for ( const kind of [ 'equivalent-fraction', 'simplify-fraction', 'share-ratio' ] ) {
+		assert.equal( mathsPreset( kind, 5, 5 ), null, kind );
+	}
+	assert.equal( mathsPreset( 'unlike-fractions', 2, 3 ), null );
+	assert.ok( mathsPreset( 'unlike-fractions', 2, 4 ) );
+	assert.ok( mathsPreset( 'speed', 5, 5 ) );
 } );
