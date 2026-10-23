@@ -306,3 +306,20 @@ $bad = $ai_call($fresh2['uuid'], $fresh2['current']['item_id'], 'hint');
 $last = end($GLOBALS['ai_calls']);
 ok($last['url'] === 'https://api.openai.com/v1/responses' && $last['headers']['authorization'] === 'Bearer ' . $KEY && status_of($bad) === 502 && $bad->get_data()['code'] === 'ohmylms_ai_auth' && strpos(wp_json_encode($bad->get_data()), 'TESTKEY') === false, 'OpenAI path or key handling wrong: ' . wp_json_encode($bad->get_data()));
 
+
+// A standalone inline-check shortcode opens in the editor as a question block; anything else is left alone.
+$uuid_a = 'aaaaaaaa-1111-4222-8333-bbbbbbbbbbbb';
+$uuid_b = 'cccccccc-1111-4222-8333-dddddddddddd';
+$lookup = static function ($uuid) use ($uuid_a) { return $uuid === $uuid_a ? 4321 : 0; };
+$as_block = '<!-- wp:ohmylms/shared-multiple-choice {"questionId":4321,"uuid":"' . $uuid_a . '"} /-->';
+$converted = \OhMyLMS\Practice\Inline::blocks_from_shortcodes("<!-- wp:shortcode -->\n[ohmylms_question uuid=\"$uuid_a\"]\n<!-- /wp:shortcode -->", $lookup);
+ok($converted === $as_block, 'A shortcode block did not become a question block: ' . $converted);
+$paragraph = "<!-- wp:paragraph -->\n<p>[ohmylms_question uuid=\"$uuid_a\"]</p>\n<!-- /wp:paragraph -->";
+ok(\OhMyLMS\Practice\Inline::blocks_from_shortcodes($paragraph, $lookup) === $as_block, 'A paragraph holding only a check did not become a question block');
+$curly = "<!-- wp:paragraph -->\n<p>[ohmylms_question uuid=&#8221;$uuid_a&#8221;]</p>\n<!-- /wp:paragraph -->";
+ok(\OhMyLMS\Practice\Inline::blocks_from_shortcodes($curly, $lookup) === $as_block, 'A check with curly quotes did not become a question block');
+$inside = "<!-- wp:paragraph -->\n<p>Try this: [ohmylms_question uuid=\"$uuid_a\"] then go on.</p>\n<!-- /wp:paragraph -->";
+ok(\OhMyLMS\Practice\Inline::blocks_from_shortcodes($inside, $lookup) === $inside, 'A check inside a sentence was changed');
+$unknown = "<!-- wp:shortcode -->\n[ohmylms_question uuid=\"$uuid_b\"]\n<!-- /wp:shortcode -->";
+ok(\OhMyLMS\Practice\Inline::blocks_from_shortcodes($unknown, $lookup) === $unknown, 'A check for an unknown question was changed');
+ok(\OhMyLMS\Practice\Inline::blocks_from_shortcodes('<p>plain</p>', $lookup) === '<p>plain</p>', 'Plain content was changed');

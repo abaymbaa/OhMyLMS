@@ -23,7 +23,6 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { createBlock } from '@wordpress/blocks';
 import { searchBank } from '../question-bank/api.mjs';
-import { inlineShortcode } from '../assessment/model.mjs';
 import { installNativeCanvasRecovery } from './nativeCanvas.mjs';
 
 installNativeCanvasRecovery();
@@ -84,23 +83,10 @@ function InlineChecks() {
 						variant="secondary"
 						onClick={ () =>
 							insertBlocks(
-								[ 'single-choice', 'multiple-choice' ].includes(
-									question.type
-								)
-									? createBlock(
-											'ohmylms/shared-multiple-choice',
-											{
-												questionId: Number(
-													question.id
-												),
-												uuid: question.uuid,
-											}
-										)
-									: createBlock( 'core/shortcode', {
-											text: inlineShortcode(
-												question.uuid
-											),
-										} )
+								createBlock( 'ohmylms/shared-multiple-choice', {
+									questionId: Number( question.id ),
+									uuid: question.uuid,
+								} )
 							)
 						}
 					>

@@ -37,6 +37,7 @@ final class NativeLessonEditor {
 		add_action( 'enqueue_block_assets', array( __CLASS__, 'question_block_styles' ) );
 		add_action( 'rest_after_insert_ohmylms-lesson', array( __CLASS__, 'after_save' ), 10, 3 );
 		add_filter( 'ohmylms_rest_prepare_lesson', array( __CLASS__, 'legacy_response' ), 10, 2 );
+		add_filter( 'rest_prepare_ohmylms-lesson', array( __CLASS__, 'blocks_for_editor' ), 10, 3 );
 	}
 
 	/** Register a reference-only placement using the established inline assessment flow. */
@@ -298,6 +299,26 @@ final class NativeLessonEditor {
 		$url  = self::edit_url( $post->ID );
 		if ( $url ) {
 			$data['native_editor_url'] = $url;
+			$response->set_data( $data );
+		}
+		return $response;
+	}
+
+	/**
+	 * Show standalone inline-check shortcodes as question blocks when a lesson opens in the editor.
+	 *
+	 * @param \WP_REST_Response $response Lesson response.
+	 * @param \WP_Post          $post     Lesson.
+	 * @param \WP_REST_Request  $request  Request.
+	 * @return \WP_REST_Response
+	 */
+	public static function blocks_for_editor( $response, $post, $request ) {
+		if ( 'edit' !== $request->get_param( 'context' ) || ! current_user_can( 'edit_post', $post->ID ) ) {
+			return $response;
+		}
+		$data = $response->get_data();
+		if ( isset( $data['content']['raw'] ) && is_string( $data['content']['raw'] ) ) {
+			$data['content']['raw'] = \OhMyLMS\Practice\Inline::blocks_from_shortcodes( $data['content']['raw'] );
 			$response->set_data( $data );
 		}
 		return $response;

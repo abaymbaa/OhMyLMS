@@ -503,6 +503,31 @@ function LessonChoiceEdit( {
 						setError( '' );
 					} }
 				/>
+			) : ! quiz && question.settings?.type ? (
+				<>
+					<MultipleChoiceFields
+						question={ question }
+						readOnly
+						onRemove={
+							standalone
+								? undefined
+								: () => removeBlock( clientId )
+						}
+					/>
+					<p className="ohmylms-inline-check-note">
+						{ __(
+							'This inline check shows the question as learners see it. Edit its content in the question bank; changes appear here once approved.',
+							'ohmylms'
+						) }{ ' ' }
+						<a
+							href={ `post.php?post=${ attributes.questionId }&action=edit` }
+							target="_blank"
+							rel="noreferrer"
+						>
+							{ __( 'Open in the question bank', 'ohmylms' ) }
+						</a>
+					</p>
+				</>
 			) : (
 				<p>
 					{ __(

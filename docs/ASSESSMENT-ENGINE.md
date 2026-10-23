@@ -228,9 +228,15 @@ performance report.
 - Math rendering uses the site's KaTeX auto-render (`wpmath`). Server-rendered quizzes and
   lesson checks are covered by its page-load pass; content added later by the practice runner
   and feedback is re-rendered through `window.ohmylmsTypeset`.
-- Inline checks are authored as shortcode text. A spike in the retained lesson editor confirmed
-  the shortcode round-trips intact (saved inside its own paragraph); curly quotes or a bare UUID
-  are also accepted. A native editor node was not built.
+- Inline checks are authored as the **OhMyLMS Question** block (`ohmylms/shared-multiple-choice`), which
+  references the bank question by ID and UUID and renders through the inline runtime (guests, retries and a
+  lesson-scoped token; no effect on lesson completion). In a lesson the block edits single and multiple choice
+  questions in place and shows every other type as a read-only learner preview with a link to the question bank.
+  The lesson panel "Inline question checks" inserts this block for every question type. Older checks written as
+  `[ohmylms_question uuid="..."]` keep working on the page; when a lesson opens in the editor, a shortcode that
+  stands alone in a Shortcode block or paragraph is shown as the block (`Inline::blocks_from_shortcodes`, applied
+  by `NativeLessonEditor::blocks_for_editor`), and is saved as a block on the next save. A shortcode inside a
+  sentence is left as text.
 - Media: each version copies the local uploads it references (question image/video, option and
   matching images, images in the question text) to `uploads/ohmylms-frozen/` by SHA-256 and serves
   those copies. Replacing a file in place produces a new version on the next save; files outside

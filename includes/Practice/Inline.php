@@ -45,6 +45,42 @@ final class Inline {
 		return self::render( $uuid );
 	}
 
+	/**
+	 * Turn inline-check shortcodes that stand alone in a lesson into question blocks.
+	 *
+	 * A check written as shortcode text, alone in a Shortcode block or a paragraph, becomes an
+	 * OhMyLMS Question block that references the same question. Shortcodes inside a sentence and
+	 * unknown questions are left as they are; the shortcode keeps working on the page either way.
+	 *
+	 * @param string        $content Block-editor content.
+	 * @param callable|null $lookup  UUID to question ID; defaults to the question bank.
+	 * @return string Content with standalone checks as blocks.
+	 */
+	public static function blocks_from_shortcodes( $content, $lookup = null ) {
+		$content = (string) $content;
+		if ( false === strpos( $content, '[ohmylms_question' ) ) {
+			return $content;
+		}
+		$lookup  = $lookup ? $lookup : array( VersionPublisher::class, 'question_by_uuid' );
+		$uuid_re = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+		$convert = static function ( $matches ) use ( $lookup ) {
+			$uuid = strtolower( $matches['uuid'] );
+			$id   = (int) call_user_func( $lookup, $uuid );
+			if ( $id < 1 ) {
+				return $matches[0];
+			}
+			return '<!-- wp:ohmylms/shared-multiple-choice ' . wp_json_encode(
+				array(
+					'questionId' => $id,
+					'uuid'       => $uuid,
+				)
+			) . ' /-->';
+		};
+		$check   = '\[ohmylms_question[^\]]*?(?P<uuid>' . $uuid_re . ')[^\]]*\]';
+		$content = preg_replace_callback( '#<!-- wp:shortcode -->\s*' . $check . '\s*<!-- /wp:shortcode -->#i', $convert, $content );
+		return preg_replace_callback( '#<!-- wp:paragraph -->\s*<p>\s*' . $check . '\s*</p>\s*<!-- /wp:paragraph -->#i', $convert, $content );
+	}
+
 	/** Version shown inline: the approved one; editors may preview an unapproved current version. */
 	private static function version_for( $uuid, &$preview ) {
 		$preview     = false;

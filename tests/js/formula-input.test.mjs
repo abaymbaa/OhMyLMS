@@ -55,3 +55,12 @@ test( 'a variable is inserted at the end of the last paragraph of a statement', 
 	assert.equal( insertIntoStatement( '<p>What is</p>', 'a' ), '<p>What is {{a}}</p>' );
 	assert.equal( insertIntoStatement( 'plain', 'b' ), 'plain {{b}}' );
 } );
+
+test( 'the lesson panel inserts the question block for every type, and the block previews types it cannot edit', async () => {
+	const fs = await import( 'node:fs' );
+	const panel = fs.readFileSync( 'assets/src/features/learning/NativeLessonSettings.jsx', 'utf8' );
+	assert.ok( ! panel.includes( 'core/shortcode' ), 'the panel still inserts shortcode text' );
+	assert.ok( panel.includes( "createBlock( 'ohmylms/shared-multiple-choice'" ) );
+	const block = fs.readFileSync( 'assets/src/features/learning/LessonChoiceBlock.jsx', 'utf8' );
+	assert.ok( block.includes( 'ohmylms-inline-check-note' ) && block.includes( 'readOnly' ) );
+} );
