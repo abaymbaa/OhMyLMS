@@ -156,12 +156,15 @@ export function MathsGenerator( { value, onGenerate } ) {
 					) }
 				</p>
 			) }
+			<details className="ohmylms-maths-generator-notes">
+				<summary>{ __( 'How each topic works', 'ohmylms' ) }</summary>
 			<p>
 				{ __(
 					'Division generates an exact product divided by a nonzero factor. Subtraction excludes negative results. Fractions use a shared denominator from 2 to 12. Linear equations use nonzero coefficients from 1 to 9. Pythagorean triples are whole-number right triangles built from two coprime numbers in the range (needs at least two numbers). Quadratics are built from two different whole-number solutions between minus the maximum and the maximum, each at least the minimum away from zero, so the equation always has two distinct whole solutions. A repeated solution is one whole number p with x² - 2px + p². The discriminant uses a from the range and b, c from minus the maximum to the maximum, never zero. Finding a shorter side uses the same triples. Simultaneous equations pick whole x and y in the range and coefficients from 1 to 9 that make the pair solvable. Fraction topics need two to three numbers in the range; percentage topics use prices of 20 times the range and steps of 5%; graph topics use gradients from -9 to 9; ratio and speed topics build the total or distance from the answer. Apply replaces the current numerical answer and variable definition.',
 					'ohmylms'
 				) }
 			</p>
+			</details>
 			<Button
 				variant="secondary"
 				disabled={ ! preset }
