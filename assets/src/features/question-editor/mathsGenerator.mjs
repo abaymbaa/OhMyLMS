@@ -70,6 +70,7 @@ export function mathsPreset( kind, min, max ) {
 			expr = 'c';
 			break;
 		case 'pythagorean':
+		case 'pythagorean-leg':
 			// Primitive triples from m > n, coprime, of opposite parity: a = m²-n², b = 2mn, c = m²+n².
 			if ( min === max ) {
 				return null;
@@ -83,8 +84,10 @@ export function mathsPreset( kind, min, max ) {
 			];
 			constraints = [ 'm>n', 'gcd(m,n)=1', 'mod(m-n,2)=1' ];
 			prompt =
-				'A right-angled triangle has shorter sides {{a}} and {{b}}. Find the hypotenuse.';
-			expr = 'c';
+				kind === 'pythagorean'
+					? 'A right-angled triangle has shorter sides {{a}} and {{b}}. Find the hypotenuse.'
+					: 'A right-angled triangle has hypotenuse {{c}} and one shorter side {{a}}. Find the other shorter side.';
+			expr = kind === 'pythagorean' ? 'c' : 'b';
 			break;
 		case 'quadratic':
 			// Build from the two solutions, so they are whole numbers and distinct by construction.
@@ -102,6 +105,45 @@ export function mathsPreset( kind, min, max ) {
 			];
 			prompt = 'Solve x² {{b:+}}x {{c:+}} = 0. Give the larger solution.';
 			expr = 'max(p,q)';
+			break;
+		case 'quadratic-repeated':
+			// (x - p)² = 0: one repeated whole solution by construction.
+			variables = [
+				{ name: 'p', type: 'int', min: -max, max, step: 1 },
+				{ name: 'b', type: 'expr', expr: '-2*p', places: 0 },
+				{ name: 'c', type: 'expr', expr: 'p*p', places: 0 },
+			];
+			constraints = [ `abs(p)>=${ min }` ];
+			prompt =
+				'Solve x² {{b:+}}x {{c:+}} = 0. It has one repeated solution; give it.';
+			expr = 'p';
+			break;
+		case 'discriminant':
+			variables = [
+				{ name: 'a', type: 'int', min, max, step: 1 },
+				{ name: 'b', type: 'int', min: -max, max, step: 1 },
+				{ name: 'c', type: 'int', min: -max, max, step: 1 },
+			];
+			constraints = [ 'b!=0', 'c!=0' ];
+			prompt = 'Find the discriminant of {{a}}x² {{b:+}}x {{c:+}}.';
+			expr = 'b*b-4*a*c';
+			break;
+		case 'simultaneous':
+			// Pick the solution first, then the equations, so x and y are whole numbers.
+			variables = [
+				{ name: 'x', type: 'int', min, max, step: 1 },
+				{ name: 'y', type: 'int', min, max, step: 1 },
+				{ name: 'a', type: 'int', min: 1, max: 9, step: 1 },
+				{ name: 'b', type: 'int', min: 1, max: 9, step: 1 },
+				{ name: 'c', type: 'int', min: 1, max: 9, step: 1 },
+				{ name: 'd', type: 'int', min: 1, max: 9, step: 1 },
+				{ name: 'p', type: 'expr', expr: 'a*x+b*y', places: 0 },
+				{ name: 'q', type: 'expr', expr: 'c*x+d*y', places: 0 },
+			];
+			constraints = [ 'a*d-b*c!=0' ];
+			prompt =
+				'{{a}}x + {{b}}y = {{p}} and {{c}}x + {{d}}y = {{q}}. Find x.';
+			expr = 'x';
 			break;
 		default:
 			return null;

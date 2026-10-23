@@ -204,3 +204,22 @@ foreach (['pythagorean', 'quadratic'] as $kind) {
     }
     ok(count($seen) >= ('pythagorean' === $kind ? 10 : 20), "The $kind preset repeats too often: " . count($seen));
 }
+
+// More presets: the answer follows from the construction for every seed.
+foreach (['quadratic-repeated', 'discriminant', 'pythagorean-leg', 'simultaneous'] as $kind) {
+    $settings = $presets[$kind]['settings'];
+    ok(true === Template::validate($settings, '', $presets[$kind]['prompt'], []), "The $kind preset did not validate");
+    for ($seed = 1; $seed <= 100; $seed++) {
+        $applied = Template::apply('', $presets[$kind]['prompt'], $settings, [], $seed);
+        $p = $applied['params'];
+        $answer = $applied['settings']['answer'];
+        ok($applied['ok'] && !$applied['errors'], "The $kind preset failed to draw at seed $seed");
+        switch ($kind) {
+            case 'quadratic-repeated': $good = $p['b'] ** 2 - 4 * $p['c'] == 0 && $answer == $p['p']; break;
+            case 'discriminant': $good = $answer == $p['b'] ** 2 - 4 * $p['a'] * $p['c']; break;
+            case 'pythagorean-leg': $good = $p['a'] ** 2 + $answer ** 2 == $p['c'] ** 2; break;
+            default: $good = $p['a'] * $p['d'] - $p['b'] * $p['c'] != 0 && $p['a'] * $answer + $p['b'] * $p['y'] == $p['p'] && $p['c'] * $answer + $p['d'] * $p['y'] == $p['q'];
+        }
+        ok($good, "The $kind answer does not follow from its numbers: " . wp_json_encode([$p, $answer]));
+    }
+}

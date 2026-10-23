@@ -31,7 +31,8 @@ test( 'maths presets use the shared private variable and answer contract', () =>
 				( variable ) =>
 					variable.type === 'expr' ||
 					variable.min > 0 ||
-					kind === 'quadratic'
+					kind.startsWith( 'quadratic' ) ||
+					kind === 'discriminant'
 			)
 		);
 	}
@@ -81,4 +82,16 @@ test( 'every number field of the visual question editors accepts a {{variable}}'
 	assert.ok( ( jsx.match( /\.\.\.numberOrFormula\(/g ) || [] ).length >= 20 );
 	// The live preview must not show a variable as a value.
 	assert.ok( jsx.includes( "typeof settings.values?.[ category.id ] === 'number'" ) );
+} );
+
+test( 'repeated-root, discriminant, missing-side and simultaneous presets are built from their construction', () => {
+	const repeated = mathsPreset( 'quadratic-repeated', 2, 9 ).settings.template;
+	assert.deepEqual( repeated.variables.slice( 1 ).map( ( v ) => v.expr ), [ '-2*p', 'p*p' ] );
+	assert.equal( repeated.set[ 0 ].expr, 'p' );
+	assert.equal( mathsPreset( 'discriminant', 2, 9 ).settings.template.set[ 0 ].expr, 'b*b-4*a*c' );
+	assert.equal( mathsPreset( 'pythagorean-leg', 2, 9 ).settings.template.set[ 0 ].expr, 'b' );
+	assert.equal( mathsPreset( 'pythagorean-leg', 4, 4 ), null );
+	const simultaneous = mathsPreset( 'simultaneous', 2, 9 ).settings.template;
+	assert.deepEqual( simultaneous.constraints, [ 'a*d-b*c!=0' ] );
+	assert.equal( simultaneous.set[ 0 ].expr, 'x' );
 } );
