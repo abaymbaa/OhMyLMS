@@ -232,6 +232,15 @@ final class Frontend {
 			<th scope="row"><?php echo esc_html( $outcome['name'] ); ?></th>
 			<td data-label="<?php esc_attr_e( 'Current level', 'ohmylms' ); ?>"><?php echo esc_html( Mastery::label( $outcome['state']['level'] ) ); ?>
 			<?php
+			if ( ! empty( $outcome['credit'] ) ) {
+				echo '<br><span class="ohmylms-learning-credit">';
+				/* translators: %s: skill level. */
+				echo esc_html( sprintf( __( '%s from other syllabuses', 'ohmylms' ), Mastery::label( $outcome['credit']['level'] ) ) );
+				echo $outcome['credit']['counts'] ? '' : ' ' . esc_html__( '(counts once proficient)', 'ohmylms' );
+				echo '</span>';
+			}
+			?>
+			<?php
 			if ( ! empty( $outcome['state']['review_due'] ) ) {
 				echo '<br>' . esc_html__( 'Review due', 'ohmylms' ); }
 			?>

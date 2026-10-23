@@ -490,14 +490,14 @@ try {
     evidence($student, $same_a, 9200010, true, 8010, 'n1', $t); Mastery::recompute($student, $same_a);
     ok(!isset(array_column(states($student), null, 'term_id')[$same_b]), 'Evidence on one skill leaked to a skill with the same name');
     $states_before_z = states($student);
-    // Shared evidence must not complete another course: course Z requires skill B (its own skill), not the shared one.
+    // Shared evidence must not complete a course that counts only its own evidence (recognize_prior off): course Z requires skill B, not the shared one. Programs that recognise prior learning get credit back (tests/php/learning-integration.php).
     $z_lesson = created('lessons', ['name' => 'Z lesson ' . $tag, 'description' => '<p>x</p>', 'type' => 'text', 'status' => 'publish']);
     for ($i = 0; $i < 3; $i++) {
         $q = created('question', ['name' => 'Z question ' . $i, 'settings' => ['type' => 'single-choice', 'hint' => 'h', 'score' => ['enabled' => true, 'value' => 1]], 'questions' => [['answer' => 'Right', 'is_correct' => 1], ['answer' => 'Wrong']], 'skills' => ['p1' => ['primary' => $skill_b, 'supporting' => []]], 'bank' => ['family_id' => 'z-family-' . $i]]);
         api('POST', 'question-bank/' . $q . '/approve');
     }
     $course_z = created('courses', ['name' => 'Course Z ' . $tag, 'status' => 'publish']);
-    $z_published = api('POST', "courses/$course_z/learning/publish", ['mode' => 'skill-based', 'recognize_prior' => true, 'evidence_days' => 0, 'bank_ids' => [], 'outcomes' => [['term_id' => $skill_b, 'target' => 'proficient', 'required' => true]], 'items' => [['id' => wp_generate_uuid4(), 'type' => 'lesson', 'content_id' => $z_lesson, 'chapter_id' => 0, 'required' => false, 'pass_percent' => 80]], 'apply_existing' => false]);
+    $z_published = api('POST', "courses/$course_z/learning/publish", ['mode' => 'skill-based', 'recognize_prior' => false, 'evidence_days' => 0, 'bank_ids' => [], 'outcomes' => [['term_id' => $skill_b, 'target' => 'proficient', 'required' => true]], 'items' => [['id' => wp_generate_uuid4(), 'type' => 'lesson', 'content_id' => $z_lesson, 'chapter_id' => 0, 'required' => false, 'pass_percent' => 80]], 'apply_existing' => false]);
     ok($z_published->get_status() === 200, 'Course Z publish failed: ' . wp_json_encode($z_published->get_data()));
     $z_eid = enroll($student, $course_z);
     $z_status = CompletionPolicy::status($student, $course_z);

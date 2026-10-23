@@ -93,6 +93,7 @@ final class CompletionPolicy {
 			);
 		}
 		$skills  = array();
+		$credits = array();
 		$terms   = array_map( 'intval', array_column( $program['outcomes'], 'term_id' ) );
 		$pending = false;
 		if ( $terms && AssessmentSchema::ready() ) {
@@ -133,6 +134,18 @@ final class CompletionPolicy {
 				foreach ( $terms as $term ) {
 					$skills[ $term ] = \OhMyLMS\Performance\Engine::evaluate( $grouped[ $term ] ?? array(), time() ); }
 			}
+			// Credit back: work on the same shared skill under other syllabuses. It shows on every target, but
+			// counts toward completion only when it reaches proficient, and only for programs that recognise
+			// prior learning without a time window (a course-only or windowed program keeps its own evidence).
+			if ( $program['recognize_prior'] && ! $program['evidence_days'] ) {
+				foreach ( \OhMyLMS\Performance\Guidance::credit( $student_id, $terms ) as $term => $credit ) {
+					$counts = \OhMyLMS\Performance\Levels::is_proficient( $credit['level'] );
+					if ( $counts ) {
+						$skills[ $term ] = array( 'level' => $credit['level'] ) + (array) ( $skills[ $term ] ?? array() );
+					}
+					$credits[ $term ] = $credit + array( 'counts' => $counts );
+				}
+			}
 			$pending = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT o.id FROM ' . AssessmentSchema::table( 'evidence_outbox' ) . ' o JOIN ' . AssessmentSchema::table( 'grade_events' ) . ' g ON g.id=o.grade_event_id JOIN ' . AssessmentSchema::table( 'qb_version_skills' ) . " s ON s.version_id=g.version_id WHERE g.student_id=%d AND s.term_id IN ($ids) AND o.status IN ('pending','failed') LIMIT 1", $student_id ) );
 		}
 		$blocked = get_post_status( $course_id ) !== 'publish';
@@ -153,6 +166,7 @@ final class CompletionPolicy {
 				'review_due'     => 0,
 				'evidence_count' => 0,
 			);
+			$outcome['credit']       = $credits[ $outcome['term_id'] ] ?? null;
 			$outcome['met']          = array_search( $outcome['state']['level'], Mastery::LEVELS, true ) >= array_search( $outcome['target'], Mastery::LEVELS, true );
 			$outcome['practice_url'] = add_query_arg(
 				array(

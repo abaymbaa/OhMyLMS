@@ -192,6 +192,48 @@ try {
     ok(api('GET', 'courses/' . $fourth . '/learning/progress')->get_status() === 403, 'Unpublished course progress accessible');
     ok(is_wp_error(Sessions::start(['student_id' => $student], $skill, ['course_id' => $fourth])), 'Unpublished course practice accessible');
     ok(CompletionPolicy::status($student, $fourth)['blocked'], 'Unpublished course not blocked');
+    // Credit back: proficiency earned on another objective of the same shared skill counts here.
+    wp_set_current_user($admin);
+    $tag = wp_generate_password(6, false, false);
+    $shared = \OhMyLMS\Curriculum\Comparison::save_shared(0, ['name' => 'Credit shared ' . $tag, 'subject' => 'Credit ' . $tag, 'topic' => 'Credit', 'domain' => 'algebra', 'grade_from' => 7, 'grade_to' => 7]);
+    ok(!is_wp_error($shared), 'Shared skill not created'); $terms[] = (int) $shared['id'];
+    $mine = (int) wp_insert_term('Credit mine ' . $tag, Taxonomy::NAME)['term_id']; $terms[] = $mine;
+    $theirs = (int) wp_insert_term('Credit theirs ' . $tag, Taxonomy::NAME)['term_id']; $terms[] = $theirs;
+    ok(!is_wp_error(\OhMyLMS\Curriculum\SkillMappings::save($mine, (int) $shared['id'], 'equivalent')) && !is_wp_error(\OhMyLMS\Curriculum\SkillMappings::save($theirs, (int) $shared['id'], 'equivalent')), 'Objectives not mapped');
+    for ($i = 0; $i < 3; $i++) {
+        $q = created('question', ['name' => 'Credit question ' . $i, 'settings' => ['type' => 'single-choice', 'score' => ['enabled' => true, 'value' => 1]], 'questions' => [['answer' => 'Right', 'is_correct' => 1], ['answer' => 'Wrong']], 'skills' => ['p1' => ['primary' => $mine, 'supporting' => []]], 'bank' => ['family_id' => 'credit-family-' . $tag . $i]]);
+        ok(api('POST', 'question-bank/' . $q . '/approve')->get_status() === 200, 'Approve failed');
+    }
+    $credit_student = learner();
+    $set_state = static function ($term, $level) use ($wpdb, $credit_student) {
+        $wpdb->delete(AssessmentSchema::table('student_skill_state'), ['student_id' => $credit_student, 'term_id' => $term]);
+        $wpdb->insert(AssessmentSchema::table('student_skill_state'), ['student_id' => $credit_student, 'term_id' => $term, 'level' => $level, 'policy' => 'evidence', 'evidence_count' => 4, 'last_evidence_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => current_time('mysql', true)]);
+    };
+    $credit_program = ['mode' => 'skill-based', 'recognize_prior' => true, 'evidence_days' => 0, 'bank_ids' => [], 'outcomes' => [['term_id' => $mine, 'target' => 'proficient', 'required' => true]], 'items' => [item('practice', $mine, false)]];
+    $credit_course = created('courses', ['name' => 'Credit course ' . $tag, 'status' => 'publish']); $posts[] = (int) ohmylms_get_course($credit_course)->get_chapters()[0]['id'];
+    publish($credit_course, $credit_program);
+    enrollment($credit_student, $credit_course);
+    ok(\OhMyLMS\Performance\Guidance::credit($credit_student, [$mine]) === [], 'Credit with no work elsewhere');
+    $set_state($theirs, 'familiar');
+    \OhMyLMS\Performance\Guidance::flush();
+    $familiar = CompletionPolicy::status($credit_student, $credit_course);
+    ok(\OhMyLMS\Performance\Guidance::credit($credit_student, [$mine])[$mine]['level'] === 'familiar' && !$familiar['eligible'] && $familiar['program']['outcomes'][0]['credit'] === ['level' => 'familiar', 'own' => 'not-started', 'counts' => false], 'Familiar work elsewhere is shown, not counted: ' . wp_json_encode($familiar['program']['outcomes'][0]['credit'] ?? null));
+    $set_state($theirs, 'proficient');
+    \OhMyLMS\Performance\Guidance::flush();
+    $proficient = CompletionPolicy::status($credit_student, $credit_course);
+    ok($proficient['eligible'] && $proficient['program']['outcomes'][0]['credit']['counts'] && $proficient['program']['outcomes'][0]['state']['level'] === 'proficient', 'Proficient work elsewhere completes the target');
+    $html = Frontend::class; ob_start(); $rendered = new ReflectionMethod(Frontend::class, 'outcomes'); $rendered->setAccessible(true); $rendered->invoke(null, $proficient['program'], false); $table = ob_get_clean();
+    ok(strpos($table, 'from other syllabuses') !== false, 'The level is not marked as from other syllabuses');
+    $windowed = $credit_program; $windowed['evidence_days'] = 90;
+    $windowed_course = created('courses', ['name' => 'Credit windowed ' . $tag, 'status' => 'publish']); $posts[] = (int) ohmylms_get_course($windowed_course)->get_chapters()[0]['id'];
+    publish($windowed_course, $windowed); enrollment($credit_student, $windowed_course);
+    ok(!CompletionPolicy::status($credit_student, $windowed_course)['eligible'] && CompletionPolicy::status($credit_student, $windowed_course)['program']['outcomes'][0]['credit'] === null, 'A program with an evidence window ignores work elsewhere');
+    $own_only = $credit_program; $own_only['recognize_prior'] = false;
+    $own_course = created('courses', ['name' => 'Credit own only ' . $tag, 'status' => 'publish']); $posts[] = (int) ohmylms_get_course($own_course)->get_chapters()[0]['id'];
+    publish($own_course, $own_only); enrollment($credit_student, $own_course);
+    ok(!CompletionPolicy::status($credit_student, $own_course)['eligible'], 'A course-only program ignores work elsewhere');
+    foreach ([$mine, $theirs] as $id) { $wpdb->delete(\OhMyLMS\Curriculum\SkillMappings::table(), ['specific_term_id' => $id]); }
+
     $pure = CompletionPolicy::evaluate(['items' => [], 'outcomes' => []], [], [], []);
     ok(!$pure['eligible'], 'Empty requirements auto-completed');
     $pure = CompletionPolicy::evaluate($program, [$lesson => true], [$skill => ['level' => 'mastered']], [$quiz => ['passed' => true]], true);

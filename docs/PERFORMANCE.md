@@ -136,6 +136,20 @@ lowest ID); a stuck skill with no weak prerequisite is its own group ("Reteach t
 inside a group learners with the nearest exam come first, with the exam shown. Because the steps come from
 guidance, a learner with more than three stuck skills shows the first three that fit one sitting.
 
+### Credit back
+
+An objective with an `equivalent` mapping stands for its shared skill, so work done under another syllabus on the
+same shared skill counts toward it (`Guidance::credit()`, answers pooled as in Guidance). It shows in two places:
+
+- A course program's skill targets (the Skills table of a learning course) show the pooled level marked "from other
+  syllabuses" when it is above the objective's own level.
+- It counts toward course **completion** only when the pooled level is proficient or higher, and only for programs
+  that recognise prior learning without an evidence window (`recognize_prior` on, `evidence_days` 0). Familiar or
+  attempted work elsewhere is shown ("counts once proficient") but never completes a target. A course-only program
+  (`recognize_prior` off) or one with an evidence window keeps counting only its own evidence.
+
+Readiness for a target syllabus already counted pooled levels.
+
 ## AI notes
 
 With an AI provider connected under *AI settings* and *Write AI study notes* on, a learner can ask for a short

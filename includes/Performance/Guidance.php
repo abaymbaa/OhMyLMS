@@ -228,6 +228,41 @@ final class Guidance {
 	}
 
 	/**
+	 * Credit back: the level an objective gets from the learner's work on other objectives of the same shared skill.
+	 *
+	 * An objective with an `equivalent` mapping stands for its shared skill, so answers given under another
+	 * syllabus count here too. Only objectives whose pooled level is above their own are returned.
+	 *
+	 * @param int   $student_id Learner.
+	 * @param int[] $terms      Objectives to look up.
+	 * @return array<int,array> Objective => level (the pooled level) and own (its own stored level).
+	 */
+	public static function credit( $student_id, array $terms ) {
+		$terms = array_values( array_unique( array_filter( array_map( 'intval', $terms ) ) ) );
+		if ( ! $terms || ! (int) $student_id || ! Schema::ready() ) {
+			return array();
+		}
+		$states = self::states( (int) $student_id );
+		$pool   = self::pool( array_merge( array_keys( $states ), $terms ) );
+		$pooled = self::combine( (int) $student_id, GuidanceModel::pooled( $states, $pool ) );
+		$credit = array();
+		foreach ( $terms as $term ) {
+			$skill = (int) ( $pool[ $term ] ?? $term );
+			if ( $skill === $term || ! isset( $pooled[ $skill ] ) ) {
+				continue;
+			}
+			$own = (string) ( $states[ $term ]['level'] ?? 'not-started' );
+			if ( Levels::rank( $pooled[ $skill ]['level'] ) > Levels::rank( $own ) ) {
+				$credit[ $term ] = array(
+					'level' => $pooled[ $skill ]['level'],
+					'own'   => $own,
+				);
+			}
+		}
+		return $credit;
+	}
+
+	/**
 	 * Judge each shared skill on all of the learner's answers across the objectives pooled onto it.
 	 *
 	 * GuidanceModel::pooled() takes the best level any single member reached. When answers are spread
