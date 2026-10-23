@@ -63,6 +63,48 @@ class SkillReportController extends RestController {
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'guidance' ),
 					'permission_callback' => array( $this, 'student_permission' ),
+					'args'                => array(
+						'limit'   => array(
+							'type'    => 'integer',
+							'minimum' => 1,
+							'maximum' => 20,
+							'default' => 6,
+						),
+						'subject' => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/map',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'skill_map' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+					'args'                => array(
+						'subject' => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/placement',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'placement' ),
+					'permission_callback' => array( $this, 'student_permission' ),
 				),
 			)
 		);
@@ -272,25 +314,36 @@ class SkillReportController extends RestController {
 	}
 
 	/**
-	 * Where the learner stands on the shared skills and what to do next: domain strength, a short
-	 * personal path, skills ready to learn, reviews (minus those covered by harder work), gaps and,
-	 * with a target syllabus, readiness.
+	 * Guidance from the learner's skill states. It is a summary, so guardians see it too.
 	 *
-	 * @param WP_REST_Request $request Learner, and optional subject, grade and target.
-	 * @return mixed
+	 * @param WP_REST_Request $request Request with student, limit and subject.
+	 * @return \WP_REST_Response
 	 */
 	public function guidance( WP_REST_Request $request ) {
 		Evidence::process( 100 );
-		return rest_ensure_response(
-			\OhMyLMS\Guidance\Guidance::for_student(
-				(int) $request['student'],
-				array(
-					'subject' => (string) $request['subject'],
-					'grade'   => absint( $request['grade'] ),
-					'target'  => absint( $request['target'] ),
-				)
-			)
-		);
+		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'], (string) $request['subject'] ) );
+	}
+
+	/**
+	 * The learner's skill map: the subjects they have started and, for one, the shared skills by
+	 * domain and grade with their levels. A summary, so guardians see it too.
+	 *
+	 * @param WP_REST_Request $request Request with student and subject.
+	 * @return \WP_REST_Response
+	 */
+	public function skill_map( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		return rest_ensure_response( \OhMyLMS\Curriculum\SkillMap::for_student( (int) $request['student'], (string) $request['subject'] ) );
+	}
+
+	/**
+	 * The learner's latest placement in each subject: working grade per domain and where to start.
+	 *
+	 * @param WP_REST_Request $request Request with student.
+	 * @return \WP_REST_Response
+	 */
+	public function placement( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Placement\Placement::results( (int) $request['student'] ) );
 	}
 
 	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */

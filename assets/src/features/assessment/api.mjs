@@ -38,15 +38,6 @@ export const rebuildStudent = ( studentId, fetch = request ) =>
  * @param audience
  * @param fetch
  */
-/**
- * What a learner should do next on the shared skill library.
- * @param studentId
- * @param fetch
- */
-export const loadGuidance = ( studentId, fetch = request ) =>
-	fetch( {
-		path: `/ohmylms/v1/reports/skills/students/${ studentId }/guidance`,
-	} );
 export const askInsight = (
 	studentId,
 	audience = 'teacher',
@@ -56,6 +47,31 @@ export const askInsight = (
 		path: `/ohmylms/v1/reports/skills/students/${ studentId }/insight`,
 		method: 'POST',
 		data: { audience },
+	} );
+/**
+ * A learner's guidance (strength by area, next steps, covered reviews, readiness), read in the
+ * course scope the report was opened from.
+ *
+ * @param {number}                       studentId Learner.
+ * @param {number}                       courseId  Course the viewer reports on.
+ * @param {(options: Object) => Promise} fetch     Request implementation.
+ * @return {Promise} Guidance.
+ */
+export const loadGuidance = ( studentId, courseId, fetch = request ) =>
+	fetch( {
+		path: `/ohmylms/v1/reports/skills/students/${ studentId }/guidance?course_id=${ courseId }&limit=8`,
+	} );
+/**
+ * A learner's latest placement test in each subject.
+ *
+ * @param {number}                       studentId Learner.
+ * @param {number}                       courseId  Course the viewer reports on.
+ * @param {(options: Object) => Promise} fetch     Request implementation.
+ * @return {Promise} Placements.
+ */
+export const loadPlacement = ( studentId, courseId, fetch = request ) =>
+	fetch( {
+		path: `/ohmylms/v1/reports/skills/students/${ studentId }/placement?course_id=${ courseId }`,
 	} );
 export const loadPools = ( quizId, fetch = request ) =>
 	fetch( { path: `/ohmylms/v1/quiz/${ quizId }/pools` } );

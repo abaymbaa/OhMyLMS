@@ -91,7 +91,7 @@ try {
     rest_get_server();
     mcp_check( Server::readiness()['ready'], 'Abilities API/adapter unavailable.' );
     $adapter_server = \WP\MCP\Core\McpAdapter::instance()->get_server( 'ohmylms' );
-    mcp_check( $adapter_server !== null && count( $adapter_server->get_tools() ) === 50, 'Official adapter server not registered.' );
+    mcp_check( $adapter_server !== null && count( $adapter_server->get_tools() ) === count( Server::tools() ), 'Official adapter server not registered with every tool.' );
     foreach ( \OhMyLMS\MCP\Abilities::names() as $ability_name ) {
         $ability = wp_get_ability( $ability_name );
         mcp_check( $ability instanceof WP_Ability && $ability->get_category() === 'ohmylms', 'Native ability missing.' );
@@ -108,7 +108,7 @@ try {
     $init = mcp_request( array( 'jsonrpc' => '2.0', 'id' => 1, 'method' => 'initialize', 'params' => array( 'protocolVersion' => '2025-11-25', 'capabilities' => (object) array(), 'clientInfo' => array( 'name' => 'test', 'version' => '1' ) ) ), $token );
     mcp_check( $init->get_status() === 200 && $init->get_data()['result']['protocolVersion'] === '2025-11-25', 'Initialize failed.' );
     $tools = mcp_request( $list, $token )->get_data()['result']['tools'];
-    mcp_check( count( $tools ) === 50 && in_array( 'save_lesson_alignment_review', array_column( $tools, 'name' ), true ), 'Tool catalog incorrect.' );
+    mcp_check( count( $tools ) === count( Server::tools() ) && in_array( 'save_lesson_alignment_review', array_column( $tools, 'name' ), true ) && in_array( 'get_student_placement', array_column( $tools, 'name' ), true ), 'Tool catalog incorrect: ' . count( $tools ) );
     foreach ( $tools as $tool ) {
         $definition = Server::tools()[ $tool['name'] ];
         mcp_check( $tool['annotations']['readOnlyHint'] === ( $definition['readonly'] ?? true ) && $tool['inputSchema']['additionalProperties'] === false, 'Unsafe tool schema.' );

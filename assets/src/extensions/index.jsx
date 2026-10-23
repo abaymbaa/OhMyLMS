@@ -241,6 +241,15 @@ const publicApi = {
 				),
 			},
 			{
+				path: '/content-hub/curriculum/skill-map',
+				element: withContentHubMenu(
+					extensionPage( {
+						id: 'skill-map',
+						render: curriculumComponents.SkillMapPage,
+					} )
+				),
+			},
+			{
 				path: SYLLABUS_ROUTE,
 				element: withContentHubMenu(
 					extensionPage( {

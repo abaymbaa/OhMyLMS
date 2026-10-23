@@ -432,6 +432,12 @@ export function CurriculumPage() {
 			<p>
 				<Button
 					variant="secondary"
+					href="#/content-hub/curriculum/skill-map"
+				>
+					{ __( 'Skill map', 'ohmylms' ) }
+				</Button>{ ' ' }
+				<Button
+					variant="secondary"
 					disabled={ savingRoadmap }
 					onClick={ () => {
 						setCreatingRoadmap( ! creatingRoadmap );

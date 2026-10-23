@@ -215,6 +215,27 @@ final class ComparisonTools {
 		);
 		$definitions['audit_my_study_plans']         = array( 'GET', '/audit', 'Read authenticated account study plans: shared mastery, direct syllabus progress, coverage and unassessed/developing objective IDs. Another student account cannot be requested.', array(), array() );
 		$definitions['audit_student_study_plans']    = array( 'GET', '/audit/{student_id}', 'Administrator-only audit of a learner study plan: shared mastery, direct syllabus progress, coverage and unassessed/developing requirements. Returns no answer bodies or assessment keys.', array( 'student_id' => $id ), array( 'student_id' ) );
+		$definitions['get_skill_map']                = array(
+			'GET',
+			'/skill-map',
+			'The coherence map of one subject: its shared skills by domain and grade band, their prerequisites and "includes" links, skills with no domain or grade yet, and coherence issues (later_prerequisite: a prerequisite first taught after the skill; long_gap: a prerequisite four or more grades earlier; no_prerequisites: a skill above the first grade of its domain that needs nothing). Optional syllabus_id adds which skills that syllabus teaches; optional student_id adds the level of that learner on each skill and strength per domain. Subjects come from the skill-map/subjects route.',
+			array(
+				'subject'     => $text,
+				'syllabus_id' => $id,
+				'student_id'  => $id,
+			),
+			array( 'subject' ),
+		);
+		$definitions['compare_syllabuses']           = array(
+			'GET',
+			'/compare',
+			'Compare two syllabuses through the shared skills their objectives map onto (equivalent, broader, narrower or combined mappings; related ones do not count). Returns the skills both teach, only A, only B, objectives with no mapping on each side, the overlap percentage and counts per domain.',
+			array(
+				'a' => $id,
+				'b' => $id,
+			),
+			array( 'a', 'b' ),
+		);
 		foreach ( $definitions as $name => $definition ) {
 			$tools[ $name ] = array(
 				'method'      => $definition[0],

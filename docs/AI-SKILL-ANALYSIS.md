@@ -70,8 +70,9 @@ Shared skills are linked in two directed, loop-free ways (`Curriculum\SkillEdges
   list, which recommendations already read, so loops and unknown skills are refused as before. The edge table keeps
   who suggested it (`manual` or `ai`), the confidence and the reason.
 - **Includes (encompasses):** practising skill A also practises skill B, by a **weight** from 0.05 to 1 (the share
-  of B a typical problem on A uses). The guidance engine (phase 3) will use these weights to give partial review
-  credit, so a learner who works advanced skills needs fewer separate reviews of the skills inside them.
+  of B a typical problem on A uses). The guidance engine (phase 3, see [performance](PERFORMANCE.md#guidance))
+  uses these weights to give partial review credit, so a learner who works advanced skills needs fewer separate
+  reviews of the skills inside them.
 
 **Suggest prerequisites and links** in the AI analysis panel starts a `links` run over the subject's placed shared
 skills (those with grades), earliest grades first, skipping skills that already have prerequisites unless asked.
@@ -109,10 +110,12 @@ Storage: curriculum schema 8 adds `ai_analysis_runs`, `ai_suggestions`, and `sou
 ## Next phases
 
 2. Prerequisite and "encompasses" links between shared skills, AI-proposed through the same review queue. Done.
-3. Done: see [GUIDANCE.md](GUIDANCE.md). Guidance on the performance engine: domain strength, skills ready to learn, reviews with implicit credit,
-   exam readiness, and short personal practice paths.
-4. Visual coherence map (domains × grades), syllabus comparison view, student skill map.
-5. Adaptive placement test.
+3. Guidance on the performance engine: strength by area, next steps (help, reviews, skills ready to learn),
+   reviews covered by work on skills that include them, and readiness per syllabus. Done; see
+   [performance](PERFORMANCE.md#guidance).
+4. Visual coherence map (domains × grades), syllabus comparison view, student skill map. Done; see
+   [skill map](SKILL-MAP.md).
+5. Adaptive placement test. Done; see [placement test](PLACEMENT-TEST.md).
 
 ## Tests
 

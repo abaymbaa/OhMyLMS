@@ -125,25 +125,28 @@ class ComparisonController extends RestController {
 			)
 		);
 		foreach ( array(
-			'/syllabus-comparison/syllabuses'             => array( 'GET', 'syllabuses' ),
-			'/syllabus-comparison/configuration'          => array( 'PUT', 'configure' ),
-			'/syllabus-comparison/objectives/(?P<id>\d+)' => array( 'GET', 'objectives' ),
-			'/syllabus-comparison/shared-skills'          => array( 'GET', 'shared_skills' ),
+			'/syllabus-comparison/syllabuses'              => array( 'GET', 'syllabuses' ),
+			'/syllabus-comparison/configuration'           => array( 'PUT', 'configure' ),
+			'/syllabus-comparison/objectives/(?P<id>\d+)'  => array( 'GET', 'objectives' ),
+			'/syllabus-comparison/shared-skills'           => array( 'GET', 'shared_skills' ),
 			'/syllabus-comparison/shared-skills/(?P<id>\d+)' => array( 'GET', 'shared_skill' ),
-			'/syllabus-comparison/shared-skills/save'     => array( 'POST', 'save_shared' ),
-			'/syllabus-comparison/mapping'                => array( 'PUT', 'save_mapping' ),
-			'/syllabus-comparison/mapping/remove'         => array( 'POST', 'remove_mapping' ),
-			'/syllabus-comparison/skill-placement'        => array( 'GET', 'skill_placement' ),
+			'/syllabus-comparison/shared-skills/save'      => array( 'POST', 'save_shared' ),
+			'/syllabus-comparison/mapping'                 => array( 'PUT', 'save_mapping' ),
+			'/syllabus-comparison/mapping/remove'          => array( 'POST', 'remove_mapping' ),
+			'/syllabus-comparison/skill-placement'         => array( 'GET', 'skill_placement' ),
 			'/syllabus-comparison/skill-links/(?P<id>\d+)' => array( 'GET', 'skill_links' ),
-			'/syllabus-comparison/skill-links'            => array( 'POST', 'save_skill_link' ),
-			'/syllabus-comparison/skill-links/remove'     => array( 'POST', 'remove_skill_link' ),
-			'/syllabus-comparison/ai/runs'                => array( 'GET,POST', 'ai_runs' ),
-			'/syllabus-comparison/ai/runs/(?P<id>\d+)'    => array( 'GET', 'ai_run' ),
+			'/syllabus-comparison/skill-links'             => array( 'POST', 'save_skill_link' ),
+			'/syllabus-comparison/skill-links/remove'      => array( 'POST', 'remove_skill_link' ),
+			'/syllabus-comparison/skill-map/subjects'      => array( 'GET', 'skill_map_subjects' ),
+			'/syllabus-comparison/skill-map'               => array( 'GET', 'skill_map' ),
+			'/syllabus-comparison/compare'                 => array( 'GET', 'compare_syllabuses' ),
+			'/syllabus-comparison/ai/runs'                 => array( 'GET,POST', 'ai_runs' ),
+			'/syllabus-comparison/ai/runs/(?P<id>\d+)'     => array( 'GET', 'ai_run' ),
 			'/syllabus-comparison/ai/runs/(?P<id>\d+)/step' => array( 'POST', 'ai_step' ),
 			'/syllabus-comparison/ai/runs/(?P<id>\d+)/cancel' => array( 'POST', 'ai_cancel' ),
 			'/syllabus-comparison/ai/runs/(?P<id>\d+)/accept-confident' => array( 'POST', 'ai_accept_confident' ),
-			'/syllabus-comparison/ai/suggestions'         => array( 'GET', 'ai_suggestions' ),
-			'/syllabus-comparison/ai/suggestions/review'  => array( 'POST', 'ai_review' ),
+			'/syllabus-comparison/ai/suggestions'          => array( 'GET', 'ai_suggestions' ),
+			'/syllabus-comparison/ai/suggestions/review'   => array( 'POST', 'ai_review' ),
 		) as $route => $handler ) {
 			register_rest_route(
 				$this->namespace,
@@ -197,6 +200,42 @@ class ComparisonController extends RestController {
 	public function skill_links( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		return \OhMyLMS\Curriculum\SkillEdges::is_shared( $id ) ? rest_ensure_response( \OhMyLMS\Curriculum\SkillEdges::for_skill( $id ) ) : Access::error( 'ohmylms_shared_missing', __( 'Shared skill not found.', 'ohmylms' ), 404 );
+	}
+
+	/**
+	 * Subjects with shared skills or syllabuses, for the skill map pickers.
+	 *
+	 * @return mixed
+	 */
+	public function skill_map_subjects() {
+		return rest_ensure_response( \OhMyLMS\Curriculum\SkillMap::subjects() );
+	}
+
+	/**
+	 * The coherence map of a subject: shared skills by domain and grade, their links and the checks
+	 * on them, optionally with a syllabus's coverage and a learner's levels laid over it.
+	 *
+	 * @param WP_REST_Request $request subject, syllabus_id, student_id.
+	 * @return mixed
+	 */
+	public function skill_map( WP_REST_Request $request ) {
+		$student = absint( $request['student_id'] );
+		if ( $student && ! get_userdata( $student ) ) {
+			return Access::error( 'ohmylms_skill_map_student', __( 'Learner not found.', 'ohmylms' ), 404 );
+		}
+		$map = \OhMyLMS\Curriculum\SkillMap::map( (string) $request['subject'], absint( $request['syllabus_id'] ), $student );
+		return is_wp_error( $map ) ? $map : rest_ensure_response( $map );
+	}
+
+	/**
+	 * Compare two syllabuses through the shared skills they map onto.
+	 *
+	 * @param WP_REST_Request $request a and b (syllabus IDs).
+	 * @return mixed
+	 */
+	public function compare_syllabuses( WP_REST_Request $request ) {
+		$result = \OhMyLMS\Curriculum\SkillMap::compare( absint( $request['a'] ), absint( $request['b'] ) );
+		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
 	/**

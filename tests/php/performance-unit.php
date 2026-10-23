@@ -1,7 +1,7 @@
 <?php
 /**
- * Pure unit checks for skill tracking: the level scale, the three level policies and the AI note's
- * facts and prompt. No WordPress needed.
+ * Pure unit checks for skill tracking: the level scale, the three level policies, the AI note's
+ * facts and prompt, and the guidance model. No WordPress needed.
  *
  * Run: php tests/php/performance-unit.php
  */
@@ -15,6 +15,7 @@ function wp_json_encode( $data, $flags = 0 ) {
 }
 require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
+use OhMyLMS\Performance\GuidanceModel;
 use OhMyLMS\Performance\Insights;
 use OhMyLMS\Performance\Levels;
 use OhMyLMS\Performance\Policies\EvidencePolicy;
@@ -48,8 +49,8 @@ $bands = array( array( 'from' => 0 ), array( 'from' => 70 ), array( 'from' => 80
 check( Levels::from_score( 0, 0, $bands ) === 'not-started' && Levels::from_score( 40, 3, $bands ) === 'attempted' && Levels::from_score( 72, 5, $bands ) === 'familiar' && Levels::from_score( 85, 8, $bands ) === 'proficient' && Levels::from_score( 100, 20, $bands ) === 'mastered', 'score bands map to levels' );
 
 // Evidence rows.
-$now     = 2000000000;
-$row     = static function ( $ok, $family, $at, $source = 'practice', $source_id = 1, $independent = 1, $first = 1 ) {
+$now      = 2000000000;
+$row      = static function ( $ok, $family, $at, $source = 'practice', $source_id = 1, $independent = 1, $first = 1 ) {
 	return array(
 		'awarded'     => $ok ? 1 : 0,
 		'available'   => 1,
@@ -63,7 +64,7 @@ $row     = static function ( $ok, $family, $at, $source = 'practice', $source_id
 		'evidence_at' => gmdate( 'Y-m-d H:i:s', $at ),
 	);
 };
-$context = array(
+$context  = array(
 	'rules'  => EvidencePolicy::DEFAULTS,
 	'bands'  => $bands,
 	'score'  => 0,
@@ -157,5 +158,179 @@ check( false !== strpos( $student['system'], 'you cannot affect' ) && false !== 
 check( false !== strpos( $student['system'], 'mn' ) && false !== strpos( $teacher['system'], 'teacher' ) && false !== strpos( $teacher['system'], 'the learner' ), 'audience and language are in the instructions' );
 check( 0 === strpos( $student['user'], '<skills>' ) && false !== strpos( $student['user'], 'Fractions' ) && false === strpos( $student['user'], '@' ), 'only the fenced skill facts are sent' );
 check( '' !== $steps->description() && '' !== $evidence->label() && '' !== $score->label(), 'policies describe themselves' );
+
+// Guidance: pooling. Objectives 101 and 102 are equivalent to shared skill 1; 102 is further along.
+$day    = DAY_IN_SECONDS;
+$pooled = GuidanceModel::pooled(
+	array(
+		101 => array(
+			'level'            => 'familiar',
+			'last_evidence_at' => $now - 20 * $day,
+			'struggling'       => true,
+		),
+		102 => array(
+			'level'            => 'proficient',
+			'last_evidence_at' => $now - 30 * $day,
+		),
+		2   => array(
+			'level'            => 'proficient',
+			'last_evidence_at' => $now - 10 * $day,
+		),
+		3   => array(
+			'level'            => 'mastered',
+			'last_evidence_at' => $now - 2 * $day,
+		),
+		4   => array(
+			'level'            => 'attempted',
+			'last_evidence_at' => $now - $day,
+			'struggling'       => true,
+		),
+	),
+	array(
+		101 => 1,
+		102 => 1,
+	)
+);
+check( array( 1, 2, 3, 4 ) === array_keys( $pooled ), 'equivalent objectives pool onto their shared skill' );
+check( 'proficient' === $pooled[1]['level'] && $now - 20 * $day === $pooled[1]['last'] && array( 102, 101 ) === $pooled[1]['terms'], 'a pooled skill takes the best level and the latest answer, best member first' );
+check( ! $pooled[1]['struggling'] && $pooled[4]['struggling'], 'a struggle only counts while the pooled skill is still developing' );
+
+// Areas.
+$place = static function ( $domain, $from, $to, $prerequisites = array() ) {
+	return array(
+		'domain'        => $domain,
+		'grade_from'    => $from,
+		'grade_to'      => $to,
+		'prerequisites' => $prerequisites,
+	);
+};
+$info  = array(
+	1 => $place( 'algebra', 7, 8 ),
+	2 => $place( 'algebra', 6, 6 ),
+	3 => $place( 'geometry', 9, 10 ),
+	4 => $place( 'number', 5, 5 ),
+	5 => $place( 'algebra', 9, 9, array( 1, 2 ) ),
+	6 => $place( 'geometry', 8, 8, array( 3 ) ),
+	7 => $place( 'number', 6, 6, array( 4 ) ),
+	8 => $place( 'algebra', 0, 0, array( 2 ) ),
+	9 => $place( '', 0, 0 ),
+);
+$areas = GuidanceModel::areas( $pooled, $info );
+check( array( 'geometry', 'algebra', 'number' ) === array_column( $areas, 'domain' ), 'areas are sorted strongest first' );
+check( 100 === $areas[0]['strength'] && 80 === $areas[1]['strength'] && 20 === $areas[2]['strength'], 'strength is the mean of the level points' );
+check( 2 === $areas[1]['started'] && 2 === $areas[1]['counts']['proficient'] && 8 === $areas[1]['grade'] && 0 === $areas[2]['grade'], 'areas count levels and the highest grade reached at proficient' );
+check( 'strong' === GuidanceModel::strength_band( 80 ) && 'steady' === GuidanceModel::strength_band( 50 ) && 'building' === GuidanceModel::strength_band( 20 ), 'strength bands' );
+$lone = array(
+	9 => array(
+		'level'      => 'mastered',
+		'last'       => null,
+		'struggling' => false,
+		'terms'      => array(),
+	),
+);
+check( array() === GuidanceModel::areas( $lone, $info ), 'skills without a domain are left out of areas' );
+
+// Reach through "encompasses" chains: 3 includes 1 (0.5) and 1 includes 2 (0.6), so 3 reaches 2 at 0.3.
+$links = array(
+	3 => array( 1 => 0.5 ),
+	1 => array( 2 => 0.6 ),
+);
+$reach = GuidanceModel::reach( $links );
+check( 0.5 === $reach[3][1] && abs( $reach[3][2] - 0.3 ) < 0.0001 && 0.6 === $reach[1][2], 'weights multiply along a chain' );
+check(
+	! isset(
+		GuidanceModel::reach(
+			array(
+				1 => array( 2 => 0.2 ),
+				2 => array( 3 => 0.2 ),
+			)
+		)[1][3]
+	),
+	'a chain below the minimum credit is not followed'
+);
+check(
+	! isset(
+		GuidanceModel::reach(
+			array(
+				1 => array( 2 => 1.0 ),
+				2 => array( 1 => 1.0 ),
+			)
+		)[1][1]
+	),
+	'a chain never credits the skill it starts from'
+);
+
+// Reviews, with a 14-day interval: skill 1 was due 6 days ago, but work on 3 since then covers half.
+$reviews = GuidanceModel::reviews( $pooled, $links, $now, 14 );
+check( array( 1, 2, 3 ) === array_keys( $reviews ), 'only proficient skills have reviews' );
+check( 'covered' === $reviews[1]['status'] && 0.5 === $reviews[1]['credit'] && array( 3 => 0.5 ) === $reviews[1]['covered_by'], 'later work on a broader skill covers part of a review' );
+check( $reviews[1]['effective_due_at'] === $reviews[1]['due_at'] + 7 * $day, 'credit moves the review later by its share of the interval' );
+check( 'fresh' === $reviews[2]['status'] && abs( $reviews[2]['credit'] - 0.3 ) < 0.0001 && 'fresh' === $reviews[3]['status'] && 0.0 === $reviews[3]['credit'], 'recent skills are fresh, chained credit still counts' );
+$early = GuidanceModel::reviews( $pooled, array( 1 => array( 2 => 1.0 ) ), $now, 7 );
+check( 0.0 === $early[2]['credit'] && 'due' === $early[2]['status'] && array() === $early[2]['covered_by'], 'work done before the last answer earns no credit' );
+$weak = GuidanceModel::reviews( $pooled, array( 4 => array( 3 => 1.0 ) ), $now + 30 * $day, 7 );
+check( 0.0 === $weak[3]['credit'] && 'due' === $weak[3]['status'], 'work below familiar earns no credit' );
+$cap  = GuidanceModel::pooled(
+	array(
+		10 => array(
+			'level'            => 'proficient',
+			'last_evidence_at' => $now - 30 * $day,
+		),
+		11 => array(
+			'level'            => 'familiar',
+			'last_evidence_at' => $now - $day,
+		),
+		12 => array(
+			'level'            => 'proficient',
+			'last_evidence_at' => $now - $day,
+		),
+	),
+	array()
+);
+$full = GuidanceModel::reviews(
+	$cap,
+	array(
+		11 => array( 10 => 0.7 ),
+		12 => array( 10 => 0.6 ),
+	),
+	$now,
+	20
+);
+check( 1.0 === $full[10]['credit'] && 'covered' === $full[10]['status'] && array( 11, 12 ) === array_keys( $full[10]['covered_by'] ), 'credit adds up across broader skills and is capped at one review' );
+
+// Ready to learn.
+$ready = GuidanceModel::ready( $pooled, $info, $areas );
+check( array( 6, 5, 8 ) === array_column( $ready, 'skill' ), 'ready skills need every prerequisite proficient, earliest grade first, ungraded last' );
+check( array( 1, 2 ) === $ready[1]['prerequisites'], 'ready skills list the prerequisites they build on' );
+
+// Next steps.
+$steps = GuidanceModel::next_steps( $pooled, $reviews, $ready, 4 );
+check( array( 'help', 'ready', 'ready', 'ready' ) === array_column( $steps, 'type' ) && 4 === $steps[0]['skill'], 'help comes first; with nothing due, ready skills follow' );
+$steps = GuidanceModel::next_steps( $pooled, $early, $ready, 4 );
+check( array( 'help', 'review', 'review', 'ready' ) === array_column( $steps, 'type' ) && 1 === $steps[1]['skill'] && 2 === $steps[2]['skill'], 'due reviews, longest overdue first, come between help and ready skills' );
+
+// Readiness for a syllabus: objectives 101 and 102 count as shared skill 1; 201 and 202 are untouched.
+$readiness = GuidanceModel::readiness(
+	array( 101, 102, 4, 201, 202 ),
+	$pooled,
+	array(
+		101 => 1,
+		102 => 1,
+	),
+	2
+);
+check( 5 === $readiness['total'] && 2 === $readiness['ready'] && 1 === $readiness['learning'] && 2 === $readiness['not_started'], 'readiness counts objectives through the pool' );
+check( 44 === $readiness['percent'], 'readiness percent: ' . $readiness['percent'] );
+check( array( 4, 201 ) === $readiness['gaps'], 'gaps list started objectives first' );
+check( 0 === GuidanceModel::readiness( array(), $pooled, array() )['percent'], 'an empty syllabus is 0% ready' );
+
+// Placement tests: placed-known skills meet prerequisites and are not suggested; start skills lead.
+$placed = GuidanceModel::ready( $pooled, $info, $areas, array( 4, 7 ), array( 9 ) );
+check( 9 === $placed[0]['skill'] && $placed[0]['placement'] && array() === $placed[0]['prerequisites'], 'a skill the placement said to start with comes first, even with no prerequisites' );
+check( ! in_array( 7, array_column( $placed, 'skill' ), true ) && ! in_array( 4, array_column( $placed, 'skill' ), true ), 'placed-known skills are not suggested' );
+$met = GuidanceModel::ready( $pooled, $info, $areas, array( 4 ) );
+check( in_array( 7, array_column( $met, 'skill' ), true ) && ! $met[0]['placement'], 'a placed-known prerequisite counts as met' );
+$steps = GuidanceModel::next_steps( array(), array(), $placed, 1 );
+check( 'placement' === $steps[0]['reason'] && '' === GuidanceModel::next_steps( array(), array(), $ready, 1 )[0]['reason'], 'ready steps say when a placement suggested them' );
 
 echo $checks . " performance unit checks passed.\n";

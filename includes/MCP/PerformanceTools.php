@@ -36,6 +36,49 @@ final class PerformanceTools {
 				array( 'student_id' ),
 				false,
 			),
+			'get_student_guidance'     => array(
+				'GET',
+				'/reports/skills/students/{student_id}/guidance',
+				'Guidance for one learner, read from their skill levels and the shared skill library: strength (0-100) per domain with the highest grade reached at proficient; next steps (help with struggling skills, reviews that are due, skills whose prerequisites are all proficient); reviews already covered by later work on skills that include them (credit 0-1 from "includes" link weights); and readiness (0-100) for each syllabus they have started, with the objectives still to learn. subject narrows everything to one subject. Skills a placement test placed as known count as met prerequisites, and its suggested starting skills come first among ready skills. Read only.',
+				array(
+					'student_id' => $id,
+					'limit'      => array(
+						'type'    => 'integer',
+						'minimum' => 1,
+						'maximum' => 20,
+					),
+					'subject'    => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+				),
+				array( 'student_id' ),
+				false,
+			),
+			'get_student_skill_map'    => array(
+				'GET',
+				'/reports/skills/students/{student_id}/map',
+				'The skill map of one learner: the subjects they have started (most started skills first) and, for one subject, its shared skills by domain and grade with the level of the learner on each (an objective with an equivalent mapping counts as its shared skill) and their strength per domain. subject picks the subject; empty picks the one with most started skills. Read only.',
+				array(
+					'student_id' => $id,
+					'subject'    => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+				),
+				array( 'student_id' ),
+				false,
+			),
+			'get_student_placement'    => array(
+				'GET',
+				'/reports/skills/students/{student_id}/placement',
+				'The latest adaptive placement test result of one learner in each subject: how many of the subject skills the test placed as known, the working grade per domain (the highest grade with enough skills known; empty means start from the beginning), and the skills to start with. Questions answered in the test count as skill evidence; skills the test only estimated are not levels. Read only.',
+				array(
+					'student_id' => $id,
+				),
+				array( 'student_id' ),
+				false,
+			),
 			'get_skill_report'         => array(
 				'GET',
 				'/reports/skills',
@@ -73,26 +116,6 @@ final class PerformanceTools {
 				),
 				array( 'policy' ),
 				false,
-			),
-			'get_student_guidance'       => array(
-				'GET',
-				'/reports/skills/students/{student_id}/guidance',
-				'What one learner should do next, from their levels on the shared skill library: strength per domain (0-100), a short personal path of steps (review, fix a weak prerequisite, continue a started skill, or learn a new one; a step may also review included skills), the skills ready to learn (every prerequisite Proficient), reviews due (minus those already covered by work on skills that include them), gaps behind skills the learner is stuck on and, with target (a syllabus id, such as an exam), the share of its skills already Proficient. subject narrows the library; grade sets the highest grade in scope (default the learner\'s profile grade).',
-				array(
-					'student_id' => $id,
-					'subject'    => array(
-						'type'      => 'string',
-						'maxLength' => 100,
-					),
-					'grade'      => array(
-						'type'    => 'integer',
-						'minimum' => 1,
-						'maximum' => 13,
-					),
-					'target'     => $id,
-				),
-				array( 'student_id' ),
-				true,
 			),
 			'write_student_skill_note' => array(
 				'POST',

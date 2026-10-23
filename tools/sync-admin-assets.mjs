@@ -47,6 +47,30 @@ for ( const [ source, target ] of [
 		'assets/dist/admin/quiz-player-block.asset.php',
 	],
 	[
+		'build/sdk/interactive-activity-block.js',
+		'assets/dist/admin/interactive-activity-block.js',
+	],
+	[
+		'build/sdk/interactive-activity-block.js.map',
+		'assets/dist/admin/interactive-activity-block.js.map',
+	],
+	[
+		'build/sdk/interactive-activity-block.asset.php',
+		'assets/dist/admin/interactive-activity-block.asset.php',
+	],
+	[
+		'build/sdk/interactive-activity-view.js',
+		'assets/dist/admin/interactive-activity-view.js',
+	],
+	[
+		'build/sdk/interactive-activity-view.js.map',
+		'assets/dist/admin/interactive-activity-view.js.map',
+	],
+	[
+		'build/sdk/interactive-activity-view.asset.php',
+		'assets/dist/admin/interactive-activity-view.asset.php',
+	],
+	[
 		'build/sdk/native-lesson-editor.js',
 		'assets/dist/admin/native-lesson-editor.js',
 	],
@@ -118,4 +142,13 @@ for ( const file of [
 fs.copyFileSync(
 	path.join( root, 'node_modules/@cortex-js/compute-engine/LICENSE' ),
 	path.join( root, 'assets/dist/mathlive/COMPUTE-ENGINE-LICENSE.txt' )
+);
+fs.mkdirSync( path.join( root, 'assets/dist/jsxgraph' ), { recursive: true } );
+fs.copyFileSync(
+	path.join( root, 'node_modules/jsxgraph/distrib/jsxgraph.css' ),
+	path.join( root, 'assets/dist/jsxgraph/jsxgraph.css' )
+);
+fs.copyFileSync(
+	path.join( root, 'node_modules/jsxgraph/distrib/LICENSE.MIT' ),
+	path.join( root, 'assets/dist/jsxgraph/LICENSE.MIT' )
 );

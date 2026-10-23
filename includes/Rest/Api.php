@@ -58,6 +58,7 @@ class Api {
 			\OhMyLMS\Rest\V1\SkillController::class,
 			\OhMyLMS\Rest\V1\AttemptController::class,
 			\OhMyLMS\Rest\V1\PracticeController::class,
+			\OhMyLMS\Rest\V1\PlacementController::class,
 			\OhMyLMS\Rest\V1\SkillReportController::class,
 			\OhMyLMS\Rest\V1\CurriculumController::class,
 			\OhMyLMS\Rest\V1\SyllabusController::class,

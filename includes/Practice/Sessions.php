@@ -94,6 +94,9 @@ final class Sessions {
 	/** Issue the next item, or complete the session when the limit or pool is reached. */
 	private static function issue( array $session ) {
 		global $wpdb;
+		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {
+			return \OhMyLMS\Placement\Placement::issue( $session );
+		}
 		$items   = self::items( $session['id'] );
 		$policy  = is_array( $session['policy'] ) ? $session['policy'] : ( json_decode( $session['policy'], true ) ?: array() );
 		$lesson  = ( $policy['style'] ?? '' ) === 'lesson';
@@ -223,7 +226,14 @@ final class Sessions {
 		return (int) $wpdb->insert_id;
 	}
 
-	private static function complete( array $session, $reason ) {
+	/**
+	 * Close a session and fire the completion hooks once.
+	 *
+	 * @param array  $session Session row, with the policy to keep.
+	 * @param string $reason  Why it ended.
+	 * @return null
+	 */
+	public static function complete( array $session, $reason ) {
 		global $wpdb;
 		$policy    = is_array( $session['policy'] ) ? $session['policy'] : ( json_decode( $session['policy'], true ) ?: array() );
 		$completed = $wpdb->update(
@@ -361,10 +371,35 @@ final class Sessions {
 			// What tutor help the learner can ask for (AI hint and explanation), never keys or settings.
 			'ai'         => \OhMyLMS\AI\Feedback::availability( $session ),
 		);
+		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {
+			// A placement test measures what the learner can do alone: no hints, tutor or retries.
+			$state['ai']        = array(
+				'hint'    => false,
+				'explain' => false,
+			);
+			$state['placement'] = \OhMyLMS\Placement\Placement::view( $session );
+			// Progress without right or wrong: the placement at the end is the feedback. "Not learned
+			// yet" uses up a question, so it counts as answered here.
+			$done              = count(
+				array_filter(
+					$items,
+					static function ( $item ) {
+						return null !== $item['answered_at'];
+					}
+				)
+			);
+			$state['answered'] = $done;
+			$state['results']  = array_fill( 0, $done, 'done' );
+			$state['skipped']  = 0;
+			$state['correct']  = null;
+			if ( $state['current'] ) {
+				$state['current']['has_hint'] = false;
+			}
+		}
 		$state['attempts'] = $current ? (int) $current['tries'] : 0;
 		$state['retry']    = 'active' === $session['status'] && self::retry_allowed( $session );
 		// Skipping is for the standard runner only, and bounded so it cannot be used to cycle the pool.
-		$state['can_skip'] = ( $session['policy']['style'] ?? '' ) !== 'lesson' && 'active' === $session['status'] && $state['skipped'] < (int) $session['item_limit'];
+		$state['can_skip'] = ( $session['policy']['style'] ?? '' ) !== 'lesson' && 'active' === $session['status'] && ( $state['skipped'] < (int) $session['item_limit'] || \OhMyLMS\Placement\Placement::MODE === $session['mode'] );
 		if ( ( $session['policy']['style'] ?? '' ) === 'lesson' ) {
 			$replays          = array_filter(
 				$items,
@@ -388,7 +423,7 @@ final class Sessions {
 			// What this practice did to the skill's level: the evidence is written first so it is included.
 			\OhMyLMS\Skills\Evidence::process( 50 );
 			$state['levels'] = \OhMyLMS\Performance\Engine::changes( (int) $session['student_id'], 'practice', (int) $session['id'] );
-			$state['recommendations'] = Recommendations::for_student( (int) $session['student_id'], 3 );
+			$state['recommendations'] = \OhMyLMS\Placement\Placement::MODE === $session['mode'] ? array() : Recommendations::for_student( (int) $session['student_id'], 3 );
 			// XP, the daily goal, the mastery score change and the streak, when those are on.
 			$reward = \OhMyLMS\Engagement\SessionReward::for_session( $session );
 			if ( $reward ) {
@@ -417,9 +452,21 @@ final class Sessions {
 			return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) ); }
 		if ( null !== $item['answered_at'] ) {
 			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
-		$graded = self::grade_item( $session, $item, $response, 'practice', null, self::retry_allowed( $session ) );
+		$placement = \OhMyLMS\Placement\Placement::MODE === $session['mode'];
+		$graded    = self::grade_item( $session, $item, $response, $placement ? \OhMyLMS\Placement\Placement::MODE : 'practice', null, self::retry_allowed( $session ) );
 		if ( is_wp_error( $graded ) ) {
 			return $graded; }
+		if ( $placement ) {
+			// No feedback during a placement test: it would teach the answers it is measuring.
+			self::issue( self::get( $session['uuid'] ) );
+			// The receipt lets a guest's device offer to claim the answer after login; it says nothing about the answer.
+			return array(
+				'item_id'       => (int) $graded['item_id'],
+				'receipt'       => $graded['receipt'],
+				'question_uuid' => $graded['question_uuid'],
+				'session'       => self::state( self::get( $session['uuid'] ) ),
+			);
+		}
 		// A wrong answer that may be tried again leaves the question open: nothing new is issued yet.
 		if ( empty( $graded['retry'] ) ) {
 			self::issue( self::get( $session['uuid'] ) ); }
@@ -455,7 +502,8 @@ final class Sessions {
 			return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) ); }
 		if ( null !== $item['answered_at'] ) {
 			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
-		if ( count( $items ) - self::counted( $items ) >= (int) $session['item_limit'] ) {
+		// In a placement test a skip means "I have not learned this yet" and uses up a question instead.
+		if ( \OhMyLMS\Placement\Placement::MODE !== $session['mode'] && count( $items ) - self::counted( $items ) >= (int) $session['item_limit'] ) {
 			return new \WP_Error( 'ohmylms_practice_skip_limit', __( 'You have skipped as many questions as this practice allows. Answer this one.', 'ohmylms' ), array( 'status' => 409 ) ); }
 		$display            = $item['display'];
 		$display['skipped'] = 1;
@@ -552,7 +600,7 @@ final class Sessions {
 	 * @return bool
 	 */
 	public static function retry_allowed( array $session ) {
-		return \OhMyLMS\Performance\Settings::retries() && ( $session['policy']['style'] ?? '' ) !== 'lesson';
+		return \OhMyLMS\Performance\Settings::retries() && ( $session['policy']['style'] ?? '' ) !== 'lesson' && \OhMyLMS\Placement\Placement::MODE !== $session['mode'];
 	}
 
 	/**
@@ -690,6 +738,9 @@ final class Sessions {
 	 */
 	public static function ai_help( array $session, $item_id, $kind ) {
 		global $wpdb;
+		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {
+			return new \WP_Error( 'ohmylms_placement_help', __( 'Help is not available during a placement test.', 'ohmylms' ), array( 'status' => 409 ) );
+		}
 		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );
 		if ( is_wp_error( $access ) ) {
 			return $access; }
@@ -715,6 +766,9 @@ final class Sessions {
 	/** Reveal the hint; the item no longer counts as independent evidence. */
 	public static function hint( array $session, $item_id ) {
 		global $wpdb;
+		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {
+			return new \WP_Error( 'ohmylms_placement_help', __( 'Help is not available during a placement test.', 'ohmylms' ), array( 'status' => 409 ) );
+		}
 		$access = \OhMyLMS\Learning\PracticeAccessPolicy::session( $session );
 		if ( is_wp_error( $access ) ) {
 			return $access; }
