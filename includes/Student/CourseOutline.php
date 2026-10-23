@@ -100,6 +100,21 @@ final class CourseOutline {
 			$term_ids[] = (int) $outcome['term_id'];
 		}
 		$display = $enrollment ? Snapshot::student( $student_id, $term_ids ) : array();
+		// Credit back: proficient work on the same shared skill under another syllabus counts here too.
+		$credited = 0;
+		foreach ( $state ? $program['outcomes'] : array() as $outcome ) {
+			$term  = (int) $outcome['term_id'];
+			$level = $display[ $term ]['key'] ?? 'not-started';
+			if ( ! empty( $outcome['credit']['counts'] ) && Levels::rank( $outcome['credit']['level'] ) > Levels::rank( $level ) ) {
+				$display[ $term ] = array(
+					'key'      => $outcome['credit']['level'],
+					'label'    => Levels::label( $outcome['credit']['level'] ),
+					'score'    => null,
+					'credited' => true,
+				) + (array) ( $display[ $term ] ?? array() );
+				++$credited;
+			}
+		}
 
 		$units  = array();
 		$skills = array();
@@ -122,15 +137,8 @@ final class CourseOutline {
 				$skills[ $row['term_id'] ] = $row['level'];
 			}
 		}
-		$credited = 0;
 		foreach ( $state ? $program['outcomes'] : array() as $outcome ) {
-			$level = $display[ (int) $outcome['term_id'] ]['key'] ?? 'not-started';
-			// Credit back: proficient work on the same shared skill under another syllabus counts here too.
-			if ( ! empty( $outcome['credit']['counts'] ) && Levels::rank( $outcome['credit']['level'] ) > Levels::rank( $level ) ) {
-				$level = $outcome['credit']['level'];
-				++$credited;
-			}
-			$skills[ (int) $outcome['term_id'] ] = $level;
+			$skills[ (int) $outcome['term_id'] ] = $display[ (int) $outcome['term_id'] ]['key'] ?? 'not-started';
 		}
 
 		$done      = 0;
@@ -245,7 +253,8 @@ final class CourseOutline {
 				'name'     => $term->name,
 				'term_id'  => $content,
 				'level'    => $entry ? $entry['key'] : null,
-				'label'    => $entry ? $entry['label'] : '',
+				'label'    => $entry ? $entry['label'] . ( ! empty( $entry['credited'] ) ? ' ' . __( '(from other syllabuses)', 'ohmylms' ) : '' ) : '',
+				'credited' => ! empty( $entry['credited'] ),
 				'score'    => $entry ? $entry['score'] : null,
 				'complete' => $entry && Levels::is_proficient( $entry['key'] ),
 				'required' => ! empty( $item['required'] ),

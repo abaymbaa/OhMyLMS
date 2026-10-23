@@ -23,6 +23,8 @@ import { questionTypePatch, QUESTION_BLOCK_TYPES } from './questionBlocks.mjs';
 import { nativeQuestionTypes } from '../learning/nativeAuthoring.mjs';
 import { QuestionOptionsBar } from './QuestionOptionsBar';
 import { QuestionTypeMenu } from './QuestionTypeMenu';
+import { VariableChips, variableNames } from './VariableChips';
+import { insertIntoStatement } from './formulaInput.mjs';
 import { QuestionLivePreview } from './QuestionLivePreview';
 import { QuestionSourceSwitch } from './QuestionSourceSwitch';
 import {
@@ -168,6 +170,20 @@ export function MultipleChoiceFields( {
 								}
 							/>
 						</div>
+						<VariableChips
+							names={ variableNames( question.settings ) }
+							onPick={ ( name ) =>
+								onChange(
+									questionPromptPatch(
+										question,
+										insertIntoStatement(
+											questionPrompt( question ),
+											name
+										)
+									)
+								)
+							}
+						/>
 						{ question.settings.type === 'reorder' && (
 							<p className="ohmylms-reorder-guidance">
 								{ __(

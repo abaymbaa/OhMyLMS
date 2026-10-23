@@ -46,3 +46,12 @@ test( 'inserting a variable replaces an empty field or a number and extends a fo
 	assert.equal( insertVariable( 5, 'a' ), '{{a}}' );
 	assert.equal( insertVariable( '{{a}}', 'b' ), '{{a}}{{b}}' );
 } );
+
+test( 'a variable is inserted at the end of the last paragraph of a statement', async () => {
+	const { insertIntoStatement } = await import(
+		'../../assets/src/features/question-editor/formulaInput.mjs'
+	);
+	assert.equal( insertIntoStatement( '', 'a' ), '<p>{{a}}</p>' );
+	assert.equal( insertIntoStatement( '<p>What is</p>', 'a' ), '<p>What is {{a}}</p>' );
+	assert.equal( insertIntoStatement( 'plain', 'b' ), 'plain {{b}}' );
+} );

@@ -88,3 +88,21 @@ export function insertVariable( current, name ) {
 		? token
 		: `${ text }${ token }`;
 }
+
+/**
+ * A question statement (HTML) after inserting a variable at its end: inside the last paragraph.
+ *
+ * @param {string} html Current statement.
+ * @param {string} name Variable name.
+ * @return {string} New statement.
+ */
+export function insertIntoStatement( html, name ) {
+	const token = `{{${ name }}}`;
+	const text = String( html ?? '' );
+	if ( text.trim() === '' ) {
+		return `<p>${ token }</p>`;
+	}
+	return /<\/p>\s*$/.test( text )
+		? text.replace( /<\/p>\s*$/, ` ${ token }</p>` )
+		: `${ text } ${ token }`;
+}

@@ -50,6 +50,9 @@ function compile( file, scope, expression ) {
 			rememberQuestion,
 			stepQuestionHistory,
 			useSelect: () => false,
+			VariableChips: 'variable-chips',
+			variableNames: () => [],
+			insertIntoStatement: ( html ) => html,
 			...scope,
 		} ),
 		`${ code }; return ${ expression };`
@@ -65,6 +68,9 @@ function compile( file, scope, expression ) {
 			rememberQuestion,
 			stepQuestionHistory,
 			useSelect: () => false,
+			VariableChips: 'variable-chips',
+			variableNames: () => [],
+			insertIntoStatement: ( html ) => html,
 			...scope,
 		} )
 	);

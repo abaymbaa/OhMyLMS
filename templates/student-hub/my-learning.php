@@ -35,7 +35,12 @@ $hub_progress = static function ( array $card ) {
 	}
 	if ( $summary['skills'] && $summary['tracked'] ) {
 		/* translators: 1: skills at Proficient or better, 2: total skills. */
-		return sprintf( __( '%1$d of %2$d skills to Proficient', 'ohmylms' ), $summary['proficient'], $summary['skills'] );
+		$line = sprintf( __( '%1$d of %2$d skills to Proficient', 'ohmylms' ), $summary['proficient'], $summary['skills'] );
+		if ( ! empty( $summary['credited'] ) ) {
+			/* translators: %d: skills counted from work under other syllabuses. */
+			$line .= ' ' . sprintf( __( '(%d from other syllabuses)', 'ohmylms' ), (int) $summary['credited'] );
+		}
+		return $line;
 	}
 	/* translators: 1: completed activities, 2: total activities. */
 	return sprintf( __( '%1$d of %2$d activities complete', 'ohmylms' ), $summary['done'], $summary['total'] );
