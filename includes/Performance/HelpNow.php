@@ -126,7 +126,7 @@ final class HelpNow {
 		foreach ( $ids as $id ) {
 			$guidance = Guidance::for_student( $id, 20, '' );
 			$help     = array();
-			foreach ( $guidance['next_steps'] as $step ) {
+			foreach ( $guidance['stuck'] as $step ) {
 				if ( 'help' === $step['type'] ) {
 					$help[] = array(
 						'skill'         => array(

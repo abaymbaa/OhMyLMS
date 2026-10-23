@@ -129,12 +129,12 @@ up to three years ahead. `Performance\ExamPlan` (pure, unit tested) turns it int
 
 The Skill performance page opens with **Who needs help now** for the chosen course
 (`GET /reports/skills/help-now?course_id=` or `class_id=`, same access as the matrix: a course the viewer may edit
-or a class they teach; up to 200 learners). `Performance\HelpNow` takes each learner's `help` steps from guidance
-(skills where recent answers had errors) and groups learners by the weaker prerequisite to reteach, so one
+or a class they teach; up to 200 learners). `Performance\HelpNow` takes each learner's `stuck` list from guidance
+(every skill where recent answers had errors) and groups learners by the weaker prerequisite to reteach, so one
 mini-lesson helps several. A skill with several weak prerequisites goes to the one the most learners share (ties:
 lowest ID); a stuck skill with no weak prerequisite is its own group ("Reteach this skill"). Biggest group first;
-inside a group learners with the nearest exam come first, with the exam shown. Because the steps come from
-guidance, a learner with more than three stuck skills shows the first three that fit one sitting.
+inside a group learners with the nearest exam come first, with the exam shown. `stuck` lists every such skill, not
+only the ones that fit the learner's own fifteen-minute sitting.
 
 ### Credit back
 
@@ -147,6 +147,9 @@ same shared skill counts toward it (`Guidance::credit()`, answers pooled as in G
   that recognise prior learning without an evidence window (`recognize_prior` on, `evidence_days` 0). Familiar or
   attempted work elsewhere is shown ("counts once proficient") but never completes a target. A course-only program
   (`recognize_prior` off) or one with an evidence window keeps counting only its own evidence.
+
+The learner's course outline counts credited targets that are proficient toward "N of M skills to Proficient" and
+shows how many came from other syllabuses (`summary.credited`).
 
 Readiness for a target syllabus already counted pooled levels.
 

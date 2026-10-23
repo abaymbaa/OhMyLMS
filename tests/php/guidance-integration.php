@@ -236,6 +236,16 @@ try {
 	$help = \OhMyLMS\Performance\HelpNow::for_students( array( $learner, $other, $learner ) );
 	ok( 2 === $help['students'] && 1 === $help['stuck'] && 1 === count( $help['groups'] ) && array( $learner ) === array_column( $help['groups'][0]['students'], 'id' ), 'only the learner stuck on the triangle is listed, once: ' . wp_json_encode( $help ) );
 	ok( in_array( $triangle, array_column( $help['groups'][0]['skills'], 'id' ), true ), 'the group names the skill they are stuck on' );
+	// A learner stuck on more skills than fit one sitting still shows every one to the teacher.
+	$many = wp_create_user( 'guidance-many-' . $tag, wp_generate_password(), 'guidance-many-' . $tag . '@example.org' ); $users[] = $many;
+	foreach ( array( $expand, $pythag, $integers, $triangle ) as $i => $term ) {
+		$wpdb->insert( AssessmentSchema::table( 'student_skill_state' ), array( 'student_id' => $many, 'term_id' => $term, 'level' => 'attempted', 'policy' => 'evidence', 'evidence_count' => 4, 'struggling' => 1, 'last_evidence_at' => gmdate( 'Y-m-d H:i:s', time() - ( $i + 1 ) * 3600 ), 'updated_at' => current_time( 'mysql', true ) ) );
+	}
+	Guidance::flush();
+	$all = Snapshot::guidance( $many, 20, '' );
+	ok( 4 === count( $all['stuck'] ) && count( $all['next_steps'] ) < 4, 'stuck lists all four skills while one sitting holds fewer: ' . count( $all['next_steps'] ) );
+	$seen = \OhMyLMS\Performance\HelpNow::for_students( array( $many ) );
+	ok( 1 === $seen['stuck'] && 4 === array_sum( array_map( static function ( $group ) { return count( $group['skills'] ); }, $seen['groups'] ) ), 'the teacher view groups all four stuck skills: ' . wp_json_encode( $seen['groups'] ) );
 	$helpnow = static function ( $user, $course ) {
 		wp_set_current_user( $user );
 		$request = new WP_REST_Request( 'GET', '/ohmylms/v1/reports/skills/help-now' );

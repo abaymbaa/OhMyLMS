@@ -181,6 +181,10 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 					if ( $hub_summary['skills'] ) {
 						/* translators: 1: skills at Proficient or better, 2: total skills. */
 						echo esc_html( sprintf( __( '%1$d of %2$d skills to Proficient', 'ohmylms' ), $hub_summary['proficient'], $hub_summary['skills'] ) );
+						if ( ! empty( $hub_summary['credited'] ) ) {
+							/* translators: %d: skills counted from work under other syllabuses. */
+							echo ' ' . esc_html( sprintf( _n( '(%d from other syllabuses)', '(%d from other syllabuses)', (int) $hub_summary['credited'], 'ohmylms' ), (int) $hub_summary['credited'] ) );
+						}
 					} else {
 						/* translators: 1: completed activities, 2: total activities. */
 						echo esc_html( sprintf( __( '%1$d of %2$d activities complete', 'ohmylms' ), $hub_summary['done'], $hub_summary['total'] ) );

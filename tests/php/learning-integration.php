@@ -224,6 +224,12 @@ try {
     ok($proficient['eligible'] && $proficient['program']['outcomes'][0]['credit']['counts'] && $proficient['program']['outcomes'][0]['state']['level'] === 'proficient', 'Proficient work elsewhere completes the target');
     $html = Frontend::class; ob_start(); $rendered = new ReflectionMethod(Frontend::class, 'outcomes'); $rendered->setAccessible(true); $rendered->invoke(null, $proficient['program'], false); $table = ob_get_clean();
     ok(strpos($table, 'from other syllabuses') !== false, 'The level is not marked as from other syllabuses');
+    $outline = \OhMyLMS\Student\CourseOutline::get($credit_course, $credit_student);
+    ok($outline['summary']['credited'] === 1 && $outline['summary']['proficient'] === 1 && $outline['summary']['percent'] === 100, 'The course outline did not count the credited target: ' . wp_json_encode($outline['summary']));
+    $set_state($theirs, 'familiar'); \OhMyLMS\Performance\Guidance::flush();
+    $familiar_outline = \OhMyLMS\Student\CourseOutline::get($credit_course, $credit_student);
+    ok($familiar_outline['summary']['credited'] === 0 && $familiar_outline['summary']['proficient'] === 0, 'Familiar work elsewhere was counted in the outline');
+    $set_state($theirs, 'proficient'); \OhMyLMS\Performance\Guidance::flush();
     $windowed = $credit_program; $windowed['evidence_days'] = 90;
     $windowed_course = created('courses', ['name' => 'Credit windowed ' . $tag, 'status' => 'publish']); $posts[] = (int) ohmylms_get_course($windowed_course)->get_chapters()[0]['id'];
     publish($windowed_course, $windowed); enrollment($credit_student, $windowed_course);

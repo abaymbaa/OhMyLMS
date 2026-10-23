@@ -55,7 +55,7 @@ final class Guidance {
 	 * @param int    $student_id Learner.
 	 * @param int    $limit      Most next steps.
 	 * @param string $subject    Only this subject's shared skills and syllabuses; empty for all.
-	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps (one session of about fifteen minutes; while preparing for an exam, today's part of the exam plan), session_minutes, ready (up to five skills ready to learn, beyond this session), reviews (due, covered, fresh), readiness, exam (the exam plan, or null), review_after_days.
+	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps (one session of about fifteen minutes; while preparing for an exam, today's part of the exam plan), stuck (every skill needing help, not cut to a session), session_minutes, ready (up to five skills ready to learn, beyond this session), reviews (due, covered, fresh), readiness, exam (the exam plan, or null), review_after_days.
 	 */
 	public static function for_student( $student_id, $limit = 6, $subject = '' ) {
 		$student_id = (int) $student_id;
@@ -70,6 +70,7 @@ final class Guidance {
 			'subjects'          => array(),
 			'areas'             => array(),
 			'next_steps'        => array(),
+			'stuck'             => array(),
 			'session_minutes'   => 0,
 			'ready'             => array(),
 			'reviews'           => array(
@@ -123,8 +124,16 @@ final class Guidance {
 		$areas   = GuidanceModel::areas( $pooled, $info );
 		$reviews = GuidanceModel::reviews( $pooled, $links, time(), $days );
 		$ready   = GuidanceModel::ready( $pooled, $info, $areas, $placed['known'], $placed['start'], self::grade( $student_id ), GuidanceModel::clears( $reviews, $links ) );
-		// One sitting: the steps that fit about fifteen minutes, never more than asked for.
 		$general = GuidanceModel::next_steps( $pooled, $reviews, $ready, 20 );
+		// Every skill the learner is stuck on, not only the ones that fit one sitting (for teachers).
+		foreach ( $general as $step ) {
+			if ( 'help' === $step['type'] ) {
+				$item = self::step( $step, $pooled, $pool, $info );
+				if ( $item ) {
+					$result['stuck'][] = $item;
+				}
+			}
+		}
 		$exam    = self::exam( $student_id, $pooled, $pool, $info );
 		if ( $exam && $exam['plan']['today'] ) {
 			// Preparing for an exam: help first, then today's part of the plan, then anything else due.

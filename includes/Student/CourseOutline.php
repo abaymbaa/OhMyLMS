@@ -122,8 +122,15 @@ final class CourseOutline {
 				$skills[ $row['term_id'] ] = $row['level'];
 			}
 		}
+		$credited = 0;
 		foreach ( $state ? $program['outcomes'] : array() as $outcome ) {
-			$skills[ (int) $outcome['term_id'] ] = $display[ (int) $outcome['term_id'] ]['key'] ?? 'not-started';
+			$level = $display[ (int) $outcome['term_id'] ]['key'] ?? 'not-started';
+			// Credit back: proficient work on the same shared skill under another syllabus counts here too.
+			if ( ! empty( $outcome['credit']['counts'] ) && Levels::rank( $outcome['credit']['level'] ) > Levels::rank( $level ) ) {
+				$level = $outcome['credit']['level'];
+				++$credited;
+			}
+			$skills[ (int) $outcome['term_id'] ] = $level;
 		}
 
 		$done      = 0;
@@ -158,6 +165,7 @@ final class CourseOutline {
 			'units'      => count( $units ),
 			'skills'     => count( $skills ),
 			'proficient' => $proficient,
+			'credited'   => $credited,
 			'done'       => $done,
 			'total'      => $total,
 			'tracked'    => (bool) $state,
