@@ -300,5 +300,124 @@
         ]
       }
     }
+  },
+  "pythagorean": {
+    "prompt": "A right-angled triangle has shorter sides {{a}} and {{b}}. Find the hypotenuse.",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "pythagorean",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "m",
+            "type": "int",
+            "min": 3,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "n",
+            "type": "int",
+            "min": 2,
+            "max": 8,
+            "step": 1
+          },
+          {
+            "name": "a",
+            "type": "expr",
+            "expr": "m*m-n*n",
+            "places": 0
+          },
+          {
+            "name": "b",
+            "type": "expr",
+            "expr": "2*m*n",
+            "places": 0
+          },
+          {
+            "name": "c",
+            "type": "expr",
+            "expr": "m*m+n*n",
+            "places": 0
+          }
+        ],
+        "constraints": [
+          "m>n",
+          "gcd(m,n)=1",
+          "mod(m-n,2)=1"
+        ],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "c"
+          }
+        ]
+      }
+    }
+  },
+  "quadratic": {
+    "prompt": "Solve x² {{b:+}}x {{c:+}} = 0. Give the larger solution.",
+    "settings": {
+      "type": "numerical",
+      "answer": 0,
+      "tolerance": 0.0001,
+      "tolerance_type": "absolute",
+      "unit": "",
+      "maths_generator": {
+        "kind": "quadratic",
+        "min": 2,
+        "max": 9
+      },
+      "template": {
+        "variables": [
+          {
+            "name": "p",
+            "type": "int",
+            "min": -9,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "q",
+            "type": "int",
+            "min": -9,
+            "max": 9,
+            "step": 1
+          },
+          {
+            "name": "b",
+            "type": "expr",
+            "expr": "-(p+q)",
+            "places": 0
+          },
+          {
+            "name": "c",
+            "type": "expr",
+            "expr": "p*q",
+            "places": 0
+          }
+        ],
+        "constraints": [
+          "p!=q",
+          "abs(p)>=2",
+          "abs(q)>=2",
+          "b!=0"
+        ],
+        "set": [
+          {
+            "path": "answer",
+            "expr": "max(p,q)"
+          }
+        ]
+      }
+    }
   }
 }

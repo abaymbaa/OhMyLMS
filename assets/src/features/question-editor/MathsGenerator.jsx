@@ -56,6 +56,14 @@ export function MathsGenerator( { value, onGenerate } ) {
 						value: 'algebra',
 						label: __( 'Linear equations', 'ohmylms' ),
 					},
+					{
+						value: 'pythagorean',
+						label: __( 'Pythagorean triples', 'ohmylms' ),
+					},
+					{
+						value: 'quadratic',
+						label: __( 'Quadratic, two distinct solutions', 'ohmylms' ),
+					},
 				] }
 			/>
 			<TextControl
@@ -86,7 +94,7 @@ export function MathsGenerator( { value, onGenerate } ) {
 			) }
 			<p>
 				{ __(
-					'Division generates an exact product divided by a nonzero factor. Subtraction excludes negative results. Fractions use a shared denominator from 2 to 12. Linear equations use nonzero coefficients from 1 to 9. Apply replaces the current numerical answer and variable definition.',
+					'Division generates an exact product divided by a nonzero factor. Subtraction excludes negative results. Fractions use a shared denominator from 2 to 12. Linear equations use nonzero coefficients from 1 to 9. Pythagorean triples are whole-number right triangles built from two coprime numbers in the range (needs at least two numbers). Quadratics are built from two different whole-number solutions between minus the maximum and the maximum, each at least the minimum away from zero, so the equation always has two distinct whole solutions. Apply replaces the current numerical answer and variable definition.',
 					'ohmylms'
 				) }
 			</p>

@@ -16,7 +16,7 @@ test( 'maths generator rejects invalid ranges and unsupported topics', () => {
 	assert.equal( mathsPreset( 'unknown', 1, 10 ), null );
 } );
 
-test( 'seven maths presets use the shared private variable and answer contract', () => {
+test( 'maths presets use the shared private variable and answer contract', () => {
 	const fixtures = JSON.parse(
 		fs.readFileSync( 'tests/fixtures/maths-generator.json', 'utf8' )
 	);
@@ -28,7 +28,10 @@ test( 'seven maths presets use the shared private variable and answer contract',
 		assert.equal( preset.settings.answers, undefined );
 		assert.ok(
 			preset.settings.template.variables.every(
-				( variable ) => variable.type === 'expr' || variable.min > 0
+				( variable ) =>
+					variable.type === 'expr' ||
+					variable.min > 0 ||
+					kind === 'quadratic'
 			)
 		);
 	}
@@ -57,4 +60,14 @@ test( 'new activity modes have both server compatibility and Gutenberg controls'
 		assert.ok( jsx.includes( `'${ mode }'` ) );
 		assert.ok( runtime.includes( mode ) );
 	}
+} );
+
+test( 'pythagorean and quadratic presets build the answer from the construction', () => {
+	const triple = mathsPreset( 'pythagorean', 2, 9 ).settings.template;
+	assert.deepEqual( triple.constraints, [ 'm>n', 'gcd(m,n)=1', 'mod(m-n,2)=1' ] );
+	assert.equal( mathsPreset( 'pythagorean', 5, 5 ), null );
+	const quadratic = mathsPreset( 'quadratic', 2, 9 ).settings.template;
+	assert.ok( quadratic.constraints.includes( 'p!=q' ) );
+	assert.ok( quadratic.constraints.includes( 'abs(p)>=2' ) );
+	assert.equal( quadratic.set[ 0 ].expr, 'max(p,q)' );
 } );

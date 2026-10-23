@@ -184,3 +184,23 @@ ok(status_of($plain) === 201, 'Plain question with braces rejected');
 $plain_id = remember_post($plain->get_data()['id']);
 $plain_snapshot = VersionPublisher::snapshot((int) VersionPublisher::identity($plain_id)['current_version_id']);
 ok(!$plain_snapshot->is_template() && $plain_snapshot->instantiate(5) === $plain_snapshot && $plain_snapshot->get_name() === 'Plain {{a}} stays literal', 'A plain question was altered by instantiation');
+
+// Maths generator presets built from a construction: Pythagorean triples and quadratics with two distinct whole solutions.
+$presets = json_decode(file_get_contents(dirname(__DIR__) . '/../fixtures/maths-generator.json'), true);
+foreach (['pythagorean', 'quadratic'] as $kind) {
+    ok(true === Template::validate($presets[$kind]['settings'], '', $presets[$kind]['prompt'], []), "The $kind preset did not validate");
+    $seen = [];
+    for ($seed = 1; $seed <= 200; $seed++) {
+        $drawn = Template::generate($presets[$kind]['settings']['template'], $seed);
+        ok($drawn['ok'], "The $kind preset failed to draw at seed $seed");
+        $p = $drawn['params'];
+        if ('pythagorean' === $kind) {
+            ok($p['a'] > 0 && $p['b'] > 0 && $p['a'] ** 2 + $p['b'] ** 2 == $p['c'] ** 2, 'Not a Pythagorean triple: ' . wp_json_encode($p));
+        } else {
+            $disc = $p['b'] ** 2 - 4 * $p['c'];
+            ok($disc > 0 && (int) sqrt($disc) ** 2 == $disc && $p['p'] != $p['q'] && $p['p'] ** 2 + $p['b'] * $p['p'] + $p['c'] == 0 && $p['b'] != 0, 'Quadratic without two distinct whole solutions: ' . wp_json_encode($p));
+        }
+        $seen[wp_json_encode($p)] = true;
+    }
+    ok(count($seen) >= ('pythagorean' === $kind ? 10 : 20), "The $kind preset repeats too often: " . count($seen));
+}
