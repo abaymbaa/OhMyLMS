@@ -32,6 +32,9 @@ final class Guidance {
 	/** Most syllabuses read for readiness. */
 	const MAX_SYLLABUSES = 30;
 
+	/** User meta holding the exam a learner is preparing for: syllabus_id and date (Y-m-d). */
+	const TARGET_META = 'ohmylms_exam_target';
+
 	/**
 	 * Results already computed in this request.
 	 *
@@ -52,7 +55,7 @@ final class Guidance {
 	 * @param int    $student_id Learner.
 	 * @param int    $limit      Most next steps.
 	 * @param string $subject    Only this subject's shared skills and syllabuses; empty for all.
-	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps (one session of about fifteen minutes), session_minutes, ready (up to five skills ready to learn, beyond this session), reviews (due, covered, fresh), readiness, review_after_days.
+	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps (one session of about fifteen minutes; while preparing for an exam, today's part of the exam plan), session_minutes, ready (up to five skills ready to learn, beyond this session), reviews (due, covered, fresh), readiness, exam (the exam plan, or null), review_after_days.
 	 */
 	public static function for_student( $student_id, $limit = 6, $subject = '' ) {
 		$student_id = (int) $student_id;
@@ -75,6 +78,7 @@ final class Guidance {
 				'fresh'   => 0,
 			),
 			'readiness'         => array(),
+			'exam'              => null,
 			'review_after_days' => $days,
 		);
 		if ( ! $student_id || ! Schema::ready() ) {
@@ -120,7 +124,17 @@ final class Guidance {
 		$reviews = GuidanceModel::reviews( $pooled, $links, time(), $days );
 		$ready   = GuidanceModel::ready( $pooled, $info, $areas, $placed['known'], $placed['start'], self::grade( $student_id ), GuidanceModel::clears( $reviews, $links ) );
 		// One sitting: the steps that fit about fifteen minutes, never more than asked for.
-		$steps = array_slice( GuidanceModel::session( GuidanceModel::next_steps( $pooled, $reviews, $ready, 20 ) ), 0, max( 1, (int) $limit ) );
+		$general = GuidanceModel::next_steps( $pooled, $reviews, $ready, 20 );
+		$exam    = self::exam( $student_id, $pooled, $pool, $info );
+		if ( $exam && $exam['plan']['today'] ) {
+			// Preparing for an exam: help first, then today's part of the plan, then anything else due.
+			$general = self::exam_steps( $general, $exam['plan'], $pooled );
+		}
+		// One sitting: the steps that fit about fifteen minutes, never more than asked for.
+		$steps = array_slice( GuidanceModel::session( $general ), 0, max( 1, (int) $limit ) );
+		if ( $exam ) {
+			$result['exam'] = self::describe_exam( $exam );
+		}
 
 		$domains = Comparison::domains();
 		foreach ( $areas as $area ) {
@@ -252,6 +266,194 @@ final class Guidance {
 			$pooled[ $skill ]['last']       = $state['last_evidence_at'] ? (int) strtotime( $state['last_evidence_at'] . ' UTC' ) : $pooled[ $skill ]['last'];
 		}
 		return $pooled;
+	}
+
+	/**
+	 * The exam a learner is preparing for.
+	 *
+	 * @param int $student_id Learner.
+	 * @return array|null syllabus_id and date (Y-m-d), or null when none is set.
+	 */
+	public static function target( $student_id ) {
+		$target = get_user_meta( (int) $student_id, self::TARGET_META, true );
+		if ( ! is_array( $target ) || empty( $target['syllabus_id'] ) || empty( $target['date'] ) ) {
+			return null;
+		}
+		return array(
+			'syllabus_id' => (int) $target['syllabus_id'],
+			'date'        => (string) $target['date'],
+		);
+	}
+
+	/**
+	 * Set or clear the exam a learner is preparing for.
+	 *
+	 * @param int    $student_id Learner.
+	 * @param int    $syllabus   Target syllabus, or 0 to clear.
+	 * @param string $date       Exam date, Y-m-d.
+	 * @return array|null|\WP_Error The stored target, null when cleared, or an error.
+	 */
+	public static function set_target( $student_id, $syllabus, $date ) {
+		if ( ! (int) $syllabus ) {
+			delete_user_meta( (int) $student_id, self::TARGET_META );
+			self::flush();
+			return null;
+		}
+		if ( ! \OhMyLMS\Curriculum\Syllabus::is_syllabus( (int) $syllabus ) ) {
+			return new \WP_Error( 'ohmylms_exam_target', __( 'Choose an exam or syllabus from the list.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+		$days = ExamPlan::days_left( (string) $date, time() );
+		if ( null === $days || $days < 0 || $days > ExamPlan::MAX_DAYS ) {
+			return new \WP_Error( 'ohmylms_exam_target', __( 'Choose an exam date from today up to three years ahead.', 'ohmylms' ), array( 'status' => 400 ) );
+		}
+		update_user_meta(
+			(int) $student_id,
+			self::TARGET_META,
+			array(
+				'syllabus_id' => (int) $syllabus,
+				'date'        => (string) $date,
+				'set_at'      => gmdate( 'Y-m-d H:i:s' ),
+			)
+		);
+		self::flush();
+		return self::target( (int) $student_id );
+	}
+
+	/**
+	 * Exams and syllabuses a learner can prepare for.
+	 *
+	 * @return array[] id, name.
+	 */
+	public static function targets() {
+		return array_map(
+			static function ( $syllabus ) {
+				return array(
+					'id'   => (int) $syllabus['id'],
+					'name' => (string) $syllabus['name'],
+				);
+			},
+			Comparison::syllabuses()
+		);
+	}
+
+	/**
+	 * The exam plan, when the learner has a target that is not past.
+	 *
+	 * @param int              $student_id Learner.
+	 * @param array<int,array> $pooled     Pooled skills.
+	 * @param array<int,int>   $pool       Term => shared skill.
+	 * @param array<int,array> $info       Library.
+	 * @return array|null target, syllabus name, readiness and plan; null without an active target.
+	 */
+	private static function exam( $student_id, array $pooled, array $pool, array $info ) {
+		$target = self::target( $student_id );
+		if ( ! $target ) {
+			return null;
+		}
+		$days = ExamPlan::days_left( $target['date'], time() );
+		$rows = Comparison::objectives( $target['syllabus_id'] );
+		if ( null === $days || $days < 0 || is_wp_error( $rows ) ) {
+			return null;
+		}
+		$objectives = array_map( 'intval', array_column( $rows, 'term_id' ) );
+		// The target's objectives may not be in the pool yet: read their mappings too.
+		$pool   = $pool + self::pool( $objectives );
+		$worked = array();
+		foreach ( $objectives as $term ) {
+			$skill = (int) ( $pool[ $term ] ?? $term );
+			if ( isset( $pooled[ $skill ] ) ) {
+				$worked[] = $skill;
+			}
+		}
+		$item = \OhMyLMS\Curriculum\Items::get( $target['syllabus_id'] );
+		return array(
+			'target'    => $target,
+			'name'      => $item ? (string) $item['name'] : '',
+			'readiness' => GuidanceModel::readiness( $objectives, $pooled, $pool, 5 ),
+			'plan'      => ExamPlan::plan( ExamPlan::gaps( $objectives, $pooled, $pool, $info ), $worked, $pooled, $days, time() ),
+		);
+	}
+
+	/**
+	 * Next steps while preparing for an exam: help first, then today's plan, then the rest.
+	 *
+	 * @param array[]          $general Next steps from GuidanceModel::next_steps().
+	 * @param array            $plan    From ExamPlan::plan().
+	 * @param array<int,array> $pooled  Pooled skills.
+	 * @return array[]
+	 */
+	private static function exam_steps( array $general, array $plan, array $pooled ) {
+		$steps = array();
+		$seen  = array();
+		foreach ( $general as $step ) {
+			if ( 'help' === $step['type'] ) {
+				$steps[]                = $step;
+				$seen[ $step['skill'] ] = true;
+			}
+		}
+		$day = $plan['schedule'][0]['phase'] ?? $plan['phase'];
+		foreach ( $plan['today'] as $skill ) {
+			if ( isset( $seen[ $skill ] ) ) {
+				continue;
+			}
+			$level = (string) ( $pooled[ $skill ]['level'] ?? 'not-started' );
+			$type  = 'review' === $day ? 'review' : ( Levels::is_developing( $level ) ? 'continue' : 'ready' );
+			$steps[]         = array(
+				'type'          => $type,
+				'skill'         => (int) $skill,
+				'prerequisites' => array(),
+				'reviews'       => array(),
+				'credit'        => 0.0,
+				'covered_by'    => array(),
+				'reason'        => 'exam',
+				'minutes'       => GuidanceModel::STEP_MINUTES[ $type ],
+			);
+			$seen[ $skill ] = true;
+		}
+		foreach ( $general as $step ) {
+			if ( ! isset( $seen[ $step['skill'] ] ) ) {
+				$steps[]                = $step;
+				$seen[ $step['skill'] ] = true;
+			}
+		}
+		return $steps;
+	}
+
+	/**
+	 * The exam plan for display.
+	 *
+	 * @param array $exam From exam().
+	 * @return array
+	 */
+	private static function describe_exam( array $exam ) {
+		$plan = $exam['plan'];
+		return array(
+			'syllabus'  => array(
+				'id'   => $exam['target']['syllabus_id'],
+				'name' => $exam['name'],
+			),
+			'date'      => $exam['target']['date'],
+			'days_left' => $plan['days_left'],
+			'phase'     => $plan['phase'],
+			'per_day'   => $plan['per_day'],
+			'remaining' => $plan['remaining'],
+			'on_track'  => $plan['on_track'],
+			'readiness' => array(
+				'percent' => $exam['readiness']['percent'],
+				'ready'   => $exam['readiness']['ready'],
+				'total'   => $exam['readiness']['total'],
+			),
+			'schedule'  => array_map(
+				static function ( $day ) {
+					return array(
+						'date'   => $day['date'],
+						'phase'  => $day['phase'],
+						'skills' => array_values( array_filter( array_map( array( __CLASS__, 'skill' ), $day['skills'] ) ) ),
+					);
+				},
+				$plan['schedule']
+			),
+		);
 	}
 
 	/**
@@ -471,15 +673,18 @@ final class Guidance {
 				}
 			}
 		} elseif ( 'continue' === $step['type'] ) {
-			$item['message'] = __( 'You have started this skill. A little more practice takes it to proficient.', 'ohmylms' );
+			$item['message'] = 'exam' === ( $step['reason'] ?? '' ) ? __( 'Today in your exam plan: keep going with this skill.', 'ohmylms' ) : __( 'You have started this skill. A little more practice takes it to proficient.', 'ohmylms' );
+			$item['reason']  = (string) ( $step['reason'] ?? '' );
 			$item['lessons'] = self::lessons( array_merge( array( $step['skill'] ), $members ) );
 		} elseif ( 'review' === $step['type'] ) {
-			$item['message']    = __( 'Time for a short review to keep this skill fresh.', 'ohmylms' );
+			$item['message']    = 'exam' === ( $step['reason'] ?? '' ) ? __( 'Exam review: keep this skill fresh for the exam.', 'ohmylms' ) : __( 'Time for a short review to keep this skill fresh.', 'ohmylms' );
+			$item['reason']     = (string) ( $step['reason'] ?? '' );
 			$item['credit']     = $step['credit'];
 			$item['covered_by'] = self::covered_by( $step['covered_by'] );
 		} else {
 			$item['reason']        = (string) ( $step['reason'] ?? '' );
 			$item['message']       = 'placement' === $item['reason'] ? __( 'Your placement test suggests starting here.', 'ohmylms' ) : __( 'You are ready to start this skill.', 'ohmylms' );
+			$item['message']       = 'exam' === $item['reason'] ? __( 'Today in your exam plan.', 'ohmylms' ) : $item['message'];
 			$item['lessons']       = self::lessons( array( $step['skill'] ) );
 			$item['prerequisites'] = array_values( array_filter( array_map( array( __CLASS__, 'skill' ), $step['prerequisites'] ) ) );
 		}

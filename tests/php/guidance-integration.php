@@ -191,6 +191,42 @@ try {
 	ok( array( 'mechanics' ) === array_column( guidance_get( $learner, array( 'subject' => $other_subject ) )->get_data()['areas'], 'domain' ), 'the route narrows to a subject' );
 	ok( isset( \OhMyLMS\MCP\Server::tools()['get_student_guidance'] ) && '/reports/skills/students/{student_id}/guidance' === \OhMyLMS\MCP\Server::tools()['get_student_guidance']['route'], 'the MCP server lists the guidance tool' );
 
+	// ---- Exam mode: Preparing for a syllabus by a date ----
+	$exam_day = gmdate( 'Y-m-d', time() + 40 * DAY_IN_SECONDS );
+	ok( null === Guidance::target( $learner ) && null === Snapshot::guidance( $learner, 6, '' )['exam'], 'no exam until one is chosen' );
+	ok( is_wp_error( Guidance::set_target( $learner, $linear, $exam_day ) ), 'a skill is not an exam' );
+	ok( is_wp_error( Guidance::set_target( $learner, $syllabus, gmdate( 'Y-m-d', time() - 3 * DAY_IN_SECONDS ) ) ) && is_wp_error( Guidance::set_target( $learner, $syllabus, 'soon' ) ) && is_wp_error( Guidance::set_target( $learner, $syllabus, gmdate( 'Y-m-d', time() + 1200 * DAY_IN_SECONDS ) ) ), 'past, unreadable and far-off dates are refused' );
+	ok( in_array( $syllabus, array_column( Guidance::targets(), 'id' ), true ), 'the syllabus is offered as an exam' );
+	$saved = Guidance::set_target( $learner, $syllabus, $exam_day );
+	ok( array( 'syllabus_id' => $syllabus, 'date' => $exam_day ) === $saved, 'the exam is stored' );
+	$plan = Snapshot::guidance( $learner, 6, '' );
+	ok( $plan['exam'] && 40 === $plan['exam']['days_left'] && 'learn' === $plan['exam']['phase'] && $syllabus === $plan['exam']['syllabus']['id'] && 2 === $plan['exam']['remaining'] && $plan['exam']['on_track'], 'the plan counts the two skills still to learn: ' . wp_json_encode( $plan['exam'] ) );
+	ok( 7 === count( $plan['exam']['schedule'] ) && 1 === count( $plan['exam']['schedule'][0]['skills'] ), 'a week of one skill a day' );
+	$today = $plan['exam']['schedule'][0]['skills'][0]['id'];
+	$exam_steps = array_filter( $plan['next_steps'], static function ( $step ) { return 'exam' === ( $step['reason'] ?? '' ); } );
+	ok( 1 === count( $exam_steps ) && $today === array_values( $exam_steps )[0]['skill']['id'] && 'help' === $plan['next_steps'][0]['type'], 'help comes first, then today\'s exam skill: ' . wp_json_encode( array_column( $plan['next_steps'], 'type' ) ) );
+	ok( $plan['exam']['readiness']['percent'] === (int) floor( 100 * ( 1 + 1 + 0.5 + 0 ) / 4 ), 'readiness counts the pooled levels (both linear objectives count: ' . wp_json_encode( $plan['exam']['readiness'] ) . ')' );
+
+	$route = static function ( $user, $method, array $params = array() ) use ( $learner ) {
+		wp_set_current_user( $user );
+		$request = new WP_REST_Request( $method, '/ohmylms/v1/reports/skills/students/' . $learner . '/exam-target' );
+		$request->set_body_params( $params );
+		return rest_do_request( $request );
+	};
+	ok( 200 === $route( $learner, 'GET' )->get_status() && $syllabus === $route( $learner, 'GET' )->get_data()['target']['syllabus_id'], 'the learner reads the exam' );
+	ok( 403 === $route( $other, 'GET' )->get_status() && 403 === $route( $other, 'POST', array( 'syllabus_id' => $syllabus, 'date' => $exam_day ) )->get_status(), 'another learner can neither read nor set it' );
+	ok( 400 === $route( $learner, 'POST', array( 'syllabus_id' => $syllabus, 'date' => 'soon' ) )->get_status() && 200 === $route( $learner, 'POST', array( 'syllabus_id' => $syllabus, 'date' => gmdate( 'Y-m-d', time() + 5 * DAY_IN_SECONDS ) ) )->get_status(), 'the learner sets a new date, bad dates are refused' );
+	Guidance::flush();
+	$week = Snapshot::guidance( $learner, 6, '' )['exam'];
+	ok( 'review' === $week['phase'] && 5 === $week['days_left'] && 'review' === $week['schedule'][0]['phase'], 'the last week is for review: ' . wp_json_encode( $week['phase'] ) );
+	if ( \OhMyLMS\Practice\Frontend::enabled() ) {
+		wp_set_current_user( $learner );
+		$html = \OhMyLMS\Practice\Frontend::skills();
+		ok( false !== strpos( $html, 'Preparing for' ) && false !== strpos( $html, 'Grade 9 ' . $tag ) && false !== strpos( $html, 'name="exam_date"' ), 'My skills shows the Preparing for card with the plan' );
+	}
+	ok( 200 === $route( $learner, 'DELETE' )->get_status() && null === Guidance::target( $learner ) && null === Snapshot::guidance( $learner, 6, '' )['exam'], 'the exam can be removed' );
+	wp_set_current_user( $admin );
+
 	// ---- My skills ----
 	if ( \OhMyLMS\Practice\Frontend::enabled() ) {
 		wp_set_current_user( $learner );

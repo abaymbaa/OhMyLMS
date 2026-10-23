@@ -39,8 +39,123 @@ final class Frontend {
 			}
 		);
 		add_action( 'template_redirect', array( __CLASS__, 'practice_page' ) );
+		add_action( 'admin_post_ohmylms_exam_target', array( __CLASS__, 'save_exam_target' ) );
 		\OhMyLMS\Placement\PlacementPage::init();
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'claim_assets' ) );
+	}
+
+	/**
+	 * Save or clear the exam the signed-in learner is preparing for (form without JavaScript).
+	 */
+	public static function save_exam_target() {
+		check_admin_referer( 'ohmylms_exam_target' );
+		$student = get_current_user_id();
+		if ( ! $student ) {
+			wp_die( esc_html__( 'Sign in to set your exam.', 'ohmylms' ), '', array( 'response' => 403 ) );
+		}
+		$clear = isset( $_POST['clear'] );
+		$saved = \OhMyLMS\Performance\Guidance::set_target(
+			$student,
+			$clear ? 0 : absint( wp_unslash( $_POST['syllabus_id'] ?? 0 ) ),
+			$clear ? '' : sanitize_text_field( wp_unslash( $_POST['exam_date'] ?? '' ) )
+		);
+		$back = wp_get_referer() ? wp_get_referer() : home_url( '/' );
+		if ( is_wp_error( $saved ) ) {
+			$back = add_query_arg( 'ohmylms_exam_error', rawurlencode( $saved->get_error_message() ), $back );
+		} else {
+			$back = remove_query_arg( 'ohmylms_exam_error', $back );
+		}
+		wp_safe_redirect( $back . '#ohmylms-exam' );
+		exit;
+	}
+
+	/**
+	 * The "Preparing for" card: choose an exam and date, or see the plan toward it.
+	 *
+	 * @param array $guidance From Snapshot::guidance().
+	 * @param int   $student  Learner.
+	 * @return string Escaped HTML.
+	 */
+	private static function exam_card( array $guidance, $student ) {
+		$exam    = $guidance['exam'] ?? null;
+		$options = \OhMyLMS\Performance\Guidance::targets();
+		$target  = \OhMyLMS\Performance\Guidance::target( $student );
+		if ( ! $exam && ! $options ) {
+			return '';
+		}
+		$date  = static function ( $value ) {
+			return wp_date( get_option( 'date_format' ), strtotime( $value . ' 12:00:00 UTC' ) );
+		};
+		$error = isset( $_GET['ohmylms_exam_error'] ) ? sanitize_text_field( wp_unslash( $_GET['ohmylms_exam_error'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Shows a message only.
+		ob_start();
+		?>
+		<section id="ohmylms-exam" class="ohmylms-guidance-card ohmylms-exam" aria-labelledby="ohmylms-exam-title">
+			<h3 id="ohmylms-exam-title"><?php esc_html_e( 'Preparing for', 'ohmylms' ); ?></h3>
+			<?php if ( $error ) { ?>
+				<p class="ohmylms-exam-error" role="alert"><?php echo esc_html( $error ); ?></p>
+			<?php } ?>
+			<?php if ( $exam ) { ?>
+				<p class="ohmylms-exam-summary">
+					<strong><?php echo esc_html( $exam['syllabus']['name'] ); ?></strong>
+					<?php
+					/* translators: 1: exam date, 2: days left. */
+					echo esc_html( sprintf( _n( 'on %1$s, %2$d day left.', 'on %1$s, %2$d days left.', (int) $exam['days_left'], 'ohmylms' ), $date( $exam['date'] ), (int) $exam['days_left'] ) );
+					?>
+				</p>
+				<p>
+					<?php
+					/* translators: 1: readiness percent, 2: skills ready, 3: skills in the exam. */
+					echo esc_html( sprintf( __( 'Readiness %1$d%%: %2$d of %3$d skills proficient.', 'ohmylms' ), (int) $exam['readiness']['percent'], (int) $exam['readiness']['ready'], (int) $exam['readiness']['total'] ) );
+					?>
+					<?php
+					if ( 'review' === $exam['phase'] ) {
+						esc_html_e( 'The last week is for review only.', 'ohmylms' );
+					} elseif ( $exam['on_track'] ) {
+						/* translators: %d: skills per day. */
+						echo esc_html( sprintf( _n( 'On track: %d new skill a day.', 'On track: %d new skills a day.', (int) $exam['per_day'], 'ohmylms' ), (int) $exam['per_day'] ) );
+					} else {
+						esc_html_e( 'Behind: more skills than can be learned at three a day. The plan covers the most useful first.', 'ohmylms' );
+					}
+					?>
+				</p>
+				<?php if ( $exam['schedule'] ) { ?>
+					<h4><?php esc_html_e( 'This week', 'ohmylms' ); ?></h4>
+					<ol class="ohmylms-exam-schedule">
+						<?php foreach ( $exam['schedule'] as $day ) { ?>
+							<li class="ohmylms-exam-day-<?php echo esc_attr( $day['phase'] ); ?>">
+								<strong><?php echo esc_html( $date( $day['date'] ) ); ?></strong>
+								<span><?php echo 'review' === $day['phase'] ? esc_html__( 'Review', 'ohmylms' ) : esc_html__( 'Learn', 'ohmylms' ); ?></span>
+								<?php echo esc_html( wp_sprintf( '%l', wp_list_pluck( $day['skills'], 'name' ) ) ); ?>
+							</li>
+						<?php } ?>
+					</ol>
+				<?php } ?>
+			<?php } elseif ( $target ) { ?>
+				<p><?php esc_html_e( 'Your exam date has passed. Choose a new exam or remove it.', 'ohmylms' ); ?></p>
+			<?php } else { ?>
+				<p><?php esc_html_e( 'Choose an exam and its date to get a day-by-day plan.', 'ohmylms' ); ?></p>
+			<?php } ?>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="ohmylms-exam-form">
+				<input type="hidden" name="action" value="ohmylms_exam_target">
+				<?php wp_nonce_field( 'ohmylms_exam_target' ); ?>
+				<label><?php esc_html_e( 'Exam', 'ohmylms' ); ?>
+					<select name="syllabus_id" required>
+						<?php foreach ( $options as $option ) { ?>
+							<option value="<?php echo esc_attr( $option['id'] ); ?>" <?php selected( (int) ( $target['syllabus_id'] ?? 0 ), $option['id'] ); ?>><?php echo esc_html( $option['name'] ); ?></option>
+						<?php } ?>
+					</select>
+				</label>
+				<label><?php esc_html_e( 'Date', 'ohmylms' ); ?>
+					<input type="date" name="exam_date" required min="<?php echo esc_attr( gmdate( 'Y-m-d' ) ); ?>" value="<?php echo esc_attr( $target['date'] ?? '' ); ?>">
+				</label>
+				<button type="submit"><?php echo $target ? esc_html__( 'Update', 'ohmylms' ) : esc_html__( 'Start plan', 'ohmylms' ); ?></button>
+				<?php if ( $target ) { ?>
+					<button type="submit" name="clear" value="1" formnovalidate><?php esc_html_e( 'Remove', 'ohmylms' ); ?></button>
+				<?php } ?>
+			</form>
+		</section>
+		<?php
+		return ob_get_clean();
 	}
 
 	/**
@@ -86,6 +201,7 @@ final class Frontend {
 		?>
 		<section class="ohmylms-skill-progress" aria-labelledby="ohmylms-skill-progress-title">
 			<h2 id="ohmylms-skill-progress-title"><?php esc_html_e( 'My skills', 'ohmylms' ); ?></h2>
+			<?php echo self::exam_card( $guidance, $student ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped exam markup. ?>
 			<?php echo self::guidance( $guidance ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped guidance markup. ?>
 			<?php echo self::skill_map( $skill_map ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped skill map markup. ?>
 			<?php echo \OhMyLMS\Placement\PlacementPage::summary( $student ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped placement markup. ?>

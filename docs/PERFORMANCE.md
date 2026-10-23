@@ -107,6 +107,24 @@ recorded class learning only. REST: `GET /reports/skills/students/{id}/guidance`
 next steps, 1-20), with the same access as the student report; guardians see it too, since it is a summary. MCP:
 `get_student_guidance`.
 
+### Exam mode
+
+A learner can choose the exam or syllabus they are **Preparing for** and its date on My skills (user meta
+`ohmylms_exam_target`; REST `GET/POST/DELETE /reports/skills/students/{id}/exam-target`, writable by the learner or
+an administrator; a no-JavaScript form posts to `admin-post.php?action=ohmylms_exam_target`). The date may be today
+up to three years ahead. `Performance\ExamPlan` (pure, unit tested) turns it into a plan:
+
+- The target's skills not yet proficient are ordered by how much each lifts readiness (objectives mapped to one
+  shared skill add up, and a skill not yet started lifts more than one already familiar), skills whose
+  prerequisites are proficient first, then by grade.
+- They are spread over the days until the last week, at most three a day. `on_track` is false when more remain than
+  three a day can cover; the most useful still come first.
+- The last seven days start nothing new: each day reviews the target skills already worked on, least recently
+  practised first. With nothing left to learn every day is review.
+- Guidance returns `exam` (syllabus, date, days left, phase, readiness, `on_track`, a week of `schedule`). While an
+  exam is set, next steps are help first, then today's plan (`reason: exam`), then the usual steps, still cut to one
+  sitting. Teachers see the exam and its readiness in the learner's guidance panel.
+
 ## AI notes
 
 With an AI provider connected under *AI settings* and *Write AI study notes* on, a learner can ask for a short

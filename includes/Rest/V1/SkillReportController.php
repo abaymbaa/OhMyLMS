@@ -13,6 +13,7 @@ use OhMyLMS\Assessment\Schema;
 use OhMyLMS\Schools\Access;
 use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Mastery;
+use OhMyLMS\Performance\Guidance;
 use OhMyLMS\Performance\Insights;
 use OhMyLMS\Performance\Levels;
 use OhMyLMS\Performance\Snapshot;
@@ -76,6 +77,38 @@ class SkillReportController extends RestController {
 							'sanitize_callback' => 'sanitize_text_field',
 						),
 					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/reports/skills/students/(?P<student>[\d]+)/exam-target',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'exam_target' ),
+					'permission_callback' => array( $this, 'student_permission' ),
+				),
+				array(
+					'methods'             => WP_REST_Server::EDITABLE,
+					'callback'            => array( $this, 'save_exam_target' ),
+					'permission_callback' => array( $this, 'own_permission' ),
+					'args'                => array(
+						'syllabus_id' => array(
+							'type'    => 'integer',
+							'default' => 0,
+						),
+						'date'        => array(
+							'type'              => 'string',
+							'default'           => '',
+							'sanitize_callback' => 'sanitize_text_field',
+						),
+					),
+				),
+				array(
+					'methods'             => WP_REST_Server::DELETABLE,
+					'callback'            => array( $this, 'clear_exam_target' ),
+					'permission_callback' => array( $this, 'own_permission' ),
 				),
 			)
 		);
@@ -319,6 +352,50 @@ class SkillReportController extends RestController {
 	 * @param WP_REST_Request $request Request with student, limit and subject.
 	 * @return \WP_REST_Response
 	 */
+	public function own_permission( WP_REST_Request $request ) {
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'ohmylms_forbidden', __( 'Sign in to set your exam.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
+		}
+		return (int) $request['student'] === get_current_user_id() || current_user_can( 'manage_options' ) ? true : new WP_Error( 'ohmylms_forbidden', __( 'Only the learner can set their exam.', 'ohmylms' ), array( 'status' => 403 ) );
+	}
+
+	/**
+	 * The exam the learner is preparing for, with the exams to choose from.
+	 *
+	 * @param WP_REST_Request $request Request with student.
+	 * @return \WP_REST_Response
+	 */
+	public function exam_target( WP_REST_Request $request ) {
+		return rest_ensure_response(
+			array(
+				'target'  => Guidance::target( (int) $request['student'] ),
+				'options' => Guidance::targets(),
+			)
+		);
+	}
+
+	/**
+	 * Set the exam and date.
+	 *
+	 * @param WP_REST_Request $request Request with student, syllabus_id and date.
+	 * @return \WP_REST_Response|WP_Error
+	 */
+	public function save_exam_target( WP_REST_Request $request ) {
+		$saved = Guidance::set_target( (int) $request['student'], (int) $request['syllabus_id'], (string) $request['date'] );
+		return is_wp_error( $saved ) ? $saved : rest_ensure_response( array( 'target' => $saved ) );
+	}
+
+	/**
+	 * Stop preparing for an exam.
+	 *
+	 * @param WP_REST_Request $request Request with student.
+	 * @return \WP_REST_Response
+	 */
+	public function clear_exam_target( WP_REST_Request $request ) {
+		Guidance::set_target( (int) $request['student'], 0, '' );
+		return rest_ensure_response( array( 'target' => null ) );
+	}
+
 	public function guidance( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'], (string) $request['subject'] ) );

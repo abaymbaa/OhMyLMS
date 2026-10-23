@@ -15,6 +15,7 @@ function wp_json_encode( $data, $flags = 0 ) {
 }
 require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
+use OhMyLMS\Performance\ExamPlan;
 use OhMyLMS\Performance\GuidanceModel;
 use OhMyLMS\Performance\Insights;
 use OhMyLMS\Performance\Levels;
@@ -397,5 +398,30 @@ $mixed = array(
 	array( 'type' => 'ready', 'skill' => 4, 'minutes' => 5 ),
 );
 check( 3 === count( GuidanceModel::session( $mixed ) ), 'steps are added while they fit fifteen minutes: 3 + 3 + 5, the next 5 would not fit' );
+
+// Exam mode: a deadline plan toward a target syllabus.
+$noon = strtotime( '2026-10-23 12:00:00 UTC' );
+check( 10 === ExamPlan::days_left( '2026-11-02', $noon ) && 0 === ExamPlan::days_left( '2026-10-23', $noon ) && -1 === ExamPlan::days_left( '2026-10-22', $noon ), 'days left counts whole days, zero on the day, negative after' );
+check( null === ExamPlan::days_left( '2026-02-30', $noon ) && null === ExamPlan::days_left( 'soon', $noon ), 'unreadable dates give null' );
+$exam_pool  = array( 21 => 1 );
+$exam_info  = array( 2 => array( 'prerequisites' => array( 1 ), 'grade_from' => 8 ), 3 => array( 'prerequisites' => array(), 'grade_from' => 9 ), 4 => array( 'prerequisites' => array(), 'grade_from' => 7 ) );
+$exam_state = array(
+	1 => array( 'level' => 'attempted', 'last' => $noon - 5 * 86400, 'terms' => array( 1, 21 ) ),
+	3 => array( 'level' => 'proficient', 'last' => $noon - 86400, 'terms' => array( 3 ) ),
+);
+$gaps = ExamPlan::gaps( array( 1, 21, 2, 3, 4 ), $exam_state, $exam_pool, $exam_info );
+check( array( 1, 4, 2 ) === array_column( $gaps, 'skill' ), 'gaps skip proficient skills, put ready ones first, bigger lift first: ' . wp_json_encode( array_column( $gaps, 'skill' ) ) );
+check( $gaps[0]['lift'] > $gaps[1]['lift'] && false === $gaps[2]['ready'], 'two objectives mapped to one skill lift more, and a skill with an unmet prerequisite is not ready' );
+$plan = ExamPlan::plan( $gaps, array( 1, 3 ), $exam_state, 30, $noon );
+check( 'learn' === $plan['phase'] && 23 === $plan['learning_days'] && 1 === $plan['per_day'] && $plan['on_track'] && 7 === count( $plan['schedule'] ), 'a month out: learn phase, one skill a day, a week shown' );
+check( array( 1 ) === $plan['today'] && array( 4 ) === $plan['schedule'][1]['skills'] && 'learn' === $plan['schedule'][0]['phase'], 'the plan follows the gap order, one a day' );
+$near = ExamPlan::plan( $gaps, array( 1, 3 ), $exam_state, 5, $noon );
+check( 'review' === $near['phase'] && 6 === count( $near['schedule'] ) && 'review' === $near['schedule'][0]['phase'] && array( 1, 3 ) === $near['today'], 'inside the last week nothing new starts: reviews, least recently practised first: ' . wp_json_encode( $near['today'] ) );
+$crowded = ExamPlan::plan( array_fill( 0, 100, array( 'skill' => 9 ) ), array(), array(), 20, $noon );
+check( false === $crowded['on_track'] && 3 === $crowded['per_day'], 'more gaps than three a day allows is flagged behind' );
+$over = ExamPlan::plan( $gaps, array(), array(), -2, $noon );
+check( 'over' === $over['phase'] && array() === $over['today'], 'after the exam there is no plan' );
+$done = ExamPlan::plan( array(), array( 3 ), $exam_state, 40, $noon );
+check( 'review' === $done['schedule'][0]['phase'], 'with nothing left to learn every day is review' );
 
 echo $checks . " performance unit checks passed.\n";

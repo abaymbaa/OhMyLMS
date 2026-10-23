@@ -906,3 +906,9 @@
 	max-width: 100%;
 	height: auto;
 }
+.ohmylms-exam-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-top: 12px; }
+.ohmylms-exam-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+.ohmylms-exam-error { color: #b91c1c; }
+.ohmylms-exam-schedule { margin: 0; padding-left: 20px; font-size: 14px; }
+.ohmylms-exam-schedule span { margin: 0 6px; color: #52525b; font-size: 12px; text-transform: uppercase; }
+.ohmylms-exam-day-review span { color: #7c3aed; }

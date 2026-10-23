@@ -60,12 +60,34 @@ export function LearnerGuidance( { studentId, courseId } ) {
 		! guidance.areas.length &&
 		! guidance.next_steps.length &&
 		! guidance.readiness.length &&
+		! guidance.exam &&
 		! placements.length;
 	if ( empty ) {
 		return null;
 	}
 	return (
 		<div className="ohmylms-learner-guidance">
+			{ guidance.exam && (
+				<Fragment>
+					<h3>{ __( 'Preparing for', 'ohmylms' ) }</h3>
+					<p>
+						{ sprintf(
+							/* translators: 1: exam, 2: date, 3: days left, 4: readiness percent. */
+							__(
+								'%1$s on %2$s (%3$d days left), readiness %4$d%%.',
+								'ohmylms'
+							),
+							guidance.exam.syllabus.name,
+							guidance.exam.date,
+							guidance.exam.days_left,
+							guidance.exam.readiness.percent
+						) }{ ' ' }
+						{ guidance.exam.on_track
+							? __( 'On track.', 'ohmylms' )
+							: __( 'Behind the plan.', 'ohmylms' ) }
+					</p>
+				</Fragment>
+			) }
 			{ guidance.next_steps.length > 0 && (
 				<Fragment>
 					<h3>{ __( 'Next steps', 'ohmylms' ) }</h3>
