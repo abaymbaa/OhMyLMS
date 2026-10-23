@@ -17,6 +17,7 @@ require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
 use OhMyLMS\Performance\ExamPlan;
 use OhMyLMS\Performance\GuidanceModel;
+use OhMyLMS\Performance\HelpNow;
 use OhMyLMS\Performance\Insights;
 use OhMyLMS\Performance\Levels;
 use OhMyLMS\Performance\Policies\EvidencePolicy;
@@ -423,5 +424,20 @@ $over = ExamPlan::plan( $gaps, array(), array(), -2, $noon );
 check( 'over' === $over['phase'] && array() === $over['today'], 'after the exam there is no plan' );
 $done = ExamPlan::plan( array(), array( 3 ), $exam_state, 40, $noon );
 check( 'review' === $done['schedule'][0]['phase'], 'with nothing left to learn every day is review' );
+
+// Who needs help now: stuck learners grouped by the prerequisite to reteach.
+$sk = static function ( $id, $name ) { return array( 'id' => $id, 'name' => $name ); };
+$helpers = array(
+	array( 'id' => 1, 'name' => 'Ana', 'exam' => null, 'help' => array( array( 'skill' => $sk( 10, 'Quadratics' ), 'prerequisites' => array( $sk( 5, 'Expanding' ), $sk( 6, 'Factorising' ) ) ) ) ),
+	array( 'id' => 2, 'name' => 'Bat', 'exam' => array( 'name' => 'SAT', 'days_left' => 9 ), 'help' => array( array( 'skill' => $sk( 11, 'Simultaneous equations' ), 'prerequisites' => array( $sk( 5, 'Expanding' ) ) ) ) ),
+	array( 'id' => 3, 'name' => 'Cara', 'exam' => array( 'name' => 'SAT', 'days_left' => 3 ), 'help' => array( array( 'skill' => $sk( 10, 'Quadratics' ), 'prerequisites' => array( $sk( 5, 'Expanding' ) ) ) ) ),
+	array( 'id' => 4, 'name' => 'Dan', 'exam' => null, 'help' => array( array( 'skill' => $sk( 12, 'Surds' ), 'prerequisites' => array() ) ) ),
+);
+$groups = HelpNow::group( $helpers );
+check( 2 === count( $groups ) && 5 === $groups[0]['reteach']['id'] && 'prerequisite' === $groups[0]['kind'] && 3 === count( $groups[0]['students'] ), 'three learners share one prerequisite to reteach, so they form one group: ' . wp_json_encode( array_column( array_column( $groups, 'reteach' ), 'id' ) ) );
+check( array( 3, 2, 1 ) === array_column( $groups[0]['students'], 'id' ), 'learners with the nearest exam come first' );
+check( array( 10, 11 ) === array_column( $groups[0]['skills'], 'id' ), 'the group names each skill they are stuck on once' );
+check( 'skill' === $groups[1]['kind'] && 12 === $groups[1]['reteach']['id'], 'a stuck skill with no weak prerequisite is its own group' );
+check( array() === HelpNow::group( array() ), 'nobody stuck means no groups' );
 
 echo $checks . " performance unit checks passed.\n";

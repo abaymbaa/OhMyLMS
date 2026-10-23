@@ -22,6 +22,7 @@ import {
 } from './api.mjs';
 import { SkillMatrix } from './SkillMatrix';
 import { LearnerGuidance } from './LearnerGuidance';
+import { HelpNow } from './HelpNow';
 
 /**
  * Skill performance by course and unit: learners x skills, separate from grades.
@@ -143,6 +144,9 @@ export function PerformancePage() {
 						/>
 					) ) }
 			</AdminCard>
+			{ courseId && (
+				<HelpNow courseId={ courseId } onSelect={ setStudent } />
+			) }
 			{ student && (
 				<StudentSkills
 					student={ student }

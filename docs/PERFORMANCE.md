@@ -125,6 +125,17 @@ up to three years ahead. `Performance\ExamPlan` (pure, unit tested) turns it int
   exam is set, next steps are help first, then today's plan (`reason: exam`), then the usual steps, still cut to one
   sitting. Teachers see the exam and its readiness in the learner's guidance panel.
 
+### Who needs help now (teachers)
+
+The Skill performance page opens with **Who needs help now** for the chosen course
+(`GET /reports/skills/help-now?course_id=` or `class_id=`, same access as the matrix: a course the viewer may edit
+or a class they teach; up to 200 learners). `Performance\HelpNow` takes each learner's `help` steps from guidance
+(skills where recent answers had errors) and groups learners by the weaker prerequisite to reteach, so one
+mini-lesson helps several. A skill with several weak prerequisites goes to the one the most learners share (ties:
+lowest ID); a stuck skill with no weak prerequisite is its own group ("Reteach this skill"). Biggest group first;
+inside a group learners with the nearest exam come first, with the exam shown. Because the steps come from
+guidance, a learner with more than three stuck skills shows the first three that fit one sitting.
+
 ## AI notes
 
 With an AI provider connected under *AI settings* and *Write AI study notes* on, a learner can ask for a short

@@ -18,6 +18,10 @@ export const loadSkillMatrix = ( courseId, fetch = request, chapterId = '' ) =>
 	fetch( {
 		path: `/ohmylms/v1/${ matrixPath( { courseId, chapterId } ) }`,
 	} );
+export const loadHelpNow = ( courseId, fetch = request ) =>
+	fetch( {
+		path: `/ohmylms/v1/reports/skills/help-now?course_id=${ courseId }`,
+	} );
 export const loadStudentSkills = (
 	studentId,
 	courseId,

@@ -227,6 +227,28 @@ try {
 	ok( 200 === $route( $learner, 'DELETE' )->get_status() && null === Guidance::target( $learner ) && null === Snapshot::guidance( $learner, 6, '' )['exam'], 'the exam can be removed' );
 	wp_set_current_user( $admin );
 
+	// ---- Who needs help now: stuck learners of a course, grouped by the prerequisite to reteach ----
+	$class_course = wp_insert_post( array( 'post_type' => OHMYLMS_COURSE_CPT, 'post_status' => 'publish', 'post_title' => 'Help now ' . $tag, 'post_author' => $admin ) );
+	foreach ( array( $learner, $other ) as $enrolled ) {
+		$wpdb->insert( $wpdb->prefix . 'ohmylms_user_enrollment', array( 'user_id' => $enrolled, 'course_id' => $class_course, 'status' => 'enrolled', 'progress' => 'running', 'start_date' => current_time( 'mysql' ) ) );
+	}
+	Guidance::flush();
+	$help = \OhMyLMS\Performance\HelpNow::for_students( array( $learner, $other, $learner ) );
+	ok( 2 === $help['students'] && 1 === $help['stuck'] && 1 === count( $help['groups'] ) && array( $learner ) === array_column( $help['groups'][0]['students'], 'id' ), 'only the learner stuck on the triangle is listed, once: ' . wp_json_encode( $help ) );
+	ok( in_array( $triangle, array_column( $help['groups'][0]['skills'], 'id' ), true ), 'the group names the skill they are stuck on' );
+	$helpnow = static function ( $user, $course ) {
+		wp_set_current_user( $user );
+		$request = new WP_REST_Request( 'GET', '/ohmylms/v1/reports/skills/help-now' );
+		$request->set_query_params( array( 'course_id' => $course ) );
+		return rest_do_request( $request );
+	};
+	$response = $helpnow( $admin, $class_course );
+	ok( 200 === $response->get_status() && 1 === $response->get_data()['stuck'], 'a teacher with access reads the view' );
+	ok( 403 === $helpnow( $other, $class_course )->get_status() && in_array( $helpnow( 0, $class_course )->get_status(), array( 401, 403 ), true ) && 400 === $helpnow( $admin, 0 )->get_status(), 'learners and guests cannot, and a course is required' );
+	wp_set_current_user( $admin );
+	wp_delete_post( $class_course, true );
+	$wpdb->delete( $wpdb->prefix . 'ohmylms_user_enrollment', array( 'course_id' => $class_course ) );
+
 	// ---- My skills ----
 	if ( \OhMyLMS\Practice\Frontend::enabled() ) {
 		wp_set_current_user( $learner );

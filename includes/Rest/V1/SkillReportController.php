@@ -14,6 +14,7 @@ use OhMyLMS\Schools\Access;
 use OhMyLMS\Skills\Evidence;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Performance\Guidance;
+use OhMyLMS\Performance\HelpNow;
 use OhMyLMS\Performance\Insights;
 use OhMyLMS\Performance\Levels;
 use OhMyLMS\Performance\Snapshot;
@@ -41,6 +42,17 @@ class SkillReportController extends RestController {
 				array(
 					'methods'             => WP_REST_Server::READABLE,
 					'callback'            => array( $this, 'matrix' ),
+					'permission_callback' => array( $this, 'scope_permission' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/reports/skills/help-now',
+			array(
+				array(
+					'methods'             => WP_REST_Server::READABLE,
+					'callback'            => array( $this, 'help_now' ),
 					'permission_callback' => array( $this, 'scope_permission' ),
 				),
 			)
@@ -352,6 +364,21 @@ class SkillReportController extends RestController {
 	 * @param WP_REST_Request $request Request with student, limit and subject.
 	 * @return \WP_REST_Response
 	 */
+	/**
+	 * Who needs help now: the learners of a course or class who are stuck, grouped by the prerequisite to reteach.
+	 *
+	 * @param WP_REST_Request $request Request with course_id or class_id.
+	 * @return \WP_REST_Response|WP_Error
+	 */
+	public function help_now( WP_REST_Request $request ) {
+		Evidence::process( 100 );
+		$students = $this->scope_students( $request );
+		if ( is_wp_error( $students ) ) {
+			return $students;
+		}
+		return rest_ensure_response( HelpNow::for_students( $students ) );
+	}
+
 	public function own_permission( WP_REST_Request $request ) {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error( 'ohmylms_forbidden', __( 'Sign in to set your exam.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
