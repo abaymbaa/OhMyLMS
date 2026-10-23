@@ -70,8 +70,10 @@ shared skill library ([AI skill analysis](AI-SKILL-ANALYSIS.md): domains, grade 
 "includes" links) into four kinds of advice. The arithmetic is in `Performance\GuidanceModel`, which has no
 WordPress calls. Guidance only reads: levels and review dates stay what the engine stored.
 
-Skills are pooled first. An objective with an `equivalent` mapping counts as its shared skill, and the pooled
-skill takes the best level any member reached and the latest answer.
+Skills are pooled first. An objective with an `equivalent` mapping counts as its shared skill. When a learner has
+answered on more than one member (a Grade 7 objective and an IGCSE objective of the same shared skill), all those
+answers are pooled, each counted once, and judged by the site's level policy, so evidence split across syllabuses
+adds up. A skill with one member keeps its stored level.
 
 - **Strength by area.** For each domain the learner has started, the mean of the level points (attempted 0.2,
   familiar 0.5, proficient 0.8, mastered 1) as 0-100, named strong (75+), steady (45+) or building, with the
@@ -81,10 +83,17 @@ skill takes the best level any member reached and the latest answer.
   link's weight as credit (weights multiply along a chain of up to three links; the total is capped at 1). Credit
   moves the review later by that share of the interval, so full credit counts as a whole review. A review that
   was due but is pushed past today is listed as covered, with the skills that covered it.
-- **Next steps.** Help with struggling skills first, then reviews still due (longest overdue first), then skills
-  not started whose prerequisites are all proficient (earliest grade first, weaker areas first among equal grades).
-  Each step names the skill to practise (the skill itself, or a mapped objective that has practice questions) and
-  up to two lessons.
+- **Next steps, one sitting at a time.** Help with struggling skills first (with the weaker prerequisites to check),
+  then reviews still due (longest overdue first), then **keep going** with skills already started (not struggling,
+  not yet proficient; most recently worked first), then skills ready to learn. Ready skills are those not started
+  whose prerequisites are all proficient, plus, for a learner whose profile grade is known, the skills of that
+  grade that need nothing first, so a new learner who skipped the placement test still has somewhere to start.
+  Among ready skills of the same grade, one whose practice also covers a due review comes first ("Also reviews …").
+  While three skills are in progress, no new skill is offered: finishing comes first. The steps are cut to one
+  sitting of about fifteen minutes (help, keep going and new skills about 5 minutes each, reviews about 3; three to
+  five steps), shown as "One sitting of about N minutes". Up to five ready skills are also returned as `ready` for
+  the next sitting. Each step names the skill to practise (the skill itself, or a mapped objective that has practice
+  questions) and up to two lessons.
 - **Placement tests.** Skills the learner's latest [placement test](PLACEMENT-TEST.md) placed as known count as met
   prerequisites (they are never suggested, and never become levels), and the skills it said to start with come
   first among ready skills, marked "Your placement test suggests starting here".

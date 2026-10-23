@@ -73,7 +73,10 @@ export function LearnerGuidance( { studentId, courseId } ) {
 						<p>
 							{ sprintf(
 								/* translators: %d: minutes. */
-								__( 'One sitting of about %d minutes.', 'ohmylms' ),
+								__(
+									'One sitting of about %d minutes.',
+									'ohmylms'
+								),
 								guidance.session_minutes
 							) }
 						</p>
