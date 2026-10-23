@@ -252,3 +252,10 @@ foreach ($topic_checks as $kind => $check) {
     }
     ok(count($seen) >= 8, "The $kind preset repeats too often: " . count($seen));
 }
+
+// A numerical answer, alternatives and tolerance may be variables or formulas.
+$formula_settings = ['type' => 'numerical', 'answer' => '{{a*b}}', 'answers' => ['{{a}}', 7], 'tolerance' => '{{c}}', 'tolerance_type' => 'absolute', 'template' => ['variables' => [['name' => 'a', 'type' => 'int', 'min' => 2, 'max' => 9], ['name' => 'b', 'type' => 'int', 'min' => 2, 'max' => 9], ['name' => 'c', 'type' => 'int', 'min' => 1, 'max' => 3]]]];
+$formula_applied = Template::apply('', 'x', $formula_settings, [], 11);
+$fp = $formula_applied['params'];
+ok(!$formula_applied['errors'] && $formula_applied['settings']['answer'] === (float) ($fp['a'] * $fp['b']) && $formula_applied['settings']['answers'] === [(float) $fp['a'], 7] && $formula_applied['settings']['tolerance'] === (float) $fp['c'], 'Formulas in a numerical answer, alternatives and tolerance were not turned into numbers: ' . wp_json_encode($formula_applied['settings']));
+ok(true === Template::validate($formula_settings, '', 'x', [], static function ($example) { return is_numeric($example['answer']) && is_numeric($example['tolerance']) && count(array_filter($example['answers'], 'is_numeric')) === 2 ? true : 'not numeric'; }), 'A numerical template with formula fields did not validate');

@@ -13,22 +13,30 @@ import {
 } from '../question-editor/interactiveModel.mjs';
 
 /**
- * Check numerical keys before autosaving an incomplete answer field.
+ * Check numerical keys before autosaving an incomplete answer field. In a randomized question an
+ * answer or tolerance may be a variable or formula such as {{a*b}}; the server checks real examples.
  *
- * @param {Object} settings Numerical answer settings.
+ * @param {Object}  settings  Numerical answer settings.
+ * @param {boolean} templated Whether the question has variables.
  * @return {boolean} Whether the answer key and tolerance are valid.
  */
-function numericalReady( settings ) {
+function numericalReady( settings, templated = false ) {
+	const formula = ( value ) =>
+		templated &&
+		typeof value === 'string' &&
+		/^\s*\{\{.+\}\}\s*$/.test( value );
 	const finite = ( value ) =>
-		[ 'number', 'string' ].includes( typeof value ) &&
-		String( value ).trim() !== '' &&
-		Number.isFinite( Number( value ) );
+		formula( value ) ||
+		( [ 'number', 'string' ].includes( typeof value ) &&
+			String( value ).trim() !== '' &&
+			Number.isFinite( Number( value ) ) );
 	const answers = settings.answers ?? [ settings.answer ];
 	return (
 		Array.isArray( answers ) &&
 		answers.length > 0 &&
 		answers.every( finite ) &&
 		( settings.tolerance === undefined ||
+			formula( settings.tolerance ) ||
 			( finite( settings.tolerance ) &&
 				Number( settings.tolerance ) >= 0 ) )
 	);
@@ -76,7 +84,13 @@ export function choiceReadyToSave( question ) {
 		);
 	}
 	if ( type === 'numerical' ) {
-		return hasPrompt && numericalReady( question.settings );
+		return (
+			hasPrompt &&
+			numericalReady(
+				question.settings,
+				Boolean( question.settings.template?.variables?.length )
+			)
+		);
 	}
 	if ( type === 'structured' ) {
 		const parts = question.settings.parts || [];
@@ -104,7 +118,13 @@ export function choiceReadyToSave( question ) {
 						} ) ) ||
 						part.kind === 'written' ||
 						( part.kind === 'numerical' &&
-							numericalReady( part ) ) ||
+							numericalReady(
+								part,
+								Boolean(
+									question.settings.template?.variables
+										?.length
+								)
+							) ) ||
 						( part.kind === 'text' &&
 							Array.isArray( part.accepted ) &&
 							part.accepted.some( ( answer ) =>

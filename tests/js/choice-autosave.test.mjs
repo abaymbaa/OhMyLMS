@@ -200,3 +200,20 @@ test( 'graphing autosave validates its existing graph settings without choice ro
 	draft.settings.points = [];
 	assert.equal( choiceReadyToSave( draft ), false );
 } );
+
+test( 'a randomized numerical question may use variables for its answer, alternatives and tolerance', () => {
+	const make = ( settings ) => ( {
+		name: 'Question',
+		settings: { type: 'numerical', ...settings },
+		questions: [],
+	} );
+	const template = { variables: [ { name: 'a', type: 'int', min: 1, max: 9 } ] };
+	assert.equal( choiceReadyToSave( make( { answer: '{{a*2}}', template } ) ), true );
+	assert.equal(
+		choiceReadyToSave( make( { answer: 4, answers: [ '{{a}}', 5 ], tolerance: '{{a}}', template } ) ),
+		true
+	);
+	// Without variables a formula is still not a number.
+	assert.equal( choiceReadyToSave( make( { answer: '{{a*2}}' } ) ), false );
+	assert.equal( choiceReadyToSave( make( { answer: 'abc', template } ) ), false );
+} );

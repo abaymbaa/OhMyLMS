@@ -12,31 +12,7 @@ import {
 	parseAmounts,
 	removeCategory,
 } from './interactiveModel.mjs';
-
-/**
- * A number field that stores a number, or nothing while empty. A randomized question may also use a variable or formula such as {{a+b}}.
- * Numbers are stored as numbers; a formula (or a number still being typed) as text.
- * @param value
- * @param onChange
- * @param extra
- */
-const numberOrFormula = ( value, onChange, extra = {} ) => ( {
-	type: 'text',
-	inputMode: 'decimal',
-	value: value ?? '',
-	onChange: ( text ) => {
-		if ( text === '' ) {
-			onChange( undefined );
-		} else if ( text.includes( '{' ) ) {
-			onChange( text );
-		} else if ( /^-?\d*\.?\d*$/.test( text ) ) {
-			onChange(
-				String( Number( text ) ) === text ? Number( text ) : text
-			);
-		}
-	},
-	...extra,
-} );
+import { numberOrFormula } from './formulaInput.mjs';
 
 /**
  * Min, max, step and the correct value on a scale: number line and jug.

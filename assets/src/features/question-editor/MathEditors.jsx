@@ -1,7 +1,14 @@
 import { MathsGenerator } from './MathsGenerator';
+import { VariableChips, variableNames } from './VariableChips';
+import {
+	insertVariable,
+	listToNumbersOrFormulas,
+	numberOrFormula,
+	toleranceOrFormula,
+} from './formulaInput.mjs';
 import { QUESTION_BLOCK_TYPES, questionTypePatch } from './questionBlocks.mjs';
 /** @jsx createElement */
-import { createElement } from '@wordpress/element';
+import { createElement, useEffect, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { RichContentControl } from '../math/RichContentControl';
 import {
@@ -13,11 +20,57 @@ import {
 } from '@wordpress/components';
 import {
 	addPart,
-	listToNumbers,
 	numbersToList,
 	removePart,
 	updatePart,
 } from '../question-bank/model.mjs';
+
+/**
+ * Other accepted answers: numbers and {{formulas}}, comma separated. The typed text is kept as
+ * typed; only complete numbers and formulas are stored.
+ * @param root0
+ * @param root0.value
+ * @param root0.onChange
+ */
+function AcceptedAnswers( { value, onChange, names } ) {
+	const stored = numbersToList( value.answers );
+	const [ text, setText ] = useState( stored );
+	useEffect( () => {
+		// Follow changes made elsewhere (the maths generator), not the user's own typing.
+		if (
+			JSON.stringify( listToNumbersOrFormulas( text ) ) !==
+			JSON.stringify( value.answers )
+		) {
+			setText( stored );
+		}
+	}, [ stored ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	const update = ( next ) => {
+		setText( next );
+		onChange( { answers: listToNumbersOrFormulas( next ) } );
+	};
+	return (
+		<>
+			<TextControl
+				label={ __(
+					'Other accepted answers (comma separated, optional)',
+					'ohmylms'
+				) }
+				value={ text }
+				onChange={ update }
+			/>
+			<VariableChips
+				names={ names }
+				onPick={ ( name ) =>
+					update(
+						text.trim() === ''
+							? `{{${ name }}}`
+							: `${ text.replace( /[,\s]+$/, '' ) }, {{${ name }}}`
+					)
+				}
+			/>
+		</>
+	);
+}
 
 /**
  * Numerical question settings: expected value(s), tolerance and unit.
@@ -27,6 +80,7 @@ import {
  * @param root0.onGenerate
  */
 export function NumericalEditor( { value, onChange, onGenerate } ) {
+	const names = variableNames( value );
 	return (
 		<div className="ohmylms-numerical-editor">
 			{ onGenerate && (
@@ -42,30 +96,27 @@ export function NumericalEditor( { value, onChange, onGenerate } ) {
 			) : (
 				<>
 					<TextControl
-						type="number"
-						step="any"
 						label={ __( 'Correct answer', 'ohmylms' ) }
-						value={ value.answer ?? '' }
-						onChange={ ( answer ) =>
+						help={ __(
+							'A number, or a variable or formula such as {{a*b}}.',
+							'ohmylms'
+						) }
+						{ ...numberOrFormula( value.answer, ( answer ) =>
+							onChange( { answer } )
+						) }
+					/>
+					<VariableChips
+						names={ names }
+						onPick={ ( name ) =>
 							onChange( {
-								answer:
-									answer === ''
-										? undefined
-										: Number( answer ),
+								answer: insertVariable( value.answer, name ),
 							} )
 						}
 					/>
-					<TextControl
-						label={ __(
-							'Other accepted answers (comma separated, optional)',
-							'ohmylms'
-						) }
-						value={ numbersToList( value.answers ) }
-						onChange={ ( text ) =>
-							onChange( {
-								answers: listToNumbers( text ),
-							} )
-						}
+					<AcceptedAnswers
+						value={ value }
+						onChange={ onChange }
+						names={ names }
 					/>
 				</>
 			) }
@@ -75,18 +126,26 @@ export function NumericalEditor( { value, onChange, onGenerate } ) {
 					gap: 12,
 				} }
 			>
-				<TextControl
-					type="number"
-					min={ 0 }
-					step="any"
-					label={ __( 'Tolerance', 'ohmylms' ) }
-					value={ value.tolerance ?? 0 }
-					onChange={ ( tolerance ) =>
-						onChange( {
-							tolerance: Math.max( 0, Number( tolerance ) || 0 ),
-						} )
-					}
-				/>
+				<div>
+					<TextControl
+						label={ __( 'Tolerance', 'ohmylms' ) }
+						{ ...toleranceOrFormula(
+							value.tolerance,
+							( tolerance ) => onChange( { tolerance } )
+						) }
+					/>
+					<VariableChips
+						names={ names }
+						onPick={ ( name ) =>
+							onChange( {
+								tolerance: insertVariable(
+									value.tolerance,
+									name
+								),
+							} )
+						}
+					/>
+				</div>
 				<SelectControl
 					label={ __( 'Tolerance type', 'ohmylms' ) }
 					value={ value.tolerance_type || 'absolute' }
@@ -301,30 +360,17 @@ export function StructuredEditor( {
 							} }
 						>
 							<TextControl
-								type="number"
-								step="any"
 								label={ __( 'Answer', 'ohmylms' ) }
-								value={ part.answer ?? '' }
-								onChange={ ( answer ) =>
-									set( index, {
-										answer:
-											answer === ''
-												? undefined
-												: Number( answer ),
-									} )
-								}
+								{ ...numberOrFormula( part.answer, ( answer ) =>
+									set( index, { answer } )
+								) }
 							/>
 							<TextControl
-								type="number"
-								min={ 0 }
-								step="any"
 								label={ __( 'Tolerance', 'ohmylms' ) }
-								value={ part.tolerance ?? 0 }
-								onChange={ ( tolerance ) =>
-									set( index, {
-										tolerance: Number( tolerance ) || 0,
-									} )
-								}
+								{ ...toleranceOrFormula(
+									part.tolerance,
+									( tolerance ) => set( index, { tolerance } )
+								) }
 							/>
 							<TextControl
 								label={ __( 'Unit', 'ohmylms' ) }
