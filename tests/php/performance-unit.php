@@ -333,4 +333,69 @@ check( in_array( 7, array_column( $met, 'skill' ), true ) && ! $met[0]['placemen
 $steps = GuidanceModel::next_steps( array(), array(), $placed, 1 );
 check( 'placement' === $steps[0]['reason'] && '' === GuidanceModel::next_steps( array(), array(), $ready, 1 )[0]['reason'], 'ready steps say when a placement suggested them' );
 
+// Cold start: with the learner's grade known, root skills of that grade are ready, placement or not.
+$roots = array(
+	20 => $place( 'number', 5, 5 ),
+	21 => $place( 'algebra', 7, 8 ),
+	22 => $place( 'geometry', 7, 7 ),
+	23 => $place( 'algebra', 9, 9 ),
+	24 => $place( 'algebra', 8, 8, array( 21 ) ),
+);
+check( array() === GuidanceModel::ready( array(), $roots ), 'without a grade or placement, a new learner gets nothing (the old behaviour)' );
+$cold = GuidanceModel::ready( array(), $roots, array(), array(), array(), 7 );
+check( array( 21, 22 ) === array_column( $cold, 'skill' ), 'a grade 7 learner starts with grade 7 skills that need nothing first: ' . wp_json_encode( array_column( $cold, 'skill' ) ) );
+check( 21 === $cold[0]['skill'] && array() === $cold[0]['prerequisites'], 'root skills list no prerequisites' );
+check( array( 21 ) === array_column( GuidanceModel::ready( array( 22 => array( 'level' => 'familiar', 'last' => $now, 'struggling' => false, 'terms' => array( 22 ) ) ), $roots, array(), array(), array(), 7 ), 'skill' ), 'a started root skill is not suggested as new' );
+
+// Double duty: among ready skills of the same grade, one that also covers a due review comes first.
+$duty = GuidanceModel::ready( array(), $roots, array(), array(), array(), 7, array( 22 => array( 20 ) ) );
+check( array( 22, 21 ) === array_column( $duty, 'skill' ) && array( 20 ) === $duty[0]['reviews'], 'a skill that also covers a due review is ranked first: ' . wp_json_encode( $duty ) );
+$clears = GuidanceModel::clears(
+	array(
+		20 => array( 'status' => 'due' ),
+		21 => array( 'status' => 'fresh' ),
+	),
+	array(
+		22 => array( 20 => 0.5, 21 => 1.0 ),
+		24 => array( 22 => 1.0 ),
+	)
+);
+check( array( 20 ) === $clears[22] && array( 20 ) === $clears[24], 'clears lists due reviews a skill includes, along chains: ' . wp_json_encode( $clears ) );
+
+// Keep going, and at most three skills in progress.
+$progress = array(
+	30 => array( 'level' => 'familiar', 'last' => $now - 3 * $day, 'struggling' => false, 'terms' => array( 30 ) ),
+	31 => array( 'level' => 'attempted', 'last' => $now - $day, 'struggling' => false, 'terms' => array( 31 ) ),
+	32 => array( 'level' => 'proficient', 'last' => $now - $day, 'struggling' => false, 'terms' => array( 32 ) ),
+);
+$fresh_ready = array(
+	array( 'skill' => 40, 'prerequisites' => array(), 'placement' => false, 'reviews' => array( 32 ) ),
+);
+$steps = GuidanceModel::next_steps( $progress, array(), $fresh_ready, 6 );
+check( array( 'continue', 'continue', 'ready' ) === array_column( $steps, 'type' ) && array( 31, 30, 40 ) === array_column( $steps, 'skill' ), 'started skills, most recent first, come before new ones: ' . wp_json_encode( $steps ) );
+check( 5 === $steps[0]['minutes'] && array( 32 ) === $steps[2]['reviews'], 'steps carry minutes, and ready steps the reviews they cover' );
+$progress[33] = array( 'level' => 'attempted', 'last' => $now - 2 * $day, 'struggling' => true, 'terms' => array( 33 ) );
+$steps        = GuidanceModel::next_steps( $progress, array(), $fresh_ready, 6 );
+check( array( 'help', 'continue', 'continue' ) === array_column( $steps, 'type' ), 'with three skills in progress no new skill is offered, and a struggling one is help, not keep going: ' . wp_json_encode( array_column( $steps, 'type' ) ) );
+
+// One sitting of about fifteen minutes: three to five steps.
+$many = array();
+foreach ( array( 'review', 'review', 'review', 'review', 'review', 'review' ) as $type ) {
+	$many[] = array( 'type' => $type, 'skill' => count( $many ), 'minutes' => 3 );
+}
+check( 5 === count( GuidanceModel::session( $many ) ), 'short steps stop at five' );
+$long = array();
+foreach ( array( 'help', 'continue', 'ready', 'ready' ) as $type ) {
+	$long[] = array( 'type' => $type, 'skill' => count( $long ), 'minutes' => 5 );
+}
+check( 3 === count( GuidanceModel::session( $long ) ), 'three five-minute steps fill fifteen minutes' );
+check( 2 === count( GuidanceModel::session( array_slice( $long, 0, 2 ) ) ) && array() === GuidanceModel::session( array() ), 'fewer steps than the minimum are all kept' );
+$mixed = array(
+	array( 'type' => 'review', 'skill' => 1, 'minutes' => 3 ),
+	array( 'type' => 'review', 'skill' => 2, 'minutes' => 3 ),
+	array( 'type' => 'continue', 'skill' => 3, 'minutes' => 5 ),
+	array( 'type' => 'ready', 'skill' => 4, 'minutes' => 5 ),
+);
+check( 3 === count( GuidanceModel::session( $mixed ) ), 'steps are added while they fit fifteen minutes: 3 + 3 + 5, the next 5 would not fit' );
+
 echo $checks . " performance unit checks passed.\n";

@@ -8,6 +8,7 @@
 namespace OhMyLMS\Performance;
 
 use OhMyLMS\Assessment\Schema;
+use OhMyLMS\Bundles\Combined;
 use OhMyLMS\Curriculum\AiAnalysis;
 use OhMyLMS\Curriculum\Comparison;
 use OhMyLMS\Curriculum\Schema as CurriculumSchema;
@@ -16,6 +17,7 @@ use OhMyLMS\Curriculum\SkillMappings;
 use OhMyLMS\Practice\Selector;
 use OhMyLMS\Skills\Mastery;
 use OhMyLMS\Skills\Taxonomy;
+use OhMyLMS\Student\LearnerProfile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -50,7 +52,7 @@ final class Guidance {
 	 * @param int    $student_id Learner.
 	 * @param int    $limit      Most next steps.
 	 * @param string $subject    Only this subject's shared skills and syllabuses; empty for all.
-	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps, reviews (due, covered, fresh), readiness, review_after_days.
+	 * @return array subject, subjects (the learner's, for choosing), areas, next_steps (one session of about fifteen minutes), session_minutes, ready (up to five skills ready to learn, beyond this session), reviews (due, covered, fresh), readiness, review_after_days.
 	 */
 	public static function for_student( $student_id, $limit = 6, $subject = '' ) {
 		$student_id = (int) $student_id;
@@ -65,6 +67,8 @@ final class Guidance {
 			'subjects'          => array(),
 			'areas'             => array(),
 			'next_steps'        => array(),
+			'session_minutes'   => 0,
+			'ready'             => array(),
 			'reviews'           => array(
 				'due'     => 0,
 				'covered' => array(),
@@ -83,7 +87,7 @@ final class Guidance {
 			$objectives = array_merge( $objectives, $syllabus['objectives'] );
 		}
 		$pool   = self::pool( array_merge( array_keys( $states ), $objectives ) );
-		$pooled = GuidanceModel::pooled( $states, $pool );
+		$pooled = self::combine( $student_id, GuidanceModel::pooled( $states, $pool ) );
 		$info   = self::library( $pooled, $pool );
 		foreach ( array_keys( $pooled ) as $skill ) {
 			$name = self::subject_of( $skill );
@@ -114,8 +118,9 @@ final class Guidance {
 		$placed  = \OhMyLMS\Placement\Placement::assumed( $student_id, $subject );
 		$areas   = GuidanceModel::areas( $pooled, $info );
 		$reviews = GuidanceModel::reviews( $pooled, $links, time(), $days );
-		$ready   = GuidanceModel::ready( $pooled, $info, $areas, $placed['known'], $placed['start'] );
-		$steps   = GuidanceModel::next_steps( $pooled, $reviews, $ready, $limit );
+		$ready   = GuidanceModel::ready( $pooled, $info, $areas, $placed['known'], $placed['start'], self::grade( $student_id ), GuidanceModel::clears( $reviews, $links ) );
+		// One sitting: the steps that fit about fifteen minutes, never more than asked for.
+		$steps = array_slice( GuidanceModel::session( GuidanceModel::next_steps( $pooled, $reviews, $ready, 20 ) ), 0, max( 1, (int) $limit ) );
 
 		$domains = Comparison::domains();
 		foreach ( $areas as $area ) {
@@ -128,7 +133,25 @@ final class Guidance {
 		foreach ( $steps as $step ) {
 			$item = self::step( $step, $pooled, $pool, $info );
 			if ( $item ) {
-				$result['next_steps'][] = $item;
+				$result['next_steps'][]     = $item;
+				$result['session_minutes'] += $item['minutes'];
+			}
+		}
+		foreach ( array_slice( $ready, 0, 5 ) as $entry ) {
+			$item = self::step(
+				array(
+					'type'          => 'ready',
+					'skill'         => $entry['skill'],
+					'prerequisites' => $entry['prerequisites'],
+					'reviews'       => $entry['reviews'],
+					'reason'        => $entry['placement'] ? 'placement' : '',
+				),
+				$pooled,
+				$pool,
+				$info
+			);
+			if ( $item ) {
+				$result['ready'][] = $item;
 			}
 		}
 		foreach ( $reviews as $skill => $review ) {
@@ -184,10 +207,62 @@ final class Guidance {
 		}
 		$states = self::states( (int) $student_id );
 		$levels = array();
-		foreach ( GuidanceModel::pooled( $states, self::pool( array_keys( $states ) ) ) as $skill => $entry ) {
+		foreach ( self::combine( (int) $student_id, GuidanceModel::pooled( $states, self::pool( array_keys( $states ) ) ) ) as $skill => $entry ) {
 			$levels[ $skill ] = $entry['level'];
 		}
 		return $levels;
+	}
+
+	/**
+	 * Judge each shared skill on all of the learner's answers across the objectives pooled onto it.
+	 *
+	 * GuidanceModel::pooled() takes the best level any single member reached. When answers are spread
+	 * over several members (two on a Grade 7 objective, two on the IGCSE one), that never adds up; here
+	 * those answers are pooled, counted once each (Bundles\Combined) and judged by the site's level
+	 * policy, like any skill. Skills with one member keep their stored state, which is the same thing.
+	 *
+	 * @param int              $student_id Learner.
+	 * @param array<int,array> $pooled     From GuidanceModel::pooled().
+	 * @return array<int,array> The same skills with level, struggling and last from the pooled answers.
+	 */
+	private static function combine( $student_id, array $pooled ) {
+		global $wpdb;
+		$owner = array();
+		foreach ( $pooled as $skill => $entry ) {
+			if ( count( $entry['terms'] ) > 1 ) {
+				foreach ( $entry['terms'] as $term ) {
+					$owner[ (int) $term ] = (int) $skill;
+				}
+			}
+		}
+		if ( ! $owner ) {
+			return $pooled;
+		}
+		$terms = array_keys( $owner );
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT id, grade_event_id, term_id, part_id, question_id, awarded, available, independent, first_try, difficulty, family_id, source_type, source_id, evidence_at FROM %i WHERE student_id=%d AND role='primary' AND superseded=0 AND term_id IN (" . implode( ',', array_fill( 0, count( $terms ), '%d' ) ) . ')', array_merge( array( Schema::table( 'skill_evidence' ), (int) $student_id ), $terms ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fresh read of the learner's own evidence; one placeholder per term.
+		$by    = array();
+		foreach ( $rows as $row ) {
+			$by[ $owner[ (int) $row['term_id'] ] ][] = $row;
+		}
+		$now = time();
+		foreach ( $by as $skill => $evidence ) {
+			$state                       = Engine::evaluate( Combined::merge( $evidence ), $now );
+			$pooled[ $skill ]['level']      = $state['level'];
+			$pooled[ $skill ]['struggling'] = ! empty( $state['struggling'] ) && Levels::is_developing( $state['level'] );
+			$pooled[ $skill ]['last']       = $state['last_evidence_at'] ? (int) strtotime( $state['last_evidence_at'] . ' UTC' ) : $pooled[ $skill ]['last'];
+		}
+		return $pooled;
+	}
+
+	/**
+	 * The learner's school grade from their profile, or 0.
+	 *
+	 * @param int $student_id Learner.
+	 * @return int 1 to 12, or 0 when unknown.
+	 */
+	private static function grade( $student_id ) {
+		$grade = (string) get_user_meta( (int) $student_id, LearnerProfile::META_GRADE, true );
+		return ctype_digit( $grade ) && (int) $grade >= 1 && (int) $grade <= 12 ? (int) $grade : 0;
 	}
 
 	/** Forget results computed earlier in this request (after evidence changes, and in tests). */
@@ -383,6 +458,8 @@ final class Guidance {
 			'credit'        => 0.0,
 			'covered_by'    => array(),
 			'reason'        => '',
+			'minutes'       => (int) ( $step['minutes'] ?? GuidanceModel::STEP_MINUTES[ $step['type'] ] ?? 5 ),
+			'also_reviews'  => array_values( array_filter( array_map( array( __CLASS__, 'skill' ), (array) ( $step['reviews'] ?? array() ) ) ) ),
 		);
 		if ( 'help' === $step['type'] ) {
 			$item['message'] = __( 'Recent answers on this skill had errors. Revisiting the lesson or a prerequisite may help.', 'ohmylms' );
@@ -393,6 +470,9 @@ final class Guidance {
 					$item['prerequisites'][] = $weak + array( 'practice_id' => self::practice_target( $prerequisite, $pooled[ $prerequisite ]['terms'] ?? array(), $pool ) );
 				}
 			}
+		} elseif ( 'continue' === $step['type'] ) {
+			$item['message'] = __( 'You have started this skill. A little more practice takes it to proficient.', 'ohmylms' );
+			$item['lessons'] = self::lessons( array_merge( array( $step['skill'] ), $members ) );
 		} elseif ( 'review' === $step['type'] ) {
 			$item['message']    = __( 'Time for a short review to keep this skill fresh.', 'ohmylms' );
 			$item['credit']     = $step['credit'];

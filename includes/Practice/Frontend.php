@@ -268,15 +268,24 @@ final class Frontend {
 			<?php if ( $guidance['next_steps'] ) { ?>
 				<section class="ohmylms-guidance-card ohmylms-guidance-next" aria-labelledby="ohmylms-guidance-next-title">
 					<h3 id="ohmylms-guidance-next-title"><?php esc_html_e( 'Suggested next steps', 'ohmylms' ); ?></h3>
+					<?php if ( ! empty( $guidance['session_minutes'] ) ) { ?>
+						<p class="ohmylms-guidance-session">
+							<?php
+							/* translators: %d: minutes. */
+							echo esc_html( sprintf( __( 'One sitting of about %d minutes.', 'ohmylms' ), (int) $guidance['session_minutes'] ) );
+							?>
+						</p>
+					<?php } ?>
 					<ul class="ohmylms-recommendations">
 						<?php foreach ( $guidance['next_steps'] as $item ) { ?>
 							<li class="ohmylms-recommendation ohmylms-recommendation-<?php echo esc_attr( $item['type'] ); ?>">
 								<span class="ohmylms-recommendation-kind">
 									<?php
 									$kinds = array(
-										'help'   => __( 'Needs help', 'ohmylms' ),
-										'review' => __( 'Review', 'ohmylms' ),
-										'ready'  => __( 'Ready to learn', 'ohmylms' ),
+										'help'     => __( 'Needs help', 'ohmylms' ),
+										'review'   => __( 'Review', 'ohmylms' ),
+										'continue' => __( 'Keep going', 'ohmylms' ),
+										'ready'    => __( 'Ready to learn', 'ohmylms' ),
 									);
 									echo esc_html( $kinds[ $item['type'] ] ?? '' );
 									?>
@@ -295,6 +304,14 @@ final class Frontend {
 										<?php
 										/* translators: %s: skill names. */
 										echo esc_html( sprintf( __( 'Builds on %s.', 'ohmylms' ), $names( $item['prerequisites'] ) ) );
+										?>
+									</p>
+								<?php } ?>
+								<?php if ( ! empty( $item['also_reviews'] ) ) { ?>
+									<p class="ohmylms-recommendation-note">
+										<?php
+										/* translators: %s: skill names. */
+										echo esc_html( sprintf( __( 'Also reviews %s, so no separate review is needed.', 'ohmylms' ), $names( $item['also_reviews'] ) ) );
 										?>
 									</p>
 								<?php } ?>

@@ -11,6 +11,7 @@ import { loadGuidance, loadPlacement } from './api.mjs';
 const STEP_LABELS = {
 	help: __( 'Needs help', 'ohmylms' ),
 	review: __( 'Review', 'ohmylms' ),
+	continue: __( 'Keep going', 'ohmylms' ),
 	ready: __( 'Ready to learn', 'ohmylms' ),
 };
 
@@ -68,6 +69,15 @@ export function LearnerGuidance( { studentId, courseId } ) {
 			{ guidance.next_steps.length > 0 && (
 				<Fragment>
 					<h3>{ __( 'Next steps', 'ohmylms' ) }</h3>
+					{ guidance.session_minutes > 0 && (
+						<p>
+							{ sprintf(
+								/* translators: %d: minutes. */
+								__( 'One sitting of about %d minutes.', 'ohmylms' ),
+								guidance.session_minutes
+							) }
+						</p>
+					) }
 					<ul>
 						{ guidance.next_steps.map( ( step, index ) => (
 							<li key={ index }>
@@ -88,6 +98,14 @@ export function LearnerGuidance( { studentId, courseId } ) {
 										),
 										Math.round( step.credit * 100 ),
 										step.covered_by
+											.map( ( item ) => item.name )
+											.join( ', ' )
+									) }` }
+								{ step.also_reviews?.length > 0 &&
+									` · ${ sprintf(
+										/* translators: %s: skill names. */
+										__( 'also reviews %s', 'ohmylms' ),
+										step.also_reviews
 											.map( ( item ) => item.name )
 											.join( ', ' )
 									) }` }

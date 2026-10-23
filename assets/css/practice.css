@@ -111,6 +111,7 @@
 	overflow-x: auto;
 }
 
+.ohmylms-guidance-session { margin: -4px 0 8px; color: #52525b; font-size: 13px; }
 .ohmylms-guidance {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -175,6 +176,8 @@
 .ohmylms-recommendation-review { border-left-color: #2563eb; }
 
 .ohmylms-recommendation-ready { border-left-color: #16a34a; }
+
+.ohmylms-recommendation-continue { border-left-color: #7c3aed; }
 
 .ohmylms-recommendation-kind {
 	color: var(--ohmylms-body-text-color, #52525b);

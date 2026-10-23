@@ -20,9 +20,13 @@ defined( 'ABSPATH' ) || exit;
  *  - areas: strength per domain, from the levels of the skills started in it;
  *  - reviews: proficient skills whose review is due, minus the credit earned by later work on skills
  *    that include them ("encompasses" links, weights multiplied along a chain);
- *  - ready: skills not started whose prerequisites are all proficient or mastered;
+ *  - ready: skills not started whose prerequisites are all proficient or mastered, plus, for a
+ *    learner whose grade is known, the skills of that grade that need nothing first (so a new learner
+ *    who skipped the placement test still has somewhere to start);
  *  - readiness: per syllabus, how much of its objectives the learner already has;
- *  - next steps: help with struggling skills, due reviews, then skills ready to learn.
+ *  - next steps: help with struggling skills, due reviews, skills to keep going with, then skills ready
+ *    to learn (none while three skills are already in progress);
+ *  - session: the next steps that fit one sitting of about fifteen minutes.
  */
 final class GuidanceModel {
 
@@ -47,6 +51,22 @@ final class GuidanceModel {
 
 	/** Credit below this is ignored, so tiny weights never show as "covered". */
 	const MIN_CREDIT = 0.05;
+
+	/** Skills in progress (started, not yet proficient) before no new skills are suggested. */
+	const WIP_LIMIT = 3;
+
+	/** Rough minutes one step of each kind takes, for sizing a session. */
+	const STEP_MINUTES = array(
+		'help'     => 5,
+		'review'   => 3,
+		'continue' => 5,
+		'ready'    => 5,
+	);
+
+	/** A session: about this many minutes, with this many steps at least and at most. */
+	const SESSION_MINUTES = 15;
+	const SESSION_MIN     = 3;
+	const SESSION_MAX     = 5;
 
 	/**
 	 * Pool states onto shared skills.
@@ -221,17 +241,23 @@ final class GuidanceModel {
 	 * @param array[]          $areas     Areas, so weaker domains come first among skills of the same grade.
 	 * @param int[]            $known     Skills a placement test placed as known.
 	 * @param int[]            $preferred Skills a placement test said to start with.
-	 * @return array[] Each: skill, prerequisites, placement (bool), ordered placement first, then by grade (earliest first), weaker area, then ID.
+	 * @param int              $grade     The learner's grade (0 when unknown): skills of that grade that need nothing first are ready too.
+	 * @param array<int,int[]> $clears    Skill => due reviews that practising it would also cover.
+	 * @return array[] Each: skill, prerequisites, placement (bool), reviews (due reviews it also covers), ordered placement first, then by grade (earliest first), skills that also cover reviews, weaker area, then ID.
 	 */
-	public static function ready( array $pooled, array $info, array $areas = array(), array $known = array(), array $preferred = array() ) {
+	public static function ready( array $pooled, array $info, array $areas = array(), array $known = array(), array $preferred = array(), $grade = 0, array $clears = array() ) {
 		$strength  = array_column( $areas, 'strength', 'domain' );
 		$known     = array_flip( array_map( 'intval', $known ) );
 		$preferred = array_flip( array_map( 'intval', $preferred ) );
+		$grade     = (int) $grade;
 		$result    = array();
 		foreach ( $info as $skill => $details ) {
 			$prerequisites = array_values( array_map( 'intval', $details['prerequisites'] ?? array() ) );
 			$placement     = isset( $preferred[ $skill ] );
-			if ( ( ! $prerequisites && ! $placement ) || isset( $pooled[ $skill ] ) || isset( $known[ $skill ] ) ) {
+			$from          = (int) ( $details['grade_from'] ?? 0 );
+			// A root skill of the learner's own grade is a place to start, with or without a placement test.
+			$at_grade = $grade && $from && $from <= $grade && $grade <= max( $from, (int) ( $details['grade_to'] ?? 0 ) );
+			if ( ( ! $prerequisites && ! $placement && ! $at_grade ) || isset( $pooled[ $skill ] ) || isset( $known[ $skill ] ) ) {
 				continue;
 			}
 			foreach ( $prerequisites as $prerequisite ) {
@@ -240,12 +266,13 @@ final class GuidanceModel {
 					continue 2;
 				}
 			}
-			$grade    = (int) ( $details['grade_from'] ?? 0 );
+			$also     = array_values( array_map( 'intval', $clears[ $skill ] ?? array() ) );
 			$result[] = array(
 				'skill'         => (int) $skill,
 				'prerequisites' => $prerequisites,
 				'placement'     => $placement,
-				'sort'          => array( $placement ? 0 : 1, $grade ? $grade : 99, $strength[ $details['domain'] ?? '' ] ?? 100, (int) $skill ),
+				'reviews'       => $also,
+				'sort'          => array( $placement ? 0 : 1, $from ? $from : 99, -count( $also ), $strength[ $details['domain'] ?? '' ] ?? 100, (int) $skill ),
 			);
 		}
 		usort(
@@ -304,13 +331,16 @@ final class GuidanceModel {
 	}
 
 	/**
-	 * Next steps, most useful first: help, due reviews (longest overdue first), then ready skills.
+	 * Next steps, most useful first: help, due reviews (longest overdue first), skills to keep going
+	 * with (started, not struggling, not yet proficient; most recently worked first), then ready
+	 * skills. A learner with WIP_LIMIT skills in progress is not offered new ones: finishing what was
+	 * started comes first.
 	 *
 	 * @param array<int,array> $pooled  Pooled skills.
 	 * @param array<int,array> $reviews Review states.
 	 * @param array[]          $ready   Ready skills, already ordered.
 	 * @param int              $limit   How many.
-	 * @return array[] Each: type (help, review or ready), skill, and for reviews credit and covered_by; for ready, prerequisites and reason (placement when a placement test suggested it).
+	 * @return array[] Each: type (help, review, continue or ready), skill, minutes, and for reviews credit and covered_by; for ready, prerequisites, reviews (due reviews it also covers) and reason (placement when a placement test suggested it).
 	 */
 	public static function next_steps( array $pooled, array $reviews, array $ready, $limit = 6 ) {
 		$help = array();
@@ -347,6 +377,27 @@ final class GuidanceModel {
 				return $left['due'] <=> $right['due'];
 			}
 		);
+		$continue    = array();
+		$in_progress = 0;
+		foreach ( $pooled as $skill => $entry ) {
+			if ( ! Levels::is_developing( $entry['level'] ) ) {
+				continue;
+			}
+			++$in_progress;
+			if ( ! $entry['struggling'] ) {
+				$continue[] = array(
+					'type'  => 'continue',
+					'skill' => (int) $skill,
+					'last'  => (int) $entry['last'],
+				);
+			}
+		}
+		usort(
+			$continue,
+			static function ( $left, $right ) {
+				return array( $right['last'], $left['skill'] ) <=> array( $left['last'], $right['skill'] );
+			}
+		);
 		$items = array();
 		foreach ( $help as $item ) {
 			unset( $item['last'] );
@@ -356,15 +407,73 @@ final class GuidanceModel {
 			unset( $item['due'] );
 			$items[] = $item;
 		}
-		foreach ( $ready as $item ) {
-			$items[] = array(
-				'type'          => 'ready',
-				'skill'         => (int) $item['skill'],
-				'prerequisites' => $item['prerequisites'],
-				'reason'        => empty( $item['placement'] ) ? '' : 'placement',
-			);
+		foreach ( $continue as $item ) {
+			unset( $item['last'] );
+			$items[] = $item;
 		}
+		if ( $in_progress < self::WIP_LIMIT ) {
+			foreach ( $ready as $item ) {
+				$items[] = array(
+					'type'          => 'ready',
+					'skill'         => (int) $item['skill'],
+					'prerequisites' => $item['prerequisites'],
+					'reviews'       => array_values( (array) ( $item['reviews'] ?? array() ) ),
+					'reason'        => empty( $item['placement'] ) ? '' : 'placement',
+				);
+			}
+		}
+		foreach ( $items as &$item ) {
+			$item['minutes'] = self::STEP_MINUTES[ $item['type'] ];
+		}
+		unset( $item );
 		return array_slice( $items, 0, max( 0, (int) $limit ) );
+	}
+
+	/**
+	 * The next steps that fit one sitting: steps in order while they fit in SESSION_MINUTES, never
+	 * fewer than SESSION_MIN (when there are that many) nor more than SESSION_MAX.
+	 *
+	 * @param array[] $steps   From next_steps().
+	 * @param int     $minutes Minutes available.
+	 * @return array[] The session's steps.
+	 */
+	public static function session( array $steps, $minutes = self::SESSION_MINUTES ) {
+		$result = array();
+		$used   = 0;
+		foreach ( $steps as $step ) {
+			$cost = (int) ( $step['minutes'] ?? self::STEP_MINUTES[ $step['type'] ] ?? 5 );
+			if ( count( $result ) >= self::SESSION_MAX || ( count( $result ) >= self::SESSION_MIN && $used + $cost > $minutes ) ) {
+				break;
+			}
+			$result[] = $step;
+			$used    += $cost;
+		}
+		return $result;
+	}
+
+	/**
+	 * Due reviews that practising each skill would also cover: skill => the due skills it includes,
+	 * directly or along a chain.
+	 *
+	 * @param array<int,array>            $reviews     Review states.
+	 * @param array<int,array<int,float>> $encompasses Skill => included skill => weight.
+	 * @return array<int,int[]>
+	 */
+	public static function clears( array $reviews, array $encompasses ) {
+		$due = array();
+		foreach ( $reviews as $skill => $review ) {
+			if ( 'due' === $review['status'] ) {
+				$due[ (int) $skill ] = true;
+			}
+		}
+		$result = array();
+		foreach ( self::reach( $encompasses ) as $skill => $inside ) {
+			$covered = array_values( array_map( 'intval', array_keys( array_intersect_key( $inside, $due ) ) ) );
+			if ( $covered ) {
+				$result[ (int) $skill ] = $covered;
+			}
+		}
+		return $result;
 	}
 
 	/**

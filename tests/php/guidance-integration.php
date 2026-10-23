@@ -88,12 +88,15 @@ try {
 	ok( 70 === $areas['algebra']['strength'] && 'steady' === $areas['algebra']['band'] && 3 === $areas['algebra']['started'] && 8 === $areas['algebra']['grade'] && 'Grade 8' === $areas['algebra']['grade_label'] && 'Algebra' === $areas['algebra']['label'], 'algebra pools the objective onto its shared skill' );
 	ok( 20 === $areas['geometry']['strength'] && 'building' === $areas['geometry']['band'] && 80 === $areas['number']['strength'], 'geometry and number strengths' );
 
-	// Next steps: help, the review nothing covers, then skills ready to learn.
+	// Next steps, one sitting of about fifteen minutes: help, the review nothing covers, then the
+	// started skill to keep going with. New skills wait for the next sitting but are listed as ready.
 	$steps = $guidance['next_steps'];
-	ok( array( 'help', 'review', 'ready' ) === array_column( $steps, 'type' ), 'next step order: ' . wp_json_encode( array_column( $steps, 'type' ) ) );
-	ok( $triangle === $steps[0]['skill']['id'] && $integers === $steps[1]['skill']['id'] && $systems === $steps[2]['skill']['id'], 'the struggling skill, the overdue skill and the ready skill' );
-	ok( array( $linear ) === array_column( $steps[2]['prerequisites'], 'id' ) && '' !== $steps[2]['message'], 'a ready skill names what it builds on' );
-	ok( ! in_array( $pythag, array_column( array_column( $steps, 'skill' ), 'id' ), true ), 'a skill whose prerequisite is still developing is not ready' );
+	ok( array( 'help', 'review', 'continue' ) === array_column( $steps, 'type' ), 'next step order: ' . wp_json_encode( array_column( $steps, 'type' ) ) );
+	ok( $triangle === $steps[0]['skill']['id'] && $integers === $steps[1]['skill']['id'] && $quadratic === $steps[2]['skill']['id'], 'the struggling skill, the overdue skill and the started skill' );
+	ok( 13 === $guidance['session_minutes'] && 5 === $steps[0]['minutes'] && 3 === $steps[1]['minutes'] && '' !== $steps[2]['message'], 'the session adds up its minutes: ' . $guidance['session_minutes'] );
+	$ready = $guidance['ready'];
+	ok( $systems === $ready[0]['skill']['id'] && array( $linear ) === array_column( $ready[0]['prerequisites'], 'id' ) && '' !== $ready[0]['message'], 'a ready skill names what it builds on: ' . wp_json_encode( $ready ) );
+	ok( ! in_array( $pythag, array_column( array_column( $ready, 'skill' ), 'id' ), true ), 'a skill whose prerequisite is still developing is not ready' );
 
 	// Reviews covered by later work.
 	ok( 1 === $guidance['reviews']['due'] && 1 === $guidance['reviews']['fresh'] && 1 === count( $guidance['reviews']['covered'] ), 'review counts: ' . wp_json_encode( $guidance['reviews'] ) );
@@ -125,21 +128,60 @@ try {
 	$phys = Snapshot::guidance( $learner, 10, $other_subject );
 	ok( array( 'Mathematics ' . $tag, $other_subject ) === $all['subjects'] && '' === $all['subject'] && in_array( 'mechanics', array_column( $all['areas'], 'domain' ), true ), 'all subjects together: ' . wp_json_encode( $all['subjects'] ) );
 	ok( $subject === $only['subject'] && ! in_array( 'mechanics', array_column( $only['areas'], 'domain' ), true ) && 1 === count( $only['readiness'] ), 'one subject leaves the others out' );
-	ok( array( 'mechanics' ) === array_column( $phys['areas'], 'domain' ) && array() === $phys['readiness'] && array() === $phys['next_steps'], 'the other subject has only its own skill and no syllabus' );
+	ok( array( 'mechanics' ) === array_column( $phys['areas'], 'domain' ) && array() === $phys['readiness'] && array( 'continue' ) === array_column( $phys['next_steps'], 'type' ) && (int) $force['id'] === $phys['next_steps'][0]['skill']['id'], 'the other subject has only its own skill, to keep going with, and no syllabus' );
 
 	// ---- A placement test feeds ready skills ----
 	$wpdb->insert( AssessmentSchema::table( 'practice_sessions' ), array( 'uuid' => wp_generate_uuid4(), 'student_id' => $learner, 'mode' => 'placement', 'term_id' => 0, 'policy' => wp_json_encode( array( 'placement' => array( 'subject' => $subject, 'grade' => 8, 'graph' => array(), 'askable' => array(), 'result' => array( 'known' => array( $triangle ), 'unknown' => array(), 'unsure' => array(), 'domains' => array(), 'start' => array( $integers ) ) ) ) ), 'status' => 'complete', 'item_limit' => 5, 'started_at' => current_time( 'mysql', true ), 'completed_at' => current_time( 'mysql', true ) ) );
 	$placement_session = (int) $wpdb->insert_id;
 	Guidance::flush();
 	$placed = Snapshot::guidance( $learner, 10, $subject );
-	$ready  = array_values( array_filter( $placed['next_steps'], static function ( $step ) { return 'ready' === $step['type']; } ) );
+	$ready  = $placed['ready'];
 	ok( in_array( $pythag, array_column( array_column( $ready, 'skill' ), 'id' ), true ), 'a prerequisite the placement found known makes its skill ready: ' . wp_json_encode( array_column( array_column( $ready, 'skill' ), 'id' ) ) );
 	$wpdb->delete( AssessmentSchema::table( 'practice_sessions' ), array( 'id' => $placement_session ) );
+
+	// ---- Cold start: a new grade 7 learner with no placement test starts at grade 7 ----
+	$newcomer = wp_create_user( 'guidance-new-' . $tag, wp_generate_password(), 'guidance-new-' . $tag . '@example.org' ); $users[] = $newcomer;
+	Guidance::flush();
+	ok( array() === Snapshot::guidance( $newcomer, 10, $subject )['next_steps'], 'without a grade or placement there is nowhere to start (as before)' );
+	update_user_meta( $newcomer, \OhMyLMS\Student\LearnerProfile::META_GRADE, '7' );
+	Guidance::flush();
+	$start = Snapshot::guidance( $newcomer, 10, $subject );
+	$ids   = array_column( array_column( $start['next_steps'], 'skill' ), 'id' );
+	ok( array( 'ready', 'ready' ) === array_column( $start['next_steps'], 'type' ) && in_array( $linear, $ids, true ) && in_array( $triangle, $ids, true ) && ! in_array( $integers, $ids, true ) && ! in_array( $quadratic, $ids, true ), 'grade 7 skills that need nothing first, not grade 6 or 9: ' . wp_json_encode( $ids ) );
+
+	// ---- Answers spread over two objectives of one shared skill are judged together ----
+	$second = Syllabus::create_skill( $syllabus, $group, array( 'name' => 'Linear equations again ' . $tag, 'code' => '9.9' ) );
+	$terms[] = (int) $second['term_id'];
+	SkillMappings::save( (int) $second['term_id'], $linear, 'equivalent' );
+	$pooler = wp_create_user( 'guidance-pool-' . $tag, wp_generate_password(), 'guidance-pool-' . $tag . '@example.org' ); $users[] = $pooler;
+	$event  = 9300000 + wp_rand( 1, 99999 ) * 10;
+	foreach ( array( array( $objectives[0], 'a' ), array( $objectives[0], 'b' ), array( (int) $second['term_id'], 'c' ) ) as $i => $answer ) {
+		++$event;
+		$wpdb->insert( AssessmentSchema::table( 'skill_evidence' ), array( 'grade_event_id' => $event, 'student_id' => $pooler, 'term_id' => $answer[0], 'part_id' => 'p1', 'role' => 'primary', 'awarded' => 1, 'available' => 1, 'independent' => 1, 'first_try' => 1, 'difficulty' => 'standard', 'family_id' => $answer[1], 'source_type' => 'practice', 'source_id' => $event, 'question_id' => $event, 'version_id' => 1, 'evidence_at' => gmdate( 'Y-m-d H:i:s', time() - 3600 + $i * 60 ), 'superseded' => 0 ) );
+	}
+	\OhMyLMS\Performance\Engine::recompute( $pooler, $objectives[0] );
+	\OhMyLMS\Performance\Engine::recompute( $pooler, (int) $second['term_id'] );
+	$alone = $wpdb->get_col( $wpdb->prepare( 'SELECT level FROM %i WHERE student_id=%d ORDER BY term_id', AssessmentSchema::table( 'student_skill_state' ), $pooler ) );
+	ok( ! in_array( 'proficient', $alone, true ), 'neither objective alone is proficient: ' . wp_json_encode( $alone ) );
+	Guidance::flush();
+	ok( 'proficient' === Guidance::levels( $pooler )[ $linear ], 'three correct answers from three families across the two objectives make the shared skill proficient' );
+
+	// ---- At most three skills in progress: no new skills beyond that ----
+	$busy = wp_create_user( 'guidance-busy-' . $tag, wp_generate_password(), 'guidance-busy-' . $tag . '@example.org' ); $users[] = $busy;
+	update_user_meta( $busy, \OhMyLMS\Student\LearnerProfile::META_GRADE, '7' );
+	foreach ( array( $expand, $pythag, $integers ) as $i => $term ) {
+		$wpdb->insert( AssessmentSchema::table( 'student_skill_state' ), array( 'student_id' => $busy, 'term_id' => $term, 'level' => 'familiar', 'policy' => 'evidence', 'evidence_count' => 2, 'last_evidence_at' => gmdate( 'Y-m-d H:i:s', time() - ( $i + 1 ) * 3600 ), 'updated_at' => current_time( 'mysql', true ) ) );
+	}
+	Guidance::flush();
+	$full = Snapshot::guidance( $busy, 10, $subject );
+	ok( array( 'continue', 'continue', 'continue' ) === array_column( $full['next_steps'], 'type' ) && array( $expand, $pythag, $integers ) === array_column( array_column( $full['next_steps'], 'skill' ), 'id' ), 'three skills in progress: keep going with them, most recent first, and nothing new: ' . wp_json_encode( array_column( $full['next_steps'], 'type' ) ) );
+	ok( 15 === $full['session_minutes'], 'three keep-going steps fill one fifteen-minute sitting' );
+	foreach ( array( $newcomer, $pooler, $busy ) as $id ) { $wpdb->delete( AssessmentSchema::table( 'skill_evidence' ), array( 'student_id' => $id ) ); }
 
 	// ---- REST and permissions ----
 	wp_set_current_user( $learner );
 	$own = guidance_get( $learner, array( 'limit' => 2 ) );
-	ok( 200 === $own->get_status() && 2 === count( $own->get_data()['next_steps'] ) && isset( $own->get_data()['areas'], $own->get_data()['readiness'], $own->get_data()['reviews'] ), 'a learner reads their own guidance: ' . wp_json_encode( $own->get_data() ) );
+	ok( 200 === $own->get_status() && 2 === count( $own->get_data()['next_steps'] ) && isset( $own->get_data()['ready'] ) && isset( $own->get_data()['areas'], $own->get_data()['readiness'], $own->get_data()['reviews'] ), 'a learner reads their own guidance: ' . wp_json_encode( $own->get_data() ) );
 	wp_set_current_user( $other );
 	ok( 403 === guidance_get( $learner )->get_status(), 'another learner cannot read it' );
 	wp_set_current_user( 0 );
