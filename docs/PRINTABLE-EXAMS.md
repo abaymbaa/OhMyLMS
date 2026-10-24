@@ -82,12 +82,13 @@ hotspot, labeling, drawing, match table, hot text and the game and poll activiti
 - Core blocks print as rendered, filtered HTML in document order. Blocks nested in layout containers print in order
   until phase 3 adds multi-column sections.
 - `assets/src/features/paper/print.jsx` (bundle `paper-print`) mounts the same `PaperQuestion` renderer, waits for
-  math, fonts and images, then enables **Print**. Math typesets here, unlike in the editor canvas.
+  math, fonts and images, then enables **Print**. Math typesets here, unlike in the editor canvas, across the
+  whole sheet: questions, paper blocks such as the formula sheet, and other content.
 - `@page` sets size and margins; page numbers use `@page` margin boxes (`counter(page)`/`counter(pages)`). The
   translated footer is escaped for the CSS string and for the style element.
 - Print buttons: **Print paper** and **Print answer key** in the editor's Printable paper panel (they save first,
   like Preview quiz) and on Content Hub → Exams (`print_urls` in the exam summary).
-- Not verified: the browser's print dialog and PDF output itself (pagination and the page footer as printed).
+- Checked by printing to PDF from the browser (Save as PDF): pagination, page footer and layout as printed.
 
 ## Phase 1 as built
 

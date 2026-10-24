@@ -256,7 +256,9 @@ function PrintedPaper( { data } ) {
  */
 async function settled( root ) {
 	if ( mathEnabled() ) {
-		await loadMath().catch( () => {} );
+		// Typeset the whole sheet, so paper blocks and other content get math as questions do.
+		const runtime = await loadMath().catch( () => null );
+		runtime?.mount( root );
 	}
 	await document.fonts?.ready;
 	await Promise.all(
@@ -281,6 +283,9 @@ const source = document.getElementById( 'ohmylms-print-data' );
 const root = document.getElementById( 'ohmylms-print-root' );
 if ( source && root ) {
 	const data = JSON.parse( source.textContent );
+	// The whole sheet is exam content: LaTeX delimiters apply everywhere on it, not only in
+	// questions. Prices such as "$5 and $10" stay text under the delimiter rules.
+	root.setAttribute( 'data-ohmylms-latex', '' );
 	createRoot( root ).render( <PrintedPaper data={ data } /> );
 	const button = document.querySelector( '.ohmylms-print-button' );
 	const status = document.querySelector( '.ohmylms-print-status' );
