@@ -61,7 +61,14 @@ mcp_addon_check(count(array_unique(array_keys(Server::tools()))) === $tool_count
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/get-course-program']['meta']['annotations']['readonly'], 'Program reads are read-only.');
 mcp_addon_check(!$GLOBALS['mcp_abilities']['ohmylms/save-course-program']['meta']['annotations']['readonly'], 'Program writes are writes.');
 mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['meta']['annotations']['destructive'], 'Unit deletion is marked destructive.');
-mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['required'] === ['id', 'chapter_id', 'confirm'] && $GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['additionalProperties'] === false, 'Unit deletion requires an explicit confirm and a closed schema.');
+mcp_addon_check($GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['required'] === ['id', 'chapter_id', 'confirm', 'revision'] && $GLOBALS['mcp_abilities']['ohmylms/delete-course-unit']['input_schema']['additionalProperties'] === false, 'Unit deletion requires an explicit confirm and a closed schema.');
+// Writes to the course program carry the revision read first, so a stale outline is refused; reads and
+// course links (outside the program routes) do not.
+foreach (\OhMyLMS\MCP\CourseStructureTools::definitions() as $mcp_tool => $mcp_definition) {
+    $mcp_schema = $GLOBALS['mcp_abilities']['ohmylms/' . str_replace('_', '-', $mcp_tool)]['input_schema'];
+    $mcp_write  = 'GET' !== $mcp_definition['method'] && 0 === strpos($mcp_definition['route'], \OhMyLMS\MCP\CourseStructureTools::PREFIX . '/');
+    mcp_addon_check($mcp_write === in_array('revision', $mcp_schema['required'], true) && $mcp_write === isset($mcp_schema['properties']['revision']), "$mcp_tool requires the revision only when it writes to the program.");
+}
 $permission = $GLOBALS['mcp_abilities']['ohmylms/list-courses']['permission_callback'];
 mcp_addon_check($permission(), 'Enabled administrator can use an ability.');
 $GLOBALS['mcp_integrations']['mcp']['is_enable'] = 0;
