@@ -802,6 +802,17 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
+.ohmylms-print-back {
+	color: #2271b1;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.ohmylms-print-back:hover,
+.ohmylms-print-back:focus {
+	text-decoration: underline;
+}
+
 .ohmylms-print-toolbar-title {
 	flex: 1;
 	min-width: 0;

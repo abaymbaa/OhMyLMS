@@ -425,6 +425,7 @@ final class PrintPaper {
 </head>
 <body class="ohmylms-print-page is-<?php echo esc_attr( $data['variant'] ); ?><?php echo 'serif' === $paper['font'] ? ' is-serif' : ''; ?>">
 <div class="ohmylms-print-toolbar" role="toolbar" aria-label="<?php esc_attr_e( 'Print', 'ohmylms' ); ?>">
+	<a class="ohmylms-print-back" href="<?php echo esc_url( (string) get_edit_post_link( $id, 'raw' ) ); ?>"><?php esc_html_e( '← Back to the exam', 'ohmylms' ); ?></a>
 	<span class="ohmylms-print-toolbar-title"><?php echo esc_html( $title ); ?></span>
 	<span class="ohmylms-print-status" role="status"><?php esc_html_e( 'Preparing the paper…', 'ohmylms' ); ?></span>
 	<button type="button" class="ohmylms-print-button" disabled><?php esc_html_e( 'Print', 'ohmylms' ); ?></button>
