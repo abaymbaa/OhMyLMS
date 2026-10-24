@@ -335,7 +335,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 					onClick={ () => start( 'placement' ) }
 				>
 					{ __(
-						'Place shared skills in domains and grades',
+						'Place shared skills in domains and levels',
 						'ohmylms'
 					) }
 				</Button>
@@ -351,7 +351,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 			</div>
 			<p className="ohmylms-ai-help">
 				{ __(
-					'The AI places each objective in a domain and grade band, then suggests which shared skills it maps to, or proposes a new shared skill. Nothing changes until you accept a suggestion.',
+					'The AI places each objective in a domain and level band, then suggests which shared skills it maps to, or proposes a new shared skill. Nothing changes until you accept a suggestion.',
 					'ohmylms'
 				) }
 			</p>
@@ -566,7 +566,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 														'ohmylms'
 													),
 													placement: __(
-														'Domain and grades',
+														'Domain and levels',
 														'ohmylms'
 													),
 													link:

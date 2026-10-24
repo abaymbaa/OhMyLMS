@@ -26,7 +26,7 @@ final class Schema {
 	// 7: course_links holds advisory course-to-course links (sub-courses, prerequisites, "get ready for").
 	// 8: mappings record where they came from (source, confidence); AI analysis runs and their suggestions await review.
 	// 9: skill_edges holds the provenance of links between shared skills (prerequisites) and the weighted "encompasses" links.
-	const VERSION = '9';
+	const VERSION = '10';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
 	/**
@@ -63,7 +63,7 @@ final class Schema {
 			// the other, by a weight from 0 to 1. Both are read by the guidance engine.
 			'skill_edges'           => "skill_id bigint unsigned NOT NULL, other_id bigint unsigned NOT NULL, type varchar(20) NOT NULL, weight decimal(4,3) NOT NULL DEFAULT 1, source varchar(20) NOT NULL DEFAULT 'manual', confidence decimal(4,3) NULL, note text NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, UNIQUE KEY edge (skill_id,other_id,type), KEY other (other_id,type)",
 			// AI analysis of a syllabus or of shared skills, run in slices; see Curriculum\AiAnalysis.
-			'ai_analysis_runs'      => "uuid char(36) NOT NULL, kind varchar(20) NOT NULL, syllabus_id bigint unsigned NOT NULL DEFAULT 0, subject varchar(100) NOT NULL DEFAULT '', status varchar(20) NOT NULL DEFAULT 'queued', total int unsigned NOT NULL DEFAULT 0, processed int unsigned NOT NULL DEFAULT 0, suggested int unsigned NOT NULL DEFAULT 0, failures int unsigned NOT NULL DEFAULT 0, model varchar(100) NOT NULL DEFAULT '', error text NULL, queue longtext NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY status (status,id)",
+			'ai_analysis_runs'      => "uuid char(36) NOT NULL, kind varchar(20) NOT NULL, syllabus_id bigint unsigned NOT NULL DEFAULT 0, subject varchar(100) NOT NULL DEFAULT '', status varchar(20) NOT NULL DEFAULT 'queued', total int unsigned NOT NULL DEFAULT 0, processed int unsigned NOT NULL DEFAULT 0, suggested int unsigned NOT NULL DEFAULT 0, failures int unsigned NOT NULL DEFAULT 0, model varchar(100) NOT NULL DEFAULT '', prompt varchar(20) NOT NULL DEFAULT '', profile varchar(40) NOT NULL DEFAULT '', profile_rev varchar(20) NOT NULL DEFAULT '', error text NULL, queue longtext NULL, created_by bigint unsigned NOT NULL DEFAULT 0, created_at datetime NOT NULL, updated_at datetime NOT NULL, UNIQUE KEY uuid (uuid), KEY status (status,id)",
 			// One AI suggestion awaiting a person: a mapping, a new shared skill, a domain and grade band, or a prerequisite.
 			'ai_suggestions'        => "run_id bigint unsigned NOT NULL, kind varchar(20) NOT NULL, specific_term_id bigint unsigned NOT NULL DEFAULT 0, shared_term_id bigint unsigned NOT NULL DEFAULT 0, relation varchar(20) NOT NULL DEFAULT '', payload longtext NULL, confidence decimal(4,3) NOT NULL DEFAULT 0, reason text NULL, status varchar(20) NOT NULL DEFAULT 'pending', result_term_id bigint unsigned NOT NULL DEFAULT 0, reviewed_by bigint unsigned NOT NULL DEFAULT 0, reviewed_at datetime NULL, created_at datetime NOT NULL, KEY run (run_id,status), KEY objective_status (specific_term_id,status), KEY review (status,kind,confidence)",
 			// Course Bundles: named groupings of courses and curriculum items.

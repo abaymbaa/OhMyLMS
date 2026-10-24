@@ -13,6 +13,9 @@ function __( $text ) {
 function wp_json_encode( $data, $flags = 0 ) {
 	return json_encode( $data, $flags );
 }
+function wp_strip_all_tags( $text ) {
+	return trim( strip_tags( preg_replace( '@<(script|style)[^>]*?>.*?</\1>@si', '', (string) $text ) ) );
+}
 require dirname( __DIR__, 2 ) . '/vendor/autoload.php';
 
 use OhMyLMS\Performance\ExamPlan;

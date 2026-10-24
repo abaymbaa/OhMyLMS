@@ -1,6 +1,6 @@
 # Plan: subject- and source-agnostic skills
 
-Status: phase 1 (subject profiles) is built; see [subject profiles](SUBJECT-PROFILES.md). Phases 2–4 are planned. Future courses will get their skills from an AI API, so the skill layer must not assume mathematics, school grades or one way of creating skills.
+Status: phases 1 (subject profiles) and 2 (prompts from profiles) are built; see [subject profiles](SUBJECT-PROFILES.md). Phases 3–4 are planned. Future courses will get their skills from an AI API, so the skill layer must not assume mathematics, school grades or one way of creating skills.
 
 ## Where the code assumes too much today
 

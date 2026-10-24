@@ -4,7 +4,19 @@ Skills are no longer tied to mathematics. Each subject has a **profile** that de
 
 - **Domains:** the areas the subject is divided into, such as Algebra, or Reading and Writing.
 - **Levels:** an ordered scale, lowest first, such as Grade 1 … Grade 12, CEFR A1 … C2, or an exam's bands.
-- **AI context:** the analyst role, a subject description and level hints, used when AI analysis places and proposes skills. Phase 2 of the [skill-agnostic plan](SKILL-AGNOSTIC-PLAN.md) builds the prompts from these fields.
+- **AI context:** the analyst role, a subject description and level hints, used when AI analysis places and proposes skills.
+
+## AI prompts
+
+All three AI analysis prompts are built from the subject's profile: placing objectives, matching them to shared skills, and suggesting prerequisites and encompassed skills.
+
+- **Analyst:** the profile's role and subject context replace the former fixed "mathematics curriculum analyst" wording.
+- **Levels:** the level scale is spelled out with every number and its name, for example "1 = A1; … 6 = C2". Replies are clamped to that scale.
+- **Hints:** level hints are added, for example how IGCSE or IELTS bands map onto levels. The Mathematics profile holds the exam hints that used to be in the prompt.
+- **Domains:** the allowed domain ids are listed with their names where these differ. A profile without domains asks for an empty domain.
+- **Fixed wording:** fences around the data, strictness and the JSON reply shapes are unchanged.
+
+Each run records the prompt template version (`prompt`, now `2`), the profile key (`profile`) and a fingerprint of the profile fields used (`profile_rev`). These are the additive columns of `ohmylms_ai_analysis_runs` (curriculum schema 10), returned with every run, so a suggestion can be traced to the prompt and profile that produced it. A run reads the subject's current profile at each step; the fingerprint is the one it started with.
 
 Open **Content Hub → Curriculum → Subject profiles** (`#/content-hub/curriculum/subjects`).
 

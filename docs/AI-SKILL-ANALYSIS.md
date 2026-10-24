@@ -44,7 +44,7 @@ Replies that name anything outside an objective's candidates, an unknown relatio
 that fails is retried up to three times, then skipped (counted as failures) so the run can finish. The panel
 advances the run while it is open; WP-Cron finishes it otherwise. A run can be stopped.
 
-The analysis uses the shared AI connection (Settings → AI tools) with a longer reply budget than learner help.
+Prompts are worded from the subject's profile (role, context, level scale and hints, domains); see [subject profiles](SUBJECT-PROFILES.md#ai-prompts). The analysis uses the shared AI connection (Settings → AI tools) with a longer reply budget than learner help.
 Only curriculum text is sent: no learner data.
 
 ## Review

@@ -7,6 +7,7 @@
 
 namespace OhMyLMS\Curriculum;
 
+use OhMyLMS\Skills\SubjectProfiles;
 use OhMyLMS\AI\Client;
 use OhMyLMS\AI\Settings as AiSettings;
 use OhMyLMS\Skills\Taxonomy;
@@ -108,7 +109,8 @@ final class AiAnalysis {
 			);
 			return Access::error( 'ohmylms_ai_analysis_empty', $empty[ $kind ] );
 		}
-		$now = current_time( 'mysql', true );
+		$now     = current_time( 'mysql', true );
+		$profile = SubjectProfiles::get( $subject );
 		$wpdb->insert(
 			self::runs_table(),
 			array(
@@ -119,6 +121,10 @@ final class AiAnalysis {
 				'status'      => 'queued',
 				'total'       => count( $queue ),
 				'model'       => (string) AiSettings::get()['model'],
+				// The prompt templates and subject profile the run starts with, so its suggestions can be traced.
+				'prompt'      => AiAnalysisModel::PROMPT_VERSION,
+				'profile'     => $profile['key'],
+				'profile_rev' => AiAnalysisModel::profile_revision( $profile ),
 				'queue'       => wp_json_encode(
 					array(
 						'ids'   => $queue,
@@ -261,6 +267,9 @@ final class AiAnalysis {
 			'failures'    => (int) $row['failures'],
 			'error'       => (string) $row['error'],
 			'model'       => $row['model'],
+			'prompt'      => (string) ( $row['prompt'] ?? '' ),
+			'profile'     => (string) ( $row['profile'] ?? '' ),
+			'profile_rev' => (string) ( $row['profile_rev'] ?? '' ),
 			'pending'     => $counts['pending'] ?? 0,
 			'accepted'    => $counts['accepted'] ?? 0,
 			'rejected'    => $counts['rejected'] ?? 0,
@@ -429,12 +438,14 @@ final class AiAnalysis {
 			'subject'  => $run['subject'],
 		);
 		$domains = Comparison::domains( $run['subject'] );
+		$scheme  = SubjectProfiles::get( $run['subject'] );
+		$max     = AiAnalysisModel::max_level( $scheme );
 		// 1. Place each objective and restate it in English.
-		$reply = self::ask( AiAnalysisModel::classify_prompt( $context, array_values( $by_id ), $domains ), 2500 );
+		$reply = self::ask( AiAnalysisModel::classify_prompt( $context, array_values( $by_id ), $domains, $scheme ), 2500 );
 		if ( is_wp_error( $reply ) ) {
 			return $reply;
 		}
-		foreach ( AiAnalysisModel::parse_classify( $reply, array_keys( $by_id ), $domains ) as $id => $placement ) {
+		foreach ( AiAnalysisModel::parse_classify( $reply, array_keys( $by_id ), $domains, $max ) as $id => $placement ) {
 			$by_id[ $id ] += $placement;
 			update_term_meta( $id, self::HINT_DOMAIN, $placement['domain'] );
 			update_term_meta( $id, self::HINT_FROM, $placement['grade_from'] );
@@ -458,7 +469,7 @@ final class AiAnalysis {
 			$by_id[ $id ]['candidates'] = $list;
 			$allowed[ $id ]             = array_column( $list, 'id' );
 		}
-		$reply = self::ask( AiAnalysisModel::match_prompt( $context, array_values( $by_id ) ), 4000 );
+		$reply = self::ask( AiAnalysisModel::match_prompt( $context, array_values( $by_id ), $scheme, $domains ), 4000 );
 		if ( is_wp_error( $reply ) ) {
 			return $reply;
 		}
@@ -471,7 +482,7 @@ final class AiAnalysis {
 		foreach ( $catalog as $skill_id => $skill ) {
 			$shared_names[ AiAnalysisModel::name_key( $skill['name'] ) ] = (int) $skill_id;
 		}
-		foreach ( AiAnalysisModel::parse_match( $reply, $allowed, $domains ) as $id => $answer ) {
+		foreach ( AiAnalysisModel::parse_match( $reply, $allowed, $domains, $max ) as $id => $answer ) {
 			foreach ( $answer['matches'] as $match ) {
 				$made += self::suggest_mapping( (int) $run['id'], $id, $match['skill'], $match['relation'], $match['confidence'], $match['reason'] );
 			}
@@ -527,6 +538,7 @@ final class AiAnalysis {
 			return 0;
 		}
 		$domains = Comparison::domains( $run['subject'] );
+		$profile = SubjectProfiles::get( $run['subject'] );
 		$reply   = self::ask(
 			AiAnalysisModel::classify_prompt(
 				array(
@@ -534,7 +546,8 @@ final class AiAnalysis {
 					'subject'  => $run['subject'],
 				),
 				$items,
-				$domains
+				$domains,
+				$profile
 			),
 			3000
 		);
@@ -542,7 +555,7 @@ final class AiAnalysis {
 			return $reply;
 		}
 		$made = 0;
-		foreach ( AiAnalysisModel::parse_classify( $reply, array_column( $items, 'id' ), $domains ) as $id => $placement ) {
+		foreach ( AiAnalysisModel::parse_classify( $reply, array_column( $items, 'id' ), $domains, AiAnalysisModel::max_level( $profile ) ) as $id => $placement ) {
 			if ( '' === $placement['domain'] && ! $placement['grade_from'] ) {
 				continue;
 			}
@@ -588,7 +601,7 @@ final class AiAnalysis {
 		if ( ! $items ) {
 			return 0;
 		}
-		$reply = self::ask( AiAnalysisModel::links_prompt( array( 'subject' => $run['subject'] ), $items ), 4500 );
+		$reply = self::ask( AiAnalysisModel::links_prompt( array( 'subject' => $run['subject'] ), $items, SubjectProfiles::get( $run['subject'] ) ), 4500 );
 		if ( is_wp_error( $reply ) ) {
 			return $reply;
 		}
