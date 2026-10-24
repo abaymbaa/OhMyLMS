@@ -1,6 +1,26 @@
 # Printable exams: design
 
-Status: **phase 1 built** (A4 canvas, core renderers, paper settings); phases 2 to 5 not built. Written October 24, 2026.
+Status: **phases 1 and 2 built** (A4 canvas, core renderers, paper settings, print page); phases 3 to 5 not built.
+Written October 24, 2026.
+
+## Phase 2 as built
+
+- `OhMyLMS\Exams\PrintPaper` serves `?ohmylms_print=ID&variant=paper|key&_wpnonce=…` (add `&print=1` to open the
+  print dialog). It needs edit access to the exam and an exam-specific nonce, sends no-cache and noindex headers,
+  and prints only the plugin's paper and math styles, never the theme's.
+- Questions are what the exam delivers, as in Preview quiz: the pinned version, else the current content. The
+  student paper is built from `QuestionSnapshot::student_view()` and keeps only name, description, public settings
+  and options, so answers never reach the page. The answer key uses the full snapshot, and only for questions the
+  person may use in the bank. Both variants use the same template seed, so randomized numbers match.
+- Core blocks print as rendered, filtered HTML in document order. Blocks nested in layout containers print in order
+  until phase 3 adds multi-column sections.
+- `assets/src/features/paper/print.jsx` (bundle `paper-print`) mounts the same `PaperQuestion` renderer, waits for
+  math, fonts and images, then enables **Print**. Math typesets here, unlike in the editor canvas.
+- `@page` sets size and margins; page numbers use `@page` margin boxes (`counter(page)`/`counter(pages)`). The
+  translated footer is escaped for the CSS string and for the style element.
+- Print buttons: **Print paper** and **Print answer key** in the editor's Printable paper panel (they save first,
+  like Preview quiz) and on Content Hub → Exams (`print_urls` in the exam summary).
+- Not verified: the browser's print dialog and PDF output itself (pagination and the page footer as printed).
 
 ## Phase 1 as built
 

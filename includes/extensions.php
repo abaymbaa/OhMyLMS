@@ -32,6 +32,7 @@ add_action( 'init', array( 'OhMyLMS\\Extensions\\Bootstrap', 'init' ), 5 );
 \OhMyLMS\Admin\Commands::init();
 \OhMyLMS\ExamImport\Jobs::init();
 \OhMyLMS\Exams\Library::init();
+\OhMyLMS\Exams\PrintPaper::init();
 \OhMyLMS\QuestionBank\Organisation::init();
 \OhMyLMS\XApi\Bootstrap::init();
 \OhMyLMS\Assessment\MathLive::init();

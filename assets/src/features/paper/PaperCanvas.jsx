@@ -1,14 +1,16 @@
 /** @jsx createElement */
-import { createElement, useEffect, useRef } from '@wordpress/element';
-import { useDispatch, useSelect } from '@wordpress/data';
+import { createElement, useEffect, useRef, useState } from '@wordpress/element';
+import { select, useDispatch, useSelect } from '@wordpress/data';
 import {
 	Button,
+	Notice,
 	RangeControl,
 	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { PAPER_STORE } from './store';
+import { saveQuizForPreview } from '../learning/quizPreview.mjs';
 import {
 	paginate,
 	paperSettings,
@@ -382,6 +384,66 @@ export function PaperCanvas() {
 }
 
 /**
+ * Print the saved paper or its answer key. Unsaved changes are saved first, because the print
+ * page reads the saved exam; the tab opens at once so the browser does not block it.
+ *
+ * @return {Element} Print buttons.
+ */
+function PrintButtons() {
+	const urls = window.ohmylmsNativeLesson?.printUrls;
+	const { savePost } = useDispatch( 'core/editor' );
+	const [ error, setError ] = useState( '' );
+	if ( ! urls ) {
+		return null;
+	}
+	const open = async ( url ) => {
+		const tab = window.open( 'about:blank', '_blank' );
+		if ( tab ) {
+			tab.opener = null;
+		}
+		setError( '' );
+		try {
+			const ready = await saveQuizForPreview( {
+				editor: select( 'core/editor' ),
+				savePost,
+			} );
+			if ( ! ready ) {
+				throw new Error( 'paper-not-saved' );
+			}
+			const target = `${ url }&print=1`;
+			if ( tab ) {
+				tab.location.replace( target );
+			} else {
+				window.location.assign( target );
+			}
+		} catch {
+			tab?.close();
+			setError(
+				__(
+					'The exam could not be saved for printing. Complete any unfinished questions and try again.',
+					'ohmylms'
+				)
+			);
+		}
+	};
+	return (
+		<div className="ohmylms-paper-print-actions">
+			<Button variant="primary" onClick={ () => open( urls.paper ) }>
+				{ __( 'Print paper', 'ohmylms' ) }
+			</Button>
+			<Button variant="secondary" onClick={ () => open( urls.key ) }>
+				{ __( 'Print answer key', 'ohmylms' ) }
+			</Button>
+			{ error && (
+				<Notice status="error" onRemove={ () => setError( '' ) }>
+					{ error }
+				</Notice>
+			) }
+		</div>
+	);
+}
+
+/**
  * Document sidebar panel with the paper layout settings, saved with the exam.
  *
  * @return {Element} Settings controls.
@@ -415,6 +477,7 @@ export function PaperSettingsPanel() {
 		} );
 	return (
 		<>
+			<PrintButtons />
 			<ToggleControl
 				label={ __( 'Paper view', 'ohmylms' ) }
 				help={ __(

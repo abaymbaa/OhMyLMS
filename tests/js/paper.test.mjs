@@ -5,6 +5,7 @@ import {
 	paperQuestion,
 	paperSettings,
 	questionLabel,
+	questionLabels,
 	questionMarks,
 	sheetMetrics,
 } from '../../assets/src/features/paper/paperModel.mjs';
@@ -279,6 +280,32 @@ test( 'bracketed part labels from imported papers are not bracketed twice', () =
 	assert.deepEqual(
 		paper.parts.map( ( part ) => part.label ),
 		[ 'a', 'b' ]
+	);
+} );
+
+test( 'statements are not numbered and numbering continues after them', () => {
+	assert.deepEqual(
+		questionLabels(
+			[ 'single-choice', 'statement', 'long-text' ],
+			paperSettings( { numbering: 'q' } )
+		),
+		[ 'Q1', '', 'Q2' ]
+	);
+} );
+
+test( 'fill-in-the-blank answers become blanks on the student paper', () => {
+	const question = {
+		settings: { type: 'fill-in-the-blank', score: { value: 2 } },
+	};
+	const prompt = '<p>The capital of France is {Paris}.</p>';
+	const paper = paperQuestion( question, { prompt } );
+	assert.ok( ! paper.prompt.includes( 'Paris' ) );
+	assert.ok( paper.prompt.includes( '__________' ) );
+	assert.ok(
+		paperQuestion( question, {
+			prompt,
+			showAnswers: true,
+		} ).prompt.includes( 'Paris' )
 	);
 } );
 

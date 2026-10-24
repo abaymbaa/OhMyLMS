@@ -375,6 +375,10 @@ final class NativeLessonEditor {
 				'bankUrl'        => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
 				'chapterId'      => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
 				'profile'        => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\Profiles::editor( get_the_ID() ) : null,
+				'printUrls'      => 'ohmylms-quiz' === $screen->post_type ? array(
+					'paper' => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'paper' ),
+					'key'   => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'key' ),
+				) : null,
 			)
 		);
 	}

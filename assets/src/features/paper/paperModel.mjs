@@ -116,6 +116,20 @@ export function questionLabel( index, settings ) {
 	return settings.numbering === 'q' ? `Q${ index + 1 }` : String( index + 1 );
 }
 
+/**
+ * Printed labels for a sequence of question types; statements are not numbered.
+ *
+ * @param {string[]} types    Question types in document order.
+ * @param {Object}   settings Normalized paper settings.
+ * @return {string[]} Labels, empty for statements.
+ */
+export function questionLabels( types, settings ) {
+	let index = 0;
+	return types.map( ( type ) =>
+		type === 'statement' ? '' : questionLabel( index++, settings )
+	);
+}
+
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
 const accepted = ( values ) =>
@@ -175,7 +189,16 @@ export function paperQuestion(
 ) {
 	const type = question?.settings?.type || '';
 	const marks = questionMarks( question );
-	const model = { type, prompt, marks, layout: 'unsupported' };
+	const model = {
+		type,
+		// A fill-in-the-blank statement holds its answers in braces: print blanks instead.
+		prompt:
+			type === 'fill-in-the-blank' && ! showAnswers
+				? String( prompt ).replace( /\{[^{}<>]+\}/g, '__________' )
+				: prompt,
+		marks,
+		layout: 'unsupported',
+	};
 	if ( ! PAPER_TYPES.includes( type ) ) {
 		return model;
 	}

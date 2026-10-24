@@ -76,6 +76,13 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	text-align: center;
 }
 
+.ohmylms-paper-print-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
 /* Printed questions */
 
 .ohmylms-print-head {
@@ -137,7 +144,10 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	margin: 0;
 }
 
+/* Filled bubbles and ruled lines are backgrounds, which browsers skip when printing by default. */
 .ohmylms-print-bubble {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
 	flex: none;
 	box-sizing: border-box;
 	width: 0.95em;
@@ -183,6 +193,8 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 }
 
 .ohmylms-print-lines {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
 	height: calc(var(--ohmylms-paper-lines, 3) * 8mm);
 	margin: 0.4em 0 0 2.4em;
 	background:
@@ -230,13 +242,101 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	font-size: 12px;
 }
 
+/* Print page */
+
+.ohmylms-print-page {
+	margin: 0;
+	background: #dcdcde;
+	color: #1e1e1e;
+}
+
+.ohmylms-print-toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 8px 16px;
+	border-bottom: 1px solid #c3c4c7;
+	background: #fff;
+	font: 13px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.ohmylms-print-toolbar-title {
+	flex: 1;
+	min-width: 0;
+	font-weight: 600;
+}
+
+.ohmylms-print-status {
+	color: #50575e;
+}
+
+.ohmylms-print-button {
+	padding: 6px 16px;
+	border: 0;
+	border-radius: 2px;
+	background: #2271b1;
+	color: #fff;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ohmylms-print-button:disabled {
+	opacity: 0.6;
+	cursor: default;
+}
+
+.ohmylms-print-sheet {
+	box-sizing: border-box;
+	width: var(--ohmylms-paper-width);
+	max-width: 100%;
+	margin: 24px auto;
+	padding: var(--ohmylms-paper-margin);
+	background: #fff;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: var(--ohmylms-paper-font-size);
+	line-height: 1.45;
+}
+
+.ohmylms-print-page.is-serif .ohmylms-print-sheet {
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+.ohmylms-print-block + .ohmylms-print-block {
+	margin-top: 1.25em;
+}
+
+.ohmylms-print-key-banner {
+	margin: 0 0 1.25em;
+	padding: 0.3em 0.6em;
+	border: 1px solid #b32d2e;
+	color: #b32d2e;
+	font-weight: 700;
+	text-align: center;
+}
+
 @media print {
 
-	.ohmylms-print-note {
+	.ohmylms-print-note,
+	.ohmylms-print-toolbar {
 		display: none;
 	}
 
-	.ohmylms-print-question {
+	.ohmylms-print-page {
+		background: none;
+	}
+
+	.ohmylms-print-sheet {
+		width: auto;
+		max-width: none;
+		margin: 0;
+		padding: 0;
+	}
+
+	.ohmylms-print-question,
+	.ohmylms-print-block {
 		break-inside: avoid;
 	}
 }
