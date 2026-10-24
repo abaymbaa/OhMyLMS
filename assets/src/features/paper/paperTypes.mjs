@@ -11,6 +11,7 @@ import {
 } from '../question-editor/puzzleModel.mjs';
 import { markerIds } from '../question-editor/interactiveModel.mjs';
 import { dropdownAnswers } from '../question-editor/dropdownModel.mjs';
+import { VISUAL_TYPES, visualFigure } from './paperVisual.mjs';
 
 const LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const letter = ( index ) =>
@@ -472,6 +473,12 @@ export function typedPaper(
 			};
 		}
 		default:
-			return null;
+			return VISUAL_TYPES.includes( type )
+				? {
+						...model,
+						layout: 'visual',
+						figure: visualFigure( type, settings, answers ),
+					}
+				: null;
 	}
 }

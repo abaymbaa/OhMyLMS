@@ -316,11 +316,11 @@ test( 'fill-in-the-blank answers become blanks on the student paper', () => {
 
 test( 'types without a printed form are flagged as unsupported', () => {
 	const paper = paperQuestion(
-		{ settings: { type: 'set-clock', score: { value: 1 } } },
-		{ prompt: '<p>Show 3:15.</p>' }
+		{ settings: { type: 'draw', score: { value: 1 } } },
+		{ prompt: '<p>Draw a house.</p>' }
 	);
 	assert.equal( paper.layout, 'unsupported' );
-	assert.equal( paper.prompt, '<p>Show 3:15.</p>' );
+	assert.equal( paper.prompt, '<p>Draw a house.</p>' );
 } );
 
 test( 'pagination moves a block that does not fit to the next sheet', () => {

@@ -1,8 +1,20 @@
 # Printable exams: design
 
 Status: **phases 1 to 5 built** (A4 canvas, renderers for most types, paper settings, print page, paper blocks,
-versions and answer sheets). Not built: static figures for the visual types (number line, clock, chart and the
-like). Written October 24, 2026.
+versions and answer sheets) and figures for the visual types. Still printed as a statement with lines: graphing,
+hotspot, labeling, drawing, match table, hot text and the game and poll activities. Written October 24, 2026.
+
+## Visual question figures
+
+- `assets/src/features/paper/paperVisual.mjs` models number line, shade a model, count with blocks, set the clock,
+  make an amount, fill to a level, build a chart and build on a grid from the fields of the learner view
+  (`Visual::public_view()`, same defaults), so the editor and the student print page draw the same figure. The
+  server already sends those learner views without targets, so no server change was needed.
+- `PaperVisualViews.jsx` draws static SVGs: a ticked number line, bar, grid or circle parts, a clock face (with a
+  digital box when set), a measuring jug with its scale, chart axes (with the data table when the author shows it)
+  and a squared grid; count with blocks prints a place value table and make an amount a box per note or coin and a
+  total line. Answer keys mark the target point, shade the parts, draw the clock hands, fill the jug, draw the
+  bars, fill the place values and the fewest notes and coins, and state the grid shape's area and perimeter.
 
 ## Phase 5 as built
 

@@ -44,6 +44,14 @@ export const PAPER_TYPES = [
 	'expression',
 	'crossword',
 	'wordsearch',
+	'number-line',
+	'shade-model',
+	'count-blocks',
+	'set-clock',
+	'make-amount',
+	'fill-level',
+	'build-chart',
+	'grid-build',
 ];
 
 const MM_TO_PX = 96 / 25.4;

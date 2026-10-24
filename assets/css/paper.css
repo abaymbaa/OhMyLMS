@@ -695,6 +695,87 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	align-items: center;
 }
 
+/* Visual question figures */
+
+.ohmylms-print-visual {
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-figure {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+	display: block;
+	max-width: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+.ohmylms-print-figure.is-number-line,
+.ohmylms-print-figure.is-bar {
+	width: 150mm;
+}
+
+.ohmylms-print-figure.is-chart {
+	width: 120mm;
+}
+
+.ohmylms-print-figure.is-jug {
+	width: 48mm;
+}
+
+.ohmylms-print-figure.is-circle,
+.ohmylms-print-figure.is-clock {
+	width: 42mm;
+}
+
+.ohmylms-print-clock,
+.ohmylms-print-money {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.8em 1.6em;
+}
+
+.ohmylms-print-digital,
+.ohmylms-print-money > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35em;
+	margin: 0;
+}
+
+.ohmylms-print-digital .ohmylms-print-box,
+.ohmylms-print-money .ohmylms-print-box {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2.4em;
+	height: 1.9em;
+	border-color: #1e1e1e;
+	color: #b32d2e;
+	font-weight: 700;
+}
+
+.ohmylms-print-note-value {
+	padding: 0.15em 0.5em;
+	border: 1px solid currentcolor;
+	border-radius: 3px;
+	white-space: nowrap;
+}
+
+.ohmylms-print-visual .ohmylms-print-table {
+	width: auto;
+	min-width: 50%;
+	margin: 0 0 0.6em;
+}
+
+.ohmylms-print-table.is-places td {
+	height: 2.4em;
+	color: #b32d2e;
+	font-weight: 700;
+	text-align: center;
+}
+
 /* On the answer sheet, notes line up with the sheet rather than with question text. */
 .ohmylms-answer-sheet .ohmylms-print-instruction {
 	margin-left: 0;

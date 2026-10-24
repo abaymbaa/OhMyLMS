@@ -1,6 +1,7 @@
 /** @jsx createElement */
 import { createElement, RawHTML } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { VisualFigure } from './PaperVisualViews';
 
 /**
  * Printed bodies of the question types built in paperTypes.mjs. The statement and marks are
@@ -130,6 +131,8 @@ export function TypedBody( { paper } ) {
 			);
 		case 'blanks':
 			return null;
+		case 'visual':
+			return <VisualFigure figure={ paper.figure } />;
 		case 'dropdown':
 			return (
 				<>
@@ -381,4 +384,5 @@ export const TYPED_LAYOUTS = [
 	'tiles',
 	'crossword',
 	'wordsearch',
+	'visual',
 ];
