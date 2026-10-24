@@ -20,6 +20,10 @@ function __( $text, $domain = '' ) {
 function wp_json_encode( $value ) {
 	return json_encode( $value );
 }
+// Structured::public_parts() filters part prompts; these checks are about which fields are kept.
+function wp_kses_post( $html ) {
+	return $html;
+}
 class WP_Error {
 	public $code;
 	public function __construct( $code = '', $message = '', $data = '' ) {

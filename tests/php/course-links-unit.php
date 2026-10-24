@@ -82,7 +82,8 @@ $plain = CourseProgram::remap(['mode' => 'traditional', 'outcomes' => [], 'items
 check(!isset($plain['groups']), 'a program without groups gets none');
 
 // ---- Schema ----
-check(Schema::VERSION === '7', 'schema version is bumped for course_links');
+// course_links arrived in version 7; later features may bump the version further.
+check(version_compare(Schema::VERSION, '7', '>='), 'schema version includes course_links');
 $definitions = Schema::definitions();
 check(isset($definitions['course_links']), 'course_links is defined');
 foreach (['course_id bigint unsigned', 'related_course_id bigint unsigned', 'link_type varchar(20)', 'position int unsigned', 'created_by', 'created_at datetime', 'UNIQUE KEY course_link (course_id,related_course_id,link_type)', 'KEY related (related_course_id,link_type)'] as $part) {
