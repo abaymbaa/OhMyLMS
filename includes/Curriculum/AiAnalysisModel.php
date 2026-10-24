@@ -458,7 +458,7 @@ final class AiAnalysisModel {
 	 * @param array $profile Subject profile.
 	 * @return string
 	 */
-	private static function persona( array $profile ) {
+	public static function persona( array $profile ) {
 		$role = self::clip( $profile['ai']['role'] ?? '', 200 );
 		return trim( 'You are an expert ' . ( '' !== $role ? $role : 'curriculum analyst' ) . '. ' . self::background( $profile ) );
 	}
@@ -469,7 +469,7 @@ final class AiAnalysisModel {
 	 * @param array $profile Subject profile.
 	 * @return string
 	 */
-	private static function background( array $profile ) {
+	public static function background( array $profile ) {
 		$context = self::clip( $profile['ai']['context'] ?? '', 600 );
 		return '' !== $context ? rtrim( $context, '.' ) . '. ' : '';
 	}
@@ -495,7 +495,7 @@ final class AiAnalysisModel {
 	 * @param array $profile Subject profile.
 	 * @return string
 	 */
-	private static function scale( array $profile ) {
+	public static function scale( array $profile ) {
 		$levels = array_values( (array) ( $profile['levels'] ?? array() ) );
 		if ( ! $levels ) {
 			return 'Levels are numbered 1 to ' . self::DEFAULT_MAX_LEVEL . ', lowest first.';
@@ -513,7 +513,7 @@ final class AiAnalysisModel {
 	 * @param array $profile Subject profile.
 	 * @return string
 	 */
-	private static function hints( array $profile ) {
+	public static function hints( array $profile ) {
 		$hints = self::clip( $profile['ai']['level_hints'] ?? '', 1500 );
 		return '' !== $hints ? '. ' . rtrim( $hints, '.' ) . '.' : '.';
 	}
@@ -524,7 +524,7 @@ final class AiAnalysisModel {
 	 * @param array $domains Domain id => label.
 	 * @return string
 	 */
-	private static function domain_rule( array $domains ) {
+	public static function domain_rule( array $domains ) {
 		if ( ! $domains ) {
 			return 'This subject has no domains: give "domain":"".';
 		}
@@ -562,7 +562,7 @@ final class AiAnalysisModel {
 	 * @param int   $limit Characters.
 	 * @return string
 	 */
-	private static function clip( $text, $limit ) {
+	public static function clip( $text, $limit ) {
 		$text = trim( preg_replace( '/\s+/u', ' ', str_replace( array( '<', '>' ), array( '‹', '›' ), wp_strip_all_tags( (string) $text ) ) ) );
 		return mb_strlen( $text ) > $limit ? mb_substr( $text, 0, $limit ) : $text;
 	}

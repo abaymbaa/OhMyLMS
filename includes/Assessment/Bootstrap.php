@@ -20,6 +20,7 @@ final class Bootstrap {
 		PreviewPlayer::init();
 		ResponseMedia::init();
 		add_action( 'init', array( Taxonomy::class, 'register' ), 4 );
+		\OhMyLMS\Skills\Provenance::init();
 		add_action( 'init', array( Usage::class, 'register_status' ), 4 );
 		add_action( 'before_delete_post', array( Usage::class, 'on_deleted_post' ) );
 		add_action( 'init', array( Schema::class, 'install' ), 6 );

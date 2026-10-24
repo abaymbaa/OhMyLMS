@@ -646,15 +646,23 @@ final class Syllabus {
 		if ( $root && term_exists( $root, Taxonomy::NAME ) ) {
 			return $root; }
 		$name = trim( self::text( $item['name'] ) );
-		$term = wp_insert_term(
-			wp_slash( mb_substr( $name, 0, 199 ) ),
-			Taxonomy::NAME,
+		$term = \OhMyLMS\Skills\Provenance::with(
 			array(
-				'description' => wp_slash( sprintf( /* translators: %s: text value. */
-				__( 'Skills of the syllabus “%s”.', 'ohmylms' ), $name ) ),
-				'parent'      => 0,
-				'slug'        => self::slug(),
-			)
+				'source' => 'syllabus',
+				'ref'    => 'syllabus:' . (int) $item['id'],
+			),
+			static function () use ( $name ) {
+				return wp_insert_term(
+					wp_slash( mb_substr( $name, 0, 199 ) ),
+					Taxonomy::NAME,
+					array(
+						'description' => wp_slash( sprintf( /* translators: %s: text value. */
+						__( 'Skills of the syllabus “%s”.', 'ohmylms' ), $name ) ),
+						'parent'      => 0,
+						'slug'        => self::slug(),
+					)
+				);
+			}
 		);
 		if ( is_wp_error( $term ) ) {
 			return $term; }
@@ -747,14 +755,22 @@ final class Syllabus {
 	 * @param string $category Category.
 	 */
 	private static function create_term( $root, $name, $code, $description, $category = '' ) {
-		$term = wp_insert_term(
-			wp_slash( mb_substr( $name, 0, 199 ) ),
-			Taxonomy::NAME,
+		$term = \OhMyLMS\Skills\Provenance::with(
 			array(
-				'description' => wp_slash( sanitize_textarea_field( $description ) ),
-				'parent'      => (int) $root,
-				'slug'        => self::slug(),
-			)
+				'source' => 'syllabus',
+				'ref'    => 'root:' . (int) $root,
+			),
+			static function () use ( $root, $name, $description ) {
+				return wp_insert_term(
+					wp_slash( mb_substr( $name, 0, 199 ) ),
+					Taxonomy::NAME,
+					array(
+						'description' => wp_slash( sanitize_textarea_field( $description ) ),
+						'parent'      => (int) $root,
+						'slug'        => self::slug(),
+					)
+				);
+			}
 		);
 		if ( is_wp_error( $term ) ) {
 			return $term; }

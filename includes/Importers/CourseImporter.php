@@ -230,7 +230,15 @@ class CourseImporter {
 						'slug' => isset( $term_data['slug'] ) ? $term_data['slug'] : sanitize_title( $term_data['term'] ),
 					);
 
-					$term = wp_insert_term( $term_data['term'], $term_data['taxonomy'], $term_args );
+					$term = \OhMyLMS\Skills\Provenance::with(
+						array(
+							'source' => 'import',
+							'ref'    => 'course-import',
+						),
+						static function () use ( $term_data, $term_args ) {
+							return wp_insert_term( $term_data['term'], $term_data['taxonomy'], $term_args );
+						}
+					);
 
 					if ( is_wp_error( $term ) ) {
 						continue; // Skip this term if there was an error.

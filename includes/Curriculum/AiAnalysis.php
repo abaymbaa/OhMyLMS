@@ -7,6 +7,9 @@
 
 namespace OhMyLMS\Curriculum;
 
+use OhMyLMS\Skills\Provenance;
+use OhMyLMS\Skills\SkillSources;
+use OhMyLMS\Skills\SkillWriter;
 use OhMyLMS\Skills\SubjectProfiles;
 use OhMyLMS\AI\Client;
 use OhMyLMS\AI\Settings as AiSettings;
@@ -32,12 +35,13 @@ defined( 'ABSPATH' ) || exit;
  */
 final class AiAnalysis {
 
-	const KINDS        = array( 'syllabus', 'placement', 'links' );
+	const KINDS        = array( 'syllabus', 'placement', 'links', 'course' );
 	const HOOK         = 'ohmylms_ai_analysis_step';
 	const SLICE        = array(
 		'syllabus'  => 8,
 		'placement' => 20,
 		'links'     => 10,
+		'course'    => 1,
 	);
 	const TRIES        = 3;
 	const HINT_DOMAIN  = '_ohmylms_ai_domain';
@@ -50,6 +54,8 @@ final class AiAnalysis {
 		'mapping'   => 1,
 		'placement' => 2,
 		'link'      => 3,
+		// Course skills create or reuse skills on their own; nothing waits for them.
+		'course_skill' => 0,
 	);
 
 	/** Hook the background step. */
@@ -84,16 +90,26 @@ final class AiAnalysis {
 		if ( ! in_array( $kind, self::KINDS, true ) ) {
 			return Access::error( 'ohmylms_ai_analysis_invalid', __( 'Choose a syllabus analysis or a placement analysis.', 'ohmylms' ) );
 		}
+		$target = array();
+		if ( 'course' === $kind ) {
+			$target = self::course_target( $params );
+			if ( is_wp_error( $target ) ) {
+				return $target;
+			}
+		}
 		$syllabus = 'syllabus' === $kind ? absint( $params['syllabus_id'] ?? 0 ) : 0;
 		if ( 'syllabus' === $kind && ! Syllabus::is_syllabus( $syllabus ) ) {
 			return Access::error( 'ohmylms_ai_analysis_invalid', __( 'Choose an existing syllabus.', 'ohmylms' ), 404 );
 		}
 		$subject = 'syllabus' === $kind ? self::subject_of( $syllabus ) : sanitize_text_field( (string) ( $params['subject'] ?? '' ) );
-		$active  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE kind=%s AND syllabus_id=%d AND subject=%s AND status IN (\'queued\',\'running\') LIMIT 1', self::runs_table(), $kind, $syllabus, $subject ) );
+		// Course runs cover one lesson each and finish in one step, so several may run side by side.
+		$active = 'course' === $kind ? 0 : (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE kind=%s AND syllabus_id=%d AND subject=%s AND status IN (\'queued\',\'running\') LIMIT 1', self::runs_table(), $kind, $syllabus, $subject ) );
 		if ( $active ) {
 			return Access::error( 'ohmylms_ai_analysis_active', __( 'An analysis of this is already running. Wait for it or cancel it.', 'ohmylms' ), 409, array( 'run' => self::run( $active ) ) );
 		}
-		if ( 'links' === $kind ) {
+		if ( 'course' === $kind ) {
+			$queue = array( $target['course_id'] );
+		} elseif ( 'links' === $kind ) {
 			$queue = self::links_queue( $subject, ! empty( $params['include_linked'] ) );
 		} else {
 			$queue = 'syllabus' === $kind ? self::objective_queue( $syllabus, ! empty( $params['include_mapped'] ) ) : self::placement_queue( $subject );
@@ -127,8 +143,9 @@ final class AiAnalysis {
 				'profile_rev' => AiAnalysisModel::profile_revision( $profile ),
 				'queue'       => wp_json_encode(
 					array(
-						'ids'   => $queue,
-						'tries' => 0,
+						'ids'    => $queue,
+						'tries'  => 0,
+						'target' => $target,
 					)
 				),
 				'created_by'  => get_current_user_id(),
@@ -137,7 +154,9 @@ final class AiAnalysis {
 			)
 		);
 		$id = (int) $wpdb->insert_id;
-		wp_schedule_single_event( time() + 30, self::HOOK, array( $id ) );
+		if ( 'course' !== $kind ) {
+			wp_schedule_single_event( time() + 30, self::HOOK, array( $id ) );
+		}
 		return self::run( $id );
 	}
 
@@ -171,6 +190,7 @@ final class AiAnalysis {
 					'syllabus'  => 'analyse_objectives',
 					'placement' => 'analyse_placements',
 					'links'     => 'analyse_links',
+					'course'    => 'analyse_course',
 				)[ $row['kind'] ];
 				$made = self::$made( $row, $slice );
 				if ( is_wp_error( $made ) ) {
@@ -186,13 +206,13 @@ final class AiAnalysis {
 					$queue         = array(
 						'ids'   => $ids,
 						'tries' => $tries,
-					);
+					) + $queue;
 				} else {
 					$ids               = array_slice( $ids, count( $slice ) );
 					$queue             = array(
 						'ids'   => $ids,
 						'tries' => 0,
-					);
+					) + $queue;
 					$done['processed'] = (int) $row['processed'] + count( $slice );
 					$done['suggested'] = (int) $row['suggested'] + (int) $made;
 				}
@@ -202,7 +222,7 @@ final class AiAnalysis {
 			}
 			$done['queue'] = wp_json_encode( $queue );
 			$wpdb->update( self::runs_table(), $done, array( 'id' => $run_id ) );
-			if ( $ids ) {
+			if ( $ids && 'course' !== $row['kind'] ) {
 				wp_schedule_single_event( time() + 20, self::HOOK, array( $run_id ) );
 			}
 			return self::run( $run_id );
@@ -321,6 +341,14 @@ final class AiAnalysis {
 			$where[] = 'kind=%s';
 			$args[]  = sanitize_key( (string) $params['kind'] );
 		}
+		if ( ! empty( $params['course_id'] ) ) {
+			$where[] = 'course_id=%d';
+			$args[]  = absint( $params['course_id'] );
+		}
+		if ( ! empty( $params['id'] ) ) {
+			$where[] = 'id=%d';
+			$args[]  = absint( $params['id'] );
+		}
 		if ( isset( $params['min_confidence'] ) && '' !== $params['min_confidence'] ) {
 			$where[] = 'confidence>=%f';
 			$args[]  = (float) $params['min_confidence'];
@@ -328,7 +356,7 @@ final class AiAnalysis {
 		$sql   = implode( ' AND ', $where );
 		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE $sql", $args ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
 		$page  = max( 1, absint( $params['page'] ?? 1 ) );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE $sql ORDER BY FIELD(kind,'new_skill','mapping','placement','link'), confidence DESC, id LIMIT 30 OFFSET %d", array_merge( $args, array( ( $page - 1 ) * 30 ) ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE $sql ORDER BY FIELD(kind,'course_skill','new_skill','mapping','placement','link'), confidence DESC, id LIMIT 30 OFFSET %d", array_merge( $args, array( ( $page - 1 ) * 30 ) ) ), ARRAY_A ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fixed clauses with placeholders.
 		return array(
 			'items' => array_map( array( __CLASS__, 'describe' ), $rows ),
 			'total' => $total,
@@ -721,6 +749,9 @@ final class AiAnalysis {
 	private static function accept( array $row, array $overrides ) {
 		$payload = json_decode( (string) $row['payload'], true );
 		$payload = is_array( $payload ) ? $payload : array();
+		if ( 'course_skill' === $row['kind'] ) {
+			return self::accept_course_skill( $row, $payload, $overrides );
+		}
 		if ( 'placement' === $row['kind'] ) {
 			$shared = Comparison::shared_skill( (int) $row['shared_term_id'] );
 			if ( ! $shared ) {
@@ -748,25 +779,23 @@ final class AiAnalysis {
 		$run = self::run( (int) $row['run_id'] );
 		if ( 'new_skill' === $row['kind'] ) {
 			$fields = array_merge( $payload, array_intersect_key( $overrides, array_flip( array( 'name', 'description', 'topic', 'domain', 'grade_from', 'grade_to' ) ) ) );
-			$skill  = self::find_shared( (string) ( $fields['name'] ?? '' ), (string) ( $run['subject'] ?? '' ) );
-			if ( ! $skill ) {
-				$saved = Comparison::save_shared(
-					0,
-					array(
-						'name'        => (string) ( $fields['name'] ?? '' ),
-						'description' => (string) ( $fields['description'] ?? '' ),
-						'topic'       => (string) ( $fields['topic'] ?? '' ),
-						'subject'     => (string) ( $run['subject'] ?? '' ),
-						'domain'      => (string) ( $fields['domain'] ?? '' ),
-						'grade_from'  => (int) ( $fields['grade_from'] ?? 0 ),
-						'grade_to'    => (int) ( $fields['grade_to'] ?? 0 ),
-					)
-				);
-				if ( is_wp_error( $saved ) ) {
-					return $saved;
-				}
-				$skill = (int) $saved['id'];
+			// A person accepted it, so the new skill is approved; its AI origin is recorded with it.
+			$saved = SkillWriter::shared(
+				array(
+					'name'        => (string) ( $fields['name'] ?? '' ),
+					'description' => (string) ( $fields['description'] ?? '' ),
+					'topic'       => (string) ( $fields['topic'] ?? '' ),
+					'subject'     => (string) ( $run['subject'] ?? '' ),
+					'domain'      => (string) ( $fields['domain'] ?? '' ),
+					'grade_from'  => (int) ( $fields['grade_from'] ?? 0 ),
+					'grade_to'    => (int) ( $fields['grade_to'] ?? 0 ),
+				),
+				self::origin( $row, $run, 'approved' )
+			);
+			if ( is_wp_error( $saved ) ) {
+				return $saved;
 			}
+			$skill = (int) $saved['id'];
 			if ( (int) $row['specific_term_id'] ) {
 				$mapped = self::map( (int) $row['specific_term_id'], $skill, $overrides['relation'] ?? 'equivalent', $row );
 				if ( is_wp_error( $mapped ) ) {
@@ -883,7 +912,10 @@ final class AiAnalysis {
 				'grade_to'   => (int) get_term_meta( (int) $row['specific_term_id'], self::HINT_TO, true ),
 			) : null,
 			'shared'     => $shared ? array_intersect_key( $shared, array_flip( array( 'id', 'name', 'description', 'topic', 'domain', 'grade_from', 'grade_to' ) ) ) : null,
-			'proposal'   => 'new_skill' === $row['kind'] ? $payload : ( $proposal ? array(
+			'source'     => (string) ( $row['source'] ?? '' ),
+			'course_id'  => (int) ( $row['course_id'] ?? 0 ),
+			'target'     => json_decode( (string) ( $row['target'] ?? '' ), true ) ? json_decode( (string) $row['target'], true ) : null,
+			'proposal'   => in_array( $row['kind'], array( 'new_skill', 'course_skill' ), true ) ? $payload : ( $proposal ? array(
 				'id'     => (int) $proposal['id'],
 				'status' => $proposal['status'],
 				'name'   => (string) ( $proposed['name'] ?? '' ),
@@ -891,6 +923,121 @@ final class AiAnalysis {
 			'placement'  => 'placement' === $row['kind'] ? $payload : null,
 			'result_id'  => (int) $row['result_term_id'],
 		);
+	}
+
+	/**
+	 * Check a course skill request: an editable course, its unit, an optional lesson and a source.
+	 *
+	 * @param array $params course_id, unit_id, group_id, source.
+	 * @return array|\WP_Error course_id, unit_id, group_id, source.
+	 */
+	private static function course_target( array $params ) {
+		$course = absint( $params['course_id'] ?? 0 );
+		if ( ! $course || ! \OhMyLMS\Learning\Catalog::can_edit( $course ) ) {
+			return Access::error( 'ohmylms_ai_analysis_course', __( 'Choose a course you can edit.', 'ohmylms' ), 403 );
+		}
+		$source = sanitize_key( (string) ( $params['source'] ?? 'course-content' ) );
+		$found  = SkillSources::get( $source );
+		if ( ! $found || ! $found->available() ) {
+			return Access::error( 'ohmylms_ai_analysis_source', __( 'This skill source is not available on this site.', 'ohmylms' ), 503 );
+		}
+		$group = (string) ( $params['group_id'] ?? '' );
+		if ( '' !== $group && ! wp_is_uuid( $group ) ) {
+			return Access::error( 'ohmylms_ai_analysis_invalid', __( 'Choose a lesson of this course.', 'ohmylms' ) );
+		}
+		return array(
+			'course_id' => $course,
+			'unit_id'   => absint( $params['unit_id'] ?? 0 ),
+			'group_id'  => $group,
+			'source'    => $source,
+		);
+	}
+
+	/**
+	 * Ask the run's skill source which skills a lesson teaches; each proposal becomes a suggestion.
+	 *
+	 * @param array $run Run row.
+	 * @return int|\WP_Error Suggestions made.
+	 */
+	private static function analyse_course( array $run ) {
+		$queue  = json_decode( (string) $run['queue'], true );
+		$target = (array) ( $queue['target'] ?? array() );
+		$source = SkillSources::get( (string) ( $target['source'] ?? '' ) );
+		if ( ! $source ) {
+			return Access::error( 'ohmylms_ai_analysis_source', __( 'This skill source is not available on this site.', 'ohmylms' ), 503 );
+		}
+		$result = $source->propose( $target + array( 'subject' => (string) $run['subject'] ) );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
+		$made = 0;
+		foreach ( (array) ( $result['proposals'] ?? array() ) as $proposal ) {
+			self::insert(
+				array(
+					'run_id'         => (int) $run['id'],
+					'kind'           => 'course_skill',
+					'shared_term_id' => (int) ( $proposal['existing'] ?? 0 ),
+					'payload'        => wp_json_encode( $proposal + array( 'meta' => (array) ( $result['meta'] ?? array() ) ) ),
+					'confidence'     => (float) ( $proposal['confidence'] ?? 0 ),
+					'reason'         => (string) ( $proposal['reason'] ?? '' ),
+					'source'         => $source->id(),
+					'subject'        => (string) $run['subject'],
+					'course_id'      => (int) $target['course_id'],
+					'target'         => wp_json_encode(
+						array(
+							'unit_id'  => (int) $target['unit_id'],
+							'group_id' => (string) $target['group_id'],
+						)
+					),
+				)
+			);
+			++$made;
+		}
+		return $made;
+	}
+
+	/**
+	 * Accept a skill proposed for a course: reuse the library skill it names, or create the new skill.
+	 * A new skill waits for library review (pending): courses can use it in drafts, but cannot be
+	 * published with it until it is approved. Linking it into the outline is the editor's next step.
+	 *
+	 * @param array $row       Suggestion row.
+	 * @param array $payload   Proposal.
+	 * @param array $overrides Reviewer changes: name, description, topic, domain, grade_from, grade_to.
+	 * @return true|\WP_Error
+	 */
+	private static function accept_course_skill( array $row, array $payload, array $overrides ) {
+		$existing = (int) $row['shared_term_id'];
+		if ( $existing ) {
+			if ( ! term_exists( $existing, Taxonomy::NAME ) || Provenance::archived( $existing ) ) {
+				return Access::error( 'ohmylms_shared_missing', __( 'This library skill is no longer available.', 'ohmylms' ), 404 );
+			}
+			self::close( (int) $row['id'], 'accepted', $existing );
+			return true;
+		}
+		$fields = array_merge( $payload, array_intersect_key( $overrides, array_flip( array( 'name', 'description', 'topic', 'domain', 'grade_from', 'grade_to' ) ) ) );
+		$meta   = (array) ( $payload['meta'] ?? array() );
+		$saved  = SkillWriter::shared(
+			array(
+				'name'        => (string) ( $fields['name'] ?? '' ),
+				'description' => (string) ( $fields['description'] ?? '' ),
+				'topic'       => (string) ( $fields['topic'] ?? '' ),
+				'subject'     => (string) $row['subject'],
+				'domain'      => (string) ( $fields['domain'] ?? '' ),
+				'grade_from'  => (int) ( $fields['grade_from'] ?? 0 ),
+				'grade_to'    => (int) ( $fields['grade_to'] ?? 0 ),
+			),
+			array(
+				'provider' => (string) ( $meta['provider'] ?? '' ),
+				'model'    => (string) ( $meta['model'] ?? '' ),
+				'prompt'   => (string) ( $meta['prompt'] ?? '' ),
+			) + self::origin( $row, self::run( (int) $row['run_id'] ), 'pending' )
+		);
+		if ( is_wp_error( $saved ) ) {
+			return $saved;
+		}
+		self::close( (int) $row['id'], 'accepted', (int) $saved['id'] );
+		return true;
 	}
 
 	/* ---------- Data ---------- */
@@ -975,7 +1122,11 @@ final class AiAnalysis {
 		$terms  = get_terms( $args );
 		$result = array();
 		foreach ( is_array( $terms ) ? $terms : array() as $term ) {
-			$id            = (int) $term->term_id;
+			$id = (int) $term->term_id;
+			// Archived and rejected skills are not offered for new matches.
+			if ( Provenance::archived( $id ) || 'rejected' === get_term_meta( $id, Provenance::REVIEW_META, true ) ) {
+				continue;
+			}
 			$result[ $id ] = array(
 				'name'        => Taxonomy::plain( $term->name ),
 				'description' => (string) $term->description,
@@ -1039,16 +1190,29 @@ final class AiAnalysis {
 	 * @return int Skill ID or 0.
 	 */
 	private static function find_shared( $name, $subject ) {
-		$key = AiAnalysisModel::name_key( $name );
-		if ( '' === $key ) {
-			return 0;
-		}
-		foreach ( self::catalog( $subject ) as $id => $skill ) {
-			if ( AiAnalysisModel::name_key( $skill['name'] ) === $key ) {
-				return (int) $id;
-			}
-		}
-		return 0;
+		return SkillWriter::find_shared( $name, $subject );
+	}
+
+	/**
+	 * Provenance of a skill created from a suggestion: the AI source, the run and suggestion, the
+	 * model and prompt version of the run, and the suggestion's confidence.
+	 *
+	 * @param array      $row    Suggestion row.
+	 * @param array|null $run    Run.
+	 * @param string     $review Review state to record.
+	 * @return array
+	 */
+	private static function origin( array $row, $run, $review ) {
+		return array(
+			'source'     => (string) ( $row['source'] ?? '' ) ? (string) $row['source'] : 'ai',
+			'ref'        => 'run:' . (int) $row['run_id'] . '/suggestion:' . (int) $row['id'],
+			'review'     => $review,
+			'reviewed'   => 'approved' === $review,
+			'provider'   => (string) ( AiSettings::get()['provider'] ?? '' ),
+			'model'      => (string) ( $run['model'] ?? '' ),
+			'prompt'     => (string) ( $run['prompt'] ?? '' ),
+			'confidence' => (float) $row['confidence'],
+		);
 	}
 
 	/**

@@ -213,6 +213,7 @@ final class Comparison {
 		$skill['grade_to']   = (int) get_term_meta( $id, self::GRADE_TO_META, true );
 		$skill['mappings']   = SkillMappings::for_skill( $id );
 		$skill['revision']   = self::revision( array( $skill['name'], $skill['description'], $skill['topic'], $skill['subject'], $skill['domain'], $skill['grade_from'], $skill['grade_to'], $skill['mappings'] ) );
+		$skill['provenance'] = \OhMyLMS\Skills\Provenance::read( $id );
 		return $skill;
 	}
 

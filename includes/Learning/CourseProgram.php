@@ -518,7 +518,7 @@ final class CourseProgram {
 	 */
 	public static function readiness( array $program, $course_id = 0 ) {
 		$syllabus          = 0 < $course_id && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
-		$errors            = self::completion_readiness( $program, $syllabus );
+		$errors            = array_merge( self::completion_readiness( $program, $syllabus ), self::review_readiness( $program ) );
 		$rules             = Mastery::rules();
 		$required_outcomes = $syllabus ? array() : array_filter(
 			$program['outcomes'],
@@ -552,6 +552,28 @@ final class CourseProgram {
 	}
 
 	/**
+	 * Skills the outline uses that a person has not approved: proposed skills still waiting for review
+	 * block publishing, and rejected ones must be replaced.
+	 *
+	 * @param array $program Program.
+	 * @return string[]
+	 */
+	public static function review_readiness( array $program ) {
+		$errors  = array();
+		$reviews = \OhMyLMS\Skills\Provenance::reviews( array_map( 'intval', array_column( (array) $program['outcomes'], 'term_id' ) ) );
+		foreach ( $reviews as $term_id => $review ) {
+			if ( 'approved' === $review ) {
+				continue;
+			}
+			$term = get_term( $term_id, Taxonomy::NAME );
+			$name = $term && ! is_wp_error( $term ) ? $term->name : (string) $term_id;
+			/* translators: %s: skill name. */
+			$errors[] = sprintf( 'pending' === $review ? __( 'Approve the proposed skill %s in the skill library first.', 'ohmylms' ) : __( 'Replace the rejected skill %s.', 'ohmylms' ), $name );
+		}
+		return $errors;
+	}
+
+	/**
 	 * The same checks as readiness(), grouped for a person: what is missing per skill and which resources
 	 * are still unpublished, so an author can see the gap before trying to publish.
 	 *
@@ -562,7 +584,7 @@ final class CourseProgram {
 	public static function readiness_report( array $program, $course_id = 0 ) {
 		$syllabus   = 0 < $course_id && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
 		$rules      = Mastery::rules();
-		$completion = self::completion_readiness( $program, $syllabus );
+		$completion = array_merge( self::completion_readiness( $program, $syllabus ), self::review_readiness( $program ) );
 		$resources  = array();
 		foreach ( $program['items'] as $item ) {
 			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {

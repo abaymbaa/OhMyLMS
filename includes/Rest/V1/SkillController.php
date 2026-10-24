@@ -74,6 +74,32 @@ class SkillController extends RestController {
 				),
 			)
 		);
+		foreach ( array(
+			'review'  => 'review',
+			'archive' => 'archive',
+			'restore' => 'restore',
+		) as $action => $callback ) {
+			register_rest_route(
+				$this->namespace,
+				'/skills/(?P<id>[\d]+)/' . $action,
+				array(
+					'methods'             => WP_REST_Server::CREATABLE,
+					'callback'            => array( $this, $callback ),
+					'permission_callback' => array( $this, 'admin_permission' ),
+				)
+			);
+		}
+		register_rest_route(
+			$this->namespace,
+			'/skill-sources',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => static function () {
+					return rest_ensure_response( \OhMyLMS\Skills\SkillSources::describe() );
+				},
+				'permission_callback' => array( $this, 'author_permission' ),
+			)
+		);
 		register_rest_route(
 			$this->namespace,
 			'/skills/(?P<id>[\d]+)/(?P<kind>lessons|courses)',
@@ -301,23 +327,15 @@ class SkillController extends RestController {
 	 * @param WP_REST_Request $request REST request.
 	 */
 	public function delete( WP_REST_Request $request ) {
-		global $wpdb;
 		$id = (int) $request['id'];
-		if ( \OhMyLMS\Learning\Schema::ready() && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE term_id=%d LIMIT 1', \OhMyLMS\Learning\Schema::table( 'outcomes' ), $id ) ) ) {
-			return new WP_Error( 'ohmylms_skill_required', __( 'Published learning programs reference this skill. Keep it for learner history.', 'ohmylms' ), array( 'status' => 409 ) );
+		if ( ! term_exists( $id, Taxonomy::NAME ) ) {
+			return new WP_Error( 'ohmylms_skill_missing', __( 'Skill not found.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		$evidence = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE term_id=%d', Schema::table( 'skill_evidence' ), $id ) );
-		$mapped   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE term_id=%d', Schema::table( 'qb_version_skills' ), $id ) );
-		if ( ( $evidence || $mapped ) && ! rest_sanitize_boolean( $request['force'] ) ) {
-			return new WP_Error(
-				'ohmylms_skill_in_use',
-				__( 'This skill has learner evidence or frozen question mappings. Rename it instead, or pass force to delete.', 'ohmylms' ),
-				array(
-					'status'   => 409,
-					'evidence' => $evidence,
-					'mappings' => $mapped,
-				)
-			);
+		// A skill a course outline uses is archived, never deleted, so courses keep working. Learner
+		// evidence and frozen question mappings archive it too, unless force asks for a real delete.
+		$usage = \OhMyLMS\Skills\SkillUsage::of( $id );
+		if ( \OhMyLMS\Skills\SkillUsage::in_courses( $usage ) || ( \OhMyLMS\Skills\SkillUsage::used( $usage ) && ! rest_sanitize_boolean( $request['force'] ) ) ) {
+			return rest_ensure_response( \OhMyLMS\Skills\SkillWriter::archive( $id ) );
 		}
 		foreach ( get_terms(
 			array(
@@ -336,6 +354,36 @@ class SkillController extends RestController {
 				'deleted' => true,
 			)
 		);
+	}
+
+	/**
+	 * Approve or reject a skill proposed by a skill source.
+	 *
+	 * @param WP_REST_Request $request id and review (approved or rejected).
+	 * @return mixed
+	 */
+	public function review( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Skills\Provenance::review( (int) $request['id'], (string) $request['review'] ) );
+	}
+
+	/**
+	 * Archive a skill: it stays for every course and record that uses it, but is not offered for new use.
+	 *
+	 * @param WP_REST_Request $request id.
+	 * @return mixed
+	 */
+	public function archive( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Skills\SkillWriter::archive( (int) $request['id'] ) );
+	}
+
+	/**
+	 * Return an archived skill to normal use.
+	 *
+	 * @param WP_REST_Request $request id.
+	 * @return mixed
+	 */
+	public function restore( WP_REST_Request $request ) {
+		return rest_ensure_response( \OhMyLMS\Skills\SkillWriter::restore( (int) $request['id'] ) );
 	}
 
 	/** Replace the set of lessons or courses linked to a skill (only posts the user may edit change).

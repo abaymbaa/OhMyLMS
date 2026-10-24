@@ -58,6 +58,31 @@ class CourseStructureController extends RestController {
 				'callback'            => array( $this, 'create_resource' ),
 			)
 		);
+		register_rest_route(
+			$this->namespace,
+			'/courses/(?P<id>\d+)/structure/skill-suggestions',
+			array(
+				array(
+					'methods'             => 'GET',
+					'permission_callback' => array( $this, 'permission' ),
+					'callback'            => array( $this, 'skill_suggestions' ),
+				),
+				array(
+					'methods'             => 'POST',
+					'permission_callback' => array( $this, 'permission' ),
+					'callback'            => array( $this, 'suggest_skills' ),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
+			'/courses/(?P<id>\d+)/structure/skill-suggestions/review',
+			array(
+				'methods'             => 'POST',
+				'permission_callback' => array( $this, 'permission' ),
+				'callback'            => array( $this, 'review_skill_suggestions' ),
+			)
+		);
 		add_filter( 'rest_dispatch_request', array( $this, 'dispatch' ), 20, 4 );
 		add_filter( 'rest_request_after_callbacks', array( $this, 'created' ), 20, 3 );
 	}
@@ -96,6 +121,7 @@ class CourseStructureController extends RestController {
 		unset( $item );
 		$data['skill_names'] = array();
 		$data['skill_codes'] = array();
+		$data['skill_meta']  = array();
 		foreach ( $data['program']['outcomes'] as $outcome ) {
 			$term = get_term( $outcome['term_id'], \OhMyLMS\Skills\Taxonomy::NAME );
 			if ( $term && ! is_wp_error( $term ) ) {
@@ -105,6 +131,8 @@ class CourseStructureController extends RestController {
 				if ( '' !== $code ) {
 					$data['skill_codes'][ $outcome['term_id'] ] = $code;
 				}
+				$origin                                    = \OhMyLMS\Skills\Provenance::read( $term->term_id );
+				$data['skill_meta'][ $outcome['term_id'] ] = array_intersect_key( $origin, array_flip( array( 'source', 'review', 'status', 'model', 'confidence' ) ) );
 			}
 		}
 		$data['create_urls'] = array(
@@ -112,6 +140,83 @@ class CourseStructureController extends RestController {
 			'quiz'   => admin_url( 'post-new.php?post_type=' . OHMYLMS_QUIZ_CPT ),
 		);
 		return $data;
+	}
+
+	/**
+	 * Skill suggestions made for this course, pending by default, with the available skill sources.
+	 *
+	 * @param \WP_REST_Request $request Request with optional status.
+	 * @return array
+	 */
+	public function skill_suggestions( $request ) {
+		return \OhMyLMS\Curriculum\AiAnalysis::suggestions(
+			array(
+				'course_id' => (int) $request['id'],
+				'kind'      => 'course_skill',
+				'status'    => $request['status'] ?? 'pending',
+				'page'      => $request['page'] ?? 1,
+			)
+		) + array( 'sources' => \OhMyLMS\Skills\SkillSources::describe() );
+	}
+
+	/**
+	 * Ask a skill source which skills a unit or lesson teaches. Runs at once; the proposals wait for review.
+	 *
+	 * @param \WP_REST_Request $request unit_id, group_id (lesson UUID or empty), subject, source.
+	 * @return array|\WP_Error run and its suggestions.
+	 */
+	public function suggest_skills( $request ) {
+		$run = \OhMyLMS\Curriculum\AiAnalysis::start(
+			array(
+				'kind'      => 'course',
+				'course_id' => (int) $request['id'],
+				'unit_id'   => (int) $request['unit_id'],
+				'group_id'  => (string) ( $request['group_id'] ?? '' ),
+				'subject'   => (string) ( $request['subject'] ?? '' ),
+				'source'    => (string) ( $request['source'] ?? 'course-content' ),
+			)
+		);
+		if ( is_wp_error( $run ) ) {
+			return $run;
+		}
+		$run = \OhMyLMS\Curriculum\AiAnalysis::step( $run['id'] );
+		if ( ! empty( $run['error'] ) && 'done' !== $run['status'] ) {
+			\OhMyLMS\Curriculum\AiAnalysis::cancel( $run['id'] );
+			return new \WP_Error( 'ohmylms_course_skill_failed', $run['error'], array( 'status' => 502 ) );
+		}
+		return array(
+			'run'         => $run,
+			'suggestions' => \OhMyLMS\Curriculum\AiAnalysis::suggestions(
+				array(
+					'run_id' => $run['id'],
+					'status' => 'all',
+				)
+			)['items'],
+		);
+	}
+
+	/**
+	 * Accept or reject this course's skill suggestions. Suggestions of other courses are ignored.
+	 *
+	 * @param \WP_REST_Request $request ids, action (accept or reject), overrides.
+	 * @return array Suggestion ID => described suggestion or error.
+	 */
+	public function review_skill_suggestions( $request ) {
+		$ids = array();
+		foreach ( (array) $request['ids'] as $id ) {
+			$row = \OhMyLMS\Curriculum\AiAnalysis::suggestions(
+				array(
+					'course_id' => (int) $request['id'],
+					'kind'      => 'course_skill',
+					'status'    => 'all',
+					'id'        => absint( $id ),
+				)
+			);
+			if ( $row['total'] ) {
+				$ids[] = absint( $id );
+			}
+		}
+		return \OhMyLMS\Curriculum\AiAnalysis::review( $ids, 'reject' === $request['action'] ? 'reject' : 'accept', (array) ( $request['overrides'] ?? array() ) );
 	}
 
 	/**
