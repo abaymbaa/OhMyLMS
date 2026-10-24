@@ -201,20 +201,93 @@ final class PrintPaper {
 		);
 		if ( $answers && AccessPolicy::can_use_question( $question_id ) ) {
 			return array(
+				'id'          => $question_id,
 				'name'        => $snapshot->get_name(),
 				'description' => $snapshot->get_description(),
 				'settings'    => $snapshot->get_settings(),
 				'questions'   => $options,
 			);
 		}
-		$view = $snapshot->student_view( array_column( $options, 'id' ), array(), array(), array(), 'print:' . $quiz_id );
+		$view     = $snapshot->student_view( array_column( $options, 'id' ), array(), array(), array(), 'print:' . $quiz_id );
+		$settings = $view['settings'];
+		$type     = $snapshot->get_type();
+		// Option text and image only: no pairings, and no saved order where the order is the answer.
+		$printed = static function ( $option ) {
+			return array(
+				'answer'    => (string) ( $option['answer'] ?? '' ),
+				'image_url' => (string) ( $option['image_url'] ?? '' ),
+			);
+		};
+		$rows    = array_map( $printed, $view['questions'] );
+		if ( 'reorder' === $type ) {
+			$texts = array_map( 'strval', array_column( $options, 'answer' ) );
+			$rows  = array();
+			foreach ( self::jumble( $texts, (string) $question_id, true ) as $index ) {
+				$rows[] = $printed( $options[ $index ] );
+			}
+		} elseif ( 'matching' === $type ) {
+			$labels = array();
+			foreach ( $options as $option ) {
+				$labels[] = (string) ( $option['matching_data']['label'] ?? '' );
+			}
+			$settings['match_right'] = array();
+			foreach ( self::jumble( $labels, (string) $question_id, true ) as $index ) {
+				$settings['match_right'][] = $labels[ $index ];
+			}
+			$rows = array_map( $printed, $options );
+		}
 		// Only what the paper renderer reads; the player's blank bank and blank layout are left out.
 		return array(
+			'id'          => $question_id,
+			'public'      => true,
 			'name'        => (string) $view['name'],
 			'description' => (string) $view['description'],
-			'settings'    => $view['settings'],
-			'questions'   => $view['questions'],
+			'settings'    => $settings,
+			'questions'   => $rows,
 		);
+	}
+
+	/**
+	 * FNV-1a hash of a string's UTF-8 bytes; fnv1a() in paperTypes.mjs is identical.
+	 *
+	 * @param string $text Text.
+	 * @return int Unsigned 32-bit hash.
+	 */
+	public static function hash( $text ) {
+		$hash = 0x811c9dc5;
+		foreach ( unpack( 'C*', (string) $text ) as $byte ) {
+			$hash ^= $byte;
+			$hash  = ( $hash * 0x01000193 ) & 0xFFFFFFFF;
+		}
+		return $hash;
+	}
+
+	/**
+	 * The printed order of a list, as jumble() in paperTypes.mjs computes it in the editor.
+	 *
+	 * @param string[] $texts          Item texts, in answer order when $avoid_identity is set.
+	 * @param string   $seed           Question seed.
+	 * @param bool     $avoid_identity Rotate an order that would match the input.
+	 * @return int[] Input indexes in printed order.
+	 */
+	public static function jumble( array $texts, $seed, $avoid_identity = false ) {
+		$texts  = array_values( $texts );
+		$hashes = array();
+		foreach ( $texts as $index => $text ) {
+			$hashes[ $index ] = self::hash( $seed . '|' . $text );
+		}
+		$order = array_keys( $texts );
+		usort(
+			$order,
+			static function ( $a, $b ) use ( $hashes ) {
+				$by_hash = $hashes[ $a ] <=> $hashes[ $b ];
+				return 0 !== $by_hash ? $by_hash : $a <=> $b;
+			}
+		);
+		if ( $avoid_identity && count( $order ) > 1 && array_keys( $order ) === $order ) {
+			$order[] = array_shift( $order );
+		}
+		return $order;
 	}
 
 	/**

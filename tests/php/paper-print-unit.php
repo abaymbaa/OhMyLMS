@@ -41,4 +41,13 @@ check('<b>West</b> x()' === $attrs['school'], 'Text keeps only bold, italic and 
 check(false === $attrs['showTime'] && 6 === $attrs['lines'], 'Booleans and numbers are kept');
 check(['name', '<i>class</i>'] === $attrs['fields'], 'Lists are filtered item by item');
 check('v' === $attrs['badkey'] && null === $attrs['object'], 'Keys are reduced to safe characters and objects are dropped');
+// Printed order must match jumble() in paperTypes.mjs (values from tests/js/paper-types.test.mjs).
+check(3826002220 === PrintPaper::hash('a') && 0x811c9dc5 === PrintPaper::hash(''), 'FNV-1a matches the reference values');
+check(3110411366 === PrintPaper::hash('42|Égalité') && 2491053697 === PrintPaper::hash('5|egg'), 'Hashes use UTF-8 bytes like the editor');
+check([2, 0, 1, 3] === PrintPaper::jumble(['egg', 'larva', 'pupa', 'butterfly'], '5', true), 'Reorder steps jumble as in the editor');
+check([2, 1, 0] === PrintPaper::jumble(['Paris', 'Rome', 'Madrid'], '9', true), 'Matching answers jumble as in the editor');
+check([1, 0, 2, 3] === PrintPaper::jumble(['Égalité', 'ß', '日本', 'a'], '77'), 'Unicode texts jumble as in the editor');
+for ($seed = 0; $seed < 200; $seed++) {
+	check([1, 0] === PrintPaper::jumble(['a', 'b'], (string) $seed, true), 'A list is never printed in answer order');
+}
 echo "paper-print-unit: ok\n";

@@ -1,3 +1,5 @@
+import { typedPaper } from './paperTypes.mjs';
+
 /**
  * Printable paper layout: settings, the printed form of each question and page breaks.
  * Pure functions shared by the editor's paper canvas and the print page.
@@ -31,6 +33,16 @@ export const PAPER_TYPES = [
 	'numerical',
 	'structured',
 	'statement',
+	'matching',
+	'reorder',
+	'fill-in-the-blank',
+	'dropdown-blanks',
+	'multi-blank',
+	'categorize',
+	'build-expression',
+	'expression',
+	'crossword',
+	'wordsearch',
 ];
 
 const MM_TO_PX = 96 / 25.4;
@@ -202,6 +214,10 @@ export function paperQuestion(
 	if ( ! PAPER_TYPES.includes( type ) ) {
 		return model;
 	}
+	const typed = typedPaper( question, model, showAnswers );
+	if ( typed ) {
+		return typed;
+	}
 	const rows = [ ...( question.questions || question.options || [] ) ].sort(
 		( a, b ) => ( a.order_number || 0 ) - ( b.order_number || 0 )
 	);
@@ -241,6 +257,8 @@ export function paperQuestion(
 			model.answers = accepted( [
 				rows.map( ( row ) => row.answer ),
 				question.settings.answers ?? [],
+				// Type-the-answer questions keep accepted answers in their settings.
+				question.settings.accepted ?? [],
 			] );
 		}
 	} else if ( type === 'structured' ) {

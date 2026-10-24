@@ -1,7 +1,24 @@
 # Printable exams: design
 
-Status: **phases 1 to 3 built** (A4 canvas, core renderers, paper settings, print page, paper blocks); phases 4
-and 5 not built. Written October 24, 2026.
+Status: **phases 1 to 4 built** (A4 canvas, renderers for most types, paper settings, print page, paper blocks).
+Not built: static figures for the visual types (number line, clock, chart and the like) and phase 5. Written
+October 24, 2026.
+
+## Phase 4 as built
+
+- `assets/src/features/paper/paperTypes.mjs` prints matching, reorder, fill-in-the-blank, dropdown blanks,
+  multi-blank (inline and table), sort into groups, build from tiles, math expression, crossword and wordsearch.
+  Each form is built from the learner view: the editor and the answer key derive it from the full question
+  (`learnerSettings()`, mirroring `Interactive::public_view()` and `WordPuzzle::public_view()`), while the student
+  print page receives the server's learner view (`public: true`), so the layout is the same either way.
+- Lists are jumbled by a fixed FNV-1a hash of the question ID and item text (`jumble()`), so the editor and the
+  print page agree. Reorder steps and matching answers must never print in answer order, which only the full
+  question shows, so for the student paper the server jumbles them with the identical `PrintPaper::jumble()`
+  (rotating an order that would match) and strips matching pairs from the options. Reference values in
+  `tests/js/paper-types.test.mjs` and `tests/php/paper-print-unit.php` keep both implementations equal.
+- `PaperTypedViews.jsx` renders the bodies: matching columns with answer boxes, numbered ordering boxes, choice
+  lists under numbered blanks, blank tables, group tables, tile rows, crossword grids with clue lists and
+  wordsearch grids. Answer keys fill bubbles, crossword squares and wordsearch cells, and list answers.
 
 ## Phase 3 as built
 

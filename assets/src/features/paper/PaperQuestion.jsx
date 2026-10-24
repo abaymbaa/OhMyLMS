@@ -3,6 +3,7 @@ import { createElement, RawHTML, useEffect, useRef } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { loadMath, mathEnabled } from '../math/loader.mjs';
 import { paperQuestion } from './paperModel.mjs';
+import { TYPED_LAYOUTS, TypedBody } from './PaperTypedViews';
 
 /**
  * Typeset math inside a printed region with the shared math runtime.
@@ -215,6 +216,9 @@ export function PaperQuestion( {
 						</div>
 					) }
 				</>
+			) }
+			{ TYPED_LAYOUTS.includes( paper.layout ) && (
+				<TypedBody paper={ paper } />
 			) }
 			{ paper.layout === 'unsupported' && (
 				<>

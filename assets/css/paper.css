@@ -361,7 +361,8 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	border-radius: 2px;
 }
 
-.ohmylms-print-options li.is-correct .ohmylms-print-bubble {
+.ohmylms-print-options li.is-correct .ohmylms-print-bubble,
+.ohmylms-print-bubble.is-filled {
 	background: currentcolor;
 }
 
@@ -440,6 +441,213 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	color: #614a19;
 	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 	font-size: 12px;
+}
+
+/* Printed matching, ordering, blank, sorting, tile and word puzzle questions */
+
+.ohmylms-print-blank {
+	display: inline-block;
+	min-width: 7em;
+	border-bottom: 1px solid currentcolor;
+	font-size: 0.85em;
+	line-height: 1.2;
+	vertical-align: baseline;
+}
+
+.ohmylms-print-blank.is-answered,
+.ohmylms-print-key .ohmylms-print-blank {
+	color: #b32d2e;
+	font-size: 1em;
+}
+
+.ohmylms-print-matching {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	gap: 1.5em;
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-matching ol,
+.ohmylms-print-slots,
+.ohmylms-print-items,
+.ohmylms-print-clues ol,
+.ohmylms-print-words {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-print-matching li,
+.ohmylms-print-items li {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5em;
+	margin: 0 0 0.4em;
+}
+
+.ohmylms-print-boxes {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.6em 1.4em;
+	margin: 0.8em 0 0 2.4em;
+}
+
+.ohmylms-print-boxes > span {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	font-weight: 700;
+}
+
+.ohmylms-print-box {
+	display: inline-block;
+	flex: none;
+	box-sizing: border-box;
+	width: 1.6em;
+	height: 1.6em;
+	border: 1px solid currentcolor;
+}
+
+.ohmylms-print-instruction {
+	margin: 0.5em 0 0 2.4em;
+	font-size: 0.9em;
+	font-style: italic;
+}
+
+.ohmylms-print-slots {
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-slots li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.4em 1.2em;
+	margin: 0 0 0.4em;
+}
+
+.ohmylms-print-choice {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.4em;
+}
+
+.ohmylms-print-items {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.2em 1.6em;
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-grid {
+	border-collapse: collapse;
+}
+
+.ohmylms-print-grid td {
+	position: relative;
+	box-sizing: border-box;
+	width: 7mm;
+	height: 7mm;
+	padding: 0;
+	font-weight: 700;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.ohmylms-print-table {
+	width: calc(100% - 2.4em);
+	margin: 0.6em 0 0 2.4em;
+	border-collapse: collapse;
+}
+
+.ohmylms-print-table th,
+.ohmylms-print-table td {
+	padding: 0.35em 0.5em;
+	border: 1px solid currentcolor;
+	text-align: left;
+	vertical-align: top;
+}
+
+.ohmylms-print-table.is-groups td {
+	height: 5em;
+}
+
+.ohmylms-print-tiles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5em;
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-tiles span {
+	min-width: 1.4em;
+	padding: 0.15em 0.5em;
+	border: 1px solid currentcolor;
+	border-radius: 3px;
+	text-align: center;
+}
+
+.ohmylms-print-puzzle {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	gap: 1.5em;
+	margin: 0.6em 0 0 2.4em;
+}
+
+.ohmylms-print-grid.is-crossword td {
+	border: 1px solid currentcolor;
+	color: #b32d2e;
+}
+
+.ohmylms-print-grid.is-crossword td.is-empty {
+	border: 0;
+}
+
+.ohmylms-print-cell-number {
+	position: absolute;
+	top: 1px;
+	left: 2px;
+	color: #1e1e1e;
+	font-size: 0.55em;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.ohmylms-print-grid.is-wordsearch td {
+	border: 1px solid #c3c4c7;
+}
+
+.ohmylms-print-grid.is-wordsearch td.is-marked {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+	background: #f5c4c4;
+}
+
+.ohmylms-print-clues {
+	display: grid;
+	flex: 1;
+	gap: 0.8em;
+	min-width: 12em;
+}
+
+.ohmylms-print-clues-heading {
+	margin: 0 0 0.3em;
+	font-weight: 700;
+}
+
+.ohmylms-print-clues li,
+.ohmylms-print-words li {
+	margin: 0 0 0.25em;
+}
+
+.ohmylms-print-words {
+	columns: 2;
+	min-width: 10em;
+}
+
+.ohmylms-print-options.is-ordering li {
+	align-items: center;
 }
 
 /* Print page */
