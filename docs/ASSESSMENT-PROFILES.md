@@ -19,6 +19,24 @@ Built in: `quiz` and `practice` (no overrides) and `exam` (`includes/Exams/Profi
 design, one question per page, formal attempts only, the Exams tab, the Exam panel). The exam also has a record
 (`ohmylms-exam`), a private wrapper course for enrollment and a public URL, which is delivery, not authoring.
 
+## Combined assessment editor
+
+Quizzes and exams open in the same Gutenberg editor. **Assessment type** chooses the profile without
+resetting duration, attempts, grading or feedback settings. A quiz linked to an exam record retains its
+Exam type so that its publication and question-security rules remain intact.
+
+The **Quiz settings** or **Exam settings** panel combines timing, grading, scheduling, results release,
+sections and learner extra time. Native saves accept the additive `ohmylms_quiz.assessment` field and write
+it to the existing assessment metadata after question placements have been synchronized, inside the same
+transaction as the document. Invalid rules roll back document and settings changes together. Existing
+clients that omit the field retain the current assessment rules. Question pools and exam publication keep
+their explicit controls and existing permission checks.
+
+**Student preview** saves pending document changes, then embeds the existing authenticated preview player
+in an editor dialog. It uses the saved profile, player design, questions, math and grading. Restart opens
+a new temporary session; preview submissions create no learner attempts or skill evidence. The preview
+result continues to show the author the answer review, including answers withheld from learners.
+
 ## Add a kind
 
 Register it before the first assessment is read (plugin load or `plugins_loaded`):

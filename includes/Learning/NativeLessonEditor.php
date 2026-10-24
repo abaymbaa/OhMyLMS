@@ -364,18 +364,29 @@ final class NativeLessonEditor {
 			'ohmylms-native-lesson-settings',
 			'ohmylmsNativeLesson',
 			array(
-				'returnUrl'      => self::return_url(),
-				'previewUrl'     => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID(), 'gutenberg' ) : '',
+				'returnUrl'       => self::return_url(),
+				'previewUrl'      => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\PreviewPlayer::url( get_the_ID(), 'gutenberg' ) : '',
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Presence flag for read-only navigation, not a submitted value.
-				'hasReturn'      => isset( $_GET['ohmylms_return'] ),
+				'hasReturn'       => isset( $_GET['ohmylms_return'] ),
 				// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only initial skill selection; the question writer validates it on save.
-				'initialSkillId' => isset( $_GET['ohmylms_skill'] ) ? absint( $_GET['ohmylms_skill'] ) : 0,
-				'questionTypes'  => \OhMyLMS\Extensions\Registry::manifest()['question'] ?? array(),
-				'newQuestionUrl' => admin_url( 'post-new.php?post_type=ohmylms-question' ),
-				'bankUrl'        => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
-				'chapterId'      => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
-				'profile'        => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\Profiles::editor( get_the_ID() ) : null,
-				'printUrls'      => 'ohmylms-quiz' === $screen->post_type ? array(
+				'initialSkillId'  => isset( $_GET['ohmylms_skill'] ) ? absint( $_GET['ohmylms_skill'] ) : 0,
+				'questionTypes'   => \OhMyLMS\Extensions\Registry::manifest()['question'] ?? array(),
+				'newQuestionUrl'  => admin_url( 'post-new.php?post_type=ohmylms-question' ),
+				'bankUrl'         => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
+				'chapterId'       => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
+				'profile'         => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\Profiles::editor( get_the_ID() ) : null,
+				'assessmentTypes' => array_values(
+					array_map(
+						static function ( $profile ) {
+							return array(
+								'value' => $profile['kind'],
+								'label' => $profile['label'],
+							);
+						},
+						\OhMyLMS\Assessment\Profiles::all()
+					)
+				),
+				'printUrls'       => 'ohmylms-quiz' === $screen->post_type ? array(
 					'paper' => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'paper' ),
 					'key'   => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'key' ),
 				) : null,

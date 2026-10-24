@@ -827,3 +827,45 @@
 	.ohmylms-shared-answer-row:nth-of-type(4n + 4) {
 	background: #984167;
 }
+
+.ohmylms-assessment-preview.components-modal__frame {
+	width: min(1400px, 96vw);
+	max-width: 96vw;
+	height: 94vh;
+	max-height: 94vh;
+}
+
+.ohmylms-assessment-preview .components-modal__content {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.ohmylms-assessment-preview .components-modal__content > :last-child {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.ohmylms-assessment-preview-toolbar {
+	display: flex;
+	flex: none;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding-bottom: 12px;
+}
+
+.ohmylms-assessment-preview-toolbar p {
+	margin: 0;
+}
+
+.ohmylms-assessment-preview-frame {
+	display: block;
+	flex: 1;
+	width: 100%;
+	min-height: 0;
+	border: 1px solid #ddd;
+	background: #fff;
+}

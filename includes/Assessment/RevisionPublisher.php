@@ -21,7 +21,7 @@ defined( 'ABSPATH' ) || exit;
  */
 final class RevisionPublisher {
 	/** Quiz settings frozen into a revision; everything a delivery or grade depends on. */
-	const FROZEN_SETTINGS = array( 'time_limit', 'passing_grade', 'allow_attempts', 'layout', 'player_template', 'question_in_one_page', 'randomize_questions', 'short_text_limit', 'assessment_kind', 'feedback_release', 'late_policy', 'grace_seconds', 'sections' );
+	const FROZEN_SETTINGS = array( 'time_limit', 'passing_grade', 'allow_attempts', 'layout', 'presentation', 'player_template', 'question_in_one_page', 'randomize_questions', 'short_text_limit', 'assessment_kind', 'feedback_release', 'late_policy', 'grace_seconds', 'sections' );
 
 	/**
 	 * Build the revision that represents the quiz now, storing it if it changed.
@@ -38,6 +38,7 @@ final class RevisionPublisher {
 		}
 		$raw                          = array_merge( (array) $quiz->get_settings(), AssessmentSettings::frozen( $quiz_id ) );
 		$settings                     = array_intersect_key( $raw, array_flip( self::FROZEN_SETTINGS ) );
+		$settings['paper_content']    = \OhMyLMS\Quiz\PaperPresentation::content( $quiz_id );
 		$settings['timer_minutes']    = (float) $quiz->get_timer();
 		$settings['passing_mark']     = (float) $quiz->get_passing_grade();
 		$settings['attempts_allowed'] = (int) $quiz->get_take_attempts();

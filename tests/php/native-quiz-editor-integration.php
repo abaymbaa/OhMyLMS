@@ -163,6 +163,73 @@ try {
 	);
 	native_quiz_check( 200 === $saved->get_status(), 'Native save failed: ' . wp_json_encode( $saved->get_data() ) );
 	native_quiz_check( array( $question_ids[1], $question_ids[2], $question_ids[0] ) === array_map( 'intval', array_column( ohmylms_get_quiz( $quiz_id )->get_questions(), 'id' ) ), 'Block order was not written to quiz placements.' );
+	$configuration = array(
+		'settings'   => array(
+			'time_limit'     => array(
+				'value' => 25,
+				'type'  => 'minutes',
+			),
+			'allow_attempts' => 2,
+		),
+		'assessment' => array(
+			'kind'             => 'exam',
+			'feedback_release' => 'manual',
+			'available_from'   => '2026-01-01T09:00:00Z',
+			'sections'         => array(
+				array(
+					'title'     => 'New section',
+					'questions' => array( $question_ids[2] ),
+					'marks'     => array( $question_ids[2] => 3 ),
+				),
+			),
+		),
+	);
+	$combined      = native_quiz_request(
+		'POST',
+		$route,
+		array(
+			'content'      => $content,
+			'ohmylms_quiz' => $configuration,
+		)
+	);
+	native_quiz_check( 200 === $combined->get_status(), 'Combined exam configuration failed: ' . wp_json_encode( $combined->get_data() ) );
+	$combined_settings = $combined->get_data()['ohmylms_quiz'];
+	native_quiz_check( 'exam' === $combined_settings['assessment']['kind'] && 'manual' === $combined_settings['assessment']['feedback_release'], 'The native save lost exam type or results policy.' );
+	native_quiz_check( '2026-01-01 09:00:00' === $combined_settings['assessment']['available_from'], 'The native save did not return normalized assessment rules.' );
+	native_quiz_check( 25 === (int) ohmylms_get_quiz( $quiz_id )->get_timer(), 'The combined settings lost the assessment duration.' );
+	$invalid = native_quiz_request(
+		'POST',
+		$route,
+		array(
+			'title'        => 'Must roll back',
+			'content'      => native_quiz_block( $question_ids[0] ),
+			'ohmylms_quiz' => array(
+				'settings'   => array(
+					'time_limit' => array(
+						'value' => 99,
+						'type'  => 'minutes',
+					),
+				),
+				'assessment' => array( 'kind' => 'unregistered-kind' ),
+			),
+		)
+	);
+	native_quiz_check( 400 === $invalid->get_status(), 'Unknown assessment types were accepted by a native save.' );
+	native_quiz_check( 'Saved native quiz' === get_the_title( $quiz_id ) && 3 === count( ohmylms_get_quiz( $quiz_id )->get_questions() ) && 25 === (int) ohmylms_get_quiz( $quiz_id )->get_timer(), 'An invalid assessment save partially changed the document, question placements or duration.' );
+	$restored = native_quiz_request(
+		'POST',
+		$route,
+		array(
+			'ohmylms_quiz' => array(
+				'assessment' => array(
+					'kind'     => 'quiz',
+					'sections' => array(),
+				),
+			),
+		)
+	);
+	native_quiz_check( 200 === $restored->get_status() && 'quiz' === $restored->get_data()['ohmylms_quiz']['assessment']['kind'], 'The combined editor could not switch back to Quiz.' );
+	native_quiz_check( 25 === (int) ohmylms_get_quiz( $quiz_id )->get_timer() && 'manual' === $restored->get_data()['ohmylms_quiz']['assessment']['feedback_release'], 'Changing assessment type silently reset its duration or feedback settings.' );
 	$stored = get_post_field( 'post_content', $quiz_id );
 	native_quiz_check( str_contains( $stored, $heading ) && ! str_contains( $stored, 'must be removed' ), 'Core block content was lost or private answer attributes entered the quiz post.' );
 	native_quiz_check( str_contains( $stored, '"delivery":"quiz"' ), 'Quiz question placements did not retain quiz delivery context.' );
@@ -252,6 +319,43 @@ try {
 	native_quiz_check( in_array( 'short-text', $written_types, true ) && in_array( 'long-text', $written_types, true ), 'Written response contracts changed during native saving.' );
 	native_quiz_check( in_array( 'reorder', $written_types, true ), 'Native saving lost the reorder question contract.' );
 	native_quiz_check( 4 === count( RevisionPublisher::latest( $written_quiz_id )['slots'] ), 'Publishing lost the written question snapshots.' );
+	$paper_document = '<!-- wp:ohmylms/paper-section {"title":"Paper section"} /-->' . $written_document;
+	$paper_saved    = native_quiz_request(
+		'POST',
+		'/wp/v2/ohmylms-quizzes/' . $written_quiz_id,
+		array(
+			'content'      => $paper_document,
+			'ohmylms_quiz' => array(
+				'settings' => array(
+					'presentation' => 'paper',
+					'layout'       => 'one_question_per_page',
+				),
+			),
+		)
+	);
+	native_quiz_check( 200 === $paper_saved->get_status(), 'Paper presentation did not save.' );
+	$paper_revision = RevisionPublisher::latest( $written_quiz_id );
+	native_quiz_check( 'paper' === $paper_revision['settings']['presentation'], 'Published revision lost paper presentation.' );
+	native_quiz_check( false !== strpos( wp_json_encode( $paper_revision['settings']['paper_content'] ), 'Paper section' ), 'Paper section was not frozen with the revision.' );
+	$invalid_presentation = native_quiz_request( 'POST', '/wp/v2/ohmylms-quizzes/' . $written_quiz_id, array( 'ohmylms_quiz' => array( 'settings' => array( 'presentation' => 'invalid' ) ) ) );
+	native_quiz_check( 400 === $invalid_presentation->get_status(), 'Invalid presentation was accepted.' );
+	native_quiz_check( 'paper' === get_post_meta( $written_quiz_id, '_quiz_settings', true )['presentation'], 'Invalid save changed paper presentation.' );
+	$exam = native_quiz_request(
+		'POST',
+		'/ohmylms/v1/exams/compose',
+		array(
+			'title'            => 'Combined editor exam fixture',
+			'duration_minutes' => 30,
+		)
+	);
+	native_quiz_check( 200 === $exam->get_status(), 'The linked exam fixture could not be created.' );
+	$exam_id   = (int) $exam->get_data()['id'];
+	$exam_data = get_post_meta( $exam_id, \OhMyLMS\Exams\Library::META, true );
+	foreach ( array( $exam_id, $exam_data['quiz_id'], $exam_data['course_id'], $exam_data['chapter_id'] ) as $exam_post_id ) {
+		$native_posts[] = (int) $exam_post_id;
+	}
+	$changed_kind = native_quiz_request( 'POST', '/wp/v2/ohmylms-quizzes/' . $exam_data['quiz_id'], array( 'ohmylms_quiz' => array( 'assessment' => array( 'kind' => 'quiz' ) ) ) );
+	native_quiz_check( 409 === $changed_kind->get_status() && 'exam' === \OhMyLMS\Assessment\AssessmentSettings::get( $exam_data['quiz_id'] )['kind'], 'A linked exam lost its assessment profile through the combined editor.' );
 	wp_set_current_user( 0 );
 	$denied = native_quiz_request( 'GET', $route, array( 'context' => 'edit' ) );
 	native_quiz_check( 401 === $denied->get_status(), 'Anonymous native reads were allowed.' );

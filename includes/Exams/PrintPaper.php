@@ -117,6 +117,24 @@ final class PrintPaper {
 					'attrs' => self::paper_attributes( $block['attrs'] ?? array() ),
 					'items' => self::walk( $block['innerBlocks'] ?? array(), $id, $answers, $questions, $version ),
 				);
+			} elseif ( 'core/columns' === $name && self::has_question( $block['innerBlocks'] ?? array() ) ) {
+				// Columns keep their layout on the paper, as the editor's Paper view shows them.
+				$columns = array();
+				foreach ( $block['innerBlocks'] as $column ) {
+					$width     = (string) ( $column['attrs']['width'] ?? '' );
+					$columns[] = array(
+						'kind'  => 'layout',
+						'name'  => 'core/column',
+						'attrs' => array( 'width' => preg_match( '/^\d+(\.\d+)?(%|px|em|rem)$/', $width ) ? $width : '' ),
+						'items' => self::walk( $column['innerBlocks'] ?? array(), $id, $answers, $questions, $version ),
+					);
+				}
+				$item = array(
+					'kind'  => 'layout',
+					'name'  => 'core/columns',
+					'attrs' => array(),
+					'items' => $columns,
+				);
 			} elseif ( '' !== $name && self::has_question( $block['innerBlocks'] ?? array() ) ) {
 				$items = array_merge( $items, self::walk( $block['innerBlocks'], $id, $answers, $questions, $version ) );
 			} elseif ( '' !== $name ) {

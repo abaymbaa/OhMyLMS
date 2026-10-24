@@ -128,14 +128,16 @@ function SkillSearch( { onPick } ) {
 /**
  * PDF papers become reviewed bank questions and an exam on the shared quiz engine.
  * @param root0
- * @param root0.reviewOnly Show only the review window of one import.
- * @param root0.jobId      Import to open for review.
- * @param root0.onClosed   Called when that review window is closed.
+ * @param root0.reviewOnly  Show only the review window of one import.
+ * @param root0.jobId       Import to open for review.
+ * @param root0.onQuestions Imported question IDs.
+ * @param root0.onClosed    Called when that review window is closed.
  */
 export function ExamsPage( {
 	reviewOnly = false,
 	jobId = 0,
 	onClosed = null,
+	onQuestions = null,
 } ) {
 	const [ importing, setImporting ] = useState( false );
 	const [ jobs, setJobs ] = useState( [] );
@@ -1086,6 +1088,25 @@ export function ExamsPage( {
 						) }
 						{ job.state === 'committed' && (
 							<>
+								{ onQuestions && (
+									<Button
+										variant="primary"
+										disabled={ busy }
+										onClick={ () =>
+											run( async () => {
+												await onQuestions(
+													job.question_ids
+												);
+												setJob( null );
+											} )
+										}
+									>
+										{ __(
+											'Insert questions into this assessment',
+											'ohmylms'
+										) }
+									</Button>
+								) }
 								<p>
 									{ __(
 										'Questions are saved as bank drafts. Approval and exam publication are separate actions.',

@@ -27,7 +27,7 @@ and practice or inline checks never touch course completion.
 |---|---|---|
 | A01 | Isolated test site restored (`tools/create-test-site.py` renamed to ohmylms identifiers); pre-existing rename bug fixed (two completion hooks shared a name and crashed quiz completion) | `tools/`, `includes/Extensions/Bootstrap.php` |
 | A02 | Object-level authorization for every question/quiz route and nested write; foreign option IDs rejected; reports scoped to their own quiz | `QuestionBank/AccessPolicy.php`, `QuestionBank/DraftWriter.php`, `Rest/V1/QuestionController.php`, `Rest/V1/QuizController.php` |
-| A03 | Atomic nested saves with per-child errors; stale-save conflict (409); editor save-generation guard keeps edits made during a save; delete split into remove-from-quiz / archive / delete-unused | `DraftWriter.php`, `QuestionBank/Usage.php`, `features/quizzes/useQuizEditor.js`, `model.mjs` |
+| A03 | Atomic nested saves with per-child errors; stale-save conflict (409); editor save-generation guard keeps edits made during a save; delete split into remove-from-quiz / archive / delete-unused | `DraftWriter.php`, `QuestionBank/Usage.php`, `features/quiz-editor/useQuizEditor.js`, `model.mjs` |
 | A04 | Question UUIDs, immutable content-hashed versions, resumable migration with inventory | `QuestionBank/VersionPublisher.php`, `Assessment/Migration.php`, `Assessment/Schema.php` |
 | A05 | Quiz revisions and slots; per-attempt frozen items (seeded order, opaque option tokens); snapshot-aware graders; versioned reports | `Assessment/RevisionPublisher.php`, `AttemptItems.php`, `Grader.php`, `AttemptReport.php`, `Quiz/Submission.php`, `Quiz/Review.php`, quiz templates |
 | A06 | Bank search/filter, approval, archive/restore, duplicate (to edit shared questions), banks and grants, quiz references, version pins; React bank page (with a New question form for choice, true/false, short/long answer, numerical and structured questions, saved without a quiz) and quiz-editor picker | `Rest/V1/QuestionBankController.php`, `QuestionBank/Banks.php`, `features/question-bank/` |
@@ -75,7 +75,9 @@ scoring policy they started with: `legacy-int` (whole points, as before) or `dec
   stored seed. Option values are per-attempt HMAC tokens (matching definitions use a
   separate token kind), so markup never reveals correctness, pairings or order. Text-answer
   option text, `is_correct`, rubrics, tolerances and answer settings are never output.
-- **Deadlines.** UTC deadline = start + time limit + extra time. Answers within the grace
+- **Deadlines.** UTC deadline = start + time limit + extra time, capped at the assessment's
+  closing time (`available_until`): the closing time is a hard deadline, so a learner who starts
+  30 minutes before the close gets 30 minutes, and an untimed attempt ends at the close. Answers within the grace
   period count; after it, only autosaved, server-received answers are graded. A cron job
   (every five minutes) and the next start finalize abandoned attempts.
 - **Question types** must declare `'snapshot' => true` (grade only the object passed in);

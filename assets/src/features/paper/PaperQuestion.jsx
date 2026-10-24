@@ -172,10 +172,6 @@ export function PaperQuestion( {
 							key={ option.letter }
 							className={ option.correct ? 'is-correct' : '' }
 						>
-							<span
-								className="ohmylms-print-bubble"
-								aria-hidden="true"
-							/>
 							<span className="ohmylms-print-letter">
 								{ option.letter }
 							</span>
