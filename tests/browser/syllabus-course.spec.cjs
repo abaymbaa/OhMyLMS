@@ -113,6 +113,7 @@ test('selects syllabus skills, reviews lessons and opens an independent draft', 
   expect(linked.program.items).toHaveLength(5);
   expect(linked.program.outcomes).toHaveLength(3);
   expect(linked.program.outcomes.find(row => row.group_id === linked.program.groups[1].id).required).toBe(false);
+  await page.getByRole('tab', { name: 'Syllabus alignment', exact: true }).click();
   await expect(page.getByText('2 objectives, 2 with content linked', { exact: true })).toBeVisible();
   await page.screenshot({ path: testInfo.outputPath('lesson-activities-checklist.png'), fullPage: true });
   expect(errors).toEqual([]);

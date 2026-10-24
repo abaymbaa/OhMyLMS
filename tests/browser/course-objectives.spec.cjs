@@ -19,6 +19,7 @@ test('course objectives support search, persistence, failed saves and removal', 
   await page.locator('#wp-submit').click();
   await page.waitForURL(/wp-admin/);
   await page.goto(`/wp-admin/admin.php?page=ohmylms#/course-edit/${state.course}/content`);
+  await page.getByRole('tab', { name: 'Syllabus alignment', exact: true }).click();
   const panel = page.getByRole('region', { name: 'Syllabus objectives', exact: true });
   await expect(panel.getByText('No target objectives selected yet.', { exact: true })).toBeVisible();
   await panel.getByRole('button', { name: 'Add objectives', exact: true }).click();
@@ -42,6 +43,7 @@ test('course objectives support search, persistence, failed saves and removal', 
   await panel.locator('summary').click();
   await expect(panel.getByText('Equation examples', { exact: true })).toBeVisible();
   await page.reload();
+  await page.getByRole('tab', { name: 'Syllabus alignment', exact: true }).click();
   await expect(panel.locator('tbody tr')).toHaveCount(2);
   await page.screenshot({ path: testInfo.outputPath('objectives-table.png'), fullPage: true });
   await page.setViewportSize({ width: 390, height: 844 });
@@ -57,6 +59,7 @@ test('course objectives support search, persistence, failed saves and removal', 
   await panel.getByRole('button', { name: 'Remove objective: Simplify expressions', exact: true }).click();
   await expect(panel.locator('tbody tr')).toHaveCount(1);
   await page.reload();
+  await page.getByRole('tab', { name: 'Syllabus alignment', exact: true }).click();
   await expect(panel.locator('tbody tr')).toHaveCount(1);
   // Existing duplicated ProseMirror instances in the course description editor:
   // docs/DEVELOPMENT.md, Known issues. Keep every other page error actionable.
