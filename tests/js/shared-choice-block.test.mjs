@@ -50,6 +50,8 @@ function compile( file, scope, expression ) {
 			rememberQuestion,
 			stepQuestionHistory,
 			useSelect: () => false,
+			usePaperView: () => false,
+			usePaperQuestion: () => ( { view: false } ),
 			VariableChips: 'variable-chips',
 			variableNames: () => [],
 			insertIntoStatement: ( html ) => html,
@@ -68,6 +70,8 @@ function compile( file, scope, expression ) {
 			rememberQuestion,
 			stepQuestionHistory,
 			useSelect: () => false,
+			usePaperView: () => false,
+			usePaperQuestion: () => ( { view: false } ),
 			VariableChips: 'variable-chips',
 			variableNames: () => [],
 			insertIntoStatement: ( html ) => html,
@@ -187,7 +191,9 @@ test( 'shared block preserves equations without showing prompt or answer format 
 	const answers = nodes( tree ).find( ( node ) => node.type === 'answers' );
 	assert.equal( Boolean( answers.props.showAnswerToolbar ), false );
 	assert.equal( answers.props.options[ 0 ].answer, marker );
-	const selector = nodes( tree ).find( ( node ) => node.type === 'type-menu' );
+	const selector = nodes( tree ).find(
+		( node ) => node.type === 'type-menu'
+	);
 	assert.deepEqual(
 		selector.props.options.map( ( option ) => option.value ),
 		QUESTION_BLOCK_TYPES.map( ( [ id ] ) => id )

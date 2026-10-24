@@ -1,0 +1,242 @@
+/*
+ * Printable exam paper: the editor's paper canvas and the printed questions.
+ * Canvas rules are scoped to .is-ohmylms-paper; question rules are shared with the print page.
+ */
+
+/* Paper canvas in the block editor */
+
+.editor-styles-wrapper.is-ohmylms-paper {
+	padding: 32px 16px 64px;
+	background: #dcdcde;
+}
+
+/*
+ * Scroll sideways rather than clip a sheet wider than the canvas. This outranks the frontend
+ * full-width rule in blocks-frontend.css, which hides horizontal overflow on the canvas body.
+ */
+html body.editor-styles-wrapper.is-ohmylms-paper {
+	overflow-x: auto;
+}
+
+/* The root is .alignfull; its frontend offset (blocks-frontend.css) must not move the sheet. */
+.editor-styles-wrapper.is-ohmylms-paper .is-root-container {
+	left: 0;
+	box-sizing: border-box;
+	width: var(--ohmylms-paper-width);
+	max-width: none;
+	margin: 0 auto;
+	padding: var(--ohmylms-paper-margin) var(--ohmylms-paper-margin) 0;
+	background:
+		repeating-linear-gradient(
+			to bottom,
+			#fff 0,
+			#fff var(--ohmylms-paper-height),
+			transparent var(--ohmylms-paper-height),
+			transparent calc(var(--ohmylms-paper-height) + var(--ohmylms-paper-gap))
+		);
+	color: #1e1e1e;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: var(--ohmylms-paper-font-size);
+	line-height: 1.45;
+}
+
+.editor-styles-wrapper.is-ohmylms-paper.is-ohmylms-paper-serif .is-root-container {
+	font-family: Georgia, "Times New Roman", serif;
+}
+
+.editor-styles-wrapper.is-ohmylms-paper .is-root-container > * {
+	max-width: none;
+	margin-right: 0 !important;
+	margin-left: 0 !important;
+	margin-block-start: 0;
+	margin-block-end: 1.25em;
+}
+
+.editor-styles-wrapper.is-ohmylms-paper .ohmylms-shared-choice-block {
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: transparent;
+	font-size: inherit;
+	line-height: inherit;
+}
+
+.ohmylms-paper-pages {
+	position: absolute;
+	top: 0;
+	left: 0;
+	pointer-events: none;
+}
+
+.ohmylms-paper-page-number {
+	position: absolute;
+	transform: translateY(-50%);
+	color: #50575e;
+	font: 9pt/1 Arial, Helvetica, sans-serif;
+	text-align: center;
+}
+
+/* Printed questions */
+
+.ohmylms-print-head {
+	display: grid;
+	grid-template-columns: 2em minmax(0, 1fr) auto;
+	align-items: baseline;
+	column-gap: 0.4em;
+}
+
+.ohmylms-print-question.is-text .ohmylms-print-head {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+.ohmylms-print-number {
+	font-weight: 700;
+}
+
+.ohmylms-print-prompt {
+	grid-column: 2;
+	min-width: 0;
+}
+
+.ohmylms-print-question.is-text .ohmylms-print-prompt {
+	grid-column: 1;
+}
+
+.ohmylms-print-prompt > :first-child {
+	margin-top: 0;
+}
+
+.ohmylms-print-prompt > :last-child {
+	margin-bottom: 0;
+}
+
+.ohmylms-print-prompt img,
+.ohmylms-print-option img {
+	max-width: 100%;
+	height: auto;
+}
+
+.ohmylms-print-marks {
+	grid-column: 3;
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.ohmylms-print-options {
+	display: grid;
+	gap: 0.4em;
+	margin: 0.6em 0 0 2.4em;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-print-options li {
+	display: flex;
+	align-items: baseline;
+	gap: 0.5em;
+	margin: 0;
+}
+
+.ohmylms-print-bubble {
+	flex: none;
+	box-sizing: border-box;
+	width: 0.95em;
+	height: 0.95em;
+	border: 1px solid currentcolor;
+	border-radius: 50%;
+	transform: translateY(0.12em);
+}
+
+.ohmylms-print-options.is-multiple .ohmylms-print-bubble {
+	border-radius: 2px;
+}
+
+.ohmylms-print-options li.is-correct .ohmylms-print-bubble {
+	background: currentcolor;
+}
+
+.ohmylms-print-letter {
+	flex: none;
+	font-weight: 700;
+}
+
+.ohmylms-print-option > :first-child {
+	margin-top: 0;
+}
+
+.ohmylms-print-option > :last-child {
+	margin-bottom: 0;
+}
+
+.ohmylms-print-answer-line {
+	display: flex;
+	align-items: flex-end;
+	justify-content: flex-end;
+	gap: 0.4em;
+	margin-top: 0.8em;
+}
+
+.ohmylms-print-line {
+	width: 45%;
+	height: 1.4em;
+	border-bottom: 1px dotted currentcolor;
+}
+
+.ohmylms-print-lines {
+	height: calc(var(--ohmylms-paper-lines, 3) * 8mm);
+	margin: 0.4em 0 0 2.4em;
+	background:
+		repeating-linear-gradient(
+			to bottom,
+			transparent 0,
+			transparent calc(8mm - 1px),
+			#8c8f94 calc(8mm - 1px),
+			#8c8f94 8mm
+		);
+}
+
+.ohmylms-print-part {
+	margin: 0.8em 0 0 2.4em;
+}
+
+.ohmylms-print-total {
+	margin-top: 0.4em;
+	text-align: right;
+}
+
+.ohmylms-print-key {
+	margin: 0.4em 0 0 2.4em;
+	padding: 0.2em 0.6em;
+	border-left: 3px solid #b32d2e;
+	color: #b32d2e;
+	font-size: 0.9em;
+}
+
+.ohmylms-print-key p {
+	margin: 0;
+}
+
+.ohmylms-print-part .ohmylms-print-lines,
+.ohmylms-print-part .ohmylms-print-key {
+	margin-left: 2.4em;
+}
+
+.ohmylms-print-note {
+	margin: 0.6em 0 0 2.4em;
+	padding: 4px 8px;
+	background: #fcf9e8;
+	color: #614a19;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	font-size: 12px;
+}
+
+@media print {
+
+	.ohmylms-print-note {
+		display: none;
+	}
+
+	.ohmylms-print-question {
+		break-inside: avoid;
+	}
+}

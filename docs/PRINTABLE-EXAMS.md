@@ -1,0 +1,149 @@
+# Printable exams: design
+
+Status: **phase 1 built** (A4 canvas, core renderers, paper settings); phases 2 to 5 not built. Written October 24, 2026.
+
+## Phase 1 as built
+
+- `assets/src/features/paper/paperModel.mjs`: settings normalization, the printed model of each question type
+  and `paginate()`. Covered by `tests/js/paper.test.mjs`, including a check that student models carry no answers.
+- `assets/src/features/paper/PaperQuestion.jsx`: the shared renderer. `PaperCanvas.jsx`: the Paper view toggle,
+  sheet layout inside the editor iframe, the **Printable paper** sidebar panel and the per-block hooks.
+  `store.js`: editor-only view state (`ohmylms/paper`); nothing in it is saved with the exam.
+- `assets/css/paper.css`: canvas rules under `.is-ohmylms-paper`, printed question classes `ohmylms-print-*`
+  (the `ohmylms-paper-*` names were already used by the Question paper dialog).
+- Settings save in `_quiz_settings['paper']`, validated by `OhMyLMS\Exams\PaperSettings::sanitize()`.
+- The Paper view choice is remembered per exam and person in `localStorage`; **Open this exam in paper view** is
+  the saved default for people who have not chosen.
+- Known limits: math (`$…$`) is not typeset inside the editor iframe. This is true of the normal editor canvas too,
+  because the math runtime cannot construct its elements in the iframe; the print page (phase 2) is a normal
+  document and will typeset. The editor's root container is `.alignfull`, so the canvas overrides the frontend
+  full-width rules in `blocks-frontend.css` (`left`, body `overflow-x`).
+
+Teachers lay out a paper version of an exam in the Gutenberg exam editor and see it as it will print. The
+printed paper comes from the same questions and pinned versions as the online exam. No second copy is stored.
+
+## Decisions
+
+| Question | Decision |
+|---|---|
+| Where papers are authored | A **Paper view** of the existing native exam editor (`ohmylms-quiz`, `NativeQuizEditor`). There is no separate paper post type. |
+| How the PDF is produced | **Browser print.** An editor-only print page uses `@page` CSS, and the user prints or saves it as PDF. No server PDF library. |
+| First release | **Student paper** and **answer key / mark scheme**. Shuffled versions and bubble answer sheets come later. |
+
+## How it fits the current editor
+
+- Question blocks in a quiz document hold only references (`questionId`, `save: () => null`). Statements and answers
+  are bank versions pinned per exam (`exam.version_ids`). The paper reads those pinned versions, the same way
+  `ExamPaperDialog.jsx` does with `loadVersion()` and `loadMath()`.
+- Question rendering already lives in JS. Paper renderers are therefore JS too, and **one renderer per question type is
+  shared by the editor canvas and the print page**. This sharing is what makes the editor WYSIWYG.
+- The online player builds from placements. Print-only blocks are ignored online: they render nothing in the player and
+  never become placements.
+
+## Pieces
+
+### 1. Paper renderers (`assets/src/features/paper/renderers/`)
+
+These are pure components, `( { snapshot, options, showAnswers } ) => element`, registered by question type. Third-party
+types can register one through the existing extension registry (`registerPaperRenderer( type, Component )`). Types
+without a renderer are shown in the editor as **Not printable**, with the reason. Printing still works; that question
+prints its statement and a blank answer space.
+
+| Type(s) | On paper | Answer key adds |
+|---|---|---|
+| single-choice, multiple-choice, true-false | Lettered options with bubbles (circles, or squares for multiple select) | Filled bubbles |
+| short-text, text-entry, numerical | Answer line or box, with the unit after it | Accepted answers and tolerance |
+| long-text | Ruled lines: `options.linesPerMark × marks`, at least 3 | Rubric |
+| fill-in-the-blank, dropdown-blanks, multi-blank | Statement with numbered blanks (dropdowns list their choices) | Blank answers |
+| matching | Two lettered columns and an answer row | Pairs |
+| reorder | Items with ordering boxes | Correct order |
+| categorize | Group table to write in | Grouping |
+| structured | Parts `(a)`, `(b)` with `[n]` marks right-aligned; each part uses its kind's renderer | Per-part answer and rubric (mark scheme row) |
+| crossword, wordsearch | Grid and clues | Solved grid |
+| statement | Text only | — |
+| expression, build-expression | Answer box | Accepted forms |
+| number-line, shade-model, set-clock, fill-level, build-chart, grid-build, count-blocks, make-amount | A static SVG blank of the figure, where the existing figure code can produce one; otherwise **Not printable** in v1 | The answer drawn on the figure, where possible |
+
+The student-paper output never contains answers, from the editor or the print page. See security below.
+
+### 2. Print-only blocks (`assets/src/blocks/paper-*`)
+
+These blocks are allowed in quiz documents through `NativeQuizEditor::quiz_blocks`.
+
+- `ohmylms/paper-header`: school or organisation, exam title, subject or code, session, duration, total marks
+  (computed live), and name, class and candidate-number boxes.
+- `ohmylms/paper-instructions`: an editable rich-text list with a default instruction set.
+- `ohmylms/paper-section`: a section heading with an optional marks subtotal.
+- `ohmylms/paper-columns`: a multi-column section. Questions and other blocks go inside it (`InnerBlocks`).
+  Settings:
+  - `columns`: 1 to 3.
+  - `gap`.
+  - `rule`: a vertical line between columns.
+  - `flow`:
+    - **Flow** (default): CSS multi-column. Questions fill the first column top to bottom, then continue in the next.
+      Each question uses `break-inside: avoid`, so it is never split across columns.
+    - **Side by side**: a fixed grid row, for example two short questions next to each other.
+
+  The section can stop mid-page and is followed by full-width content. Question numbering and marks totals continue
+  across sections, because placements follow document order, including nested slots, as the native quiz editor
+  already reconciles them. Wide items (tables, figures, long-answer lines) can be marked **Span all columns**
+  (`column-span: all`). The online player ignores the column layout and shows its questions in order.
+- `ohmylms/paper-page-break`: a forced page break.
+- `ohmylms/paper-answer-space`: ruled lines, a squared grid or a blank box of a set height, for extra working space.
+- `ohmylms/paper-formula-sheet`: free content that prints on its own page.
+
+Core text, image, table and math blocks already in the document print as they are.
+
+### 3. A4 paper canvas in the editor
+
+- The editing surface is the sheet itself: the editor canvas is an A4 (or Letter) page with the paper's margins.
+  Teachers insert questions and paper blocks straight onto it, and each block shows its printed form as they type.
+- Exams created as **Printable paper** open on the paper canvas by default. Any other exam can switch to it with the
+  **Paper view** toolbar toggle, which adds `is-ohmylms-paper` to the editor iframe body and loads `paper-editor.css`.
+- When a question on the sheet is selected, its answers, marks and print options are edited in the block sidebar, so the
+  page stays exactly as it will print.
+- **Pagination preview:** a `ResizeObserver` measures block heights and draws page-boundary markers and page
+  numbers. Questions use `break-inside: avoid`. A question taller than one page gets a warning. The markers are a
+  close preview; the browser's print engine has the final say.
+- **Paper settings** document panel, stored with the quiz settings (new `paper` key in `_quiz_settings`, written
+  through the existing `ohmylms_quiz` REST field):
+  `size` (A4 or Letter), `margins`, `font_size`, `numbering` (1, 2, 3 or Q1), `show_marks`, `lines_per_mark`,
+  `footer` (title, page X of Y) and `answer_key_style` (inline answers or mark-scheme table).
+
+### 4. Print page
+
+- Route: `?ohmylms_print=ID&variant=paper|key&_wpnonce=…`. It needs `edit_post` on the quiz and a valid nonce, and it
+  is never cached.
+- It renders a minimal document with the theme's styles removed and mounts the same renderers. It waits for math and
+  figures to load before enabling **Print** and offering auto-print.
+- `@page { size; margin }` comes from the paper settings. Page numbers use `@page` margin boxes
+  (`counter(page)` / `counter(pages)`) where the browser supports them.
+- Buttons: **Print paper** and **Print answer key** in the editor's Paper settings, plus a **Print** action on
+  Content Hub → Exams.
+
+## Security
+
+- Answer data reaches the client only for users who can edit the quiz. This is already true of `loadVersion`.
+- The student-paper variant uses only public fields: statement, options, and part `id`/`label`/`prompt`/`kind`/`marks`/`unit`
+  (the same field list as `Structured` public output). Renderers receive `showAnswers: false` and an answer-free snapshot.
+  Hiding answers with CSS alone is not enough.
+- The print route checks the capability and nonce on the server, sanitizes settings, and escapes all labels.
+
+## Build phases
+
+1. **A4 canvas and core renderers.** The paper canvas in Gutenberg (sheet sizing, margins, page markers), renderers
+   for choice, true/false, short, long, numerical and structured types, and Paper settings. Teachers can add questions
+   onto the sheet and see them as printed.
+2. **Print page.** The print route with student paper and answer key variants, and the Print buttons.
+3. **Print-only blocks.** Header, instructions, section, multi-column section, page break, answer space and formula
+   sheet. Page markers on the canvas account for column flow.
+4. **Remaining types.** Matching, reorder, blanks, categorize, crossword, wordsearch and expression, then static figures
+   for the visual types.
+5. **Later.** Shuffled versions A/B/C with per-version keys, and a bubble answer sheet.
+
+## Verification
+
+- JS unit tests for each renderer: the student variant contains no answer fields, and the key variant shows them.
+- A PHP integration test for the print route: denied for anonymous users and non-editors, and the nonce is required.
+- A Playwright test: toggle Paper view, add a page break and header, open the print page, and check page count and
+  layout with `page.pdf()`.

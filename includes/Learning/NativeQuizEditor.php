@@ -139,6 +139,9 @@ final class NativeQuizEditor {
 			return AccessPolicy::denied();
 		}
 		$value = NativeLessonEditor::sanitize_setting( $value );
+		if ( isset( $value['settings']['paper'] ) ) {
+			$value['settings']['paper'] = \OhMyLMS\Exams\PaperSettings::sanitize( $value['settings']['paper'] );
+		}
 		foreach ( array(
 			'settings'      => '_quiz_settings',
 			'drip_settings' => '_drip_settings',

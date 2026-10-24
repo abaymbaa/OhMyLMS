@@ -5,12 +5,13 @@ import {
 	getBlockType,
 	registerBlockType,
 } from '@wordpress/blocks';
-import { useBlockProps } from '@wordpress/block-editor';
+import { InspectorControls, useBlockProps } from '@wordpress/block-editor';
 import { select, useDispatch } from '@wordpress/data';
 import {
 	Button,
 	Dropdown,
 	Modal,
+	PanelBody,
 	SelectControl,
 	ToggleControl,
 } from '@wordpress/components';
@@ -42,6 +43,7 @@ import {
 	questionPromptPatch,
 } from './questionPrompt.mjs';
 import { loadMath, mathEnabled } from '../math/loader.mjs';
+import { usePaperView } from '../paper/PaperCanvas';
 
 export const MULTIPLE_CHOICE_BLOCK = 'ohmylms/shared-multiple-choice';
 
@@ -490,6 +492,7 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 		} );
 		const { replaceBlocks } = useDispatch( 'core/block-editor' );
 		const [ picking, setPicking ] = useState( false );
+		const paper = usePaperView();
 		const choose = ( source ) => {
 			const step = fromQuestionBlock( source, { postType } );
 			if ( step.action === 'player' ) {
@@ -504,12 +507,23 @@ export function registerMultipleChoiceBlock( LessonEdit ) {
 		const content = <LessonEdit { ...props } />;
 		return (
 			<div { ...blockProps }>
-				{ props.isSelected && (
+				{ props.isSelected && ! paper && (
 					<QuestionSourceSwitch
 						source="write"
 						allowed={ allowed }
 						onChange={ choose }
 					/>
+				) }
+				{ paper && (
+					<InspectorControls>
+						<PanelBody title={ __( 'Question source', 'ohmylms' ) }>
+							<QuestionSourceSwitch
+								source="write"
+								allowed={ allowed }
+								onChange={ choose }
+							/>
+						</PanelBody>
+					</InspectorControls>
 				) }
 				{ content }
 				{ picking && (

@@ -11,6 +11,7 @@ import { NativeSaveGuard } from './NativeSaveGuard';
 import { rememberQuestion, stepQuestionHistory } from './questionHistory.mjs';
 import {
 	Notice,
+	PanelBody,
 	Spinner,
 	ToolbarGroup,
 	ToolbarButton,
@@ -28,7 +29,11 @@ import {
 	getBlockType,
 	createBlock,
 } from '@wordpress/blocks';
-import { useBlockProps, BlockControls } from '@wordpress/block-editor';
+import {
+	useBlockProps,
+	BlockControls,
+	InspectorControls,
+} from '@wordpress/block-editor';
 import { choiceReadyToSave, reconcileChoiceSave } from './choiceAutosave.mjs';
 import {
 	loadBankQuestion,
@@ -41,6 +46,31 @@ import {
 	MultipleChoiceFields,
 	registerMultipleChoiceBlock,
 } from '../question-editor/MultipleChoiceBlock';
+import { questionPrompt } from '../question-editor/questionPrompt.mjs';
+import { PaperQuestion } from '../paper/PaperQuestion';
+import { usePaperQuestion } from '../paper/PaperCanvas';
+
+/**
+ * Question fields stay on the canvas, except on the printable paper, where the sheet shows the
+ * printed question and the fields move to the block sidebar.
+ *
+ * @param {Object}  props          Properties.
+ * @param {boolean} props.paper    Whether paper view is on.
+ * @param {Element} props.children Question fields.
+ * @return {Element} Fields in place or in the sidebar.
+ */
+function QuestionFieldsSlot( { paper, children } ) {
+	if ( ! paper ) {
+		return children;
+	}
+	return (
+		<InspectorControls>
+			<PanelBody title={ __( 'Question', 'ohmylms' ) }>
+				{ children }
+			</PanelBody>
+		</InspectorControls>
+	);
+}
 
 /**
  * A lesson placement stores references only; private authoring data uses the bank API.
@@ -76,6 +106,11 @@ function LessonChoiceEdit( {
 	latestQuestion.current = question;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
+	const printed = usePaperQuestion(
+		clientId,
+		question?.settings?.type || ''
+	);
+	const paper = printed.view && ! standalone;
 	useEffect( () => {
 		if ( context.postType ) {
 			let delivery = quiz ? 'quiz' : 'inline';
@@ -412,6 +447,71 @@ function LessonChoiceEdit( {
 		);
 	}
 
+	let answerFields = (
+		<p>
+			{ __(
+				'The editor for this question type is unavailable. Enable its extension to edit it.',
+				'ohmylms'
+			) }
+		</p>
+	);
+	if ( supported ) {
+		answerFields = (
+			<MultipleChoiceFields
+				question={ question }
+				allowWritten={ quiz }
+				readOnly={ coreSaving || detail?.can_edit === false }
+				onRemove={
+					standalone ? undefined : () => removeBlock( clientId )
+				}
+				onDuplicate={
+					! standalone && ! busy && choiceReadyToSave( question )
+						? duplicate
+						: undefined
+				}
+				onApprove={
+					( standalone || ! quiz ) && detail?.can_approve && ! busy
+						? () => save( true )
+						: undefined
+				}
+				onChange={ ( patch ) => {
+					rememberQuestion( history.current, question );
+					revision.current++;
+					const next = { ...question, ...patch };
+					latestQuestion.current = next;
+					setQuestion( next );
+					setDirty( true );
+					setError( '' );
+				} }
+			/>
+		);
+	} else if ( ! quiz && question.settings?.type ) {
+		answerFields = (
+			<>
+				<MultipleChoiceFields
+					question={ question }
+					readOnly
+					onRemove={
+						standalone ? undefined : () => removeBlock( clientId )
+					}
+				/>
+				<p className="ohmylms-inline-check-note">
+					{ __(
+						'This inline check shows the question as learners see it. Edit its content in the question bank; changes appear here once approved.',
+						'ohmylms'
+					) }{ ' ' }
+					<a
+						href={ `post.php?post=${ attributes.questionId }&action=edit` }
+						target="_blank"
+						rel="noreferrer"
+					>
+						{ __( 'Open in the question bank', 'ohmylms' ) }
+					</a>
+				</p>
+			</>
+		);
+	}
+
 	const restoreEdit = ( direction ) => {
 		const next = stepQuestionHistory(
 			history.current,
@@ -465,77 +565,32 @@ function LessonChoiceEdit( {
 					{ error }
 				</Notice>
 			) }
-			{ dirty &&
-				! busy &&
-				supported &&
-				! choiceReadyToSave( question ) && (
-					<p className="ohmylms-choice-validation" role="status">
-						{ incompleteMessage }
-					</p>
-				) }
-			{ supported ? (
-				<MultipleChoiceFields
+			{ paper && (
+				<PaperQuestion
 					question={ question }
-					allowWritten={ quiz }
-					readOnly={ coreSaving || detail?.can_edit === false }
-					onRemove={
-						standalone ? undefined : () => removeBlock( clientId )
-					}
-					onDuplicate={
-						! standalone && ! busy && choiceReadyToSave( question )
-							? duplicate
-							: undefined
-					}
-					onApprove={
-						( standalone || ! quiz ) &&
-						detail?.can_approve &&
-						! busy
-							? () => save( true )
-							: undefined
-					}
-					onChange={ ( patch ) => {
-						rememberQuestion( history.current, question );
-						revision.current++;
-						const next = { ...question, ...patch };
-						latestQuestion.current = next;
-						setQuestion( next );
-						setDirty( true );
-						setError( '' );
-					} }
+					prompt={ questionPrompt( question ) }
+					label={ printed.label }
+					settings={ printed.settings }
+					showAnswers={ printed.answers }
+					editor
 				/>
-			) : ! quiz && question.settings?.type ? (
-				<>
-					<MultipleChoiceFields
-						question={ question }
-						readOnly
-						onRemove={
-							standalone
-								? undefined
-								: () => removeBlock( clientId )
-						}
-					/>
-					<p className="ohmylms-inline-check-note">
-						{ __(
-							'This inline check shows the question as learners see it. Edit its content in the question bank; changes appear here once approved.',
-							'ohmylms'
-						) }{ ' ' }
-						<a
-							href={ `post.php?post=${ attributes.questionId }&action=edit` }
-							target="_blank"
-							rel="noreferrer"
-						>
-							{ __( 'Open in the question bank', 'ohmylms' ) }
-						</a>
-					</p>
-				</>
-			) : (
-				<p>
-					{ __(
-						'The editor for this question type is unavailable. Enable its extension to edit it.',
-						'ohmylms'
-					) }
+			) }
+			{ paper && dirty && ! busy && ! choiceReadyToSave( question ) && (
+				<p className="ohmylms-print-note" role="status">
+					{ incompleteMessage }
 				</p>
 			) }
+			<QuestionFieldsSlot paper={ paper }>
+				{ dirty &&
+					! busy &&
+					supported &&
+					! choiceReadyToSave( question ) && (
+						<p className="ohmylms-choice-validation" role="status">
+							{ incompleteMessage }
+						</p>
+					) }
+				{ answerFields }
+			</QuestionFieldsSlot>
 			{ attributes.questionId > 0 && (
 				<NativeQuestionDetails
 					id={ attributes.questionId }
