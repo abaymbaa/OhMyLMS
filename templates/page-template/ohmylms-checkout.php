@@ -1,6 +1,8 @@
 <?php
 /**
  * Template Name: OhMyLMS Checkout - No Header
+ *
+ * @package OhMyLMS
  */
 ?>
 

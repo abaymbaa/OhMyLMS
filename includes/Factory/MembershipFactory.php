@@ -4,14 +4,17 @@ namespace OhMyLMS\Factory;
 
 use OhMyLMS\Data\Membership;
 
+/**
+ * Plugin membership factory implementation.
+ */
 class MembershipFactory {
 
 	/**
 	 * Get membership object
 	 *
-	 * @param bool $membership_id
+	 * @param bool $membership_id Membership identifier.
 	 * @return bool|Membership
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_membership( $membership_id = false ) {
@@ -26,7 +29,7 @@ class MembershipFactory {
 	/**
 	 * Get membership id
 	 *
-	 * @param $membership
+	 * @param mixed $membership Membership.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */
@@ -49,8 +52,8 @@ class MembershipFactory {
 	/**
 	 * Check whether the membership exist or not
 	 *
-	 * @param $membership_id Membership ID
-	 *
+	 * @param mixed $membership_id Membership ID
+	 * .
 	 * @return bool If membership is exist then return true, otherwise return false
 	 *
 	 * @since 1.0.0

@@ -100,7 +100,7 @@ class BlocksManager {
 	/**
 	 * Register OhMyLMS block category
 	 *
-	 * @param array $categories Existing block categories
+	 * @param array $categories Existing block categories.
 	 * @return array Updated block categories
 	 */
 	public function register_block_category( $categories ) {

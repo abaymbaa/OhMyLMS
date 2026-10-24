@@ -11,6 +11,9 @@ namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Engagement\Achievements;
 
+/**
+ * Plugin level implementation.
+ */
 class Level {
 
 	/**
@@ -49,6 +52,7 @@ class Level {
 	 *
 	 * @return array|false
 	 * @since 1.0.0
+	 * @param mixed $user_id User identifier.
 	 */
 	public static function maybe_met_rules( $user_id = null ) {
 		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
@@ -104,33 +108,25 @@ class Level {
 
 	/**
 	 * Helper to compare values with a sign
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $compare_sign Comparesign.
+	 * @param mixed $compare_data Comparedata.
 	 */
-	private static function compare_with_sign( $value, $compareSign, $compareData ) {
-		switch ( $compareSign ) {
-			case '>=':
-				return $value >= $compareData;
-			case '<=':
-				return $value <= $compareData;
-			case '>':
-				return $value > $compareData;
-			case '<':
-				return $value < $compareData;
-			case '!=':
-				return $value != $compareData;
-			case '==':
-			case '=':
-				return $value == $compareData;
-			default:
-				return false;
-		}
+	private static function compare_with_sign( $value, $compare_sign, $compare_data ) {
+		return Rules::compare( $value, $compare_sign, $compare_data );
 	}
 
 	/**
 	 * Add points to a user.
 	 *
-	 * @param int    $user_id
-	 * @param int    $points
-	 * @param string $reason
+	 * @param int    $user_id User identifier.
+	 * @param mixed  $type Type.
+	 * @param mixed  $level_id Level identifier.
+	 * @param string $reason Reason.
+	 * @param mixed  $course_id Course identifier.
+	 * @param mixed  $membership_id Membership identifier.
+	 * @param mixed  $content_id Content identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -166,6 +162,7 @@ class Level {
 	 *
 	 * @return int
 	 * @since 1.0.0
+	 * @param mixed $user_id User identifier.
 	 */
 	public static function get_current_level_of_a_user( $user_id = null ) {
 		global $wpdb;
@@ -184,11 +181,12 @@ class Level {
 		// Get all user's level achievements.
 		$level_achievements = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT level_id, date_created FROM {$table_name} 
+				'SELECT level_id, date_created FROM %i
              WHERE user_id = %d 
-             AND type = 'level' 
-             AND status = 'active'
-             ORDER BY date_created ASC",
+             AND type = \'level\'
+             AND status = \'active\'
+             ORDER BY date_created ASC',
+				$table_name,
 				$user_id
 			)
 		);
@@ -205,7 +203,7 @@ class Level {
 
 		// Sort levels by progression to find the highest level.
 		$sorted_levels    = self::sort_levels_by_progression( $levels );
-		$user_level_slugs = array_column( $level_achievements, 'level_id' );
+		$user_level_slugs = array_map( 'strval', array_column( $level_achievements, 'level_id' ) );
 
 		// Find the highest level the user has achieved.
 		$highest_level      = null;
@@ -214,7 +212,7 @@ class Level {
 		// Go through sorted levels in reverse order (highest to lowest).
 		for ( $i = count( $sorted_levels ) - 1; $i >= 0; $i-- ) {
 			$level = $sorted_levels[ $i ];
-			if ( isset( $level['slug'] ) && in_array( $level['slug'], $user_level_slugs ) ) {
+			if ( isset( $level['slug'] ) && in_array( (string) $level['slug'], $user_level_slugs, true ) ) {
 				// Find the date this level was achieved.
 				foreach ( $level_achievements as $achievement ) {
 					if ( $achievement->level_id === $level['slug'] ) {
@@ -243,7 +241,7 @@ class Level {
 	/**
 	 * Get next level for a user with points and rules information.
 	 *
-	 * @param int $user_id
+	 * @param int $user_id User identifier.
 	 * @return array|false
 	 * @since 1.0.0
 	 */
@@ -309,7 +307,7 @@ class Level {
 	/**
 	 * Sort levels by progression based on minimum points requirement.
 	 *
-	 * @param array $levels
+	 * @param array $levels Levels.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -329,7 +327,7 @@ class Level {
 	/**
 	 * Get minimum points requirement for a level.
 	 *
-	 * @param array $level
+	 * @param array $level Level.
 	 * @return int
 	 * @since 1.0.0
 	 */
@@ -342,10 +340,10 @@ class Level {
 		foreach ( $level['rules'] as $rule ) {
 			if ( isset( $rule['dataValue'], $rule['compareData'], $rule['compareSign'] ) && 'points' === $rule['dataValue'] ) {
 				// For >= or > operators, this is a minimum requirement.
-				if ( in_array( $rule['compareSign'], array( '>=', '>' ) ) ) {
+				if ( in_array( $rule['compareSign'], array( '>=', '>' ), true ) ) {
 					$required_points = intval( $rule['compareData'] );
 					if ( '>' === $rule['compareSign'] ) {
-						$required_points += 1; // For strict greater than.
+						++$required_points; // For strict greater than.
 					}
 					$min_points = max( $min_points, $required_points );
 				}
@@ -358,8 +356,8 @@ class Level {
 	/**
 	 * Check if user qualifies for a specific level.
 	 *
-	 * @param int   $user_id
-	 * @param array $level
+	 * @param int   $user_id User identifier.
+	 * @param array $level Level.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -370,9 +368,9 @@ class Level {
 	/**
 	 * Format next level data for return.
 	 *
-	 * @param array $next_level
-	 * @param int   $user_id
-	 * @param int   $current_points
+	 * @param array $next_level Next level.
+	 * @param int   $user_id User identifier.
+	 * @param int   $current_points Current points.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -396,10 +394,10 @@ class Level {
 						case 'points':
 							$rule_summary['current'] = $current_points;
 							// Calculate points needed for >= or > operators.
-							if ( in_array( $rule['compareSign'], array( '>=', '>' ) ) ) {
+							if ( in_array( $rule['compareSign'], array( '>=', '>' ), true ) ) {
 								$required_points = intval( $rule['compareData'] );
 								if ( '>' === $rule['compareSign'] ) {
-									$required_points += 1;
+									++$required_points;
 								}
 								$points_needed = max( $points_needed, $required_points - $current_points );
 							}
@@ -440,6 +438,11 @@ class Level {
 		);
 	}
 
+	/**
+	 * Rule progress for Level.
+	 *
+	 * @param mixed $rules Rules.
+	 */
 	private static function rule_progress( $rules ) {
 		if ( ! $rules ) {
 			return 0; }
@@ -454,7 +457,7 @@ class Level {
 	/**
 	 * Get all the levels of a user
 	 *
-	 * @param int $user_id
+	 * @param int $user_id User identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -464,14 +467,15 @@ class Level {
 		$table_name = $wpdb->prefix . 'ohmylms_user_achievement';
 
 		$query = $wpdb->prepare(
-			"
-            SELECT level_id FROM $table_name
+			'
+            SELECT level_id FROM %i
             WHERE user_id = %d
             AND level_id IS NOT NULL
             AND type = %s
             AND status = %s
             ORDER BY date_created DESC
-            ",
+            ',
+			$table_name,
 			$user_id,
 			'level',
 			'active'
@@ -484,7 +488,7 @@ class Level {
 			$levels = self::get_levels();
 			foreach ( $results as $result ) {
 				foreach ( $levels as $level ) {
-					if ( $result->level_id == $level['slug'] ) {
+					if ( (string) $result->level_id === (string) $level['slug'] ) {
 						$formatted_levels[] = $level;
 					}
 				}
@@ -496,7 +500,7 @@ class Level {
 	/**
 	 * Get the total points for a user.
 	 *
-	 * @param int $user_id
+	 * @param int $user_id User identifier.
 	 * @return int
 	 * @since 1.0.0
 	 */
@@ -504,10 +508,7 @@ class Level {
 		global $wpdb;
 		$table_name   = $wpdb->prefix . 'ohmylms_user_achievement';
 		$total_points = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT SUM(points) FROM {$table_name} WHERE user_id = %d AND status = 'active'",
-				$user_id
-			)
+			$wpdb->prepare( 'SELECT SUM(points) FROM %i WHERE user_id = %d AND status = \'active\'', $table_name, $user_id )
 		);
 		return intval( $total_points );
 	}

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createAssignmentEditor( readRuntime ) {
@@ -206,7 +207,7 @@ export function createAssignmentEditor( readRuntime ) {
 												case 3:
 													_eLocal7.p = 3;
 													_tLocal5 = _eLocal7.v;
-													console.error(
+													showRequestError(
 														'Error fetching course data:',
 														_tLocal5
 													);

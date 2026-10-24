@@ -15,12 +15,12 @@ import {
 /**
  * Lesson groups of each unit: create, rename, reorder, delete, and move items between groups.
  * The program is edited in place by the parent; this component only produces the next program.
- * @param {Object}   root0
- * @param {Object}   root0.program  Program draft.
- * @param {Object[]} root0.chapters Units of the course: [{id, name}].
- * @param {Function} root0.onChange Called with the next program.
- * @param {Function} root0.newId    Returns a new UUID.
- * @param {boolean}  root0.disabled Disables the controls while saving.
+ * @param {Object}                    root0
+ * @param {Object}                    root0.program  Program draft.
+ * @param {Object[]}                  root0.chapters Units of the course: [{id, name}].
+ * @param {(program: Object) => void} root0.onChange Called with the next program.
+ * @param {() => string}              root0.newId    Returns a new UUID.
+ * @param {boolean}                   root0.disabled Disables the controls while saving.
  */
 export function LessonGroups( {
 	program,

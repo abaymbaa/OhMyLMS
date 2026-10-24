@@ -9,10 +9,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 use OhMyLMS\Integrations\Cohorts\Includes\CohortReminderScheduler;
 use OhMyLMS\Integrations\Cohorts\Includes\Hooks;
 
+/**
+ * Plugin cohorts implementation.
+ */
 class Cohorts {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'Cohorts';
 
+	/**
+	 * Initialize Cohorts.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();

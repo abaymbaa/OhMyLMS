@@ -82,7 +82,7 @@ do_action( 'ohmylms_before_checkout_form_start', $checkout );
 					<?php endif; ?>
 
 					<input type="hidden" name="action" value="ohmylms_checkout">
-					<input type="hidden" name="student_id" value="<?php echo get_current_user_id(); ?>">
+					<input type="hidden" name="student_id" value="<?php echo esc_attr( get_current_user_id() ); ?>">
 				</form>
 			</div>
 

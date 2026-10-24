@@ -27,6 +27,10 @@ abstract class RestController extends WP_REST_Controller {
 	 * Authorize access to an existing object of the expected post type.
 	 *
 	 * @return true|\WP_Error
+	 * @param mixed  $request REST request.
+	 * @param mixed  $action Action.
+	 * @param mixed  $post_types Post types.
+	 * @param string $id_param Id param.
 	 */
 	protected function check_object_permission( $request, $action, $post_types, $id_param = 'id' ) {
 		$post_id = isset( $request[ $id_param ] ) ? absint( $request[ $id_param ] ) : 0;

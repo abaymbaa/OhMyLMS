@@ -27,7 +27,7 @@ export function createGeneralSettingsFields( readRuntime ) {
 							( _tLocal2 = ( function ( _eLocal2 ) {
 								var _tLocal3 = ( function ( _eLocal3 ) {
 									if (
-										'object' != gK( _eLocal3 ) ||
+										'object' !== gK( _eLocal3 ) ||
 										! _eLocal3
 									) {
 										return _eLocal3;
@@ -39,7 +39,7 @@ export function createGeneralSettingsFields( readRuntime ) {
 											_eLocal3,
 											'string'
 										);
-										if ( 'object' != gK( _nLocal2 ) ) {
+										if ( 'object' !== gK( _nLocal2 ) ) {
 											return _nLocal2;
 										}
 										throw new TypeError(
@@ -48,7 +48,7 @@ export function createGeneralSettingsFields( readRuntime ) {
 									}
 									return String( _eLocal3 );
 								} )( _eLocal2 );
-								return 'symbol' == gK( _tLocal3 )
+								return 'symbol' === gK( _tLocal3 )
 									? _tLocal3
 									: _tLocal3 + '';
 							} )( _tLocal2 ) ) in _eLocal

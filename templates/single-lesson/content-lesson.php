@@ -22,7 +22,7 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 	<div class="ohmylms-lesson-content-body ohmylms-wysiwyg-content" 
 		data-lesson-id="<?php echo esc_attr( get_the_ID() ); ?>"
 		data-course-id="<?php echo esc_attr( ohmylms_get_course_by_content_id( get_the_ID() ) ); ?>">
-		<h1><?php echo get_the_title(); ?></h1>
+		<h1><?php echo esc_html( get_the_title() ); ?></h1>
 		<?php
 
 		$lesson         = ohmylms_get_lesson( get_the_ID() );
@@ -54,10 +54,10 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 					class="ohmylms-custom-video-player ohmylms-responsive-video-wrapper"
 					style="aspect-ratio: <?php echo esc_attr( $aspect_ratio ); ?>;"
 					data-video-url="<?php echo esc_url( $video ); ?>"
-					data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
-					data-loop="<?php echo $loop ? 'true' : 'false'; ?>"
-					data-muted="<?php echo $autoplay ? 'true' : 'false'; ?>"
-					data-poster="<?php echo $cover_image ? esc_url( $cover_image ) : ''; ?>"
+					data-autoplay="<?php echo esc_attr( $autoplay ? 'true' : 'false' ); ?>"
+					data-loop="<?php echo esc_attr( $loop ? 'true' : 'false' ); ?>"
+					data-muted="<?php echo esc_attr( $autoplay ? 'true' : 'false' ); ?>"
+					data-poster="<?php echo esc_attr( $cover_image ? esc_url( $cover_image ) : '' ); ?>"
 					data-logo-url="<?php echo esc_url( get_option( 'ohmylms_video_player_logo', '' ) ); ?>"
 				>
 					<!-- Player will be initialized by video-player.js -->
@@ -222,10 +222,10 @@ if ( \OhMyLMS\Extensions\Layouts::render( 'lesson', get_the_ID(), ohmylms_get_co
 					class="ohmylms-custom-video-player ohmylms-responsive-video-wrapper"
 					style="aspect-ratio: <?php echo esc_attr( $aspect_ratio ); ?>;"
 					data-video-url="<?php echo esc_attr( $external_video ); ?>"
-					data-autoplay="<?php echo $autoplay ? 'true' : 'false'; ?>"
-					data-loop="<?php echo $loop ? 'true' : 'false'; ?>"
-					data-muted="<?php echo $autoplay ? 'true' : 'false'; ?>"
-					data-poster="<?php echo $cover_image ? esc_url( $cover_image ) : ''; ?>"
+					data-autoplay="<?php echo esc_attr( $autoplay ? 'true' : 'false' ); ?>"
+					data-loop="<?php echo esc_attr( $loop ? 'true' : 'false' ); ?>"
+					data-muted="<?php echo esc_attr( $autoplay ? 'true' : 'false' ); ?>"
+					data-poster="<?php echo esc_attr( $cover_image ? esc_url( $cover_image ) : '' ); ?>"
 					data-logo-url="<?php echo esc_url( get_option( 'ohmylms_video_player_logo', '' ) ); ?>"
 				>
 					<!-- Player will be initialized by video-player.js -->

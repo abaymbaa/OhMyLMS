@@ -27,7 +27,7 @@ final class ExtendedQuestions {
 				$type,
 				array(
 					'label'             => array(
-						'spin-wheel' => __( 'Spin the wheel', 'ohmylms' ),
+						'spin-wheel'       => __( 'Spin the wheel', 'ohmylms' ),
 						'gameshow'         => __( 'Gameshow quiz', 'ohmylms' ),
 						'open-box'         => __( 'Open the box', 'ohmylms' ),
 						'speaking-cards'   => __( 'Speaking cards', 'ohmylms' ),

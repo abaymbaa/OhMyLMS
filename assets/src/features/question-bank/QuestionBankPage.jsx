@@ -3,6 +3,7 @@ import {
 	createElement,
 	Fragment,
 	useContext,
+	useCallback,
 	useEffect,
 	useState,
 } from '@wordpress/element';
@@ -1061,13 +1062,16 @@ function GrantsModal( { bank, onClose } ) {
 	const [ userId, setUserId ] = useState( '' );
 	const [ permission, setPermission ] = useState( 'use' );
 	const [ error, setError ] = useState( '' );
-	const load = () =>
-		listGrants( bank.id )
-			.then( ( data ) => setGrants( data.grants || [] ) )
-			.catch( ( cause ) => setError( cause.message ) );
+	const load = useCallback(
+		() =>
+			listGrants( bank.id )
+				.then( ( data ) => setGrants( data.grants || [] ) )
+				.catch( ( cause ) => setError( cause.message ) ),
+		[ bank.id ]
+	);
 	useEffect( () => {
 		load();
-	}, [ bank.id ] );
+	}, [ load ] );
 	return (
 		<Modal
 			title={ sprintf(

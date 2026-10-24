@@ -2,6 +2,8 @@
 /**
  * Celebration Template
  * Include this once in your theme or plugin footer.
+ *
+ * @package OhMyLMS
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

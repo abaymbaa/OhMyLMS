@@ -7,8 +7,14 @@ use OhMyLMS\Abstracts\Assets;
 defined( 'ABSPATH' ) || exit();
 
 
+/**
+ * Plugin frontend assets implementation.
+ */
 class FrontendAssets extends Assets {
 
+	/**
+	 * Init for Frontend assets.
+	 */
 	public function init() {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
@@ -100,6 +106,11 @@ class FrontendAssets extends Assets {
 		return is_array( $styles ) ? array_filter( $styles ) : array();
 	}
 
+	/**
+	 * Get script data for Frontend assets.
+	 *
+	 * @param mixed $handle Handle.
+	 */
 	public function get_script_data( $handle ) {
 		switch ( $handle ) {
 			case 'ohmylms-frontend':
@@ -267,8 +278,8 @@ class FrontendAssets extends Assets {
 	/**
 	 * Check if a script should be enqueued.
 	 *
-	 * @param array  $script
-	 * @param string $screen_id
+	 * @param array  $script Script.
+	 * @param string $screen_id Screen identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */

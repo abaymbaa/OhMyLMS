@@ -45,13 +45,13 @@ class MailMint {
 	/**
 	 * Retrieves all automations from MailMint based on provided filters.
 	 *
-	 * @param array  $ids        An array of automation IDs to filter.
-	 * @param string $order_by   Column to order by.
+	 * @param array  $ids An array of automation IDs to filter.
+	 * @param string $order_by Column to order by.
 	 * @param string $order_type Sorting order (ASC/DESC).
-	 * @param int    $offset     Offset for pagination.
-	 * @param int    $limit      Number of records per page.
-	 * @param string $search     Search query.
-	 * @param string $status     Automation status.
+	 * @param int    $offset Offset for pagination.
+	 * @param int    $limit Number of records per page.
+	 * @param string $search Search query.
+	 * @param string $status Automation status.
 	 *
 	 * @return array|null Returns an array of automation data or null on failure.
 	 */
@@ -241,6 +241,7 @@ class MailMint {
      * @return string The subject with replaced placeholders.
      * 
      * @since 1.1.6
+     * @param mixed $post_id Post identifier.
      */
     public function replace_subject_placeholders( $subject, $post_id ) {
         $placeholders = [
@@ -278,6 +279,7 @@ class MailMint {
      * @param array  $data    The data to replace placeholders.
      * @return string The content with replaced placeholders.
      * @since 1.1.6
+     * @param mixed $post_id Post identifier.
      */
     public function replace_content_placeholders( $content, $post_id ) {
         $placeholders = [
@@ -310,8 +312,8 @@ class MailMint {
     /**
      * Updates the status of an automation in MailMint.
      *
-     * @param int    $automation_id The ID of the automation to update.
-     * @param string $status        The new status to set.
+     * @param int $automation_id The ID of the automation to update.
+     * @param string $status The new status to set.
      * @return void
      */
     public function update_automation_status( $automation_id, $status ) {
@@ -357,6 +359,11 @@ class MailMint {
     }
 
 
+    /**
+     * Duplicate automation for Mail mint.
+     *
+     * @param mixed $automation_id Automation identifier.
+     */
     public function duplicate_automation( $automation_id ){
         
         if ( ! $this->is_active() ) {

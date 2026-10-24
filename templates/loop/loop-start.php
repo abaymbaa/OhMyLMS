@@ -63,7 +63,7 @@ $is_block_context = isset( $atts ) && is_array( $atts ) && (
 if ( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) && ! $is_editor_context ) {
 	?>
 	<!-- carousel skeleton loader -->
-	<div class="ohmylms-carousel-outer" style="--per-row:<?php echo $per_row; ?>">
+	<div class="ohmylms-carousel-outer" style="--per-row:<?php echo esc_attr( $per_row ); ?>">
 		<!-- .ohmylms-carousel-outer ends in the loop-end.php -->
 		<div class="ohmylms-carousel-skeleton">
 			<?php
@@ -74,11 +74,11 @@ if ( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' ==
 		</div>
 <?php } elseif ( 'grid' === $layout && ( 'grid-style3' === $layout_style || 'grid-style4' === $layout_style ) && ( $is_editor_context || $is_block_context ) ) { ?>
 	<!-- carousel container for editor/blocks - no skeleton -->
-	<div class="ohmylms-carousel-outer" style="--per-row:<?php echo $per_row; ?>">
+	<div class="ohmylms-carousel-outer" style="--per-row:<?php echo esc_attr( $per_row ); ?>">
 		<!-- .ohmylms-carousel-outer ends in the loop-end.php -->
 <?php } ?>
 
 <!-- use .ohmylms-col-1 class for 1 column, .ohmylms-col-2 class for 2 column, .ohmylms-col-3 class for 3 column by default its 4 column. If you use list view then use .ohmylms-list-view class -->
-<div class="ohmylms-course-cards <?php echo $class_name; ?>" data-col="<?php echo $per_row; ?>" >
+<div class="ohmylms-course-cards <?php echo esc_attr( $class_name ); ?>" data-col="<?php echo esc_attr( $per_row ); ?>" >
 
 

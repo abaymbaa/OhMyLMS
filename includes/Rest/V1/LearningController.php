@@ -14,7 +14,13 @@ use WP_REST_Server;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin learning controller implementation.
+ */
 class LearningController extends RestController {
+	/**
+	 * Register routes for Learning controller.
+	 */
 	public function register_routes() {
 		$base = '/courses/(?P<id>\d+)/learning';
 		register_rest_route(
@@ -95,16 +101,31 @@ class LearningController extends RestController {
 		);
 	}
 
+	/**
+	 * Author for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function author( $request ) {
 		if ( ! Schema::ready() ) {
 			return CourseProgram::error( __( 'Learning storage is unavailable.', 'ohmylms' ), 503 ); }
 		return AccessPolicy::check( get_post_type( (int) $request['id'] ) === OHMYLMS_COURSE_CPT && current_user_can( 'edit_post', (int) $request['id'] ) );
 	}
 
+	/**
+	 * Learner for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function learner( $request ) {
 		return AccessPolicy::check( is_user_logged_in() && get_post_status( (int) $request['id'] ) === 'publish' && CourseProgram::enrollment( get_current_user_id(), (int) $request['id'] ), __( 'An available course and enrollment are required.', 'ohmylms' ) );
 	}
 
+	/**
+	 * Show for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function show( $request ) {
 		$data = CourseProgram::editor( (int) $request['id'] );
 		foreach ( $data['draft']['items'] as &$item ) {
@@ -127,15 +148,30 @@ class LearningController extends RestController {
 		return rest_ensure_response( $data );
 	}
 
+	/**
+	 * Save for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function save( $request ) {
 		return CourseProgram::save( (int) $request['id'], (array) $request->get_json_params() );
 	}
 
+	/**
+	 * Publish for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function publish( $request ) {
 		$data = (array) $request->get_json_params();
 		return CourseProgram::save( (int) $request['id'], $data, true, ! empty( $data['apply_existing'] ) );
 	}
 
+	/**
+	 * Preview for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function preview( $request ) {
 		$program = CourseProgram::normalize( (int) $request['id'], (array) $request->get_json_params() );
 		if ( is_wp_error( $program ) ) {
@@ -158,6 +194,11 @@ class LearningController extends RestController {
 		);
 	}
 
+	/**
+	 * Resources for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function resources( $request ) {
 		$type  = 'quiz' === $request['type'] ? OHMYLMS_QUIZ_CPT : OHMYLMS_LESSON_CPT;
 		$query = new \WP_Query(
@@ -190,6 +231,11 @@ class LearningController extends RestController {
 		);
 	}
 
+	/**
+	 * Progress for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function progress( $request ) {
 		Evidence::process( 50 );
 		$state = CompletionPolicy::award( get_current_user_id(), (int) $request['id'] );
@@ -214,6 +260,11 @@ class LearningController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Complete for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function complete( $request ) {
 		global $wpdb;
 		$course  = (int) $request['id'];
@@ -231,7 +282,7 @@ class LearningController extends RestController {
 			if ( ! $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 3)', $key ) ) ) {
 				return CourseProgram::error( __( 'Please retry completing the lesson.', 'ohmylms' ), 409 ); }
 			try {
-				$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE enrollment_id=%d AND content_id=%d AND status='completed'", $state['enrollment_id'], $item['content_id'] ) );
+				$existing = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE enrollment_id=%d AND content_id=%d AND status=\'completed\'', $table, $state['enrollment_id'], $item['content_id'] ) );
 				if ( ! $existing ) {
 					if ( ! $wpdb->insert(
 						$table,
@@ -255,11 +306,16 @@ class LearningController extends RestController {
 		return CourseProgram::error( __( 'Learning activity not found.', 'ohmylms' ), 404 );
 	}
 
+	/**
+	 * Report for Learning controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function report( $request ) {
 		global $wpdb;
 		$course = (int) $request['id'];
 		$page   = max( 1, (int) $request['page'] );
-		$rows   = $wpdb->get_results( $wpdb->prepare( "SELECT user_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id=%d AND status='enrolled' ORDER BY id LIMIT 25 OFFSET %d", $course, ( $page - 1 ) * 25 ), ARRAY_A );
+		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT user_id FROM %i WHERE course_id=%d AND status=\'enrolled\' ORDER BY id LIMIT 25 OFFSET %d', $wpdb->prefix . 'ohmylms_user_enrollment', $course, ( $page - 1 ) * 25 ), ARRAY_A );
 		$result = array();
 		foreach ( $rows as $row ) {
 			$state    = CompletionPolicy::status( $row['user_id'], $course );
@@ -274,7 +330,7 @@ class LearningController extends RestController {
 			array(
 				'students' => $result,
 				'page'     => $page,
-				'total'    => (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id=%d AND status='enrolled'", $course ) ),
+				'total'    => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE course_id=%d AND status=\'enrolled\'', $wpdb->prefix . 'ohmylms_user_enrollment', $course ) ),
 			)
 		);
 	}

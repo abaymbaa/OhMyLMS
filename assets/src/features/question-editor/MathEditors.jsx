@@ -31,6 +31,7 @@ import {
  * @param root0
  * @param root0.value
  * @param root0.onChange
+ * @param root0.names
  */
 function AcceptedAnswers( { value, onChange, names } ) {
 	const stored = numbersToList( value.answers );

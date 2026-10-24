@@ -33,29 +33,59 @@ final class Syllabus {
 	const CATEGORY_META = '_ohmylms_skill_category';
 	const ROOT_META     = '_ohmylms_syllabus_item';
 
+	/**
+	 * Groups table for Syllabus.
+	 */
 	public static function groups_table() {
 		return Schema::table( 'syllabus_groups' ); }
+	/**
+	 * Placements table for Syllabus.
+	 */
 	public static function placements_table() {
 		return Schema::table( 'syllabus_group_skills' ); }
 
-	/** Names and notes come back from WordPress with entities ("a &lt; 0"); the editor wants the real text. */
+	/** Names and notes come back from WordPress with entities ("a &lt; 0"); the editor wants the real text.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public static function text( $value ) {
 		return Taxonomy::plain( $value );
 	}
 
+	/**
+	 * Now for Syllabus.
+	 */
 	private static function now() {
 		return current_time( 'mysql', true ); }
+	/**
+	 * Placeholders for Syllabus.
+	 *
+	 * @param array $ids Ids.
+	 */
 	private static function placeholders( array $ids ) {
 		return implode( ',', array_fill( 0, count( $ids ), '%d' ) ); }
+	/**
+	 * Ints for Syllabus.
+	 *
+	 * @param array $ids Ids.
+	 */
 	private static function ints( array $ids ) {
 		return array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) ); }
 
+	/**
+	 * Is syllabus for Syllabus.
+	 *
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function is_syllabus( $item_id ) {
 		$item = Items::get( $item_id );
 		return $item && ! empty( $item['is_syllabus'] );
 	}
 
-	/** The syllabus an item belongs to: itself or the nearest ancestor flagged as one (0 for none). */
+	/** The syllabus an item belongs to: itself or the nearest ancestor flagged as one (0 for none).
+	 *
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function owner( $item_id ) {
 		global $wpdb;
 		$flagged = array_map( 'intval', $wpdb->get_col( 'SELECT id FROM ' . Items::table() . ' WHERE is_syllabus=1' ) );
@@ -68,21 +98,35 @@ final class Syllabus {
 		return 0;
 	}
 
+	/**
+	 * Group for Syllabus.
+	 *
+	 * @param mixed $group_id Group identifier.
+	 */
 	public static function group( $group_id ) {
 		global $wpdb;
 		$group_id = (int) $group_id;
 		return $group_id > 0 ? ( $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::groups_table() . ' WHERE id=%d', $group_id ), ARRAY_A ) ?: null ) : null;
 	}
 
+	/**
+	 * Missing group for Syllabus.
+	 */
 	private static function missing_group() {
 		return Access::error( 'ohmylms_syllabus_group_missing', __( 'Skill group not found.', 'ohmylms' ), 404 );
 	}
 
+	/**
+	 * Not a syllabus for Syllabus.
+	 */
 	private static function not_a_syllabus() {
 		return Access::error( 'ohmylms_syllabus_invalid', __( 'This item is not a syllabus. Turn on “This item is a syllabus” first.', 'ohmylms' ), 400 );
 	}
 
-	/** Skill groups sitting under any of these items. */
+	/** Skill groups sitting under any of these items.
+	 *
+	 * @param array $item_ids Item ids.
+	 */
 	public static function group_count( array $item_ids ) {
 		global $wpdb;
 		$item_ids = self::ints( $item_ids );
@@ -91,7 +135,10 @@ final class Syllabus {
 		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::groups_table() . ' WHERE item_id IN (' . self::placeholders( $item_ids ) . ')', $item_ids ) );
 	}
 
-	/** Per syllabus: its skill groups and skill placements, counting everything beneath it. */
+	/** Per syllabus: its skill groups and skill placements, counting everything beneath it.
+	 *
+	 * @param array $rows Rows.
+	 */
 	public static function totals( array $rows ) {
 		global $wpdb;
 		$syllabuses = array();
@@ -128,6 +175,8 @@ final class Syllabus {
 	/**
 	 * The whole syllabus for the editor: its content items in tree order (the syllabus itself first),
 	 * each with its skill groups, each with its skills.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
 	 */
 	public static function outline( $syllabus_id ) {
 		global $wpdb;
@@ -239,7 +288,10 @@ final class Syllabus {
 		);
 	}
 
-	/** The outline in the shape the import planner works on. */
+	/** The outline in the shape the import planner works on.
+	 *
+	 * @param array $outline Outline.
+	 */
 	private static function plan_state( array $outline ) {
 		$state = array(
 			'root'     => (int) $outline['syllabus']['id'],
@@ -266,7 +318,10 @@ final class Syllabus {
 		return $state;
 	}
 
-	/** Library skills placed in any group under these items. */
+	/** Library skills placed in any group under these items.
+	 *
+	 * @param array $item_ids Item ids.
+	 */
 	public static function skill_ids( array $item_ids ) {
 		global $wpdb;
 		$item_ids = self::ints( $item_ids );
@@ -275,7 +330,10 @@ final class Syllabus {
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT p.term_id FROM ' . self::placements_table() . ' p JOIN ' . self::groups_table() . ' g ON g.id=p.group_id WHERE g.item_id IN (' . self::placeholders( $item_ids ) . ') ORDER BY p.term_id', $item_ids ) ) );
 	}
 
-	/** The curriculum items whose skill groups hold this skill (for showing where a skill belongs). */
+	/** The curriculum items whose skill groups hold this skill (for showing where a skill belongs).
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function item_ids_for_skill( $term_id ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -285,11 +343,22 @@ final class Syllabus {
 
 	// ---- Ordering helpers -------------------------------------------------------------------------
 
+	/**
+	 * Group ids in for Syllabus.
+	 *
+	 * @param mixed $item_id Item identifier.
+	 */
 	private static function group_ids_in( $item_id ) {
 		global $wpdb;
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM ' . self::groups_table() . ' WHERE item_id=%d ORDER BY position, id', (int) $item_id ) ) );
 	}
 
+	/**
+	 * Renumber groups for Syllabus.
+	 *
+	 * @param array $ordered Ordered.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function renumber_groups( array $ordered ) {
 		global $wpdb;
 		foreach ( array_values( $ordered ) as $position => $id ) {
@@ -298,11 +367,23 @@ final class Syllabus {
 		}
 	}
 
+	/**
+	 * Term ids in for Syllabus.
+	 *
+	 * @param mixed $group_id Group identifier.
+	 */
 	private static function term_ids_in( $group_id ) {
 		global $wpdb;
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT term_id FROM ' . self::placements_table() . ' WHERE group_id=%d ORDER BY position, term_id', (int) $group_id ) ) );
 	}
 
+	/**
+	 * Renumber skills for Syllabus.
+	 *
+	 * @param mixed $group_id Group identifier.
+	 * @param array $ordered Ordered.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function renumber_skills( $group_id, array $ordered ) {
 		global $wpdb;
 		foreach ( array_values( $ordered ) as $position => $term_id ) {
@@ -318,11 +399,20 @@ final class Syllabus {
 		}
 	}
 
+	/**
+	 * Skill count for Syllabus.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	private static function skill_count( $syllabus_id ) {
 		return count( self::skill_ids( Items::with_descendants( $syllabus_id ) ) );
 	}
 
-	/** The group, if it belongs to this syllabus. */
+	/** The group, if it belongs to this syllabus.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 */
 	private static function owned_group( $syllabus_id, $group_id ) {
 		$group = self::group( $group_id );
 		if ( ! $group || self::owner( (int) $group['item_id'] ) !== (int) $syllabus_id ) {
@@ -332,6 +422,12 @@ final class Syllabus {
 
 	// ---- Skill groups -----------------------------------------------------------------------------
 
+	/**
+	 * Clean group for Syllabus.
+	 *
+	 * @param array $data Input data.
+	 * @param mixed $partial Partial.
+	 */
 	private static function clean_group( array $data, $partial ) {
 		$fields = array();
 		if ( array_key_exists( 'icon', $data ) ) {
@@ -348,24 +444,35 @@ final class Syllabus {
 			if ( '' === $name ) {
 				return Access::error( 'ohmylms_syllabus_invalid', __( 'A skill group needs a name or a code.', 'ohmylms' ) ); }
 			if ( mb_strlen( $name ) > SyllabusRows::NAME_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill group name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'A skill group name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
 			$fields['name'] = sanitize_text_field( $name );
 		}
 		if ( ! $partial || array_key_exists( 'code', $data ) ) {
 			$code = SyllabusRows::line( $data['code'] ?? '' );
 			if ( mb_strlen( $code ) > SyllabusRows::GROUP_CODE_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill group code can have at most %d characters.', 'ohmylms' ), SyllabusRows::GROUP_CODE_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'A skill group code can have at most %d characters.', 'ohmylms' ), SyllabusRows::GROUP_CODE_LIMIT ) ); }
 			$fields['code'] = sanitize_text_field( $code );
 		}
 		if ( ! $partial || array_key_exists( 'description', $data ) ) {
 			$description = SyllabusRows::notes( $data['description'] ?? '' );
 			if ( mb_strlen( $description ) > SyllabusRows::DESCRIPTION_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'Notes can have at most %d characters.', 'ohmylms' ), SyllabusRows::DESCRIPTION_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'Notes can have at most %d characters.', 'ohmylms' ), SyllabusRows::DESCRIPTION_LIMIT ) ); }
 			$fields['description'] = sanitize_textarea_field( $description );
 		}
 		return $fields;
 	}
 
+	/**
+	 * Insert group for Syllabus.
+	 *
+	 * @param mixed $item_id Item identifier.
+	 * @param array $fields Fields.
+	 * @param mixed $position Position.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function insert_group( $item_id, array $fields, $position = null ) {
 		global $wpdb;
 		$now  = self::now();
@@ -388,7 +495,13 @@ final class Syllabus {
 		return $id;
 	}
 
-	/** @return int|\WP_Error The new group's ID. */
+	/**
+	 * Add group for Syllabus.
+	 *
+	 * @return int|\WP_Error The new group's ID.
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $data Input data.
+	 */
 	public static function add_group( $syllabus_id, array $data ) {
 		if ( ! self::is_syllabus( $syllabus_id ) ) {
 			return Items::get( $syllabus_id ) ? self::not_a_syllabus() : Items::missing(); }
@@ -402,13 +515,22 @@ final class Syllabus {
 		return Items::exclusive(
 			static function () use ( $syllabus_id, $item_id, $fields, $position ) {
 				if ( self::group_count( Items::with_descendants( $syllabus_id ) ) >= self::MAX_GROUPS ) {
-					return Access::error( 'ohmylms_syllabus_limit', sprintf( __( 'A syllabus can have at most %d skill groups.', 'ohmylms' ), self::MAX_GROUPS ), 409 ); }
+					return Access::error( 'ohmylms_syllabus_limit', sprintf( /* translators: %d: number. */
+					__( 'A syllabus can have at most %d skill groups.', 'ohmylms' ), self::MAX_GROUPS ), 409 ); }
 				return self::insert_group( $item_id, $fields, $position );
 			}
 		);
 	}
 
-	/** @return true|\WP_Error */
+	/**
+	 * Update group for Syllabus.
+	 *
+	 * @return true|\WP_Error
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param array $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function update_group( $syllabus_id, $group_id, array $data ) {
 		global $wpdb;
 		if ( ! self::owned_group( $syllabus_id, $group_id ) ) {
@@ -427,7 +549,14 @@ final class Syllabus {
 		);
 	}
 
-	/** Move a group under another content item of the same syllabus and/or to another position. */
+	/** Move a group under another content item of the same syllabus and/or to another position.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $position Position.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function move_group( $syllabus_id, $group_id, $item_id, $position = null ) {
 		global $wpdb;
 		$group = self::owned_group( $syllabus_id, $group_id );
@@ -461,6 +590,10 @@ final class Syllabus {
 	 * A group that holds skills needs $confirm.
 	 *
 	 * @return array|\WP_Error ['skills_detached' => n]
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param bool  $confirm Confirm.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function delete_group( $syllabus_id, $group_id, $confirm = false ) {
 		global $wpdb;
@@ -469,7 +602,8 @@ final class Syllabus {
 			return self::missing_group(); }
 		$skills = count( self::term_ids_in( $group_id ) );
 		if ( $skills && ! $confirm ) {
-			return Access::error( 'ohmylms_syllabus_needs_confirmation', sprintf( _n( 'This group holds %d skill. Deleting the group keeps the skill in the skill library but removes it from the syllabus outline.', 'This group holds %d skills. Deleting the group keeps the skills in the skill library but removes them from the syllabus outline.', $skills, 'ohmylms' ), $skills ), 409, array( 'skills' => $skills ) );
+			return Access::error( 'ohmylms_syllabus_needs_confirmation', sprintf( /* translators: %d: number. */
+			_n( 'This group holds %d skill. Deleting the group keeps the skill in the skill library but removes it from the syllabus outline.', 'This group holds %d skills. Deleting the group keeps the skills in the skill library but removes them from the syllabus outline.', $skills, 'ohmylms' ), $skills ), 409, array( 'skills' => $skills ) );
 		}
 		return Items::exclusive(
 			static function () use ( $wpdb, $group, $skills ) {
@@ -498,7 +632,11 @@ final class Syllabus {
 		return 'skill-' . strtolower( wp_generate_password( 12, false, false ) );
 	}
 
-	/** The library skill that parents every skill created for this syllabus. Created on first use. */
+	/** The library skill that parents every skill created for this syllabus. Created on first use.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function root_skill( $syllabus_id ) {
 		global $wpdb;
 		$item = Items::get( $syllabus_id );
@@ -512,7 +650,8 @@ final class Syllabus {
 			wp_slash( mb_substr( $name, 0, 199 ) ),
 			Taxonomy::NAME,
 			array(
-				'description' => wp_slash( sprintf( __( 'Skills of the syllabus “%s”.', 'ohmylms' ), $name ) ),
+				'description' => wp_slash( sprintf( /* translators: %s: text value. */
+				__( 'Skills of the syllabus “%s”.', 'ohmylms' ), $name ) ),
 				'parent'      => 0,
 				'slug'        => self::slug(),
 			)
@@ -527,6 +666,12 @@ final class Syllabus {
 		return $id;
 	}
 
+	/**
+	 * Clean skill for Syllabus.
+	 *
+	 * @param array $data Input data.
+	 * @param mixed $partial Partial.
+	 */
 	private static function clean_skill( array $data, $partial ) {
 		$fields = array();
 		if ( array_key_exists( 'objective', $data ) ) {
@@ -547,19 +692,22 @@ final class Syllabus {
 			if ( '' === $name ) {
 				return Access::error( 'ohmylms_syllabus_invalid', __( 'A skill needs a name.', 'ohmylms' ) ); }
 			if ( mb_strlen( $name ) > SyllabusRows::NAME_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'A skill name can have at most %d characters.', 'ohmylms' ), SyllabusRows::NAME_LIMIT ) ); }
 			$fields['name'] = $name;
 		}
 		if ( ! $partial || array_key_exists( 'code', $data ) ) {
 			$code = SyllabusRows::line( $data['code'] ?? '' );
 			if ( mb_strlen( $code ) > SyllabusRows::SKILL_CODE_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'A skill code can have at most %d characters.', 'ohmylms' ), SyllabusRows::SKILL_CODE_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'A skill code can have at most %d characters.', 'ohmylms' ), SyllabusRows::SKILL_CODE_LIMIT ) ); }
 			$fields['code'] = $code;
 		}
 		if ( ! $partial || array_key_exists( 'description', $data ) ) {
 			$description = SyllabusRows::notes( $data['description'] ?? '' );
 			if ( mb_strlen( $description ) > SyllabusRows::DESCRIPTION_LIMIT ) {
-				return Access::error( 'ohmylms_syllabus_invalid', sprintf( __( 'Notes can have at most %d characters.', 'ohmylms' ), SyllabusRows::DESCRIPTION_LIMIT ) ); }
+				return Access::error( 'ohmylms_syllabus_invalid', sprintf( /* translators: %d: number. */
+				__( 'Notes can have at most %d characters.', 'ohmylms' ), SyllabusRows::DESCRIPTION_LIMIT ) ); }
 			$fields['description'] = $description;
 		}
 		if ( array_key_exists( 'translations', $data ) ) {
@@ -572,7 +720,12 @@ final class Syllabus {
 		return $fields;
 	}
 
-	/** Another skill of this syllabus that already uses the code (skill codes are unique per syllabus). */
+	/** Another skill of this syllabus that already uses the code (skill codes are unique per syllabus).
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $code Code.
+	 * @param int   $except_term Except term.
+	 */
 	private static function code_taken( $syllabus_id, $code, $except_term = 0 ) {
 		if ( '' === $code ) {
 			return false; }
@@ -587,6 +740,11 @@ final class Syllabus {
 	 * Create a library skill under the syllabus's root skill. Equal names are allowed (see slug()).
 	 *
 	 * @return array|\WP_Error ['term_id' => int, 'name' => string]
+	 * @param mixed  $root Root.
+	 * @param mixed  $name Name.
+	 * @param mixed  $code Code.
+	 * @param mixed  $description Description.
+	 * @param string $category Category.
 	 */
 	private static function create_term( $root, $name, $code, $description, $category = '' ) {
 		$term = wp_insert_term(
@@ -612,6 +770,13 @@ final class Syllabus {
 		);
 	}
 
+	/**
+	 * Place skill for Syllabus.
+	 *
+	 * @param mixed $group_id Group identifier.
+	 * @param mixed $term_id Term identifier.
+	 * @param mixed $position Position.
+	 */
 	private static function place_skill( $group_id, $term_id, $position = null ) {
 		global $wpdb;
 		$wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . self::placements_table() . ' (group_id, term_id, position) VALUES (%d, %d, 0)', (int) $group_id, (int) $term_id ) );
@@ -622,6 +787,9 @@ final class Syllabus {
 	 * Create a new skill in a group.
 	 *
 	 * @return array|\WP_Error ['term_id' => int, 'name' => string]
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param array $data Input data.
 	 */
 	public static function create_skill( $syllabus_id, $group_id, array $data ) {
 		$group = self::owned_group( $syllabus_id, $group_id );
@@ -637,9 +805,11 @@ final class Syllabus {
 				if ( is_wp_error( $category_check ) ) {
 					return $category_check; }
 				if ( self::skill_count( $syllabus_id ) >= self::MAX_SKILLS ) {
-					return Access::error( 'ohmylms_syllabus_limit', sprintf( __( 'A syllabus can have at most %d skills.', 'ohmylms' ), self::MAX_SKILLS ), 409 ); }
+					return Access::error( 'ohmylms_syllabus_limit', sprintf( /* translators: %d: number. */
+					__( 'A syllabus can have at most %d skills.', 'ohmylms' ), self::MAX_SKILLS ), 409 ); }
 				if ( self::code_taken( $syllabus_id, $fields['code'] ) ) {
-					return Access::error( 'ohmylms_syllabus_code_taken', sprintf( __( 'Another skill in this syllabus already uses the code “%s”.', 'ohmylms' ), $fields['code'] ), 409 ); }
+					return Access::error( 'ohmylms_syllabus_code_taken', sprintf( /* translators: %s: text value. */
+					__( 'Another skill in this syllabus already uses the code “%s”.', 'ohmylms' ), $fields['code'] ), 409 ); }
 				$root = self::root_skill( $syllabus_id );
 				if ( is_wp_error( $root ) ) {
 					return $root; }
@@ -670,7 +840,12 @@ final class Syllabus {
 		);
 	}
 
-	/** Place an existing library skill in a group (it keeps its own questions, lessons and evidence). */
+	/** Place an existing library skill in a group (it keeps its own questions, lessons and evidence).
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function add_skill( $syllabus_id, $group_id, $term_id ) {
 		$group = self::owned_group( $syllabus_id, $group_id );
 		if ( ! $group ) {
@@ -683,14 +858,20 @@ final class Syllabus {
 				if ( in_array( $term_id, self::skill_ids( Items::with_descendants( $syllabus_id ) ), true ) ) {
 					return Access::error( 'ohmylms_syllabus_skill_placed', __( 'That skill is already in a skill group of this syllabus.', 'ohmylms' ), 409 ); }
 				if ( self::skill_count( $syllabus_id ) >= self::MAX_SKILLS ) {
-					return Access::error( 'ohmylms_syllabus_limit', sprintf( __( 'A syllabus can have at most %d skills.', 'ohmylms' ), self::MAX_SKILLS ), 409 ); }
+					return Access::error( 'ohmylms_syllabus_limit', sprintf( /* translators: %d: number. */
+					__( 'A syllabus can have at most %d skills.', 'ohmylms' ), self::MAX_SKILLS ), 409 ); }
 				self::place_skill( (int) $group['id'], $term_id );
 				return true;
 			}
 		);
 	}
 
-	/** Change a placed skill's name, code or notes. @return true|\WP_Error */
+	/** Change a placed skill's name, code or notes. @return true|\WP_Error
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $term_id Term identifier.
+	 * @param array $data Input data.
+	 */
 	public static function update_skill( $syllabus_id, $term_id, array $data ) {
 		$term_id = (int) $term_id;
 		if ( ! in_array( $term_id, self::skill_ids( Items::with_descendants( $syllabus_id ) ), true ) ) {
@@ -708,10 +889,16 @@ final class Syllabus {
 		);
 	}
 
-	/** Apply changed fields to a skill. Codes stay unique in the syllabus; names may repeat (see slug()). */
+	/** Apply changed fields to a skill. Codes stay unique in the syllabus; names may repeat (see slug()).
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $term_id Term identifier.
+	 * @param array $fields Fields.
+	 */
 	private static function write_skill( $syllabus_id, $term_id, array $fields ) {
 		if ( isset( $fields['code'] ) && self::code_taken( $syllabus_id, $fields['code'], $term_id ) ) {
-			return Access::error( 'ohmylms_syllabus_code_taken', sprintf( __( 'Another skill in this syllabus already uses the code “%s”.', 'ohmylms' ), $fields['code'] ), 409 );
+			return Access::error( 'ohmylms_syllabus_code_taken', sprintf( /* translators: %s: text value. */
+			__( 'Another skill in this syllabus already uses the code “%s”.', 'ohmylms' ), $fields['code'] ), 409 );
 		}
 		$args = array();
 		if ( isset( $fields['name'] ) ) {
@@ -739,7 +926,12 @@ final class Syllabus {
 		return true;
 	}
 
-	/** Take a skill out of a group. The skill stays in the library. */
+	/** Take a skill out of a group. The skill stays in the library.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function remove_skill( $syllabus_id, $group_id, $term_id ) {
 		global $wpdb;
 		if ( ! self::owned_group( $syllabus_id, $group_id ) ) {
@@ -759,7 +951,14 @@ final class Syllabus {
 		);
 	}
 
-	/** Move a skill to another position, or into another group of the same syllabus. */
+	/** Move a skill to another position, or into another group of the same syllabus.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param mixed $group_id Group identifier.
+	 * @param mixed $term_id Term identifier.
+	 * @param int   $to_group_id To group identifier.
+	 * @param mixed $position Position.
+	 */
 	public static function move_skill( $syllabus_id, $group_id, $term_id, $to_group_id = 0, $position = null ) {
 		global $wpdb;
 		if ( ! self::owned_group( $syllabus_id, $group_id ) ) {
@@ -778,6 +977,15 @@ final class Syllabus {
 		);
 	}
 
+	/**
+	 * Move placement for Syllabus.
+	 *
+	 * @param mixed $from From.
+	 * @param mixed $to To.
+	 * @param mixed $term_id Term identifier.
+	 * @param mixed $position Position.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function move_placement( $from, $to, $term_id, $position ) {
 		global $wpdb;
 		$from = (int) $from;
@@ -806,8 +1014,11 @@ final class Syllabus {
 	 * contents, groups and skills (by code, else by name) update them; the rest are added. If any
 	 * row has a problem nothing changes at all.
 	 *
+	 * @param mixed   $syllabus_id Syllabus identifier.
 	 * @param array[] $rows Rows as the browser mapped them (content, content_code, group, group_code, skill, skill_code, description, line).
+	 * @param bool    $dry_run Dry run.
 	 * @return array|\WP_Error The report: counts, errors, warnings and whether it was `applied`.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function import( $syllabus_id, array $rows, $dry_run = true ) {
 		$outline = self::outline( $syllabus_id );
@@ -850,7 +1061,12 @@ final class Syllabus {
 		return $report;
 	}
 
-	/** Run planned operations in order inside the caller's lock and transaction. */
+	/** Run planned operations in order inside the caller's lock and transaction.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $ops Ops.
+	 * @param array $created_terms Created terms.
+	 */
 	private static function execute( $syllabus_id, array $ops, array &$created_terms ) {
 		global $wpdb;
 		$map     = array();
@@ -910,7 +1126,8 @@ final class Syllabus {
 					}
 					$created = self::create_term( $root, $op['name'], $op['code'], $op['description'], $op['category'] ?? '' );
 					if ( is_wp_error( $created ) ) {
-						return Access::error( $created->get_error_code(), sprintf( __( 'The skill “%1$s” could not be created: %2$s', 'ohmylms' ), $op['name'], $created->get_error_message() ), 500 ); }
+						return Access::error( $created->get_error_code(), sprintf( /* translators: %1$s: text value; %2$s: text value. */
+						__( 'The skill “%1$s” could not be created: %2$s', 'ohmylms' ), $op['name'], $created->get_error_message() ), 500 ); }
 					$created_terms[] = $created['term_id'];
 					self::place_skill( $resolve( $op['group'] ), $created['term_id'] );
 					$map[ $op['ref'] ] = $created['term_id'];
@@ -935,7 +1152,10 @@ final class Syllabus {
 
 	// ---- Cleanup -----------------------------------------------------------------------------------
 
-	/** Remove the skill groups under deleted items, and the placements in them. Skills stay in the library. */
+	/** Remove the skill groups under deleted items, and the placements in them. Skills stay in the library.
+	 *
+	 * @param array $item_ids Item ids.
+	 */
 	public static function delete_for_items( array $item_ids ) {
 		global $wpdb;
 		$item_ids = self::ints( $item_ids );
@@ -952,7 +1172,10 @@ final class Syllabus {
 		return count( $group_ids );
 	}
 
-	/** A deleted library skill leaves no placements, and a deleted root skill is forgotten so it is made again. */
+	/** A deleted library skill leaves no placements, and a deleted root skill is forgotten so it is made again.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function remove_term( $term_id ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {

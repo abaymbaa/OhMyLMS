@@ -2,6 +2,8 @@
 
 /**
  * OhMyLMS admin functions
+ *
+ * @package OhMyLMS
  */
 
 /**

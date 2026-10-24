@@ -2,6 +2,9 @@
 
 namespace OhMyLMS\Commerce\DataStore;
 
+/**
+ * Plugin order refund store implementation.
+ */
 class OrderRefundStore extends OrderStore {
 
 	/**
@@ -29,7 +32,8 @@ class OrderRefundStore extends OrderStore {
 	 * @since 1.0.0
 	 */
 	protected function get_post_title() {
-		return sprintf( __( 'Refund &ndash; %s', 'ohmylms' ), ( new \DateTime( 'now' ) )->format( _x( 'M d, Y @ h:i A', 'Order date', 'ohmylms' ) ) );
+		return sprintf( /* translators: %s: text value. */
+		__( 'Refund &ndash; %s', 'ohmylms' ), ( new \DateTime( 'now' ) )->format( _x( 'M d, Y @ h:i A', 'Order date', 'ohmylms' ) ) );
 	}
 
 	/**

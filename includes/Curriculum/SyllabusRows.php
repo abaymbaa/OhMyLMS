@@ -28,7 +28,10 @@ final class SyllabusRows {
 	const SKILL_CODE_LIMIT   = 40;
 	const DESCRIPTION_LIMIT  = 2000;
 
-	/** Text as valid UTF-8: stray bytes become "?" instead of making later pattern matching fail. */
+	/** Text as valid UTF-8: stray bytes become "?" instead of making later pattern matching fail.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	private static function utf8( $value ) {
 		$text = is_scalar( $value ) ? (string) $value : '';
 		return function_exists( 'mb_convert_encoding' ) ? (string) mb_convert_encoding( $text, 'UTF-8', 'UTF-8' ) : $text;
@@ -37,6 +40,8 @@ final class SyllabusRows {
 	/**
 	 * One line of text: control characters and runs of whitespace removed. Angle brackets are kept
 	 * (objectives such as "a < 0" are maths, not markup); WordPress sanitizes the text when it is saved.
+	 *
+	 * @param mixed $value Value to process.
 	 */
 	public static function line( $value ) {
 		$text = self::utf8( $value );
@@ -46,7 +51,10 @@ final class SyllabusRows {
 		return trim( (string) $text );
 	}
 
-	/** Several lines of text: control characters removed, line breaks kept. */
+	/** Several lines of text: control characters removed, line breaks kept.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public static function notes( $value ) {
 		$text = self::utf8( $value );
 		$text = str_replace( array( "\r\n", "\r" ), "\n", $text );
@@ -56,16 +64,26 @@ final class SyllabusRows {
 		return trim( (string) $text );
 	}
 
+	/**
+	 * Length for Syllabus rows.
+	 *
+	 * @param mixed $text Text.
+	 */
 	private static function length( $text ) {
 		return function_exists( 'mb_strlen' ) ? mb_strlen( $text ) : strlen( $text );
 	}
 
-	/** "Paper 1 > 1 Number" => ['Paper 1', '1 Number']. */
+	/**
+	 * Path for Syllabus rows.
+	 * "Paper 1 > 1 Number" => ['Paper 1', '1 Number'].
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public static function path( $value ) {
 		$parts = preg_split( '/\s*[>›»]\s*/u', self::line( $value ) );
 		return array_values(
 			array_filter(
-				array_map( 'trim', $parts ?: array() ),
+				array_map( 'trim', $parts ? $parts : array() ),
 				static function ( $part ) {
 					return '' !== $part;
 				}
@@ -74,6 +92,8 @@ final class SyllabusRows {
 	}
 
 	/**
+	 * Normalize.
+	 *
 	 * @param array[] $rows Rows as sent by the browser; `line` is the row's line in the file.
 	 * @return array{rows: array[], errors: array[], warnings: array[], skipped: int}
 	 */
@@ -85,7 +105,8 @@ final class SyllabusRows {
 		if ( count( $rows ) > self::MAX_ROWS ) {
 			$errors[] = array(
 				'line'    => 0,
-				'message' => sprintf( __( 'An import can have at most %d rows. Split the file and import it in parts.', 'ohmylms' ), self::MAX_ROWS ),
+				'message' => sprintf( /* translators: %d: number. */
+				__( 'An import can have at most %d rows. Split the file and import it in parts.', 'ohmylms' ), self::MAX_ROWS ),
 			);
 			return array(
 				'rows'     => array(),
@@ -128,26 +149,35 @@ final class SyllabusRows {
 			if ( self::length( $category ) > 60 ) {
 				$problems[] = __( 'A skill category can have at most 60 characters.', 'ohmylms' ); }
 			if ( '' === $skill && '' !== $skill_code ) {
-				$problems[] = sprintf( __( 'Skill code “%s” has no skill name.', 'ohmylms' ), $skill_code ); }
+				$problems[] = sprintf( /* translators: %s: text value. */
+				__( 'Skill code “%s” has no skill name.', 'ohmylms' ), $skill_code ); }
 			if ( count( $path ) > self::MAX_DEPTH ) {
-				$problems[] = sprintf( __( 'A content path can have at most %d levels.', 'ohmylms' ), self::MAX_DEPTH ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A content path can have at most %d levels.', 'ohmylms' ), self::MAX_DEPTH ); }
 			foreach ( $path as $name ) {
 				if ( self::length( $name ) > self::NAME_LIMIT ) {
-					$problems[] = sprintf( __( 'A content name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT );
+					$problems[] = sprintf( /* translators: %d: number. */
+					__( 'A content name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT );
 					break; }
 			}
 			if ( self::length( $group ) > self::NAME_LIMIT ) {
-				$problems[] = sprintf( __( 'A skill group name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A skill group name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT ); }
 			if ( self::length( $skill ) > self::NAME_LIMIT ) {
-				$problems[] = sprintf( __( 'A skill name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A skill name can have at most %d characters.', 'ohmylms' ), self::NAME_LIMIT ); }
 			if ( self::length( $content_code ) > self::CONTENT_CODE_LIMIT ) {
-				$problems[] = sprintf( __( 'A content code can have at most %d characters.', 'ohmylms' ), self::CONTENT_CODE_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A content code can have at most %d characters.', 'ohmylms' ), self::CONTENT_CODE_LIMIT ); }
 			if ( self::length( $group_code ) > self::GROUP_CODE_LIMIT ) {
-				$problems[] = sprintf( __( 'A skill group code can have at most %d characters.', 'ohmylms' ), self::GROUP_CODE_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A skill group code can have at most %d characters.', 'ohmylms' ), self::GROUP_CODE_LIMIT ); }
 			if ( self::length( $skill_code ) > self::SKILL_CODE_LIMIT ) {
-				$problems[] = sprintf( __( 'A skill code can have at most %d characters.', 'ohmylms' ), self::SKILL_CODE_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'A skill code can have at most %d characters.', 'ohmylms' ), self::SKILL_CODE_LIMIT ); }
 			if ( self::length( $description ) > self::DESCRIPTION_LIMIT ) {
-				$problems[] = sprintf( __( 'Notes can have at most %d characters.', 'ohmylms' ), self::DESCRIPTION_LIMIT ); }
+				$problems[] = sprintf( /* translators: %d: number. */
+				__( 'Notes can have at most %d characters.', 'ohmylms' ), self::DESCRIPTION_LIMIT ); }
 			if ( $problems ) {
 				foreach ( $problems as $message ) {
 					$errors[] = array(

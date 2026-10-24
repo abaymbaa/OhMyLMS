@@ -1,4 +1,10 @@
 <?php
+/**
+ * Order functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 /**
  * Retrieve an order by its ID.
@@ -11,6 +17,11 @@ function ohmylms_ecommerce_get_order( $order_id ) {
 }
 
 
+/**
+ * Ohmylms ecommerce get refund order for Order-functions.
+ *
+ * @param mixed $order_id Order identifier.
+ */
 function ohmylms_ecommerce_get_refund_order( $order_id ) {
 	return \OhMyLMS\Commerce\ecommerce()->order_factory->get_refund_order( $order_id );
 }
@@ -21,7 +32,7 @@ function ohmylms_ecommerce_get_refund_order( $order_id ) {
  *
  * @param array $args {
  *     Arguments for creating a refund.
- *
+ * .
  *     @type int    $amount         Refund amount.
  *     @type string $reason         Reason for the refund.
  *     @type int    $order_id       Order ID.
@@ -31,6 +42,7 @@ function ohmylms_ecommerce_get_refund_order( $order_id ) {
  *     @type bool   $restock_items  Whether to restock the items.
  * }
  * @return \WC_Order_Refund|\WP_Error The refund object on success, WP_Error on failure.
+ * @throws \Exception When the operation cannot be completed.
  */
 function ohmylms_ecommerce_create_refund( $args = array() ) {
 	$default_args = array(
@@ -165,6 +177,7 @@ function ohmylms_ecommerce_create_refund( $args = array() ) {
  * @return bool|\WP_Error True on success, WP_Error on failure.
  *
  * @since 1.0.0
+ * @throws \Exception When the operation cannot be completed.
  */
 function ohmylms_ecommerce_refund_payment( $order, $amount, $reason = '' ) {
 	try {
@@ -179,7 +192,7 @@ function ohmylms_ecommerce_refund_payment( $order, $amount, $reason = '' ) {
 		if ( 'offline' !== $gateway->id ) {
 			$result = $gateway->process_refund( $order->get_id(), $amount, $reason );
 			if ( is_array( $result ) && isset( $result['result'] ) && 'failure' === $result['result'] ) {
-				throw new \Exception( $result['message'] ?: __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
+				throw new \Exception( $result['message'] ? $result['message'] : __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
 			}
 			if ( false === $result ) {
 				throw new \Exception( __( 'An error occurred while attempting to create the refund using the payment gateway API.', 'ohmylms' ) );
@@ -188,8 +201,9 @@ function ohmylms_ecommerce_refund_payment( $order, $amount, $reason = '' ) {
 			// Add order note about the refund.
 			$order->add_order_note(
 				sprintf(
+					/* translators: %s: text value. */
 					__( 'Refund processed.Reason: %s', 'ohmylms' ),
-					$reason ?: __( 'No reason provided', 'ohmylms' )
+					$reason ? $reason : __( 'No reason provided', 'ohmylms' )
 				)
 			);
 			$order->save();
@@ -238,6 +252,11 @@ function ohmylms_ecommerce_get_order_status_name( $status ) {
 }
 
 
+/**
+ * Ohmylms ecommerce get order notes for Order-functions.
+ *
+ * @param mixed $args Operation arguments.
+ */
 function ohmylms_ecommerce_get_order_notes( $args ) {
 	$key_mapping = array(
 		'limit'         => 'number',

@@ -29,6 +29,7 @@ final class MediaFreezer {
 	 * Local files referenced by version content.
 	 *
 	 * @return array<string,array{url:string,path:string}> reference key => source
+	 * @param array $content Content.
 	 */
 	public static function sources( array $content ) {
 		$sources = array();
@@ -66,6 +67,14 @@ final class MediaFreezer {
 		return array_slice( $sources, 0, self::MAX_FILES, true );
 	}
 
+	/**
+	 * Add for Media freezer.
+	 *
+	 * @param array $sources Sources.
+	 * @param mixed $key Lookup key.
+	 * @param mixed $url Url.
+	 * @param mixed $attachment_id Attachment identifier.
+	 */
 	private static function add( array &$sources, $key, $url, $attachment_id ) {
 		// Prefer the file actually shown (e.g. the "large" size), else the attachment's original.
 		$path = self::path_for_url( $url );
@@ -79,7 +88,10 @@ final class MediaFreezer {
 		);
 	}
 
-	/** Uploads path for a URL under the uploads base URL, or null. */
+	/** Uploads path for a URL under the uploads base URL, or null.
+	 *
+	 * @param mixed $url Url.
+	 */
 	public static function path_for_url( $url ) {
 		$url = strtok( (string) $url, '?#' );
 		if ( '' === $url || false === $url ) {
@@ -95,6 +107,11 @@ final class MediaFreezer {
 		return self::inside_uploads( trailingslashit( $uploads['basedir'] ) . $relative );
 	}
 
+	/**
+	 * Inside uploads for Media freezer.
+	 *
+	 * @param mixed $path Path.
+	 */
 	private static function inside_uploads( $path ) {
 		$real = realpath( (string) $path );
 		$root = realpath( wp_upload_dir( null, false )['basedir'] );
@@ -108,6 +125,7 @@ final class MediaFreezer {
 	 * Copy each referenced file into frozen storage.
 	 *
 	 * @return array<string,array> reference key => frozen record (url, source, sha256, size, mtime)
+	 * @param array $content Content.
 	 */
 	public static function freeze( array $content ) {
 		$frozen  = array();
@@ -141,13 +159,20 @@ final class MediaFreezer {
 		return $frozen;
 	}
 
-	/** No directory listing for frozen storage. */
+	/** No directory listing for frozen storage.
+	 *
+	 * @param mixed $directory Directory.
+	 */
 	private static function protect_directory( $directory ) {
 		if ( is_dir( $directory ) && ! is_file( $directory . '/index.php' ) ) {
 			@file_put_contents( $directory . '/index.php', "<?php\n// Silence is golden.\n" ); }
 	}
 
-	/** Has a file the version froze been replaced in place since? */
+	/** Has a file the version froze been replaced in place since?
+	 *
+	 * @param array $frozen Frozen.
+	 * @param array $content Content.
+	 */
 	public static function changed( array $frozen, array $content ) {
 		foreach ( self::sources( $content ) as $key => $source ) {
 			if ( ! isset( $frozen[ $key ] ) ) {
@@ -163,7 +188,11 @@ final class MediaFreezer {
 		return false;
 	}
 
-	/** Replace frozen references in question text. */
+	/** Replace frozen references in question text.
+	 *
+	 * @param mixed $body Body.
+	 * @param array $frozen Frozen.
+	 */
 	public static function body( $body, array $frozen ) {
 		foreach ( $frozen as $key => $record ) {
 			if ( strpos( $key, 'body:' ) !== 0 ) {

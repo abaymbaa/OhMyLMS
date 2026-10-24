@@ -6,7 +6,16 @@ use OhMyLMS\Abstracts\Data;
 use OhMyLMS\Abstracts\DataStore;
 use OhMyLMS\Data\Student;
 
+/**
+ * Plugin student store implementation.
+ */
 class StudentStore extends DataStore {
+	/**
+	 * Clear learning cache for Student store.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function clear_learning_cache( $student_id, $course_id ) {
 		$key = $student_id . '_' . $course_id;
 		unset( self::$course_completed_cache[ $key ], self::$course_in_progress_cache[ $key ], self::$completed_content_count_cache[ $key ] );
@@ -58,7 +67,7 @@ class StudentStore extends DataStore {
 	/**
 	 * Create new record
 	 *
-	 * @param $student Student
+	 * @param mixed $student Student.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -72,7 +81,7 @@ class StudentStore extends DataStore {
 	/**
 	 * Read new record
 	 *
-	 * @param $student Data
+	 * @param mixed $student Data.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -107,7 +116,7 @@ class StudentStore extends DataStore {
 	/**
 	 * Get user meta data for the given student.
 	 *
-	 * @param $student
+	 * @param mixed $student Student.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -127,7 +136,7 @@ class StudentStore extends DataStore {
 	/**
 	 * Update new record
 	 *
-	 * @param $student Student
+	 * @param mixed $student Student.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -144,8 +153,8 @@ class StudentStore extends DataStore {
 	/**
 	 * Delete new record
 	 *
-	 * @param $student Student
-	 * @param array $args
+	 * @param mixed $student Student.
+	 * @param array $args Operation arguments.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -190,51 +199,78 @@ class StudentStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Get course count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE user_id = %d", $student->get_id() );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d', $table_name, $student->get_id() ) );
 	}
 
+	/**
+	 * Get enrolled course count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_enrolled_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(DISTINCT course_id) FROM %i WHERE user_id = %d AND status = %s', $table_name, $student->get_id(), 'enrolled' ) );
 	}
 
+	/**
+	 * Get memebership count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_memebership_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s", $student->get_id(), 'enrolled' );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(DISTINCT course_id) FROM %i WHERE user_id = %d AND status = %s', $table_name, $student->get_id(), 'enrolled' ) );
 	}
 
+	/**
+	 * Get completed course count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_completed_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(*) FROM $table_name WHERE user_id = %d AND progress = %s", $student->get_id(), 'completed' );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND progress = %s', $table_name, $student->get_id(), 'completed' ) );
 	}
+	/**
+	 * Get progress course count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_progress_course_count( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT COUNT(DISTINCT course_id) FROM $table_name WHERE user_id = %d AND status = %s AND progress = %s", $student->get_id(), 'enrolled', 'running' );
-		return $wpdb->get_var( $query );
+		return $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(DISTINCT course_id) FROM %i WHERE user_id = %d AND status = %s AND progress = %s', $table_name, $student->get_id(), 'enrolled', 'running' ) );
 	}
 
+	/**
+	 * Get courses for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_courses( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
-			"
+			'
 			SELECT DISTINCT e.course_id
-			FROM $table_name e
-			JOIN $post_table p ON e.course_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.status = %s AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'enrolled',
 			'ohmylms-course'
@@ -251,6 +287,11 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Get memberships for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_memberships( $student ) {
 		if ( ! ohmylms_is_pro() ) {
 			return array();
@@ -260,12 +301,14 @@ class StudentStore extends DataStore {
 		$table_name     = $wpdb->prefix . 'ohmylms_user_membership';
 		$post_table     = $wpdb->prefix . 'posts';
 		$query          = $wpdb->prepare(
-			"
+			'
 			SELECT e.membership_id
-			FROM $table_name e
-			JOIN $post_table p ON e.membership_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.membership_id = p.ID
 			WHERE e.user_id = %d AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'ohmylms-membership'
 		);
@@ -279,6 +322,11 @@ class StudentStore extends DataStore {
 		return $memberships;
 	}
 
+	/**
+	 * Get enrolled memberships for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_enrolled_memberships( $student ) {
 		if ( ! ohmylms_is_pro() ) {
 			return array();
@@ -294,12 +342,14 @@ class StudentStore extends DataStore {
 		$table_name      = $wpdb->prefix . 'ohmylms_user_membership';
 		$post_table      = $wpdb->prefix . 'posts';
 		$query           = $wpdb->prepare(
-			"
+			'
 			SELECT e.membership_id, e.order_id
-			FROM $table_name e
-			JOIN $post_table p ON e.membership_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.membership_id = p.ID
 			WHERE e.user_id = %d AND e.status = %s AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'enrolled',
 			'ohmylms-membership'
@@ -333,17 +383,24 @@ class StudentStore extends DataStore {
 		return $memberships;
 	}
 
+	/**
+	 * Get enrolled courses for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_enrolled_courses( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
-			"
+			'
 			SELECT DISTINCT e.course_id
-			FROM $table_name e
-			JOIN $post_table p ON e.course_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.status = %s AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'enrolled',
 			'ohmylms-course'
@@ -359,17 +416,24 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Get progress course for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_progress_course( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
-			"
+			'
 			SELECT DISTINCT e.course_id
-			FROM $table_name e
-			JOIN $post_table p ON e.course_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.progress = %s AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'running',
 			'ohmylms-course'
@@ -384,17 +448,24 @@ class StudentStore extends DataStore {
 		return $courses;
 	}
 
+	/**
+	 * Get completed course for Student store.
+	 *
+	 * @param mixed $student Student.
+	 */
 	public function get_completed_course( $student ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$post_table = $wpdb->prefix . 'posts';
 		$query      = $wpdb->prepare(
-			"
+			'
 			SELECT DISTINCT e.course_id
-			FROM $table_name e
-			JOIN $post_table p ON e.course_id = p.ID
+			FROM %i e
+			JOIN %i p ON e.course_id = p.ID
 			WHERE e.user_id = %d AND e.progress = %s AND p.post_type = %s
-		",
+		',
+			$table_name,
+			$post_table,
 			$student->get_id(),
 			'completed',
 			'ohmylms-course'
@@ -557,88 +628,22 @@ class StudentStore extends DataStore {
 		return ohmylms_get_course_first_lesson_url( $course_id );
 	}
 	/**
-	 * Get the resume URL for the course.
+	 * Return the placeholder URL while certificate downloads are unavailable.
 	 *
-	 * @param Student $student The student object.
-	 * @param int     $course_id The course ID.
-	 * @return string The resume URL for the course.
+	 * @param Student $student The student object, retained for compatibility.
+	 * @param int     $course_id The course ID, retained for compatibility.
+	 * @return string The placeholder URL.
 	 */
 	public function get_course_certificate_url( $student, $course_id ) {
 		return '#';
-		// Retrieve course and certificate.
-		$course = ohmylms_get_course( $course_id );
-		if ( ! $course ) {
-			return '#'; // Return fallback URL if course doesn't exist.
-		}
-
-		$certificate = $course->get_certificate();
-		if ( ! $certificate ) {
-			return '#'; // Return fallback URL if certificate doesn't exist.
-		}
-
-		$certificate_id = $certificate->get_id();
-
-		// Initialize Dompdf options.
-		$options = new \Dompdf\Options();
-		$options->set( 'isRemoteEnabled', true ); // Allow external resources like images.
-		$options->set( 'isHtml5ParserEnabled', true ); // Enable HTML5 parsing.
-		$options->set( 'isPhpEnabled', true ); // Enable PHP if needed.
-		$options->set( 'dpi', 98 ); // Adjust DPI to match design resolution.
-
-		// Get certificate HTML contents.
-		$data = $certificate->get_html_contents();
-		if ( empty( $data ) ) {
-			return '#'; // Return fallback URL if certificate contents are empty.
-		}
-
-		// Prepare HTML structure for Dompdf.
-		$html  = '<html><head><style>
-			.container {
-				margin : 10px
-			}
-		</style></head><body><div class="container">';
-		$html .= $data;
-		$html .= '</div></body></html>';
-
-		$html = str_replace( 'Name Surname', $student->get_name(), $html );
-
-		// $html = ob_get_clean();
-
-		// Initialize Dompdf.
-		$dompdf = new \Dompdf\Dompdf( $options );
-		$dompdf->loadHtml( $html );
-
-		// Set paper size and orientation
-		// $dompdf->setPaper([0, 0, 1224, 692], 'landscape'); // Set custom size to match the certificate.
-		$dompdf->setPaper( array( 0, 0, 2100, 2970 ), 'landscape' );
-
-		// Render the PDF.
-		$dompdf->render();
-
-		// Generate PDF file path.
-		$upload_dir = wp_upload_dir();
-		$pdf_dir    = $upload_dir['basedir'] . '/ohmylms/certificates/';
-
-		if ( ! file_exists( $pdf_dir ) ) {
-			// Create directory if it doesn't exist.
-			if ( ! wp_mkdir_p( $pdf_dir ) ) {
-				return '#'; // Return fallback URL if directory creation fails.
-			}
-		}
-
-		// Define the file name and path.
-		$file_name     = 'certificate_' . $certificate_id . '.pdf';
-		$pdf_file_path = $pdf_dir . $file_name;
-
-		// Save the PDF to the file system.
-		if ( file_put_contents( $pdf_file_path, $dompdf->output() ) === false ) {
-			return '#'; // Return fallback URL if saving the file fails.
-		}
-
-		// Return the URL of the generated PDF.
-		return $upload_dir['baseurl'] . '/ohmylms/certificates/' . $file_name;
 	}
 
+	/**
+	 * Is course in progress for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function is_course_in_progress( $student, $course_id ) {
 		$cache_key = $student->get_id() . '_' . $course_id;
 
@@ -648,8 +653,7 @@ class StudentStore extends DataStore {
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d AND status = %s AND progress = %s", $student->get_id(), $course_id, 'enrolled', 'running' );
-		$course     = $wpdb->get_row( $query, ARRAY_A );
+		$course     = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d AND status = %s AND progress = %s', $table_name, $student->get_id(), $course_id, 'enrolled', 'running' ), ARRAY_A );
 		$result     = $course ? true : false;
 
 		self::$course_in_progress_cache[ $cache_key ] = $result;
@@ -657,6 +661,12 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Is course completed for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function is_course_completed( $student, $course_id ) {
 		$cache_key = $student->get_id() . '_' . $course_id;
 
@@ -666,18 +676,22 @@ class StudentStore extends DataStore {
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d AND progress = %s", $student->get_id(), $course_id, 'completed' );
-		$course     = $wpdb->get_row( $query, ARRAY_A );
+		$course     = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d AND progress = %s', $table_name, $student->get_id(), $course_id, 'completed' ), ARRAY_A );
 		$result     = $course ? true : false;
 
 		self::$course_completed_cache[ $cache_key ] = $result;
 		return $result;
 	}
+	/**
+	 * Get course completed date for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_course_completed_date( $student, $course_id ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT end_date FROM $table_name WHERE user_id = %d AND course_id = %d AND progress = %s", $student->get_id(), $course_id, 'completed' );
-		$course     = $wpdb->get_row( $query, ARRAY_A );
+		$course     = $wpdb->get_row( $wpdb->prepare( 'SELECT end_date FROM %i WHERE user_id = %d AND course_id = %d AND progress = %s', $table_name, $student->get_id(), $course_id, 'completed' ), ARRAY_A );
 		$result     = ! empty( $course['end_date'] ) ? $course['end_date'] : '';
 		return $result;
 	}
@@ -701,8 +715,7 @@ class StudentStore extends DataStore {
 
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$query      = $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d AND status = %s", $student->get_id(), $course_id, 'enrolled' );
-		$course     = $wpdb->get_row( $query, ARRAY_A );
+		$course     = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d AND status = %s', $table_name, $student->get_id(), $course_id, 'enrolled' ), ARRAY_A );
 		$result     = $course ? true : false;
 
 		// Cache the result.
@@ -724,19 +737,20 @@ class StudentStore extends DataStore {
 
 
 	/**
-	 * @param $student
-	 * @param $lesson_id
-	 * @param $course_id
+	 * Complete lesson.
 	 *
+	 * @param mixed $student Student.
+	 * @param mixed $lesson_id Lesson identifier.
+	 * @param mixed $course_id Course identifier.
+	 * .
 	 * @return bool|int|\mysqli_result|null
-	 * @throws \Exception
-	 */
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function complete_lesson( $student, $lesson_id, $course_id ) {
 		global $wpdb;
 		$content_type  = ohmylms_get_content_type_id_by_content_id( $lesson_id );
 		$lesson        = ohmylms_get_content_object( $content_type, $lesson_id );
 		$content_type  = $lesson->get_type();
-		$enrollment_id = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d", $student->get_id(), $course_id ) );
+		$enrollment_id = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE user_id = %d AND course_id = %d', $wpdb->prefix . 'ohmylms_user_enrollment', $student->get_id(), $course_id ) );
 		$table_name    = $wpdb->prefix . 'ohmylms_user_progress';
 
 		if ( ! $enrollment_id ) {
@@ -744,7 +758,7 @@ class StudentStore extends DataStore {
 		}
 
 		// Check if the lesson is already completed.
-		$existing_progress = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table_name WHERE enrollment_id = %d AND content_id = %d AND status = %s", $enrollment_id, $lesson_id, 'completed' ) );
+		$existing_progress = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE enrollment_id = %d AND content_id = %d AND status = %s', $table_name, $enrollment_id, $lesson_id, 'completed' ) );
 
 		if ( ! $existing_progress ) {
 			$progress_id = $wpdb->insert(
@@ -775,6 +789,12 @@ class StudentStore extends DataStore {
 		return null; // or any other value indicating no new insert was made.
 	}
 
+	/**
+	 * Maybe completed for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $lesson_id Lesson identifier.
+	 */
 	public function maybe_completed( $student, $lesson_id ) {
 		$cache_key = $student->get_id() . '_' . $lesson_id;
 
@@ -786,12 +806,14 @@ class StudentStore extends DataStore {
 		$table_name       = $wpdb->prefix . 'ohmylms_user_progress';
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$query            = $wpdb->prepare(
-			"
+			'
 		SELECT p.*
-		FROM $table_name p
-		JOIN $enrollment_table e ON p.enrollment_id = e.id
+		FROM %i p
+		JOIN %i e ON p.enrollment_id = e.id
 		WHERE e.user_id = %d AND p.content_id = %d AND p.status = %s
-	",
+	',
+			$table_name,
+			$enrollment_table,
 			$student->get_id(),
 			$lesson_id,
 			'completed'
@@ -808,6 +830,12 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Get completed lesson for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_completed_lesson( &$student, $course_id ) {
 		global $wpdb;
 		$table_name        = $wpdb->prefix . 'ohmylms_user_progress';
@@ -817,9 +845,11 @@ class StudentStore extends DataStore {
 		$course_id         = $course->get_id();
 		$completed_lessons = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM $table_name up
-		INNER JOIN $enrollment_table ue ON up.enrollment_id = ue.id
-		WHERE ue.user_id = %d AND ue.course_id = %d AND up.status = %s",
+				'SELECT * FROM %i up
+		INNER JOIN %i ue ON up.enrollment_id = ue.id
+		WHERE ue.user_id = %d AND ue.course_id = %d AND up.status = %s',
+				$table_name,
+				$enrollment_table,
 				$user_id,
 				$course_id,
 				'completed'
@@ -828,6 +858,12 @@ class StudentStore extends DataStore {
 		return $completed_lessons;
 	}
 
+	/**
+	 * Get completed content count for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_completed_content_count( &$student, $course_id ) {
 		$cache_key = $student->get_id() . '_' . $course_id;
 
@@ -847,9 +883,11 @@ class StudentStore extends DataStore {
 		$course_id               = $course->get_id();
 		$completed_content_count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM $table_name up
-		INNER JOIN $enrollment_table ue ON up.enrollment_id = ue.id
-		WHERE ue.user_id = %d AND ue.course_id = %d AND up.status = %s",
+				'SELECT COUNT(*) FROM %i up
+		INNER JOIN %i ue ON up.enrollment_id = ue.id
+		WHERE ue.user_id = %d AND ue.course_id = %d AND up.status = %s',
+				$table_name,
+				$enrollment_table,
 				$user_id,
 				$course_id,
 				'completed'
@@ -859,6 +897,13 @@ class StudentStore extends DataStore {
 		self::$completed_content_count_cache[ $cache_key ] = $completed_content_count;
 		return $completed_content_count;
 	}
+	/**
+	 * Get completed content count by type for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 * @param array $content_type Content type.
+	 */
 	public function get_completed_content_count_by_type( &$student, $course_id, $content_type = array() ) {
 		global $wpdb;
 		$table_name              = $wpdb->prefix . 'ohmylms_user_progress';
@@ -869,11 +914,11 @@ class StudentStore extends DataStore {
 		if ( $course && ! empty( $content_type ) ) {
 			$course_id               = $course->get_id();
 			$placeholders            = implode( ',', array_fill( 0, count( $content_type ), '%s' ) );
-			$args                    = array_merge( array( $user_id, $course_id, 'completed' ), array_values( $content_type ) );
+			$args                    = array_merge( array( $table_name, $enrollment_table, $user_id, $course_id, 'completed' ), array_values( $content_type ) );
 			$completed_content_count = $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM $table_name up
-			INNER JOIN $enrollment_table ue ON up.enrollment_id = ue.id
+					"SELECT COUNT(*) FROM %i up
+			INNER JOIN %i ue ON up.enrollment_id = ue.id
 			WHERE ue.user_id = %d AND ue.course_id = %d AND up.status = %s AND up.content_type IN ($placeholders)",
 					$args
 				)
@@ -885,13 +930,13 @@ class StudentStore extends DataStore {
 	}
 
 	/**
-	 * @param $student
-	 * @param $course_id
-	 * @param $student Student
+	 * Get over all completion rate.
 	 *
+	 * @param mixed $student Student. Student
+	 * .
+	 * @param mixed $course_id Course identifier.
 	 * @return int|string
-	 * @throws \Exception
-	 */
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function get_over_all_completion_rate( $student, $course_id ) {
 		if ( \OhMyLMS\Learning\CourseProgram::managed( $student->get_id(), $course_id ) ) {
 			$state = \OhMyLMS\Learning\CompletionPolicy::award( $student->get_id(), $course_id );
@@ -919,7 +964,7 @@ class StudentStore extends DataStore {
 
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-			$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $student_id, $course_id ), ARRAY_A );
+			$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d', $table_name, $student_id, $course_id ), ARRAY_A );
 			if ( 'enrolled' === $enroll_data['status'] && 'running' === $enroll_data['progress'] ) {
 				$wpdb->update(
 					$table_name,
@@ -938,6 +983,12 @@ class StudentStore extends DataStore {
 		return $completion_rate;
 	}
 
+	/**
+	 * Get quiz completion rate for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_quiz_completion_rate( $student, $course_id ) {
 		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
@@ -952,6 +1003,12 @@ class StudentStore extends DataStore {
 		}
 		return $completion_rate;
 	}
+	/**
+	 * Get assignment completion rate for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_assignment_completion_rate( $student, $course_id ) {
 		$course = ohmylms_get_course( $course_id );
 		if ( ! $course ) {
@@ -967,6 +1024,12 @@ class StudentStore extends DataStore {
 		return $completion_rate;
 	}
 
+	/**
+	 * Delete enrollment for Student store.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $order_id Order identifier.
+	 */
 	public function delete_enrollment( $student_id, $order_id ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
@@ -988,6 +1051,13 @@ class StudentStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Update enrollment status for Student store.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $order_id Order identifier.
+	 * @param mixed $new_status New status.
+	 */
 	public function update_enrollment_status( $student_id, $order_id, $new_status ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
@@ -1013,6 +1083,13 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Update membership enrollment status for Student store.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $order_id Order identifier.
+	 * @param mixed $new_status New status.
+	 */
 	public function update_membership_enrollment_status( $student_id, $order_id, $new_status ) {
 		if ( ! ohmylms_is_pro() ) {
 			return false;
@@ -1060,12 +1137,7 @@ class StudentStore extends DataStore {
 		$table_name = "{$wpdb->prefix}ohmylms_assignment_attempts";
 
 		// Prepare and execute query.
-		$query   = $wpdb->prepare(
-			"SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d ORDER BY assignment_id",
-			$student->get_id(),
-			$course_id
-		);
-		$results = $wpdb->get_results( $query, ARRAY_A );
+		$results = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d ORDER BY assignment_id', $table_name, $student->get_id(), $course_id ), ARRAY_A );
 
 		// Return early if no results found.
 		if ( ! $results ) {
@@ -1098,6 +1170,12 @@ class StudentStore extends DataStore {
 	}
 
 
+	/**
+	 * Get assignment remaining time for Student store.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $content_id Content identifier.
+	 */
 	public function get_assignment_remaining_time( &$student, $content_id ) {
 		$content_id = absint( $content_id ); // Ensure content_id is an integer.
 		$student_id = absint( $student->get_id() ); // Ensure student ID is an integer.
@@ -1124,7 +1202,7 @@ class StudentStore extends DataStore {
 	 * Check student is banned or not
 	 *
 	 * @param Student $student The student object.
-	 *
+	 * .
 	 * @return bool True if the student is banned, false otherwise.
 	 *
 	 * @since 1.0.0
@@ -1137,7 +1215,7 @@ class StudentStore extends DataStore {
 	/**
 	 * Check if reminder already sent to student for specific course.
 	 *
-	 * @param int $student_id Student ID.
+	 * @param int $student _id Student ID.
 	 * @param int $course_id Course ID.
 	 * @return bool True if reminder sent, false otherwise.
 	 */
@@ -1146,10 +1224,11 @@ class StudentStore extends DataStore {
 		$table_name = $wpdb->prefix . 'ohmylms_notifications';
 
 		$query = $wpdb->prepare(
-			"SELECT COUNT(*) FROM {$table_name}
+			'SELECT COUNT(*) FROM %i
 			WHERE student_id = %d
 			AND course_id = %d
-			AND status = %s",
+			AND status = %s',
+			$table_name,
 			$student->get_id(),
 			$course_id,
 			'sent'
@@ -1173,13 +1252,14 @@ class StudentStore extends DataStore {
 		$table_name = $wpdb->prefix . 'ohmylms_notifications';
 
 		$query = $wpdb->prepare(
-			"SELECT id, subject, message, created_at as sent_date, email
-			FROM {$table_name}
+			'SELECT id, subject, message, created_at as sent_date, email
+			FROM %i
 			WHERE student_id = %d
 			AND course_id = %d
 			AND status = %s
 			ORDER BY created_at DESC
-			LIMIT 1",
+			LIMIT 1',
+			$table_name,
 			$student->get_id(),
 			$course_id,
 			'sent'
@@ -1277,6 +1357,11 @@ class StudentStore extends DataStore {
 	 * @return float The average order value for the student.
 	 *
 	 * @since 1.0.0
+	 */
+	/**
+	 * Get aov for Student store.
+	 *
+	 * @param mixed $student_id Student identifier.
 	 */
 	public function get_aov( $student_id = null ) {
 		$total_orders  = $this->get_total_orders( $student_id );

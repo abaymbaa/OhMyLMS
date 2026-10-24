@@ -26,6 +26,11 @@ class EmailController extends RestController {
 	 */
 	protected $base = 'email-settings/(?P<email_id>[\w-]+)';
 
+	/**
+	 * Items.
+	 *
+	 * @var mixed
+	 */
 	protected $items = 'all-emails';
 
 
@@ -182,8 +187,8 @@ class EmailController extends RestController {
 	/**
 	 * Get a single setting for a specific group.
 	 *
-	 * @param string $group_id The group ID.
-	 * @param string $setting_id The setting ID.
+	 * @param mixed $email_id Email identifier.
+	 * @param array $default Default.
 	 * @return array|\WP_Error The setting array or error object.
 	 *
 	 * @since 1.0.0
@@ -198,8 +203,8 @@ class EmailController extends RestController {
 	/**
 	 * Get a single setting for a specific group.
 	 *
-	 * @param string $group_id The group ID.
-	 * @param string $setting_id The setting ID.
+	 * @param mixed $email_id Email identifier.
+	 * @param mixed $data Input data.
 	 * @return bool The setting array or error object.
 	 *
 	 * @since 1.0.0

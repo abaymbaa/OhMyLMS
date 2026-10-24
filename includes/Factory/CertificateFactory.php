@@ -21,9 +21,9 @@ class CertificateFactory {
 	/**
 	 * Get certificate object
 	 *
-	 * @param bool $certificate_id
+	 * @param bool $certificate_id Certificate identifier.
 	 * @return bool|Certificate
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_certificate( $certificate_id = false ) {
@@ -38,7 +38,7 @@ class CertificateFactory {
 	/**
 	 * Get certificate id
 	 *
-	 * @param $certificate
+	 * @param mixed $certificate Certificate.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */

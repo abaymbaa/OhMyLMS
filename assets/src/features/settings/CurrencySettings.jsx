@@ -1,7 +1,8 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCurrencySettings( readRuntime ) {
-	return function CurrencySettings( props ) {
+	return function CurrencySettings() {
 		const {
 			I: Controls,
 			Nm,
@@ -60,7 +61,7 @@ export function createCurrencySettings( readRuntime ) {
 							( _tLocal3 = ( function ( _eLocal3 ) {
 								var _tLocal4 = ( function ( _eLocal4 ) {
 									if (
-										'object' != b1( _eLocal4 ) ||
+										'object' !== b1( _eLocal4 ) ||
 										! _eLocal4
 									) {
 										return _eLocal4;
@@ -72,7 +73,7 @@ export function createCurrencySettings( readRuntime ) {
 											_eLocal4,
 											'string'
 										);
-										if ( 'object' != b1( _nLocal3 ) ) {
+										if ( 'object' !== b1( _nLocal3 ) ) {
 											return _nLocal3;
 										}
 										throw new TypeError(
@@ -81,7 +82,7 @@ export function createCurrencySettings( readRuntime ) {
 									}
 									return String( _eLocal4 );
 								} )( _eLocal3 );
-								return 'symbol' == b1( _tLocal4 )
+								return 'symbol' === b1( _tLocal4 )
 									? _tLocal4
 									: _tLocal4 + '';
 							} )( _tLocal3 ) ) in _eLocal2
@@ -149,7 +150,7 @@ export function createCurrencySettings( readRuntime ) {
 										case 2:
 											_eLocal5.p = 2;
 											_rLocal2 = _eLocal5.v;
-											console.error(
+											showRequestError(
 												'Error fetching currency data:',
 												_rLocal2
 											);

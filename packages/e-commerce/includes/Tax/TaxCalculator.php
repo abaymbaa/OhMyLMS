@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 /**
  * Tax Calculator class.
  *
@@ -45,8 +45,8 @@ class OhMyLMS_Tax_Calculator {
 	/**
 	 * Calculate tax based on country and state
 	 *
-	 * @param string $country Country code
-	 * @param string $state State code
+	 * @param mixed $tax_rate Tax rate.
+	 * @param array $cart_totals Cart totals.
 	 * @return array Tax calculation data
 	 */
 	public function calculate_tax( $tax_rate, $cart_totals = array() ) {

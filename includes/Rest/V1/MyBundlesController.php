@@ -25,6 +25,9 @@ defined( 'ABSPATH' ) || exit;
  * independent of enrollment and grants no access.
  */
 class MyBundlesController extends RestController {
+	/**
+	 * Register routes for My bundles controller.
+	 */
 	public function register_routes() {
 		$learner = array( Access::class, 'learner' );
 		register_rest_route(
@@ -67,6 +70,11 @@ class MyBundlesController extends RestController {
 		);
 	}
 
+	/**
+	 * Summary for My bundles controller.
+	 *
+	 * @param array $row Row.
+	 */
 	private function summary( array $row ) {
 		$bundle = Bundles::describe( $row );
 		return array(
@@ -77,6 +85,9 @@ class MyBundlesController extends RestController {
 		) + ( isset( $row['enrolled_overlap'] ) ? array( 'enrolled_overlap' => (int) $row['enrolled_overlap'] ) : array() );
 	}
 
+	/**
+	 * Index for My bundles controller.
+	 */
 	public function index() {
 		$user = get_current_user_id();
 		return rest_ensure_response(
@@ -87,7 +98,10 @@ class MyBundlesController extends RestController {
 		);
 	}
 
-	/** Progress for a published bundle, always for the current learner only. */
+	/** Progress for a published bundle, always for the current learner only.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		$bundle = Bundles::get( (int) $request['id'] );
 		if ( ! $bundle || 'published' !== $bundle['status'] ) {
@@ -96,6 +110,11 @@ class MyBundlesController extends RestController {
 		return rest_ensure_response( Progress::for_bundle( $bundle, get_current_user_id() ) + array( 'following' => Follows::is_following( get_current_user_id(), (int) $bundle['id'] ) ) );
 	}
 
+	/**
+	 * Follow for My bundles controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function follow( WP_REST_Request $request ) {
 		$result = Follows::follow( get_current_user_id(), (int) $request['id'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response(
@@ -106,6 +125,11 @@ class MyBundlesController extends RestController {
 		);
 	}
 
+	/**
+	 * Unfollow for My bundles controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function unfollow( WP_REST_Request $request ) {
 		Follows::unfollow( get_current_user_id(), (int) $request['id'] );
 		return rest_ensure_response(

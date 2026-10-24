@@ -4,6 +4,9 @@ namespace OhMyLMS\Commerce\DataStore;
 
 use OhMyLMS\Commerce\Abstracts\Data;
 
+/**
+ * Plugin order item coupon store implementation.
+ */
 class OrderItemCouponStore extends OrderItemStore {
 
 	/**

@@ -12,6 +12,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Wires XP and the mastery score into practice, and exposes the learner's own totals. */
 final class XpHooks {
+	/**
+	 * Init for Xp hooks.
+	 */
 	public static function init() {
 		add_action(
 			'init',
@@ -27,10 +30,18 @@ final class XpHooks {
 		add_action( 'rest_api_init', array( self::class, 'routes' ) );
 	}
 
+	/**
+	 * Practice for Xp hooks.
+	 *
+	 * @param mixed $uuid Uuid.
+	 */
 	public static function practice( $uuid ) {
 		Xp::award_practice( (string) $uuid );
 	}
 
+	/**
+	 * Routes for Xp hooks.
+	 */
 	public static function routes() {
 		register_rest_route(
 			'ohmylms/v1',

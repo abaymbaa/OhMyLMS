@@ -172,7 +172,7 @@ final class Comparison {
 		if ( ! $skill || ! metadata_exists( 'term', $id, self::SUBJECT_META ) ) {
 			return null;
 		}
-		$skill['topic']    = (string) get_term_meta( $id, self::TOPIC_META, true );
+		$skill['topic']      = (string) get_term_meta( $id, self::TOPIC_META, true );
 		$skill['subject']    = (string) get_term_meta( $id, self::SUBJECT_META, true );
 		$skill['domain']     = (string) get_term_meta( $id, self::DOMAIN_META, true );
 		$skill['grade_from'] = (int) get_term_meta( $id, self::GRADE_FROM_META, true );
@@ -300,8 +300,8 @@ final class Comparison {
 		$description = sanitize_textarea_field( $data['description'] ?? '' );
 		$topic       = sanitize_text_field( $data['topic'] ?? '' );
 		$subject     = sanitize_text_field( $data['subject'] ?? '' );
-		$current   = $id ? self::shared_skill( $id ) : null;
-		$placement = self::placement(
+		$current     = $id ? self::shared_skill( $id ) : null;
+		$placement   = self::placement(
 			array_key_exists( 'domain', $data ) ? $data['domain'] : ( $current['domain'] ?? '' ),
 			array_key_exists( 'grade_from', $data ) ? $data['grade_from'] : ( $current['grade_from'] ?? 0 ),
 			array_key_exists( 'grade_to', $data ) ? $data['grade_to'] : ( $current['grade_to'] ?? 0 )

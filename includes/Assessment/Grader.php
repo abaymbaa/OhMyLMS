@@ -21,7 +21,12 @@ defined( 'ABSPATH' ) || exit;
  */
 final class Grader {
 	/**
+	 * Grade.
+	 *
 	 * @return array|\WP_Error ['answer','present','pending','fraction','correct']
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 * @param mixed            $answer Answer.
+	 * @param array            $options Operation options.
 	 */
 	public static function grade( QuestionSnapshot $snapshot, $answer, array $options = array() ) {
 		$definition = Registry::get( 'question', $snapshot->get_type() );
@@ -71,6 +76,11 @@ final class Grader {
 		);
 	}
 
+	/**
+	 * Sanitize for Grader.
+	 *
+	 * @param mixed $answer Answer.
+	 */
 	public static function sanitize( $answer ) {
 		return map_deep(
 			$answer,
@@ -80,6 +90,12 @@ final class Grader {
 		);
 	}
 
+	/**
+	 * Present for Grader.
+	 *
+	 * @param mixed $answer Answer.
+	 * @param int   $depth Depth.
+	 */
 	public static function present( $answer, $depth = 0 ) {
 		if ( $depth > 3 ) {
 			return false;
@@ -98,7 +114,10 @@ final class Grader {
 		return is_scalar( $answer ) && '' !== trim( (string) $answer );
 	}
 
-	/** Is manual review required for this type? */
+	/** Is manual review required for this type?
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function manual_type( $type ) {
 		$definition = Registry::get( 'question', (string) $type );
 		return ! $definition || ! empty( $definition['manual'] );

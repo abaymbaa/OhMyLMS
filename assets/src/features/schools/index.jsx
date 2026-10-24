@@ -1,3 +1,4 @@
+import { confirmAction } from '../requestFeedback.mjs';
 import {
 	createElement,
 	createRoot,
@@ -10,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { PeopleTabs } from './PeopleTabs';
 import { request, exportCsv } from './api.mjs';
 const config = window.ohmylmsSchools;
-const t = ( text ) => __( text, 'ohmylms' );
 const api = ( path, data, method = 'POST' ) =>
 	request( config, path, {
 		method,
@@ -73,7 +73,7 @@ function useRemote( path, revision, source = config ) {
 			}
 		);
 		return () => controller.abort();
-	}, [ path, revision ] );
+	}, [ path, revision, source ] );
 	return state.path === path
 		? state
 		: {
@@ -84,7 +84,7 @@ function useRemote( path, revision, source = config ) {
 }
 function Remote( { state, children } ) {
 	if ( state.loading && state.data === null ) {
-		return <p role="status">{ t( 'Loading…' ) }</p>;
+		return <p role="status">{ __( 'Loading…', 'ohmylms' ) }</p>;
 	}
 	if ( state.error ) {
 		return (
@@ -164,7 +164,7 @@ function Form( {
 										}
 									>
 										<option value="">
-											{ t( 'Choose…' ) }
+											{ __( 'Choose…', 'ohmylms' ) }
 										</option>
 										{ field.options.map( ( option ) => (
 											<option
@@ -218,7 +218,7 @@ function Form( {
 					</label>
 				) ) }
 				<button type="submit">
-					{ busy ? t( 'Saving…' ) : t( submit ) }
+					{ busy ? __( 'Saving…', 'ohmylms' ) : t( submit ) }
 				</button>
 				{ error && (
 					<p role="alert" className="ohmylms-error">
@@ -247,15 +247,19 @@ const option = ( value, label ) => ( {
 } );
 const roleLabel = ( role ) =>
 	( {
-		school_admin: t( 'School administrator' ),
-		teacher: t( 'Teacher' ),
-		student: t( 'Student' ),
-		guardian: t( 'Parent / guardian' ),
-		activation: t( 'Student password setup / recovery' ),
+		school_admin: __( 'School administrator', 'ohmylms' ),
+		teacher: __( 'Teacher', 'ohmylms' ),
+		student: __( 'Student', 'ohmylms' ),
+		guardian: __( 'Parent / guardian', 'ohmylms' ),
+		activation: __( 'Student password setup / recovery', 'ohmylms' ),
 	} )[ role ] || role;
 function Table( { rows, columns, actions } ) {
 	if ( ! rows?.length ) {
-		return <p className="ohmylms-empty">{ t( 'No records yet.' ) }</p>;
+		return (
+			<p className="ohmylms-empty">
+				{ __( 'No records yet.', 'ohmylms' ) }
+			</p>
+		);
 	}
 	return (
 		<div className="ohmylms-table-scroll">
@@ -267,7 +271,9 @@ function Table( { rows, columns, actions } ) {
 								{ t( title ) }
 							</th>
 						) ) }
-						{ actions && <th scope="col">{ t( 'Actions' ) }</th> }
+						{ actions && (
+							<th scope="col">{ __( 'Actions', 'ohmylms' ) }</th>
+						) }
 					</tr>
 				</thead>
 				<tbody>
@@ -307,16 +313,16 @@ function Pager( { page, setPage, count } ) {
 				disabled={ page === 1 }
 				onClick={ () => setPage( page - 1 ) }
 			>
-				{ t( 'Previous' ) }
+				{ __( 'Previous', 'ohmylms' ) }
 			</button>
 			<span>
-				{ t( 'Page' ) } { page }
+				{ __( 'Page', 'ohmylms' ) } { page }
 			</span>
 			<button
 				disabled={ count < 50 }
 				onClick={ () => setPage( page + 1 ) }
 			>
-				{ t( 'Next' ) }
+				{ __( 'Next', 'ohmylms' ) }
 			</button>
 		</div>
 	);
@@ -360,7 +366,7 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 				{ classroom.name } · { classroom.grade }{ ' ' }
 				<small>{ classroom.status }</small>
 			</h3>
-			<h4>{ t( 'Class roster' ) }</h4>
+			<h4>{ __( 'Class roster', 'ohmylms' ) }</h4>
 			<Remote state={ members }>
 				{ ( rows ) => (
 					<>
@@ -376,11 +382,12 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 											( isAdmin ||
 												row.role === 'student' ) && (
 												<button
-													onClick={ () => {
+													onClick={ async () => {
 														if (
-															window.confirm(
-																t(
-																	'Remove this membership from the class? The account and learning history will remain.'
+															await confirmAction(
+																__(
+																	'Remove this membership from the class? The account and learning history will remain.',
+																	'ohmylms'
 																)
 															)
 														) {
@@ -396,7 +403,10 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 														}
 													} }
 												>
-													{ t( 'Remove from class' ) }
+													{ __(
+														'Remove from class',
+														'ohmylms'
+													) }
 												</button>
 											)
 									: undefined
@@ -412,7 +422,7 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 			</Remote>
 			{ active && isAdmin && (
 				<label htmlFor={ _controlId2 + '-field-2' }>
-					{ t( 'Find a school roster member' ) }
+					{ __( 'Find a school roster member', 'ohmylms' ) }
 					<input
 						value={ candidateSearch }
 						onChange={ ( event ) =>
@@ -437,9 +447,14 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 							)
 						),
 						choice( 'role', 'Class role', [
-							option( 'student', t( 'Student' ) ),
+							option( 'student', __( 'Student', 'ohmylms' ) ),
 							...( isAdmin
-								? [ option( 'teacher', t( 'Teacher' ) ) ]
+								? [
+										option(
+											'teacher',
+											__( 'Teacher', 'ohmylms' )
+										),
+									]
 								: [] ),
 						] ),
 					] }
@@ -455,14 +470,15 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 			) }
 			{ active && (
 				<>
-					<h4>{ t( 'Assign learning' ) }</h4>
+					<h4>{ __( 'Assign learning', 'ohmylms' ) }</h4>
 					<p>
-						{ t(
-							'Recipients must already have course access. This does not enroll them or create a purchase. New class members do not receive earlier assignments automatically.'
+						{ __(
+							'Recipients must already have course access. This does not enroll them or create a purchase. New class members do not receive earlier assignments automatically.',
+							'ohmylms'
 						) }
 					</p>
 					<label htmlFor={ _controlId2 + '-field-3' }>
-						{ t( 'Find a course' ) }
+						{ __( 'Find a course', 'ohmylms' ) }
 						<input
 							value={ search }
 							onChange={ ( event ) =>
@@ -533,7 +549,7 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 					</Remote>
 				</>
 			) }
-			<h4>{ t( 'Assigned work and completion' ) }</h4>
+			<h4>{ __( 'Assigned work and completion', 'ohmylms' ) }</h4>
 			<Remote state={ work }>
 				{ ( rows ) => (
 					<>
@@ -547,8 +563,8 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 									'Progress',
 									( value ) =>
 										value
-											? t( 'Completed' )
-											: t( 'Assigned' ),
+											? __( 'Completed', 'ohmylms' )
+											: __( 'Assigned', 'ohmylms' ),
 								],
 							] }
 						/>
@@ -570,11 +586,12 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 			{ isAdmin && active && (
 				<button
 					className="secondary"
-					onClick={ () => {
+					onClick={ async () => {
 						if (
-							window.confirm(
-								t(
-									'Archive this class? History is preserved and new assignments will be disabled.'
+							await confirmAction(
+								__(
+									'Archive this class? History is preserved and new assignments will be disabled.',
+									'ohmylms'
 								)
 							)
 						) {
@@ -582,7 +599,7 @@ function ClassView( { classroom, isAdmin, revision, run } ) {
 						}
 					} }
 				>
-					{ t( 'Archive class' ) }
+					{ __( 'Archive class', 'ohmylms' ) }
 				</button>
 			) }
 			{ skillsConfig && (
@@ -599,7 +616,7 @@ const levelBadge = ( level, label, reviewDue ) => (
 		{ reviewDue && (
 			<span className="ohmylms-skill-review">
 				{ ' ' }
-				· { t( 'Review due' ) }
+				· { __( 'Review due', 'ohmylms' ) }
 			</span>
 		) }
 	</>
@@ -619,7 +636,7 @@ function ClassSkills( { classroom, revision } ) {
 	);
 	return (
 		<section className="ohmylms-class-skills">
-			<h4>{ t( 'Class skills' ) }</h4>
+			<h4>{ __( 'Class skills', 'ohmylms' ) }</h4>
 			<Remote state={ state }>
 				{ ( data ) =>
 					data.skills.length && data.students.length ? (
@@ -627,7 +644,9 @@ function ClassSkills( { classroom, revision } ) {
 							<table>
 								<thead>
 									<tr>
-										<th scope="col">{ t( 'Student' ) }</th>
+										<th scope="col">
+											{ __( 'Student', 'ohmylms' ) }
+										</th>
 										{ data.skills.map( ( skill ) => (
 											<th key={ skill.id } scope="col">
 												{ skill.code
@@ -673,7 +692,10 @@ function ClassSkills( { classroom, revision } ) {
 						</div>
 					) : (
 						<p className="ohmylms-empty">
-							{ t( 'No skill evidence for this class yet.' ) }
+							{ __(
+								'No skill evidence for this class yet.',
+								'ohmylms'
+							) }
 						</p>
 					)
 				}
@@ -692,7 +714,7 @@ function Grading( { classroom, revision, run } ) {
 	);
 	return (
 		<section>
-			<h4>{ t( 'Review submissions' ) }</h4>
+			<h4>{ __( 'Review submissions', 'ohmylms' ) }</h4>
 			<Remote state={ submissions }>
 				{ ( rows ) => {
 					const current = rows.find(
@@ -717,7 +739,7 @@ function Grading( { classroom, revision, run } ) {
 											)
 										}
 									>
-										{ t( 'Review' ) }
+										{ __( 'Review', 'ohmylms' ) }
 									</button>
 								) }
 							/>
@@ -736,11 +758,14 @@ function Grading( { classroom, revision, run } ) {
 									</p>
 									{ current.file_url && (
 										<a href={ current.file_url }>
-											{ t( 'Download submitted file' ) }
+											{ __(
+												'Download submitted file',
+												'ohmylms'
+											) }
 										</a>
 									) }
 									<p>
-										{ t( 'Total points' ) }:{ ' ' }
+										{ __( 'Total points', 'ohmylms' ) }:{ ' ' }
 										{ current.total_points }
 									</p>
 									<Form
@@ -813,14 +838,15 @@ function ImportRoster( { school, run } ) {
 	};
 	return (
 		<section>
-			<h3>{ t( 'Import student roster' ) }</h3>
+			<h3>{ __( 'Import student roster', 'ohmylms' ) }</h3>
 			<p>
-				{ t(
-					'Paste up to 200 students using name and external_student_id columns. Existing school IDs are skipped; names never merge accounts. Password setup links can be issued after import.'
+				{ __(
+					'Paste up to 200 students using name and external_student_id columns. Existing school IDs are skipped; names never merge accounts. Password setup links can be issued after import.',
+					'ohmylms'
 				) }
 			</p>
 			<label htmlFor={ _controlId3 + '-field-4' }>
-				{ t( 'CSV content' ) }
+				{ __( 'CSV content', 'ohmylms' ) }
 				<textarea
 					rows="7"
 					value={ csv }
@@ -832,7 +858,7 @@ function ImportRoster( { school, run } ) {
 				/>
 			</label>
 			<button disabled={ busy } onClick={ () => check( false ) }>
-				{ t( 'Preview import' ) }
+				{ __( 'Preview import', 'ohmylms' ) }
 			</button>
 			{ preview && (
 				<>
@@ -853,7 +879,7 @@ function ImportRoster( { school, run } ) {
 						}
 						onClick={ () => check( true ) }
 					>
-						{ t( 'Import new valid students' ) }
+						{ __( 'Import new valid students', 'ohmylms' ) }
 					</button>
 				</>
 			) }
@@ -928,9 +954,12 @@ function SchoolView( {
 		<section>
 			<h2>{ school.name }</h2>
 			<p>
-				{ t( 'School timezone' ) }: { school.timezone }
+				{ __( 'School timezone', 'ohmylms' ) }: { school.timezone }
 			</p>
-			<nav className="ohmylms-tabs" aria-label={ t( 'School sections' ) }>
+			<nav
+				className="ohmylms-tabs"
+				aria-label={ __( 'School sections', 'ohmylms' ) }
+			>
 				{ [
 					'classes',
 					...( isAdmin
@@ -992,7 +1021,10 @@ function SchoolView( {
 														)
 													}
 												>
-													{ t( 'Open class' ) }
+													{ __(
+														'Open class',
+														'ohmylms'
+													) }
 												</button>
 											)
 										: undefined
@@ -1071,7 +1103,7 @@ function SchoolView( {
 			{ tab === 'roster' && (
 				<>
 					<label htmlFor={ _controlId4 + '-field-5' }>
-						{ t( 'Search students and staff' ) }
+						{ __( 'Search students and staff', 'ohmylms' ) }
 						<input
 							value={ search }
 							onChange={ ( event ) => {
@@ -1097,11 +1129,12 @@ function SchoolView( {
 									] }
 									actions={ ( row ) => (
 										<button
-											onClick={ () => {
+											onClick={ async () => {
 												if (
-													window.confirm(
-														t(
-															'Remove this school membership and its class access? The account and learning history will remain.'
+													await confirmAction(
+														__(
+															'Remove this school membership and its class access? The account and learning history will remain.',
+															'ohmylms'
 														)
 													)
 												) {
@@ -1115,7 +1148,10 @@ function SchoolView( {
 												}
 											} }
 										>
-											{ t( 'Remove membership' ) }
+											{ __(
+												'Remove membership',
+												'ohmylms'
+											) }
 										</button>
 									) }
 								/>
@@ -1138,8 +1174,9 @@ function SchoolView( {
 						}
 					/>
 					<p>
-						{ t(
-							'For existing accounts, use a student invitation instead of creating a duplicate. For new school accounts, issue a password setup link from Invitations.'
+						{ __(
+							'For existing accounts, use a student invitation instead of creating a duplicate. For new school accounts, issue a password setup link from Invitations.',
+							'ohmylms'
 						) }
 					</p>
 				</>
@@ -1147,7 +1184,10 @@ function SchoolView( {
 			{ tab === 'invitations' && (
 				<>
 					<label htmlFor={ _controlId4 + '-field-6' }>
-						{ t( 'Find a student for this invitation' ) }
+						{ __(
+							'Find a student for this invitation',
+							'ohmylms'
+						) }
 						<input
 							value={ search }
 							onChange={ ( event ) => {
@@ -1286,7 +1326,7 @@ function SchoolView( {
 												)
 											}
 										>
-											{ t( 'Revoke' ) }
+											{ __( 'Revoke', 'ohmylms' ) }
 										</button>
 									)
 								}
@@ -1308,11 +1348,12 @@ function SchoolView( {
 							actions={ ( row ) =>
 								row.status === 'active' && (
 									<button
-										onClick={ () => {
+										onClick={ async () => {
 											if (
-												window.confirm(
-													t(
-														"Revoke this parent's access to this child's school work?"
+												await confirmAction(
+													__(
+														"Revoke this parent's access to this child's school work?",
+														'ohmylms'
 													)
 												)
 											) {
@@ -1326,7 +1367,7 @@ function SchoolView( {
 											}
 										} }
 									>
-										{ t( 'Revoke access' ) }
+										{ __( 'Revoke access', 'ohmylms' ) }
 									</button>
 								)
 							}
@@ -1385,14 +1426,18 @@ function SchoolView( {
 									] }
 									onSubmit={ async ( data ) => {
 										if (
-											! window.confirm(
-												t(
-													'Archive the old year and create empty classes in the new year? Old rosters and work remain in history.'
+											! ( await confirmAction(
+												__(
+													'Archive the old year and create empty classes in the new year? Old rosters and work remain in history.',
+													'ohmylms'
 												)
-											)
+											) )
 										) {
 											throw new Error(
-												t( 'Rollover cancelled.' )
+												__(
+													'Rollover cancelled.',
+													'ohmylms'
+												)
 											);
 										}
 										return run(
@@ -1447,7 +1492,7 @@ function SchoolView( {
 									URL.revokeObjectURL( url );
 								} }
 							>
-								{ t( 'Download report CSV' ) }
+								{ __( 'Download report CSV', 'ohmylms' ) }
 							</button>
 						</>
 					) }
@@ -1484,11 +1529,13 @@ function Users( { revision, role = '' } ) {
 			</h2>
 			{ config.usersUrl && (
 				<p>
-					<a href={ config.usersUrl }>{ t( 'Add user' ) }</a>
+					<a href={ config.usersUrl }>
+						{ __( 'Add user', 'ohmylms' ) }
+					</a>
 				</p>
 			) }
 			<label htmlFor={ _controlId5 + '-field-7' }>
-				{ t( 'Search users' ) }
+				{ __( 'Search users', 'ohmylms' ) }
 				<input
 					value={ search }
 					onChange={ ( event ) => {
@@ -1512,7 +1559,7 @@ function Users( { revision, role = '' } ) {
 							actions={ ( row ) =>
 								row.edit_url && (
 									<a href={ row.edit_url }>
-										{ t( 'Edit user' ) }
+										{ __( 'Edit user', 'ohmylms' ) }
 									</a>
 								)
 							}
@@ -1536,10 +1583,11 @@ function IndependentClasses( { revision, run } ) {
 	const classes = useRemote( `classes?page=${ page }`, revision );
 	return (
 		<section>
-			<h2>{ t( 'Independent classes' ) }</h2>
+			<h2>{ __( 'Independent classes', 'ohmylms' ) }</h2>
 			<p>
-				{ t(
-					'Create and manage your own classes without a school or academic year.'
+				{ __(
+					'Create and manage your own classes without a school or academic year.',
+					'ohmylms'
 				) }
 			</p>
 			<Remote state={ classes }>
@@ -1560,15 +1608,16 @@ function IndependentClasses( { revision, run } ) {
 											setSelected( String( row.id ) )
 										}
 									>
-										{ t( 'Open classroom' ) }
+										{ __( 'Open classroom', 'ohmylms' ) }
 									</button>
 									{ row.status === 'active' && (
 										<button
-											onClick={ () => {
+											onClick={ async () => {
 												if (
-													window.confirm(
-														t(
-															'Archive this class?'
+													await confirmAction(
+														__(
+															'Archive this class?',
+															'ohmylms'
 														)
 													)
 												) {
@@ -1579,7 +1628,7 @@ function IndependentClasses( { revision, run } ) {
 												}
 											} }
 										>
-											{ t( 'Archive class' ) }
+											{ __( 'Archive class', 'ohmylms' ) }
 										</button>
 									) }
 								</>
@@ -1645,7 +1694,7 @@ function AdminManagement() {
 		try {
 			const result = await api( path, data, method );
 			setRevision( ( value ) => value + 1 );
-			setMessage( result.message || t( 'Saved.' ) );
+			setMessage( result.message || __( 'Saved.', 'ohmylms' ) );
 			if ( result.url ) {
 				setLink( result.url );
 			}
@@ -1662,7 +1711,7 @@ function AdminManagement() {
 			<header>
 				<div>
 					<p className="ohmylms-eyebrow">OhMyLMS</p>
-					<h1>{ t( 'Students' ) }</h1>
+					<h1>{ __( 'Students', 'ohmylms' ) }</h1>
 				</div>
 			</header>
 			{ message && (
@@ -1678,13 +1727,14 @@ function AdminManagement() {
 			{ link && (
 				<div className="ohmylms-success">
 					<p>
-						{ t(
-							'Copy this invitation and share it privately with the intended recipient. It expires in 48 hours.'
+						{ __(
+							'Copy this invitation and share it privately with the intended recipient. It expires in 48 hours.',
+							'ohmylms'
 						) }
 					</p>
 					<input
 						readOnly
-						aria-label={ t( 'Invitation link' ) }
+						aria-label={ __( 'Invitation link', 'ohmylms' ) }
 						value={ link }
 						onFocus={ ( event ) => event.target.select() }
 					/>
@@ -1695,7 +1745,7 @@ function AdminManagement() {
 					person.platform_admin ? (
 						<>
 							<p>
-								{ t( 'Welcome' ) }, { person.name }.
+								{ __( 'Welcome', 'ohmylms' ) }, { person.name }.
 							</p>
 							<PeopleTabs
 								active={ tab }
@@ -1726,8 +1776,9 @@ function AdminManagement() {
 							{ tab === 'students' && config.studentsUrl && (
 								<p>
 									<a href={ config.studentsUrl }>
-										{ t(
-											'Open course enrollments and student progress'
+										{ __(
+											'Open course enrollments and student progress',
+											'ohmylms'
 										) }
 									</a>
 								</p>
@@ -1748,7 +1799,10 @@ function AdminManagement() {
 												{ school ? (
 													<>
 														<label htmlFor="ohmylms-admin-school">
-															{ t( 'School' ) }
+															{ __(
+																'School',
+																'ohmylms'
+															) }
 															<select
 																id="ohmylms-admin-school"
 																value={
@@ -1804,8 +1858,9 @@ function AdminManagement() {
 													</>
 												) : (
 													<p>
-														{ t(
-															'No schools yet.'
+														{ __(
+															'No schools yet.',
+															'ohmylms'
 														) }
 													</p>
 												) }
@@ -1849,8 +1904,9 @@ function AdminManagement() {
 						</>
 					) : (
 						<p role="alert">
-							{ t(
-								'Platform administrator access is required.'
+							{ __(
+								'Platform administrator access is required.',
+								'ohmylms'
 							) }
 						</p>
 					)

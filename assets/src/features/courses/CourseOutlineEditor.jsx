@@ -19,7 +19,7 @@ import apiFetch from '@wordpress/api-fetch';
 import { __, sprintf } from '@wordpress/i18n';
 import { CourseStructurePublish } from './CourseStructurePublish';
 import { ActivityCreateForm } from './ActivityCreateForm';
-import { LessonReadiness } from './LessonReadiness';
+import { CourseReadiness } from './CourseReadiness';
 import {
 	moveOutlineRow,
 	orderedOutlineItems,
@@ -544,10 +544,23 @@ export function CourseOutlineEditor( {
 					save,
 				} }
 			/>
-			<LessonReadiness
-				program={ draft.program }
-				names={ draft.skill_names }
-				onSelect={ ( id ) => select( 'lesson', id ) }
+			<CourseReadiness
+				courseId={ courseId }
+				draft={ draft }
+				dirty={ !! dirty }
+				onSelect={ ( type, id ) => {
+					select( type, id );
+					window.requestAnimationFrame( () => {
+						const inspector = document.querySelector(
+							'.ohmylms-outline-inspector'
+						);
+						inspector?.scrollIntoView( {
+							block: 'start',
+							behavior: 'smooth',
+						} );
+						inspector?.focus();
+					} );
+				} }
 			/>
 			<div className="ohmylms-outline-columns">
 				<nav
@@ -623,10 +636,75 @@ export function CourseOutlineEditor( {
 						</div>
 					) }
 				</nav>
-				<div className="ohmylms-outline-inspector">
+				<div className="ohmylms-outline-inspector" tabIndex={ -1 }>
 					{ ! unit && ! lesson && ! activity && (
 						<div>
 							<h2>{ __( 'Build your course', 'ohmylms' ) }</h2>
+							<h3>
+								{ __( 'Completion requirements', 'ohmylms' ) }
+							</h3>
+							<SelectControl
+								label={ __( 'Learning mode', 'ohmylms' ) }
+								value={ draft.program.mode }
+								disabled={ busy }
+								options={ [
+									{
+										value: 'traditional',
+										label: __(
+											'Activity completion',
+											'ohmylms'
+										),
+									},
+									{
+										value: 'skill-based',
+										label: __(
+											'Skill proficiency',
+											'ohmylms'
+										),
+									},
+									{
+										value: 'blended',
+										label: __(
+											'Activities and skills',
+											'ohmylms'
+										),
+									},
+								] }
+								onChange={ ( mode ) => program( { mode } ) }
+							/>
+							<p>
+								{ __(
+									'Select an activity to require its completion. Required skill outcomes also need enough approved questions for their target.',
+									'ohmylms'
+								) }
+							</p>
+							{ draft.program.outcomes.map( ( outcome ) => (
+								<CheckboxControl
+									key={ outcome.term_id }
+									label={
+										draft.skill_names?.[
+											outcome.term_id
+										] || String( outcome.term_id )
+									}
+									checked={ !! outcome.required }
+									disabled={ busy }
+									onChange={ ( required ) =>
+										program( {
+											outcomes:
+												draft.program.outcomes.map(
+													( row ) =>
+														row.term_id ===
+														outcome.term_id
+															? {
+																	...row,
+																	required,
+																}
+															: row
+												),
+										} )
+									}
+								/>
+							) ) }
 							<p>
 								{ __(
 									'Add a unit, give it lessons, then add videos, readings, practice or quizzes. Select any item on the left to edit it.',

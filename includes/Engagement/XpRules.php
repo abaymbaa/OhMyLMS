@@ -13,7 +13,8 @@ final class XpRules {
 	/**
 	 * XP for one finished practice lesson.
 	 *
-	 * @param array $facts answered (meaningful answers), planned_total, planned_right, challenge_right
+	 * @param array $facts answered (meaningful answers), planned_total, planned_right, challenge_right.
+	 * @param array $settings Configuration settings.
 	 * @return array{total:int,parts:array,counted:bool}
 	 */
 	public static function practice( array $facts, array $settings ) {
@@ -44,6 +45,9 @@ final class XpRules {
 	 * How much of $xp fits under the daily ceiling.
 	 *
 	 * @return array{xp:int,capped:bool}
+	 * @param mixed $xp Xp.
+	 * @param mixed $earned_today Earned today.
+	 * @param mixed $cap Cap.
 	 */
 	public static function cap( $xp, $earned_today, $cap ) {
 		$room = max( 0, (int) $cap - (int) $earned_today );
@@ -53,7 +57,10 @@ final class XpRules {
 		);
 	}
 
-	/** Monday and Sunday (Y-m-d) of the week that holds $date. */
+	/** Monday and Sunday (Y-m-d) of the week that holds $date.
+	 *
+	 * @param mixed $date Date.
+	 */
 	public static function week( $date ) {
 		$day = new \DateTimeImmutable( $date . ' 00:00:00', new \DateTimeZone( 'UTC' ) );
 		$mon = $day->modify( '-' . ( (int) $day->format( 'N' ) - 1 ) . ' days' );

@@ -5,12 +5,15 @@ namespace OhMyLMS\Commerce\DataStore;
 use OhMyLMS\Commerce\Abstracts\Data;
 use OhMyLMS\Commerce\Abstracts\DataStore;
 
+/**
+ * Plugin order item store implementation.
+ */
 class OrderItemStore extends DataStore {
 
 	/**
 	 * Create new record
 	 *
-	 * @param $data Data
+	 * @param mixed $item Item.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -32,9 +35,10 @@ class OrderItemStore extends DataStore {
 	/**
 	 * Read new record
 	 *
-	 * @param $data Data
+	 * @param mixed $item Item.
 	 * @return mixed
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function read( &$item ) {
 		global $wpdb;
@@ -43,7 +47,7 @@ class OrderItemStore extends DataStore {
 		$data = wp_cache_get( 'ecom-item-' . $item->get_id(), 'order-items' );
 
 		if ( false === $data ) {
-			$data = $wpdb->get_row( $wpdb->prepare( "SELECT order_id, order_item_name FROM {$wpdb->prefix}ohmylms_order_items WHERE order_item_id = %d LIMIT 1;", $item->get_id() ) );
+			$data = $wpdb->get_row( $wpdb->prepare( 'SELECT order_id, order_item_name FROM %i WHERE order_item_id = %d LIMIT 1;', $wpdb->prefix . 'ohmylms_order_items', $item->get_id() ) );
 			wp_cache_set( 'ecom-item-' . $item->get_id(), $data, 'order-items' );
 		}
 
@@ -62,7 +66,7 @@ class OrderItemStore extends DataStore {
 	/**
 	 * Update new record
 	 *
-	 * @param $data Data
+	 * @param mixed $data Data.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -73,8 +77,8 @@ class OrderItemStore extends DataStore {
 	/**
 	 * Delete new record
 	 *
-	 * @param $data
-	 * @param array $args
+	 * @param mixed $data Input data.
+	 * @param array $args Operation arguments.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -107,10 +111,10 @@ class OrderItemStore extends DataStore {
 	/**
 	 * Update custom item metadata.
 	 *
-	 * @param int    $item_id    The ID of the item.
-	 * @param string $meta_key   The metadata key.
+	 * @param int    $item_id The ID of the item.
+	 * @param string $meta_key The metadata key.
 	 * @param mixed  $meta_value The metadata value.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	function update_metadata( $item_id, $meta_key, $meta_value ) {
@@ -119,11 +123,7 @@ class OrderItemStore extends DataStore {
 
 		// Check if the meta key exists for the custom item.
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT meta_id FROM $table_name_meta WHERE order_item_id = %d AND meta_key = %s",
-				$item_id,
-				$meta_key
-			)
+			$wpdb->prepare( 'SELECT meta_id FROM %i WHERE order_item_id = %d AND meta_key = %s', $table_name_meta, $item_id, $meta_key )
 		);
 
 		if ( $exists ) {
@@ -156,8 +156,8 @@ class OrderItemStore extends DataStore {
 	 * Retrieve custom item metadata.
 	 *
 	 * @param int    $item_id The ID of the custom item.
-	 * @param string $meta_key       The metadata key.
-	 * @param bool   $single         Whether to return a single value.
+	 * @param string $meta_key The metadata key.
+	 * @param bool   $single Whether to return a single value.
 	 * @return mixed The metadata value.
 	 *
 	 * @since 1.0.0
@@ -167,11 +167,7 @@ class OrderItemStore extends DataStore {
 		$table_name_meta = $wpdb->prefix . 'ohmylms_order_itemmeta';
 
 		$meta_value = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT meta_value FROM $table_name_meta WHERE order_item_id = %d AND meta_key = %s",
-				$item_id,
-				$meta_key
-			)
+			$wpdb->prepare( 'SELECT meta_value FROM %i WHERE order_item_id = %d AND meta_key = %s', $table_name_meta, $item_id, $meta_key )
 		);
 
 		return $single ? maybe_unserialize( $meta_value ) : array_map( 'maybe_unserialize', (array) $meta_value );

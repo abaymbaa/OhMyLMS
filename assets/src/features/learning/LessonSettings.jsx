@@ -176,11 +176,16 @@ export function createLessonSettings( readRuntime ) {
 											( _oLocal2 = _nLocal2.data.filter(
 												function ( _eLocal6 ) {
 													return (
-														( _eLocal6 === null ||
-														_eLocal6 === void 0
-															? void 0
-															: _eLocal6.value ) !=
-															lesson.id &&
+														String(
+															_eLocal6 === null ||
+																_eLocal6 ===
+																	void 0
+																? void 0
+																: _eLocal6.value
+														) !==
+															String(
+																lesson.id
+															) &&
 														_rLocal2.indexOf(
 															String(
 																_eLocal6 ===
@@ -291,8 +296,12 @@ export function createLessonSettings( readRuntime ) {
 																_eLocal8
 															) {
 																return (
-																	_eLocal8.value ==
-																	lesson.id
+																	String(
+																		_eLocal8.value
+																	) ===
+																	String(
+																		lesson.id
+																	)
 																);
 															}
 														)

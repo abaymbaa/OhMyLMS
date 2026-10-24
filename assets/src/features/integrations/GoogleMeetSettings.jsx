@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createGoogleMeetSettings( readRuntime ) {
@@ -224,7 +225,7 @@ export function createGoogleMeetSettings( readRuntime ) {
 													)
 												);
 											}
-											console.error( _oLocal );
+											showRequestError( _oLocal );
 										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
@@ -297,7 +298,7 @@ export function createGoogleMeetSettings( readRuntime ) {
 										case 5:
 											_eLocal4.p = 5;
 											_rLocal3 = _eLocal4.v;
-											console.error(
+											showRequestError(
 												'OAuth authentication failed:',
 												_rLocal3
 											);

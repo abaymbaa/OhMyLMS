@@ -6,8 +6,16 @@ use WP_REST_Server;
 use WP_REST_Response;
 use WP_Error;
 
+/**
+ * Plugin app controller implementation.
+ */
 class AppController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'app';
 
 	/**
@@ -36,6 +44,8 @@ class AppController extends RestController {
 
 	/**
 	 * Permission check (same as AnalyticsController)
+	 *
+	 * @param mixed $request REST request.
 	 */
 	public function get_items_permissions_check( $request ) {
 		return \current_user_can( 'edit_posts' );
@@ -43,6 +53,8 @@ class AppController extends RestController {
 
 	/**
 	 * Main handler for fetching app data
+	 *
+	 * @param mixed $request REST request.
 	 */
 	public function get_app_data( $request ) {
 		$type   = $request->get_param( 'type' );
@@ -77,7 +89,6 @@ class AppController extends RestController {
 	/**
 	 * Get the additional resources for a course.
 	 *
-	 * @param Course $course The course object.
 	 * @return array
 	 * @since 1.0.0
 	 */

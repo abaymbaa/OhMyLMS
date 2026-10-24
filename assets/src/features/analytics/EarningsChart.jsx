@@ -135,9 +135,7 @@ export function createEarningsChart( readRuntime ) {
 								null === e
 							) {
 								return (
-									console.warn(
-										'Invalid input: Expected a non-empty object.'
-									),
+									void 0,
 									{
 										revenue: _nLocal4,
 										refund: _rLocal3,
@@ -206,18 +204,8 @@ export function createEarningsChart( readRuntime ) {
 													);
 													k( _sLocal, g, _rLocal4 );
 												} else {
-													console.warn(
-														'Invalid label for key '.concat(
-															_lLocal2
-														)
-													);
 												}
 											} else {
-												console.warn(
-													'Invalid date format for key '.concat(
-														_lLocal2
-													)
-												);
 											}
 										}
 									} )( e, _nLocal4, _rLocal3, _aLocal3 );
@@ -269,12 +257,6 @@ export function createEarningsChart( readRuntime ) {
 															) ||
 															null === _uLocal2 )
 													) {
-														console.warn(
-															'Invalid value for key '.concat(
-																_cLocal3,
-																': Expected an object.'
-															)
-														);
 													} else {
 														var _pLocal2 =
 																_uLocal2.earning,
@@ -303,18 +285,8 @@ export function createEarningsChart( readRuntime ) {
 														);
 													}
 												} else {
-													console.warn(
-														'Invalid label for key '.concat(
-															_cLocal3
-														)
-													);
 												}
 											} else {
-												console.warn(
-													'Invalid date format for key '.concat(
-														_cLocal3
-													)
-												);
 											}
 										}
 										for (
@@ -375,12 +347,6 @@ export function createEarningsChart( readRuntime ) {
 														) ||
 														null === _uLocal3
 													) {
-														console.warn(
-															'Invalid value for key '.concat(
-																_cLocal4,
-																': Expected an object.'
-															)
-														);
 													} else {
 														var _mLocal3 =
 																_uLocal3.earning,
@@ -408,18 +374,8 @@ export function createEarningsChart( readRuntime ) {
 														);
 													}
 												} else {
-													console.warn(
-														'Invalid label for key '.concat(
-															_cLocal4
-														)
-													);
 												}
 											} else {
-												console.warn(
-													'Invalid date format for key '.concat(
-														_cLocal4
-													)
-												);
 											}
 										}
 										for (
@@ -444,11 +400,6 @@ export function createEarningsChart( readRuntime ) {
 									} )( e, _nLocal4, _rLocal3, _aLocal3 );
 									break;
 								default:
-									console.warn(
-										'Unsupported filter type: '.concat(
-											_tLocal4
-										)
-									);
 							}
 							return {
 								revenue: _nLocal4,

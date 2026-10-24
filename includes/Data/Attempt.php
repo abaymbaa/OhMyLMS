@@ -6,10 +6,28 @@ use OhMyLMS\DataStores\DataStores;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin attempt implementation.
+ */
 class Attempt extends Data {
+	/**
+	 * Data store name.
+	 *
+	 * @var mixed
+	 */
 	protected string $data_store_name = 'attempt';
-	public string $object_type        = 'attampt';
-	protected array $data             = array(
+	/**
+	 * Object type.
+	 *
+	 * @var mixed
+	 */
+	public string $object_type = 'attampt';
+	/**
+	 * Data.
+	 *
+	 * @var mixed
+	 */
+	protected array $data = array(
 		'id'         => 0,
 		'quiz_id'    => 0,
 		'student_id' => 0,
@@ -52,7 +70,7 @@ class Attempt extends Data {
 	/**
 	 * Set the attempt ID.
 	 *
-	 * @param int $id
+	 * @param int $id Id.
 	 */
 	public function set_id( $id ) {
 		$this->set_prop( 'id', $id );
@@ -70,7 +88,7 @@ class Attempt extends Data {
 	/**
 	 * Set the quiz ID.
 	 *
-	 * @param int $quiz_id
+	 * @param int $quiz_id Quiz identifier.
 	 */
 	public function set_quiz_id( $quiz_id ) {
 		$this->set_prop( 'quiz_id', $quiz_id );
@@ -88,7 +106,7 @@ class Attempt extends Data {
 	/**
 	 * Set the student ID.
 	 *
-	 * @param int $student_id
+	 * @param int $student_id Student identifier.
 	 */
 	public function set_student_id( $student_id ) {
 		$this->set_prop( 'student_id', $student_id );
@@ -106,7 +124,7 @@ class Attempt extends Data {
 	/**
 	 * Set the course ID.
 	 *
-	 * @param int $course_id
+	 * @param int $course_id Course identifier.
 	 */
 	public function set_course_id( $course_id ) {
 		$this->set_prop( 'course_id', $course_id );
@@ -124,7 +142,7 @@ class Attempt extends Data {
 	/**
 	 * Set the total.
 	 *
-	 * @param int $total
+	 * @param int $total Total.
 	 */
 	public function set_total( $total ) {
 		$this->set_prop( 'total', $total );
@@ -142,7 +160,7 @@ class Attempt extends Data {
 	/**
 	 * Set the start date.
 	 *
-	 * @param string $start_date
+	 * @param string $start_date Start date.
 	 */
 	public function set_start_date( $start_date ) {
 		$this->set_date_prop( 'start_date', $start_date );
@@ -160,7 +178,7 @@ class Attempt extends Data {
 	/**
 	 * Set the end date.
 	 *
-	 * @param string $end_date
+	 * @param string $end_date End date.
 	 */
 	public function set_end_date( $end_date ) {
 		$this->set_date_prop( 'end_date', $end_date );

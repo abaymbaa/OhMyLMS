@@ -24,6 +24,9 @@ defined( 'ABSPATH' ) || exit;
  * Only the attempt's own learner can use them; nothing here reveals correctness.
  */
 class AttemptController extends RestController {
+	/**
+	 * Register routes for Attempt controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -59,7 +62,10 @@ class AttemptController extends RestController {
 		);
 	}
 
-	/** The current user must own an in-progress versioned attempt they can still access. */
+	/** The current user must own an in-progress versioned attempt they can still access.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function owner_permission( WP_REST_Request $request ) {
 		global $wpdb;
 		if ( ! is_user_logged_in() ) {
@@ -77,11 +83,21 @@ class AttemptController extends RestController {
 		return true;
 	}
 
+	/**
+	 * Attempt for Attempt controller.
+	 *
+	 * @param mixed $id Id.
+	 */
 	private function attempt( $id ) {
 		global $wpdb;
 		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d", (int) $id ), ARRAY_A );
 	}
 
+	/**
+	 * Resume for Attempt controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function resume( WP_REST_Request $request ) {
 		$attempt_id = (int) $request['id'];
 		$attempt    = $this->attempt( $attempt_id );
@@ -108,6 +124,11 @@ class AttemptController extends RestController {
 		);
 	}
 
+	/**
+	 * Save for Attempt controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save( WP_REST_Request $request ) {
 		$attempt_id = (int) $request['id'];
 		$attempt    = $this->attempt( $attempt_id );

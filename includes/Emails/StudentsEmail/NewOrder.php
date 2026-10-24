@@ -4,6 +4,9 @@ namespace OhMyLMS\Emails\StudentsEmail;
 
 use OhMyLMS\Emails\Emails;
 
+/**
+ * Plugin new order implementation.
+ */
 class NewOrder {
 
 	/**
@@ -63,8 +66,8 @@ class NewOrder {
 	 * This function is triggered after an order is created. It retrieves the email settings, prepares the email content,
 	 * inlines the CSS, and sends the email to the creator or the default admin email.
 	 *
-	 * @param $order The order object containing details of the new order.
-	 * @param $data  Additional data related to the order.
+	 * @param mixed $order The order object containing details of the new order.
+	 * @param mixed $data Additional data related to the order.
 	 */
 	public function trigger( $order, $data ) {
 		if ( ! $order ) {

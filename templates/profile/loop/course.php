@@ -16,7 +16,7 @@ $certificate     = $course->get_certificate();
 $cerificate_id   = $certificate ? $certificate->get_id() : '';
 ?>
 
-<div class="ohmylms-dashboard-single-course <?php echo $class_completed; ?>">
+<div class="ohmylms-dashboard-single-course <?php echo esc_attr( $class_completed ); ?>">
 	<div class="course-info-wrapper">
 		<figure>
 			<img src="<?php echo esc_url( $course->get_thumbnail_url() ); ?>" alt="<?php echo esc_attr( $course->get_name() ); ?>" class="ohmylms-image">
@@ -74,7 +74,7 @@ $cerificate_id   = $certificate ? $certificate->get_id() : '';
 		<?php endif; ?>
 
 		<?php if ( $student->is_course_completed( $course->get_id() ) && $course->get_certificate() ) : ?>
-			<a class="ohmylms-button ohmylms-download-certificate" aria-label="Download Certificate" data-course-id="<?php echo $course->get_id(); ?>" data-student-id="<?php echo $student->get_id(); ?>" data-certificate-id="<?php echo $cerificate_id; ?>">
+			<a class="ohmylms-button ohmylms-download-certificate" aria-label="Download Certificate" data-course-id="<?php echo esc_attr( $course->get_id() ); ?>" data-student-id="<?php echo esc_attr( $student->get_id() ); ?>" data-certificate-id="<?php echo esc_attr( $cerificate_id ); ?>">
 				<?php include OHMYLMS_DIR . '/assets/images/icon/download-icon.php'; ?>
 				Download Certificate
 			</a>

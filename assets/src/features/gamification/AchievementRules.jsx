@@ -4,7 +4,6 @@ import {
 	removeAchievementRule,
 	updateAchievementRule,
 } from './model.mjs';
-
 export function createAchievementRules( readRuntime ) {
 	return function AchievementRules( { rules = [], setRules } ) {
 		const {
@@ -14,7 +13,10 @@ export function createAchievementRules( readRuntime ) {
 			lf: AddButton,
 		} = readRuntime();
 		const fields = [
-			{ label: I18n.__( 'Points', 'ohmylms' ), value: 'points' },
+			{
+				label: I18n.__( 'Points', 'ohmylms' ),
+				value: 'points',
+			},
 			{
 				label: I18n.__( 'Completed lessons', 'ohmylms' ),
 				value: 'completed_lesson',
@@ -25,15 +27,33 @@ export function createAchievementRules( readRuntime ) {
 			},
 		];
 		const comparisons = [
-			{ label: 'Greater than', value: '>' },
-			{ label: 'Greater than or equal', value: '>=' },
-			{ label: 'Equal', value: '==' },
-			{ label: 'Less than', value: '<' },
-			{ label: 'Less than or equal', value: '<=' },
-			{ label: 'Not equal', value: '!=' },
+			{
+				label: I18n.__( 'Greater than', 'ohmylms' ),
+				value: '>',
+			},
+			{
+				label: I18n.__( 'Greater than or equal', 'ohmylms' ),
+				value: '>=',
+			},
+			{
+				label: I18n.__( 'Equal', 'ohmylms' ),
+				value: '==',
+			},
+			{
+				label: I18n.__( 'Less than', 'ohmylms' ),
+				value: '<',
+			},
+			{
+				label: I18n.__( 'Less than or equal', 'ohmylms' ),
+				value: '<=',
+			},
+			{
+				label: I18n.__( 'Not equal', 'ohmylms' ),
+				value: '!=',
+			},
 		].map( ( option ) => ( {
 			...option,
-			label: I18n.__( option.label, 'ohmylms' ),
+			label: option.label,
 		} ) );
 		const updateRule = ( index, field, value ) =>
 			setRules( updateAchievementRule( rules, index, field, value ) );
@@ -53,7 +73,9 @@ export function createAchievementRules( readRuntime ) {
 					<Controls.FlexWP
 						key={ index }
 						align="flex-start"
-						style={ { marginBottom: '8px' } }
+						style={ {
+							marginBottom: '8px',
+						} }
 					>
 						<Controls.FlexItemWP>
 							<Controls.SelectWP
@@ -62,7 +84,9 @@ export function createAchievementRules( readRuntime ) {
 								onChange={ ( value ) =>
 									updateRule( index, 'dataValue', value )
 								}
-								style={ { minWidth: '180px' } }
+								style={ {
+									minWidth: '180px',
+								} }
 							/>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP>
@@ -72,7 +96,9 @@ export function createAchievementRules( readRuntime ) {
 								onChange={ ( value ) =>
 									updateRule( index, 'compareSign', value )
 								}
-								style={ { minWidth: '80px' } }
+								style={ {
+									minWidth: '80px',
+								} }
 							/>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP>
@@ -82,7 +108,9 @@ export function createAchievementRules( readRuntime ) {
 								onChange={ ( value ) =>
 									updateRule( index, 'compareData', value )
 								}
-								style={ { width: '100px' } }
+								style={ {
+									width: '100px',
+								} }
 							/>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP>
@@ -101,7 +129,9 @@ export function createAchievementRules( readRuntime ) {
 				<Controls.FlexWP
 					justify="end"
 					align="center"
-					style={ { marginTop: '12px' } }
+					style={ {
+						marginTop: '12px',
+					} }
 				>
 					<AddButton
 						label={ I18n.__( 'Add Condition', 'ohmylms' ) }

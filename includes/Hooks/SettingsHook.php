@@ -7,12 +7,23 @@
  */
 namespace OhMyLMS\Hooks;
 
+/**
+ * Plugin settings hook implementation.
+ */
 class SettingsHook {
 
+	/**
+	 * Register hooks for Settings hook.
+	 */
 	public function register_hooks() {
 		add_filter( 'ohmylms_default_pages', array( $this, 'add_membership_default_page' ) );
 	}
 
+	/**
+	 * Add membership default page for Settings hook.
+	 *
+	 * @param mixed $pages Pages.
+	 */
 	public function add_membership_default_page( $pages ) {
 		$pages['membership'] = array(
 			'name'    => _x( 'ohmylms-all-membership', 'Page slug', 'ohmylms' ),

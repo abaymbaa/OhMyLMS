@@ -4,8 +4,14 @@ namespace OhMyLMS\Hooks;
 
 use OhMyLMS\Abstracts\HookHandler;
 
+/**
+ * Plugin order hooks implementation.
+ */
 class OrderHooks extends HookHandler {
 
+	/**
+	 * Register hooks for Order hooks.
+	 */
 	public function register_hooks() {
 		add_action( 'ohmylms_order_refunded', array( $this, 'cancel_student_enrollment' ), 10, 2 );
 		add_action( 'ohmylms_rest_delete_order', array( $this, 'rest_delete_order' ), 10 );
@@ -18,8 +24,8 @@ class OrderHooks extends HookHandler {
 	 * Cancel student enrollment when an order is refunded.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
-	 * @param \OhMyLMS\Commerce\Data\Order       $order  The order object.
-	 *
+	 * @param \OhMyLMS\Commerce\Data\Order       $order The order object.
+	 * .
 	 * @since 1.0.0
 	 */
 	public function cancel_student_enrollment( $refund, $order ) {
@@ -74,17 +80,14 @@ class OrderHooks extends HookHandler {
 	 * Delete order.
 	 *
 	 * @param int $order_id The order ID.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function rest_delete_order( $order_id ) {
 		global $wpdb;
 		// Get all order items for this order.
 		$order_items = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT order_item_id FROM {$wpdb->prefix}ohmylms_order_items WHERE order_id = %d",
-				$order_id
-			)
+			$wpdb->prepare( 'SELECT order_item_id FROM %i WHERE order_id = %d', $wpdb->prefix . 'ohmylms_order_items', $order_id )
 		);
 
 		if ( ! empty( $order_items ) ) {
@@ -120,8 +123,7 @@ class OrderHooks extends HookHandler {
 	/**
 	 * After payment completed.
 	 *
-	 * @param int $order_id The order ID.
-	 *
+	 * @param mixed $order Order.
 	 * @since 1.0.0
 	 */ public function after_payment_completed( $order ) {
 		if ( ! is_object( $order ) ) {
@@ -137,7 +139,7 @@ class OrderHooks extends HookHandler {
 		// To check pending enrollment, we will check in ohmylms_user_enrollment table with status 'pending' for this order id.
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );
+		$enroll_data = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE order_id = %d AND status = %s', $table_name, $order->get_id(), 'pending' ), ARRAY_A );
 		if ( ! empty( $enroll_data ) ) {
 			foreach ( $enroll_data as $enroll ) {
 				$rows = $wpdb->update(
@@ -161,7 +163,7 @@ class OrderHooks extends HookHandler {
 			return;
 		}
 		$table_name      = $wpdb->prefix . 'ohmylms_user_membership';
-		$membership_data = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d AND status = %s", $order->get_id(), 'pending' ), ARRAY_A );
+		$membership_data = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE order_id = %d AND status = %s', $table_name, $order->get_id(), 'pending' ), ARRAY_A );
 		if ( ! empty( $membership_data ) ) {
 			// update the status to 'enrolled' for each membership using query.
 			foreach ( $membership_data as $membership ) {

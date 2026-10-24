@@ -3,9 +3,8 @@
  * Displays order title, ID, payment method, transaction link, and creation date.
  */
 import { createElement } from '@wordpress/element';
-
 export function createOrderHeader( readRuntime ) {
-	return function OrderHeader( { order, status } ) {
+	return function OrderHeader( { order } ) {
 		const {
 			Ge: decodeEntities,
 			I: Controls,
@@ -13,11 +12,9 @@ export function createOrderHeader( readRuntime ) {
 			React,
 			b: I18n,
 		} = readRuntime();
-
 		if ( ! order ) {
 			return null;
 		}
-
 		return (
 			<React.Fragment>
 				<Controls.HeadingWP
@@ -39,7 +36,9 @@ export function createOrderHeader( readRuntime ) {
 									href={ order.transaction_url }
 									target="_blank"
 									variant="link"
-									style={ { textDecoration: 'none' } }
+									style={ {
+										textDecoration: 'none',
+									} }
 								>
 									({ order.transaction_id })
 								</Controls.ButtonWP>

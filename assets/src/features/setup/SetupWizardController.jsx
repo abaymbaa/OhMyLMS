@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createSetupWizardController( readRuntime ) {
@@ -68,7 +69,7 @@ export function createSetupWizardController( readRuntime ) {
 										case 2:
 											_eLocal5.p = 2;
 											_nLocal = _eLocal5.v;
-											console.error(
+											showRequestError(
 												'Failed to track onboarding skipped:',
 												_nLocal
 											);
@@ -100,7 +101,7 @@ export function createSetupWizardController( readRuntime ) {
 						nonce: window.ohmylms_params.setup_wizard_nonce,
 					},
 				} ).catch( function ( _eLocal6 ) {
-					console.error(
+					showRequestError(
 						'Failed to track onboarding started:',
 						_eLocal6
 					);
@@ -278,7 +279,7 @@ export function createSetupWizardController( readRuntime ) {
 																										_eLocal14.p = 2;
 																										_nLocal2 =
 																											_eLocal14.v;
-																										console.error(
+																										showRequestError(
 																											'Failed to track onboarding completed:',
 																											_nLocal2
 																										);
@@ -328,7 +329,8 @@ export function createSetupWizardController( readRuntime ) {
 																									case 0:
 																										l(
 																											'/dashboard'
-																										); // Falls through to the shared async state cleanup.
+																										);
+																									// Falls through to the shared async state cleanup.
 																									case 1:
 																										return _eLocal17.a(
 																											2
@@ -401,7 +403,7 @@ export function createSetupWizardController( readRuntime ) {
 																							_eLocal20.p = 2;
 																							_nLocal3 =
 																								_eLocal20.v;
-																							console.error(
+																							showRequestError(
 																								'Failed to track onboarding completed:',
 																								_nLocal3
 																							);
@@ -491,7 +493,7 @@ export function createSetupWizardController( readRuntime ) {
 											case 6:
 												_eLocal0.p = 6;
 												_oLocal = _eLocal0.v;
-												console.error(
+												showRequestError(
 													'Failed to load settings:',
 													_oLocal
 												);

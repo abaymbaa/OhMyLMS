@@ -5,6 +5,9 @@ namespace OhMyLMS\Abstracts;
 use OhMyLMS\OhMyLmsDateTime;
 use OhMyLMS\DataException;
 
+/**
+ * Plugin data implementation.
+ */
 abstract class Data {
 
 	/**
@@ -123,7 +126,7 @@ abstract class Data {
 	/**
 	 * Set ID of object
 	 *
-	 * @param $id
+	 * @param mixed $id Id.
 	 */
 	public function set_id( $id ) {
 		$this->id = $id;
@@ -133,7 +136,7 @@ abstract class Data {
 	/**
 	 * Set collection of params to the object
 	 *
-	 * @param $props
+	 * @param mixed $props Props.
 	 * @return bool|\WP_Error
 	 */
 	public function set_props( $props ) {
@@ -163,8 +166,8 @@ abstract class Data {
 	/**
 	 * Set prop
 	 *
-	 * @param $prop
-	 * @param $value
+	 * @param mixed $prop Prop.
+	 * @param mixed $value Value to process.
 	 * @since 1.0.0
 	 */
 	protected function set_prop( $prop, $value ) {
@@ -268,7 +271,7 @@ abstract class Data {
 	 * @param string $message The error message.
 	 * @param int    $http_status_code The HTTP status code (default is 400).
 	 * @param array  $data Additional data to pass with the exception.
-	 * @throws \OhMyLMS\DataException
+	 * @throws \OhMyLMS\DataException When the operation cannot be completed.
 	 *
 	 * @since 1.0.0
 	 */

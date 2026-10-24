@@ -8,7 +8,6 @@ import {
 	Spinner,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-
 export function StreakSettings( { BadgeEditor } ) {
 	const [ settings, setSettings ] = useState( null );
 	const [ badges, setBadges ] = useState( [] );
@@ -23,11 +22,17 @@ export function StreakSettings( { BadgeEditor } ) {
 				} )
 			);
 		} catch ( error ) {
-			setMessage( { status: 'error', text: error.message } );
+			setMessage( {
+				status: 'error',
+				text: error.message,
+			} );
 		}
 	};
 	const set = ( key, value ) =>
-		setSettings( ( previous ) => ( { ...previous, [ key ]: value } ) );
+		setSettings( ( previous ) => ( {
+			...previous,
+			[ key ]: value,
+		} ) );
 	useEffect( () => {
 		Promise.all( [
 			window.wp.apiFetch( {
@@ -42,7 +47,10 @@ export function StreakSettings( { BadgeEditor } ) {
 				setBadges( available );
 			} )
 			.catch( ( error ) =>
-				setMessage( { status: 'error', text: error.message } )
+				setMessage( {
+					status: 'error',
+					text: error.message,
+				} )
 			);
 	}, [] );
 	if ( ! settings ) {
@@ -58,7 +66,7 @@ export function StreakSettings( { BadgeEditor } ) {
 		<TextControl
 			key={ key }
 			type="number"
-			label={ __( label, 'ohmylms' ) }
+			label={ label }
 			min={ min }
 			max={ max }
 			value={ settings[ key ] }
@@ -88,7 +96,10 @@ export function StreakSettings( { BadgeEditor } ) {
 						text: __( 'Streak settings saved.', 'ohmylms' ),
 					} );
 				} catch ( error ) {
-					setMessage( { status: 'error', text: error.message } );
+					setMessage( {
+						status: 'error',
+						text: error.message,
+					} );
 				} finally {
 					setSaving( false );
 				}
@@ -135,20 +146,35 @@ export function StreakSettings( { BadgeEditor } ) {
 							) }
 						</p>
 						{ [
-							[ 'lesson', 'Verified lesson completion' ],
-							[ 'quiz', 'Submitted quiz with answers attempted' ],
-							[ 'practice', 'Completed skill practice session' ],
+							[
+								'lesson',
+								__( 'Verified lesson completion', 'ohmylms' ),
+							],
+							[
+								'quiz',
+								__(
+									'Submitted quiz with answers attempted',
+									'ohmylms'
+								),
+							],
+							[
+								'practice',
+								__(
+									'Completed skill practice session',
+									'ohmylms'
+								),
+							],
 						].map( ( [ key, label ] ) => (
 							<ToggleControl
 								key={ key }
-								label={ __( label, 'ohmylms' ) }
+								label={ label }
 								checked={ settings[ key ] }
 								onChange={ ( value ) => set( key, value ) }
 							/>
 						) ) }
 						{ number(
 							'practice_minimum',
-							'Minimum practice answers',
+							__( 'Minimum practice answers', 'ohmylms' ),
 							1,
 							30
 						) }
@@ -178,19 +204,22 @@ export function StreakSettings( { BadgeEditor } ) {
 						>
 							{ number(
 								'initial_freezes',
-								'Starting freezes',
+								__( 'Starting freezes', 'ohmylms' ),
 								0,
 								10
 							) }
 							{ number(
 								'maximum_freezes',
-								'Maximum freezes',
+								__( 'Maximum freezes', 'ohmylms' ),
 								0,
 								10
 							) }
 							{ number(
 								'refill_days',
-								'Learning days to earn a freeze',
+								__(
+									'Learning days to earn a freeze',
+									'ohmylms'
+								),
 								1,
 								365
 							) }
@@ -235,7 +264,10 @@ export function StreakSettings( { BadgeEditor } ) {
 								'milestones',
 								settings.milestones.map( ( item, position ) =>
 									position === index
-										? { ...item, [ key ]: value }
+										? {
+												...item,
+												[ key ]: value,
+											}
 										: item
 								)
 							);
@@ -386,7 +418,10 @@ export function StreakSettings( { BadgeEditor } ) {
 							milestones: previous.milestones.map(
 								( item, index ) =>
 									index === badgeMilestone
-										? { ...item, badge: badge.slug }
+										? {
+												...item,
+												badge: badge.slug,
+											}
 										: item
 							),
 						} ) );

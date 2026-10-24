@@ -395,7 +395,11 @@ export function graphIsValid( settings = {} ) {
 	) {
 		return false;
 	}
-	if ( ! finite( tolerance ) || Number( tolerance ) < 0 || Number( tolerance ) > 1 ) {
+	if (
+		! finite( tolerance ) ||
+		Number( tolerance ) < 0 ||
+		Number( tolerance ) > 1
+	) {
 		return false;
 	}
 	if ( settings.mode === 'line' ) {

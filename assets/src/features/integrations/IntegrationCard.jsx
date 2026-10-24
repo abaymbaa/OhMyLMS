@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createIntegrationCard( readRuntime ) {
@@ -151,7 +152,7 @@ export function createIntegrationCard( readRuntime ) {
 											case 2:
 												_eLocal6.p = 2;
 												_rLocal2 = _eLocal6.v;
-												console.error(
+												showRequestError(
 													'Error toggling integration:',
 													_rLocal2
 												);

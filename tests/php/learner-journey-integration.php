@@ -233,6 +233,27 @@ try {
 		'group_id'   => $journey_group,
 	);
 	journey_check( ! is_wp_error( CourseProgram::save( $journey_state['course'], $journey_program, true ) ), 'Fixture publishes its course outline.' );
+	$journey_report = CourseProgram::readiness_report( $journey_program, $journey_state['course'] );
+	journey_check( $journey_report['ready'] && ! $journey_report['skills'] && 1 === count( $journey_report['practice_skills'] ) && 0 === $journey_report['practice_skills'][0]['questions'], 'An optional skill with no approved questions is reported without blocking publication.' );
+	$journey_required                            = $journey_program;
+	$journey_required['outcomes'][0]['required'] = true;
+	$journey_report                              = CourseProgram::readiness_report( $journey_required, $journey_state['course'] );
+	journey_check( ! $journey_report['ready'] && 1 === count( $journey_report['skills'] ) && $journey_group === $journey_report['skills'][0]['group_id'], 'The same empty required skill blocks publication and identifies its repair lesson.' );
+	journey_check( ! CourseProgram::readiness( $journey_program, $journey_state['course'] ) && (bool) CourseProgram::readiness( $journey_required, $journey_state['course'] ), 'Readiness report and authoritative publication checks agree.' );
+	wp_update_post(
+		array(
+			'ID'          => $journey_program['items'][0]['content_id'],
+			'post_status' => 'draft',
+		)
+	);
+	$journey_report = CourseProgram::readiness_report( $journey_program, $journey_state['course'] );
+	journey_check( ! $journey_report['ready'] && 1 === count( $journey_report['resources'] ) && $journey_program['items'][0]['content_id'] === $journey_report['resources'][0]['content_id'], 'Unpublished resources block publication and expose their exact repair resource.' );
+	wp_update_post(
+		array(
+			'ID'          => $journey_program['items'][0]['content_id'],
+			'post_status' => 'publish',
+		)
+	);
 	wp_set_current_user( $journey_state['learner'] );
 	$journey_outline = CourseOutline::get( $journey_state['course'], $journey_state['learner'] );
 	journey_check( is_wp_error( LessonJourney::find( $journey_outline, $journey_group ) ), 'Unenrolled learners cannot open lesson pages.' );
@@ -334,6 +355,8 @@ try {
 		}
 		wp_set_current_user( $journey_state['learner'] );
 		$journey_guidance = \OhMyLMS\Student\PracticeGuidance::get( $journey_state['course'], $journey_group );
+		$journey_report   = CourseProgram::readiness_report( CourseProgram::editor( $journey_state['course'] )['draft'], $journey_state['course'] );
+		journey_check( 3 === $journey_report['practice_skills'][0]['questions'], 'Author readiness counts approved eligible questions and excludes unapproved and secure questions.' );
 		journey_check( 3 === $journey_guidance['skills'][0]['session_limit'] && $journey_guidance['recommended']['term_id'] === $journey_state['skill'], 'Only approved non-secure questions are offered for the assigned skill.' );
 		journey_check( is_wp_error( \OhMyLMS\Student\PracticeGuidance::get( $journey_state['course'], $journey_group, PHP_INT_MAX ) ), 'Foreign skill guidance is denied.' );
 		$journey_started = journey_api(

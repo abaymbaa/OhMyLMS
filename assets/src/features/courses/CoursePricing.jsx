@@ -80,7 +80,10 @@ export function createCoursePricing( readRuntime ) {
 								uz( {}, _tLocal, _[ _tLocal ] )
 							)
 						);
-						if ( 0 == _regularPrice && 'paid' === _priceType ) {
+						if (
+							Number( _regularPrice ) === 0 &&
+							'paid' === _priceType
+						) {
 							{
 								l.setIsValidCourseSettings( ! 1 );
 								f(
@@ -102,7 +105,7 @@ export function createCoursePricing( readRuntime ) {
 			},
 			O = function ( _eLocal6, _tLocal2 ) {
 				var _nLocal = _eLocal6.target.value;
-				if ( 0 == _nLocal ) {
+				if ( Number( _nLocal ) === 0 ) {
 					l.setCourse(
 						cz( cz( {}, c ), {}, uz( {}, _tLocal2, '' ) )
 					);
@@ -172,7 +175,7 @@ export function createCoursePricing( readRuntime ) {
 										)
 									);
 									if (
-										0 == c.regular_price &&
+										Number( c.regular_price ) === 0 &&
 										'free' !== _eLocal7
 									) {
 										{
@@ -314,8 +317,9 @@ export function createCoursePricing( readRuntime ) {
 																			);
 																		}
 																	} else if (
-																		0 ==
-																		_eLocal1
+																		Number(
+																			_eLocal1
+																		) === 0
 																	) {
 																		{
 																			l.setIsValidCourseSettings(
@@ -497,8 +501,10 @@ export function createCoursePricing( readRuntime ) {
 																			);
 																		}
 																	} else if (
-																		0 ==
-																			_regularPrice &&
+																		Number(
+																			_regularPrice
+																		) ===
+																			0 &&
 																		'paid' ===
 																			_priceType
 																	) {

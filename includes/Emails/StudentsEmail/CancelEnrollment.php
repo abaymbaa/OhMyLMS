@@ -4,12 +4,21 @@ namespace OhMyLMS\Emails\StudentsEmail;
 
 use OhMyLMS\Emails\Emails;
 
+/**
+ * Plugin cancel enrollment implementation.
+ */
 class CancelEnrollment {
 
+	/**
+	 * Initialize Cancel enrollment.
+	 */
 	public function __construct() {
 		add_action( 'ohmylms_update_order_status_to_cancelled', array( $this, 'trigger' ), 10 );
 	}
 
+	/**
+	 * Basic settings for Cancel enrollment.
+	 */
 	public function basic_settings(): array {
 		$basic = array(
 			'id'             => 'student_cancel_enrollment',
@@ -22,6 +31,9 @@ class CancelEnrollment {
 		return $basic;
 	}
 
+	/**
+	 * Default settings for Cancel enrollment.
+	 */
 	public function default_settings(): array {
 		$default_settings = array(
 			'enable'             => false,
@@ -34,6 +46,11 @@ class CancelEnrollment {
 		return $default_settings;
 	}
 
+	/**
+	 * Trigger for Cancel enrollment.
+	 *
+	 * @param mixed $order Order.
+	 */
 	public function trigger( $order ) {
 		if ( ! $order ) {
 			return;
@@ -57,7 +74,7 @@ class CancelEnrollment {
 
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ), ARRAY_A );
 		$course      = false;
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;

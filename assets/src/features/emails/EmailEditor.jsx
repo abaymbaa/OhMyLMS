@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createEmailEditor( readRuntime ) {
@@ -117,7 +118,7 @@ export function createEmailEditor( readRuntime ) {
 											case 3:
 												_eLocal4.p = 3;
 												_iLocal = _eLocal4.v;
-												console.error( _iLocal );
+												showRequestError( _iLocal );
 												u(
 													'error',
 													'Failed to save! Please try again.'
@@ -187,7 +188,7 @@ export function createEmailEditor( readRuntime ) {
 						l( _eLocal7 );
 					} }
 					handleTestEmail={ function () {
-						console.warn( 'Test Email' );
+						showRequestError( 'Test Email' );
 					} }
 					handleSave={ S }
 					device={ i }

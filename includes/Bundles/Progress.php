@@ -38,7 +38,11 @@ final class Progress {
 	const PRACTICE_LIMIT = 5;
 	const CLASSES        = array( 'strength', 'gap', 'developing', 'not-assessed' );
 
-	/** Strength, gap, in progress or not assessed. Not-assessed skills are never counted as gaps. */
+	/** Strength, gap, in progress or not assessed. Not-assessed skills are never counted as gaps.
+	 *
+	 * @param mixed $level Level.
+	 * @param mixed $struggling Struggling.
+	 */
 	public static function classify( $level, $struggling ) {
 		if ( in_array( $level, array( 'proficient', 'mastered' ), true ) ) {
 			return 'strength'; }
@@ -47,6 +51,11 @@ final class Progress {
 		return 'not-assessed';
 	}
 
+	/**
+	 * Class label for Progress.
+	 *
+	 * @param mixed $class Class.
+	 */
 	public static function class_label( $class ) {
 		return array(
 			'strength'     => __( 'Strength', 'ohmylms' ),
@@ -56,6 +65,11 @@ final class Progress {
 		)[ $class ] ?? $class;
 	}
 
+	/**
+	 * Mode label for Progress.
+	 *
+	 * @param mixed $mode Mode.
+	 */
 	public static function mode_label( $mode ) {
 		return array(
 			'traditional' => __( 'Traditional', 'ohmylms' ),
@@ -64,17 +78,26 @@ final class Progress {
 		)[ $mode ] ?? ucfirst( (string) $mode );
 	}
 
-	/** Students only ever see published courses; drafts and private courses stay hidden. */
+	/** Students only ever see published courses; drafts and private courses stay hidden.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function visible_course( $course_id ) {
 		$post = get_post( (int) $course_id );
-		return $post && $post->post_type === OHMYLMS_COURSE_CPT && 'publish' === $post->post_status ? $post : null;
+		return $post && OHMYLMS_COURSE_CPT === $post->post_type && 'publish' === $post->post_status ? $post : null;
 	}
 
+	/**
+	 * Evidence ready for Progress.
+	 */
 	private static function evidence_ready() {
 		return AssessmentSchema::ready();
 	}
 
-	/** Skill term IDs a course is tied to: its linked skills and its published program's outcomes. */
+	/** Skill term IDs a course is tied to: its linked skills and its published program's outcomes.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function course_skill_ids( $course_id ) {
 		$ids     = array_map( 'intval', (array) wp_get_object_terms( (int) $course_id, Taxonomy::NAME, array( 'fields' => 'ids' ) ) );
 		$program = \OhMyLMS\Learning\Schema::ready() ? CourseProgram::current( $course_id ) : null;
@@ -86,6 +109,9 @@ final class Progress {
 	/**
 	 * One course for one learner, or null when it is not visible to students.
 	 * Progress is a set of counts from the course's own rules, read without side effects.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course_id Course identifier.
 	 */
 	public static function course( $student, $course_id ) {
 		global $wpdb;
@@ -130,7 +156,7 @@ final class Progress {
 		}
 		$course              = ohmylms_get_course( $course_id );
 		$total               = $course ? (int) $course->get_lessons_count() + (int) $course->get_quiz_count() + (int) $course->get_assignment_count() : 0;
-		$met                 = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_progress WHERE enrollment_id=%d AND status='completed'", (int) $enrollment['id'] ) );
+		$met                 = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE enrollment_id=%d AND status=\'completed\'', $wpdb->prefix . 'ohmylms_user_progress', (int) $enrollment['id'] ) );
 		$summary['progress'] = array(
 			'kind'  => 'activities',
 			'met'   => min( $met, $total ),
@@ -139,7 +165,11 @@ final class Progress {
 		return $summary;
 	}
 
-	/** A curriculum item: where it sits, the published courses linked under it and its skills. */
+	/** A curriculum item: where it sits, the published courses linked under it and its skills.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function curriculum( $student, $item_id ) {
 		$item = Items::get( $item_id );
 		if ( ! $item ) {
@@ -172,7 +202,12 @@ final class Progress {
 		);
 	}
 
-	/** @return array<int,array> term id => ['name' => ..., 'code' => ...] */
+	/**
+	 * Skill labels for Progress.
+	 *
+	 * @return array<int,array> term id => ['name' => ..., 'code' => ...]
+	 * @param array $term_ids Term ids.
+	 */
 	private static function skill_labels( array $term_ids ) {
 		$labels = array();
 		if ( ! $term_ids ) {
@@ -193,7 +228,13 @@ final class Progress {
 		return $labels;
 	}
 
-	/** @return array<int,array> term id => stored state row (absent when never assessed) */
+	/**
+	 * Skill states for Progress.
+	 *
+	 * @return array<int,array> term id => stored state row (absent when never assessed)
+	 * @param mixed $student Student.
+	 * @param array $term_ids Term ids.
+	 */
 	private static function skill_states( $student, array $term_ids ) {
 		global $wpdb;
 		$states = array();
@@ -206,9 +247,19 @@ final class Progress {
 		return $states;
 	}
 
+	/**
+	 * Practice.
+	 *
+	 * @var mixed
+	 */
 	private static $practice = array();
 
-	/** A practice link only when the learner may actually practise this skill and questions exist. */
+	/** A practice link only when the learner may actually practise this skill and questions exist.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $term_id Term identifier.
+	 * @param array $enrolled_courses Enrolled courses.
+	 */
 	private static function practice_url( $student, $term_id, array $enrolled_courses ) {
 		if ( ! \OhMyLMS\Practice\Frontend::enabled() ) {
 			return null; }
@@ -237,7 +288,13 @@ final class Progress {
 		return self::$practice[ $key ] = $url;
 	}
 
-	/** One entry per skill with its level, classification and where it appears. */
+	/** One entry per skill with its level, classification and where it appears.
+	 *
+	 * @param mixed $student Student.
+	 * @param array $term_ids Term ids.
+	 * @param array $sources Sources.
+	 * @param array $enrolled_courses Enrolled courses.
+	 */
 	private static function skill_entries( $student, array $term_ids, array $sources, array $enrolled_courses ) {
 		$labels  = self::skill_labels( $term_ids );
 		$states  = self::skill_states( $student, $term_ids );
@@ -267,7 +324,10 @@ final class Progress {
 		return $entries;
 	}
 
-	/** Sort order for practice suggestions: gaps, then reviews, then in progress, then not yet assessed. */
+	/** Sort order for practice suggestions: gaps, then reviews, then in progress, then not yet assessed.
+	 *
+	 * @param array $entry Entry.
+	 */
 	private static function practice_rank( array $entry ) {
 		if ( 'gap' === $entry['classification'] ) {
 			return 0; }
@@ -276,7 +336,12 @@ final class Progress {
 		return 'developing' === $entry['classification'] ? 2 : 3;
 	}
 
-	/** @return array{total:int,strengths:int,gaps:int,developing:int,not_assessed:int} */
+	/**
+	 * Summarize for Progress.
+	 *
+	 * @return array{total:int,strengths:int,gaps:int,developing:int,not_assessed:int}
+	 * @param array $entries Entries.
+	 */
 	public static function summarize( array $entries ) {
 		$summary = array(
 			'total'        => count( $entries ),
@@ -302,6 +367,10 @@ final class Progress {
 	 * bundle is mapped to it (or it is in the bundle itself and has mappings). Only `equivalent`
 	 * mappings pool evidence; `related` ones are listed for reference. Each source keeps its own
 	 * level and curriculum context, and nothing is averaged across them.
+	 *
+	 * @param mixed $student Student.
+	 * @param array $bundle_terms Bundle terms.
+	 * @param array $own_entries Own entries.
 	 */
 	private static function combined( $student, array $bundle_terms, array $own_entries ) {
 		global $wpdb;
@@ -422,7 +491,11 @@ final class Progress {
 		);
 	}
 
-	/** Full progress view of one bundle for one learner. */
+	/** Full progress view of one bundle for one learner.
+	 *
+	 * @param array $bundle Bundle.
+	 * @param mixed $student Student.
+	 */
 	public static function for_bundle( array $bundle, $student ) {
 		$student   = (int) $student;
 		$members   = array();

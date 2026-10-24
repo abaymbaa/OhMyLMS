@@ -1,11 +1,18 @@
 <?php
+/**
+ * Notice functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 
 /**
  * Add and store a notice
  *
- * @param string $message
- * @param string $type
+ * @param string $message Message.
+ * @param string $notice_type Notice type.
+ * @param array  $data Input data.
  * @return void
  *
  * @since 1.0.0
@@ -27,5 +34,8 @@ function ohmylms_add_notice( $message, $notice_type = 'success', $data = array()
 }
 
 
+/**
+ * Ohmylms notice count for Notice-functions.
+ */
 function ohmylms_notice_count() {
 }

@@ -119,7 +119,7 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 			.catch( ( cause ) =>
 				setNotice( { status: 'error', message: cause.message } )
 			);
-	}, [ run?.id, run?.processed, run?.status, reload ] );
+	}, [ run, reload ] );
 
 	async function start( kind ) {
 		setBusy( true );

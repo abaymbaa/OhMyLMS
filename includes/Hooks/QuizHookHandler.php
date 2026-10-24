@@ -16,6 +16,9 @@ use OhMyLMS\Abstracts\HookHandler;
  */
 class QuizHookHandler extends HookHandler {
 
+	/**
+	 * Register hooks for Quiz hook handler.
+	 */
 	public function register_hooks() {
 		add_action( 'ohmylms_rest_insert_quiz', array( $this, 'link_quiz_with_chapter' ), 10, 2 );
 		add_action( 'ohmylms_rest_delete_quiz', array( $this, 'unlink_chapter_from_quiz' ), 10 );
@@ -25,6 +28,9 @@ class QuizHookHandler extends HookHandler {
 	/**
 	 * Link lesson with chapter.
 	 * Update
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $request REST request.
 	 */
 	public function link_quiz_with_chapter( $quiz, $request ) {
 		if ( ! is_a( $quiz, 'WP_Post' ) ) {
@@ -49,7 +55,7 @@ class QuizHookHandler extends HookHandler {
 	 * @param int $chapter_id The ID of the chapter.
 	 * @param int $quiz_id The ID of the lesson.
 	 * @param int $order_number The order number of the lesson in the chapter.
-	 *
+	 * .
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -65,11 +71,7 @@ class QuizHookHandler extends HookHandler {
 
 		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT ID FROM $table_name WHERE chapter_id = %d AND content_id = %d LIMIT 1",
-				$chapter_id,
-				$quiz_id
-			)
+			$wpdb->prepare( 'SELECT ID FROM %i WHERE chapter_id = %d AND content_id = %d LIMIT 1', $table_name, $chapter_id, $quiz_id )
 		);
 
 		// If exists, update the relationship, otherwise insert a new one.
@@ -113,8 +115,7 @@ class QuizHookHandler extends HookHandler {
 	/**
 	 * Unlink a lesson from a chapter.
 	 *
-	 * @param \WP_Post $lesson The lesson post object.
-	 *
+	 * @param mixed $quiz_id Quiz identifier.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -154,10 +155,7 @@ class QuizHookHandler extends HookHandler {
 		// Step 3: Get all question IDs linked to the quiz.
 		$relationship_table = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$question_ids       = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT question_id FROM {$relationship_table} WHERE quiz_id = %d",
-				$quiz_id
-			)
+			$wpdb->prepare( 'SELECT question_id FROM %i WHERE quiz_id = %d', $relationship_table, $quiz_id )
 		);
 
 		if ( ! empty( $question_ids ) ) {

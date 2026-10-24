@@ -2,8 +2,14 @@
 
 namespace OhMyLMS\Integrations\Gamification\Includes;
 
+/**
+ * Plugin hooks implementation.
+ */
 class Hooks {
 
+	/**
+	 * Initialize Hooks.
+	 */
 	public function __construct() {
 		add_filter( 'ohmylms_integrations', array( $this, 'add_chort' ) );
 	}
@@ -33,6 +39,7 @@ class Hooks {
 	 * Check if gamification is enable
 	 *
 	 * @since 1.0.0
+	 * @param mixed $should_show Should show.
 	 */
 	public function should_show_cohort( $should_show ) {
 		$integrations = get_option( 'ohmylms_integrations' );

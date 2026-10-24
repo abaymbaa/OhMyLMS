@@ -26,6 +26,14 @@ use OhMyLMS\Utility\Transaction;
  * event (with reviewer and reason) even when the attempt total does not change.
  */
 final class Review {
+	/**
+	 * Save for Review.
+	 *
+	 * @param mixed  $quiz_id Quiz identifier.
+	 * @param mixed  $attempt_id Attempt identifier.
+	 * @param array  $marks Marks.
+	 * @param string $reason Reason.
+	 */
 	public static function save( $quiz_id, $attempt_id, array $marks, $reason = '' ) {
 		global $wpdb;
 		if ( ! current_user_can( 'edit_post', $quiz_id ) ) {
@@ -41,11 +49,11 @@ final class Review {
 		try {
 			$result = Transaction::run(
 				static function () use ( $wpdb, $quiz_id, $attempt_id, $marks, $reviewer, $reason, &$changed ) {
-					$attempt = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d AND quiz_id=%d FOR UPDATE", $attempt_id, $quiz_id ), ARRAY_A );
+					$attempt = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d AND quiz_id=%d FOR UPDATE', $wpdb->prefix . 'ohmylms_quiz_attempts', $attempt_id, $quiz_id ), ARRAY_A );
 					if ( ! $attempt || ! in_array( $attempt['status'], array( 'in-review', 'completed' ), true ) ) {
 						throw new ErrorException( new \WP_Error( 'quiz_attempt', 'Submitted attempt unavailable.', array( 'status' => 409 ) ) );
 					}
-					$rows        = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id=%d", $attempt_id ), ARRAY_A );
+					$rows        = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE quiz_attempt_id=%d', $wpdb->prefix . 'ohmylms_quiz_attempts_answers', $attempt_id ), ARRAY_A );
 					$by_question = array_column( $rows, null, 'question_id' );
 					foreach ( $marks as $id => $mark ) {
 						// Structured questions may be marked per part: [part_id => marks].
@@ -255,7 +263,7 @@ final class Review {
 					do_action( 'ohmylms_lesson_completed', $quiz_id, $course_id, $student_id );
 				}
 				if ( ! \OhMyLMS\Learning\CourseProgram::managed( $student_id, $course_id ) && 100 !== (int) $before && (int) $student->get_over_all_completion_rate( $course_id ) === 100 ) {
-					$order = (int) $wpdb->get_var( $wpdb->prepare( "SELECT order_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d", $student_id, $course_id ) );
+					$order = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT order_id FROM %i WHERE user_id=%d AND course_id=%d', $wpdb->prefix . 'ohmylms_user_enrollment', $student_id, $course_id ) );
 					do_action( 'ohmylms_course_completed', $student_id, $course_id, $order );
 				}
 			}
@@ -263,9 +271,16 @@ final class Review {
 		return $quiz->get_attempt_report( $attempt_id );
 	}
 
+	/**
+	 * Current part for Review.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $part_id Part identifier.
+	 */
 	private static function current_part( $attempt_id, $item_id, $part_id ) {
 		global $wpdb;
-		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'grade_events' ) . " WHERE source_type='quiz' AND source_id=%d AND item_id=%d AND part_id=%s AND superseded_by=0 ORDER BY id DESC LIMIT 1", $attempt_id, $item_id, (string) $part_id ), ARRAY_A ) ?: null;
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE source_type=\'quiz\' AND source_id=%d AND item_id=%d AND part_id=%s AND superseded_by=0 ORDER BY id DESC LIMIT 1', Schema::table( 'grade_events' ), $attempt_id, $item_id, (string) $part_id ), ARRAY_A ) ?: null;
 	}
 
 	/**
@@ -274,6 +289,12 @@ final class Review {
 	 * remainder is shared across written parts in proportion to their marks.
 	 *
 	 * @return array|\WP_Error ['parts' => part_id => awarded (changed parts), 'total' => question total]
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param array $item Item.
+	 * @param array $settings Configuration settings.
+	 * @param mixed $mark Mark.
+	 * @param mixed $question_marks Question marks.
+	 * @param mixed $policy Policy.
 	 */
 	private static function distribute_parts( $attempt_id, array $item, array $settings, $mark, $question_marks, $policy ) {
 		$weights = \OhMyLMS\Assessment\Structured::weights( $settings );

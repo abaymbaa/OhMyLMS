@@ -27,11 +27,11 @@ $answer_rows = ! empty( $question['questions'] ) ? $question['questions'] : arra
 
 <?php foreach ( $answer_rows as $option ) { ?>
 	<div class="answer-type-text">
-		<input type="text" data-question-id="<?php echo $option['question_id']; ?>"class="ohmylms-text-input <?php echo $class; ?>" data-limit="<?php echo $short_text_limit; ?>" name="attempt[<?php echo $attempt['id']; ?>][quiz_question][<?php echo $option['question_id']; ?>][]" placeholder="Type your answer here ... ">
+		<input type="text" data-question-id="<?php echo esc_attr( $option['question_id'] ); ?>"class="ohmylms-text-input <?php echo esc_attr( $class ); ?>" data-limit="<?php echo esc_attr( $short_text_limit ); ?>" name="attempt[<?php echo esc_attr( $attempt['id'] ); ?>][quiz_question][<?php echo esc_attr( $option['question_id'] ); ?>][]" placeholder="Type your answer here ... ">
 
 		<?php if ( ! empty( $short_text_limit ) ) { ?>
 			<span class="ohmylms-character-limit-hints">
-				<span>0</span>/<?php echo $short_text_limit; ?>
+				<span>0</span>/<?php echo esc_html( $short_text_limit ); ?>
 			</span>
 		<?php } ?>
 	</div>

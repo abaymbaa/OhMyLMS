@@ -1,4 +1,10 @@
 <?php
+/**
+ * Module.
+ *
+ * @package OhMyLMS
+ */
+
 defined( 'ABSPATH' ) || exit;
 
 // Future Skills services register their hooks from this entry point.

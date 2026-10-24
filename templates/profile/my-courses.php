@@ -17,8 +17,8 @@ $my_course_tab = apply_filters( 'ohmylms_my_course_tabs', array() );
 		<div class="ohmylms-my-courses-tab">
 			<ul role="tablist" id="my-courses-tab">
 				<?php foreach ( $my_course_tab as $key => $course_tab ) : ?>
-					<li class="<?php echo 'enrolled-courses' === $key ? 'active' : ''; ?>" role="presentation">
-						<button type="button" role="tab" aria-controls="course-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo 'enrolled-courses' === $key ? 'true' : 'false'; ?>" tabindex="<?php echo 'enrolled-courses' === $key ? '0' : '-1'; ?>" data-target="#course-<?php echo esc_attr( $key ); ?>">
+					<li class="<?php echo esc_attr( 'enrolled-courses' === $key ? 'active' : '' ); ?>" role="presentation">
+						<button type="button" role="tab" aria-controls="course-<?php echo esc_attr( $key ); ?>" aria-selected="<?php echo esc_attr( 'enrolled-courses' === $key ? 'true' : 'false' ); ?>" tabindex="<?php echo esc_attr( 'enrolled-courses' === $key ? '0' : '-1' ); ?>" data-target="#course-<?php echo esc_attr( $key ); ?>">
 							<?php echo wp_kses_post( $course_tab['title'] ); ?>
 						</button>
 					</li>
@@ -38,7 +38,7 @@ $my_course_tab = apply_filters( 'ohmylms_my_course_tabs', array() );
 
 				?>
 
-				<div class="<?php echo $courseClass; ?>" id="<?php echo $courseId; ?>" aria-labelledby="<?php echo $courseId; ?>" role="tabpanel" tabindex="0">
+				<div class="<?php echo esc_attr( $courseClass ); ?>" id="<?php echo esc_attr( $courseId ); ?>" aria-labelledby="<?php echo esc_attr( $courseId ); ?>" role="tabpanel" tabindex="0">
 					<?php
 					if ( isset( $course_tab['callback'] ) ) {
 						call_user_func( $course_tab['callback'], $key, $course_tab );

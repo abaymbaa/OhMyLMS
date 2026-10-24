@@ -11,8 +11,14 @@
 
 namespace OhMyLMS\Integrations\WPFusion\Includes;
 
+/**
+ * Plugin hooks implementation.
+ */
 class Hooks {
 
+	/**
+	 * Initialize Hooks.
+	 */
 	public function __construct() {
 		add_filter( 'ohmylms_integrations', array( $this, 'add_wpfusion' ) );
 		add_filter( 'ohmylms_should_enable_wpfusion', array( $this, 'should_enable_wpfusion' ) );
@@ -64,8 +70,8 @@ class Hooks {
 	/**
 	 * Handle integration update - trigger table creation when WP Fusion is enabled
 	 *
-	 * @param mixed $old_value Old integration settings
-	 * @param mixed $new_value New integration settings
+	 * @param mixed $old_value Old integration settings.
+	 * @param mixed $new_value New integration settings.
 	 * @since 1.0.0
 	 */
 	public function on_integration_updated( $old_value, $new_value ) {

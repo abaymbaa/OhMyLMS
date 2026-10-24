@@ -74,8 +74,8 @@ class Lesson extends PostTypeData {
 	/**
 	 * Lesson constructor.
 	 *
-	 * @param $lesson
-	 * @throws \Exception
+	 * @param string $lesson Lesson.
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function __construct( $lesson = '' ) {
@@ -109,8 +109,9 @@ class Lesson extends PostTypeData {
 	/**
 	 * Set the lesson type.
 	 *
-	 * @return string
+	 * @return void
 	 * @since 1.0.0
+	 * @param mixed $type Type.
 	 */
 	public function set_type( $type ) {
 		$this->set_prop( 'type', $type );
@@ -141,8 +142,9 @@ class Lesson extends PostTypeData {
 	/**
 	 * Set the lesson type.
 	 *
-	 * @return string
+	 * @return void
 	 * @since 1.0.0
+	 * @param mixed $type Type.
 	 */
 	public function set_audio_id( $type ) {
 		$this->set_prop( 'audio_id', $type );
@@ -152,8 +154,9 @@ class Lesson extends PostTypeData {
 	/**
 	 * Set the lesson type.
 	 *
-	 * @return string
+	 * @return void
 	 * @since 1.0.0
+	 * @param mixed $link Link.
 	 */
 	public function set_external_url( $link ) {
 		$this->set_prop( 'external_url', $link );
@@ -174,7 +177,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get average rating
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -186,7 +189,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get review count
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -197,7 +200,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get rating counts
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -207,7 +210,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get Modified counts
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -219,7 +222,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get Content counts
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -231,7 +234,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Get Content counts
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -291,7 +294,7 @@ class Lesson extends PostTypeData {
 	 * Set order number of the lesson
 	 *
 	 * @param int $number The order number to set for the lesson.
-	 *
+	 * .
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -303,7 +306,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Set prerequisites of the Lesson
 	 *
-	 * @param $price
+	 * @param mixed $comments_enable Comments enable.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -314,7 +317,7 @@ class Lesson extends PostTypeData {
 	/**
 	 * Set prerequisites of the Lesson
 	 *
-	 * @param $price
+	 * @param mixed $price Price.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -441,29 +444,52 @@ class Lesson extends PostTypeData {
 	/**
 	 * Delete lesson data
 	 *
-	 * @param array $args
+	 * @param array $args Operation arguments.
 	 * @since 1.0.0
 	 */
 	public function delete( $args = array() ) {
 		$this->data_store->delete( $this, $args );
 	}
 
+	/**
+	 * Get order number for Lesson.
+	 */
 	public function get_order_number() {
 		return $this->data_store->get_order_number( $this );
 	}
 
+	/**
+	 * Get drip settings for Lesson.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_drip_settings( $context = 'view' ) {
 		return $this->get_prop( 'drip_settings', $context ) ?? array();
 	}
 
+	/**
+	 * Set drip settings for Lesson.
+	 *
+	 * @param mixed $drip_feed Drip feed.
+	 */
 	public function set_drip_settings( $drip_feed ) {
 		$this->set_prop( 'drip_settings', $drip_feed );
 	}
 
+	/**
+	 * Get download resource for Lesson.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_download_resource( $context = 'view' ) {
 		return $this->get_prop( 'download_resource', $context ) ?? array();
 	}
 
+	/**
+	 * Set download resource for Lesson.
+	 *
+	 * @param mixed $resources Resources.
+	 */
 	public function set_download_resource( $resources ) {
 		$this->set_prop( 'download_resource', $resources );
 	}

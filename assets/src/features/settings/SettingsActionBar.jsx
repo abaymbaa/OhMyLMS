@@ -17,7 +17,7 @@ export function createSettingsActionBar( readRuntime ) {
 					marginTop={ 2 }
 				>
 					<Controls.FlexWP justify={ 'flex-end' }>
-						{ 'migration' == t ? (
+						{ 'migration' === t ? (
 							<Buttons.A
 								type={ 'primary' }
 								onClick={ r }

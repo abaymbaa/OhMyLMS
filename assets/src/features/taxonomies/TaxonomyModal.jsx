@@ -14,30 +14,30 @@ export function createTaxonomyModal( readRuntime ) {
 			g: ReactHooks,
 			wY,
 		} = readRuntime();
-		var t = props.isOpen,
-			n = props.onClose,
-			r = props.onSubmit,
-			a = props.title,
-			o = props.type,
-			i = void 0 === o ? 'category' : o,
-			l = props.initialData,
-			c = void 0 === l ? null : l,
-			u = props.categories,
-			s = void 0 === u ? [] : u,
-			d = props.isSubmitting,
-			m = void 0 !== d && d,
-			p = EY(
-				( 0, ReactHooks.useState )( {
-					name: '',
-					parent: 0,
-				} ),
-				2
-			),
-			f = p[ 0 ],
-			v = p[ 1 ],
-			h = EY( ( 0, ReactHooks.useState )( {} ), 2 ),
-			y = h[ 0 ],
-			_ = h[ 1 ];
+		var t = props.isOpen;
+		var n = props.onClose;
+		var r = props.onSubmit;
+		var a = props.title;
+		var o = props.type;
+		var i = void 0 === o ? 'category' : o;
+		var l = props.initialData;
+		var c = void 0 === l ? null : l;
+		var u = props.categories;
+		var s = void 0 === u ? [] : u;
+		var d = props.isSubmitting;
+		var m = void 0 !== d && d;
+		var p = EY(
+			( 0, ReactHooks.useState )( {
+				name: '',
+				parent: 0,
+			} ),
+			2
+		);
+		var f = p[ 0 ];
+		var v = p[ 1 ];
+		var h = EY( ( 0, ReactHooks.useState )( {} ), 2 );
+		var y = h[ 0 ];
+		var _ = h[ 1 ];
 		( 0, ReactHooks.useEffect )(
 			function () {
 				v(
@@ -56,74 +56,74 @@ export function createTaxonomyModal( readRuntime ) {
 			[ c, t ]
 		);
 		var w = function ( e, _tLocal ) {
-				v( function ( _nLocal ) {
-					return _Y( _Y( {}, _nLocal ), {}, wY( {}, e, _tLocal ) );
+			v( function ( _nLocal ) {
+				return _Y( _Y( {}, _nLocal ), {}, wY( {}, e, _tLocal ) );
+			} );
+			if ( y[ e ] ) {
+				_( function ( _tLocal2 ) {
+					return _Y( _Y( {}, _tLocal2 ), {}, wY( {}, e, '' ) );
 				} );
-				if ( y[ e ] ) {
-					_( function ( _tLocal2 ) {
-						return _Y( _Y( {}, _tLocal2 ), {}, wY( {}, e, '' ) );
-					} );
-				}
-			},
-			E = function () {
-				if ( ! m ) {
-					n();
-				}
-			},
-			S = [
-				{
-					label: ( 0, I18n.__ )( 'None', 'ohmylms' ),
-					value: 0,
-				},
-			].concat(
-				( function ( e ) {
-					return (
-						( function ( _eLocal ) {
-							if ( Array.isArray( _eLocal ) ) {
-								return RY( _eLocal );
-							}
-						} )( e ) ||
-						( function ( _eLocal2 ) {
-							if (
-								( 'undefined' !== typeof Symbol &&
-									( ( _nullableValue ) =>
-										_nullableValue !== null &&
-										_nullableValue !== void 0 )(
-										_eLocal2[ Symbol.iterator ]
-									) ) ||
-								( ( _nullableValue2 ) =>
-									_nullableValue2 !== null &&
-									_nullableValue2 !== void 0 )(
-									_eLocal2[ '@@iterator' ]
-								)
-							) {
-								return Array.from( _eLocal2 );
-							}
-						} )( e ) ||
-						SY( e ) ||
-						( function () {
-							throw new TypeError(
-								'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
-							);
-						} )()
-					);
-				} )(
-					s
-						.filter( function ( e ) {
-							return ! c || e.term_id !== c.term_id;
-						} )
-						.map( function ( e ) {
-							return {
-								label: e.name,
-								value: e.term_id,
-							};
-						} )
-				)
-			);
+			}
+		};
+		var E = function () {
+			if ( ! m ) {
+				n();
+			}
+		};
 		if ( ! t ) {
 			return null;
 		}
 		var R = ! f.name.trim();
+		var S = [
+			{
+				label: ( 0, I18n.__ )( 'None', 'ohmylms' ),
+				value: 0,
+			},
+		].concat(
+			( function ( e ) {
+				return (
+					( function ( _eLocal ) {
+						if ( Array.isArray( _eLocal ) ) {
+							return RY( _eLocal );
+						}
+					} )( e ) ||
+					( function ( _eLocal2 ) {
+						if (
+							( 'undefined' !== typeof Symbol &&
+								( ( _nullableValue ) =>
+									_nullableValue !== null &&
+									_nullableValue !== void 0 )(
+									_eLocal2[ Symbol.iterator ]
+								) ) ||
+							( ( _nullableValue2 ) =>
+								_nullableValue2 !== null &&
+								_nullableValue2 !== void 0 )(
+								_eLocal2[ '@@iterator' ]
+							)
+						) {
+							return Array.from( _eLocal2 );
+						}
+					} )( e ) ||
+					SY( e ) ||
+					( function () {
+						throw new TypeError(
+							'Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
+						);
+					} )()
+				);
+			} )(
+				s
+					.filter( function ( e ) {
+						return ! c || e.term_id !== c.term_id;
+					} )
+					.map( function ( e ) {
+						return {
+							label: e.name,
+							value: e.term_id,
+						};
+					} )
+			)
+		);
 		return (
 			<Controls.ModalWP
 				title={ a }

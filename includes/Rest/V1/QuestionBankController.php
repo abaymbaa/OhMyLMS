@@ -30,6 +30,9 @@ defined( 'ABSPATH' ) || exit;
  * bank sharing, and placing existing questions into quizzes by reference.
  */
 class QuestionBankController extends RestController {
+	/**
+	 * Register routes for Question bank controller.
+	 */
 	public function register_routes() {
 		$id = '(?P<id>[\d]+)';
 		register_rest_route(
@@ -168,32 +171,65 @@ class QuestionBankController extends RestController {
 
 	// ---- Permissions ----
 
+	/**
+	 * Author permission for Question bank controller.
+	 */
 	public function author_permission() {
 		if ( ! Schema::ready() ) {
 			return new WP_Error( 'ohmylms_bank_unavailable', __( 'The question bank is not installed yet.', 'ohmylms' ), array( 'status' => 503 ) ); }
 		return AccessPolicy::check( AccessPolicy::can_author() );
 	}
+	/**
+	 * Question exists for Question bank controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function question_exists( $request ) {
 		return get_post_type( (int) $request['id'] ) === OHMYLMS_QUESTION_CPT ? true : new WP_Error( 'ohmylms_rest_invalid_question_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 	}
+	/**
+	 * Use permission for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function use_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
 		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_use_question( (int) $request['id'] ) );
 	}
+	/**
+	 * Edit permission for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function edit_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
 		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_edit_question( (int) $request['id'] ) );
 	}
+	/**
+	 * Approve permission for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function approve_permission( WP_REST_Request $request ) {
 		$exists = $this->question_exists( $request );
 		return true !== $exists ? $exists : AccessPolicy::check( AccessPolicy::can_approve_question( (int) $request['id'] ), __( 'You cannot approve versions of this question.', 'ohmylms' ) );
 	}
+	/**
+	 * Version permission for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function version_permission( WP_REST_Request $request ) {
 		$version = VersionPublisher::version( (int) $request['version_id'] );
 		if ( ! $version ) {
 			return new WP_Error( 'ohmylms_version_missing', __( 'Version not found.', 'ohmylms' ), array( 'status' => 404 ) ); }
 		return AccessPolicy::check( AccessPolicy::can_use_question( (int) $version['question_id'] ) );
 	}
+	/**
+	 * Quiz permission for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function quiz_permission( WP_REST_Request $request ) {
 		$quiz_id = (int) $request['quiz_id'];
 		if ( get_post_type( $quiz_id ) !== OHMYLMS_QUIZ_CPT ) {
@@ -203,11 +239,16 @@ class QuestionBankController extends RestController {
 
 	// ---- Search ----
 
+	/**
+	 * Search for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function search( WP_REST_Request $request ) {
 		global $wpdb;
 		$q     = Schema::table( 'qb_questions' );
 		$where = array( 'p.post_type=%s', "p.post_status NOT IN ('auto-draft','trash')" );
-		$args  = array( OHMYLMS_QUESTION_CPT );
+		$args  = array( $wpdb->posts, $q, OHMYLMS_QUESTION_CPT );
 
 		$organisation = \OhMyLMS\QuestionBank\Organisation::condition( $request );
 		if ( is_wp_error( $organisation ) ) {
@@ -264,13 +305,13 @@ class QuestionBankController extends RestController {
 					$visible[] = 'q.bank_id IN (' . implode( ',', $bank_ids ) . ')'; }
 				$where[] = '(' . implode( ' OR ', $visible ) . ')';
 			}
-			$per_page  = max( 1, min( 100, (int) ( $request['per_page'] ?: 20 ) ) );
-			$page      = max( 1, (int) ( $request['page'] ?: 1 ) );
+			$per_page  = max( 1, min( 100, (int) ( $request['per_page'] ? $request['per_page'] : 20 ) ) );
+			$page      = max( 1, (int) ( $request['page'] ? $request['page'] : 1 ) );
 			$sql_where = implode( ' AND ', $where );
-			$total     = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} p LEFT JOIN $q q ON q.question_id=p.ID WHERE $sql_where", $args ) );
+			$total     = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i p LEFT JOIN %i q ON q.question_id=p.ID WHERE $sql_where", $args ) );
 			$rows      = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT p.ID FROM {$wpdb->posts} p LEFT JOIN $q q ON q.question_id=p.ID WHERE $sql_where ORDER BY p.post_modified_gmt DESC, p.ID DESC LIMIT %d OFFSET %d",
+					"SELECT p.ID FROM %i p LEFT JOIN %i q ON q.question_id=p.ID WHERE $sql_where ORDER BY p.post_modified_gmt DESC, p.ID DESC LIMIT %d OFFSET %d",
 					array_merge( $args, array( $per_page, ( $page - 1 ) * $per_page ) )
 				)
 			);
@@ -293,6 +334,11 @@ class QuestionBankController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Summary for Question bank controller.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	private function summary( $question_id ) {
 		$attributes = BankAttributes::get( $question_id );
 		$settings   = (array) get_post_meta( $question_id, '_question_settings', true );
@@ -324,6 +370,11 @@ class QuestionBankController extends RestController {
 		);
 	}
 
+	/**
+	 * Detail for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function detail( WP_REST_Request $request ) {
 		$question_id = (int) $request['id'];
 		VersionPublisher::identity( $question_id );
@@ -347,6 +398,11 @@ class QuestionBankController extends RestController {
 		return rest_ensure_response( $data );
 	}
 
+	/**
+	 * Version for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function version( WP_REST_Request $request ) {
 		$snapshot       = VersionPublisher::snapshot( (int) $request['version_id'] );
 		$data           = $snapshot->to_array();
@@ -386,6 +442,11 @@ class QuestionBankController extends RestController {
 		return RowExporter::export( array_map( 'absint', (array) $ids ), 'csv' === $request['format'] ? 'csv' : 'json', $label, $sections );
 	}
 
+	/**
+	 * Approve for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function approve( WP_REST_Request $request ) {
 		global $wpdb;
 		$question_id = (int) $request['id'];
@@ -417,11 +478,21 @@ class QuestionBankController extends RestController {
 		return rest_ensure_response( $this->summary( $question_id ) );
 	}
 
+	/**
+	 * Archive for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function archive( WP_REST_Request $request ) {
 		$result = Usage::archive( (int) $request['id'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $this->summary( (int) $request['id'] ) );
 	}
 
+	/**
+	 * Restore for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function restore( WP_REST_Request $request ) {
 		$result = Usage::restore( (int) $request['id'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $this->summary( (int) $request['id'] ) );
@@ -430,6 +501,8 @@ class QuestionBankController extends RestController {
 	/**
 	 * Duplicate as a new question (new UUID, same family). With quiz_id, the copy replaces the
 	 * original in that quiz — the way to edit a shared, read-only question.
+	 *
+	 * @param WP_REST_Request $request REST request.
 	 */
 	public function duplicate( WP_REST_Request $request ) {
 		global $wpdb;
@@ -453,7 +526,7 @@ class QuestionBankController extends RestController {
 			},
 			$source->get_questions()
 		);
-		$family     = $attributes['family_id'] ?: ( 'q-' . substr( $attributes['uuid'] ?? wp_generate_uuid4(), 0, 8 ) );
+		$family     = $attributes['family_id'] ? $attributes['family_id'] : ( 'q-' . substr( $attributes['uuid'] ?? wp_generate_uuid4(), 0, 8 ) );
 		$bank       = array(
 			'family_id'  => $family,
 			'difficulty' => $attributes['difficulty'] ?? 'standard',
@@ -463,7 +536,8 @@ class QuestionBankController extends RestController {
 		if ( ! empty( $attributes['bank_id'] ) && Banks::can( (int) $attributes['bank_id'], 'edit' ) ) {
 			$bank['bank_id'] = (int) $attributes['bank_id']; }
 		$payload = array(
-			'name'         => sprintf( __( '%s (copy)', 'ohmylms' ), $source->get_name() ),
+			'name'         => sprintf( /* translators: %s: text value. */
+			__( '%s (copy)', 'ohmylms' ), $source->get_name() ),
 			'description'  => $source->get_description(),
 			'settings'     => $source->get_settings(),
 			'thumbnail_id' => $source->get_thumbnail_id(),
@@ -474,7 +548,7 @@ class QuestionBankController extends RestController {
 		);
 		$order   = null;
 		if ( $quiz_id ) {
-			$order = $wpdb->get_var( $wpdb->prepare( "SELECT order_number FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship WHERE quiz_id=%d AND question_id=%d", $quiz_id, $source_id ) );
+			$order = $wpdb->get_var( $wpdb->prepare( 'SELECT order_number FROM %i WHERE quiz_id=%d AND question_id=%d', $wpdb->prefix . 'ohmylms_quiz_questions_relationship', $quiz_id, $source_id ) );
 			if ( null !== $order ) {
 				$payload['order_number'] = (int) $order; }
 		}
@@ -505,7 +579,10 @@ class QuestionBankController extends RestController {
 
 	// ---- Quiz references ----
 
-	/** Place existing bank questions into a quiz by reference (never copies or edits them). */
+	/** Place existing bank questions into a quiz by reference (never copies or edits them).
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function add_to_quiz( WP_REST_Request $request ) {
 		$quiz_id = (int) $request['quiz_id'];
 		$ids     = array_values( array_unique( array_map( 'intval', (array) $request['question_ids'] ) ) );
@@ -517,7 +594,8 @@ class QuestionBankController extends RestController {
 			if ( ! AccessPolicy::can_edit_question( $question_id ) ) {
 				$identity = VersionPublisher::identity( $question_id );
 				if ( ! $identity || ! (int) $identity['approved_version_id'] ) {
-					return new WP_Error( 'quiz_question_unapproved', sprintf( __( '"%s" has no approved version yet.', 'ohmylms' ), get_the_title( $question_id ) ), array( 'status' => 409 ) );
+					return new WP_Error( 'quiz_question_unapproved', sprintf( /* translators: %s: text value. */
+					__( '"%s" has no approved version yet.', 'ohmylms' ), get_the_title( $question_id ) ), array( 'status' => 409 ) );
 				}
 			}
 		}
@@ -549,7 +627,10 @@ class QuestionBankController extends RestController {
 		);
 	}
 
-	/** Pin a question in this quiz to a specific version, or unpin (version_id null). */
+	/** Pin a question in this quiz to a specific version, or unpin (version_id null).
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function pin( WP_REST_Request $request ) {
 		$quiz_id     = (int) $request['quiz_id'];
 		$question_id = (int) $request['question_id'];
@@ -578,18 +659,26 @@ class QuestionBankController extends RestController {
 			array(
 				'quiz_id'     => $quiz_id,
 				'question_id' => $question_id,
-				'version_id'  => $version_id ?: null,
+				'version_id'  => $version_id ? $version_id : null,
 			)
 		);
 	}
 
 	// ---- Banks and sharing ----
 
+	/**
+	 * Banks for Question bank controller.
+	 */
 	public function banks() {
 		return rest_ensure_response( array( 'banks' => Banks::for_user() ) ); }
 
+	/**
+	 * Create bank for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create_bank( WP_REST_Request $request ) {
-		$bank = Banks::create( $request['name'], (int) $request['course_id'], (string) ( $request['visibility'] ?: 'private' ) );
+		$bank = Banks::create( $request['name'], (int) $request['course_id'], (string) ( $request['visibility'] ? $request['visibility'] : 'private' ) );
 		if ( is_wp_error( $bank ) ) {
 			return $bank; }
 		$response = rest_ensure_response( $bank );
@@ -597,11 +686,21 @@ class QuestionBankController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Update bank for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update_bank( WP_REST_Request $request ) {
 		$bank = Banks::update( (int) $request['bank_id'], $request->get_params() );
 		return is_wp_error( $bank ) ? $bank : rest_ensure_response( $bank );
 	}
 
+	/**
+	 * Grants for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function grants( WP_REST_Request $request ) {
 		$bank = Banks::get( (int) $request['bank_id'] );
 		if ( ! $bank ) {
@@ -611,11 +710,21 @@ class QuestionBankController extends RestController {
 		return rest_ensure_response( array( 'grants' => Banks::grants( (int) $request['bank_id'] ) ) );
 	}
 
+	/**
+	 * Grant for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function grant( WP_REST_Request $request ) {
 		$result = Banks::grant( (int) $request['bank_id'], (int) $request['user_id'], (string) $request['permission'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( array( 'grants' => $result ) );
 	}
 
+	/**
+	 * Revoke for Question bank controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function revoke( WP_REST_Request $request ) {
 		$result = Banks::revoke( (int) $request['bank_id'], (int) $request['user_id'], (string) $request['permission'] );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( array( 'grants' => $result ) );

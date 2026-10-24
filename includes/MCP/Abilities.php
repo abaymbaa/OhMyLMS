@@ -10,12 +10,18 @@ defined( 'ABSPATH' ) || exit;
 
 /** LMS operations registered in WordPress's native Abilities API. */
 final class Abilities {
+	/**
+	 * Init for Abilities.
+	 */
 	public static function init() {
 		add_action( 'wp_abilities_api_categories_init', array( __CLASS__, 'category' ) );
 		add_action( 'wp_abilities_api_init', array( __CLASS__, 'register' ) );
 		add_filter( 'mcp_adapter_tool_name', array( __CLASS__, 'tool_name' ), 10, 2 );
 	}
 
+	/**
+	 * Category for Abilities.
+	 */
 	public static function category() {
 		wp_register_ability_category(
 			'ohmylms',
@@ -26,14 +32,28 @@ final class Abilities {
 		);
 	}
 
+	/**
+	 * Name for Abilities.
+	 *
+	 * @param mixed $tool Tool.
+	 */
 	public static function name( $tool ) {
 		return 'ohmylms/' . str_replace( '_', '-', $tool );
 	}
 
+	/**
+	 * Names for Abilities.
+	 */
 	public static function names() {
 		return array_map( array( __CLASS__, 'name' ), array_keys( Server::tools() ) );
 	}
 
+	/**
+	 * Tool name for Abilities.
+	 *
+	 * @param mixed $name Name.
+	 * @param mixed $ability Ability.
+	 */
 	public static function tool_name( $name, $ability ) {
 		// Preserve existing client allowlists while using valid, namespaced ability IDs.
 		foreach ( Server::tools() as $tool => $definition ) {
@@ -44,6 +64,9 @@ final class Abilities {
 		return $name;
 	}
 
+	/**
+	 * Register for Abilities.
+	 */
 	public static function register() {
 		foreach ( Server::tools() as $name => $tool ) {
 			wp_register_ability(
@@ -88,6 +111,13 @@ final class Abilities {
 		}
 	}
 
+	/**
+	 * Execute for Abilities.
+	 *
+	 * @param mixed $name Name.
+	 * @param mixed $tool Tool.
+	 * @param mixed $input Input.
+	 */
 	private static function execute( $name, $tool, $input ) {
 		$args = (array) $input;
 		foreach ( $args as $key => $value ) {

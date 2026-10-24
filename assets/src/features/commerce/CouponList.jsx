@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCouponList( readRuntime ) {
@@ -384,7 +385,7 @@ export function createCouponList( readRuntime ) {
 										case 2:
 											_eLocal19.p = 2;
 											_aLocal = _eLocal19.v;
-											console.error( _aLocal );
+											showRequestError( _aLocal );
 										// Falls through to the shared async state cleanup.
 										case 3:
 											return _eLocal19.a( 2 );
@@ -436,7 +437,7 @@ export function createCouponList( readRuntime ) {
 					}
 					return saved;
 				} catch ( error ) {
-					console.error( error );
+					showRequestError( error );
 					$(
 						'error',
 						error?.code ===
@@ -527,7 +528,7 @@ export function createCouponList( readRuntime ) {
 										case 2:
 											_eLocal23.p = 2;
 											_oLocal = _eLocal23.v;
-											console.error( _oLocal );
+											showRequestError( _oLocal );
 											$(
 												'error',
 												( 0, I18n.__ )(
@@ -571,7 +572,7 @@ export function createCouponList( readRuntime ) {
 					P( items );
 					G( Number( response.headers.get( 'X-WP-Total' ) ) || 0 );
 				} catch ( error ) {
-					console.error( error );
+					showRequestError( error );
 					$(
 						'error',
 						I18n.__(
@@ -651,7 +652,7 @@ export function createCouponList( readRuntime ) {
 										case 3:
 											_eLocal27.p = 3;
 											_oLocal2 = _eLocal27.v;
-											console.error( _oLocal2 );
+											showRequestError( _oLocal2 );
 											$(
 												'error',
 												( 0, I18n.__ )(

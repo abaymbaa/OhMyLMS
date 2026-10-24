@@ -8,6 +8,11 @@ namespace OhMyLMS\Extensions;
 
 /** Registration is explicit; callbacks are supplied by trusted plugins or themes only. */
 final class Registry {
+	/**
+	 * Items.
+	 *
+	 * @var mixed
+	 */
 	private static $items = array(
 		'layout'   => array(),
 		'question' => array(),
@@ -15,6 +20,14 @@ final class Registry {
 		'activity' => array(),
 	);
 
+	/**
+	 * Register for Registry.
+	 *
+	 * @param mixed $kind Kind.
+	 * @param mixed $id Id.
+	 * @param array $definition Definition.
+	 * @throws \InvalidArgumentException When the operation cannot be completed.
+	 */
 	public static function register( $kind, $id, array $definition ) {
 		if ( ! isset( self::$items[ $kind ] ) || ! is_string( $id ) || ! preg_match( '/^[a-z][a-z0-9_-]*$/D', $id ) ) {
 			throw new \InvalidArgumentException( 'Invalid extension identifier.' );
@@ -35,10 +48,24 @@ final class Registry {
 		}
 		self::$items[ $kind ][ $id ] = $definition;
 	}
+	/**
+	 * Get for Registry.
+	 *
+	 * @param mixed $kind Kind.
+	 * @param mixed $id Id.
+	 */
 	public static function get( $kind, $id ) {
 		return self::$items[ $kind ][ $id ] ?? null; }
+	/**
+	 * All for Registry.
+	 *
+	 * @param mixed $kind Kind.
+	 */
 	public static function all( $kind ) {
 		return self::$items[ $kind ] ?? array(); }
+	/**
+	 * Manifest for Registry.
+	 */
 	public static function manifest() {
 		$result = array();
 		foreach ( self::$items as $kind => $items ) {

@@ -8,12 +8,28 @@ namespace OhMyLMS\Engagement;
 
 /** Calendar policy has no WordPress dependencies and never uses 86400-second days. */
 final class StreakCalendar {
+	/**
+	 * Next for Streak calendar.
+	 *
+	 * @param mixed $date Date.
+	 */
 	public static function next( $date ) {
 		return ( new \DateTimeImmutable( $date, new \DateTimeZone( 'UTC' ) ) )->modify( '+1 day' )->format( 'Y-m-d' ); }
+	/**
+	 * Date for Streak calendar.
+	 *
+	 * @param mixed $utc Utc.
+	 * @param mixed $timezone Timezone.
+	 */
 	public static function date( $utc, $timezone ) {
 		return ( new \DateTimeImmutable( $utc, new \DateTimeZone( 'UTC' ) ) )->setTimezone( new \DateTimeZone( $timezone ) )->format( 'Y-m-d' ); }
 
-	/** Close only past dates. Today's pending activity cannot break a streak. */
+	/** Close only past dates. Today's pending activity cannot break a streak.
+	 *
+	 * @param array $state State.
+	 * @param mixed $today Today.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function reconcile( array $state, $today, array $settings ) {
 		$days             = array();
 		$state['freezes'] = $settings['freezes'] ? min( $state['freezes'], $settings['maximum_freezes'] ) : 0;
@@ -33,6 +49,13 @@ final class StreakCalendar {
 		return array( $state, $days );
 	}
 
+	/**
+	 * Practice for Streak calendar.
+	 *
+	 * @param array $state State.
+	 * @param mixed $date Date.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function practice( array $state, $date, array $settings ) {
 		if ( $state['cursor_date'] && $date <= $state['cursor_date'] ) {
 			return array( $state, false ); }
@@ -49,6 +72,11 @@ final class StreakCalendar {
 		return array( $state, true );
 	}
 
+	/**
+	 * Meaningful for Streak calendar.
+	 *
+	 * @param mixed $answer Answer.
+	 */
 	public static function meaningful( $answer ) {
 		if ( is_array( $answer ) ) {
 			foreach ( $answer as $part ) {
@@ -57,6 +85,6 @@ final class StreakCalendar {
 			}
 			return false;
 		}
-		return is_scalar( $answer ) && ( is_numeric( $answer ) || is_bool( $answer ) || trim( strip_tags( (string) $answer ) ) !== '' );
+		return is_scalar( $answer ) && ( is_numeric( $answer ) || is_bool( $answer ) || trim( wp_strip_all_tags( (string) $answer ) ) !== '' );
 	}
 }

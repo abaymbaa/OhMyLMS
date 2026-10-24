@@ -11,9 +11,17 @@ namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Engagement\Achievements;
 
+/**
+ * Plugin badge implementation.
+ */
 class Badge {
 
 
+	/**
+	 * Get badges for Badge.
+	 *
+	 * @param mixed $include_streak Include streak.
+	 */
 	public static function get_badges( $include_streak = null ) {
 		$include_streak = null === $include_streak ? StreakSettings::enabled() : $include_streak;
 		return array_merge( (array) get_option( 'ohmylms_badges', array() ), $include_streak ? StreakSettings::badges() : array() );
@@ -41,25 +49,13 @@ class Badge {
 
 	/**
 	 * Helper to compare values with a sign
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $compare_sign Comparesign.
+	 * @param mixed $compare_data Comparedata.
 	 */
-	private static function compare_with_sign( $value, $compareSign, $compareData ) {
-		switch ( $compareSign ) {
-			case '>=':
-				return $value >= $compareData;
-			case '<=':
-				return $value <= $compareData;
-			case '>':
-				return $value > $compareData;
-			case '<':
-				return $value < $compareData;
-			case '!=':
-				return $value != $compareData;
-			case '==':
-			case '=':
-				return $value == $compareData;
-			default:
-				return false;
-		}
+	private static function compare_with_sign( $value, $compare_sign, $compare_data ) {
+		return Rules::compare( $value, $compare_sign, $compare_data );
 	}
 
 	/**
@@ -67,6 +63,7 @@ class Badge {
 	 *
 	 * @return bool
 	 * @since 1.0.0
+	 * @param mixed $user_id User identifier.
 	 */
 	public static function maybe_met_rules( $user_id = null ) {
 		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
@@ -84,9 +81,14 @@ class Badge {
 	/**
 	 * Add badge to a user.
 	 *
-	 * @param int    $user_id
-	 * @param int    $points
-	 * @param string $reason
+	 * @param int    $user_id User identifier.
+	 * @param mixed  $type Type.
+	 * @param mixed  $badge_id Badge identifier.
+	 * @param string $reason Reason.
+	 * @param mixed  $course_id Course identifier.
+	 * @param mixed  $membership_id Membership identifier.
+	 * @param mixed  $content_id Content identifier.
+	 * @param bool   $streak Streak.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -136,15 +138,16 @@ class Badge {
 
 		// Query to get unique badge IDs for the user.
 		$query = $wpdb->prepare(
-			"
+			'
             SELECT DISTINCT badge_id 
-            FROM {$table_name}
+            FROM %i
             WHERE user_id = %d
                 AND badge_id IS NOT NULL
                 AND type = %s
                 AND status = %s
             ORDER BY badge_id ASC
-            ",
+            ',
+			$table_name,
 			$user_id,
 			'badge',
 			'active'

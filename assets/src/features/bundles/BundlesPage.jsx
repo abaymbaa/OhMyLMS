@@ -101,7 +101,7 @@ export function BundlesPage() {
 			say(
 				'success',
 				sprintf(
-					/* translators: %s: course bundle or member title. */ __(
+					/* translators: %s: item label. */ __(
 						'Created “%s”. Add courses or syllabuses, then publish it.',
 						'ohmylms'
 					),
@@ -282,7 +282,7 @@ export function BundlesPage() {
 										</span>
 										<span className="ohmylms-cur-counts">
 											{ sprintf(
-												/* translators: %d: number of bundle members. */ _n(
+												/* translators: %d: item count. */ _n(
 													'%d member',
 													'%d members',
 													bundle.member_count,
@@ -291,7 +291,7 @@ export function BundlesPage() {
 												bundle.member_count
 											) }
 											{ bundle.follower_count > 0
-												? ` · ${ sprintf( /* translators: %d: number of followers. */ _n( '%d follower', '%d followers', bundle.follower_count, 'ohmylms' ), bundle.follower_count ) }`
+												? ` · ${ sprintf( /* translators: %d: item count. */ _n( '%d follower', '%d followers', bundle.follower_count, 'ohmylms' ), bundle.follower_count ) }`
 												: '' }
 										</span>
 										<span className="ohmylms-cur-actions">
@@ -307,18 +307,14 @@ export function BundlesPage() {
 												aria-label={
 													editing
 														? sprintf(
-																/* translators: %s: course bundle or member title. */
-																/* translators: %s: course bundle or member title. */
-																__(
+																/* translators: %s: item label. */ __(
 																	'Close editor for %s',
 																	'ohmylms'
 																),
 																bundle.title
 															)
 														: sprintf(
-																/* translators: %s: course bundle or member title. */
-																/* translators: %s: course bundle or member title. */
-																__(
+																/* translators: %s: item label. */ __(
 																	'Edit %s',
 																	'ohmylms'
 																),

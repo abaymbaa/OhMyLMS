@@ -17,7 +17,13 @@ defined( 'ABSPATH' ) || exit;
  * expressions are rejected rather than guessed. Only finite values are ever accepted.
  */
 final class NumericAnswer {
-	/** @return float|null null for blank or invalid input */
+	/**
+	 * Parse for Numeric answer.
+	 *
+	 * @return float|null null for blank or invalid input
+	 * @param mixed $input Input.
+	 * @param bool  $allow_fractions Allow fractions.
+	 */
 	public static function parse( $input, $allow_fractions = true ) {
 		if ( is_array( $input ) ) {
 			$input = reset( $input ); }
@@ -34,7 +40,7 @@ final class NumericAnswer {
 		}
 		if ( $allow_fractions && preg_match( '/^([+-]?)(?:(\d+)\s+)?(\d+)\s*\/\s*(\d+)$/', $text, $match ) ) {
 			$denominator = (float) $match[4];
-			if ( 0.0 == $denominator ) {
+			if ( 0.0 === $denominator ) {
 				return null; }
 			$value = (float) ( '' !== $match[2] ? $match[2] : 0 ) + (float) $match[3] / $denominator;
 			$value = '-' === $match[1] ? -$value : $value;
@@ -46,7 +52,10 @@ final class NumericAnswer {
 	/**
 	 * Is $value within tolerance of $expected?
 	 *
-	 * @param string $type 'absolute' (|v - e| <= t) or 'relative' (|v - e| <= t * |e|)
+	 * @param mixed  $value Value to process.
+	 * @param mixed  $expected Expected.
+	 * @param mixed  $tolerance Tolerance.
+	 * @param string $type 'absolute' (|v - e| <= t) or 'relative' (|v - e| <= t * |e|).
 	 */
 	public static function matches( $value, $expected, $tolerance = 0.0, $type = 'absolute' ) {
 		if ( null === $value || ! is_numeric( $expected ) || ! is_finite( (float) $expected ) ) {
@@ -59,7 +68,11 @@ final class NumericAnswer {
 		return $difference <= $limit + $epsilon;
 	}
 
-	/** Grade against settings: answer (or answers[]), tolerance, tolerance_type, allow_fractions. */
+	/** Grade against settings: answer (or answers[]), tolerance, tolerance_type, allow_fractions.
+	 *
+	 * @param mixed $input Input.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function grade( $input, array $settings ) {
 		$value    = self::parse( $input, ! isset( $settings['allow_fractions'] ) || ! empty( $settings['allow_fractions'] ) );
 		$accepted = isset( $settings['answers'] ) && is_array( $settings['answers'] ) ? $settings['answers'] : array( $settings['answer'] ?? null );

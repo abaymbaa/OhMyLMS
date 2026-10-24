@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createEmailPersonalization( readRuntime ) {
@@ -55,11 +56,12 @@ export function createEmailPersonalization( readRuntime ) {
 											case 2:
 												_eLocal2.p = 2;
 												_tLocal2 = _eLocal2.v;
-												console.error( _tLocal2 );
+												showRequestError( _tLocal2 );
 												a(
 													'error',
 													'Failed to update. Please try again.'
-												); // Falls through to the shared async state cleanup.
+												);
+											// Falls through to the shared async state cleanup.
 											case 3:
 												return _eLocal2.a( 2 );
 										}
@@ -112,7 +114,7 @@ export function createEmailPersonalization( readRuntime ) {
 							( _tLocal5 = ( function ( _eLocal6 ) {
 								var _tLocal6 = ( function ( _eLocal7 ) {
 									if (
-										'object' != b4( _eLocal7 ) ||
+										'object' !== b4( _eLocal7 ) ||
 										! _eLocal7
 									) {
 										return _eLocal7;
@@ -124,7 +126,7 @@ export function createEmailPersonalization( readRuntime ) {
 											_eLocal7,
 											'string'
 										);
-										if ( 'object' != b4( _nLocal4 ) ) {
+										if ( 'object' !== b4( _nLocal4 ) ) {
 											return _nLocal4;
 										}
 										throw new TypeError(
@@ -133,7 +135,7 @@ export function createEmailPersonalization( readRuntime ) {
 									}
 									return String( _eLocal7 );
 								} )( _eLocal6 );
-								return 'symbol' == b4( _tLocal6 )
+								return 'symbol' === b4( _tLocal6 )
 									? _tLocal6
 									: _tLocal6 + '';
 							} )( _tLocal5 ) ) in _eLocal5

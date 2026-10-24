@@ -115,7 +115,10 @@ export function createReorderEditor( readRuntime ) {
 										localStorage.getItem(
 											'draggedItemIndex'
 										);
-									if ( null !== _aLocal3 && _aLocal3 != r ) {
+									if (
+										null !== _aLocal3 &&
+										String( _aLocal3 ) !== String( r )
+									) {
 										var i = Qd( options ),
 											_lLocal2 = Jd(
 												i.splice( _aLocal3, 1 ),

@@ -24,6 +24,9 @@ defined( 'ABSPATH' ) || exit;
  * question skill maps. Profile "skills" on student accounts are unrelated.
  */
 class SkillController extends RestController {
+	/**
+	 * Register routes for Skill controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -124,14 +127,27 @@ class SkillController extends RestController {
 		return rest_ensure_response( \OhMyLMS\Skills\Translations::preview( $request['locale'], $request['source'] ) );
 	}
 
+	/**
+	 * Author permission for Skill controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function author_permission( $request = null ) {
 		if ( ! Schema::ready() ) {
 			return new WP_Error( 'ohmylms_skills_unavailable', __( 'Skills are not installed yet.', 'ohmylms' ), array( 'status' => 503 ) ); }
 		return AccessPolicy::check( AccessPolicy::can_author() );
 	}
+	/**
+	 * Admin permission for Skill controller.
+	 */
 	public function admin_permission() {
 		return AccessPolicy::check( current_user_can( 'manage_options' ) );
 	}
+	/**
+	 * Question permission for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function question_permission( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		if ( get_post_type( $id ) !== OHMYLMS_QUESTION_CPT ) {
@@ -139,6 +155,11 @@ class SkillController extends RestController {
 		return AccessPolicy::check( $request->get_method() === 'GET' ? AccessPolicy::can_use_question( $id ) : AccessPolicy::can_edit_question( $id ) );
 	}
 
+	/**
+	 * Index for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function index( WP_REST_Request $request ) {
 		$terms  = get_terms(
 			array(
@@ -157,11 +178,21 @@ class SkillController extends RestController {
 		return rest_ensure_response( array( 'skills' => $skills ) );
 	}
 
+	/**
+	 * Show for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		$skill = Taxonomy::describe( (int) $request['id'] );
 		return $skill ? rest_ensure_response( $skill ) : new WP_Error( 'ohmylms_skill_missing', __( 'Skill not found.', 'ohmylms' ), array( 'status' => 404 ) );
 	}
 
+	/**
+	 * Create for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create( WP_REST_Request $request ) {
 		$name = sanitize_text_field( (string) $request['name'] );
 		if ( '' === $name ) {
@@ -191,6 +222,11 @@ class SkillController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Update for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		if ( ! term_exists( $id, Taxonomy::NAME ) ) {
@@ -218,6 +254,12 @@ class SkillController extends RestController {
 		return rest_ensure_response( Taxonomy::describe( $id ) );
 	}
 
+	/**
+	 * Apply meta for Skill controller.
+	 *
+	 * @param mixed           $id Id.
+	 * @param WP_REST_Request $request REST request.
+	 */
 	private function apply_meta( $id, WP_REST_Request $request ) {
 		if ( isset( $request['objective'] ) ) {
 			$objective = \OhMyLMS\Skills\Objectives::normalize( $request['objective'] );
@@ -254,15 +296,18 @@ class SkillController extends RestController {
 		return true;
 	}
 
-	/** Skills with recorded evidence are kept; a skill in use can only be removed by an administrator with force. */
+	/** Skills with recorded evidence are kept; a skill in use can only be removed by an administrator with force.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function delete( WP_REST_Request $request ) {
 		global $wpdb;
 		$id = (int) $request['id'];
-		if ( \OhMyLMS\Learning\Schema::ready() && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . \OhMyLMS\Learning\Schema::table( 'outcomes' ) . ' WHERE term_id=%d LIMIT 1', $id ) ) ) {
+		if ( \OhMyLMS\Learning\Schema::ready() && $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE term_id=%d LIMIT 1', \OhMyLMS\Learning\Schema::table( 'outcomes' ), $id ) ) ) {
 			return new WP_Error( 'ohmylms_skill_required', __( 'Published learning programs reference this skill. Keep it for learner history.', 'ohmylms' ), array( 'status' => 409 ) );
 		}
-		$evidence = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'skill_evidence' ) . ' WHERE term_id=%d', $id ) );
-		$mapped   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'qb_version_skills' ) . ' WHERE term_id=%d', $id ) );
+		$evidence = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE term_id=%d', Schema::table( 'skill_evidence' ), $id ) );
+		$mapped   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE term_id=%d', Schema::table( 'qb_version_skills' ), $id ) );
 		if ( ( $evidence || $mapped ) && ! rest_sanitize_boolean( $request['force'] ) ) {
 			return new WP_Error(
 				'ohmylms_skill_in_use',
@@ -293,7 +338,10 @@ class SkillController extends RestController {
 		);
 	}
 
-	/** Replace the set of lessons or courses linked to a skill (only posts the user may edit change). */
+	/** Replace the set of lessons or courses linked to a skill (only posts the user may edit change).
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function link_posts( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		if ( ! term_exists( $id, Taxonomy::NAME ) ) {
@@ -315,7 +363,10 @@ class SkillController extends RestController {
 		return rest_ensure_response( Taxonomy::describe( $id ) );
 	}
 
-	/** Lessons or courses the author may link: search results, or titles for known IDs. */
+	/** Lessons or courses the author may link: search results, or titles for known IDs.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function link_targets( WP_REST_Request $request ) {
 		$post_type = 'course' === $request['type'] ? OHMYLMS_COURSE_CPT : OHMYLMS_LESSON_CPT;
 		$ids       = array_filter( array_map( 'intval', explode( ',', (string) $request['include'] ) ) );
@@ -342,11 +393,19 @@ class SkillController extends RestController {
 			return rest_ensure_response( $rows );
 	}
 
+	/**
+	 * Question skills for Skill controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function question_skills( WP_REST_Request $request ) {
 		return rest_ensure_response( array( 'skill_map' => SkillMap::current( (int) $request['id'] ) ) );
 	}
 
-	/** Save the question's part-level skill map through the versioning writer. */
+	/** Save the question's part-level skill map through the versioning writer.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save_question_skills( WP_REST_Request $request ) {
 		$saved = DraftWriter::save(
 			array(

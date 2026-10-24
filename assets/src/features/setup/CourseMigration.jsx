@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseMigration( readRuntime ) {
@@ -170,7 +171,7 @@ export function createCourseMigration( readRuntime ) {
 											case 4:
 												_eLocal3.p = 4;
 												_nLocal2 = _eLocal3.v;
-												console.error(
+												showRequestError(
 													'Failed to fetch courses',
 													_nLocal2
 												);
@@ -263,7 +264,7 @@ export function createCourseMigration( readRuntime ) {
 											return (
 												( _eLocal6.p = 4 ),
 												( _rLocal2 = _eLocal6.v ),
-												console.error(
+												showRequestError(
 													'Error creating certificate:',
 													_rLocal2
 												),
@@ -341,7 +342,7 @@ export function createCourseMigration( readRuntime ) {
 										case 3:
 											_eLocal9.p = 3;
 											_iLocal = _eLocal9.v;
-											console.error(
+											showRequestError(
 												'Error importing sample course:',
 												_iLocal
 											);
@@ -589,7 +590,7 @@ export function createCourseMigration( readRuntime ) {
 										case 4:
 											_eLocal1.p = 4;
 											_Local = _eLocal1.v;
-											console.error(
+											showRequestError(
 												'Error saving setup wizard data:',
 												_Local
 											);
@@ -678,7 +679,7 @@ export function createCourseMigration( readRuntime ) {
 										case 6:
 											_eLocal11.p = 6;
 											_oLocal3 = _eLocal11.v;
-											console.error(
+											showRequestError(
 												'Failed to migrate course '.concat(
 													_rLocal3,
 													':'
@@ -767,9 +768,9 @@ export function createCourseMigration( readRuntime ) {
 				<Gte
 					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' ==
+						'experienced' ===
 							( a === null || a === void 0 ? void 0 : a.level ) ||
-						'intermediate' ==
+						'intermediate' ===
 							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0
@@ -1370,9 +1371,9 @@ export function createCourseMigration( readRuntime ) {
 				<Gte
 					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' ==
+						'experienced' ===
 							( a === null || a === void 0 ? void 0 : a.level ) ||
-						'intermediate' ==
+						'intermediate' ===
 							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0

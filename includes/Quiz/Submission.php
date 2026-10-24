@@ -28,6 +28,12 @@ use OhMyLMS\Utility\Transaction;
  * (no attempt context) finish on the legacy path with their original semantics.
  */
 final class Submission {
+	/**
+	 * Access for Submission.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public static function access( $quiz_id, $student_id ) {
 		if ( ! $student_id || get_post_type( $quiz_id ) !== 'ohmylms-quiz' ) {
 			return new \WP_Error( 'quiz_access', 'Quiz access denied.', array( 'status' => 403 ) );
@@ -41,15 +47,32 @@ final class Submission {
 		}
 		return $course_id;
 	}
+	/**
+	 * Lock for Submission.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $student_id Student identifier.
+	 */
 	private static function lock( $quiz_id, $student_id ) {
 		global $wpdb;
 		$key = 'ohmylms-quiz-' . md5( $wpdb->prefix . ':' . $quiz_id . ':' . $student_id );
 		return (string) $wpdb->get_var( $wpdb->prepare( 'SELECT GET_LOCK(%s, 3)', $key ) ) === '1' ? $key : false;
 	}
+	/**
+	 * Unlock for Submission.
+	 *
+	 * @param mixed $key Lookup key.
+	 */
 	private static function unlock( $key ) {
 		global $wpdb;
 		$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $key ) );
 	}
+	/**
+	 * Start for Submission.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public static function start( $quiz_id, $student_id ) {
 		global $wpdb;
 		$course_id = self::access( $quiz_id, $student_id );
@@ -144,6 +167,15 @@ final class Submission {
 			}
 		}
 	}
+	/**
+	 * Submit for Submission.
+	 *
+	 * @param mixed  $quiz_id Quiz identifier.
+	 * @param mixed  $attempt_id Attempt identifier.
+	 * @param mixed  $student_id Student identifier.
+	 * @param array  $answers Answers.
+	 * @param string $reason Reason.
+	 */
 	public static function submit( $quiz_id, $attempt_id, $student_id, array $answers, $reason = 'submit' ) {
 		global $wpdb;
 		$course_id = self::access( $quiz_id, $student_id );
@@ -169,7 +201,12 @@ final class Submission {
 		return self::after_commit( $attempt, $course_id, $graded );
 	}
 
-	/** Original engine for attempts started before versioning (unchanged semantics). */
+	/** Original engine for attempts started before versioning (unchanged semantics).
+	 *
+	 * @param array $attempt Attempt.
+	 * @param array $answers Answers.
+	 * @param mixed $reason Reason.
+	 */
 	private static function grade_legacy( array $attempt, array $answers, $reason ) {
 		global $wpdb;
 		$quiz_id    = (int) $attempt['quiz_id'];
@@ -181,7 +218,7 @@ final class Submission {
 		$quiz       = ohmylms_get_quiz( $quiz_id );
 		$questions  = $quiz->get_questions();
 		$duration   = (int) $quiz->get_timer() * 60;
-		$expired    = $duration > 0 && current_time( 'timestamp' ) >= strtotime( $attempt['start_date'] ) + $duration;
+		$expired    = 0 < $duration && current_time( 'timestamp' ) >= strtotime( $attempt['start_date'] ) + $duration;
 		if ( 'timeout' === $reason && ! $expired ) {
 			return new \WP_Error( 'quiz_timer', 'The attempt has not reached its deadline.', array( 'status' => 400 ) );
 		}
@@ -273,7 +310,14 @@ final class Submission {
 		);
 	}
 
-	/** Versioned engine: grade only the frozen items issued at start. */
+	/** Versioned engine: grade only the frozen items issued at start.
+	 *
+	 * @param array $attempt Attempt.
+	 * @param array $context Context.
+	 * @param array $answers Answers.
+	 * @param mixed $reason Reason.
+	 * @param mixed $now Now.
+	 */
 	private static function grade_versioned( array $attempt, array $context, array $answers, $reason, $now = null ) {
 		global $wpdb;
 		$quiz_id     = (int) $attempt['quiz_id'];
@@ -408,7 +452,7 @@ final class Submission {
 										'awarded'     => round( $part_max * $part_fraction, 4 ),
 										'max_marks'   => $part_max,
 										'fraction'    => $part_fraction,
-										'correct'     => $part_fraction >= 1 ? 1 : 0,
+										'correct'     => 1 <= $part_fraction ? 1 : 0,
 										'grader'      => 'auto',
 										'reason'      => $late ? 'deadline' : 'submitted',
 									)
@@ -474,7 +518,12 @@ final class Submission {
 		);
 	}
 
-	/** Hooks, completion and course progress after the attempt is committed. */
+	/** Hooks, completion and course progress after the attempt is committed.
+	 *
+	 * @param array $attempt Attempt.
+	 * @param mixed $course_id Course identifier.
+	 * @param array $graded Graded.
+	 */
 	private static function after_commit( array $attempt, $course_id, array $graded ) {
 		global $wpdb;
 		$quiz_id    = (int) $attempt['quiz_id'];
@@ -521,6 +570,8 @@ final class Submission {
 	/**
 	 * Finalize an expired versioned attempt that nobody submitted (closed browser).
 	 * Grades only server-received responses. Runs without a current user.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
 	 */
 	public static function finalize_expired( $attempt_id ) {
 		global $wpdb;

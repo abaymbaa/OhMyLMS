@@ -28,8 +28,18 @@ final class Placement {
 	const ITEM_PREFIX   = 'c';
 	const BUNDLE_PREFIX = 'b';
 
+	/**
+	 * Item slug for Placement.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function item_slug( $id ) {
 		return self::ITEM_PREFIX . (int) $id; }
+	/**
+	 * Bundle slug for Placement.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function bundle_slug( $id ) {
 		return self::BUNDLE_PREFIX . (int) $id; }
 
@@ -38,11 +48,18 @@ final class Placement {
 		do_action( 'ohmylms_curriculum_changed' );
 	}
 
+	/**
+	 * Ready for Placement.
+	 */
 	private static function ready() {
 		return Schema::ready();
 	}
 
-	/** IDs from filter slugs of one kind ('item' or 'bundle'); anything else is ignored. */
+	/** IDs from filter slugs of one kind ('item' or 'bundle'); anything else is ignored.
+	 *
+	 * @param mixed $slugs Slugs.
+	 * @param mixed $kind Kind.
+	 */
 	public static function ids_from_slugs( $slugs, $kind ) {
 		$prefix = 'bundle' === $kind ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
 		$ids    = array();
@@ -57,6 +74,9 @@ final class Placement {
 	 * IDs from a shortcode, block or widget value such as "12, c14" (numbers, or the c<id> / t<id>
 	 * slug of that kind). A value that is set but names nothing valid yields [0] so a mistyped list
 	 * shows no courses instead of silently showing all of them.
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $kind Kind.
 	 */
 	public static function ids_from_list( $value, $kind ) {
 		$prefix = 'bundle' === $kind ? self::BUNDLE_PREFIX : self::ITEM_PREFIX;
@@ -72,7 +92,12 @@ final class Placement {
 
 	// ---- Reading a course's placement ------------------------------------------------------
 
-	/** @return int[] Curriculum items the course is directly linked to. */
+	/**
+	 * Item ids for Placement.
+	 *
+	 * @return int[] Curriculum items the course is directly linked to.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function item_ids( $course_id ) {
 		global $wpdb;
 		if ( ! self::ready() ) {
@@ -80,7 +105,10 @@ final class Placement {
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT item_id FROM ' . Links::table() . " WHERE object_type='course' AND object_id=%d ORDER BY item_id", (int) $course_id ) ) );
 	}
 
-	/** Linked curriculum items with their ancestry, for display. */
+	/** Linked curriculum items with their ancestry, for display.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function items( $course_id ) {
 		$rows = array();
 		foreach ( self::item_ids( $course_id ) as $id ) {
@@ -100,7 +128,12 @@ final class Placement {
 		return $rows;
 	}
 
-	/** @return int[] Bundles the course is a direct member of. */
+	/**
+	 * Bundle ids for Placement.
+	 *
+	 * @return int[] Bundles the course is a direct member of.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function bundle_ids( $course_id ) {
 		global $wpdb;
 		if ( ! self::ready() ) {
@@ -108,6 +141,11 @@ final class Placement {
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT bundle_id FROM ' . Bundles::members_table() . " WHERE item_type='course' AND item_id=%d ORDER BY bundle_id", (int) $course_id ) ) );
 	}
 
+	/**
+	 * Bundles for Placement.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function bundles( $course_id ) {
 		$rows = array();
 		foreach ( self::bundle_ids( $course_id ) as $id ) {
@@ -125,7 +163,11 @@ final class Placement {
 
 	// ---- Which courses are under items or bundles -------------------------------------------
 
-	/** Courses linked to the given items, and by default to everything beneath them. */
+	/** Courses linked to the given items, and by default to everything beneath them.
+	 *
+	 * @param array $item_ids Item ids.
+	 * @param bool  $descendants Descendants.
+	 */
 	public static function course_ids_for_items( array $item_ids, $descendants = true ) {
 		$item_ids = array_values( array_unique( array_filter( array_map( 'intval', $item_ids ) ) ) );
 		if ( ! $item_ids || ! self::ready() ) {
@@ -139,7 +181,10 @@ final class Placement {
 		return Links::object_ids( $all, 'course' );
 	}
 
-	/** Courses a bundle refers to: direct course members plus courses linked under its curriculum members. */
+	/** Courses a bundle refers to: direct course members plus courses linked under its curriculum members.
+	 *
+	 * @param array $bundle_ids Bundle ids.
+	 */
 	public static function course_ids_for_bundles( array $bundle_ids ) {
 		global $wpdb;
 		$bundle_ids = array_values( array_unique( array_filter( array_map( 'intval', $bundle_ids ) ) ) );
@@ -157,7 +202,11 @@ final class Placement {
 		return array_values( array_unique( array_merge( $courses, self::course_ids_for_items( $items ) ) ) );
 	}
 
-	/** Course IDs matching filter slugs of one kind: the union of everything selected. */
+	/** Course IDs matching filter slugs of one kind: the union of everything selected.
+	 *
+	 * @param mixed $slugs Slugs.
+	 * @param mixed $kind Kind.
+	 */
 	public static function course_ids_for_slugs( $slugs, $kind ) {
 		$ids = self::ids_from_slugs( $slugs, $kind );
 		return 'bundle' === $kind ? self::course_ids_for_bundles( $ids ) : self::course_ids_for_items( $ids );
@@ -167,6 +216,10 @@ final class Placement {
 	 * Narrow WP_Query arguments to courses matching curriculum and bundle filters. Selections in one
 	 * group are alternatives; the two groups must both match. A selection that matches nothing
 	 * yields no courses rather than silently showing everything.
+	 *
+	 * @param array $args Operation arguments.
+	 * @param array $item_ids Item ids.
+	 * @param array $bundle_ids Bundle ids.
 	 */
 	public static function narrow_query( array $args, array $item_ids = array(), array $bundle_ids = array() ) {
 		$sets = array();
@@ -187,7 +240,10 @@ final class Placement {
 
 	// ---- Public lists (only what has published courses) ------------------------------------
 
-	/** @return array<int,int[]> item id => ids of published courses linked to it directly. */
+	/**
+	 * Published links for Placement.
+	 *
+	 * @return array<int,int[]> item id => ids of published courses linked to it directly. */
 	private static function published_links() {
 		global $wpdb;
 		$map = array();
@@ -246,6 +302,9 @@ final class Placement {
 	/**
 	 * A course's curriculum items, or with $bundles its published Course Bundles, as {id,name,slug} for
 	 * course cards and learner-facing dashboards.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param bool  $bundles Bundles.
 	 */
 	public static function card_terms( $course_id, $bundles = false ) {
 		$terms = array();
@@ -269,7 +328,10 @@ final class Placement {
 		return $terms;
 	}
 
-	/** @return array<int,array<int,array{id:int,title:string}>> item id => published courses linked to it directly, by title. */
+	/**
+	 * Published courses by item for Placement.
+	 *
+	 * @return array<int,array<int,array{id:int,title:string}>> item id => published courses linked to it directly, by title. */
 	public static function published_courses_by_item() {
 		global $wpdb;
 		$map = array();
@@ -369,7 +431,10 @@ final class Placement {
 		return $result;
 	}
 
-	/** Bundles shaped like course tag terms. */
+	/** Bundles shaped like course tag terms.
+	 *
+	 * @param string $search Search.
+	 */
 	public static function term_bundles( $search = '' ) {
 		if ( ! self::ready() ) {
 			return array(); }
@@ -399,12 +464,21 @@ final class Placement {
 
 	// ---- Changing a course's placement -----------------------------------------------------
 
+	/**
+	 * Valid course for Placement.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function valid_course( $course_id ) {
 		$status = get_post_status( (int) $course_id );
 		return get_post_type( (int) $course_id ) === OHMYLMS_COURSE_CPT && $status && ! in_array( $status, array( 'trash', 'auto-draft' ), true );
 	}
 
-	/** Replace the curriculum items a course is linked to. @return true|\WP_Error */
+	/** Replace the curriculum items a course is linked to. @return true|\WP_Error
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $item_ids Item ids.
+	 */
 	public static function set_items( $course_id, array $item_ids ) {
 		if ( ! self::ready() ) {
 			return Access::error( 'ohmylms_curriculum_unavailable', __( 'Curriculum storage is not installed yet.', 'ohmylms' ), 503 ); }
@@ -431,6 +505,8 @@ final class Placement {
 	 * administrators. A published bundle cannot be left with no members.
 	 *
 	 * @return true|\WP_Error
+	 * @param mixed $course_id Course identifier.
+	 * @param array $bundle_ids Bundle ids.
 	 */
 	public static function set_bundles( $course_id, array $bundle_ids ) {
 		if ( ! self::ready() ) {
@@ -456,7 +532,11 @@ final class Placement {
 		return true;
 	}
 
-	/** Give a duplicate the same curriculum placement as its original. Bundle membership is not copied. */
+	/** Give a duplicate the same curriculum placement as its original. Bundle membership is not copied.
+	 *
+	 * @param mixed $from_course From course.
+	 * @param mixed $to_course To course.
+	 */
 	public static function copy_items( $from_course, $to_course ) {
 		if ( ! self::ready() ) {
 			return; }
@@ -466,6 +546,9 @@ final class Placement {
 
 	// ---- Importing (other LMS plugins, export files) ---------------------------------------
 
+	/**
+	 * Ensure ready for Placement.
+	 */
 	private static function ensure_ready() {
 		return self::ready() || Schema::install();
 	}
@@ -474,6 +557,9 @@ final class Placement {
 	 * Link an imported course to curriculum items, creating any that are missing. Each path lists names
 	 * from the top level down, for example `['Science', 'Physics']`. Existing items with the same name
 	 * and parent are reused, so repeated imports do not duplicate structure.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $paths Paths.
 	 */
 	public static function import_categories( $course_id, array $paths ) {
 		if ( ! self::ensure_ready() ) {
@@ -485,7 +571,10 @@ final class Placement {
 		}
 	}
 
-	/** Create top-level curriculum items for these names where they do not exist yet (setup wizard). */
+	/** Create top-level curriculum items for these names where they do not exist yet (setup wizard).
+	 *
+	 * @param array $names Names.
+	 */
 	public static function ensure_items( array $names ) {
 		if ( ! self::ensure_ready() ) {
 			return; }
@@ -493,7 +582,10 @@ final class Placement {
 			self::ensure_path( array( $name ) ); }
 	}
 
-	/** The item at the end of a path of names, creating missing items on the way. 0 when nothing valid was given. */
+	/** The item at the end of a path of names, creating missing items on the way. 0 when nothing valid was given.
+	 *
+	 * @param array $path Path.
+	 */
 	private static function ensure_path( array $path ) {
 		global $wpdb;
 		$parent = 0;
@@ -516,7 +608,10 @@ final class Placement {
 		return $parent;
 	}
 
-	/** Names from the top level down for a term of another plugin's hierarchical taxonomy, e.g. ['Science', 'Physics']. */
+	/** Names from the top level down for a term of another plugin's hierarchical taxonomy, e.g. ['Science', 'Physics'].
+	 *
+	 * @param mixed $term Term.
+	 */
 	public static function term_path( $term ) {
 		$path   = array( $term->name );
 		$parent = (int) $term->parent;
@@ -529,7 +624,11 @@ final class Placement {
 		}
 		return $path;
 	}
-	/** Add an imported course to the bundles with these titles, creating draft bundles that do not exist yet. */
+	/** Add an imported course to the bundles with these titles, creating draft bundles that do not exist yet.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $titles Titles.
+	 */
 	public static function import_tags( $course_id, array $titles ) {
 		if ( ! self::ensure_ready() ) {
 			return; }

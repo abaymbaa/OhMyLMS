@@ -13,12 +13,15 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code profile implementation.
+ */
 class ShortCodeProfile {
 
 	/**
 	 * Render the profile
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	public static function output( $atts ) {
@@ -41,7 +44,7 @@ class ShortCodeProfile {
 	/**
 	 * Display profile content
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function profile( $atts ) {
@@ -135,7 +138,7 @@ class ShortCodeProfile {
 		$student = new Student( get_current_user_id() );
 
 		// Check current view mode.
-		$current_view = isset( $_GET['view'] ) ? sanitize_text_field( $_GET['view'] ) : 'profile';
+		$current_view = isset( $_GET['view'] ) ? sanitize_text_field( wp_unslash( $_GET['view'] )) : 'profile';
 		$is_edit_mode = isset( $_GET['edit'] ) && 'true' === $_GET['edit'];
 
 		// Generate custom styles.
@@ -213,7 +216,7 @@ class ShortCodeProfile {
 	/**
 	 * Render custom navigation for shortcode
 	 *
-	 * @param string $current_view Current view
+	 * @param string $current_view Current view.
 	 * @since 1.0.0
 	 */
 	private static function render_navigation( $current_view ) {
@@ -407,7 +410,7 @@ class ShortCodeProfile {
 	/**
 	 * Generate custom styles based on shortcode attributes
 	 *
-	 * @param array $args Shortcode attributes
+	 * @param array $args Shortcode attributes.
 	 * @since 1.2.5
 	 */
 	private static function generate_custom_styles( $args ) {

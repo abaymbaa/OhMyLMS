@@ -1,6 +1,7 @@
 import {
 	createElement,
 	Fragment,
+	useCallback,
 	useEffect,
 	useState,
 } from '@wordpress/element';
@@ -172,13 +173,16 @@ function StudentSkills( { student, courseId, unitId, onClose } ) {
 			.catch( ( cause ) => setError( cause.message ) )
 			.finally( () => setWriting( false ) );
 	};
-	const load = () =>
-		loadStudentSkills( student.id, courseId, undefined, unitId )
-			.then( setData )
-			.catch( ( cause ) => setError( cause.message ) );
+	const load = useCallback(
+		() =>
+			loadStudentSkills( student.id, courseId, undefined, unitId )
+				.then( setData )
+				.catch( ( cause ) => setError( cause.message ) ),
+		[ student.id, courseId, unitId ]
+	);
 	useEffect( () => {
 		load();
-	}, [ student.id, unitId ] );
+	}, [ load ] );
 	return (
 		<Modal title={ student.name } onRequestClose={ onClose } size="large">
 			{ error && (

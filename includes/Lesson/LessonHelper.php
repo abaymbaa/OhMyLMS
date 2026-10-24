@@ -19,8 +19,8 @@ class LessonHelper {
 	/**
 	 * Add lesson
 	 *
-	 * @param $title
-	 * @param $content
+	 * @param mixed $title Title.
+	 * @param mixed $content Content.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -79,8 +79,8 @@ class LessonHelper {
 	/**
 	 * Update lesson
 	 *
-	 * @param mixed $post_id
-	 * @param array $map_data
+	 * @param mixed $post_id Post identifier.
+	 * @param array $map_data Map data.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -138,8 +138,8 @@ class LessonHelper {
 	/**
 	 * Save lesson
 	 *
-	 * @param mixed $post_id
-	 * @param array $lesson_data
+	 * @param mixed $post_id Post identifier.
+	 * @param array $lesson_data Lesson data.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -206,7 +206,7 @@ class LessonHelper {
 	/**
 	 * Get lesson content
 	 *
-	 * @param $post_id
+	 * @param mixed $post_id Post identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -245,7 +245,7 @@ class LessonHelper {
 	/**
 	 * Delete lesson
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Post identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */

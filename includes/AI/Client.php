@@ -21,7 +21,12 @@ defined( 'ABSPATH' ) || exit;
  * to show, never the key or the raw response.
  */
 final class Client {
-	/** @return Provider|null */
+	/**
+	 * Provider for Client.
+	 *
+	 * @return Provider|null
+	 * @param mixed $name Name.
+	 */
 	public static function provider( $name ) {
 		$providers = apply_filters(
 			'ohmylms_ai_providers',
@@ -35,9 +40,11 @@ final class Client {
 	}
 
 	/**
+	 * Complete.
+	 *
 	 * @param array $request [ 'system' => string, 'user' => string, 'max_tokens' => int (optional),
 	 *                        'long' => bool (optional: an administrator tool that needs a longer reply and
-	 *                        more time than learner help; up to 6000 tokens and 120 seconds) ]
+	 *                        more time than learner help; up to 6000 tokens and 120 seconds) ].
 	 * @return array{text:string,input_tokens:int,output_tokens:int}|\WP_Error
 	 */
 	public static function complete( array $request ) {

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createSetupPreferences( readRuntime ) {
@@ -109,7 +110,7 @@ export function createSetupPreferences( readRuntime ) {
 											return (
 												( _eLocal2.p = 4 ),
 												( _rLocal = _eLocal2.v ),
-												console.error(
+												showRequestError(
 													'Error creating certificate:',
 													_rLocal
 												),
@@ -186,7 +187,7 @@ export function createSetupPreferences( readRuntime ) {
 										case 3:
 											_eLocal5.p = 3;
 											_oLocal = _eLocal5.v;
-											console.error(
+											showRequestError(
 												'Error importing sample course:',
 												_oLocal
 											);
@@ -389,7 +390,7 @@ export function createSetupPreferences( readRuntime ) {
 										case 4:
 											_eLocal7.p = 4;
 											_mLocal = _eLocal7.v;
-											console.error(
+											showRequestError(
 												'Error saving setup wizard data:',
 												_mLocal
 											);
@@ -493,7 +494,7 @@ export function createSetupPreferences( readRuntime ) {
 										case 3:
 											_eLocal9.p = 3;
 											_aLocal3 = _eLocal9.v;
-											console.error(
+											showRequestError(
 												'Error saving setup wizard data:',
 												_aLocal3
 											);
@@ -536,9 +537,11 @@ export function createSetupPreferences( readRuntime ) {
 											O()
 										 );
 									case 2:
-										x( ! 1 ); // Falls through to the shared async state cleanup.
+										x( ! 1 );
+									// Falls through to the shared async state cleanup.
 									case 3:
-										F(); // Falls through to the shared async state cleanup.
+										F();
+									// Falls through to the shared async state cleanup.
 									case 4:
 										return _eLocal1.a( 2 );
 								}
@@ -592,7 +595,8 @@ export function createSetupPreferences( readRuntime ) {
 										if ( 'beginner' === _.level ) {
 											k();
 										}
-										F(); // Falls through to the shared async state cleanup.
+										F();
+									// Falls through to the shared async state cleanup.
 									case 2:
 										return _eLocal13.a( 2 );
 								}
@@ -760,11 +764,11 @@ export function createSetupPreferences( readRuntime ) {
 					<Gte
 						level={ _ === null || _ === void 0 ? void 0 : _.level }
 						currentStep={
-							'experienced' ==
+							'experienced' ===
 								( _ === null || _ === void 0
 									? void 0
 									: _.level ) ||
-							'intermediate' ==
+							'intermediate' ===
 								( _ === null || _ === void 0
 									? void 0
 									: _.level )

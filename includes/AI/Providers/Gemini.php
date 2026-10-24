@@ -14,6 +14,13 @@ defined( 'ABSPATH' ) || exit;
  * never appears in access logs. Thinking models share the token budget with the visible reply.
  */
 final class Gemini implements Provider {
+	/**
+	 * Request for Gemini.
+	 *
+	 * @param array $settings Configuration settings.
+	 * @param mixed $key Lookup key.
+	 * @param array $request REST request.
+	 */
 	public function request( array $settings, $key, array $request ) {
 		return array(
 			'url'     => 'https://generativelanguage.googleapis.com/v1beta/models/' . rawurlencode( $settings['model'] ) . ':generateContent',
@@ -34,6 +41,12 @@ final class Gemini implements Provider {
 		);
 	}
 
+	/**
+	 * Parse for Gemini.
+	 *
+	 * @param array $decoded Decoded.
+	 * @param mixed $status Status.
+	 */
 	public function parse( array $decoded, $status ) {
 		if ( $status >= 400 || ! empty( $decoded['error'] ) ) {
 			return Errors::from_status( $status, (string) ( $decoded['error']['message'] ?? '' ) ); }

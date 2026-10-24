@@ -33,6 +33,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Class GoogleAuthService
  */
 class GoogleAuthService {
+	/**
+	 * Link user id.
+	 *
+	 * @var mixed
+	 */
 	private static $link_user_id = 0;
 
 	const OPTION_KEY        = 'ohmylms_google_oauth';
@@ -313,7 +318,7 @@ class GoogleAuthService {
 	 * returning user, so this is the only place a Google login writes name,
 	 * email, or avatar data.
 	 *
-	 * @param string $email   Verified email address.
+	 * @param string $email Verified email address.
 	 * @param array  $profile Google userinfo payload.
 	 * @return WP_User|WP_Error
 	 */

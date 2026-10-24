@@ -24,6 +24,9 @@ defined( 'ABSPATH' ) || exit;
  * Nothing is stored.
  */
 class TemplateController extends RestController {
+	/**
+	 * Register routes for Template controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -38,10 +41,18 @@ class TemplateController extends RestController {
 		);
 	}
 
+	/**
+	 * Permission for Template controller.
+	 */
 	public function permission() {
 		return current_user_can( 'edit_posts' ) ? true : new WP_Error( 'ohmylms_rest_forbidden', __( 'You cannot author questions.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
 	}
 
+	/**
+	 * Preview for Template controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function preview( WP_REST_Request $request ) {
 		$settings = is_array( $request['settings'] ) ? $request['settings'] : array();
 		$options  = is_array( $request['questions'] ) ? array_values( array_filter( $request['questions'], 'is_array' ) ) : array();

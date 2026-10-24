@@ -29,12 +29,20 @@ final class Schema {
 	const VERSION = '9';
 	const OPTION  = 'ohmylms_curriculum_schema';
 
+	/**
+	 * Table for Schema.
+	 *
+	 * @param mixed $name Name.
+	 */
 	public static function table( $name ) {
 		global $wpdb;
 		return $wpdb->prefix . 'ohmylms_' . $name;
 	}
 
-	/** @return array<string,string> table => column definitions (id/primary key are added). */
+	/**
+	 * Definitions for Schema.
+	 *
+	 * @return array<string,string> table => column definitions (id/primary key are added). */
 	public static function definitions() {
 		return array(
 			// Any depth: a row points at its parent (0 = root) and carries its order among siblings.
@@ -68,10 +76,16 @@ final class Schema {
 		);
 	}
 
+	/**
+	 * Ready for Schema.
+	 */
 	public static function ready() {
 		return get_option( self::OPTION ) === self::VERSION;
 	}
 
+	/**
+	 * Install for Schema.
+	 */
 	public static function install() {
 		if ( self::ready() ) {
 			return true; }
@@ -87,7 +101,7 @@ final class Schema {
 				return false; }
 		}
 		// Items typed "syllabus" before the flag existed are syllabuses. Safe to repeat: it only sets the flag.
-		$wpdb->query( 'UPDATE ' . self::table( 'curriculum_items' ) . " SET is_syllabus=1 WHERE item_type='syllabus' AND is_syllabus=0" );
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i SET is_syllabus=1 WHERE item_type=\'syllabus\' AND is_syllabus=0', self::table( 'curriculum_items' ) ) );
 		update_option( self::OPTION, self::VERSION, false );
 		do_action( 'ohmylms_curriculum_schema_installed', self::VERSION );
 		return true;
@@ -115,9 +129,9 @@ final class Schema {
 				continue; }
 			if ( $exists( $new ) ) {
 				// An empty new table can only have been created by an earlier partial install.
-				if ( (int) $wpdb->get_var( "SELECT COUNT(*) FROM $new" ) > 0 ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				if ( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $new ) ) > 0 ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 					return false; }
-				$wpdb->query( "DROP TABLE $new" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( $wpdb->prepare( 'DROP TABLE %i', $new ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 			$wpdb->query( "RENAME TABLE $old TO $new" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			if ( ! $exists( $new ) ) {
@@ -128,15 +142,15 @@ final class Schema {
 			$table = self::table( $name );
 			if ( ! $exists( $table ) ) {
 				continue; }
-			if ( $wpdb->get_var( "SHOW COLUMNS FROM $table LIKE 'track_id'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$wpdb->query( "ALTER TABLE $table CHANGE track_id bundle_id bigint unsigned NOT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( $wpdb->get_var( $wpdb->prepare( 'SHOW COLUMNS FROM %i LIKE %s', $table, $wpdb->esc_like( 'track_id' ) ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i CHANGE track_id bundle_id bigint unsigned NOT NULL', $table ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 			}
 		}
 		$items = self::table( 'bundle_items' );
-		if ( $exists( $items ) && $wpdb->get_var( "SHOW INDEX FROM $items WHERE Key_name = 'track_position'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			$wpdb->query( "ALTER TABLE $items DROP INDEX track_position" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-			if ( ! $wpdb->get_var( "SHOW INDEX FROM $items WHERE Key_name = 'bundle_position'" ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-				$wpdb->query( "ALTER TABLE $items ADD INDEX bundle_position (bundle_id,position)" ); } // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		if ( $exists( $items ) && $wpdb->get_var( $wpdb->prepare( 'SHOW INDEX FROM %i WHERE Key_name = \'track_position\'', $items ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i DROP INDEX track_position', $items ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+			if ( ! $wpdb->get_var( $wpdb->prepare( 'SHOW INDEX FROM %i WHERE Key_name = \'bundle_position\'', $items ) ) ) { // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+				$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD INDEX bundle_position (bundle_id,position)', $items ) ); } // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		}
 		// Membership plans stored their Course Bundle rule under the old meta key.
 		$wpdb->update( $wpdb->postmeta, array( 'meta_key' => '_course_bundles' ), array( 'meta_key' => '_course_tracks' ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key

@@ -13,6 +13,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Wires the question bank, versioned assessment, skills and practice services. */
 final class Bootstrap {
+	/**
+	 * Init for Bootstrap.
+	 */
 	public static function init() {
 		PreviewPlayer::init();
 		ResponseMedia::init();

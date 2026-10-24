@@ -33,7 +33,7 @@ final class DraftWriter {
 	/**
 	 * Validate and save one question.
 	 *
-	 * @param array|\WP_REST_Request $data    Question payload.
+	 * @param array|\WP_REST_Request $data Question payload.
 	 * @param int                    $quiz_id Quiz to place the question in (0 keeps placement unchanged).
 	 * @return array|\WP_Error ['id'=>int,'created'=>bool]
 	 */
@@ -59,6 +59,8 @@ final class DraftWriter {
 	 *
 	 * @return array|\WP_Error List of ['id','created'] in input order, or an error whose
 	 *                         data.errors lists each failing child by index.
+	 * @param array $items Items.
+	 * @param mixed $quiz_id Quiz identifier.
 	 */
 	public static function save_many( array $items, $quiz_id ) {
 		$quiz_id = (int) $quiz_id;
@@ -78,7 +80,11 @@ final class DraftWriter {
 		}
 	}
 
-	/** Validate a batch without writing; returns plans or an aggregate WP_Error. */
+	/** Validate a batch without writing; returns plans or an aggregate WP_Error.
+	 *
+	 * @param array $items Items.
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	public static function prepare_many( array $items, $quiz_id ) {
 		$plans  = array();
 		$errors = array();
@@ -124,7 +130,11 @@ final class DraftWriter {
 		return $plans;
 	}
 
-	/** Normalize, authorize and validate one payload. No writes. */
+	/** Normalize, authorize and validate one payload. No writes.
+	 *
+	 * @param array $data Input data.
+	 * @param int   $quiz_id Quiz identifier.
+	 */
 	public static function prepare( array $data, $quiz_id = 0 ) {
 		$id = isset( $data['id'] ) && '' !== $data['id'] ? (int) $data['id'] : 0;
 		if ( $id && get_post_type( $id ) !== OHMYLMS_QUESTION_CPT ) {
@@ -179,7 +189,8 @@ final class DraftWriter {
 		foreach ( array( 'name', 'description', 'slug' ) as $field ) {
 			if ( isset( $data[ $field ] ) ) {
 				if ( ! is_scalar( $data[ $field ] ) ) {
-					return self::invalid( sprintf( __( '%s must be text.', 'ohmylms' ), $field ) ); }
+					return self::invalid( sprintf( /* translators: %s: text value. */
+					__( '%s must be text.', 'ohmylms' ), $field ) ); }
 				$value                    = (string) $data[ $field ];
 				$plan['fields'][ $field ] = 'slug' === $field ? sanitize_title( $value ) : ( $unfiltered ? $value : wp_kses_post( $value ) );
 			}
@@ -192,7 +203,8 @@ final class DraftWriter {
 				return self::invalid( __( 'Question settings must be an object.', 'ohmylms' ) ); }
 			$type = (string) ( $data['settings']['type'] ?? '' );
 			if ( '' !== $type && ! Registry::get( 'question', $type ) ) {
-				return new \WP_Error( 'ohmylms_question_type_missing', sprintf( __( 'Question type "%s" is not available. Enable its extension before saving.', 'ohmylms' ), $type ), array( 'status' => 400 ) );
+				return new \WP_Error( 'ohmylms_question_type_missing', sprintf( /* translators: %s: text value. */
+				__( 'Question type "%s" is not available. Enable its extension before saving.', 'ohmylms' ), $type ), array( 'status' => 400 ) );
 			}
 			$probe = new Question();
 			$probe->set_settings( $data['settings'] );
@@ -205,7 +217,8 @@ final class DraftWriter {
 		foreach ( array( 'thumbnail_id', 'video_id' ) as $field ) {
 			if ( isset( $data[ $field ] ) ) {
 				if ( '' !== $data[ $field ] && ! is_numeric( $data[ $field ] ) ) {
-					return self::invalid( sprintf( __( '%s must be a media ID.', 'ohmylms' ), $field ) ); }
+					return self::invalid( sprintf( /* translators: %s: text value. */
+					__( '%s must be a media ID.', 'ohmylms' ), $field ) ); }
 				$plan['fields'][ $field ] = '' === $data[ $field ] ? '' : (int) $data[ $field ];
 			}
 		}
@@ -234,7 +247,11 @@ final class DraftWriter {
 		return $plan;
 	}
 
-	/** Option rows must belong to the question they are saved with. */
+	/** Option rows must belong to the question they are saved with.
+	 *
+	 * @param mixed $options Operation options.
+	 * @param mixed $question_id Question identifier.
+	 */
 	private static function prepare_options( $options, $question_id ) {
 		if ( null === $options || '' === $options ) {
 			return null; }
@@ -244,7 +261,7 @@ final class DraftWriter {
 		if ( ! $options ) {
 			return null; }
 		global $wpdb;
-		$owned      = $question_id ? array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_question_answers WHERE question_id=%d", $question_id ) ) ) : array();
+		$owned      = $question_id ? array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE question_id=%d', $wpdb->prefix . 'ohmylms_question_answers', $question_id ) ) ) : array();
 		$owned      = array_flip( $owned );
 		$clean      = array();
 		$seen       = array();
@@ -287,7 +304,11 @@ final class DraftWriter {
 		return $clean;
 	}
 
-	/** Would this payload change the stored question? Used for read-only (shared) reuse. */
+	/** Would this payload change the stored question? Used for read-only (shared) reuse.
+	 *
+	 * @param array $data Input data.
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function changes_content( array $data, $question_id ) {
 		$question = ohmylms_get_question( (int) $question_id );
 		if ( ! $question ) {
@@ -321,6 +342,11 @@ final class DraftWriter {
 		return isset( $data['bank'] ) && ! empty( $data['bank'] );
 	}
 
+	/**
+	 * Canonical for Draft writer.
+	 *
+	 * @param array $value Value to process.
+	 */
 	private static function canonical( array $value ) {
 		ksort( $value );
 		foreach ( $value as $key => $item ) {
@@ -333,7 +359,11 @@ final class DraftWriter {
 		return $value;
 	}
 
-	/** Apply a validated plan. Throws on any storage failure so the transaction rolls back. */
+	/** Apply a validated plan. Throws on any storage failure so the transaction rolls back.
+	 *
+	 * @param array $plan Plan.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function write( array $plan ) {
 		if ( ! empty( $plan['readonly'] ) ) {
 			self::link( $plan['quiz_id'], $plan['id'], $plan['order_number'] );
@@ -378,12 +408,17 @@ final class DraftWriter {
 		);
 	}
 
-	/** Synchronize a question's option rows; every update is scoped to the owning question. */
+	/** Synchronize a question's option rows; every update is scoped to the owning question.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 * @param array $options Operation options.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function write_options( $question_id, array $options ) {
 		global $wpdb;
 		$answers  = $wpdb->prefix . 'ohmylms_question_answers';
 		$meta     = $wpdb->prefix . 'ohmylms_question_answermeta';
-		$existing = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT id FROM $answers WHERE question_id=%d", $question_id ) ) );
+		$existing = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE question_id=%d', $answers, $question_id ) ) );
 		$kept     = array();
 		foreach ( $options as $option ) {
 			$row = array(
@@ -415,7 +450,7 @@ final class DraftWriter {
 			$kept[] = $option_id;
 			foreach ( $option['meta'] as $meta_key => $value ) {
 				$stored = maybe_serialize( $value );
-				$found  = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $meta WHERE answer_id=%d AND meta_key=%s", $option_id, $meta_key ) );
+				$found  = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE answer_id=%d AND meta_key=%s', $meta, $option_id, $meta_key ) );
 				$ok     = $found
 					? $wpdb->update( $meta, array( 'meta_value' => $stored ), array( 'id' => (int) $found ), array( '%s' ), array( '%d' ) )
 					: $wpdb->insert(
@@ -445,18 +480,24 @@ final class DraftWriter {
 		}
 	}
 
-	/** Place a question in a quiz (or update its position). */
+	/** Place a question in a quiz (or update its position).
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $question_id Question identifier.
+	 * @param mixed $order_number Order number.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function link( $quiz_id, $question_id, $order_number = null ) {
 		global $wpdb;
 		$table    = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
-		$existing = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE quiz_id=%d AND question_id=%d LIMIT 1", $quiz_id, $question_id ) );
+		$existing = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE quiz_id=%d AND question_id=%d LIMIT 1', $table, $quiz_id, $question_id ) );
 		if ( $existing ) {
 			if ( null !== $order_number && $wpdb->update( $table, array( 'order_number' => (int) $order_number ), array( 'id' => (int) $existing ), array( '%d' ), array( '%d' ) ) === false ) {
 				throw new \RuntimeException( 'Link update failed' ); }
 			return;
 		}
 		if ( null === $order_number ) {
-			$order_number = 1 + (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(order_number) FROM $table WHERE quiz_id=%d", $quiz_id ) );
+			$order_number = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(order_number) FROM %i WHERE quiz_id=%d', $table, $quiz_id ) );
 		}
 		if ( ! $wpdb->insert(
 			$table,
@@ -471,12 +512,22 @@ final class DraftWriter {
 		do_action( 'ohmylms_quiz_question_relationship_created', $quiz_id, $question_id );
 	}
 
+	/**
+	 * Payload for Draft writer.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	private static function payload( $data ) {
 		if ( $data instanceof \WP_REST_Request ) {
 			return $data->get_params(); }
 		return is_array( $data ) ? $data : array();
 	}
 
+	/**
+	 * Invalid for Draft writer.
+	 *
+	 * @param mixed $message Message.
+	 */
 	private static function invalid( $message ) {
 		return new \WP_Error( 'ohmylms_question_invalid', $message, array( 'status' => 400 ) );
 	}

@@ -74,7 +74,7 @@ export function createMatchingResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == _tLocal2
+													Number( _tLocal2 ) === 0
 														? '0'
 														: '16px 0 0'
 												}
@@ -256,7 +256,11 @@ export function createMatchingResult( readRuntime ) {
 												}
 												return _rLocal2.find(
 													function ( _eLocal ) {
-														return _eLocal.id == u;
+														return (
+															String(
+																_eLocal.id
+															) === String( u )
+														);
 													}
 												);
 											} )();
@@ -266,7 +270,7 @@ export function createMatchingResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == _tLocal4
+													Number( _tLocal4 ) === 0
 														? '0'
 														: '16px 0 0'
 												}
@@ -459,7 +463,7 @@ export function createMatchingResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == _tLocal6
+													Number( _tLocal6 ) === 0
 														? '0'
 														: '16px 0 0'
 												}

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseStudentsReport( readRuntime ) {
@@ -163,7 +164,7 @@ export function createCourseStudentsReport( readRuntime ) {
 								<div
 									className={ 'course-status-wrapper '
 										.concat(
-											'100' == e
+											Number( e ) === 100
 												? 'status-completed'
 												: 'status-in-progress',
 											' '
@@ -175,7 +176,7 @@ export function createCourseStudentsReport( readRuntime ) {
 										) }
 								>
 									<kt.A>
-										{ '100' == e
+										{ Number( e ) === 100
 											? ( 0, I18n.__ )( 'Yes', 'ohmylms' )
 											: ( 0, I18n.__ )(
 													'No',
@@ -246,10 +247,11 @@ export function createCourseStudentsReport( readRuntime ) {
 									);
 								} }
 								disabled={
-									100 ==
-									( _tLocal4 === null || _tLocal4 === void 0
-										? void 0
-										: _tLocal4.completion_rate )
+									Number(
+										_tLocal4 === null || _tLocal4 === void 0
+											? void 0
+											: _tLocal4.completion_rate
+									) === 100
 								}
 								variant={ 'secondary' }
 							>
@@ -504,7 +506,7 @@ export function createCourseStudentsReport( readRuntime ) {
 										case 3:
 											_eLocal4.p = 3;
 											_cLocal = _eLocal4.v;
-											console.error(
+											showRequestError(
 												'Error fetching data:',
 												_cLocal
 											);

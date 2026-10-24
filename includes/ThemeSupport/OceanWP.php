@@ -16,10 +16,18 @@ defined( 'ABSPATH' ) || exit;
 class OceanWP {
 
 
+	/**
+	 * Init for Ocean wp.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles for Ocean wp.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-oceanwp.css' ),

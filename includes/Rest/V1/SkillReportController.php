@@ -34,6 +34,9 @@ defined( 'ABSPATH' ) || exit;
  * overrides never become skill evidence.
  */
 class SkillReportController extends RestController {
+	/**
+	 * Register routes for Skill report controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -185,22 +188,30 @@ class SkillReportController extends RestController {
 		);
 	}
 
-	/** Learners in the requested scope, or WP_Error. */
+	/** Learners in the requested scope, or WP_Error.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	private function scope_students( WP_REST_Request $request ) {
 		global $wpdb;
 		if ( (int) $request['class_id'] ) {
 			if ( ! class_exists( Access::class ) || ! Access::classroom( (int) $request['class_id'] ) ) {
 				return new WP_Error( 'ohmylms_forbidden', __( 'You cannot view this class.', 'ohmylms' ), array( 'status' => 403 ) ); }
-			return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM {$wpdb->prefix}ohmylms_class_memberships WHERE class_id=%d AND role='student' AND status='active'", (int) $request['class_id'] ) ) );
+			return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT user_id FROM %i WHERE class_id=%d AND role=\'student\' AND status=\'active\'', $wpdb->prefix . 'ohmylms_class_memberships', (int) $request['class_id'] ) ) );
 		}
 		$course = (int) $request['course_id'];
 		if ( ! $course || get_post_type( $course ) !== OHMYLMS_COURSE_CPT ) {
 			return new WP_Error( 'ohmylms_scope_required', __( 'Choose a course or class.', 'ohmylms' ), array( 'status' => 400 ) ); }
 		if ( ! current_user_can( 'edit_post', $course ) ) {
 			return new WP_Error( 'ohmylms_forbidden', __( 'You cannot view this course.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) ); }
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT user_id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id=%d AND status='enrolled'", $course ) ) );
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT user_id FROM %i WHERE course_id=%d AND status=\'enrolled\'', $wpdb->prefix . 'ohmylms_user_enrollment', $course ) ) );
 	}
 
+	/**
+	 * Scope permission for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function scope_permission( WP_REST_Request $request ) {
 		if ( ! Schema::ready() ) {
 			return new WP_Error( 'ohmylms_reports_unavailable', __( 'Reports are not installed yet.', 'ohmylms' ), array( 'status' => 503 ) ); }
@@ -208,6 +219,11 @@ class SkillReportController extends RestController {
 		return is_wp_error( $students ) ? $students : true;
 	}
 
+	/**
+	 * Student permission for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function student_permission( WP_REST_Request $request ) {
 		$access = $this->student_access( $request );
 		return is_wp_error( $access ) ? $access : true;
@@ -216,6 +232,8 @@ class SkillReportController extends RestController {
 	/**
 	 * How the viewer reaches this learner: 'full' (the learner, an administrator or a
 	 * teacher/course scope) or 'guardian' (summary and suggestions only, no answer log).
+	 *
+	 * @param WP_REST_Request $request REST request.
 	 */
 	private function student_access( WP_REST_Request $request ) {
 		if ( ! Schema::ready() ) {
@@ -241,6 +259,11 @@ class SkillReportController extends RestController {
 		return in_array( $student, $students, true ) ? 'full' : new WP_Error( 'ohmylms_forbidden', __( 'This learner is not in your scope.', 'ohmylms' ), array( 'status' => 403 ) );
 	}
 
+	/**
+	 * Matrix for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function matrix( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		$students = $this->scope_students( $request );
@@ -283,7 +306,7 @@ class SkillReportController extends RestController {
 	 * published course. Only unit names are added; it never widens what the viewer may see.
 	 *
 	 * @param WP_REST_Request $request Report request.
-	 * @param array           $skills  Evidence::summary rows.
+	 * @param array           $skills Evidence::summary rows.
 	 * @return array|WP_Error
 	 */
 	private function unit_view( WP_REST_Request $request, array $skills ) {
@@ -318,6 +341,11 @@ class SkillReportController extends RestController {
 		);
 	}
 
+	/**
+	 * Student for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function student( WP_REST_Request $request ) {
 		global $wpdb;
 		$student = (int) $request['student'];
@@ -339,7 +367,8 @@ class SkillReportController extends RestController {
 		$evidence = $wpdb->get_results(
 			$wpdb->prepare(
 				'SELECT e.term_id, e.part_id, e.role, e.awarded, e.available, e.independent, e.first_try, e.difficulty, e.source_type, e.source_id, e.question_id, e.version_id, e.evidence_at, e.superseded
-             FROM ' . Schema::table( 'skill_evidence' ) . ' e WHERE e.student_id=%d ORDER BY e.evidence_at DESC, e.id DESC LIMIT 200',
+             FROM %i e WHERE e.student_id=%d ORDER BY e.evidence_at DESC, e.id DESC LIMIT 200',
+				Schema::table( 'skill_evidence' ),
 				$student
 			),
 			ARRAY_A
@@ -379,6 +408,11 @@ class SkillReportController extends RestController {
 		return rest_ensure_response( HelpNow::for_students( $students ) );
 	}
 
+	/**
+	 * Own permission for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function own_permission( WP_REST_Request $request ) {
 		if ( ! is_user_logged_in() ) {
 			return new WP_Error( 'ohmylms_forbidden', __( 'Sign in to set your exam.', 'ohmylms' ), array( 'status' => rest_authorization_required_code() ) );
@@ -423,6 +457,11 @@ class SkillReportController extends RestController {
 		return rest_ensure_response( array( 'target' => null ) );
 	}
 
+	/**
+	 * Guidance for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function guidance( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		return rest_ensure_response( Snapshot::guidance( (int) $request['student'], (int) $request['limit'], (string) $request['subject'] ) );
@@ -450,7 +489,10 @@ class SkillReportController extends RestController {
 		return rest_ensure_response( \OhMyLMS\Placement\Placement::results( (int) $request['student'] ) );
 	}
 
-	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only. */
+	/** Learners write about themselves; staff with full access to a learner write about them. Guardians get the summary only.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function insight_permission( WP_REST_Request $request ) {
 		$access = $this->student_access( $request );
 		if ( is_wp_error( $access ) ) {
@@ -461,13 +503,21 @@ class SkillReportController extends RestController {
 		return true;
 	}
 
-	/** An AI-written note about the learner's skills; the levels themselves never come from it. */
+	/** An AI-written note about the learner's skills; the levels themselves never come from it.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function insight( WP_REST_Request $request ) {
 		Evidence::process( 100 );
 		$note = Insights::note( (int) $request['student'], (string) $request['audience'], get_current_user_id() );
 		return is_wp_error( $note ) ? $note : rest_ensure_response( $note );
 	}
 
+	/**
+	 * Rebuild for Skill report controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function rebuild( WP_REST_Request $request ) {
 		return rest_ensure_response(
 			array(

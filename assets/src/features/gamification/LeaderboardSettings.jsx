@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { FeatureSwitch } from './FeatureSwitch';
@@ -81,7 +82,7 @@ export function createLeaderboardSettings( readRuntime ) {
 									case 3:
 										_tLocal3.p = 3;
 										_rLocal = _tLocal3.v;
-										console.error( _rLocal );
+										showRequestError( _rLocal );
 									// Falls through to the shared async state cleanup.
 									case 4:
 										return (

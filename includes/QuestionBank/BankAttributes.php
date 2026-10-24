@@ -20,6 +20,12 @@ defined( 'ABSPATH' ) || exit;
 final class BankAttributes {
 	const DIFFICULTIES = array( 'easy', 'standard', 'challenge' );
 
+	/**
+	 * Prepare for Bank attributes.
+	 *
+	 * @param mixed $bank Bank.
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function prepare( $bank, $question_id ) {
 		if ( ! is_array( $bank ) ) {
 			return new \WP_Error( 'ohmylms_bank_invalid', __( 'Bank attributes must be an object.', 'ohmylms' ), array( 'status' => 400 ) ); }
@@ -44,6 +50,13 @@ final class BankAttributes {
 		return $clean;
 	}
 
+	/**
+	 * Write for Bank attributes.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 * @param array $attributes Attributes.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function write( $question_id, array $attributes ) {
 		global $wpdb;
 		if ( ! $attributes ) {
@@ -54,6 +67,11 @@ final class BankAttributes {
 		}
 	}
 
+	/**
+	 * Get for Bank attributes.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function get( $question_id ) {
 		$identity = VersionPublisher::identity( $question_id, false );
 		if ( ! $identity ) {

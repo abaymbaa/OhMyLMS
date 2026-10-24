@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createAssignmentGrading( readRuntime ) {
@@ -112,7 +113,7 @@ export function createAssignmentGrading( readRuntime ) {
 										case 3:
 											_eLocal6.p = 3;
 											_aLocal = _eLocal6.v;
-											console.error( _aLocal );
+											showRequestError( _aLocal );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
@@ -221,7 +222,7 @@ export function createAssignmentGrading( readRuntime ) {
 										case 2:
 											_tLocal4.p = 2;
 											_dLocal = _tLocal4.v;
-											console.error( _dLocal );
+											showRequestError( _dLocal );
 											e.showNotification(
 												( 0, I18n.__ )(
 													'Something went wrong',

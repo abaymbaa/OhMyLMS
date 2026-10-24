@@ -10,9 +10,19 @@ defined( 'ABSPATH' ) || exit;
 
 /** Public frontend module contract. Admin editors and server-side graders remain separate. */
 final class Interactivity {
-	const API_VERSION        = 1;
+	const API_VERSION = 1;
+	/**
+	 * Rendered.
+	 *
+	 * @var mixed
+	 */
 	private static $rendered = array();
 
+	/**
+	 * Once for Interactivity.
+	 *
+	 * @param mixed $component Component.
+	 */
 	public static function once( $component ) {
 		if ( isset( self::$rendered[ $component ] ) ) {
 			return false;
@@ -21,12 +31,18 @@ final class Interactivity {
 		return true;
 	}
 
+	/**
+	 * Init for Interactivity.
+	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register' ), 5 );
 		add_filter( 'script_loader_src', array( __CLASS__, 'legacy_url' ), 30 );
 		add_filter( 'ohmylms_template_html', array( __CLASS__, 'disclosures' ), 10, 2 );
 	}
 
+	/**
+	 * Register for Interactivity.
+	 */
 	public static function register() {
 		foreach ( array(
 			'interactivity' => 'sdk',
@@ -62,7 +78,10 @@ final class Interactivity {
 		do_action( 'ohmylms_register_interactivity_modules', self::API_VERSION );
 	}
 
-	/** Call while rendering any custom template/shortcode, including after wp_head. */
+	/** Call while rendering any custom template/shortcode, including after wp_head.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function enqueue( $id ) {
 		wp_enqueue_style(
 			'ohmylms-interactivity',
@@ -82,7 +101,10 @@ final class Interactivity {
 		}
 	}
 
-	/** Keep original compiled assets as provenance; execute the maintained frontend source. */
+	/** Keep original compiled assets as provenance; execute the maintained frontend source.
+	 *
+	 * @param mixed $url Url.
+	 */
 	public static function legacy_url( $url ) {
 		$base = plugins_url( '/', OHMYLMS_FILE );
 		$path = strtok( substr( $url, strlen( $base ) ), '?' );
@@ -93,7 +115,11 @@ final class Interactivity {
 		return $url;
 	}
 
-	/** Accessible accordions and mobile table details, including custom template overrides. */
+	/** Accessible accordions and mobile table details, including custom template overrides.
+	 *
+	 * @param mixed $html Html.
+	 * @param mixed $template Template.
+	 */
 	public static function disclosures( $html, $template ) {
 		if ( strpos( $template, 'emails/' ) === 0 || strpos( $template, 'quiz-loop/' ) !== false || 'single-lesson/quiz-form.php' === $template ) {
 			return $html;
@@ -132,7 +158,11 @@ final class Interactivity {
 		return $tags->get_updated_html();
 	}
 
-	/** Add directives without changing existing question renderers or answer field names. */
+	/** Add directives without changing existing question renderers or answer field names.
+	 *
+	 * @param mixed $html Html.
+	 * @param array $context Context.
+	 */
 	public static function quiz( $html, array $context ) {
 		self::enqueue( 'ohmylms/quiz' );
 		$context = apply_filters( 'ohmylms_quiz_interactivity_context', $context, self::API_VERSION );

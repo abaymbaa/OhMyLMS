@@ -1,7 +1,13 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Engagement;
 
+/**
+ * Plugin streak settings implementation.
+ */
 final class StreakSettings {
+	/**
+	 * Defaults for Streak settings.
+	 */
 	public static function defaults() {
 		return array(
 			'enable'           => false,
@@ -33,11 +39,19 @@ final class StreakSettings {
 		);
 	}
 
+	/**
+	 * Get for Streak settings.
+	 */
 	public static function get() {
 		$settings = self::validate( array_replace( self::defaults(), (array) get_option( 'ohmylms_streak_settings', array() ) ) );
 		return is_wp_error( $settings ) ? self::defaults() : $settings;
 	}
 
+	/**
+	 * Validate for Streak settings.
+	 *
+	 * @param mixed $settings Configuration settings.
+	 */
 	public static function validate( $settings ) {
 		$fail = static function () {
 			return new \WP_Error( 'streak_settings', __( 'Invalid streak settings.', 'ohmylms' ), array( 'status' => 400 ) );
@@ -82,15 +96,24 @@ final class StreakSettings {
 		return array_intersect_key( $settings, self::defaults() );
 	}
 
+	/**
+	 * Enabled for Streak settings.
+	 */
 	public static function enabled() {
 		return ! empty( self::get()['enable'] ); }
 
+	/**
+	 * Badges for Streak settings.
+	 */
 	public static function badges() {
 		$badges = array();
 		foreach ( array( 7, 30, 100 ) as $days ) {
 			$badges[] = array(
 				'slug'        => 'streak-' . $days,
-				'name'        => sprintf( __( '%d-day learning streak', 'ohmylms' ), $days ),
+				'name'        => sprintf( /* translators: %d: number. */
+					__( '%d-day learning streak', 'ohmylms' ),
+					$days
+				),
 				'description' => __( 'Qualifying learning days in one streak.', 'ohmylms' ),
 				'image'       => plugins_url( 'assets/images/streak-badge.svg', OHMYLMS_FILE ),
 				'color'       => '#365dbe',

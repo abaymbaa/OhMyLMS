@@ -1,7 +1,8 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement, useId } from '@wordpress/element';
 export function createTaxSettings( readRuntime ) {
-	return function TaxSettings( props ) {
+	return function TaxSettings() {
 		const _controlId = useId();
 		const {
 			D1,
@@ -171,7 +172,7 @@ export function createTaxSettings( readRuntime ) {
 										case 2:
 											_eLocal.p = 2;
 											_aLocal3 = _eLocal.v;
-											console.error(
+											showRequestError(
 												'Error fetching tax data:',
 												_aLocal3
 											);
@@ -1119,17 +1120,19 @@ export function createTaxSettings( readRuntime ) {
 																					{
 																						( ( _tLocal0 =
 																							e.country ),
-																						( _nLocal4 =
-																							w.find(
-																								function (
-																									_eLocal9
-																								) {
-																									return (
-																										_eLocal9.value ===
-																										_tLocal0
-																									);
-																								}
-																							) )
+																						Boolean(
+																							( _nLocal4 =
+																								w.find(
+																									function (
+																										_eLocal9
+																									) {
+																										return (
+																											_eLocal9.value ===
+																											_tLocal0
+																										);
+																									}
+																								) )
+																						)
 																							? _nLocal4.label
 																							: _tLocal0 )
 																					}
@@ -1137,35 +1140,35 @@ export function createTaxSettings( readRuntime ) {
 																				<div>
 																					{ ( function (
 																						_eLocal0,
-																						t
+																						_tValue
 																					) {
-																						var n =
+																						var _nValue =
 																							E[
 																								_eLocal0
 																							];
 																						if (
-																							! n ||
-																							! t
+																							! _nValue ||
+																							! _tValue
 																						) {
 																							return (
-																								t ||
+																								_tValue ||
 																								'——'
 																							);
 																						}
 																						var _rLocal4 =
-																							n.find(
+																							_nValue.find(
 																								function (
 																									_eLocal1
 																								) {
 																									return (
 																										_eLocal1.value ===
-																										t
+																										_tValue
 																									);
 																								}
 																							);
 																						return _rLocal4
 																							? _rLocal4.label
-																							: t;
+																							: _tValue;
 																					} )(
 																						e.country,
 																						e.state
@@ -1213,20 +1216,20 @@ export function createTaxSettings( readRuntime ) {
 																					}
 																					onClick={ function () {
 																						return (
-																							( t =
+																							( _tValue2 =
 																								e.id ),
 																							void C(
 																								function (
 																									_eLocal10
 																								) {
-																									var n =
+																									var _nValue2 =
 																										_eLocal10.filter(
 																											function (
 																												_eLocal11
 																											) {
 																												return (
 																													_eLocal11.id !==
-																													t
+																													_tValue2
 																												);
 																											}
 																										);
@@ -1235,16 +1238,16 @@ export function createTaxSettings( readRuntime ) {
 																											{
 																												ohmylms_existing_tax_rates:
 																													{
-																														value: n,
+																														value: _nValue2,
 																													},
 																											}
 																										),
-																										n
+																										_nValue2
 																									 );
 																								}
 																							)
 																						 );
-																						var t;
+																						var _tValue2;
 																					} }
 																					className={
 																						'tax-rate-remove-btn'

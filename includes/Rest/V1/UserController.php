@@ -31,6 +31,9 @@ class UserController extends RestController {
 	 */
 	protected $base = 'users';
 
+	/**
+	 * Check user permission for User controller.
+	 */
 	public function check_user_permission() {
 		return current_user_can( 'edit_posts' );
 	}

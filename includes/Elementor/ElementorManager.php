@@ -76,7 +76,7 @@ class ElementorManager {
 	 * Return true when the current page is an Elementor page that contains
 	 * the My Courses widget, so FrontendAssets enqueues ohmylms-frontend.
 	 *
-	 * @param bool $is_ohmylms_page
+	 * @param bool $is_ohmylms_page Is ohmylms page.
 	 * @return bool
 	 */
 	public function is_ohmylms_page_for_elementor( $is_ohmylms_page ) {
@@ -150,7 +150,7 @@ class ElementorManager {
 	/**
 	 * Register widget categories
 	 *
-	 * @param \Elementor\Elements_Manager $elements_manager
+	 * @param \Elementor\Elements_Manager $elements_manager Elements manager.
 	 * @return void
 	 */
 	public function register_widget_categories( $elements_manager ) {
@@ -166,7 +166,7 @@ class ElementorManager {
 	/**
 	 * Register widgets
 	 *
-	 * @param \Elementor\Widgets_Manager $widgets_manager
+	 * @param \Elementor\Widgets_Manager $widgets_manager Widgets manager.
 	 * @return void
 	 */
 	public function register_widgets( $widgets_manager ) {

@@ -23,10 +23,16 @@ class MembershipListBlock {
 
 	const BLOCK_NAME = 'ohmylms/membership-list';
 
+	/**
+	 * Initialize Membership list block.
+	 */
 	public function __construct() {
 		$this->register_block();
 	}
 
+	/**
+	 * Register block for Membership list block.
+	 */
 	private function register_block() {
 		register_block_type(
 			self::BLOCK_NAME,
@@ -40,6 +46,9 @@ class MembershipListBlock {
 		);
 	}
 
+	/**
+	 * Get block attributes for Membership list block.
+	 */
 	private function get_block_attributes() {
 		return array(
 			'title' => array(
@@ -53,6 +62,12 @@ class MembershipListBlock {
 		);
 	}
 
+	/**
+	 * Render block for Membership list block.
+	 *
+	 * @param mixed  $attributes Attributes.
+	 * @param string $content Content.
+	 */
 	public function render_block( $attributes, $content = '' ) {
 		wp_enqueue_style( 'ohmylms-frontend' );
 		wp_enqueue_style( 'ohmylms-general' );

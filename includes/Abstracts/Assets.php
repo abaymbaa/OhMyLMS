@@ -20,10 +20,25 @@ defined( 'ABSPATH' ) || exit();
  */
 abstract class Assets {
 
+	/**
+	 * Scripts.
+	 *
+	 * @var mixed
+	 */
 	public $scripts = array();
 
+	/**
+	 * Styles.
+	 *
+	 * @var mixed
+	 */
 	public $styles = array();
 
+	/**
+	 * Localized scripts.
+	 *
+	 * @var mixed
+	 */
 	public $localized_scripts = array();
 
 	/**
@@ -85,10 +100,10 @@ abstract class Assets {
 	/**
 	 * Register a script.
 	 *
-	 * @param string $handle    Name of the script.
-	 * @param string $path      Full URL of the script.
-	 * @param array  $deps      An array of registered script handles this script depends on. Default 'jquery'.
-	 * @param string $version   String specifying the script version number. Default OHMYLMS_VERSION.
+	 * @param string $handle Name of the script.
+	 * @param string $path Full URL of the script.
+	 * @param array  $deps An array of registered script handles this script depends on. Default 'jquery'.
+	 * @param string $version String specifying the script version number. Default OHMYLMS_VERSION.
 	 * @param array  $in_footer Optional. Whether to enqueue the script before </body> instead of in the <head>. Default array('strategy' => 'defer').
 	 *
 	 * @since 1.0.0
@@ -101,12 +116,12 @@ abstract class Assets {
 	/**
 	 * Register a style.
 	 *
-	 * @param string $handle   Name of the stylesheet.
-	 * @param string $path     Full URL of the stylesheet.
-	 * @param array  $deps     An array of registered stylesheet handles this stylesheet depends on.
-	 * @param string $version  String specifying the stylesheet version number.
-	 * @param string $media    Optional. The media for which this stylesheet has been defined. Default 'all'.
-	 * @param bool   $has_rtl  Optional. Whether the stylesheet has an RTL version. Default false.
+	 * @param string $handle Name of the stylesheet.
+	 * @param string $path Full URL of the stylesheet.
+	 * @param array  $deps An array of registered stylesheet handles this stylesheet depends on.
+	 * @param string $version String specifying the stylesheet version number.
+	 * @param string $media Optional. The media for which this stylesheet has been defined. Default 'all'.
+	 * @param bool   $has_rtl Optional. Whether the stylesheet has an RTL version. Default false.
 	 *
 	 * @since 1.0.0
 	 */
@@ -162,6 +177,11 @@ abstract class Assets {
 		}
 	}
 
+	/**
+	 * Localize script mrm for Assets.
+	 *
+	 * @param mixed $handle Handle.
+	 */
 	public function localize_script_MRM( $handle ) {
 		if ( ! in_array( $handle, $this->localized_scripts, true ) && wp_script_is( $handle ) ) {
 			$data = $this->get_script_data( $handle );
@@ -189,7 +209,7 @@ abstract class Assets {
 	/**
 	 * Determine if a script should be enqueued based on the screen ID.
 	 *
-	 * @param array  $script    The script properties.
+	 * @param array  $script The script properties.
 	 * @param string $screen_id The current screen ID.
 	 * @return bool True if the script should be enqueued, false otherwise.
 	 *

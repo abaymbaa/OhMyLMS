@@ -7,8 +7,14 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin form handler implementation.
+ */
 class FormHandler {
 
+	/**
+	 * Init for Form handler.
+	 */
 	public static function init() {
 		add_action( 'template_redirect', array( __CLASS__, 'save_account_details' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'save_account_notification' ) );
@@ -36,7 +42,7 @@ class FormHandler {
 
 		$user_id = get_current_user_id();
 
-		if ( $user_id <= 0 ) {
+		if ( 0 >= $user_id ) {
 			return;
 		}
 
@@ -45,14 +51,14 @@ class FormHandler {
 		$display_name = ! empty( $_POST['display_name'] ) ? ohmylms_clean( wp_unslash( $_POST['display_name'] ) ) : '';
 		$address      = ! empty( $_POST['address'] ) ? ohmylms_clean( wp_unslash( $_POST['address'] ) ) : '';
 		$email        = ! empty( $_POST['email'] ) ? ohmylms_clean( wp_unslash( $_POST['email'] ) ) : '';
-		$pass_current = ! empty( $_POST['password_current'] ) ? ohmylms_clean( $_POST['password_current'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass1        = ! empty( $_POST['password1'] ) ? ohmylms_clean( $_POST['password1'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$pass2        = ! empty( $_POST['password2'] ) ? ohmylms_clean( $_POST['password2'] ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
-		$bio          = ! empty( $_POST['bio'] ) ? htmlspecialchars( strip_tags( $_POST['bio'] ), ENT_QUOTES, 'UTF-8' ) : '';
-		$interests    = ! empty( $_POST['interests'] ) ? htmlspecialchars( strip_tags( $_POST['interests'] ), ENT_QUOTES, 'UTF-8' ) : '';
-		$skills       = ! empty( $_POST['skills'] ) && is_array( $_POST['skills'] ) ? array_map( 'sanitize_text_field', $_POST['skills'] ) : array();
-		$link_labels  = ! empty( $_POST['link_labels'] ) && is_array( $_POST['link_labels'] ) ? array_map( 'sanitize_text_field', $_POST['link_labels'] ) : array();
-		$link_urls    = ! empty( $_POST['link_urls'] ) && is_array( $_POST['link_urls'] ) ? array_map( 'esc_url_raw', $_POST['link_urls'] ) : array();
+		$pass_current = ! empty( $_POST['password_current'] ) ? ohmylms_clean( wp_unslash( $_POST['password_current'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass1        = ! empty( $_POST['password1'] ) ? ohmylms_clean( wp_unslash( $_POST['password1'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$pass2        = ! empty( $_POST['password2'] ) ? ohmylms_clean( wp_unslash( $_POST['password2'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
+		$bio          = ! empty( $_POST['bio'] ) ? htmlspecialchars( wp_strip_all_tags( wp_unslash( $_POST['bio'] ) ), ENT_QUOTES, 'UTF-8' ) : '';
+		$interests    = ! empty( $_POST['interests'] ) ? htmlspecialchars( wp_strip_all_tags( wp_unslash( $_POST['interests'] ) ), ENT_QUOTES, 'UTF-8' ) : '';
+		$skills       = ! empty( $_POST['skills'] ) && is_array( $_POST['skills'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['skills'] ) ) : array();
+		$link_labels  = ! empty( $_POST['link_labels'] ) && is_array( $_POST['link_labels'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['link_labels'] ) ) : array();
+		$link_urls    = ! empty( $_POST['link_urls'] ) && is_array( $_POST['link_urls'] ) ? array_map( 'esc_url_raw', wp_unslash( $_POST['link_urls'] ) ) : array();
 		$phone        = ! empty( $_POST['phone'] ) ? ohmylms_clean( wp_unslash( $_POST['phone'] ) ) : '';
 		$whatsapp     = ! empty( $_POST['whatsapp'] ) ? ohmylms_clean( wp_unslash( $_POST['whatsapp'] ) ) : '';
 		$country      = ! empty( $_POST['country'] ) ? ohmylms_clean( wp_unslash( $_POST['country'] ) ) : '';
@@ -191,7 +197,7 @@ class FormHandler {
 
 		$user_id = get_current_user_id();
 
-		if ( $user_id <= 0 ) {
+		if ( 0 >= $user_id ) {
 			return;
 		}
 
@@ -230,7 +236,7 @@ class FormHandler {
 
 		$assignment_id = ! empty( $_POST['assignment_id'] ) ? ohmylms_clean( wp_unslash( $_POST['assignment_id'] ) ) : '';
 		$course_id     = ! empty( $_POST['course_id'] ) ? ohmylms_clean( wp_unslash( $_POST['course_id'] ) ) : '';
-		$content       = ! empty( $_POST['submission-body'] ) ? ohmylms_clean( sanitize_text_field( $_POST['submission-body'] ) ) : '';
+		$content       = ! empty( $_POST['submission-body'] ) ? ohmylms_clean( sanitize_text_field( wp_unslash( $_POST['submission-body'] ) ) ) : '';
 
 		$assignment = new \OhMyLMS\Data\Assignment( $assignment_id );
 
@@ -246,7 +252,7 @@ class FormHandler {
 
 		require_once ABSPATH . 'wp-admin/includes/file.php';
 
-		if ( empty( $_FILES['ohmylms-submission-file'] ) || $_FILES['ohmylms-submission-file']['error'] === UPLOAD_ERR_NO_FILE ) {
+		if ( ! isset( $_FILES['ohmylms-submission-file']['error'] ) || UPLOAD_ERR_NO_FILE === absint( $_FILES['ohmylms-submission-file']['error'] ) ) {
 			\OhMyLMS\Commerce\ohmylmse_add_notice( __( 'No file was uploaded.', 'ohmylms' ), 'error' );
 			wp_safe_redirect( get_permalink( $assignment->get_id() ) );
 			exit;
@@ -318,10 +324,10 @@ class FormHandler {
 	 * @return void
 	 */
 	public static function save_quiz_attempt() {
-		if ( ( $_POST['action'] ?? '' ) !== 'quiz-action' ) {
+		if ( 'quiz-action' !== sanitize_key( wp_unslash( $_POST['action'] ?? '' ) ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['save-quiz-attempt-nonce'] ?? '', 'save_quiz_attempt' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['save-quiz-attempt-nonce'] ?? '' ) ), 'save_quiz_attempt' ) ) {
 			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
 		}
 		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );
@@ -340,10 +346,10 @@ class FormHandler {
 	 * @return void
 	 */
 	public static function save_quiz_submit() {
-		if ( ( $_POST['action'] ?? '' ) !== 'ohmylms-quiz-submission' ) {
+		if ( 'ohmylms-quiz-submission' !== sanitize_key( wp_unslash( $_POST['action'] ?? '' ) ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['save-quiz-submit-nonce'] ?? '', 'save_quiz_submit' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['save-quiz-submit-nonce'] ?? '' ) ), 'save_quiz_submit' ) ) {
 			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
 		}
 		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );
@@ -362,11 +368,14 @@ class FormHandler {
 	}
 
 
+	/**
+	 * Save quiz exit submit for Form handler.
+	 */
 	public static function save_quiz_exit_submit() {
-		if ( ( $_POST['action'] ?? '' ) !== 'ohmylms-quiz-exit-submission' ) {
+		if ( 'ohmylms-quiz-exit-submission' !== sanitize_key( wp_unslash( $_POST['action'] ?? '' ) ) ) {
 			return;
 		}
-		if ( ! wp_verify_nonce( $_POST['save-quiz-exit-submit-nonce'] ?? '', 'save_quiz_exit_submit' ) ) {
+		if ( ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['save-quiz-exit-submit-nonce'] ?? '' ) ), 'save_quiz_exit_submit' ) ) {
 			wp_die( 'Invalid quiz request.', '', array( 'response' => 403 ) );
 		}
 		$quiz_id    = absint( $_POST['ohmylms_quiz_id'] ?? 0 );

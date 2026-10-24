@@ -76,7 +76,7 @@ export function createReorderResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == _tLocal2
+													Number( _tLocal2 ) === 0
 														? '0'
 														: '16px 0 0'
 												}
@@ -153,8 +153,10 @@ export function createReorderResult( readRuntime ) {
 																_tLocal4
 															) {
 																return (
-																	_tLocal4.id ==
-																	e
+																	String(
+																		_tLocal4.id
+																	) ===
+																	String( e )
 																);
 															}
 														);
@@ -164,7 +166,7 @@ export function createReorderResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '24px' }
 												margin={
-													0 == _tLocal3
+													Number( _tLocal3 ) === 0
 														? '0'
 														: '20px 0 0'
 												}
@@ -254,7 +256,7 @@ export function createReorderResult( readRuntime ) {
 												isBorderless={ ! 0 }
 												padding={ '12px 16px' }
 												margin={
-													0 == _tLocal6
+													Number( _tLocal6 ) === 0
 														? '0'
 														: '16px 0 0'
 												}

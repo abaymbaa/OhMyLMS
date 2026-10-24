@@ -16,14 +16,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
+/**
+ * Plugin cohort reminder scheduler implementation.
+ */
 class CohortReminderScheduler {
 	const ACTION_HOOK = 'ohmylms_send_cohort_start_reminders';
 
+	/**
+	 * Init for Cohort reminder scheduler.
+	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'schedule_reminder' ) );
 		add_action( self::ACTION_HOOK, array( __CLASS__, 'handle_reminder' ) );
 	}
 
+	/**
+	 * Schedule reminder for Cohort reminder scheduler.
+	 */
 	public static function schedule_reminder() {
 		if ( ! function_exists( 'as_has_scheduled_action' ) || ! function_exists( 'as_schedule_recurring_action' ) ) {
 			return;
@@ -88,8 +97,9 @@ class CohortReminderScheduler {
 			$course_id = intval( $cohort->course_id );
 			$students  = $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT user_id FROM {$wpdb->prefix}ohmylms_user_enrollment
-                     WHERE course_id = %d",
+					'SELECT user_id FROM %i
+                     WHERE course_id = %d',
+					$wpdb->prefix . 'ohmylms_user_enrollment',
 					$course_id
 				)
 			);
@@ -106,6 +116,9 @@ class CohortReminderScheduler {
 
 	/**
 	 * Check if email was already sent for this user + cohort
+	 *
+	 * @param mixed $user_id User identifier.
+	 * @param mixed $cohort_id Cohort identifier.
 	 */
 	protected static function has_sent_email( $user_id, $cohort_id ) {
 		return get_user_meta( $user_id, '_ohmylms_cohort_reminder_' . $cohort_id, true );
@@ -113,6 +126,9 @@ class CohortReminderScheduler {
 
 	/**
 	 * Mark that email has been sent
+	 *
+	 * @param mixed $user_id User identifier.
+	 * @param mixed $cohort_id Cohort identifier.
 	 */
 	protected static function mark_email_sent( $user_id, $cohort_id ) {
 		update_user_meta( $user_id, '_ohmylms_cohort_reminder_' . $cohort_id, true );
@@ -120,6 +136,10 @@ class CohortReminderScheduler {
 
 	/**
 	 * Send the actual email
+	 *
+	 * @param mixed $user_id User identifier.
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $cohort Cohort.
 	 */
 	protected static function send_email( $user_id, $course_id, $cohort ) {
 		$user = get_user_by( 'ID', $user_id );

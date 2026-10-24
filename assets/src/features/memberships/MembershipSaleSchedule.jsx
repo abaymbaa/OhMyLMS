@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createMembershipSaleSchedule( readRuntime ) {
@@ -62,7 +63,7 @@ export function createMembershipSaleSchedule( readRuntime ) {
 					? sn()( e )
 							.startOf( 'day' )
 							.format( 'YYYY-MM-DDTHH:mm:ss.SSS' )
-					: ( console.error( 'Invalid date value provided:', e ),
+					: ( showRequestError( 'Invalid date value provided:', e ),
 						null );
 			},
 			_ = function ( e, _tLocal, _nLocal ) {

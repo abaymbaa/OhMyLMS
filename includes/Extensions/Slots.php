@@ -1,7 +1,13 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
+/**
+ * Plugin slots implementation.
+ */
 final class Slots {
+	/**
+	 * Init for Slots.
+	 */
 	public static function init() {
 		$hooks = array(
 			'ohmylms_before_single_course_content' => 'student.course.before',
@@ -18,6 +24,12 @@ final class Slots {
 			);
 		}
 	}
+	/**
+	 * Render for Slots.
+	 *
+	 * @param mixed $name Name.
+	 * @param array $context Context.
+	 */
 	public static function render( $name, array $context = array() ) {
 		do_action( 'ohmylms_render_slot', $name, $context );
 		if ( ! defined( 'OHMYLMS_SOURCE_ASSETS' ) || ! OHMYLMS_SOURCE_ASSETS ) {

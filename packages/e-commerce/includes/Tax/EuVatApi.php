@@ -1,7 +1,10 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 
 use OhMyLMS\Commerce\Includes\Tax\TaxService;
 
+/**
+ * Plugin oh my lms_eu_vat_api implementation.
+ */
 class OhMyLMS_EU_VAT_API {
 
 	const API_URL = 'https://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl';
@@ -69,10 +72,10 @@ class OhMyLMS_EU_VAT_API {
 	/**
 	 * Makes a request to the VIES API
 	 *
-	 * @param OhMyLMS_EU_VAT_API_Response $result
-	 * @param string                      $vat_number
-	 * @param string                      $country_code
-	 * @param string                      $vat_prefix_for_country
+	 * @param OhMyLMS_EU_VAT_API_Response $result Result.
+	 * @param string                      $vat_number Vat number.
+	 * @param string                      $country_code Country code.
+	 * @param string                      $vat_prefix_for_country Vat prefix for country.
 	 *
 	 * @return OhMyLMS_EU_VAT_API_Response
 	 */
@@ -134,7 +137,7 @@ class OhMyLMS_EU_VAT_API {
 	/**
 	 * Return the vat number prefix.
 	 *
-	 * @param string $country
+	 * @param string $country Country.
 	 *
 	 * @return string
 	 */
@@ -160,6 +163,9 @@ class OhMyLMS_EU_VAT_API {
 		return $vat_prefix;
 	}
 
+	/**
+	 * Get eu countries for Eu vat api.
+	 */
 	private static function get_eu_countries() {
 		return TaxService::get_instance()->get_eu_countries();
 	}

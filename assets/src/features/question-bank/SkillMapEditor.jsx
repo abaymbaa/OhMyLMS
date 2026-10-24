@@ -9,15 +9,9 @@ import {
 } from './model.mjs';
 
 /**
- * Part-level skill attribution: one primary assessed skill per part, plus supporting
- * skills that only inform recommendations.
- * @param root0
- * @param root0.skills
- * @param root0.value
- * @param root0.parts
- * @param root0.disabled
- * @param root0.onChange
- * @param skill
+ * Format a skill choice.
+ * @param {Object} skill Skill with its tree depth.
+ * @return {string} Indented skill label.
  */
 const skillLabel = ( skill ) =>
 	`${ '— '.repeat( skill.depth ) }${ skill.code ? `${ skill.code } · ` : '' }${ skill.name }`;

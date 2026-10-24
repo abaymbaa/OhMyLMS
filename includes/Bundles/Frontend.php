@@ -21,8 +21,16 @@ defined( 'ABSPATH' ) || exit;
  * follow and unfollow endpoints and swaps in the section they return.
  */
 final class Frontend {
+	/**
+	 * Printed.
+	 *
+	 * @var mixed
+	 */
 	private static $printed = false;
 
+	/**
+	 * Init for Frontend.
+	 */
 	public static function init() {
 		add_shortcode( 'ohmylms_bundles', array( __CLASS__, 'shortcode' ) );
 		// The [ohmylms_dashboard] shortcode fires the first hook; the profile dashboard template fires the second.
@@ -32,6 +40,9 @@ final class Frontend {
 		}
 	}
 
+	/**
+	 * Print once for Frontend.
+	 */
 	public static function print_once() {
 		if ( self::$printed ) {
 			return; }
@@ -39,10 +50,16 @@ final class Frontend {
 		echo self::section( get_current_user_id() ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped inside section().
 	}
 
+	/**
+	 * Shortcode for Frontend.
+	 */
 	public static function shortcode() {
 		return self::section( get_current_user_id() );
 	}
 
+	/**
+	 * Enqueue for Frontend.
+	 */
 	public static function enqueue() {
 		wp_enqueue_style( 'ohmylms-learning-bundles', plugins_url( 'assets/css/learning-bundles.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 		\OhMyLMS\Extensions\Interactivity::enqueue( 'ohmylms/bundles' );
@@ -60,7 +77,10 @@ final class Frontend {
 		);
 	}
 
-	/** The whole section, or an empty string for guests and sites without the storage. */
+	/** The whole section, or an empty string for guests and sites without the storage.
+	 *
+	 * @param mixed $user_id User identifier.
+	 */
 	public static function section( $user_id ) {
 		$user_id = (int) $user_id;
 		if ( ! $user_id || ! Schema::ready() ) {
@@ -100,9 +120,11 @@ final class Frontend {
 								<?php
 								if ( ! empty( $row['enrolled_overlap'] ) ) {
 									?>
-									<p class="ohmylms-bundles-reason"><?php echo esc_html( sprintf( _n( 'Includes %d course you are enrolled in.', 'Includes %d courses you are enrolled in.', (int) $row['enrolled_overlap'], 'ohmylms' ), (int) $row['enrolled_overlap'] ) ); ?></p><?php } ?>
+									<p class="ohmylms-bundles-reason"><?php echo esc_html( sprintf( /* translators: %d: number. */
+									_n( 'Includes %d course you are enrolled in.', 'Includes %d courses you are enrolled in.', (int) $row['enrolled_overlap'], 'ohmylms' ), (int) $row['enrolled_overlap'] ) ); ?></p><?php } ?>
 							</div>
-							<button type="button" class="ohmylms-button" data-bundle-follow="<?php echo esc_attr( (int) $row['id'] ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Add %s to my dashboard', 'ohmylms' ), $row['title'] ) ); ?>"><?php esc_html_e( 'Add to my dashboard', 'ohmylms' ); ?></button>
+							<button type="button" class="ohmylms-button" data-bundle-follow="<?php echo esc_attr( (int) $row['id'] ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: text value. */
+							__( 'Add %s to my dashboard', 'ohmylms' ), $row['title'] ) ); ?>"><?php esc_html_e( 'Add to my dashboard', 'ohmylms' ); ?></button>
 						</li>
 					<?php } ?>
 				</ul>
@@ -113,6 +135,11 @@ final class Frontend {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Summary line for Frontend.
+	 *
+	 * @param array $summary Summary.
+	 */
 	private static function summary_line( array $summary ) {
 		if ( ! $summary['total'] ) {
 			return ''; }
@@ -127,20 +154,40 @@ final class Frontend {
 		);
 	}
 
+	/**
+	 * Level badge for Frontend.
+	 *
+	 * @param mixed $level Level.
+	 * @param mixed $label Label.
+	 */
 	private static function level_badge( $level, $label ) {
 		return '<span class="ohmylms-level ohmylms-level-' . esc_attr( $level ) . '">' . esc_html( $label ) . '</span>';
 	}
 
+	/**
+	 * Progress meter for Frontend.
+	 *
+	 * @param mixed $label Label.
+	 * @param mixed $met Met.
+	 * @param mixed $total Total.
+	 */
 	private static function progress_meter( $label, $met, $total ) {
 		?>
 		<div class="ohmylms-bundle-measure">
 			<span class="ohmylms-bundle-measure-label"><?php echo esc_html( $label ); ?></span>
-			<progress max="<?php echo esc_attr( (int) $total ); ?>" value="<?php echo esc_attr( (int) $met ); ?>" aria-label="<?php echo esc_attr( sprintf( __( '%1$s: %2$d of %3$d', 'ohmylms' ), $label, $met, $total ) ); ?>"></progress>
-			<span><?php echo esc_html( sprintf( __( '%1$d of %2$d', 'ohmylms' ), $met, $total ) ); ?></span>
+			<progress max="<?php echo esc_attr( (int) $total ); ?>" value="<?php echo esc_attr( (int) $met ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %1$s: text value; %2$d: number; %3$d: number. */
+			__( '%1$s: %2$d of %3$d', 'ohmylms' ), $label, $met, $total ) ); ?>"></progress>
+			<span><?php echo esc_html( sprintf( /* translators: %1$d: number; %2$d: number. */
+			__( '%1$d of %2$d', 'ohmylms' ), $met, $total ) ); ?></span>
 		</div>
 		<?php
 	}
 
+	/**
+	 * Course for Frontend.
+	 *
+	 * @param array $course Course.
+	 */
 	private static function course( array $course ) {
 		?>
 		<li class="ohmylms-bundle-course">
@@ -182,6 +229,11 @@ final class Frontend {
 		<?php
 	}
 
+	/**
+	 * Skill list for Frontend.
+	 *
+	 * @param array $skills Skills.
+	 */
 	private static function skill_list( array $skills ) {
 		if ( ! $skills ) {
 			return; }
@@ -197,6 +249,11 @@ final class Frontend {
 		<?php
 	}
 
+	/**
+	 * Bundle for Frontend.
+	 *
+	 * @param array $view View.
+	 */
 	private static function bundle( array $view ) {
 		$bundle  = $view['bundle'];
 		$heading = 'ohmylms-bundle-' . (int) $bundle['id'] . '-title';
@@ -204,7 +261,8 @@ final class Frontend {
 		<article class="ohmylms-bundle" aria-labelledby="<?php echo esc_attr( $heading ); ?>" data-bundle="<?php echo esc_attr( (int) $bundle['id'] ); ?>">
 			<header class="ohmylms-bundle-header">
 				<h3 id="<?php echo esc_attr( $heading ); ?>"><?php echo esc_html( $bundle['title'] ); ?></h3>
-				<button type="button" class="ohmylms-button ohmylms-button-secondary" data-bundle-unfollow="<?php echo esc_attr( (int) $bundle['id'] ); ?>" aria-label="<?php echo esc_attr( sprintf( __( 'Remove %s from my dashboard', 'ohmylms' ), $bundle['title'] ) ); ?>"><?php esc_html_e( 'Remove from dashboard', 'ohmylms' ); ?></button>
+				<button type="button" class="ohmylms-button ohmylms-button-secondary" data-bundle-unfollow="<?php echo esc_attr( (int) $bundle['id'] ); ?>" aria-label="<?php echo esc_attr( sprintf( /* translators: %s: text value. */
+				__( 'Remove %s from my dashboard', 'ohmylms' ), $bundle['title'] ) ); ?>"><?php esc_html_e( 'Remove from dashboard', 'ohmylms' ); ?></button>
 			</header>
 			<?php
 			if ( '' !== $bundle['description'] ) {
@@ -233,7 +291,8 @@ final class Frontend {
 								<?php
 								if ( '' !== $member['version'] ) {
 									?>
-									<span class="ohmylms-bundle-badge"><?php echo esc_html( sprintf( __( 'Version %s', 'ohmylms' ), $member['version'] ) ); ?></span><?php } ?>
+									<span class="ohmylms-bundle-badge"><?php echo esc_html( sprintf( /* translators: %s: text value. */
+									__( 'Version %s', 'ohmylms' ), $member['version'] ) ); ?></span><?php } ?>
 							</div>
 							<?php
 							if ( $member['path'] ) {
@@ -270,6 +329,11 @@ final class Frontend {
 		<?php
 	}
 
+	/**
+	 * Skills for Frontend.
+	 *
+	 * @param array $view View.
+	 */
 	private static function skills( array $view ) {
 		?>
 		<h4><?php esc_html_e( 'Skills in this bundle', 'ohmylms' ); ?></h4>
@@ -288,7 +352,8 @@ final class Frontend {
 						<?php
 						if ( $skill['sources'] ) {
 							?>
-							<small><?php echo esc_html( sprintf( __( 'In: %s', 'ohmylms' ), implode( ', ', $skill['sources'] ) ) ); ?></small><?php } ?></th>
+							<small><?php echo esc_html( sprintf( /* translators: %s: text value. */
+							__( 'In: %s', 'ohmylms' ), implode( ', ', $skill['sources'] ) ) ); ?></small><?php } ?></th>
 						<td data-label="<?php esc_attr_e( 'Level', 'ohmylms' ); ?>"><?php echo self::level_badge( $skill['level'], $skill['level_label'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?>
 						<?php
 						if ( $skill['review_due'] ) {
@@ -316,13 +381,19 @@ final class Frontend {
 			<h4><?php esc_html_e( 'Next practice', 'ohmylms' ); ?></h4>
 			<ul class="ohmylms-bundle-practice">
 				<?php foreach ( $view['next_practice'] as $skill ) { ?>
-					<li><a href="<?php echo esc_url( $skill['practice_url'] ); ?>"><?php echo esc_html( sprintf( __( 'Practice %s', 'ohmylms' ), $skill['name'] ) ); ?></a> — <?php echo esc_html( $skill['review_due'] ? __( 'Review due', 'ohmylms' ) : $skill['classification_label'] ); ?></li>
+					<li><a href="<?php echo esc_url( $skill['practice_url'] ); ?>"><?php echo esc_html( sprintf( /* translators: %s: text value. */
+					__( 'Practice %s', 'ohmylms' ), $skill['name'] ) ); ?></a> — <?php echo esc_html( $skill['review_due'] ? __( 'Review due', 'ohmylms' ) : $skill['classification_label'] ); ?></li>
 				<?php } ?>
 			</ul>
 		<?php } ?>
 		<?php
 	}
 
+	/**
+	 * Combined for Frontend.
+	 *
+	 * @param array $groups Groups.
+	 */
 	private static function combined( array $groups ) {
 		?>
 		<h4><?php esc_html_e( 'Combined skills', 'ohmylms' ); ?></h4>
@@ -330,7 +401,8 @@ final class Frontend {
 		<?php foreach ( $groups as $group ) { ?>
 			<details class="ohmylms-bundle-combined">
 				<summary><strong><?php echo esc_html( $group['shared']['name'] ); ?></strong> — <?php esc_html_e( 'Shared level:', 'ohmylms' ); ?> <?php echo self::level_badge( $group['level'], $group['level_label'] ); // phpcs:ignore WordPress.Security.EscapeOutput ?></summary>
-				<p><?php echo esc_html( $group['evidence_count'] ? sprintf( _n( 'Based on %d answer.', 'Based on %d answers.', $group['evidence_count'], 'ohmylms' ), $group['evidence_count'] ) : __( 'No answers recorded yet.', 'ohmylms' ) ); ?></p>
+				<p><?php echo esc_html( $group['evidence_count'] ? sprintf( /* translators: %d: number. */
+				_n( 'Based on %d answer.', 'Based on %d answers.', $group['evidence_count'], 'ohmylms' ), $group['evidence_count'] ) : __( 'No answers recorded yet.', 'ohmylms' ) ); ?></p>
 				<ul>
 					<?php foreach ( $group['sources'] as $source ) { ?>
 						<li>
@@ -342,7 +414,8 @@ final class Frontend {
 							<?php
 							if ( '' !== $source['note'] ) {
 								?>
-								<small><?php echo esc_html( sprintf( __( 'Differences: %s', 'ohmylms' ), $source['note'] ) ); ?></small><?php } ?>
+								<small><?php echo esc_html( sprintf( /* translators: %s: text value. */
+								__( 'Differences: %s', 'ohmylms' ), $source['note'] ) ); ?></small><?php } ?>
 						</li>
 					<?php } ?>
 				</ul>

@@ -1,14 +1,20 @@
 <?php
+/**
+ * Core functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 use function OhMyLMS\Commerce\ecommerce;
 
 /**
  * Get other templates passing attributes and including the file.
  *
- * @param $template_name
- * @param array  $args
- * @param string $template_path
- * @param string $default_path
+ * @param mixed  $template_name Template name.
+ * @param array  $args Operation arguments.
+ * @param string $template_path Template path.
+ * @param string $default_path Default path.
  * @since 1.0.0
  */
 function ohmylms_get_template( $template_name, $args = array(), $template_path = '', $default_path = '' ) {
@@ -69,9 +75,9 @@ function ohmylms_get_template( $template_name, $args = array(), $template_path =
 /**
  * Locate template
  *
- * @param $template_name
- * @param string $template_path
- * @param string $default_path
+ * @param mixed  $template_name Template name.
+ * @param string $template_path Template path.
+ * @param string $default_path Default path.
  * @return mixed|void
  * @since 1.0.0
  */
@@ -105,9 +111,9 @@ function ohmylms_locate_template( $template_name, $template_path = '', $default_
 /**
  * Get template part
  *
- * @param $slug
- * @param string $name
- * @param array  $atts Variables to pass to the template
+ * @param mixed  $slug Slug.
+ * @param string $name Name.
+ * @param array  $atts Variables to pass to the template.
  * @since 1.0.0
  */
 function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
@@ -140,11 +146,11 @@ function ohmylms_get_template_part( $slug, $name = '', $atts = null ) {
 /**
  * Set Cookie
  *
- * @param $name
- * @param $value
- * @param int  $expire
- * @param bool $secure
- * @param bool $httponly
+ * @param mixed $name Name.
+ * @param mixed $value Value to process.
+ * @param int   $expire Expire.
+ * @param bool  $secure Secure.
+ * @param bool  $httponly Httponly.
  * @since 1.0.0
  */
 function ohmylms_setcookie( $name, $value, $expire = 0, $secure = false, $httponly = false ) {
@@ -176,8 +182,7 @@ function ohmylms_site_is_https() {
 /**
  * Display OhMyLMS tooltip
  *
- * @param $tip
- * @param bool $allow_html
+ * @param mixed $tip Tip.
  * @return string
  * @since 1.0.0
  */
@@ -189,6 +194,8 @@ function ohmylms_help_tip( $tip ) {
 
 
 /**
+ * Ohmylms get rounding precision.
+ *
  * @return mixed|void
  * @since 1.0.0
  */
@@ -655,6 +662,11 @@ function get_ohmylms_currency_symbol( $currency = '' ) {
 	return apply_filters( 'ohmylms_currency_symbol', $currency_symbol, $currency );
 }
 
+/**
+ * Ohmylms decode unicode sequences for Core-functions.
+ *
+ * @param mixed $str Str.
+ */
 function ohmylms_decode_unicode_sequences( $str ) {
 	return preg_replace_callback(
 		'/\\\\u([0-9a-fA-F]{4})/',
@@ -705,6 +717,9 @@ function ohmylms_if_theme_support_available() {
 }
 
 
+/**
+ * Ohmylms placeholder img for Core-functions.
+ */
 function ohmylms_placeholder_img() {
 	$placeholder_img = apply_filters( 'ohmylms_placeholder_img', OHMYLMS_URL . '/assets/images/course-placeholder-image.svg' );
 	return $placeholder_img;
@@ -743,6 +758,9 @@ function ohmylms_format_duration( $duration ) {
 }
 
 
+/**
+ * Ohmylms get membership url for Core-functions.
+ */
 function ohmylms_get_membership_url() {
 	$page_id        = get_option( 'ohmylms_membership_page_id' );
 	$membership_url = 0 < $page_id ? get_permalink( $page_id ) : '';
@@ -762,6 +780,9 @@ function ohmylms_get_membership_url() {
  * @since 1.2.12
  */
 if ( ! function_exists( 'ohmylms_get_student_role' ) ) {
+	/**
+	 * Ohmylms get student role for Core-functions.
+	 */
 	function ohmylms_get_student_role() {
 		$role = apply_filters( 'ohmylms_student_role', 'ohmylms_student' );
 		return is_string( $role ) && '' !== $role ? $role : 'ohmylms_student';
@@ -780,12 +801,18 @@ if ( ! function_exists( 'ohmylms_get_student_role' ) ) {
  * @since 1.2.12
  */
 if ( ! function_exists( 'ohmylms_get_assignable_student_role' ) ) {
+	/**
+	 * Ohmylms get assignable student role for Core-functions.
+	 */
 	function ohmylms_get_assignable_student_role() {
 		$role = ohmylms_get_student_role();
 		return get_role( $role ) ? $role : 'subscriber';
 	}
 }
 
+/**
+ * Ohmylms is pro for Core-functions.
+ */
 function ohmylms_is_pro() {
 	return true;
 }
@@ -800,6 +827,9 @@ function ohmylms_is_funnel_enabled() {
 	return apply_filters( 'ohmylms_should_show_funnel', false );
 }
 
+/**
+ * Ohmylms modules for Core-functions.
+ */
 function ohmylms_modules() {
 	$modules = array(
 		'course',
@@ -1827,6 +1857,7 @@ function ohmylms_get_countries() {
  *
  * @return array
  * @since 1.0.0
+ * @param mixed $code Code.
  */
 function ohmylms_get_country_name_by_code( $code ) {
 	$countries = ohmylms_get_countries();
@@ -1848,7 +1879,7 @@ function ohmylms_get_country_name_by_code( $code ) {
  * Converts a given hex color code to its RGB representation.
  *
  * @param string $hex A hex color code, optionally prefixed with a hash (#).
- *
+ * .
  * @return string The RGB representation of the given hex color code,
  *                in the format "R, G, B".
  */
@@ -1908,7 +1939,7 @@ function ohmylms_get_payment_gateways_settings() {
  *
  * @param string $content_type The content type.
  * @param int    $content_id The content ID.
- *
+ * .
  * @return object The content object.
  * @since 1.0.0
  */

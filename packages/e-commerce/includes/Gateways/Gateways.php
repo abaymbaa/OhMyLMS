@@ -4,6 +4,9 @@ namespace OhMyLMS\Commerce\Gateways;
 
 use OhMyLMS\Abstracts\SettingsPage;
 
+/**
+ * Plugin gateways implementation.
+ */
 class Gateways extends SettingsPage {
 
 	/**
@@ -25,6 +28,8 @@ class Gateways extends SettingsPage {
 
 
 	/**
+	 * Instance.
+	 *
 	 * @return Gateways
 	 * @since 1.0.0
 	 */
@@ -190,6 +195,9 @@ class Gateways extends SettingsPage {
 	}
 
 
+	/**
+	 * Output for Gateways.
+	 */
 	public function output() {
 		echo '<h1>' . esc_html__( 'Payment Gateways', 'ohmylms' ) . '</h1>';
 	}

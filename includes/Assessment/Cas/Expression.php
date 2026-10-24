@@ -34,7 +34,10 @@ final class Expression {
 
 	/* ---------- Normalisation ---------- */
 
-	/** ASCII-math from what a learner typed, pasted or composed (Unicode, LaTeX). */
+	/** ASCII-math from what a learner typed, pasted or composed (Unicode, LaTeX).
+	 *
+	 * @param mixed $input Input.
+	 */
 	public static function normalize( $input ) {
 		$text = is_scalar( $input ) ? (string) $input : '';
 		if ( 2000 < strlen( $text ) ) {
@@ -53,7 +56,10 @@ final class Expression {
 		return trim( preg_replace( '/\s+/', ' ', $text ) );
 	}
 
-	/** The LaTeX subset a math keyboard emits, converted to ASCII-math. */
+	/** The LaTeX subset a math keyboard emits, converted to ASCII-math.
+	 *
+	 * @param mixed $text Text.
+	 */
 	private static function latex( $text ) {
 		$text = preg_replace( '/\\\\(?:(?:left|right|displaystyle|quad|qquad)\b|[,;!])\s*/', '', $text );
 		$text = preg_replace( '/\\\\(cdot|times|ast)\b/', '*', $text );
@@ -88,8 +94,11 @@ final class Expression {
 	/* ---------- Parsing ---------- */
 
 	/**
+	 * Parse.
+	 *
 	 * @return array|null Tree, or null when the text is empty, too large or not valid math.
 	 *                    An equation is ['=', left, right].
+	 * @param mixed $input Input.
 	 */
 	public static function parse( $input ) {
 		$text = self::normalize( $input );
@@ -114,10 +123,15 @@ final class Expression {
 				return null; }
 			$tree = array( '=', $left, $right );
 		}
-		return $state['pos'] === count( $state['tokens'] ) ? $tree : null;
+		return count( $state['tokens'] ) === $state['pos'] ? $tree : null;
 	}
 
-	/** @return array[]|null list of [type, value] */
+	/**
+	 * Tokenize for Expression.
+	 *
+	 * @return array[]|null list of [type, value]
+	 * @param mixed $text Text.
+	 */
 	private static function tokenize( $text ) {
 		$tokens = array();
 		$length = strlen( $text );
@@ -151,6 +165,11 @@ final class Expression {
 		return count( $tokens ) > 200 ? null : $tokens;
 	}
 
+	/**
+	 * Split word for Expression.
+	 *
+	 * @param mixed $word Word.
+	 */
 	private static function split_word( $word ) {
 		$parts = array();
 		$names = array_merge( self::FUNCTIONS, array( 'pi' ) );
@@ -178,21 +197,38 @@ final class Expression {
 		return $parts;
 	}
 
+	/**
+	 * Peek for Expression.
+	 *
+	 * @param array $state State.
+	 */
 	private static function peek( array &$state ) {
 		return $state['tokens'][ $state['pos'] ] ?? null;
 	}
 
+	/**
+	 * Node for Expression.
+	 *
+	 * @param array $state State.
+	 * @param array $node Node.
+	 */
 	private static function node( array &$state, array $node ) {
 		return ++$state['nodes'] > self::MAX_NODES ? null : $node;
 	}
 
+	/**
+	 * Parse sum for Expression.
+	 *
+	 * @param array $state State.
+	 * @param mixed $depth Depth.
+	 */
 	private static function parse_sum( array &$state, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
 			return null; }
 		$left = self::parse_product( $state, $depth + 1 );
 		while ( null !== $left ) {
 			$token = self::peek( $state );
-			if ( $token === array( 'op', '+' ) || $token === array( 'op', '-' ) ) {
+			if ( array( 'op', '+' ) === $token || array( 'op', '-' ) === $token ) {
 				++$state['pos'];
 				$right = self::parse_product( $state, $depth + 1 );
 				$left  = null === $right ? null : self::node( $state, array( $token[1], $left, $right ) );
@@ -202,15 +238,26 @@ final class Expression {
 		return $left;
 	}
 
+	/**
+	 * Starts factor for Expression.
+	 *
+	 * @param mixed $token Token.
+	 */
 	private static function starts_factor( $token ) {
-		return null !== $token && ( in_array( $token[0], array( 'num', 'var', 'const', 'fn' ), true ) || $token === array( 'op', '(' ) );
+		return null !== $token && ( in_array( $token[0], array( 'num', 'var', 'const', 'fn' ), true ) || array( 'op', '(' ) === $token );
 	}
 
+	/**
+	 * Parse product for Expression.
+	 *
+	 * @param array $state State.
+	 * @param mixed $depth Depth.
+	 */
 	private static function parse_product( array &$state, $depth ) {
 		$left = self::parse_unary( $state, $depth + 1 );
 		while ( null !== $left ) {
 			$token = self::peek( $state );
-			if ( $token === array( 'op', '*' ) || $token === array( 'op', '/' ) ) {
+			if ( array( 'op', '*' ) === $token || array( 'op', '/' ) === $token ) {
 				++$state['pos'];
 				$right = self::parse_unary( $state, $depth + 1 );
 				$left  = null === $right ? null : self::node( $state, array( $token[1], $left, $right ) );
@@ -224,11 +271,17 @@ final class Expression {
 		return $left;
 	}
 
+	/**
+	 * Parse unary for Expression.
+	 *
+	 * @param array $state State.
+	 * @param mixed $depth Depth.
+	 */
 	private static function parse_unary( array &$state, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
 			return null; }
 		$token = self::peek( $state );
-		if ( $token === array( 'op', '-' ) || $token === array( 'op', '+' ) ) {
+		if ( array( 'op', '-' ) === $token || array( 'op', '+' ) === $token ) {
 			++$state['pos'];
 			$operand = self::parse_unary( $state, $depth + 1 );
 			if ( null === $operand ) {
@@ -238,6 +291,12 @@ final class Expression {
 		return self::parse_power( $state, $depth + 1 );
 	}
 
+	/**
+	 * Parse power for Expression.
+	 *
+	 * @param array $state State.
+	 * @param mixed $depth Depth.
+	 */
 	private static function parse_power( array &$state, $depth ) {
 		$base = self::parse_primary( $state, $depth + 1 );
 		if ( null !== $base && self::peek( $state ) === array( 'op', '^' ) ) {
@@ -249,6 +308,12 @@ final class Expression {
 		return $base;
 	}
 
+	/**
+	 * Parse primary for Expression.
+	 *
+	 * @param array $state State.
+	 * @param mixed $depth Depth.
+	 */
 	private static function parse_primary( array &$state, $depth ) {
 		if ( $depth > self::MAX_DEPTH ) {
 			return null; }
@@ -260,14 +325,14 @@ final class Expression {
 			return self::node( $state, array( 'num', $token[1] ) ); }
 		if ( 'var' === $token[0] || 'const' === $token[0] ) {
 			return self::node( $state, array( $token[0], $token[1] ) ); }
-		if ( $token === array( 'op', '(' ) ) {
+		if ( array( 'op', '(' ) === $token ) {
 			$inner = self::parse_sum( $state, $depth + 1 );
 			if ( null === $inner || self::peek( $state ) !== array( 'op', ')' ) ) {
 				return null; }
 			++$state['pos'];
 			return $inner;
 		}
-		if ( $token === array( 'op', '|' ) ) {
+		if ( array( 'op', '|' ) === $token ) {
 			$inner = self::parse_sum( $state, $depth + 1 );
 			if ( null === $inner || self::peek( $state ) !== array( 'op', '|' ) ) {
 				return null; }
@@ -302,7 +367,13 @@ final class Expression {
 
 	/* ---------- Evaluation ---------- */
 
-	/** @return float|null null when undefined (division by zero, sqrt of a negative, overflow). */
+	/**
+	 * Evaluate for Expression.
+	 *
+	 * @return float|null null when undefined (division by zero, sqrt of a negative, overflow).
+	 * @param array $tree Tree.
+	 * @param array $vars Vars.
+	 */
 	public static function evaluate( array $tree, array $vars ) {
 		switch ( $tree[0] ) {
 			case 'num':
@@ -344,7 +415,7 @@ final class Expression {
 				$value = $a / $b;
 				break;
 			case '^':
-				if ( ( 0.0 == $a && $b <= 0.0 ) || ( $a < 0 && floor( $b ) !== $b ) || abs( $b ) > 200 ) {
+				if ( ( 0.0 === (float) $a && 0.0 >= $b ) || ( 0 > $a && floor( $b ) !== $b ) || abs( $b ) > 200 ) {
 					return null; }
 				$value = pow( $a, $b );
 				break;
@@ -354,16 +425,24 @@ final class Expression {
 		return is_finite( $value ) && abs( $value ) < 1e15 ? $value : null;
 	}
 
-	/** Whole-number value of a float, or null when it is not (within noise) an integer. */
+	/** Whole-number value of a float, or null when it is not (within noise) an integer.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	private static function whole( $value ) {
 		return abs( $value - round( $value ) ) < 1e-9 && abs( $value ) < 1e12 ? (int) round( $value ) : null;
 	}
 
-	/** @param float[] $args */
+	/**
+	 * Apply for Expression.
+	 *
+	 * @param mixed   $name Name.
+	 * @param float[] $args Operation arguments.
+	 */
 	private static function apply( $name, array $args ) {
 		$count = count( $args );
 		if ( in_array( $name, array( 'min', 'max' ), true ) ) {
-			return $count >= 1 ? ( 'min' === $name ? min( $args ) : max( $args ) ) : null; }
+			return 1 <= $count ? ( 'min' === $name ? min( $args ) : max( $args ) ) : null; }
 		if ( in_array( $name, array( 'gcd', 'lcm', 'mod' ), true ) ) {
 			$a = 2 === $count ? self::whole( $args[0] ) : null;
 			$b = 2 === $count ? self::whole( $args[1] ) : null;
@@ -384,6 +463,12 @@ final class Expression {
 		return 1 === $count ? self::apply_unary( $name, $args[0] ) : null;
 	}
 
+	/**
+	 * Apply unary for Expression.
+	 *
+	 * @param mixed $name Name.
+	 * @param mixed $a A.
+	 */
 	private static function apply_unary( $name, $a ) {
 		switch ( $name ) {
 			case 'floor':
@@ -393,13 +478,13 @@ final class Expression {
 			case 'abs':
 				return abs( $a );
 			case 'sqrt':
-				return $a < 0 ? null : sqrt( $a );
+				return 0 > $a ? null : sqrt( $a );
 			case 'ln':
-				return $a <= 0 ? null : log( $a );
+				return 0 >= $a ? null : log( $a );
 			case 'log':
-				return $a <= 0 ? null : log10( $a );
+				return 0 >= $a ? null : log10( $a );
 			case 'exp':
-				return $a > 50 ? null : exp( $a );
+				return 50 < $a ? null : exp( $a );
 			case 'sin':
 				return sin( $a );
 			case 'cos':
@@ -416,7 +501,11 @@ final class Expression {
 		return null;
 	}
 
-	/** Variable names used in a tree. */
+	/** Variable names used in a tree.
+	 *
+	 * @param array $tree Tree.
+	 * @param array $found Found.
+	 */
 	public static function variables( array $tree, array $found = array() ) {
 		if ( 'var' === $tree[0] ) {
 			$found[ $tree[1] ] = true;
@@ -433,7 +522,10 @@ final class Expression {
 	/**
 	 * Is the learner's text equivalent to the key, and does it have the required form?
 	 *
-	 * @param string $form any | expanded | factored | simplified
+	 * @param mixed  $student Student.
+	 * @param mixed  $key Lookup key.
+	 * @param string $form any | expanded | factored | simplified.
+	 * @param array  $settings Configuration settings.
 	 * @return array{correct:bool,reason:string} reason: equivalent | parse | different | form
 	 */
 	public static function check( $student, $key, $form = 'any', array $settings = array() ) {
@@ -466,9 +558,15 @@ final class Expression {
 		);
 	}
 
+	/**
+	 * Equivalent for Expression.
+	 *
+	 * @param array $a A.
+	 * @param array $b B.
+	 */
 	public static function equivalent( array $a, array $b ) {
 		$equation_a = '=' === $a[0];
-		if ( $equation_a !== ( '=' === $b[0] ) ) {
+		if ( ( '=' === $b[0] ) !== $equation_a ) {
 			return false; }
 		if ( $equation_a ) {
 			$a = array( '-', $a[1], $a[2] );
@@ -478,7 +576,7 @@ final class Expression {
 		sort( $names );
 		$ratio  = null;
 		$agreed = 0;
-		$seed   = crc32( json_encode( array( $a, $b ) ) );
+		$seed   = crc32( wp_json_encode( array( $a, $b ) ) );
 		for ( $i = 0; $i < self::SAMPLES; $i++ ) {
 			$vars = array();
 			foreach ( $names as $index => $name ) {
@@ -511,7 +609,12 @@ final class Expression {
 		return $agreed >= ( $names ? 4 : 1 );
 	}
 
-	/** Deterministic, well-spread values that avoid 0 and +/-1 coincidences. */
+	/** Deterministic, well-spread values that avoid 0 and +/-1 coincidences.
+	 *
+	 * @param mixed $seed Seed.
+	 * @param mixed $i I.
+	 * @param mixed $index Index.
+	 */
 	private static function sample( $seed, $i, $index ) {
 		$hash  = crc32( $seed . ':' . $i . ':' . $index );
 		$value = ( ( $hash % 2000 ) / 2000.0 ) * 9.0 - 4.5;
@@ -522,6 +625,12 @@ final class Expression {
 
 	/* ---------- Form checks ---------- */
 
+	/**
+	 * Has form for Expression.
+	 *
+	 * @param array $tree Tree.
+	 * @param mixed $form Form.
+	 */
 	public static function has_form( array $tree, $form ) {
 		if ( '=' === $tree[0] ) {
 			return self::has_form( $tree[1], $form ) && self::has_form( $tree[2], $form ); }
@@ -536,7 +645,10 @@ final class Expression {
 		return true;
 	}
 
-	/** Top-level terms with their signs removed. */
+	/** Top-level terms with their signs removed.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function terms( array $tree ) {
 		if ( '+' === $tree[0] ) {
 			return array_merge( self::terms( $tree[1] ), self::terms( $tree[2] ) ); }
@@ -547,6 +659,11 @@ final class Expression {
 		return array( 'neg' === $tree[0] ? $tree[1] : $tree );
 	}
 
+	/**
+	 * Contains sum for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function contains_sum( array $tree ) {
 		if ( in_array( $tree[0], array( '+', '-' ), true ) ) {
 			return true; }
@@ -559,11 +676,19 @@ final class Expression {
 		return false;
 	}
 
-	/** A number built only from literals. */
+	/** A number built only from literals.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function is_constant( array $tree ) {
 		return 'num' === $tree[0] || ( 'var' !== $tree[0] && self::variables( $tree ) === array() && ! self::contains_function( $tree ) );
 	}
 
+	/**
+	 * Contains function for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function contains_function( array $tree ) {
 		if ( 'fn' === $tree[0] ) {
 			return true; }
@@ -577,6 +702,10 @@ final class Expression {
 	/**
 	 * Monomial signature (variable powers) of a term with at most one numeric coefficient,
 	 * or null when the term is not a plain monomial.
+	 *
+	 * @param array $tree Tree.
+	 * @param array $powers Powers.
+	 * @param mixed $coefficients Coefficients.
 	 */
 	private static function monomial( array $tree, array &$powers, &$coefficients ) {
 		switch ( $tree[0] ) {
@@ -600,7 +729,7 @@ final class Expression {
 				++$coefficients;
 				return self::monomial( $tree[1], $powers, $coefficients );
 			case '^':
-				if ( 'var' === $tree[1][0] && 'num' === $tree[2][0] && $tree[2][1] >= 2 && floor( $tree[2][1] ) === $tree[2][1] ) {
+				if ( 'var' === $tree[1][0] && 'num' === $tree[2][0] && 2 <= $tree[2][1] && floor( $tree[2][1] ) === $tree[2][1] ) {
 					$powers[ $tree[1][1] ] = ( $powers[ $tree[1][1] ] ?? 0 ) + (int) $tree[2][1];
 					return true; }
 				return false;
@@ -608,6 +737,11 @@ final class Expression {
 		return false;
 	}
 
+	/**
+	 * Is expanded for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function is_expanded( array $tree ) {
 		$seen = array();
 		foreach ( self::terms( $tree ) as $term ) {
@@ -615,10 +749,10 @@ final class Expression {
 			$coefficients = 0;
 			if ( self::contains_sum( $term ) && ! self::monomial( $term, $powers, $coefficients ) ) {
 				return false; }
-			if ( ! self::monomial( $term, $powers, $coefficients ) || $coefficients > 1 ) {
+			if ( ! self::monomial( $term, $powers, $coefficients ) || 1 < $coefficients ) {
 				return false; }
 			ksort( $powers );
-			$signature = json_encode( $powers );
+			$signature = wp_json_encode( $powers );
 			if ( isset( $seen[ $signature ] ) ) {
 				return false; // like terms not combined.
 			}
@@ -627,13 +761,18 @@ final class Expression {
 		return true;
 	}
 
+	/**
+	 * Is factored for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function is_factored( array $tree ) {
 		if ( 'neg' === $tree[0] ) {
 			return self::is_factored( $tree[1] ); }
 		if ( in_array( $tree[0], array( '+', '-' ), true ) ) {
 			return false; }
 		if ( '^' === $tree[0] ) {
-			return self::contains_sum( $tree[1] ) && 'num' === $tree[2][0] && $tree[2][1] >= 2; }
+			return self::contains_sum( $tree[1] ) && 'num' === $tree[2][0] && 2 <= $tree[2][1]; }
 		if ( '/' === $tree[0] ) {
 			return self::is_factored( $tree[1] ) && ( 'num' === $tree[2][0] || self::is_factored( $tree[2] ) || ! self::contains_sum( $tree[2] ) ); }
 		if ( '*' !== $tree[0] ) {
@@ -649,10 +788,20 @@ final class Expression {
 		return count( $real ) >= 2 || ( count( $real ) === 1 && count( $factors ) > 1 && self::contains_sum( reset( $real ) ) );
 	}
 
+	/**
+	 * Factors for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function factors( array $tree ) {
 		return '*' === $tree[0] ? array_merge( self::factors( $tree[1] ), self::factors( $tree[2] ) ) : array( $tree );
 	}
 
+	/**
+	 * Is simplified for Expression.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function is_simplified( array $tree ) {
 		if ( ! self::free_of_foldable( $tree ) ) {
 			return false; }
@@ -662,7 +811,7 @@ final class Expression {
 			$coefficients = 0;
 			if ( self::monomial( $term, $powers, $coefficients ) ) {
 				ksort( $powers );
-				$signature = json_encode( $powers );
+				$signature = wp_json_encode( $powers );
 				if ( isset( $seen[ $signature ] ) ) {
 					return false; }
 				$seen[ $signature ] = true;
@@ -671,22 +820,25 @@ final class Expression {
 		return true;
 	}
 
-	/** No operation whose operands are both plain numbers (3+4, 2*5), no x*1, x+0, x^1; fractions must be lowest terms. */
+	/** No operation whose operands are both plain numbers (3+4, 2*5), no x*1, x+0, x^1; fractions must be lowest terms.
+	 *
+	 * @param array $tree Tree.
+	 */
 	private static function free_of_foldable( array $tree ) {
 		$op = $tree[0];
 		if ( in_array( $op, array( '+', '-', '*', '/', '^' ), true ) ) {
 			$left  = $tree[1];
 			$right = $tree[2];
 			if ( 'num' === $left[0] && 'num' === $right[0] ) {
-				if ( '/' === $op && floor( $left[1] ) === $left[1] && floor( $right[1] ) === $right[1] && 0 != $right[1] ) {
-					if ( self::gcd( (int) $left[1], (int) $right[1] ) === 1 && 1 != $right[1] ) {
+				if ( '/' === $op && floor( $left[1] ) === $left[1] && floor( $right[1] ) === $right[1] && 0.0 !== (float) $right[1] ) {
+					if ( self::gcd( (int) $left[1], (int) $right[1] ) === 1 && 1.0 !== (float) $right[1] ) {
 						return true; }
 				}
 				return false;
 			}
-			if ( ( '*' === $op && ( ( 'num' === $left[0] && 1 == $left[1] ) || ( 'num' === $right[0] && 1 == $right[1] ) ) )
-				|| ( in_array( $op, array( '+', '-' ), true ) && ( ( 'num' === $left[0] && 0 == $left[1] ) || ( 'num' === $right[0] && 0 == $right[1] ) ) )
-				|| ( '^' === $op && 'num' === $right[0] && ( 1 == $right[1] || 0 == $right[1] ) ) ) {
+			if ( ( '*' === $op && ( ( 'num' === $left[0] && 1.0 === (float) $left[1] ) || ( 'num' === $right[0] && 1.0 === (float) $right[1] ) ) )
+				|| ( in_array( $op, array( '+', '-' ), true ) && ( ( 'num' === $left[0] && 0.0 === (float) $left[1] ) || ( 'num' === $right[0] && 0.0 === (float) $right[1] ) ) )
+				|| ( '^' === $op && 'num' === $right[0] && ( 1.0 === (float) $right[1] || 0.0 === (float) $right[1] ) ) ) {
 				return false;
 			}
 			return self::free_of_foldable( $left ) && self::free_of_foldable( $right );
@@ -703,11 +855,17 @@ final class Expression {
 		return true;
 	}
 
+	/**
+	 * Gcd for Expression.
+	 *
+	 * @param mixed $a A.
+	 * @param mixed $b B.
+	 */
 	private static function gcd( $a, $b ) {
 		$a = abs( $a );
 		$b = abs( $b );
 		while ( $b ) {
 			list( $a, $b ) = array( $b, $a % $b ); }
-		return $a ?: 1;
+		return $a ? $a : 1;
 	}
 }

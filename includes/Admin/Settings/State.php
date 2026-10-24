@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 
 defined( 'ABSPATH' ) || exit;
 
@@ -1151,7 +1151,6 @@ return array(
 		'mafes' => __( 'Fès-Dar-Dbibegh', 'ohmylms' ),
 		'mafig' => __( 'Figuig', 'ohmylms' ),
 		'mafqh' => __( 'Fquih Ben Salah', 'ohmylms' ),
-		'mafes' => __( 'Fès-Dar-Dbibegh', 'ohmylms' ),
 		'mague' => __( 'Guelmim', 'ohmylms' ),
 		'maguf' => __( 'Guercif', 'ohmylms' ),
 		'mahaj' => __( 'El Hajeb', 'ohmylms' ),

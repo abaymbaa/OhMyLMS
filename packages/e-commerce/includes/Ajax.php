@@ -4,11 +4,20 @@ namespace OhMyLMS\Commerce;
 
 use GatewayPaypal;
 
+/**
+ * Plugin ajax implementation.
+ */
 class Ajax {
+	/**
+	 * Init for Ajax.
+	 */
 	public static function init(): void {
 		self::add_ajax_actions();
 	}
 
+	/**
+	 * Add ajax actions for Ajax.
+	 */
 	public static function add_ajax_actions(): void {
 		$ajax_events_nopriv = array(
 			'capture_paypal_payment',

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement, useId } from '@wordpress/element';
 import { ViewAsModal, canViewAs } from '../schools/ViewAsModal';
@@ -143,22 +144,22 @@ export function createCourseList( readRuntime ) {
 			je = ke[ 0 ],
 			Ae = ke[ 1 ],
 			Me = ( function () {
-				var _eLocal6 = ( function ( _eLocal7, t ) {
+				var _eLocal6Value = ( function ( _eLocal7Value, _tValue ) {
 						return (
 							( function ( _eLocal8 ) {
 								if ( Array.isArray( _eLocal8 ) ) {
 									return _eLocal8;
 								}
-							} )( _eLocal7 ) ||
+							} )( _eLocal7Value ) ||
 							( function ( _eLocal9, _tLocal ) {
-								var n =
+								var _nValue =
 									_eLocal9 === null || _eLocal9 === void 0
 										? null
 										: ( 'undefined' !== typeof Symbol &&
 												_eLocal9[ Symbol.iterator ] ) ||
 											_eLocal9[ '@@iterator' ];
-								if ( n !== null && n !== void 0 ) {
-									var r,
+								if ( _nValue !== null && _nValue !== void 0 ) {
+									var _rValue,
 										_aLocal,
 										_oLocal,
 										_iLocal,
@@ -167,21 +168,24 @@ export function createCourseList( readRuntime ) {
 										_uLocal = ! 1;
 									try {
 										if (
-											( ( _oLocal = ( n =
-												n.call( _eLocal9 ) ).next ),
+											( ( _oLocal = ( _nValue =
+												_nValue.call( _eLocal9 ) )
+												.next ),
 											0 === _tLocal )
 										) {
-											if ( Object( n ) !== n ) {
+											if (
+												Object( _nValue ) !== _nValue
+											) {
 												return;
 											}
 											_cLocal = ! 1;
 										} else {
 											for (
 												;
-												! ( _cLocal = ( r =
-													_oLocal.call( n ) )
+												! ( _cLocal = ( _rValue =
+													_oLocal.call( _nValue ) )
 													.done ) &&
-												( _lLocal.push( r.value ),
+												( _lLocal.push( _rValue.value ),
 												_lLocal.length !== _tLocal );
 												_cLocal = ! 0
 											) {}
@@ -196,9 +200,10 @@ export function createCourseList( readRuntime ) {
 												( ( _nullableValue ) =>
 													_nullableValue !== null &&
 													_nullableValue !== void 0 )(
-													n.return
+													_nValue.return
 												) &&
-												( ( _iLocal = n.return() ),
+												( ( _iLocal =
+													_nValue.return() ),
 												Object( _iLocal ) !== _iLocal )
 											) {
 												return;
@@ -211,27 +216,31 @@ export function createCourseList( readRuntime ) {
 									}
 									return _lLocal;
 								}
-							} )( _eLocal7, t ) ||
+							} )( _eLocal7Value, _tValue ) ||
 							( function ( _eLocal1, _tLocal2 ) {
 								if ( _eLocal1 ) {
 									if ( 'string' === typeof _eLocal1 ) {
 										return iY( _eLocal1, _tLocal2 );
 									}
-									var n = {}.toString
+									var _nValue2 = {}.toString
 										.call( _eLocal1 )
 										.slice( 8, -1 );
 									return (
-										'Object' === n &&
+										'Object' === _nValue2 &&
 											_eLocal1.constructor &&
-											( n = _eLocal1.constructor.name ),
+											( _nValue2 =
+												_eLocal1.constructor.name ),
 										( () => {
-											if ( 'Map' === n || 'Set' === n ) {
+											if (
+												'Map' === _nValue2 ||
+												'Set' === _nValue2
+											) {
 												return Array.from( _eLocal1 );
 											}
 											if (
-												'Arguments' === n ||
+												'Arguments' === _nValue2 ||
 												/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-													n
+													_nValue2
 												)
 											) {
 												return iY( _eLocal1, _tLocal2 );
@@ -240,7 +249,7 @@ export function createCourseList( readRuntime ) {
 										} )()
 									 );
 								}
-							} )( _eLocal7, t ) ||
+							} )( _eLocal7Value, _tValue ) ||
 							( function () {
 								throw new TypeError(
 									'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
@@ -248,8 +257,8 @@ export function createCourseList( readRuntime ) {
 							} )()
 						);
 					} )( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-					_tLocal3 = _eLocal6[ 0 ],
-					_nLocal = _eLocal6[ 1 ],
+					_tLocal3 = _eLocal6Value[ 0 ],
+					_nLocal = _eLocal6Value[ 1 ],
 					_rLocal = ( 0, ReactHooks.useCallback )( function (
 						..._args3
 					) {
@@ -285,7 +294,10 @@ export function createCourseList( readRuntime ) {
 							 );
 						} catch ( _eLocal11 ) {
 							return (
-								console.error( 'Download failed:', _eLocal11 ),
+								showRequestError(
+									'Download failed:',
+									_eLocal11
+								),
 								_nLocal( ! 1 ),
 								! 1
 							 );
@@ -792,7 +804,7 @@ export function createCourseList( readRuntime ) {
 										case 3:
 											_tLocal0.p = 3;
 											_rLocal8 = _tLocal0.v;
-											console.error( _rLocal8 );
+											showRequestError( _rLocal8 );
 											openNotificationWithIcon(
 												'error',
 												( 0, I18n.__ )(
@@ -847,7 +859,6 @@ export function createCourseList( readRuntime ) {
 								_aLocal7,
 								_oLocal5,
 								_iLocal3,
-								_lLocal2,
 								_cLocal2,
 								_uLocal2 = _args6;
 							return cY().w(
@@ -918,8 +929,7 @@ export function createCourseList( readRuntime ) {
 															_iLocal3.data
 														) {
 															{
-																_lLocal2 =
-																	_oLocal5.data;
+																void _oLocal5.data;
 															}
 														}
 													}
@@ -929,7 +939,7 @@ export function createCourseList( readRuntime ) {
 											case 6:
 												_eLocal33.p = 6;
 												_cLocal2 = _eLocal33.v;
-												console.error( _cLocal2 );
+												showRequestError( _cLocal2 );
 												openNotificationWithIcon(
 													'error',
 													_cLocal2.message ||

@@ -5,6 +5,8 @@
  * This file registers the Paypal payment gateway with OhMyLMS.
  *
  * @version 1.0.0
+ *
+ * @package OhMyLMS
  */
 define( 'OHMYLMS_PAYPAL_VERSION', '1.0.0' );
 define( 'OHMYLMS_PAYPAL_MAIN_FILE', __FILE__ );

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseImport( readRuntime ) {
@@ -105,7 +106,7 @@ export function createCourseImport( readRuntime ) {
 											case 4:
 												_eLocal2.p = 4;
 												_rLocal = _eLocal2.v;
-												console.error( _rLocal );
+												showRequestError( _rLocal );
 											// Falls through to the shared async state cleanup.
 											case 5:
 												return (
@@ -254,11 +255,11 @@ export function createCourseImport( readRuntime ) {
 					<Gte
 						level={ c === null || c === void 0 ? void 0 : c.level }
 						currentStep={
-							'experienced' ==
+							'experienced' ===
 								( c === null || c === void 0
 									? void 0
 									: c.level ) ||
-							'intermediate' ==
+							'intermediate' ===
 								( c === null || c === void 0
 									? void 0
 									: c.level )

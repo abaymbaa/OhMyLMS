@@ -19,23 +19,20 @@ defined( 'ABSPATH' ) || exit;
  */
 final class GradeEvents {
 	/**
+	 * Record.
+	 *
 	 * @param array $event source_type, source_id, item_id, student_id, question_id, version_id,
 	 *                     awarded, max_marks, fraction, correct, grader, reviewer_id, reason.
 	 *                     Optional record_evidence defaults to true; false saves a grade without skill effects.
 	 * @return int event ID
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function record( array $event ) {
 		global $wpdb;
 		$table    = Schema::table( 'grade_events' );
 		$part     = (string) ( $event['part_id'] ?? '' );
 		$previous = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT id FROM $table WHERE source_type=%s AND source_id=%d AND item_id=%d AND part_id=%s AND superseded_by=0 ORDER BY id DESC LIMIT 1",
-				$event['source_type'],
-				$event['source_id'],
-				$event['item_id'],
-				$part
-			)
+			$wpdb->prepare( 'SELECT id FROM %i WHERE source_type=%s AND source_id=%d AND item_id=%d AND part_id=%s AND superseded_by=0 ORDER BY id DESC LIMIT 1', $table, $event['source_type'], $event['source_id'], $event['item_id'], $part )
 		);
 		$row      = array(
 			'source_type' => (string) $event['source_type'],
@@ -82,36 +79,41 @@ final class GradeEvents {
 		return $id;
 	}
 
-	/** Current (non-superseded) event for an item, or null. */
+	/** Current (non-superseded) event for an item, or null.
+	 *
+	 * @param mixed $source_type Source type.
+	 * @param mixed $source_id Source identifier.
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function current( $source_type, $source_id, $item_id ) {
 		global $wpdb;
 		return $wpdb->get_row(
-			$wpdb->prepare(
-				'SELECT * FROM ' . Schema::table( 'grade_events' ) . ' WHERE source_type=%s AND source_id=%d AND item_id=%d AND superseded_by=0 ORDER BY id DESC LIMIT 1',
-				$source_type,
-				$source_id,
-				$item_id
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE source_type=%s AND source_id=%d AND item_id=%d AND superseded_by=0 ORDER BY id DESC LIMIT 1', Schema::table( 'grade_events' ), $source_type, $source_id, $item_id ),
 			ARRAY_A
 		) ?: null;
 	}
 
-	/** Full history for an item, oldest first. */
+	/** Full history for an item, oldest first.
+	 *
+	 * @param mixed $source_type Source type.
+	 * @param mixed $source_id Source identifier.
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function history( $source_type, $source_id, $item_id ) {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT * FROM ' . Schema::table( 'grade_events' ) . ' WHERE source_type=%s AND source_id=%d AND item_id=%d ORDER BY id',
-				$source_type,
-				$source_id,
-				$item_id
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE source_type=%s AND source_id=%d AND item_id=%d ORDER BY id', Schema::table( 'grade_events' ), $source_type, $source_id, $item_id ),
 			ARRAY_A
 		);
 	}
 
+	/**
+	 * Get for Grade events.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function get( $id ) {
 		global $wpdb;
-		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'grade_events' ) . ' WHERE id=%d', (int) $id ), ARRAY_A ) ?: null;
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', Schema::table( 'grade_events' ), (int) $id ), ARRAY_A ) ?: null;
 	}
 }

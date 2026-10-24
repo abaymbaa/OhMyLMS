@@ -4,14 +4,17 @@ namespace OhMyLMS\Factory;
 
 use OhMyLMS\Data\Question;
 
+/**
+ * Plugin question factory implementation.
+ */
 class QuestionFactory {
 
 	/**
 	 * Get question object
 	 *
-	 * @param bool $question_id
+	 * @param bool $question_id Question identifier.
 	 * @return bool|question
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_question( $question_id = false ) {
@@ -28,7 +31,7 @@ class QuestionFactory {
 	/**
 	 * Get question id
 	 *
-	 * @param $question
+	 * @param mixed $question Question.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */

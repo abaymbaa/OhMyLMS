@@ -1,4 +1,10 @@
 <?php
+/**
+ * Subscription functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 /**
  * Get subscription.

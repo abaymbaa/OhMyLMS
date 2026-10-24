@@ -9,8 +9,14 @@ namespace OhMyLMS\Hooks;
 
 use OhMyLMS\Engagement\Leaderboard;
 
+/**
+ * Plugin leaderboard hook implementation.
+ */
 class LeaderboardHook {
 
+	/**
+	 * Register hooks for Leaderboard hook.
+	 */
 	public function register_hooks() {
 		add_filter( 'ohmylms_leaderboard_students', array( $this, 'filter_leaderboard_students' ), 10, 2 );
 	}
@@ -18,8 +24,8 @@ class LeaderboardHook {
 	/**
 	 * Filter the leaderboard students.
 	 *
-	 * @param array $students
-	 * @param int   $course_id
+	 * @param array $students Students.
+	 * @param int   $course_id Course identifier.
 	 * @return array
 	 */
 	public function filter_leaderboard_students( $students, $course_id ) {

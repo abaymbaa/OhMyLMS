@@ -4,14 +4,17 @@ namespace OhMyLMS\Factory;
 
 use OhMyLMS\Data\Course;
 
+/**
+ * Plugin course factory implementation.
+ */
 class CourseFactory {
 
 	/**
 	 * Get course object
 	 *
-	 * @param bool $course_id
+	 * @param bool $course_id Course identifier.
 	 * @return bool|Course
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_course( $course_id = false ) {
@@ -27,7 +30,7 @@ class CourseFactory {
 	/**
 	 * Get course id
 	 *
-	 * @param $course
+	 * @param mixed $course Course.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */
@@ -50,8 +53,8 @@ class CourseFactory {
 	/**
 	 * Check whether the course exist or not
 	 *
-	 * @param $course_id Course ID
-	 *
+	 * @param mixed $course_id Course ID
+	 * .
 	 * @return bool If course is exist then return true, otherwise return false
 	 *
 	 * @since 1.0.0

@@ -50,9 +50,8 @@ class Session extends PostTypeData {
 	/**
 	 * Session constructor.
 	 *
-	 * @param $session
-	 * @throws \Exception
-	 */
+	 * @param string $session Session.
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function __construct( $session = '' ) {
 		if ( is_numeric( $session ) && $session > 0 ) {
 			$this->set_id( $session );
@@ -83,8 +82,9 @@ class Session extends PostTypeData {
 	/**
 	 * Set the lesson type.
 	 *
-	 * @return string
+	 * @return void
 	 * @since 1.0.0
+	 * @param mixed $type Type.
 	 */
 	public function set_type( $type ) {
 		$this->set_prop( 'type', $type );

@@ -8,7 +8,6 @@ import {
 import { Modal, Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { exportCsv } from '../schools/api.mjs';
-const t = ( text ) => __( text, 'ohmylms' );
 const percent = ( value ) =>
 	value === null || value === undefined
 		? '—'
@@ -136,12 +135,12 @@ export function CourseGradebook( { courseId, onClose } ) {
 									manual: cell.status === 'manual',
 								} )
 							}
-							aria-label={ `${ t( 'Edit grade' ) }: ${ student.name }, ${ item.title }` }
+							aria-label={ `${ __( 'Edit grade', 'ohmylms' ) }: ${ student.name }, ${ item.title }` }
 						>
 							{ ( () => {
 								if ( cell.score === null ) {
 									if ( cell.status === 'pending' ) {
-										return t( 'Pending' );
+										return __( 'Pending', 'ohmylms' );
 									}
 									return '—';
 								}
@@ -160,7 +159,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 					} }
 				>
 					{ student.total.graded }/{ data.items.length }{ ' ' }
-					{ t( 'graded' ) }
+					{ __( 'graded', 'ohmylms' ) }
 				</small>
 			</td>
 		</tr>
@@ -201,8 +200,8 @@ export function CourseGradebook( { courseId, onClose } ) {
 		<Modal
 			title={
 				data
-					? `${ data.course.name } — ${ t( 'Gradebook' ) }`
-					: t( 'Course gradebook' )
+					? `${ data.course.name } — ${ __( 'Gradebook', 'ohmylms' ) }`
+					: __( 'Course gradebook', 'ohmylms' )
 			}
 			isFullScreen
 			onRequestClose={ () => ! busy && onClose() }
@@ -211,7 +210,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 				<Notice status="error" isDismissible={ false }>
 					{ error }{ ' ' }
 					<Button onClick={ () => setRevision( ( v ) => v + 1 ) }>
-						{ t( 'Retry' ) }
+						{ __( 'Retry', 'ohmylms' ) }
 					</Button>
 				</Notice>
 			) }
@@ -224,18 +223,21 @@ export function CourseGradebook( { courseId, onClose } ) {
 					{ message }
 				</Notice>
 			) }
-			{ loading && <p role="status">{ t( 'Loading gradebook…' ) }</p> }
+			{ loading && (
+				<p role="status">{ __( 'Loading gradebook…', 'ohmylms' ) }</p>
+			) }
 			{ data && (
 				<>
 					<p>
-						{ data.student_count } { t( 'students' ) } ·{ ' ' }
-						{ data.classes.length } { t( 'classes' ) } ·{ ' ' }
-						{ t( 'Course average' ) }:{ ' ' }
+						{ data.student_count } { __( 'students', 'ohmylms' ) } ·{ ' ' }
+						{ data.classes.length } { __( 'classes', 'ohmylms' ) } ·{ ' ' }
+						{ __( 'Course average', 'ohmylms' ) }:{ ' ' }
 						<strong>{ percent( data.average ) }</strong>
 					</p>
 					<p>
-						{ t(
-							'Expand a class to see its nested gradebook. Class grades are averages of student percentages. Student totals use the latest graded attempts; pending and missing work are excluded.'
+						{ __(
+							'Expand a class to see its nested gradebook. Class grades are averages of student percentages. Student totals use the latest graded attempts; pending and missing work are excluded.',
+							'ohmylms'
 						) }
 					</p>
 					<form
@@ -250,7 +252,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 										enroll,
 									},
 									( result ) =>
-										`${ t( 'Class added' ) }. ${ result.included } ${ t( 'students grouped' ) }, ${ result.enrolled } ${ t( 'new enrollments' ) }, ${ result.skipped } ${ t( 'skipped' ) }.`
+										`${ __( 'Class added', 'ohmylms' ) }. ${ result.included } ${ __( 'students grouped', 'ohmylms' ) }, ${ result.enrolled } ${ __( 'new enrollments', 'ohmylms' ) }, ${ result.skipped } ${ __( 'skipped', 'ohmylms' ) }.`
 								)
 							) {
 								setExpanded( ( value ) => ( {
@@ -271,7 +273,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 						} }
 					>
 						<label htmlFor={ _controlId + '-field-1' }>
-							{ t( 'Add class to course' ) }{ ' ' }
+							{ __( 'Add class to course', 'ohmylms' ) }{ ' ' }
 							<select
 								value={ selected }
 								disabled={ busy || loading }
@@ -282,7 +284,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 								id={ _controlId + '-field-1' }
 							>
 								<option value="">
-									{ t( 'Choose a class…' ) }
+									{ __( 'Choose a class…', 'ohmylms' ) }
 								</option>
 								{ classes
 									.filter( ( c ) => ! Number( c.attached ) )
@@ -291,7 +293,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 											{ c.name }
 											{ c.school_name
 												? ` — ${ c.school_name }`
-												: ` — ${ t( 'Independent' ) }` }
+												: ` — ${ __( 'Independent', 'ohmylms' ) }` }
 										</option>
 									) ) }
 							</select>
@@ -306,8 +308,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 								}
 								id={ _controlId + '-field-2' }
 							/>{ ' ' }
-							{ t(
-								'Enroll current students who do not have course access'
+							{ __(
+								'Enroll current students who do not have course access',
+								'ohmylms'
 							) }
 						</label>
 						<Button
@@ -315,12 +318,13 @@ export function CourseGradebook( { courseId, onClose } ) {
 							variant="primary"
 							disabled={ ! selected || busy || loading }
 						>
-							{ t( 'Add class' ) }
+							{ __( 'Add class', 'ohmylms' ) }
 						</Button>
 					</form>
 					<p>
-						{ t(
-							'A class occupies one row. Adding it keeps individual student accounts and grades. Sync adds current class members; previously grouped students keep their grade history. Blocked or cancelled enrollments are skipped.'
+						{ __(
+							'A class occupies one row. Adding it keeps individual student accounts and grades. Sync adds current class members; previously grouped students keep their grade history. Blocked or cancelled enrollments are skipped.',
+							'ohmylms'
 						) }
 					</p>
 					<div
@@ -332,7 +336,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 						} }
 					>
 						<label htmlFor={ _controlId + '-field-3' }>
-							{ t( 'Search students or classes' ) }{ ' ' }
+							{ __( 'Search students or classes', 'ohmylms' ) }{ ' ' }
 							<input
 								type="search"
 								value={ search }
@@ -347,13 +351,14 @@ export function CourseGradebook( { courseId, onClose } ) {
 							onClick={ download }
 							disabled={ ! data.student_count || loading }
 						>
-							{ t( 'Export CSV' ) }
+							{ __( 'Export CSV', 'ohmylms' ) }
 						</Button>
 					</div>
 					{ ! data.items.length && (
 						<Notice status="info" isDismissible={ false }>
-							{ t(
-								'Add quizzes or assignments to the course curriculum to create grade columns.'
+							{ __(
+								'Add quizzes or assignments to the course curriculum to create grade columns.',
+								'ohmylms'
 							) }
 						</Notice>
 					) }
@@ -375,14 +380,15 @@ export function CourseGradebook( { courseId, onClose } ) {
 									margin: '12px 0',
 								} }
 							>
-								{ t(
-									'Course gradebook — classes and individual students'
+								{ __(
+									'Course gradebook — classes and individual students',
+									'ohmylms'
 								) }
 							</caption>
 							<thead>
 								<tr>
 									<th scope="col" style={ cellStyle }>
-										{ t( 'Class / student' ) }
+										{ __( 'Class / student', 'ohmylms' ) }
 									</th>
 									{ data.items.map( ( item ) => (
 										<th
@@ -402,12 +408,13 @@ export function CourseGradebook( { courseId, onClose } ) {
 														? 'Quiz'
 														: 'Assignment'
 												) }{ ' ' }
-												· { item.max } { t( 'points' ) }
+												· { item.max }{ ' ' }
+												{ __( 'points', 'ohmylms' ) }
 											</small>
 										</th>
 									) ) }
 									<th scope="col" style={ cellStyle }>
-										{ t( 'Grade' ) }
+										{ __( 'Grade', 'ohmylms' ) }
 									</th>
 								</tr>
 							</thead>
@@ -463,9 +470,16 @@ export function CourseGradebook( { courseId, onClose } ) {
 															group.students
 																.length
 														}{ ' ' }
-														{ t( 'students' ) } ·{ ' ' }
+														{ __(
+															'students',
+															'ohmylms'
+														) }{ ' ' }
+														·{ ' ' }
 														{ group.school_name ||
-															t( 'Independent' ) }
+															__(
+																'Independent',
+																'ohmylms'
+															) }
 													</small>
 													<div>
 														<Button
@@ -485,12 +499,13 @@ export function CourseGradebook( { courseId, onClose } ) {
 																	(
 																		result
 																	) =>
-																		`${ t( 'Class synced' ) }. ${ result.included } ${ t( 'students grouped' ) }, ${ result.enrolled } ${ t( 'new enrollments' ) }, ${ result.skipped } ${ t( 'skipped' ) }.`
+																		`${ __( 'Class synced', 'ohmylms' ) }. ${ result.included } ${ __( 'students grouped', 'ohmylms' ) }, ${ result.enrolled } ${ __( 'new enrollments', 'ohmylms' ) }, ${ result.skipped } ${ __( 'skipped', 'ohmylms' ) }.`
 																)
 															}
 														>
-															{ t(
-																'Sync roster'
+															{ __(
+																'Sync roster',
+																'ohmylms'
 															) }
 														</Button>
 														<Button
@@ -504,8 +519,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 																)
 															}
 														>
-															{ t(
-																'Remove class'
+															{ __(
+																'Remove class',
+																'ohmylms'
 															) }
 														</Button>
 													</div>
@@ -533,7 +549,10 @@ export function CourseGradebook( { courseId, onClose } ) {
 															display: 'block',
 														} }
 													>
-														{ t( 'Class average' ) }
+														{ __(
+															'Class average',
+															'ohmylms'
+														) }
 													</small>
 												</td>
 											</tr>
@@ -550,8 +569,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 														}
 														style={ cellStyle }
 													>
-														{ t(
-															'No students grouped yet. Add students to the class, then sync its roster.'
+														{ __(
+															'No students grouped yet. Add students to the class, then sync its roster.',
+															'ohmylms'
 														) }
 													</td>
 												</tr>
@@ -573,8 +593,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 												}
 												style={ cellStyle }
 											>
-												{ t(
-													'Add a class or enroll students to start this gradebook.'
+												{ __(
+													'Add a class or enroll students to start this gradebook.',
+													'ohmylms'
 												) }
 											</td>
 										</tr>
@@ -583,15 +604,16 @@ export function CourseGradebook( { courseId, onClose } ) {
 						</table>
 					</div>
 					<p>
-						{ t(
-							'* Manual gradebook override. Overrides affect gradebook totals. Assessment grading controls pass and completion status.'
+						{ __(
+							'* Manual gradebook override. Overrides affect gradebook totals. Assessment grading controls pass and completion status.',
+							'ohmylms'
 						) }
 					</p>
 				</>
 			) }
 			{ editing && (
 				<Modal
-					title={ `${ t( 'Edit grade' ) } — ${ editing.student.name }` }
+					title={ `${ __( 'Edit grade', 'ohmylms' ) } — ${ editing.student.name }` }
 					onRequestClose={ () => ! busy && setEditing( null ) }
 				>
 					<form
@@ -607,7 +629,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 										score: editing.score,
 										note: editing.note,
 									},
-									t( 'Grade saved.' )
+									__( 'Grade saved.', 'ohmylms' )
 								)
 							) {
 								setEditing( null );
@@ -616,7 +638,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 					>
 						<p>{ editing.item.title }</p>
 						<label htmlFor={ _controlId + '-field-4' }>
-							{ t( 'Score' ) } / { editing.item.max }
+							{ __( 'Score', 'ohmylms' ) } / { editing.item.max }
 							<input
 								type="number"
 								min="0"
@@ -636,7 +658,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 						</label>
 						<p>
 							<label htmlFor={ _controlId + '-field-5' }>
-								{ t( 'Grade note' ) }
+								{ __( 'Grade note', 'ohmylms' ) }
 								<textarea
 									value={ editing.note }
 									disabled={ busy }
@@ -657,7 +679,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 							type="submit"
 							disabled={ busy }
 						>
-							{ t( 'Save grade' ) }
+							{ __( 'Save grade', 'ohmylms' ) }
 						</Button>{ ' ' }
 						{ editing.manual && (
 							<Button
@@ -671,8 +693,9 @@ export function CourseGradebook( { courseId, onClose } ) {
 												user_id: editing.student.id,
 												content_id: editing.item.id,
 											},
-											t(
-												'Original assessment grade restored.'
+											__(
+												'Original assessment grade restored.',
+												'ohmylms'
 											)
 										)
 									) {
@@ -680,7 +703,7 @@ export function CourseGradebook( { courseId, onClose } ) {
 									}
 								} }
 							>
-								{ t( 'Use assessment grade' ) }
+								{ __( 'Use assessment grade', 'ohmylms' ) }
 							</Button>
 						) }
 					</form>
@@ -688,13 +711,17 @@ export function CourseGradebook( { courseId, onClose } ) {
 			) }
 			{ remove && (
 				<Modal
-					title={ t( 'Remove class from course gradebook?' ) }
+					title={ __(
+						'Remove class from course gradebook?',
+						'ohmylms'
+					) }
 					onRequestClose={ () => ! busy && setRemove( null ) }
 				>
 					<p>{ remove.name }</p>
 					<p>
-						{ t(
-							'Students keep their course access and grades, and appear as individual rows unless they belong to another attached class.'
+						{ __(
+							'Students keep their course access and grades, and appear as individual rows unless they belong to another attached class.',
+							'ohmylms'
 						) }
 					</p>
 					{ error && <p role="alert">{ error }</p> }
@@ -708,14 +735,17 @@ export function CourseGradebook( { courseId, onClose } ) {
 									`/classes/${ remove.id }`,
 									'DELETE',
 									{},
-									t( 'Class removed from gradebook.' )
+									__(
+										'Class removed from gradebook.',
+										'ohmylms'
+									)
 								)
 							) {
 								setRemove( null );
 							}
 						} }
 					>
-						{ t( 'Remove class' ) }
+						{ __( 'Remove class', 'ohmylms' ) }
 					</Button>
 				</Modal>
 			) }

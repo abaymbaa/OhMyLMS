@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /**
  * Preserve the dashboard's REST filter/date contract.
  * @param filter
@@ -10,7 +11,6 @@ export function dashboardPath( filter, formatDate ) {
 	}
 	return path;
 }
-
 export function sortRecentCourses( courses = [] ) {
 	return [ ...courses ].sort(
 		( left, right ) => right?.total_sales_count - left?.total_sales_count
@@ -30,7 +30,7 @@ export function loadDashboard(
 	actions,
 	filter,
 	formatDate,
-	onError = console.error
+	onError = showRequestError
 ) {
 	let active = true;
 	actions.setDashboardLoader( true );

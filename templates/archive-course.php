@@ -58,7 +58,7 @@ do_action( 'ohmylms_before_main_content' );
 	if ( have_posts() ) {
 		?>
 		
-		<div class="ohmylms-course-outer <?php echo $course_outer_classes; ?>" >
+		<div class="ohmylms-course-outer <?php echo esc_attr( $course_outer_classes ); ?>" >
 			<?php if ( 'grid' === $layout && 'yes' === $is_filter_enabled ) { ?>
 				<aside class="ohmylms-course-sidebar" >
 					<?php

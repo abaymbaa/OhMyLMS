@@ -11,7 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Plugin offer button block implementation.
+ */
 class OfferButtonBlock {
+	/**
+	 * Register for Offer button block.
+	 */
 	public static function register() {
 		register_block_type(
 			'ohmylms/offer-button',
@@ -86,6 +92,11 @@ class OfferButtonBlock {
 		);
 	}
 
+	/**
+	 * Render for Offer button block.
+	 *
+	 * @param mixed $atts Atts.
+	 */
 	public static function render( $atts ) {
 		// Use the pro shortcode handler for output.
 		if ( class_exists( '\OhMyLMS\Shortcodes\ShortCodeOfferButton' ) ) {

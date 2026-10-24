@@ -24,7 +24,7 @@ class LessonStore extends DataStore {
 	/**
 	 * Create lesson
 	 *
-	 * @param Lesson $lesson
+	 * @param Lesson $lesson Lesson.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -85,9 +85,9 @@ class LessonStore extends DataStore {
 	/**
 	 * Read data
 	 *
-	 * @param Lesson $lesson
+	 * @param Lesson $lesson Lesson.
 	 * @return mixed|void
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function read( &$lesson ) {
@@ -195,7 +195,7 @@ class LessonStore extends DataStore {
 	 * This function deletes a lesson by its ID and triggers the 'ohmylms_after_deleting_a_lesson' action hook.
 	 *
 	 * @param Lesson $lesson The lesson object to be deleted.
-	 * @param array  $args   Optional. Additional arguments for the delete operation. Default empty array.
+	 * @param array  $args Optional. Additional arguments for the delete operation. Default empty array.
 	 *
 	 * @since 1.0.0
 	 */
@@ -220,7 +220,7 @@ class LessonStore extends DataStore {
 	/**
 	 * Helper function that reads lesson data
 	 *
-	 * @param Lesson $lesson
+	 * @param Lesson $lesson Lesson.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -257,8 +257,8 @@ class LessonStore extends DataStore {
 	/**
 	 * Helper function that updates lesson meta
 	 *
-	 * @param Lesson $lesson
-	 * @param bool   $force
+	 * @param Lesson $lesson Lesson.
+	 * @param bool   $force Force.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -316,11 +316,7 @@ class LessonStore extends DataStore {
 		$chapter_id   = ohmylms_get_chapter_id_by_content_id( $lesson_id );
 		$table_name   = $wpdb->prefix . 'ohmylms_content_relationship';
 		$order_number = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT order_number FROM {$table_name} WHERE chapter_id = %d AND content_id = %d",
-				$chapter_id,
-				$lesson_id
-			)
+			$wpdb->prepare( 'SELECT order_number FROM %i WHERE chapter_id = %d AND content_id = %d', $table_name, $chapter_id, $lesson_id )
 		);
 		return $order_number;
 	}

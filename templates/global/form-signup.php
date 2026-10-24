@@ -142,6 +142,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<?php
 					printf(
 						wp_kses_post(
+							/* translators: %1$s: text value. */
 							__( 'By signing up, you agree to our <a href="%1$s" target="_blank">Privacy Policy</a>.', 'ohmylms' )
 						),
 						esc_url( get_permalink( get_option( 'wp_page_for_privacy_policy' ) ) )

@@ -3,12 +3,21 @@
 namespace OhMyLMS\Emails\CreatorsEmail;
 
 use OhMyLMS\Emails\Emails;
+/**
+ * Plugin cancelled order implementation.
+ */
 class CancelledOrder {
 
+	/**
+	 * Initialize Cancelled order.
+	 */
 	public function __construct() {
 		add_action( 'ohmylms_update_order_status_to_cancelled', array( $this, 'trigger' ), 10 );
 	}
 
+	/**
+	 * Basic settings for Cancelled order.
+	 */
 	public function basic_settings(): array {
 		$basic = array(
 			'id'             => 'creator_cancelled_order',
@@ -21,6 +30,9 @@ class CancelledOrder {
 		return $basic;
 	}
 
+	/**
+	 * Default settings for Cancelled order.
+	 */
 	public function default_settings(): array {
 		$default_settings = array(
 			'enable'             => false,
@@ -33,6 +45,11 @@ class CancelledOrder {
 		return $default_settings;
 	}
 
+	/**
+	 * Trigger for Cancelled order.
+	 *
+	 * @param mixed $order Order.
+	 */
 	public function trigger( $order ) {
 		$settings = get_option( 'create_lms_email_creator_cancelled_order', $this->default_settings() );
 

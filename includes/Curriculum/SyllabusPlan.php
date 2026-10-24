@@ -32,41 +32,139 @@ final class SyllabusPlan {
 	const MAX_GROUPS = 2000;
 	const MAX_SKILLS = 5000;
 
+	/**
+	 * Root.
+	 *
+	 * @var mixed
+	 */
 	private $root;
+	/**
+	 * Options.
+	 *
+	 * @var mixed
+	 */
 	private $options;
-	private $contents  = array();
-	private $groups    = array();
-	private $skills    = array();
-	private $by_code   = array();
-	private $in_group  = array();
-	private $ops       = array();
-	private $op_index  = array();
-	private $updates   = array(
+	/**
+	 * Contents.
+	 *
+	 * @var mixed
+	 */
+	private $contents = array();
+	/**
+	 * Groups.
+	 *
+	 * @var mixed
+	 */
+	private $groups = array();
+	/**
+	 * Skills.
+	 *
+	 * @var mixed
+	 */
+	private $skills = array();
+	/**
+	 * By code.
+	 *
+	 * @var mixed
+	 */
+	private $by_code = array();
+	/**
+	 * In group.
+	 *
+	 * @var mixed
+	 */
+	private $in_group = array();
+	/**
+	 * Ops.
+	 *
+	 * @var mixed
+	 */
+	private $ops = array();
+	/**
+	 * Op index.
+	 *
+	 * @var mixed
+	 */
+	private $op_index = array();
+	/**
+	 * Updates.
+	 *
+	 * @var mixed
+	 */
+	private $updates = array(
 		'content' => array(),
 		'group'   => array(),
 		'skill'   => array(),
 	);
-	private $matched   = array(
+	/**
+	 * Matched.
+	 *
+	 * @var mixed
+	 */
+	private $matched = array(
 		'content' => array(),
 		'group'   => array(),
 		'skill'   => array(),
 	);
-	private $moved     = array();
-	private $created   = array(
+	/**
+	 * Moved.
+	 *
+	 * @var mixed
+	 */
+	private $moved = array();
+	/**
+	 * Created.
+	 *
+	 * @var mixed
+	 */
+	private $created = array(
 		'content' => 0,
 		'group'   => 0,
 		'skill'   => 0,
 	);
-	private $errors    = array();
-	private $warnings  = array();
-	private $sequence  = 0;
+	/**
+	 * Errors.
+	 *
+	 * @var mixed
+	 */
+	private $errors = array();
+	/**
+	 * Warnings.
+	 *
+	 * @var mixed
+	 */
+	private $warnings = array();
+	/**
+	 * Sequence.
+	 *
+	 * @var mixed
+	 */
+	private $sequence = 0;
+	/**
+	 * Defaulted.
+	 *
+	 * @var mixed
+	 */
 	private $defaulted = array();
 
+	/**
+	 * Key for Syllabus plan.
+	 *
+	 * @param mixed $text Text.
+	 */
 	public static function key( $text ) {
 		$text = trim( (string) preg_replace( '/\s+/u', ' ', (string) $text ) );
 		return function_exists( 'mb_strtolower' ) ? mb_strtolower( $text, 'UTF-8' ) : strtolower( $text );
 	}
 
+	/**
+	 * Same for Syllabus plan.
+	 *
+	 * @param mixed $code_a Code a.
+	 * @param mixed $name_a Name a.
+	 * @param mixed $code_b Code b.
+	 * @param mixed $name_b Name b.
+	 */
 	private static function same( $code_a, $name_a, $code_b, $name_b ) {
 		if ( '' !== $code_a && '' !== $code_b ) {
 			return self::key( $code_a ) === self::key( $code_b ); }
@@ -74,8 +172,10 @@ final class SyllabusPlan {
 	}
 
 	/**
-	 * @param array   $state   See the class description.
-	 * @param array[] $rows    Output of SyllabusRows::normalize()['rows'].
+	 * Build.
+	 *
+	 * @param array   $state See the class description.
+	 * @param array[] $rows Output of SyllabusRows::normalize()['rows'].
 	 * @param array   $options default_group (name for skills with no group), max_groups, max_skills.
 	 * @return array{ops: array[], report: array}
 	 */
@@ -94,11 +194,22 @@ final class SyllabusPlan {
 		return $plan->finish();
 	}
 
+	/**
+	 * Initialize Syllabus plan.
+	 *
+	 * @param mixed $root Root.
+	 * @param array $options Operation options.
+	 */
 	private function __construct( $root, array $options ) {
 		$this->root    = $root;
 		$this->options = $options;
 	}
 
+	/**
+	 * Load for Syllabus plan.
+	 *
+	 * @param array $state State.
+	 */
 	private function load( array $state ) {
 		foreach ( $state['contents'] ?? array() as $content ) {
 			$id = (int) $content['id'];
@@ -137,16 +248,31 @@ final class SyllabusPlan {
 		}
 	}
 
+	/**
+	 * Ref for Syllabus plan.
+	 *
+	 * @param mixed $letter Letter.
+	 */
 	private function ref( $letter ) {
 		return '@' . $letter . ( ++$this->sequence ); }
 
+	/**
+	 * Push for Syllabus plan.
+	 *
+	 * @param array $op Op.
+	 */
 	private function push( array $op ) {
 		$this->ops[] = $op;
 		if ( isset( $op['ref'] ) ) {
 			$this->op_index[ $op['ref'] ] = count( $this->ops ) - 1; }
 	}
 
-	/** Set fields on a thing: created in this plan (edit its operation) or existing (one update operation). */
+	/** Set fields on a thing: created in this plan (edit its operation) or existing (one update operation).
+	 *
+	 * @param mixed $kind Kind.
+	 * @param mixed $id Id.
+	 * @param array $fields Fields.
+	 */
 	private function set( $kind, $id, array $fields ) {
 		if ( ! $fields ) {
 			return; }
@@ -171,6 +297,13 @@ final class SyllabusPlan {
 			$current[ $key ] = $value; }
 	}
 
+	/**
+	 * Content for Syllabus plan.
+	 *
+	 * @param mixed $parent Parent.
+	 * @param mixed $name Name.
+	 * @param mixed $code Code.
+	 */
 	private function content( $parent, $name, $code ) {
 		foreach ( $this->contents as $id => $content ) {
 			if ( $content['parent'] === $parent && self::same( $code, $name, $content['code'], $content['name'] ) ) {
@@ -205,6 +338,13 @@ final class SyllabusPlan {
 		return $ref;
 	}
 
+	/**
+	 * Group for Syllabus plan.
+	 *
+	 * @param mixed $item Item.
+	 * @param mixed $name Name.
+	 * @param mixed $code Code.
+	 */
 	private function group( $item, $name, $code ) {
 		foreach ( $this->groups as $id => $group ) {
 			if ( $group['item'] === $item && self::same( $code, $name, $group['code'], $group['name'] ) ) {
@@ -239,6 +379,13 @@ final class SyllabusPlan {
 		return $ref;
 	}
 
+	/**
+	 * Find skill for Syllabus plan.
+	 *
+	 * @param mixed $group Group.
+	 * @param mixed $name Name.
+	 * @param mixed $code Code.
+	 */
 	private function find_skill( $group, $name, $code ) {
 		if ( '' !== $code && isset( $this->by_code[ self::key( $code ) ] ) ) {
 			return $this->by_code[ self::key( $code ) ]; }
@@ -250,6 +397,12 @@ final class SyllabusPlan {
 		return null;
 	}
 
+	/**
+	 * Skill for Syllabus plan.
+	 *
+	 * @param mixed $group Group.
+	 * @param array $row Row.
+	 */
 	private function skill( $group, array $row ) {
 		$name        = $row['skill'];
 		$code        = $row['skill_code'];
@@ -289,12 +442,14 @@ final class SyllabusPlan {
 			if ( $skill['group'] === $group ) {
 				$this->warnings[] = array(
 					'line'    => $row['line'],
-					'message' => sprintf( __( '“%s” appears more than once in the file; the repeated row was ignored.', 'ohmylms' ), $name ),
+					'message' => sprintf( /* translators: %s: text value. */
+					__( '“%s” appears more than once in the file; the repeated row was ignored.', 'ohmylms' ), $name ),
 				);
 			} else {
 				$this->errors[] = array(
 					'line'    => $row['line'],
-					'message' => sprintf( __( 'Skill code “%s” is used under more than one skill group.', 'ohmylms' ), $code ),
+					'message' => sprintf( /* translators: %s: text value. */
+					__( 'Skill code “%s” is used under more than one skill group.', 'ohmylms' ), $code ),
 				);
 			}
 			return;
@@ -330,6 +485,11 @@ final class SyllabusPlan {
 		$this->set( 'skill', $found, $fields );
 	}
 
+	/**
+	 * Row for Syllabus plan.
+	 *
+	 * @param array $row Row.
+	 */
 	private function row( array $row ) {
 		$parent = $this->root;
 		$last   = count( $row['content_path'] ) - 1;
@@ -346,7 +506,8 @@ final class SyllabusPlan {
 				$this->defaulted[ (string) $parent ] = true;
 				$this->warnings[]                    = array(
 					'line'    => $row['line'],
-					'message' => sprintf( __( 'Skills with no skill group were placed in a group called “%s”.', 'ohmylms' ), $name ),
+					'message' => sprintf( /* translators: %s: text value. */
+					__( 'Skills with no skill group were placed in a group called “%s”.', 'ohmylms' ), $name ),
 				);
 			}
 		}
@@ -355,19 +516,24 @@ final class SyllabusPlan {
 			$this->skill( $group, $row ); }
 	}
 
+	/**
+	 * Finish for Syllabus plan.
+	 */
 	private function finish() {
 		$groups_total = count( $this->groups );
 		$skills_total = count( $this->skills );
 		if ( $groups_total > $this->options['max_groups'] ) {
 			$this->errors[] = array(
 				'line'    => 0,
-				'message' => sprintf( __( 'A syllabus can have at most %d skill groups.', 'ohmylms' ), $this->options['max_groups'] ),
+				'message' => sprintf( /* translators: %d: number. */
+				__( 'A syllabus can have at most %d skill groups.', 'ohmylms' ), $this->options['max_groups'] ),
 			);
 		}
 		if ( $skills_total > $this->options['max_skills'] ) {
 			$this->errors[] = array(
 				'line'    => 0,
-				'message' => sprintf( __( 'A syllabus can have at most %d skills.', 'ohmylms' ), $this->options['max_skills'] ),
+				'message' => sprintf( /* translators: %d: number. */
+				__( 'A syllabus can have at most %d skills.', 'ohmylms' ), $this->options['max_skills'] ),
 			);
 		}
 		$counted = static function ( array $updates, array $ops ) {

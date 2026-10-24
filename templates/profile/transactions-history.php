@@ -74,13 +74,13 @@ defined( 'ABSPATH' ) || exit();
 							<div class="table-accordion-handler"></div>
 
 							<div class="dashboard-table-td order-id">
-								#<?php echo $order->get_id(); ?>
+								#<?php echo esc_html( $order->get_id() ); ?>
 							</div>
 
 							<div class="dashboard-table-td course-name">
 							<?php
 							if ( $course ) {
-								echo $course->get_name();
+								echo esc_html( $course->get_name() );
 							}
 							?>
 							</div>
@@ -94,7 +94,7 @@ defined( 'ABSPATH' ) || exit();
 							<div class="dashboard-table-td price">
 								<?php
 								if ( $course ) {
-									echo ohmylms_price( $order->get_total() );
+									echo wp_kses_post( ohmylms_price( $order->get_total() ) );
 								}
 								?>
 							</div>
@@ -104,7 +104,7 @@ defined( 'ABSPATH' ) || exit();
 							</div>
 
 							<div class="dashboard-table-td status">
-								<span class="status-tag <?php echo $order->get_status(); ?>">
+								<span class="status-tag <?php echo esc_attr( $order->get_status() ); ?>">
 								<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 								</span>
 							</div>
@@ -113,7 +113,7 @@ defined( 'ABSPATH' ) || exit();
 								<div class="dashboard-table-td course-name" data-title="Course Name: ">
 								<?php
 								if ( $course ) {
-									echo $course->get_name();
+									echo esc_html( $course->get_name() );
 								}
 								?>
 								</div>
@@ -127,7 +127,7 @@ defined( 'ABSPATH' ) || exit();
 								<div class="dashboard-table-td price" data-title="Price: ">
 									<?php
 									if ( $course ) {
-										echo ohmylms_price( $order->get_formatted_order_total() );
+										echo wp_kses_post( ohmylms_price( $order->get_formatted_order_total() ) );
 									}
 									?>
 								</div>
@@ -157,21 +157,21 @@ defined( 'ABSPATH' ) || exit();
 			<div class="dashboard-table-foot">
 				<div class="ohmylms-table-pagination">
 					<strong>
-						<?php echo $student_orders->total; ?>
+						<?php echo esc_html( $student_orders->total ); ?>
 					</strong> items
 
 					<a class="previous-page" aria-label="Previous page" title="Previous Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page - 1 ) ); ?>">
 						<?php include OHMYLMS_DIR . '/assets/images/icon/arrow-left-icon.php'; ?>
 					</a>
 
-					<input type="number" name="current-page-number" id="current-page-number" min="1" max="<?php echo $student_orders->max_num_pages; ?>" value="1" class="current-page-number">
+					<input type="number" name="current-page-number" id="current-page-number" min="1" max="<?php echo esc_attr( $student_orders->max_num_pages ); ?>" value="1" class="current-page-number">
 
 					<a class="next-page" aria-label="Next page" title="Next Page" href="<?php echo esc_url( ohmylms_get_endpoint_url( 'transactions-history', $current_page + 1 ) ); ?>">
 						<?php include OHMYLMS_DIR . '/assets/images/icon/arrow-right-icon.php'; ?>
 					</a>
 
 					of <strong>
-						<?php echo $student_orders->max_num_pages; ?>
+						<?php echo esc_html( $student_orders->max_num_pages ); ?>
 					</strong>
 				</div>
 			</div>

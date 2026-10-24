@@ -12,12 +12,15 @@ use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code offer button implementation.
+ */
 class ShortCodeOfferButton {
 
 	/**
 	 * Get the shortcode content.
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -60,7 +63,7 @@ class ShortCodeOfferButton {
 
 		// If not available from query vars, check URL parameters (for offer pages).
 		if ( empty( $current_step ) && isset( $_GET['step'] ) ) {
-			$current_step = sanitize_text_field( $_GET['step'] );
+			$current_step = sanitize_text_field( wp_unslash( $_GET['step'] ));
 		}
 
 		// If still not available, fall back to session (for backward compatibility).
@@ -155,10 +158,10 @@ class ShortCodeOfferButton {
 	/**
 	 * Generate the offer action URL.
 	 *
-	 * @param int    $order_id      The order ID
-	 * @param string $current_step  The current funnel step
-	 * @param string $action        The action (accept/decline)
-	 * @param string $custom_redirect Custom redirect URL
+	 * @param int    $order_id The order ID.
+	 * @param string $current_step The current funnel step.
+	 * @param string $action The action (accept/decline).
+	 * @param string $custom_redirect Custom redirect URL.
 	 * @return string The action URL
 	 * @since 1.0.0
 	 */
@@ -186,11 +189,11 @@ class ShortCodeOfferButton {
 	/**
 	 * Render the offer button HTML.
 	 *
-	 * @param string $url           The button URL
-	 * @param string $text          The button text
-	 * @param array  $classes       CSS classes array
-	 * @param string $style_attr    Inline style attribute
-	 * @param array  $atts          Shortcode attributes
+	 * @param string $url The button URL.
+	 * @param string $text The button text.
+	 * @param array  $classes CSS classes array.
+	 * @param string $style_attr Inline style attribute.
+	 * @param array  $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function render_offer_button( $url, $text, $classes, $style_attr, $atts ) {

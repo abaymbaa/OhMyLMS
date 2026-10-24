@@ -3,12 +3,22 @@ namespace OhMyLMS\Rest\V1;
 
 use OhMyLMS\Abstracts\RestController;
 
+/**
+ * Plugin analytics controller implementation.
+ */
 class AnalyticsController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'analytics';
 
 	/**
 	 * Check permission
+	 *
+	 * @param mixed $request REST request.
 	 */
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
@@ -52,7 +62,7 @@ class AnalyticsController extends RestController {
 	 * Get single course analytics.
 	 *
 	 * @param \WP_REST_Request $request The request object.
-	 *
+	 * .
 	 * @return \WP_REST_Response|\WP_Error The response object or error object.
 	 *
 	 * @since 1.0.0
@@ -61,7 +71,7 @@ class AnalyticsController extends RestController {
 		$id   = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		$post = get_post( $id );
 
-		if ( empty( $id ) || empty( $post ) || $post->post_type !== OHMYLMS_COURSE_CPT ) {
+		if ( empty( $id ) || empty( $post ) || OHMYLMS_COURSE_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -92,12 +102,15 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get all course data
 	 *
-	 * @param int    $course_id
-	 * @param string $data_type
-	 * @param string $filter
-	 * @param date   $start_date
-	 * @param date   $end_date
-	 *
+	 * @param int    $course_id Course identifier.
+	 * @param string $data_type Data type.
+	 * @param string $filter Filter.
+	 * @param mixed  $sort_by Sort by.
+	 * @param date   $start_date Start date.
+	 * @param date   $end_date End date.
+	 * .
+	 * @param mixed  $search Search.
+	 * @param mixed  $completion_type Completion type.
 	 * @return \WP_REST_Response|\WP_Error The response object or error object.
 	 *
 	 * @since 1.0.0
@@ -159,11 +172,11 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get all earning data of a course
 	 *
-	 * @param int    $course_id
-	 * @param string $filter
-	 * @param date   $start_date
-	 * @param date   $end_date
-	 *
+	 * @param int    $course_id Course identifier.
+	 * @param string $filter Filter.
+	 * @param date   $start_date Start date.
+	 * @param date   $end_date End date.
+	 * .
 	 * @return \WP_REST_Response|\WP_Error The response object or error object.
 	 *
 	 * @since 1.0.0
@@ -245,10 +258,10 @@ class AnalyticsController extends RestController {
 		$end      = new \DateTime( $end_date );
 		$interval = $start->diff( $end );
 
-		if ( $interval->m > 1 || $interval->y >= 1 ) {
+		if ( 1 < $interval->m || 1 <= $interval->y ) {
 			$group_by = 'monthly';
 		}
-		if ( $interval->y >= 1 && $interval->m + $interval->y * 12 > 12 ) {
+		if ( 1 <= $interval->y && $interval->m + $interval->y * 12 > 12 ) {
 			$group_by = 'yearly';
 		}
 		if ( 'current_year' === $filter || 'last_12_months' === $filter ) {
@@ -286,6 +299,14 @@ class AnalyticsController extends RestController {
 	}
 
 
+	/**
+	 * Get course earning graph data for Analytics controller.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $filter Filter.
+	 * @param mixed $start_date Start date.
+	 * @param mixed $end_date End date.
+	 */
 	private function get_course_earning_graph_data( $course_id, $filter, $start_date = null, $end_date = null ) {
 		global $wpdb;
 
@@ -357,10 +378,10 @@ class AnalyticsController extends RestController {
 		$end      = new \DateTime( $end_date );
 		$interval = $start->diff( $end );
 
-		if ( $interval->m > 1 || $interval->y >= 1 ) {
+		if ( 1 < $interval->m || 1 <= $interval->y ) {
 			$group_by = 'monthly';
 		}
-		if ( $interval->y >= 1 && $interval->m + $interval->y * 12 > 12 ) {
+		if ( 1 <= $interval->y && $interval->m + $interval->y * 12 > 12 ) {
 			$group_by = 'yearly';
 		}
 		if ( 'current_year' === $filter || 'last_12_months' === $filter ) {
@@ -414,11 +435,14 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get all student data of a course
 	 *
-	 * @param int    $course_id
-	 * @param string $filter
-	 * @param date   $start_date
-	 * @param date   $end_date
-	 *
+	 * @param int    $course_id Course identifier.
+	 * @param string $filter Filter.
+	 * @param mixed  $sort_by Sort by.
+	 * @param date   $start_date Start date.
+	 * @param date   $end_date End date.
+	 * .
+	 * @param mixed  $search Search.
+	 * @param mixed  $only_completed Only completed.
 	 * @return \WP_REST_Response|\WP_Error The response object or error object.
 	 *
 	 * @since 1.0.0
@@ -447,7 +471,7 @@ class AnalyticsController extends RestController {
 	 * Get earning analytics
 	 *
 	 * @param \WP_REST_Request $request The request object.
-	 *
+	 * .
 	 * @return \WP_REST_Response|\WP_Error The response object or error object.
 	 *
 	 * @since 1.0.0
@@ -610,8 +634,8 @@ class AnalyticsController extends RestController {
 		}
 
 		$calculate_growth = function ( $current, $previous ) {
-			if ( $previous <= 0 ) {
-				return $current > 0 ? 100 : 0;
+			if ( 0 >= $previous ) {
+				return 0 < $current ? 100 : 0;
 			}
 			return round( ( ( $current - $previous ) / $previous ) * 100, 2 );
 		};
@@ -658,10 +682,10 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get date range from filter
 	 *
-	 * @param string $filter
-	 * @param string $start
-	 * @param string $end
-	 *
+	 * @param string $filter Filter.
+	 * @param string $start Start.
+	 * @param string $end End.
+	 * .
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -702,16 +726,16 @@ class AnalyticsController extends RestController {
 				break;
 
 			case 'custom':
-				$start_date = $start ?: ( clone $today )->modify( '-30 days' )->format( 'Y-m-d H:i:s' );
-				$end_date   = $end ?: $today->setTime( 23, 59, 59 )->format( 'Y-m-d H:i:s' );
+				$start_date = $start ? $start : ( clone $today )->modify( '-30 days' )->format( 'Y-m-d H:i:s' );
+				$end_date   = $end ? $end : $today->setTime( 23, 59, 59 )->format( 'Y-m-d H:i:s' );
 
 				$start_obj = new \DateTime( $start_date );
 				$end_obj   = new \DateTime( $end_date );
 				$diff      = $start_obj->diff( $end_obj );
 
-				if ( $diff->y >= 1 && ( $diff->m + $diff->y * 12 ) > 12 ) {
+				if ( 1 <= $diff->y && ( $diff->m + $diff->y * 12 ) > 12 ) {
 					$group_by = 'yearly';
-				} elseif ( $diff->m > 1 || $diff->y >= 1 ) {
+				} elseif ( 1 < $diff->m || 1 <= $diff->y ) {
 					$group_by = 'monthly';
 				} else {
 					$group_by = 'daily';
@@ -737,9 +761,9 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get previous date range
 	 *
-	 * @param string $start_date
-	 * @param string $end_date
-	 *
+	 * @param string $start_date Start date.
+	 * @param string $end_date End date.
+	 * .
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -763,8 +787,8 @@ class AnalyticsController extends RestController {
 	/**
 	 * Get order transactions data
 	 *
-	 * @param array $params
-	 *
+	 * @param array $params Request parameters.
+	 * .
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -869,10 +893,10 @@ class AnalyticsController extends RestController {
 			foreach ( $order->get_items() as $item_id => $item ) {
 
 				$post_type = get_post_type( $item->get_course_id() );
-				if ( $post_type === OHMYLMS_COURSE_CPT ) {
+				if ( OHMYLMS_COURSE_CPT === $post_type ) {
 					$course = $item->get_course();
 					$type   = 'course';
-				} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
+				} elseif ( OHMYLMS_MEMBERSHIP_CPT === $post_type ) {
 					$course = $item->get_membership();
 					$type   = 'membership';
 				} else {

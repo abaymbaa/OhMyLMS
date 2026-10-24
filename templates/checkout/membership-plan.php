@@ -41,7 +41,8 @@ ob_start();
 		<div class="membership-plan">
 			<h3>
 				<?php
-					echo $title = get_the_title( $plan_id );
+					$title = get_the_title( $plan_id );
+					echo esc_html( $title );
 				?>
 			</h3>
 			<p>
@@ -58,10 +59,10 @@ ob_start();
 			<p>
 			<?php
 				$billing_period = get_post_meta( $plan_id, 'ohmylms_membership_billing_period', true );
-				echo esc_html__( 'Subscription: ', 'ohmylms' ) . $billing_period
+				echo esc_html__( 'Subscription: ', 'ohmylms' ) . esc_html( $billing_period )
 			?>
 			</p>
-			<button class="buy-now-button crlm_purchase" data-membership="<?php echo $plan_id; ?>" data-plan="<?php echo $plan['plan_id']; ?>" ><?php echo $buy_now_text; ?></button>
+			<button class="buy-now-button crlm_purchase" data-membership="<?php echo esc_attr( $plan_id ); ?>" data-plan="<?php echo esc_attr( $plan['plan_id'] ); ?>" ><?php echo esc_html( $buy_now_text ); ?></button>
 			<?php
 			$courses = unserialize( get_post_meta( $plan_id, 'ohmylms_membership_selected_products', true ) );
 			if ( ! empty( $courses ) && is_array( $courses ) ) :

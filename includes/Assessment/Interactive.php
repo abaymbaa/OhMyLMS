@@ -29,11 +29,19 @@ final class Interactive {
 	/** Marker such as {1} or {b2} inside a prompt or table cell. */
 	const MARKER = '/\{([a-z0-9_-]{1,20})\}/i';
 
+	/**
+	 * Is interactive for Interactive.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function is_interactive( $type ) {
 		return in_array( $type, self::TYPES, true );
 	}
 
-	/** Marker IDs in the order they appear. */
+	/** Marker IDs in the order they appear.
+	 *
+	 * @param mixed $text Text.
+	 */
 	public static function markers( $text ) {
 		$text = preg_replace( '~' . MathLive::MARKER . '~', '', (string) $text );
 		$text = preg_replace( '/\{\{[^{}]{1,240}\}\}/', '', $text );
@@ -41,7 +49,10 @@ final class Interactive {
 		return array_values( array_unique( $found[1] ) );
 	}
 
-	/** Blank IDs of a multi-blank question, from its inline text or table cells. */
+	/** Blank IDs of a multi-blank question, from its inline text or table cells.
+	 *
+	 * @param array $settings Configuration settings.
+	 */
 	public static function blank_ids( array $settings ) {
 		if ( ( $settings['layout'] ?? 'inline' ) === 'table' ) {
 			$ids = array();
@@ -55,7 +66,11 @@ final class Interactive {
 		return self::markers( $settings['text'] ?? '' );
 	}
 
-	/** Same list, same seed, same order: stable across reloads, different across learners. */
+	/** Same list, same seed, same order: stable across reloads, different across learners.
+	 *
+	 * @param array $list List.
+	 * @param mixed $seed Seed.
+	 */
 	public static function shuffled( array $list, $seed ) {
 		$keyed = array();
 		foreach ( array_values( $list ) as $index => $item ) {
@@ -70,7 +85,10 @@ final class Interactive {
 		return array_column( $keyed, 1 );
 	}
 
-	/** The tile bank of a build-expression question, unshuffled. */
+	/** The tile bank of a build-expression question, unshuffled.
+	 *
+	 * @param array $settings Configuration settings.
+	 */
 	public static function tiles( array $settings ) {
 		return array_merge(
 			array_map( 'strval', array_values( (array) ( $settings['correct'] ?? array() ) ) ),
@@ -81,6 +99,8 @@ final class Interactive {
 	/**
 	 * Learner-safe settings: no answers, accepted values, tolerances or bucket assignments.
 	 *
+	 * @param mixed  $type Type.
+	 * @param array  $settings Configuration settings.
 	 * @param string $seed Delivery seed that fixes the order of shuffled lists.
 	 */
 	public static function public_view( $type, array $settings, $seed = '' ) {
@@ -164,7 +184,11 @@ final class Interactive {
 		return $view;
 	}
 
-	/** Readable correct answer, revealed only after a response has been graded. */
+	/** Readable correct answer, revealed only after a response has been graded.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function expected( $type, array $settings ) {
 		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
 			return array_map(
@@ -212,7 +236,11 @@ final class Interactive {
 		return array();
 	}
 
-	/** Does this settings array still hold an answer key? */
+	/** Does this settings array still hold an answer key?
+	 *
+	 * @param mixed $type Type.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function has_key( $type, array $settings ) {
 		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
 			return isset( $settings['entries'] );
@@ -243,6 +271,9 @@ final class Interactive {
 	/**
 	 * Settings a template may output. Student views are already safe; raw settings
 	 * (legacy rendering, previews) are reduced here so a template can never leak a key.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $question Question.
 	 */
 	public static function learner_settings( $type, array $question ) {
 		$settings = (array) ( $question['settings'] ?? array() );
@@ -264,13 +295,22 @@ final class Interactive {
 		return $settings;
 	}
 
-	/** Form field name for a keyed answer, or for the ordered list when $key is null. */
+	/** Form field name for a keyed answer, or for the ordered list when $key is null.
+	 *
+	 * @param array $attempt Attempt.
+	 * @param array $question Question.
+	 * @param mixed $key Lookup key.
+	 */
 	public static function field_name( array $attempt, array $question, $key = null ) {
 		return 'attempt[' . (int) $attempt['id'] . '][quiz_question][' . (int) $question['id'] . ']'
 			. ( null === $key ? '[]' : '[' . preg_replace( '/[^a-z0-9_-]/i', '', (string) $key ) . ']' );
 	}
 
-	/** Field-name prefix for widgets that add their own hidden inputs: attempt[a][quiz_question][q]. */
+	/** Field-name prefix for widgets that add their own hidden inputs: attempt[a][quiz_question][q].
+	 *
+	 * @param array $attempt Attempt.
+	 * @param array $question Question.
+	 */
 	public static function field_prefix( array $attempt, array $question ) {
 		return 'attempt[' . (int) $attempt['id'] . '][quiz_question][' . (int) $question['id'] . ']';
 	}
@@ -285,6 +325,9 @@ final class Interactive {
 		wp_register_style( 'ohmylms-jsxgraph', plugins_url( 'assets/dist/jsxgraph/jsxgraph.css', OHMYLMS_FILE ), array(), '1.14.1' );
 	}
 
+	/**
+	 * Enqueue for Interactive.
+	 */
 	public static function enqueue() {
 		if ( ! function_exists( 'wp_enqueue_script' ) ) {
 			return; }
@@ -316,6 +359,7 @@ final class Interactive {
 	/**
 	 * Split text at {marker}s: calls $field($id) for each marker, escapes the rest.
 	 *
+	 * @param mixed    $text Text.
 	 * @param callable $field Receives the marker ID and echoes a control.
 	 */
 	public static function render_marked( $text, callable $field ) {
@@ -330,7 +374,11 @@ final class Interactive {
 	}
 
 	/**
+	 * Grade.
+	 *
+	 * @param mixed       $type Type.
 	 * @param array|mixed $answer Keyed by slot / item / blank ID, or an ordered list of tiles.
+	 * @param array       $settings Configuration settings.
 	 * @return array{correct:bool,fraction:float,manual:bool}
 	 */
 	public static function grade( $type, $answer, array $settings ) {
@@ -381,12 +429,18 @@ final class Interactive {
 		return true;
 	}
 
-	/** A form name the engine knows; anything else means no requirement. */
+	/** A form name the engine knows; anything else means no requirement.
+	 *
+	 * @param mixed $form Form.
+	 */
 	private static function form( $form ) {
 		return in_array( $form, Expression::FORMS, true ) ? $form : 'any';
 	}
 
-	/** The one typed value of a single-field answer, posted as a list or as a keyed object. */
+	/** The one typed value of a single-field answer, posted as a list or as a keyed object.
+	 *
+	 * @param array $answer Answer.
+	 */
 	private static function typed( array $answer ) {
 		foreach ( $answer as $value ) {
 			if ( is_scalar( $value ) ) {
@@ -423,6 +477,12 @@ final class Interactive {
 		return true;
 	}
 
+	/**
+	 * Grade expression for Interactive.
+	 *
+	 * @param array $answer Answer.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function grade_expression( array $answer, array $settings ) {
 		$typed = self::typed( $answer );
 		$keys  = array_merge( array( (string) ( $settings['answer'] ?? '' ) ), array_map( 'strval', (array) ( $settings['alternatives'] ?? array() ) ) );
@@ -440,7 +500,12 @@ final class Interactive {
 		return $result;
 	}
 
-	/** @param bool[] $items per-item correctness */
+	/**
+	 * Result for Interactive.
+	 *
+	 * @param bool[] $items per-item correctness.
+	 * @param mixed  $partial Partial.
+	 */
 	private static function result( array $items, $partial ) {
 		$total = count( $items );
 		$hits  = count( array_filter( $items ) );
@@ -453,10 +518,22 @@ final class Interactive {
 		);
 	}
 
+	/**
+	 * Same text for Interactive.
+	 *
+	 * @param mixed $a A.
+	 * @param mixed $b B.
+	 */
 	private static function same_text( $a, $b ) {
 		return mb_strtolower( trim( (string) $a ) ) === mb_strtolower( trim( (string) $b ) );
 	}
 
+	/**
+	 * Grade dropdown for Interactive.
+	 *
+	 * @param array $answer Answer.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function grade_dropdown( array $answer, array $settings ) {
 		if ( 2 === ( $settings['dropdown_grading_version'] ?? null ) ) {
 			return self::grade_weighted_dropdown( $answer, $settings );
@@ -486,7 +563,7 @@ final class Interactive {
 	/**
 	 * Grade bounded multiple selections with frozen per-dropdown points.
 	 *
-	 * @param array $answer   Learner selections.
+	 * @param array $answer Learner selections.
 	 * @param array $settings Frozen teacher settings.
 	 * @return array Grade fraction and dropdown correctness.
 	 */
@@ -535,6 +612,12 @@ final class Interactive {
 		);
 	}
 
+	/**
+	 * Grade categorize for Interactive.
+	 *
+	 * @param array $answer Answer.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function grade_categorize( array $answer, array $settings ) {
 		$items = array();
 		$key   = (array) ( $settings['key'] ?? array() );
@@ -545,6 +628,12 @@ final class Interactive {
 		return self::result( $items, ! empty( $settings['partial_credit'] ) );
 	}
 
+	/**
+	 * Grade multi blank for Interactive.
+	 *
+	 * @param array $answer Answer.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function grade_multi_blank( array $answer, array $settings ) {
 		$items = array();
 		foreach ( self::blank_ids( $settings ) as $id ) {
@@ -565,6 +654,12 @@ final class Interactive {
 		return self::result( $items, ! empty( $settings['partial_credit'] ) );
 	}
 
+	/**
+	 * Grade tiles for Interactive.
+	 *
+	 * @param array $answer Answer.
+	 * @param array $settings Configuration settings.
+	 */
 	private static function grade_tiles( array $answer, array $settings ) {
 		$given = array_map( 'strval', array_values( array_filter( $answer, 'is_scalar' ) ) );
 		$valid = array_merge(
@@ -585,7 +680,11 @@ final class Interactive {
 		return self::result( array( $ok ), false );
 	}
 
-	/** Authoring validation: true or a message. */
+	/** Authoring validation: true or a message.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function validate_settings( $type, array $settings ) {
 		if ( in_array( $type, WordPuzzle::TYPES, true ) ) {
 			return WordPuzzle::validate_settings( $type, $settings );

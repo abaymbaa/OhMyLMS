@@ -5,6 +5,9 @@ namespace OhMyLMS\Commerce\DataStore;
 use OhMyLMS\Abstracts\Data;
 use OhMyLMS\Abstracts\DataStore;
 
+/**
+ * Plugin coupon store implementation.
+ */
 class CouponStore extends DataStore {
 
 	/**
@@ -41,7 +44,7 @@ class CouponStore extends DataStore {
 	/**
 	 * Read new record
 	 *
-	 * @param $data Data
+	 * @param mixed $coupon Coupon.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -85,7 +88,7 @@ class CouponStore extends DataStore {
 	/**
 	 * Update new record
 	 *
-	 * @param $data Data
+	 * @param mixed $coupon Coupon.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -112,8 +115,8 @@ class CouponStore extends DataStore {
 	/**
 	 * Delete new record
 	 *
-	 * @param $data
-	 * @param array $args
+	 * @param mixed $data Input data.
+	 * @param array $args Operation arguments.
 	 * @return mixed
 	 * @since 1.0.0
 	 */
@@ -148,7 +151,7 @@ class CouponStore extends DataStore {
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Coupon $coupon The coupon object to update.
 	 * @param bool                          $force Whether to force the update.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta( &$coupon, $force = false ) {

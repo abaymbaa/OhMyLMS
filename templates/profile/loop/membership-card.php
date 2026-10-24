@@ -92,27 +92,27 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
 ?>
 <div class="ohmylms-membership-card ohmylms-dashboard-single-membership">
 	<div class="ohmylms-membership-card-header">
-		<h3 class="ohmylms-membership-name"><?php echo $memebership->get_name(); ?></h3>
+		<h3 class="ohmylms-membership-name"><?php echo esc_html( $memebership->get_name() ); ?></h3>
 		<span class="<?php echo esc_attr( $status_classes ); ?>"><?php echo esc_html( ucfirst( $status ) ); ?></span>
 	</div>
 	<div class="ohmylms-membership-card-body">
 		<ul class="ohmylms-membership-details">
 			<li>
 				<strong><?php echo esc_html__( 'Price:', 'ohmylms' ); ?></strong>
-				<span><?php echo $price_html; ?></span>
+				<span><?php echo wp_kses_post( $price_html ); ?></span>
 			</li>
 			<li>
 				<strong><?php echo esc_html__( 'Courses Included:', 'ohmylms' ); ?></strong>
-				<span><?php echo $course_count > 0 ? $course_count : esc_html__( 'No courses yet', 'ohmylms' ); ?></span>
+				<span><?php echo esc_html( $course_count > 0 ? $course_count : esc_html__( 'No courses yet', 'ohmylms' ) ); ?></span>
 			</li>
 			<li>
 				<strong><?php echo esc_html__( 'Purchase Date:', 'ohmylms' ); ?></strong>
-				<span><?php echo $purchase_date; ?></span>
+				<span><?php echo esc_html( $purchase_date ); ?></span>
 			</li>
 			<?php if ( ! $is_one_time ) : ?>
 			<li>
 				<strong><?php echo esc_html__( 'Next Renewal:', 'ohmylms' ); ?></strong>
-				<span><?php echo $renewal_date; ?></span>
+				<span><?php echo esc_html( $renewal_date ); ?></span>
 			</li>
 			<?php endif; ?>
 			<li>
@@ -136,8 +136,8 @@ $payment_method = $order && $order->get_payment_method_title() ? $order->get_pay
 				</h4>
 				<div class="membership-plan-wrapper">
 					<div class="membership-table-header">
-						<p class="plan-name"><?php echo $memebership->get_name(); ?></p>
-						<span class="price"><?php echo $price_html; ?></span>
+						<p class="plan-name"><?php echo esc_html( $memebership->get_name() ); ?></p>
+						<span class="price"><?php echo wp_kses_post( $price_html ); ?></span>
 					</div>
 					<?php if ( $course_count > 0 ) : ?>
 					<ul class="membership-table-list">

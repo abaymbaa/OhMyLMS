@@ -1,5 +1,7 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
+ * Template data and rendering context.
+ *
  * @access public
  * @package OhMyLMS\Migrations
  *
@@ -673,7 +675,7 @@ class LearnPress {
 	 * @param int    $new_question_id The ID of the newly created question in OhMyLMS.
 	 * @param string $question_type The question type.
 	 * @param mixed  $mark The question mark/points.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */

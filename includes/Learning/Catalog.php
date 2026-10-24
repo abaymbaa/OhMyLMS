@@ -25,14 +25,31 @@ defined( 'ABSPATH' ) || exit;
 final class Catalog {
 	const MODES = CourseProgram::MODES;
 
+	/**
+	 * Error for Catalog.
+	 *
+	 * @param mixed  $message Message.
+	 * @param int    $status Status.
+	 * @param string $code Code.
+	 */
 	public static function error( $message, $status = 400, $code = 'ohmylms_catalog_invalid' ) {
 		return new \WP_Error( $code, $message, array( 'status' => $status ) );
 	}
 
+	/**
+	 * Can edit for Catalog.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function can_edit( $course_id ) {
 		return get_post_type( (int) $course_id ) === OHMYLMS_COURSE_CPT && current_user_can( 'edit_post', (int) $course_id );
 	}
 
+	/**
+	 * Post type for Catalog.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function post_type( $type ) {
 		return array(
 			'lesson'     => OHMYLMS_LESSON_CPT,
@@ -41,6 +58,11 @@ final class Catalog {
 		)[ $type ] ?? '';
 	}
 
+	/**
+	 * Title for Catalog.
+	 *
+	 * @param mixed $id Id.
+	 */
 	private static function title( $id ) {
 		if ( OHMYLMS_CHAPTER_CPT === get_post_type( $id ) ) {
 			return html_entity_decode( (string) get_post_field( 'post_title', $id ), ENT_QUOTES, 'UTF-8' );
@@ -48,21 +70,29 @@ final class Catalog {
 		return html_entity_decode( (string) get_the_title( (int) $id ), ENT_QUOTES, 'UTF-8' );
 	}
 
-	/** The structure the editor works on: the draft, or the published program, or the course's defaults. */
+	/** The structure the editor works on: the draft, or the published program, or the course's defaults.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function draft( $course_id ) {
 		return CourseProgram::editor( (int) $course_id )['draft'];
 	}
 
 	// ---- Chapters (units) -------------------------------------------------------------------------------
 
-	/** @return array<int, array{id:int,name:string,number:string}> `number` is the author's unit label, '' for automatic numbering. */
+	/**
+	 * Chapters for Catalog.
+	 *
+	 * @return array<int, array{id:int,name:string,number:string}> `number` is the author's unit label, '' for automatic numbering.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function chapters( $course_id ) {
 		global $wpdb;
-		$ids      = $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d ORDER BY order_number ASC, id ASC", (int) $course_id ) );
+		$ids      = $wpdb->get_col( $wpdb->prepare( 'SELECT chapter_id FROM %i WHERE course_id=%d ORDER BY order_number ASC, id ASC', $wpdb->prefix . 'ohmylms_chapter_relationship', (int) $course_id ) );
 		$chapters = array();
 		foreach ( $ids as $id ) {
 			$post = get_post( (int) $id );
-			if ( $post && $post->post_type === OHMYLMS_CHAPTER_CPT && 'trash' !== $post->post_status ) {
+			if ( $post && OHMYLMS_CHAPTER_CPT === $post->post_type && 'trash' !== $post->post_status ) {
 				$chapters[] = array(
 					'id'     => (int) $id,
 					'name'   => self::title( $id ),
@@ -72,10 +102,22 @@ final class Catalog {
 		return $chapters;
 	}
 
+	/**
+	 * Belongs for Catalog.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $chapter_id Chapter identifier.
+	 */
 	private static function belongs( $course_id, $chapter_id ) {
 		return in_array( (int) $chapter_id, array_column( self::chapters( $course_id ), 'id' ), true );
 	}
 
+	/**
+	 * Add chapter for Catalog.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $name Name.
+	 */
 	public static function add_chapter( $course_id, $name ) {
 		global $wpdb;
 		$name = trim( wp_strip_all_tags( (string) $name ) );
@@ -92,7 +134,7 @@ final class Catalog {
 		);
 		if ( is_wp_error( $id ) ) {
 			return $id; }
-		$order = 1 + (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(order_number) FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", (int) $course_id ) );
+		$order = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(order_number) FROM %i WHERE course_id=%d', $wpdb->prefix . 'ohmylms_chapter_relationship', (int) $course_id ) );
 		if ( ! $wpdb->insert(
 			$wpdb->prefix . 'ohmylms_chapter_relationship',
 			array(
@@ -110,6 +152,13 @@ final class Catalog {
 		);
 	}
 
+	/**
+	 * Rename chapter for Catalog.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $chapter_id Chapter identifier.
+	 * @param mixed $name Name.
+	 */
 	public static function rename_chapter( $course_id, $chapter_id, $name ) {
 		if ( ! self::belongs( $course_id, $chapter_id ) ) {
 			return self::error( __( 'The chapter does not belong to this course.', 'ohmylms' ), 404 ); }
@@ -132,9 +181,9 @@ final class Catalog {
 	/**
 	 * Change a chapter's name and/or unit number. Everything is checked before anything is written.
 	 *
-	 * @param int   $course_id  Course ID.
+	 * @param int   $course_id Course ID.
 	 * @param int   $chapter_id Chapter ID.
-	 * @param array $fields     Any of `name` and `number`.
+	 * @param array $fields Any of `name` and `number`.
 	 * @return array|\WP_Error
 	 */
 	public static function update_chapter( $course_id, $chapter_id, array $fields ) {
@@ -157,7 +206,11 @@ final class Catalog {
 		);
 	}
 
-	/** Chapters must be given in full, so a partial list can never silently drop one. */
+	/** Chapters must be given in full, so a partial list can never silently drop one.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $ids Ids.
+	 */
 	public static function reorder_chapters( $course_id, array $ids ) {
 		global $wpdb;
 		$ids     = array_values( array_map( 'intval', $ids ) );
@@ -184,13 +237,16 @@ final class Catalog {
 	/**
 	 * Delete a chapter. A chapter that still holds lessons or quizzes in the course editor, or that the
 	 * published program refers to, is kept: removing it would orphan content or break enrolled learners.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $chapter_id Chapter identifier.
 	 */
 	public static function delete_chapter( $course_id, $chapter_id ) {
 		global $wpdb;
 		$chapter_id = (int) $chapter_id;
 		if ( ! self::belongs( $course_id, $chapter_id ) ) {
 			return self::error( __( 'The chapter does not belong to this course.', 'ohmylms' ), 404 ); }
-		if ( (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id=%d", $chapter_id ) ) ) {
+		if ( (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE chapter_id=%d', $wpdb->prefix . 'ohmylms_content_relationship', $chapter_id ) ) ) {
 			return self::error( __( 'This chapter still holds lessons or quizzes in the course editor. Move or remove them there first.', 'ohmylms' ), 409, 'ohmylms_chapter_in_use' );
 		}
 		$published = CourseProgram::current( (int) $course_id );
@@ -237,6 +293,11 @@ final class Catalog {
 
 	// ---- Structure ---------------------------------------------------------------------------------------
 
+	/**
+	 * Fingerprint for Catalog.
+	 *
+	 * @param mixed $program Program.
+	 */
 	private static function fingerprint( $program ) {
 		if ( ! is_array( $program ) ) {
 			return ''; }
@@ -244,7 +305,11 @@ final class Catalog {
 		return md5( wp_json_encode( array_intersect_key( $program, array_flip( $keep ) ) ) );
 	}
 
-	/** Courses that place this content other than `$course_id`, as `[{id,title}]`. */
+	/** Courses that place this content other than `$course_id`, as `[{id,title}]`.
+	 *
+	 * @param mixed $content_id Content identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function also_in( $content_id, $course_id ) {
 		$others = array_diff( Placements::courses_for( $content_id ), array( (int) $course_id ) );
 		$home   = (int) ohmylms_get_course_id_by_chapter_id( (int) ohmylms_get_chapter_id_by_content_id( $content_id ) );
@@ -261,6 +326,11 @@ final class Catalog {
 		);
 	}
 
+	/**
+	 * Summary for Catalog.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function summary( $course_id ) {
 		$draft       = self::draft( $course_id );
 		$attachments = array_filter(
@@ -281,7 +351,10 @@ final class Catalog {
 		);
 	}
 
-	/** The catalog tree for one grade, exam or subject. */
+	/** The catalog tree for one grade, exam or subject.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function payload( $course_id ) {
 		$editor = CourseProgram::editor( (int) $course_id );
 		$draft  = $editor['draft'];
@@ -340,7 +413,7 @@ final class Catalog {
 	 * settings, practice steps and everything else in the draft are kept. Validation is the program's own.
 	 *
 	 * @param int                                                                  $course_id Course ID.
-	 * @param array{mode?:string,outcomes?:array,attachments?:array,groups?:array} $data      Parts of the structure to replace.
+	 * @param array{mode?:string,outcomes?:array,attachments?:array,groups?:array} $data Parts of the structure to replace.
 	 * @return true|\WP_Error
 	 */
 	public static function save_draft( $course_id, array $data ) {
@@ -355,7 +428,7 @@ final class Catalog {
 	 * Validate a structure change exactly as save_draft would, without storing it.
 	 *
 	 * @param int   $course_id Course ID.
-	 * @param array $data      Any of mode, outcomes, attachments and groups (lesson groups, replaced as a whole).
+	 * @param array $data Any of mode, outcomes, attachments and groups (lesson groups, replaced as a whole).
 	 * @return array|\WP_Error The program that would be stored.
 	 */
 	public static function check_draft( $course_id, array $data ) {
@@ -417,7 +490,11 @@ final class Catalog {
 		return $program;
 	}
 
-	/** Publish the stored draft. This is the program's own publish: readiness checks, versioning, enrolled learners. */
+	/** Publish the stored draft. This is the program's own publish: readiness checks, versioning, enrolled learners.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param bool  $apply_existing Apply existing.
+	 */
 	public static function publish( $course_id, $apply_existing = false ) {
 		$editor                       = CourseProgram::editor( (int) $course_id );
 		$draft                        = $editor['draft'];
@@ -427,7 +504,10 @@ final class Catalog {
 
 	// ---- Structure for assistants (MCP) ------------------------------------------------------------------
 
-	/** Units of a course with their position and the label printed on the hub. */
+	/** Units of a course with their position and the label printed on the hub.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function units( $course_id ) {
 		$units = array();
 		foreach ( self::chapters( $course_id ) as $position => $chapter ) {
@@ -442,7 +522,10 @@ final class Catalog {
 		return $units;
 	}
 
-	/** A token for the stored draft; a write that quotes an older one is refused instead of overwriting newer work. */
+	/** A token for the stored draft; a write that quotes an older one is refused instead of overwriting newer work.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function revision( $course_id ) {
 		$stored = get_post_meta( (int) $course_id, CourseProgram::DRAFT, true );
 		$source = is_array( $stored ) ? $stored : CourseProgram::current( (int) $course_id );
@@ -485,8 +568,8 @@ final class Catalog {
 	 * Run a draft change only when the caller saw the current draft, holding the same lock the publish uses.
 	 *
 	 * @param int      $course_id Course ID.
-	 * @param string   $revision  Revision from program_view().
-	 * @param callable $change    Performs the change.
+	 * @param string   $revision Revision from program_view().
+	 * @param callable $change Performs the change.
 	 * @return mixed|\WP_Error
 	 */
 	public static function with_revision( $course_id, $revision, callable $change ) {
@@ -508,10 +591,10 @@ final class Catalog {
 	/**
 	 * Replace the lesson groups of one unit and assign its items; see ProgramGroups::replace_unit().
 	 *
-	 * @param int   $course_id  Course ID.
+	 * @param int   $course_id Course ID.
 	 * @param int   $chapter_id Unit (chapter) ID.
-	 * @param array $spec       New groups in order.
-	 * @param bool  $dry_run    Validate only.
+	 * @param array $spec New groups in order.
+	 * @param bool  $dry_run Validate only.
 	 * @return array|\WP_Error The program that was (or would be) stored.
 	 */
 	public static function save_unit_groups( $course_id, $chapter_id, array $spec, $dry_run = false ) {
@@ -543,11 +626,19 @@ final class Catalog {
 
 	// ---- Pickers and lists -------------------------------------------------------------------------------
 
+	/**
+	 * Author scope for Catalog.
+	 */
 	private static function author_scope() {
 		return current_user_can( 'edit_others_posts' ) ? '' : get_current_user_id();
 	}
 
-	/** Grades, exams and subjects (courses) the current user can edit, with their catalog counts. */
+	/** Grades, exams and subjects (courses) the current user can edit, with their catalog counts.
+	 *
+	 * @param string $search Search.
+	 * @param int    $page Page.
+	 * @param int    $per_page Per page.
+	 */
 	public static function courses( $search = '', $page = 1, $per_page = 24 ) {
 		$query = new \WP_Query(
 			array(
@@ -574,7 +665,13 @@ final class Catalog {
 		);
 	}
 
-	/** Search content (or skills) to attach, leaving out what the course already has. */
+	/** Search content (or skills) to attach, leaving out what the course already has.
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $search Search.
+	 * @param int   $course_id Course identifier.
+	 * @param int   $page Page.
+	 */
 	public static function targets( $type, $search, $course_id = 0, $page = 1 ) {
 		$placed = array();
 		if ( $course_id ) {
@@ -649,7 +746,7 @@ final class Catalog {
 	 * Courses that use each lesson, quiz or assignment: its original chapter course plus every course whose
 	 * published program or draft places it.
 	 *
-	 * @param int[] $content_ids
+	 * @param int[] $content_ids Content ids.
 	 * @return array<int, int[]>
 	 */
 	public static function used_in( array $content_ids ) {
@@ -667,7 +764,7 @@ final class Catalog {
 			foreach ( $published[ $id ] ?? array() as $course ) {
 				$used[ $id ][ $course ] = $course; }
 		}
-		$drafts = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key=%s", CourseProgram::DRAFT ), ARRAY_N );
+		$drafts = $wpdb->get_results( $wpdb->prepare( 'SELECT post_id, meta_value FROM %i WHERE meta_key=%s', $wpdb->postmeta, CourseProgram::DRAFT ), ARRAY_N );
 		$rows   = array();
 		foreach ( (array) $drafts as $draft ) {
 			$rows[] = array( (int) $draft[0], maybe_unserialize( $draft[1] ) ); }
@@ -684,6 +781,7 @@ final class Catalog {
 	 * The lesson library: every lesson the user can edit, whether or not it sits in a course.
 	 *
 	 * @return array{items:array,total:int,pages:int}
+	 * @param array $args Operation arguments.
 	 */
 	public static function lessons( array $args ) {
 		$status   = (string) ( $args['status'] ?? '' );
@@ -747,7 +845,11 @@ final class Catalog {
 		);
 	}
 
-	/** Replace the skills a lesson is linked to. Skills are shared; this links, it never copies. */
+	/** Replace the skills a lesson is linked to. Skills are shared; this links, it never copies.
+	 *
+	 * @param mixed $lesson_id Lesson identifier.
+	 * @param array $skill_ids Skill ids.
+	 */
 	public static function set_lesson_skills( $lesson_id, array $skill_ids ) {
 		if ( get_post_type( (int) $lesson_id ) !== OHMYLMS_LESSON_CPT || ! current_user_can( 'edit_post', (int) $lesson_id ) ) {
 			return self::error( __( 'You cannot change this lesson.', 'ohmylms' ), 403, 'ohmylms_rest_forbidden' ); }
@@ -760,7 +862,10 @@ final class Catalog {
 		return is_wp_error( $result ) ? $result : $skill_ids;
 	}
 
-	/** Move lessons to the trash one by one, so a lesson the user may not delete never blocks the rest. */
+	/** Move lessons to the trash one by one, so a lesson the user may not delete never blocks the rest.
+	 *
+	 * @param array $ids Ids.
+	 */
 	public static function trash_lessons( array $ids ) {
 		$trashed = array();
 		$skipped = array();
@@ -792,10 +897,13 @@ final class Catalog {
 		);
 	}
 
-	/** A draft copy of a lesson: same content, settings and skills, but in no course. */
+	/** A draft copy of a lesson: same content, settings and skills, but in no course.
+	 *
+	 * @param mixed $lesson_id Lesson identifier.
+	 */
 	public static function duplicate_lesson( $lesson_id ) {
 		$post = get_post( (int) $lesson_id );
-		if ( ! $post || $post->post_type !== OHMYLMS_LESSON_CPT || ! current_user_can( 'edit_post', $post->ID ) ) {
+		if ( ! $post || OHMYLMS_LESSON_CPT !== $post->post_type || ! current_user_can( 'edit_post', $post->ID ) ) {
 			return self::error( __( 'You cannot copy this lesson.', 'ohmylms' ), 403, 'ohmylms_rest_forbidden' ); }
 		$copy = wp_insert_post(
 			wp_slash(
@@ -803,7 +911,8 @@ final class Catalog {
 					'post_type'    => $post->post_type,
 					'post_status'  => 'draft',
 					'post_author'  => get_current_user_id(),
-					'post_title'   => sprintf( __( '%s (copy)', 'ohmylms' ), $post->post_title ),
+					'post_title'   => sprintf( /* translators: %s: text value. */
+					__( '%s (copy)', 'ohmylms' ), $post->post_title ),
 					'post_content' => $post->post_content,
 					'post_excerpt' => $post->post_excerpt,
 				)

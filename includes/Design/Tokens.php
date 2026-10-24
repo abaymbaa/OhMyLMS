@@ -100,23 +100,41 @@ final class Tokens {
 		return $css . '}';
 	}
 
-	/** A saved font choice: one of FONTS, 'system' or (learner site only) 'inherit'. */
+	/** A saved font choice: one of FONTS, 'system' or (learner site only) 'inherit'.
+	 *
+	 * @param mixed $option Option.
+	 */
 	public static function font( $option ) {
 		$value   = get_option( $option, '' );
 		$allowed = array_merge( self::FONTS, array( 'system' ), 'ohmylms_font_family' === $option ? array( 'inherit' ) : array() );
 		return is_string( $value ) && in_array( $value, $allowed, true ) ? $value : self::DEFAULTS[ $option ];
 	}
 
-	/** "r, g, b" for rgba() use. */
+	/**
+	 * Rgb for Tokens.
+	 * "r, g, b" for rgba() use.
+	 *
+	 * @param mixed $hex Hex.
+	 */
 	public static function rgb( $hex ) {
 		return implode( ', ', self::channels( $hex ) );
 	}
 
+	/**
+	 * Channels for Tokens.
+	 *
+	 * @param mixed $hex Hex.
+	 */
 	private static function channels( $hex ) {
 		return array( hexdec( substr( $hex, 1, 2 ) ), hexdec( substr( $hex, 3, 2 ) ), hexdec( substr( $hex, 5, 2 ) ) );
 	}
 
-	/** Mix $hex toward $with by $amount (0..1). */
+	/** Mix $hex toward $with by $amount (0..1).
+	 *
+	 * @param mixed $hex Hex.
+	 * @param mixed $with With.
+	 * @param mixed $amount Amount.
+	 */
 	public static function mix( $hex, $with, $amount ) {
 		$from = self::channels( $hex );
 		$to   = self::channels( $with );
@@ -126,7 +144,10 @@ final class Tokens {
 		return $out;
 	}
 
-	/** CSS font-family value for a choice. */
+	/** CSS font-family value for a choice.
+	 *
+	 * @param mixed $font Font.
+	 */
 	public static function stack( $font ) {
 		if ( 'inherit' === $font ) {
 			return 'inherit'; }
@@ -135,7 +156,10 @@ final class Tokens {
 		return '"' . $font . '", ' . self::SYSTEM_STACK;
 	}
 
-	/** Google Fonts stylesheet URL for a choice, or ''. */
+	/** Google Fonts stylesheet URL for a choice, or ''.
+	 *
+	 * @param mixed $font Font.
+	 */
 	public static function font_url( $font ) {
 		if ( ! in_array( $font, self::FONTS, true ) ) {
 			return ''; }
@@ -164,6 +188,9 @@ final class Tokens {
 		return $css . self::quiz_css();
 	}
 
+	/**
+	 * Enqueue frontend font for Tokens.
+	 */
 	public static function enqueue_frontend_font() {
 		$url = self::font_url( self::font( 'ohmylms_font_family' ) );
 		if ( $url ) {
@@ -224,11 +251,17 @@ final class Tokens {
 		return $css;
 	}
 
+	/**
+	 * Is admin app screen for Tokens.
+	 */
 	public static function is_admin_app_screen() {
 		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
 		return $screen && 'toplevel_page_ohmylms' === $screen->id;
 	}
 
+	/**
+	 * Enqueue admin for Tokens.
+	 */
 	public static function enqueue_admin() {
 		if ( ! self::is_admin_app_screen() ) {
 			return; }

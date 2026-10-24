@@ -1,12 +1,24 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
+/**
+ * Plugin authoring implementation.
+ */
 final class Authoring {
+	/**
+	 * Init for Authoring.
+	 */
 	public static function init() {
 		add_action( 'ohmylms_before_creating_new_question', array( __CLASS__, 'validate_question' ) );
 		add_action( 'ohmylms_before_updating_question', array( __CLASS__, 'validate_question' ) );
 	}
 
+	/**
+	 * Validate question for Authoring.
+	 *
+	 * @param mixed $question Question.
+	 * @throws \OhMyLMS\DataException When the operation cannot be completed.
+	 */
 	public static function validate_question( $question ) {
 		$settings   = $question->get_settings();
 		$definition = Registry::get( 'question', $settings['type'] ?? '' );
@@ -33,6 +45,8 @@ final class Authoring {
 	 * Run a type's own settings checks on a settings array.
 	 *
 	 * @return true|string
+	 * @param mixed $definition Definition.
+	 * @param array $settings Configuration settings.
 	 */
 	public static function check( $definition, array $settings ) {
 		if ( ! empty( $definition['validate_settings'] ) && is_callable( $definition['validate_settings'] ) ) {

@@ -10,6 +10,11 @@ defined( 'ABSPATH' ) || exit;
 
 /** Front-end assets for versioned quiz delivery (autosave and resume). */
 final class Delivery {
+	/**
+	 * Needed.
+	 *
+	 * @var mixed
+	 */
 	private static $needed = false;
 
 	/** Called by the quiz template when it renders a versioned attempt. */
@@ -20,12 +25,18 @@ final class Delivery {
 		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 	}
 
+	/**
+	 * Enqueue for Delivery.
+	 */
 	public static function enqueue() {
 		if ( self::$needed ) {
 			self::register();
 			wp_enqueue_script( 'ohmylms-quiz-autosave' ); }
 	}
 
+	/**
+	 * Register for Delivery.
+	 */
 	private static function register() {
 		if ( wp_script_is( 'ohmylms-quiz-autosave', 'registered' ) ) {
 			return; }

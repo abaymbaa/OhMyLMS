@@ -1,4 +1,10 @@
 <?php
+/**
+ * Notice functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 namespace OhMyLMS\Commerce;
 

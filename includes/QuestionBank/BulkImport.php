@@ -819,8 +819,8 @@ final class BulkImport {
 		if ( $bank_id && ! Banks::can( $bank_id, 'edit' ) ) {
 			return AccessPolicy::denied( __( 'You cannot add questions to that bank.', 'ohmylms' ) );
 		}
-		$rows       = array_map( array( __CLASS__, 'normalize_row' ), $raw_rows );
-		$defaults   = self::list_of( $options['default_skills'], ';,|' );
+		$rows     = array_map( array( __CLASS__, 'normalize_row' ), $raw_rows );
+		$defaults = self::list_of( $options['default_skills'], ';,|' );
 		if ( $defaults ) {
 			foreach ( $rows as &$default_row ) {
 				if ( ! $default_row['skills'] ) {

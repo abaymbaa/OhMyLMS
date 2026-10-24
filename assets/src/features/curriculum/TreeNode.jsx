@@ -18,7 +18,7 @@ function counts( item ) {
 	if ( course ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of courses. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d course',
 					'%d courses',
 					course,
@@ -31,7 +31,7 @@ function counts( item ) {
 	if ( skill ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of skills. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d skill',
 					'%d skills',
 					skill,
@@ -44,7 +44,7 @@ function counts( item ) {
 	if ( bank ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of selected questions. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d question bank',
 					'%d question banks',
 					bank,
@@ -57,7 +57,7 @@ function counts( item ) {
 	if ( quiz ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of quizzes. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d quiz or exam',
 					'%d quizzes or exams',
 					quiz,
@@ -72,7 +72,7 @@ function counts( item ) {
 	if ( groups ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of curriculum folders. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d folder',
 					'%d folders',
 					groups,
@@ -85,7 +85,7 @@ function counts( item ) {
 	if ( placed ) {
 		parts.push(
 			sprintf(
-				/* translators: %d: number of skills. */ _n(
+				/* translators: %d: item count. */ _n(
 					'%d skill in groups',
 					'%d skills in groups',
 					placed,
@@ -127,8 +127,10 @@ export function TreeNode( { node } ) {
 					<input
 						type="checkbox"
 						aria-label={ sprintf(
-							/* translators: %s: syllabus name. */
-							__( 'Include %s in Roadmap', 'ohmylms' ),
+							/* translators: %s: item label. */ __(
+								'Include %s in Roadmap',
+								'ohmylms'
+							),
 							item.name
 						) }
 						checked={ c.roadmapSelection.ids.includes( item.id ) }
@@ -155,15 +157,17 @@ export function TreeNode( { node } ) {
 						aria-label={
 							open
 								? sprintf(
-										/* translators: %s: curriculum item name. */
-										/* translators: %s: curriculum item name. */
-										__( 'Collapse %s', 'ohmylms' ),
+										/* translators: %s: item label. */ __(
+											'Collapse %s',
+											'ohmylms'
+										),
 										item.name
 									)
 								: sprintf(
-										/* translators: %s: curriculum item name. */
-										/* translators: %s: curriculum item name. */
-										__( 'Expand %s', 'ohmylms' ),
+										/* translators: %s: item label. */ __(
+											'Expand %s',
+											'ohmylms'
+										),
 										item.name
 									)
 						}
@@ -179,7 +183,7 @@ export function TreeNode( { node } ) {
 				) }
 				<span className="screen-reader-text">
 					{ sprintf(
-						/* translators: %d: level number. */ __(
+						/* translators: %d: item count. */ __(
 							'Level %d',
 							'ohmylms'
 						),
@@ -225,15 +229,17 @@ export function TreeNode( { node } ) {
 						aria-label={
 							editing
 								? sprintf(
-										/* translators: %s: curriculum item name. */
-										/* translators: %s: curriculum item name. */
-										__( 'Close editor for %s', 'ohmylms' ),
+										/* translators: %s: item label. */ __(
+											'Close editor for %s',
+											'ohmylms'
+										),
 										item.name
 									)
 								: sprintf(
-										/* translators: %s: curriculum item name. */
-										/* translators: %s: curriculum item name. */
-										__( 'Edit %s', 'ohmylms' ),
+										/* translators: %s: item label. */ __(
+											'Edit %s',
+											'ohmylms'
+										),
 										item.name
 									)
 						}
@@ -255,7 +261,7 @@ export function TreeNode( { node } ) {
 							variant="secondary"
 							size="small"
 							aria-label={ sprintf(
-								/* translators: %s: curriculum item name. */ __(
+								/* translators: %s: item label. */ __(
 									'Add child to %s',
 									'ohmylms'
 								),
@@ -272,7 +278,7 @@ export function TreeNode( { node } ) {
 						size="small"
 						disabled={ c.pending || c.search.active || index <= 0 }
 						aria-label={ sprintf(
-							/* translators: %s: curriculum item name. */ __(
+							/* translators: %s: item label. */ __(
 								'Move %s up',
 								'ohmylms'
 							),
@@ -293,7 +299,7 @@ export function TreeNode( { node } ) {
 							index >= count - 1
 						}
 						aria-label={ sprintf(
-							/* translators: %s: curriculum item name. */ __(
+							/* translators: %s: item label. */ __(
 								'Move %s down',
 								'ohmylms'
 							),

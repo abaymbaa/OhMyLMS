@@ -40,7 +40,7 @@ export function topicPreset( kind, min, max ) {
 						constraints: [ 'a<b' ],
 						prompt: '{{a}}/{{b}} = ?/{{c}}. Find the missing numerator.',
 						expr: 'a*k',
-				  };
+					};
 		case 'simplify-fraction':
 			// a/b in lowest terms multiplied up by k; the answer is the simplest denominator.
 			return needsTwo
@@ -56,7 +56,7 @@ export function topicPreset( kind, min, max ) {
 						constraints: [ 'a<b', 'gcd(a,b)=1' ],
 						prompt: 'Simplify {{n}}/{{d}}. What is the denominator of the simplest form?',
 						expr: 'b',
-				  };
+					};
 		case 'unlike-fractions':
 			// Two different denominators need three numbers in the range.
 			return max - min < 2
@@ -72,7 +72,7 @@ export function topicPreset( kind, min, max ) {
 						constraints: [ 'a<b', 'c<d', 'b!=d' ],
 						prompt: '{{a}}/{{b}} + {{c}}/{{d}} = ?/{{p}}. Find the missing numerator.',
 						expr: 'a*d+c*b',
-				  };
+					};
 		case 'percent-increase':
 			// A price of 20k and a percentage in steps of 5 keep the answer a whole number.
 			return {
@@ -176,7 +176,7 @@ export function topicPreset( kind, min, max ) {
 						constraints: [ 'a!=b', 'gcd(a,b)=1' ],
 						prompt: 'Share {{t}} in the ratio {{a}}:{{b}}. How much is the first share?',
 						expr: 'a*k',
-				  };
+					};
 		case 'speed':
 			return {
 				variables: [

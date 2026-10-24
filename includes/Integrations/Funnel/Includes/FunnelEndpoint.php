@@ -480,6 +480,12 @@ class FunnelEndpoint {
 	}
 
 
+	/**
+	 * Calculate discount amount for Funnel endpoint.
+	 *
+	 * @param mixed $product Product.
+	 * @param mixed $step_data Step data.
+	 */
 	private function calculate_discount_amount( $product, $step_data ) {
 		// Get discount configuration.
 		$original_price  = is_callable( array( $product, 'get_price' ) ) ? $product->get_price() : $product->price;
@@ -633,6 +639,7 @@ class FunnelEndpoint {
 
 		// Add order note.
 		$note = sprintf(
+			/* translators: %1$s: text value; %2$s: text value; %3$s: text value; %4$s: text value; %5$s: text value. */
 			__( '%1$s (%2$s) added via funnel step %3$s. Original price: %4$s, Final price: %5$s', 'ohmylms' ),
 			$product->get_name(),
 			$offer_type,
@@ -653,10 +660,12 @@ class FunnelEndpoint {
 			if ( $membership && 'one_time' !== $membership->get_subscription_period() ) {
 				$subscription_id = SubscriptionManager::create_subscription( $original_order, $product->get_id() );
 				if ( is_wp_error( $subscription_id ) ) {
-					$original_order->add_order_note( sprintf( __( 'Automated subscription creation failed. Error: %s', 'ohmylms' ), $subscription_id->get_error_message() ) );
+					$original_order->add_order_note( sprintf( /* translators: %s: text value. */
+					__( 'Automated subscription creation failed. Error: %s', 'ohmylms' ), $subscription_id->get_error_message() ) );
 				} elseif ( $subscription_id ) {
 					SubscriptionManager::mark_subscription_active( $subscription_id );
-					$original_order->add_order_note( sprintf( __( 'Subscription #%1$d created and activated for membership: %2$s.', 'ohmylms' ), $subscription_id, get_the_title( $product->get_id() ) ) );
+					$original_order->add_order_note( sprintf( /* translators: %1$d: number; %2$s: text value. */
+					__( 'Subscription #%1$d created and activated for membership: %2$s.', 'ohmylms' ), $subscription_id, get_the_title( $product->get_id() ) ) );
 				}
 			}
 		}
@@ -690,11 +699,7 @@ class FunnelEndpoint {
 		if ( $course_id && $student && ! $student->maybe_enrolled( $course_id ) ) {
 			// Check if the record exists.
 			$existing_record = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
-					$student_id,
-					$course_id
-				)
+				$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $enrollment_table, $student_id, $course_id )
 			);
 
 			if ( $existing_record ) {
@@ -751,11 +756,7 @@ class FunnelEndpoint {
 
 		// Check if the record exists.
 		$existing_record = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM $membership_table WHERE user_id = %d AND membership_id = %d",
-				$student_id,
-				$membership_id
-			)
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND membership_id = %d', $membership_table, $student_id, $membership_id )
 		);
 
 		if ( $existing_record ) {

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCertificateImageField( readRuntime ) {
@@ -179,7 +180,9 @@ export function createCertificateImageField( readRuntime ) {
 								r( _nLocal3 );
 							}
 						} else {
-							alert( 'Invalid file type or media type.' );
+							showRequestError(
+								'Invalid file type or media type.'
+							);
 						}
 					} );
 					_tLocal4.open();

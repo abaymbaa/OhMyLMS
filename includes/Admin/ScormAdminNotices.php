@@ -52,25 +52,25 @@ class ScormAdminNotices {
 
 		?>
 		<div class="notice notice-info is-dismissible ohmylms-scorm-notice">
-			<h3><?php _e( 'New Feature: SCORM Export', 'ohmylms-pro' ); ?></h3>
+			<h3><?php esc_html_e( 'New Feature: SCORM Export', 'ohmylms' ); ?></h3>
 			<p>
-				<?php _e( 'You can now export your courses as SCORM packages! This allows you to use your courses in any SCORM-compliant LMS platform like Moodle, Canvas, or Blackboard.', 'ohmylms-pro' ); ?>
+				<?php esc_html_e( 'You can now export your courses as SCORM packages! This allows you to use your courses in any SCORM-compliant LMS platform like Moodle, Canvas, or Blackboard.', 'ohmylms' ); ?>
 			</p>
 			<p>
-				<strong><?php _e( 'How to use:', 'ohmylms-pro' ); ?></strong>
+				<strong><?php esc_html_e( 'How to use:', 'ohmylms' ); ?></strong>
 			</p>
 			<ul style="list-style: disc; margin-left: 20px;">
-				<li><?php _e( 'Select one or more courses from the list', 'ohmylms-pro' ); ?></li>
-				<li><?php _e( 'Choose "Export as SCORM" from the Bulk Actions dropdown', 'ohmylms-pro' ); ?></li>
-				<li><?php _e( 'Select your preferred SCORM version (1.2 or 2004)', 'ohmylms-pro' ); ?></li>
-				<li><?php _e( 'Download and import the package into your LMS', 'ohmylms-pro' ); ?></li>
+				<li><?php esc_html_e( 'Select one or more courses from the list', 'ohmylms' ); ?></li>
+				<li><?php esc_html_e( 'Choose "Export as SCORM" from the Bulk Actions dropdown', 'ohmylms' ); ?></li>
+				<li><?php esc_html_e( 'Select your preferred SCORM version (1.2 or 2004)', 'ohmylms' ); ?></li>
+				<li><?php esc_html_e( 'Download and import the package into your LMS', 'ohmylms' ); ?></li>
 			</ul>
 			<p>
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=ohmylms-scorm-docs' ) ); ?>" class="button button-primary">
-					<?php _e( 'Learn More', 'ohmylms-pro' ); ?>
+					<?php esc_html_e( 'Learn More', 'ohmylms' ); ?>
 				</a>
 				<button type="button" class="button ohmylms-dismiss-scorm-notice">
-					<?php _e( 'Dismiss', 'ohmylms-pro' ); ?>
+					<?php esc_html_e( 'Dismiss', 'ohmylms' ); ?>
 				</button>
 			</p>
 		</div>

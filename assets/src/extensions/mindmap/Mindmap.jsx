@@ -106,15 +106,17 @@ export function Mindmap( {
 								aria-label={
 									expanded
 										? sprintf(
-												/* translators: %s: curriculum node label. */
-												/* translators: %s: curriculum node label. */
-												__( 'Collapse %s', 'ohmylms' ),
+												/* translators: %s: item label. */ __(
+													'Collapse %s',
+													'ohmylms'
+												),
 												node.label
 											)
 										: sprintf(
-												/* translators: %s: curriculum node label. */
-												/* translators: %s: curriculum node label. */
-												__( 'Expand %s', 'ohmylms' ),
+												/* translators: %s: item label. */ __(
+													'Expand %s',
+													'ohmylms'
+												),
 												node.label
 											)
 								}

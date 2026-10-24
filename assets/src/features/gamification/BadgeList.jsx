@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createBadgeList( readRuntime ) {
@@ -226,7 +227,7 @@ export function createBadgeList( readRuntime ) {
 										case 2:
 											_eLocal9.p = 2;
 											_aLocal = _eLocal9.v;
-											console.error(
+											showRequestError(
 												'Error deleting badge:',
 												_aLocal
 											);
@@ -277,7 +278,7 @@ export function createBadgeList( readRuntime ) {
 										case 2:
 											_eLocal11.p = 2;
 											_rLocal2 = _eLocal11.v;
-											console.error( _rLocal2 );
+											showRequestError( _rLocal2 );
 										// Falls through to the shared async state cleanup.
 										case 3:
 											return (

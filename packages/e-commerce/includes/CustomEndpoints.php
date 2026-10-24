@@ -14,6 +14,8 @@ namespace OhMyLMS\Commerce;
 class CustomEndpoints {
 
 	/**
+	 * Query variables for custom endpoints.
+	 *
 	 * @var array $query_vars Query variables for custom endpoints.
 	 */
 	public $query_vars = array();

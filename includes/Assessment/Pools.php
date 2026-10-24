@@ -24,12 +24,20 @@ defined( 'ABSPATH' ) || exit;
 final class Pools {
 	const META = '_ohmylms_pools';
 
+	/**
+	 * Rules for Pools.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	public static function rules( $quiz_id ) {
 		$rules = get_post_meta( (int) $quiz_id, self::META, true );
 		return is_array( $rules ) ? array_values( $rules ) : array();
 	}
 
-	/** Normalize and validate rules; returns rules or WP_Error. */
+	/** Normalize and validate rules; returns rules or WP_Error.
+	 *
+	 * @param array $rules Rules.
+	 */
 	public static function sanitize( array $rules ) {
 		$clean = array();
 		foreach ( array_values( $rules ) as $index => $rule ) {
@@ -61,6 +69,12 @@ final class Pools {
 		return $clean;
 	}
 
+	/**
+	 * Save for Pools.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param array $rules Rules.
+	 */
 	public static function save( $quiz_id, array $rules ) {
 		$clean = self::sanitize( $rules );
 		if ( is_wp_error( $clean ) ) {
@@ -72,7 +86,11 @@ final class Pools {
 		return $clean;
 	}
 
-	/** Pool slots for a revision (after the fixed slots), or WP_Error on shortage. */
+	/** Pool slots for a revision (after the fixed slots), or WP_Error on shortage.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $fixed_count Fixed count.
+	 */
 	public static function slots_for( $quiz_id, $fixed_count ) {
 		$rules = self::rules( $quiz_id );
 		if ( ! $rules ) {
@@ -99,7 +117,11 @@ final class Pools {
 		return $slots;
 	}
 
-	/** Joint feasibility: every pool can draw its count from distinct, unused families. */
+	/** Joint feasibility: every pool can draw its count from distinct, unused families.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param array $rules Rules.
+	 */
 	public static function check( $quiz_id, array $rules ) {
 		$fixed = array_map( 'intval', array_column( ohmylms_get_quiz( (int) $quiz_id )->get_questions(), 'id' ) );
 		$taken = self::family_keys( $fixed );
@@ -135,7 +157,13 @@ final class Pools {
 		return true;
 	}
 
-	/** Draw one version for a pool slot, deterministic for the attempt seed. */
+	/** Draw one version for a pool slot, deterministic for the attempt seed.
+	 *
+	 * @param mixed $rule Rule.
+	 * @param mixed $seed Seed.
+	 * @param array $used Used.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function draw( $rule, $seed, array $used, $attempt_id ) {
 		$filtered = (int) apply_filters( 'ohmylms_quiz_pool_draw', 0, $rule, $seed, $used, (int) $attempt_id );
 		if ( $filtered ) {
@@ -179,7 +207,10 @@ final class Pools {
 		return count( $families );
 	}
 
-	/** Approved, non-archived versions matching a rule. */
+	/** Approved, non-archived versions matching a rule.
+	 *
+	 * @param array $rule Rule.
+	 */
 	public static function candidates( array $rule ) {
 		global $wpdb;
 		$terms = array_merge( array( (int) $rule['term_id'] ), array_map( 'intval', get_term_children( (int) $rule['term_id'], Taxonomy::NAME ) ?: array() ) );
@@ -206,15 +237,25 @@ final class Pools {
 		);
 	}
 
+	/**
+	 * Family key for Pools.
+	 *
+	 * @param array $row Row.
+	 */
 	private static function family_key( array $row ) {
 		return '' !== $row['family_id'] && null !== $row['family_id'] ? 'f:' . $row['family_id'] : 'q:' . (int) $row['question_id'];
 	}
 
+	/**
+	 * Family keys for Pools.
+	 *
+	 * @param array $question_ids Question ids.
+	 */
 	private static function family_keys( array $question_ids ) {
 		global $wpdb;
 		$keys = array();
 		foreach ( $question_ids as $question_id ) {
-			$family = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT family_id FROM ' . Schema::table( 'qb_questions' ) . ' WHERE question_id=%d', (int) $question_id ) );
+			$family = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT family_id FROM %i WHERE question_id=%d', Schema::table( 'qb_questions' ), (int) $question_id ) );
 			$keys[ self::family_key(
 				array(
 					'family_id'   => $family,
@@ -225,6 +266,11 @@ final class Pools {
 		return $keys;
 	}
 
+	/**
+	 * Invalid for Pools.
+	 *
+	 * @param mixed $message Message.
+	 */
 	private static function invalid( $message ) {
 		return new \WP_Error( 'ohmylms_pool_invalid', $message, array( 'status' => 400 ) );
 	}

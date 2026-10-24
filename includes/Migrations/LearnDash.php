@@ -1,5 +1,7 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
+ * Template data and rendering context.
+ *
  * @access public
  * @package OhMyLMS\Migrations
  *
@@ -373,7 +375,7 @@ class LearnDash {
 	 *
 	 * @param int   $new_quiz_id The ID of the newly created quiz in OhMyLMS.
 	 * @param array $meta_data The metadata from the old quiz to be migrated.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -462,10 +464,7 @@ class LearnDash {
 			foreach ( $questions as $key => $id ) {
 				// Fetch question data from wp_learndash_pro_quiz_question.
 				$question_data = $wpdb->get_row(
-					$wpdb->prepare(
-						"SELECT * FROM {$wpdb->prefix}learndash_pro_quiz_question WHERE id = %d",
-						$id
-					),
+					$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $wpdb->prefix . 'learndash_pro_quiz_question', $id ),
 					ARRAY_A
 				);
 
@@ -517,7 +516,7 @@ class LearnDash {
 	 *
 	 * @param int   $new_question_id The ID of the newly created question in OhMyLMS.
 	 * @param array $meta_data The metadata from the old question to be migrated.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -561,9 +560,8 @@ class LearnDash {
 	 * This function transfers answers associated with a question from the old system (LearnDash LMS)
 	 * to the new system (OhMyLMS).
 	 *
-	 * @param int $new_question_id The ID of the newly created question in OhMyLMS.
-	 * @param int $old_question_id The ID of the old question in LearnDash LMS.
-	 *
+	 * @param int   $new_question_id The ID of the newly created question in OhMyLMS.
+	 * @param mixed $answers Answers.
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -596,9 +594,9 @@ class LearnDash {
 	 * and the relationship between the new chapter and lessons is established. If the lesson
 	 * has a video or other content types, they are properly handled.
 	 *
-	 * @param int $new_chapter_id The ID of the newly created chapter in OhMyLMS.
-	 * @param int $old_chapter_id The ID of the old chapter from the LearnDash LMS system.
-	 * @param int $index The index of the lesson in the chapter, used for maintaining order.
+	 * @param int   $new_chapter_id The ID of the newly created chapter in OhMyLMS.
+	 * @param mixed $old_lesson_id Old lesson identifier.
+	 * @param int   $index The index of the lesson in the chapter, used for maintaining order.
 	 */
 	private function migrate_lesson( $new_chapter_id, $old_lesson_id, $index = 0 ) {
 		global $wpdb;
@@ -734,7 +732,7 @@ class LearnDash {
 	 *
 	 * @param int $student_id The ID of the student to enroll.
 	 * @param int $course_id The ID of the course to enroll the student in.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -754,11 +752,7 @@ class LearnDash {
 		if ( $student && ! $student->maybe_enrolled( $course_id ) ) {
 			// Check if the record exists.
 			$existing_record = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d",
-					$student_id,
-					$course_id
-				)
+				$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $wpdb->prefix . 'ohmylms_user_enrollment', $student_id, $course_id )
 			);
 
 			if ( ! $existing_record ) {

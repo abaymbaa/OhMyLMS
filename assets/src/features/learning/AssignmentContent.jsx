@@ -45,11 +45,12 @@ export function createAssignmentContent( readRuntime ) {
 							}
 							return ( () => {
 								if (
-									'video' ==
-									( assignment === null ||
-									assignment === void 0
-										? void 0
-										: assignment.type )
+									String(
+										assignment === null ||
+											assignment === void 0
+											? void 0
+											: assignment.type
+									) === 'video'
 								) {
 									if (
 										assignment === null ||
@@ -78,11 +79,12 @@ export function createAssignmentContent( readRuntime ) {
 							}
 							return ( () => {
 								if (
-									'audio' ==
-									( assignment === null ||
-									assignment === void 0
-										? void 0
-										: assignment.type )
+									String(
+										assignment === null ||
+											assignment === void 0
+											? void 0
+											: assignment.type
+									) === 'audio'
 								) {
 									if (
 										assignment === null ||
@@ -116,10 +118,11 @@ export function createAssignmentContent( readRuntime ) {
 						align={ 'left' }
 						mediaType={ ( () => {
 							if (
-								'text' ==
-								( assignment === null || assignment === void 0
-									? void 0
-									: assignment.type )
+								String(
+									assignment === null || assignment === void 0
+										? void 0
+										: assignment.type
+								) === 'text'
 							) {
 								return 'image_video';
 							}
@@ -133,10 +136,11 @@ export function createAssignmentContent( readRuntime ) {
 						} )() }
 						mediaId={ ( () => {
 							if (
-								'audio' ==
-								( assignment === null || assignment === void 0
-									? void 0
-									: assignment.type )
+								String(
+									assignment === null || assignment === void 0
+										? void 0
+										: assignment.type
+								) === 'audio'
 							) {
 								if (
 									assignment === null ||

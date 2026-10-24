@@ -9,18 +9,32 @@ if ( ! defined( 'ABSPATH' ) ) {
 use OhMyLMS\Integrations\Zoom\Includes\Hooks;
 use OhMyLMS\Integrations\Zoom\Includes\SessionReminderScheduler;
 
+/**
+ * Plugin zoom implementation.
+ */
 class Zoom {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'Zoom';
 
 	const Version = '1.0.0';
 
 
+	/**
+	 * Initialize Zoom.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();
 	}
 
+	/**
+	 * Init classes for Zoom.
+	 */
 	private function init_classes() {
 		// Register REST API routes for Zoom settings.
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
@@ -39,6 +53,9 @@ class Zoom {
 		SessionReminderScheduler::init();
 	}
 
+	/**
+	 * Define constants for Zoom.
+	 */
 	private function define_constants() {
 		define( 'OHMYLMS_ZOOM_INTEGRATION_URL', plugins_url( '', OHMYLMS_PRO_FILE ) );
 	}

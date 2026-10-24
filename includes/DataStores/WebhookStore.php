@@ -23,7 +23,7 @@ class WebhookStore extends DataStore {
 	/**
 	 * Create webhook
 	 *
-	 * @param Webhook $webhook
+	 * @param Webhook $webhook Webhook.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -64,9 +64,10 @@ class WebhookStore extends DataStore {
 	/**
 	 * Read webhook
 	 *
-	 * @param Webhook $webhook
+	 * @param Webhook $webhook Webhook.
 	 * @return mixed|void
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function read( &$webhook ) {
 		global $wpdb;
@@ -75,10 +76,7 @@ class WebhookStore extends DataStore {
 		}
 
 		$webhook_data = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}ohmylms_webhooks WHERE id = %d",
-				$webhook->get_id()
-			)
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $wpdb->prefix . 'ohmylms_webhooks', $webhook->get_id() )
 		);
 
 		if ( ! $webhook_data ) {
@@ -111,7 +109,7 @@ class WebhookStore extends DataStore {
 	/**
 	 * Update webhook
 	 *
-	 * @param Webhook $webhook
+	 * @param Webhook $webhook Webhook.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -151,8 +149,8 @@ class WebhookStore extends DataStore {
 	/**
 	 * Delete webhook
 	 *
-	 * @param Webhook $webhook
-	 * @param array   $args
+	 * @param Webhook $webhook Webhook.
+	 * @param array   $args Operation arguments.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */

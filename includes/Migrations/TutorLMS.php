@@ -1,5 +1,7 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
+ * Template data and rendering context.
+ *
  * @access public
  * @package OhMyLMS\Migrations
  *
@@ -318,7 +320,7 @@ class TutorLMS {
 	 *
 	 * @param int $new_chapter_id The ID of the newly created chapter in OhMyLMS.
 	 * @param int $old_chapter_id The ID of the old chapter from the Tutor LMS system.
-	 *
+	 * .
 	 * @since 1.0.0
 	 *
 	 * @return void
@@ -586,7 +588,7 @@ class TutorLMS {
 	 *
 	 * @param int   $new_quiz_id The ID of the newly created quiz in OhMyLMS.
 	 * @param array $meta_data The metadata from the old quiz to be migrated.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -665,7 +667,7 @@ class TutorLMS {
 	 *
 	 * @param int $new_quiz_id The ID of the newly created quiz in OhMyLMS.
 	 * @param int $old_quiz_id The ID of the old quiz in Tutor LMS.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -674,7 +676,7 @@ class TutorLMS {
 
 		// Fetch all questions associated with the old quiz.
 		$questions = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}tutor_quiz_questions WHERE quiz_id = %d", $old_quiz_id )
+			$wpdb->prepare( 'SELECT * FROM %i WHERE quiz_id = %d', $wpdb->prefix . 'tutor_quiz_questions', $old_quiz_id )
 		);
 
 		if ( empty( $questions ) ) {
@@ -724,7 +726,7 @@ class TutorLMS {
 	 *
 	 * @param int   $new_question_id The ID of the newly created question in OhMyLMS.
 	 * @param array $meta_data The metadata from the old question to be migrated.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -781,7 +783,7 @@ class TutorLMS {
 	 *
 	 * @param int $new_question_id The ID of the newly created question in OhMyLMS.
 	 * @param int $old_question_id The ID of the old question in Tutor LMS.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -790,7 +792,7 @@ class TutorLMS {
 
 		// Fetch answers for the given question.
 		$answers = $wpdb->get_results(
-			$wpdb->prepare( "SELECT * FROM {$wpdb->prefix}tutor_quiz_question_answers WHERE belongs_question_id = %d", $old_question_id )
+			$wpdb->prepare( 'SELECT * FROM %i WHERE belongs_question_id = %d', $wpdb->prefix . 'tutor_quiz_question_answers', $old_question_id )
 		);
 
 		if ( empty( $answers ) ) {
@@ -818,8 +820,9 @@ class TutorLMS {
 	 * This function transfers students associated with a course from the old system (Tutor LMS)
 	 * to the new system (OhMyLMS).
 	 *
-	 * @param int $new_course_id The ID of the newly created course in OhMyLMS.
-	 *
+	 * @param int    $new_course_id The ID of the newly created course in OhMyLMS.
+	 * .
+	 * @param string $field_name Field name.
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -864,7 +867,7 @@ class TutorLMS {
 	 *
 	 * @param int $student_id The ID of the student to enroll.
 	 * @param int $course_id The ID of the course to enroll the student in.
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return void
 	 */
@@ -884,11 +887,7 @@ class TutorLMS {
 		if ( $student && ! $student->maybe_enrolled( $course_id ) ) {
 			// Check if the record exists.
 			$existing_record = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d",
-					$student_id,
-					$course_id
-				)
+				$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $wpdb->prefix . 'ohmylms_user_enrollment', $student_id, $course_id )
 			);
 
 			if ( ! $existing_record ) {

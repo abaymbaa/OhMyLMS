@@ -78,7 +78,7 @@ export function createBadgeSettings( readRuntime ) {
 		var R = b3( ( 0, ReactHooks.useState )( ! 1 ), 2 );
 		var x = R[ 0 ];
 		var C = R[ 1 ];
-		var P = b3( ( 0, ReactHooks.useState )( null ), 2 );
+		b3( ( 0, ReactHooks.useState )( null ), 2 );
 		( 0, ReactHooks.useEffect )( function () {
 			var _tLocal = ( function () {
 				var _eLocal3 = y3(

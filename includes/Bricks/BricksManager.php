@@ -108,7 +108,7 @@ class BricksManager {
 	/**
 	 * Add OhMyLMS category to Bricks elements
 	 *
-	 * @param array $categories Existing categories
+	 * @param array $categories Existing categories.
 	 * @return array Modified categories
 	 */
 	public function add_element_category( $categories ) {

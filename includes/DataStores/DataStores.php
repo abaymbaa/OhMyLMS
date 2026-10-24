@@ -75,8 +75,8 @@ class DataStores {
 	 *
 	 * Create datastore to interact with the DB
 	 *
-	 * @param $object_type
-	 * @throws \Exception
+	 * @param mixed $object_type Object type.
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function __construct( $object_type ) {
@@ -99,9 +99,9 @@ class DataStores {
 	/**
 	 * Loads a data store
 	 *
-	 * @param $object_type
+	 * @param mixed $object_type Object type.
 	 * @return DataStores
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public static function load( $object_type ) {
@@ -113,7 +113,7 @@ class DataStores {
 	/**
 	 * Read an object from the data store
 	 *
-	 * @param $data Data
+	 * @param mixed $data Data.
 	 * @since 1.0.0
 	 */
 	public function read( &$data ) {
@@ -123,7 +123,7 @@ class DataStores {
 	/**
 	 * Create a object in datastore
 	 *
-	 * @param $data Data
+	 * @param mixed $data Data.
 	 * @since 1.0.0
 	 */
 	public function create( &$data ) {
@@ -134,8 +134,8 @@ class DataStores {
 	/**
 	 * Update object in data store
 	 *
-	 * @param $data Data
-	 *
+	 * @param mixed $data Data
+	 * .
 	 * @since 1.0.0
 	 */
 	public function update( &$data ) {
@@ -146,8 +146,9 @@ class DataStores {
 	/**
 	 * Delete an object
 	 *
-	 * @param $data Data
-	 *
+	 * @param mixed $data Data
+	 * .
+	 * @param array $args Operation arguments.
 	 * @since 1.0.0
 	 */
 	public function delete( &$data, $args = array() ) {

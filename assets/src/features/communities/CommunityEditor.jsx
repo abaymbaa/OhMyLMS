@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 import { createElement } from '@wordpress/element';
 import { validateCommunity } from './model.mjs';
 export function createCommunityEditor( readRuntime ) {
@@ -60,7 +61,7 @@ export function createCommunityEditor( readRuntime ) {
 					onSuccess?.();
 				}
 			} catch ( error ) {
-				console.error( 'Error creating community:', error );
+				showRequestError( 'Error creating community:', error );
 			} finally {
 				savingRef.current = false;
 				setSaving( false );

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { CourseGradebook } from '../courses/CourseGradebook';
@@ -248,7 +249,7 @@ export function createCourseStudents( readRuntime ) {
 										case 2:
 											_eLocal6.p = 2;
 											_nLocal = _eLocal6.v;
-											console.error( _nLocal );
+											showRequestError( _nLocal );
 											w( _nLocal.message );
 										// Falls through to the shared async state cleanup.
 										case 3:
@@ -403,7 +404,7 @@ export function createCourseStudents( readRuntime ) {
 										case 5:
 											_eLocal1.p = 5;
 											_vLocal = _eLocal1.v;
-											console.error( _vLocal );
+											showRequestError( _vLocal );
 										// Falls through to the shared async state cleanup.
 										case 6:
 											return (
@@ -526,7 +527,6 @@ export function createCourseStudents( readRuntime ) {
 										'Enroll a Student',
 										'ohmylms'
 									) }
-									autoFocus={ ! 0 }
 								>
 									{ React.createElement( nf, null ) }
 									{ ' ' }

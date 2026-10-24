@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Wires curriculum storage, cleanup of references to deleted content, and the learner dashboard. */
 final class Bootstrap {
+	/**
+	 * Init for Bootstrap.
+	 */
 	public static function init() {
 		add_action( 'init', array( Schema::class, 'install' ), 7 );
 		add_action( 'before_delete_post', array( __CLASS__, 'post_deleted' ) );
@@ -26,21 +29,29 @@ final class Bootstrap {
 		Directory::init();
 	}
 
-	/** A deleted course or quiz/exam leaves no curriculum links, and a deleted course leaves no bundle slot. */
+	/** A deleted course or quiz/exam leaves no curriculum links, and a deleted course leaves no bundle slot.
+	 *
+	 * @param mixed $post_id Post identifier.
+	 */
 	public static function post_deleted( $post_id ) {
 		if ( ! Schema::ready() ) {
 			return; }
 		$type = get_post_type( $post_id );
-		if ( $type === OHMYLMS_COURSE_CPT ) {
+		if ( OHMYLMS_COURSE_CPT === $type ) {
 			Links::remove_object( 'course', $post_id );
 			CourseLinks::remove_course( $post_id );
 			Bundles::remove_member( 'course', $post_id );
-		} elseif ( $type === OHMYLMS_QUIZ_CPT ) {
+		} elseif ( OHMYLMS_QUIZ_CPT === $type ) {
 			Links::remove_object( 'quiz', $post_id );
 		}
 	}
 
-	/** A deleted skill leaves no curriculum links or mappings. Learner evidence is handled by the skills module. */
+	/** A deleted skill leaves no curriculum links or mappings. Learner evidence is handled by the skills module.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 * @param mixed $tt_id Tt identifier.
+	 * @param mixed $taxonomy Taxonomy.
+	 */
 	public static function term_deleted( $term_id, $tt_id, $taxonomy ) {
 		if ( $taxonomy !== Taxonomy::NAME || ! Schema::ready() ) {
 			return; }

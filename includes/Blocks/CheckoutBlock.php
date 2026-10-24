@@ -540,8 +540,8 @@ class CheckoutBlock {
 	/**
 	 * Render the block
 	 *
-	 * @param array  $attributes Block attributes
-	 * @param string $content Block content
+	 * @param array  $attributes Block attributes.
+	 * @param string $content Block content.
 	 * @return string
 	 */
 	public function render_block( $attributes, $content = '' ) {
@@ -700,7 +700,7 @@ class CheckoutBlock {
 	/**
 	 * Validate and sanitize block attributes
 	 *
-	 * @param array $attributes Raw attributes
+	 * @param array $attributes Raw attributes.
 	 * @return array Validated attributes
 	 */
 	private function validate_attributes( $attributes ) {
@@ -733,7 +733,7 @@ class CheckoutBlock {
 	/**
 	 * Render empty cart message
 	 *
-	 * @param array $attributes Block attributes
+	 * @param array $attributes Block attributes.
 	 * @return void
 	 */
 	private function render_empty_cart_message( $attributes ) {

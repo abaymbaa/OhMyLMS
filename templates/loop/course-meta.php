@@ -29,7 +29,8 @@ $level        = $course->get_level();
 				<?php
 					$total = $course->get_total_enrolled_users();
 					printf(
-						esc_html( _n( '%d Student', '%d Students', $total, 'ohmylms' ) ),
+						esc_html( /* translators: %d: number. */
+						_n( '%d Student', '%d Students', $total, 'ohmylms' ) ),
 						$total
 					);
 				?>
@@ -39,7 +40,7 @@ $level        = $course->get_level();
 
 	<?php if ( $course->get_level() && 'all' !== $course->get_level() ) { ?>
 		
-		<li class="course-level <?php echo $course->get_level(); ?>">
+		<li class="course-level <?php echo esc_attr( $course->get_level() ); ?>">
 			<span class="icon-text-align">
 				<?php
 				if ( 'beginner' === $level ) {
@@ -70,12 +71,13 @@ $level        = $course->get_level();
 			<span class="icon-text-align">
 			<?php include OHMYLMS_DIR . '/assets/images/icon/star-color-icon.php'; ?>
 				<span class="rating">
-					<span class="average-rating"><?php echo $average; ?></span>
+					<span class="average-rating"><?php echo esc_html( $average ); ?></span>
 				<?php
 					printf(
 						'(%s)',
 						sprintf(
-							esc_html( _n( '%d', '%d', $rating_count, 'ohmylms' ) ),
+							esc_html( /* translators: %d: number. */
+							_n( '%d', '%d', $rating_count, 'ohmylms' ) ),
 							$rating_count
 						)
 					);
@@ -84,7 +86,7 @@ $level        = $course->get_level();
 			</span>
 
 			<span class="course-review-rating" role="img">
-				<span class="given-rate" style="width: <?php echo $icon_percent; ?>%;"></span>
+				<span class="given-rate" style="width: <?php echo esc_attr( $icon_percent ); ?>%;"></span>
 			</span>
 
 			<span class="total-ratings">

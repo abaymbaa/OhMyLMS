@@ -1,6 +1,8 @@
 <?php
 /**
  * Template Name: OhMyLMS Thank You - No Header
+ *
+ * @package OhMyLMS
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { nativeLessonHref } from '../content-hub/editorNavigation.mjs';
@@ -279,7 +280,7 @@ export function createCourseChapter( readRuntime ) {
 										case 3:
 											_eLocal6.p = 3;
 											i = _eLocal6.v;
-											console.error( i );
+											showRequestError( i );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (

@@ -16,10 +16,23 @@ defined( 'ABSPATH' ) || exit;
  * the learner saw, never the current draft.
  */
 class QuestionSnapshot {
+	/**
+	 * Version.
+	 *
+	 * @var mixed
+	 */
 	private $version;
-	/** @var array|null seed and numbers of a template instance */
+	/**
+	 * seed and numbers of a template instance.
+	 *
+	 * @var array|null seed and numbers of a template instance */
 	private $instance = null;
 
+	/**
+	 * Initialize Question snapshot.
+	 *
+	 * @param array $version Version.
+	 */
 	public function __construct( array $version ) {
 		$this->version = $version;
 		foreach ( array( 'image_url', 'video_url' ) as $setting ) {
@@ -58,7 +71,10 @@ class QuestionSnapshot {
 		}
 	}
 
-	/** Decode a qb_question_versions row (JSON columns) into a snapshot. */
+	/** Decode a qb_question_versions row (JSON columns) into a snapshot.
+	 *
+	 * @param mixed $row Row.
+	 */
 	public static function from_row( $row ) {
 		if ( ! $row ) {
 			return null; }
@@ -78,6 +94,8 @@ class QuestionSnapshot {
 	/**
 	 * The concrete question for one instance seed. A version without a template is returned
 	 * unchanged, so callers can instantiate every item without checking.
+	 *
+	 * @param mixed $seed Seed.
 	 */
 	public function instantiate( $seed ) {
 		if ( ! $this->is_template() ) {
@@ -100,25 +118,52 @@ class QuestionSnapshot {
 		return $this->instance;
 	}
 
+	/**
+	 * Get id for Question snapshot.
+	 */
 	public function get_id() {
 		return (int) $this->version['question_id']; }
+	/**
+	 * Get version id for Question snapshot.
+	 */
 	public function get_version_id() {
 		return (int) $this->version['id']; }
+	/**
+	 * Get version no for Question snapshot.
+	 */
 	public function get_version_no() {
 		return (int) $this->version['version_no']; }
+	/**
+	 * Get uuid for Question snapshot.
+	 */
 	public function get_uuid() {
 		return (string) $this->version['question_uuid']; }
+	/**
+	 * Get type for Question snapshot.
+	 */
 	public function get_type() {
 		return (string) $this->version['type']; }
+	/**
+	 * Get name for Question snapshot.
+	 */
 	public function get_name() {
 		return (string) $this->version['title']; }
+	/**
+	 * Get description for Question snapshot.
+	 */
 	public function get_description() {
 		return \OhMyLMS\QuestionBank\MediaFreezer::body( (string) $this->version['body'], $this->frozen() ); }
+	/**
+	 * Get settings for Question snapshot.
+	 */
 	public function get_settings(): array {
 		return $this->version['settings']; }
 	/** Full option rows, including correctness. Server-side use only. */
 	public function get_questions(): array {
 		return $this->version['options']; }
+	/**
+	 * Get correct options for Question snapshot.
+	 */
 	public function get_correct_options() {
 		return array_values(
 			array_filter(
@@ -129,6 +174,9 @@ class QuestionSnapshot {
 			)
 		);
 	}
+	/**
+	 * Get parts for Question snapshot.
+	 */
 	public function get_parts() {
 		return $this->version['parts'] ?: array(
 			array(
@@ -136,31 +184,64 @@ class QuestionSnapshot {
 				'fraction' => 1,
 			),
 		); }
+	/**
+	 * Get extension settings for Question snapshot.
+	 */
 	public function get_extension_settings() {
 		return $this->version['extension']; }
+	/**
+	 * Get thumbnail id for Question snapshot.
+	 */
 	public function get_thumbnail_id() {
 		return (int) ( $this->version['media']['thumbnail_id'] ?? 0 ); }
+	/**
+	 * Get image id for Question snapshot.
+	 */
 	public function get_image_id() {
 		return (int) ( $this->version['media']['image_id'] ?? 0 ); }
+	/**
+	 * Get video id for Question snapshot.
+	 */
 	public function get_video_id() {
 		return (int) ( $this->version['media']['video_id'] ?? 0 ); }
+	/**
+	 * Get image url for Question snapshot.
+	 */
 	public function get_image_url() {
 		return $this->frozen_url( 'image', (string) ( $this->version['media']['image_url'] ?? '' ) ); }
+	/**
+	 * Get video url for Question snapshot.
+	 */
 	public function get_video_url() {
 		return $this->frozen_url( 'video', (string) ( $this->version['media']['video_url'] ?? '' ) ); }
 	/** Frozen media copies captured with this version (see QuestionBank\MediaFreezer). */
 	public function frozen() {
 		return (array) ( $this->version['media']['frozen'] ?? array() ); }
+	/**
+	 * Frozen url for Question snapshot.
+	 *
+	 * @param mixed $key Lookup key.
+	 * @param mixed $live Live.
+	 */
 	private function frozen_url( $key, $live ) {
 		$frozen = $this->frozen();
 		return isset( $frozen[ $key ]['url'] ) ? (string) $frozen[ $key ]['url'] : $live;
 	}
+	/**
+	 * Is migration snapshot for Question snapshot.
+	 */
 	public function is_migration_snapshot() {
 		return ! empty( $this->version['is_migration_snapshot'] ); }
+	/**
+	 * To array for Question snapshot.
+	 */
 	public function to_array() {
 		return $this->version; }
 
-	/** Types whose option text is the expected answer and must never reach the learner. */
+	/** Types whose option text is the expected answer and must never reach the learner.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function hides_option_text( $type ) {
 		return in_array( $type, array( 'statement', 'fill-in-the-blank', 'short-text', 'long-text' ), true );
 	}
@@ -171,10 +252,10 @@ class QuestionSnapshot {
 	 * Correctness, expected text and teacher-only settings are removed. Option IDs are
 	 * replaced by per-delivery tokens so markup cannot reveal matches or ordering.
 	 *
-	 * @param array $option_order Option IDs in delivery order.
-	 * @param array $tokens       option id => token.
-	 * @param array $display      Extra frozen presentation data (e.g. matching definition order).
-	 * @param array $definition_tokens Matching definition tokens.
+	 * @param array  $option_order Option IDs in delivery order.
+	 * @param array  $tokens option id => token.
+	 * @param array  $display Extra frozen presentation data (e.g. matching definition order).
+	 * @param array  $definition_tokens Matching definition tokens.
 	 * @param string $scope Delivery token scope for nested parts.
 	 */
 	public function student_view( array $option_order = array(), array $tokens = array(), array $display = array(), array $definition_tokens = array(), $scope = '' ) {
@@ -183,7 +264,7 @@ class QuestionSnapshot {
 		foreach ( $this->version['options'] as $option ) {
 			$by_id[ (int) $option['id'] ] = $option; }
 		$ordered = array();
-		foreach ( $option_order ?: array_keys( $by_id ) as $option_id ) {
+		foreach ( $option_order ? $option_order : array_keys( $by_id ) as $option_id ) {
 			if ( ! isset( $by_id[ (int) $option_id ] ) ) {
 				continue; }
 			$ordered[] = $this->safe_option( $by_id[ (int) $option_id ], $tokens, $type );
@@ -191,7 +272,7 @@ class QuestionSnapshot {
 		$definitions = array();
 		foreach ( (array) ( $display['definitions'] ?? array() ) as $option_id ) {
 			if ( isset( $by_id[ (int) $option_id ] ) ) {
-				$definitions[] = $this->safe_option( $by_id[ (int) $option_id ], $definition_tokens ?: $tokens, $type ); }
+				$definitions[] = $this->safe_option( $by_id[ (int) $option_id ], $definition_tokens ? $definition_tokens : $tokens, $type ); }
 		}
 		// Only settings a renderer needs are public; a type may name more via 'public_settings'.
 		$definition = \OhMyLMS\Extensions\Registry::get( 'question', $type );
@@ -224,6 +305,13 @@ class QuestionSnapshot {
 		);
 	}
 
+	/**
+	 * Safe option for Question snapshot.
+	 *
+	 * @param array $option Option.
+	 * @param array $tokens Tokens.
+	 * @param mixed $type Type.
+	 */
 	private function safe_option( array $option, array $tokens, $type ) {
 		$id       = (int) $option['id'];
 		$matching = is_array( $option['matching_data'] ?? null ) ? $option['matching_data'] : array();

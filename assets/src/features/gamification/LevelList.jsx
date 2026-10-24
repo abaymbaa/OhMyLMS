@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createLevelList( readRuntime ) {
@@ -207,7 +208,7 @@ export function createLevelList( readRuntime ) {
 										case 2:
 											_eLocal2.p = 2;
 											_aLocal = _eLocal2.v;
-											console.error(
+											showRequestError(
 												'Error deleting level:',
 												_aLocal
 											);
@@ -259,7 +260,7 @@ export function createLevelList( readRuntime ) {
 										case 2:
 											_eLocal5.p = 2;
 											_rLocal = _eLocal5.v;
-											console.error( _rLocal );
+											showRequestError( _rLocal );
 										// Falls through to the shared async state cleanup.
 										case 3:
 											return (

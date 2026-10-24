@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createEarningsReport( readRuntime ) {
@@ -218,7 +219,7 @@ export function createEarningsReport( readRuntime ) {
 							'M d, Y',
 							new Date( _eLocal )
 						);
-					} catch ( _eLocal2 ) {
+					} catch {
 						return 'Invalid Date';
 					}
 				},
@@ -582,7 +583,7 @@ export function createEarningsReport( readRuntime ) {
 												case 4:
 													_eLocal12.p = 4;
 													_sLocal = _eLocal12.v;
-													console.error(
+													showRequestError(
 														'Error fetching data:',
 														_sLocal
 													);

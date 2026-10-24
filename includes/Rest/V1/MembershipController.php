@@ -33,6 +33,9 @@ class MembershipController extends RestController {
 	 */
 	protected $base = 'membership';
 
+	/**
+	 * Check membership permission for Membership controller.
+	 */
 	public function check_membership_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -43,7 +46,7 @@ class MembershipController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_membership_read_permission( $request ) {
@@ -60,7 +63,7 @@ class MembershipController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_membership_edit_permission( $request ) {
@@ -73,7 +76,7 @@ class MembershipController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_membership_delete_permission( $request ) {
@@ -160,7 +163,7 @@ class MembershipController extends RestController {
 	/**
 	 * Check if a given request has access to read an item.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 *
 	 * @since 1.0.0
@@ -293,7 +296,7 @@ class MembershipController extends RestController {
 		$page        = (int) $query_args['paged'];
 		$total_posts = $posts_query->found_posts;
 
-		if ( $total_posts < 1 && $page > 1 ) {
+		if ( 1 > $total_posts && 1 < $page ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
 			$count_query->query( $query_args );
@@ -313,7 +316,7 @@ class MembershipController extends RestController {
 		}
 		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
 
-		if ( $page > 1 ) {
+		if ( 1 < $page ) {
 			$prev_page = $page - 1;
 			if ( $prev_page > $max_pages ) {
 				$prev_page = $max_pages;
@@ -333,7 +336,7 @@ class MembershipController extends RestController {
 	/**
 	 * Create a single membership
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -385,7 +388,7 @@ class MembershipController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_MEMBERSHIP_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_MEMBERSHIP_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_membership_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -460,7 +463,7 @@ class MembershipController extends RestController {
 	/**
 	 * Delete membership
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -509,7 +512,7 @@ class MembershipController extends RestController {
 	 *
 	 * @param array                $prepared_args The prepared arguments for the query.
 	 * @param WP_REST_Request|null $request The REST request object.
-	 *
+	 * .
 	 * @return array The filtered and prepared query arguments.
 	 * @since 1.0.0
 	 */
@@ -627,7 +630,7 @@ class MembershipController extends RestController {
 	 * @param \WP_REST_Request $request The REST request object containing the meta data.
 	 * @return bool True on success, false on failure.
 	 *
-	 * @throws DataException
+	 * @throws DataException When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
@@ -652,6 +655,7 @@ class MembershipController extends RestController {
 	 * @return Membership The updated membership object.
 	 *
 	 * @since 1.0.0
+	 * @throws DataException When the operation cannot be completed.
 	 */
 	protected function set_membership_meta( $membership, $request ) {
 		$error = $this->validate_course_selection( $request, $membership );
@@ -718,7 +722,7 @@ class MembershipController extends RestController {
 	/**
 	 * Get membership data.
 	 *
-	 * @param Membership $membership
+	 * @param Membership $membership Membership.
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -765,6 +769,9 @@ class MembershipController extends RestController {
 	 * tag rules, saved before those were replaced, can only be kept or removed, never extended: members keep
 	 * the access they were granted until an administrator removes the rule, yet nothing new is organized by
 	 * categories or tags.
+	 *
+	 * @param mixed $request REST request.
+	 * @param mixed $membership Membership.
 	 */
 	private function validate_course_selection( $request, $membership = null ) {
 		$rules = array(
@@ -819,7 +826,10 @@ class MembershipController extends RestController {
 		return true;
 	}
 
-	/** Legacy category and tag rules still saved on a plan, with their names, so they can be shown and removed. */
+	/** Legacy category and tag rules still saved on a plan, with their names, so they can be shown and removed.
+	 *
+	 * @param mixed $membership Membership.
+	 */
 	private function legacy_rules( $membership ) {
 		$named = static function ( $ids, $taxonomy ) {
 			$rows = array();
@@ -838,6 +848,11 @@ class MembershipController extends RestController {
 		);
 	}
 
+	/**
+	 * Course preview for Membership controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function course_preview( $request ) {
 		$valid = $this->validate_course_selection( $request );
 		if ( is_wp_error( $valid ) ) {
@@ -918,8 +933,8 @@ class MembershipController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $membership
-	 * @param $request
+	 * @param mixed $membership Membership.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0
@@ -941,9 +956,9 @@ class MembershipController extends RestController {
 	/**
 	 * Prepare a single membership for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Membership|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_item_for_database( $request ) {
@@ -974,7 +989,7 @@ class MembershipController extends RestController {
 	 * Prepare a single membership for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0

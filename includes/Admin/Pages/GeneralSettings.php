@@ -7,9 +7,15 @@ use OhMyLMS\Abstracts\SettingsPage;
 defined( 'ABSPATH' ) || exit;
 
 
+/**
+ * Plugin general settings implementation.
+ */
 class GeneralSettings extends SettingsPage {
 
 
+	/**
+	 * Initialize General settings.
+	 */
 	public function __construct() {
 		$this->id    = 'general';
 		$this->label = __( 'General', 'ohmylms' );
@@ -18,6 +24,9 @@ class GeneralSettings extends SettingsPage {
 	}
 
 
+	/**
+	 * Get settings for default section for General settings.
+	 */
 	public function get_settings_for_default_section() {
 
 		$currency_code_options = get_ohmylms_currencies();

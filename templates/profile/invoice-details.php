@@ -26,19 +26,19 @@ $order_date = $date->format( 'F d, Y' );
 					</a>
 				</li>
 
-				<li><?php echo "Invoice #{$order->get_id()}"; ?></li>
+				<li><?php echo esc_html( "Invoice #{$order->get_id()}" ); ?></li>
 			</ul>
 		</nav>
 
 		<div class="invoice-header">
 			<div class="invoice-left">
 				<h2 class="invoice-title">
-					<?php echo "Invoice #{$order->get_id()} on {$order_date}"; ?>
+					<?php echo esc_html( "Invoice #{$order->get_id()} on {$order_date}" ); ?>
 				</h2>
 				<ul class="invoice-tags">
-					<li class="invoice-student-name"><?php echo "{$order->get_student_name()} ( {$order->get_email()} )"; ?></li>
+					<li class="invoice-student-name"><?php echo esc_html( "{$order->get_student_name()} ( {$order->get_email()} )" ); ?></li>
 					<li class="invoice-payment">
-						<span class="status-tag <?php echo $order->get_status(); ?>">
+						<span class="status-tag <?php echo esc_attr( $order->get_status() ); ?>">
 							<?php echo esc_html( ohmylms_ecommerce_get_order_status_name( $order->get_status() ) ); ?>
 						</span>
 					</li>
@@ -80,9 +80,9 @@ $order_date = $date->format( 'F d, Y' );
 				foreach ( $order->get_items() as $item ) :
 					$post_type  = get_post_type( $item->get_course_id() );
 					$membership = false;
-					if ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
+					if ( OHMYLMS_MEMBERSHIP_CPT === $post_type ) {
 						$membership = $item->get_membership();
-					} elseif ( $post_type === OHMYLMS_COURSE_CPT ) {
+					} elseif ( OHMYLMS_COURSE_CPT === $post_type ) {
 						$membership = ohmylms_get_course( $item->get_course_id() );
 
 					}
@@ -102,10 +102,10 @@ $order_date = $date->format( 'F d, Y' );
 					<div class="dashboard-table-td membership-price">
 						<?php
 							$item_total      = floatval( $item->get_total() ) / floatval( $item->get_quantity() );
-							$negative        = $item_total < 0;
+							$negative        = 0 > $item_total;
 							$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $item_total );
 
-							echo $formatted_price;
+							echo wp_kses_post( $formatted_price );
 						?>
 					</div>
 
@@ -119,7 +119,7 @@ $order_date = $date->format( 'F d, Y' );
 							$negative        = $item->get_total() < 0;
 							$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $item->get_total() );
 
-							echo $formatted_price;
+							echo wp_kses_post( $formatted_price );
 						?>
 					</div>
 
@@ -127,10 +127,10 @@ $order_date = $date->format( 'F d, Y' );
 						<div class="dashboard-table-td membership-price" data-title="Price: ">
 							<?php
 								$item_total      = floatval( $item->get_total() ) / floatval( $item->get_quantity() );
-								$negative        = $item_total < 0;
+								$negative        = 0 > $item_total;
 								$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $item_total );
 
-								echo $formatted_price;
+								echo wp_kses_post( $formatted_price );
 							?>
 						</div>
 
@@ -154,7 +154,7 @@ $order_date = $date->format( 'F d, Y' );
 								$negative        = $order->get_cart_subtotal() < 0;
 								$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $order->get_cart_subtotal() );
 
-								echo $formatted_price;
+								echo wp_kses_post( $formatted_price );
 							?>
 						</span>
 					</div>
@@ -170,7 +170,7 @@ $order_date = $date->format( 'F d, Y' );
 									$negative        = $order->get_cart_discount() > 0;
 									$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $order->get_cart_discount() );
 
-									echo $formatted_price;
+									echo wp_kses_post( $formatted_price );
 								?>
 							</span>
 						</div>
@@ -186,7 +186,7 @@ $order_date = $date->format( 'F d, Y' );
 								<?php
 									$formatted_price = sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $order->get_tax_amount() );
 
-									echo $formatted_price;
+									echo wp_kses_post( $formatted_price );
 								?>
 							</span>
 						</div>
@@ -204,7 +204,7 @@ $order_date = $date->format( 'F d, Y' );
 								$negative        = $order->get_total() < 0;
 								$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $order->get_total() );
 
-								echo $formatted_price;
+								echo wp_kses_post( $formatted_price );
 							?>
 						</span>
 					</div>

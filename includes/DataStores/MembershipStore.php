@@ -23,7 +23,7 @@ class MembershipStore extends DataStore {
 	/**
 	 * Create membership
 	 *
-	 * @param Membership $membership
+	 * @param Membership $membership Membership.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -71,9 +71,9 @@ class MembershipStore extends DataStore {
 	/**
 	 * Read data
 	 *
-	 * @param Membership $membership
+	 * @param Membership $membership Membership.
 	 * @return mixed|void
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function read( &$membership ) {
@@ -197,8 +197,8 @@ class MembershipStore extends DataStore {
 	/**
 	 * Delete the membership
 	 *
-	 * @param $membership
-	 * @param array $args
+	 * @param mixed $membership Membership.
+	 * @param array $args Operation arguments.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -223,7 +223,7 @@ class MembershipStore extends DataStore {
 	/**
 	 * Helper function that reads membership data
 	 *
-	 * @param membership $membership
+	 * @param membership $membership Membership.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -264,6 +264,7 @@ class MembershipStore extends DataStore {
 	 * Check membership is already purchased or not
 	 *
 	 * @return bool
+	 * @param mixed $membership Membership.
 	 */
 	public function is_already_purchased( &$membership ) {
 		global $wpdb;
@@ -273,7 +274,7 @@ class MembershipStore extends DataStore {
 
 		// Prepare the query.
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
-		$query      = $wpdb->prepare( "SELECT membership_id FROM $table_name WHERE user_id = %d AND `status` = %s AND membership_id = %d", $user_id, 'enrolled', $membership->get_id() );
+		$query      = $wpdb->prepare( 'SELECT membership_id FROM %i WHERE user_id = %d AND `status` = %s AND membership_id = %d', $table_name, $user_id, 'enrolled', $membership->get_id() );
 		// Execute the query and return the result.
 		$result = $wpdb->get_row( $query, ARRAY_A );
 		return ! empty( $result ) ? true : false;
@@ -283,6 +284,7 @@ class MembershipStore extends DataStore {
 	 * Check how many memberships are already purchased
 	 *
 	 * @return int
+	 * @param mixed $membership Membership.
 	 */
 	public function count_membership_members( &$membership ) {
 		global $wpdb;
@@ -291,11 +293,7 @@ class MembershipStore extends DataStore {
 		$table_name = $wpdb->prefix . 'ohmylms_user_membership';
 
 		// Prepare the query to count rows.
-		$query = $wpdb->prepare(
-			"SELECT COUNT(*) FROM $table_name WHERE `status` = %s AND membership_id = %d",
-			'enrolled',
-			$membership->get_id()
-		);
+		$query = $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE `status` = %s AND membership_id = %d', $table_name, 'enrolled', $membership->get_id() );
 
 		// Execute the query and return the count.
 		$count = $wpdb->get_var( $query );
@@ -307,6 +305,8 @@ class MembershipStore extends DataStore {
 	 * Update membership status
 	 *
 	 * @return bool
+	 * @param mixed $membership Membership.
+	 * @param mixed $new_status New status.
 	 */
 	public function update_membership_status( &$membership, $new_status ) {
 		global $wpdb;
@@ -346,6 +346,13 @@ class MembershipStore extends DataStore {
 	}
 
 
+	/**
+	 * Cancel enrollment for Membership store.
+	 *
+	 * @param mixed $membership Membership.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $order_id Order identifier.
+	 */
 	public function cancel_enrollment( &$membership, $student_id, $order_id ) {
 		global $wpdb;
 		$user_id          = $student_id;
@@ -383,6 +390,11 @@ class MembershipStore extends DataStore {
 	}
 
 
+	/**
+	 * Get billing period for Membership store.
+	 *
+	 * @param mixed $membership Membership.
+	 */
 	public function get_billing_period( &$membership ) {
 		$membership_id       = $membership->get_id();
 		$subscription_length = get_post_meta( $membership_id, '_subscription_period', true );
@@ -391,6 +403,11 @@ class MembershipStore extends DataStore {
 	}
 
 
+	/**
+	 * Get billing interval for Membership store.
+	 *
+	 * @param mixed $membership Membership.
+	 */
 	public function get_billing_interval( &$membership ) {
 		$membership_id       = $membership->get_id();
 		$subscription_length = get_post_meta( $membership_id, '_subscription_length', true );

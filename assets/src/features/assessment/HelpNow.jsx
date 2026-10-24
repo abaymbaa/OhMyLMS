@@ -8,9 +8,9 @@ import { loadHelpNow } from './api.mjs';
  * Who needs help now: stuck learners of a course, grouped by the prerequisite to reteach, so one
  * mini-lesson helps several. Learners with an exam coming up are listed first.
  *
- * @param {Object}   root0          Props.
- * @param {number}   root0.courseId Course the viewer reports on.
- * @param {Function} root0.onSelect Called with a learner to open their skills.
+ * @param {Object}                    root0          Props.
+ * @param {number}                    root0.courseId Course the viewer reports on.
+ * @param {(student: Object) => void} root0.onSelect Called with a learner to open their skills.
  */
 export function HelpNow( { courseId, onSelect } ) {
 	const [ data, setData ] = useState( undefined );
@@ -58,7 +58,7 @@ export function HelpNow( { courseId, onSelect } ) {
 												/* translators: %s: skill to reteach. */
 												__( 'Reteach: %s', 'ohmylms' ),
 												group.reteach.name
-										  )
+											)
 										: sprintf(
 												/* translators: %s: skill to reteach. */
 												__(
@@ -66,7 +66,7 @@ export function HelpNow( { courseId, onSelect } ) {
 													'ohmylms'
 												),
 												group.reteach.name
-										  ) }
+											) }
 								</h3>
 								<p className="ohmylms-ext-muted">
 									{ group.kind === 'prerequisite'
@@ -82,7 +82,7 @@ export function HelpNow( { courseId, onSelect } ) {
 												group.skills
 													.map( ( s ) => s.name )
 													.join( ', ' )
-										  )
+											)
 										: sprintf(
 												/* translators: %d: number of learners. */
 												_n(
@@ -92,7 +92,7 @@ export function HelpNow( { courseId, onSelect } ) {
 													'ohmylms'
 												),
 												group.students.length
-										  ) }
+											) }
 								</p>
 								<ul>
 									{ group.students.map( ( learner ) => (

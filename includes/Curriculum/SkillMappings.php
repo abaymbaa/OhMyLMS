@@ -28,6 +28,9 @@ final class SkillMappings {
 	const RELATIONS = array( 'equivalent', 'broader', 'narrower', 'related', 'combined' );
 	const LOCK      = 'ohmylms-skill-mappings';
 
+	/**
+	 * Table for Skill mappings.
+	 */
 	public static function table() {
 		return Schema::table( 'skill_mappings' ); }
 
@@ -49,6 +52,11 @@ final class SkillMappings {
 		);
 	}
 
+	/**
+	 * Describe for Skill mappings.
+	 *
+	 * @param array $row Row.
+	 */
 	private static function describe( array $row ) {
 		return array(
 			'id'          => (int) $row['id'],
@@ -64,7 +72,10 @@ final class SkillMappings {
 		);
 	}
 
-	/** Mappings in which the skill is the specific side (pointing at shared skills) or the shared target. */
+	/** Mappings in which the skill is the specific side (pointing at shared skills) or the shared target.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function for_skill( $term_id ) {
 		global $wpdb;
 		$term_id = (int) $term_id;
@@ -121,7 +132,10 @@ final class SkillMappings {
 		return $connections;
 	}
 
-	/** Every mapping, optionally limited to a set of skill IDs on either side. */
+	/** Every mapping, optionally limited to a set of skill IDs on either side.
+	 *
+	 * @param array $term_ids Term ids.
+	 */
 	public static function all( array $term_ids = array() ) {
 		global $wpdb;
 		$term_ids = array_values( array_filter( array_map( 'intval', $term_ids ) ) );
@@ -131,7 +145,7 @@ final class SkillMappings {
 		} else {
 			$rows = $wpdb->get_results( 'SELECT * FROM ' . self::table() . ' ORDER BY id', ARRAY_A );
 		}
-		return $rows ?: array();
+		return $rows ? $rows : array();
 	}
 
 	/**
@@ -183,14 +197,14 @@ final class SkillMappings {
 					return Access::error( 'ohmylms_mapping_stale', __( 'This mapping changed. Reload before saving.', 'ohmylms' ), 409 );
 				}
 			}
-			if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE shared_term_id=%d LIMIT 1", $specific_id ) ) ) {
+			if ( $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE shared_term_id=%d LIMIT 1', $table, $specific_id ) ) ) {
 				return Access::error( 'ohmylms_mapping_chain', __( 'This skill is already the shared skill for other skills. A skill cannot be both, so evidence is never combined through two steps.', 'ohmylms' ), 409 );
 			}
-			if ( $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE specific_term_id=%d LIMIT 1", $shared_id ) ) ) {
+			if ( $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE specific_term_id=%d LIMIT 1', $table, $shared_id ) ) ) {
 				return Access::error( 'ohmylms_mapping_chain', __( 'The chosen shared skill is itself mapped to another skill. Choose that skill instead.', 'ohmylms' ), 409 );
 			}
 			$now      = current_time( 'mysql', true );
-			$existing = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $table WHERE specific_term_id=%d AND shared_term_id=%d", $specific_id, $shared_id ) );
+			$existing = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE specific_term_id=%d AND shared_term_id=%d', $table, $specific_id, $shared_id ) );
 			if ( $existing ) {
 				$ok = $wpdb->update(
 					$table,
@@ -220,12 +234,18 @@ final class SkillMappings {
 			}
 			if ( false === $ok ) {
 				return Access::error( 'ohmylms_mapping_failed', __( 'The mapping could not be saved.', 'ohmylms' ), 500 ); }
-			return self::describe( $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE id=%d", $existing ), ARRAY_A ) );
+			return self::describe( $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', $table, $existing ), ARRAY_A ) );
 		} finally {
 			$wpdb->get_var( $wpdb->prepare( 'SELECT RELEASE_LOCK(%s)', $lock ) );
 		}
 	}
 
+	/**
+	 * Remove for Skill mappings.
+	 *
+	 * @param mixed $specific_id Specific identifier.
+	 * @param mixed $shared_id Shared identifier.
+	 */
 	public static function remove( $specific_id, $shared_id ) {
 		global $wpdb;
 		$group_uuid = $wpdb->get_var( $wpdb->prepare( 'SELECT group_uuid FROM %i WHERE specific_term_id=%d AND shared_term_id=%d', self::table(), $specific_id, $shared_id ) );
@@ -242,7 +262,10 @@ final class SkillMappings {
 		return false !== $result;
 	}
 
-	/** Drop mappings of a deleted skill. */
+	/** Drop mappings of a deleted skill.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function remove_skill( $term_id ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {

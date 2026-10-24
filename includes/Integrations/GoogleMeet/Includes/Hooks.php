@@ -163,7 +163,7 @@ class Hooks {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \WP_Post $post    The post object.
+	 * @param \WP_Post $post The post object.
 	 * @param array    $request The request data.
 	 *
 	 * @return void
@@ -247,6 +247,11 @@ class Hooks {
 	}
 
 
+	/**
+	 * Get valid token for Hooks.
+	 *
+	 * @param mixed $user_id User identifier.
+	 */
 	private function get_valid_token( $user_id ) {
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		if ( empty( $tokens['access_token'] ) ) {
@@ -261,6 +266,11 @@ class Hooks {
 	}
 
 
+	/**
+	 * Refresh access token for Hooks.
+	 *
+	 * @param mixed $user_id User identifier.
+	 */
 	private function refresh_access_token( $user_id ) {
 		$creds  = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
@@ -302,7 +312,7 @@ class Hooks {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param \WP_Post $post    The post object.
+	 * @param \WP_Post $post The post object.
 	 * @param array    $request The request data.
 	 *
 	 * @return void
@@ -421,7 +431,7 @@ class Hooks {
 	 * @since 1.0.0
 	 *
 	 * @param int   $session_id The session ID.
-	 * @param array $request    The request data.
+	 * @param array $request The request data.
 	 *
 	 * @return void
 	 */
@@ -444,6 +454,9 @@ class Hooks {
 	}
 
 
+	/**
+	 * Google meet authentication for Hooks.
+	 */
 	public function google_meet_authentication() {
 		if ( isset( $_GET['code'] ) && isset( $_GET['state'] ) && 'googlemeet_auth' === $_GET['state'] ) {
 			$code    = sanitize_text_field( wp_unslash( $_GET['code'] ) );

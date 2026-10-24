@@ -1,7 +1,6 @@
 import { createElement } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-
 export function createCourseInfoHeader( readRuntime ) {
 	return function CourseInfoHeader( {
 		handleInputChange,
@@ -59,7 +58,6 @@ export function createCourseInfoHeader( readRuntime ) {
 							} }
 							size="large"
 							autoComplete="off"
-							autoFocus
 							variant="borderless"
 						/>
 					</div>

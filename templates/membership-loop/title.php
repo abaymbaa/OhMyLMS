@@ -17,5 +17,5 @@ if ( null == $membership ) {
 }
 ?>
 
-<h4 class="membership-title"><?php echo $membership->get_name(); ?></h4>
+<h4 class="membership-title"><?php echo esc_html( $membership->get_name() ); ?></h4>
 

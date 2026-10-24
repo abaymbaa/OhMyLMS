@@ -30,6 +30,9 @@ class SetupWizardController extends RestController {
 	 */
 	protected $base = 'setup-wizard';
 
+	/**
+	 * Check setup permission for Setup wizard controller.
+	 */
 	public function check_setup_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -141,7 +144,7 @@ class SetupWizardController extends RestController {
 	 * Fires the onboarding started telemetry event.
 	 *
 	 * @since  1.1.16
-	 * @param  WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 */
 	public function onboarding_started( WP_REST_Request $request ) {
@@ -170,7 +173,7 @@ class SetupWizardController extends RestController {
 	 * Fires the onboarding completed telemetry event.
 	 *
 	 * @since  1.1.16
-	 * @param  WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 */
 	public function onboarding_completed( WP_REST_Request $request ) {
@@ -199,7 +202,7 @@ class SetupWizardController extends RestController {
 	 * Fires the onboarding skipped telemetry event.
 	 *
 	 * @since  1.1.17
-	 * @param  WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 */
 	public function onboarding_skipped( WP_REST_Request $request ) {
@@ -230,7 +233,7 @@ class SetupWizardController extends RestController {
 	/**
 	 * Import a sample course from JSON data.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function import_course( WP_REST_Request $request ) {
@@ -302,7 +305,7 @@ class SetupWizardController extends RestController {
 	/**
 	 * Update default meta data
 	 *
-	 * @param int $course_id
+	 * @param int $course_id Course identifier.
 	 */
 	private function update_default_meta_data( $course_id ) {
 		update_post_meta( $course_id, '_access_type', 'public' );
@@ -316,9 +319,9 @@ class SetupWizardController extends RestController {
 	/**
 	 * Import a chapter and its contents.
 	 *
-	 * @param int   $course_id
-	 * @param array $chapter_data
-	 * @param int   $order
+	 * @param int   $course_id Course identifier.
+	 * @param array $chapter_data Chapter data.
+	 * @param int   $order Order.
 	 */
 	private function import_chapter( $course_id, $chapter_data, $order ) {
 		if ( empty( $chapter_data['title'] ) ) {
@@ -364,9 +367,9 @@ class SetupWizardController extends RestController {
 	/**
 	 * Import a content item (lesson, quiz, etc.) and associate it with a chapter.
 	 *
-	 * @param int   $chapter_id
-	 * @param array $content_data
-	 * @param int   $order
+	 * @param int   $chapter_id Chapter identifier.
+	 * @param array $content_data Content data.
+	 * @param int   $order Order.
 	 */
 	private function import_content( $chapter_id, $content_data, $order ) {
 		if ( empty( $content_data['title'] ) || empty( $content_data['type'] ) ) {
@@ -425,7 +428,7 @@ class SetupWizardController extends RestController {
 	/**
 	 * Save setup wizard data
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 */
 	public function update_data( $request ) {
 		$nonce_verification = $this->verify_nonce( $request );
@@ -477,7 +480,7 @@ class SetupWizardController extends RestController {
 	/**
 	 * Activate addon
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 */
 	public function activate_addon( $request ) {
 		$slug = sanitize_text_field( $request['slug'] );
@@ -501,6 +504,11 @@ class SetupWizardController extends RestController {
 	}
 
 
+	/**
+	 * Save email settings for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_email_settings( $request ) {
 
 		if ( isset( $request['logo'] ) ) {
@@ -543,6 +551,8 @@ class SetupWizardController extends RestController {
 	/**
 	 * The wizard's "category" names become top-level curriculum items (course categories were replaced
 	 * by the curriculum). Names that already exist are left alone.
+	 *
+	 * @param mixed $request REST request.
 	 */
 	private function save_terms( $request ) {
 		if ( isset( $request['category'] ) && is_array( $request['category'] ) ) {
@@ -550,6 +560,11 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * Save payment data for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_payment_data( $request ) {
 		if ( isset( $request['payment'] ) && is_array( $request['payment'] ) ) {
 			foreach ( $request['payment'] as $key => $payment ) {
@@ -558,6 +573,11 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * Save permalink data for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_permalink_data( $request ) {
 		if ( isset( $request['permalink'] ) && is_array( $request['permalink'] ) ) {
 			foreach ( $request['permalink'] as $key => $payment ) {
@@ -567,6 +587,11 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * Save currency data for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_currency_data( $request ) {
 		if ( isset( $request['currency'] ) && is_array( $request['currency'] ) ) {
 			foreach ( $request['currency'] as $key => $payment ) {
@@ -575,6 +600,11 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * Save design data for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_design_data( $request ) {
 		if ( isset( $request['design'] ) && is_array( $request['design'] ) ) {
 			foreach ( $request['design'] as $key => $design ) {
@@ -584,6 +614,11 @@ class SetupWizardController extends RestController {
 	}
 
 
+	/**
+	 * Create contact for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function create_contact( $request ) {
 		if ( isset( $request['contact'] ) ) {
 			$email      = isset( $request['contact']['email'] ) ? sanitize_text_field( $request['contact']['email'] ) : '';
@@ -595,6 +630,11 @@ class SetupWizardController extends RestController {
 		}
 	}
 
+	/**
+	 * Save layout settings for Setup wizard controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private function save_layout_settings( $request ) {
 		$design_obj = new \OhMyLMS\Admin\Settings\Design();
 		$settings   = $design_obj->get_settings();

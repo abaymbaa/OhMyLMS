@@ -26,7 +26,7 @@ final class QuizSkills {
 	public static function get( $quiz_id ) {
 		global $wpdb;
 		$table = Schema::table( 'quiz_skills' );
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT term_id FROM $table WHERE quiz_id=%d ORDER BY position, term_id", (int) $quiz_id ) ) );
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT term_id FROM %i WHERE quiz_id=%d ORDER BY position, term_id', $table, (int) $quiz_id ) ) );
 	}
 
 	/**
@@ -47,7 +47,7 @@ final class QuizSkills {
 		$table = Schema::table( 'quiz_skills' );
 		$wpdb->delete( $table, array( 'quiz_id' => (int) $quiz_id ), array( '%d' ) );
 		foreach ( $ids as $position => $term_id ) {
-			$wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO $table (quiz_id, term_id, position) VALUES (%d, %d, %d)", (int) $quiz_id, $term_id, $position ) );
+			$wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (quiz_id, term_id, position) VALUES (%d, %d, %d)', $table, (int) $quiz_id, $term_id, $position ) );
 		}
 		return $ids;
 	}

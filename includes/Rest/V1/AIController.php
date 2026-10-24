@@ -74,7 +74,7 @@ class AIController extends RestController {
 	/**
 	 * Create course with AI
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -180,17 +180,35 @@ class AIController extends RestController {
 		}
 	}
 
+	/**
+	 * Save chapter for Aicontroller.
+	 *
+	 * @param mixed $request REST request.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function save_chapter( $request, $course_id ) {
 		$chapter = $this->prepare_chapter_for_database( $request );
 		return $chapter->save();
 	}
 
+	/**
+	 * Save content for Aicontroller.
+	 *
+	 * @param mixed $request REST request.
+	 * @param mixed $chapter_id Chapter identifier.
+	 */
 	public function save_content( $request, $chapter_id ) {
 		$content_id = $this->prepare_content_for_database( $request, $chapter_id );
 		return $content_id;
 	}
 
 
+	/**
+	 * Prepare content for database for Aicontroller.
+	 *
+	 * @param mixed $request REST request.
+	 * @param mixed $chapter_id Chapter identifier.
+	 */
 	public function prepare_content_for_database( $request, $chapter_id ) {
 		$chapter = ohmylms_get_chapter( $chapter_id );
 		if ( $chapter instanceof Chapter ) {
@@ -227,7 +245,7 @@ class AIController extends RestController {
 	 * Prepare a single course for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -279,6 +297,11 @@ class AIController extends RestController {
 		return apply_filters( 'ohmylms_rest_prepare_course', $response, $post, $request );
 	}
 
+	/**
+	 * Delete exiting contents for Aicontroller.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function delete_exiting_contents( $course_id ) {
 		$course = ohmylms_get_course( $course_id );
 		global $wpdb;
@@ -334,9 +357,9 @@ class AIController extends RestController {
 	/**
 	 * Prepare a single course for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Course|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_course_for_database( $request ) {
@@ -370,9 +393,9 @@ class AIController extends RestController {
 	/**
 	 * Prepare a single chapter for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Chapter|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_chapter_for_database( $request ) {
@@ -401,7 +424,7 @@ class AIController extends RestController {
 	/**
 	 * Update course with AI
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -413,10 +436,6 @@ class AIController extends RestController {
 			return new WP_Error( 'ohmylms_rest_course_invalid_id', __( 'ID is invalid.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
-		try {
-
-		} catch ( DataException $e ) {
-			return new WP_Error( $e->getErrorCode(), $e->getMessage(), $e->getErrorData() );
-		}
+		return null;
 	}
 }

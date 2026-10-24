@@ -19,7 +19,6 @@ import {
 	searchCourses,
 	LINK_TYPES,
 } from './courseLinks.mjs';
-
 const typeLabel = ( type ) =>
 	( {
 		prerequisite: __( 'Prerequisite', 'ohmylms' ),
@@ -42,7 +41,6 @@ export function CourseLinks( { courseId } ) {
 	const [ search, setSearch ] = useState( '' );
 	const [ type, setType ] = useState( 'prerequisite' );
 	const [ matches, setMatches ] = useState( null );
-
 	useEffect( () => {
 		let live = true;
 		setLinks( null );
@@ -60,13 +58,11 @@ export function CourseLinks( { courseId } ) {
 			live = false;
 		};
 	}, [ courseId ] );
-
 	const edit = ( next ) => {
 		setLinks( next );
 		setDirty( true );
 		setNotice( '' );
 	};
-
 	async function run( work, failure ) {
 		setBusy( true );
 		setError( '' );
@@ -78,13 +74,11 @@ export function CourseLinks( { courseId } ) {
 			setBusy( false );
 		}
 	}
-
 	const find = () =>
 		run(
 			async () => setMatches( await searchCourses( courseId, search ) ),
 			__( 'Could not search courses.', 'ohmylms' )
 		);
-
 	const save = () =>
 		run(
 			async () => {
@@ -95,7 +89,6 @@ export function CourseLinks( { courseId } ) {
 			},
 			__( 'Could not save course links.', 'ohmylms' )
 		);
-
 	return (
 		<section
 			className="ohmylms-course-links"
@@ -135,7 +128,7 @@ export function CourseLinks( { courseId } ) {
 			) }
 			{ links && links.length > 0 && (
 				<ul className="ohmylms-course-links-list">
-					{ links.map( ( link, index ) => {
+					{ links.map( ( link ) => {
 						const key = linkKey( link );
 						const name =
 							link.title || sprintf( '#%d', link.course_id );

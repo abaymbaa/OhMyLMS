@@ -426,7 +426,7 @@ final class AiAnalysisModel {
 	 * @return string
 	 */
 	private static function clip( $text, $limit ) {
-		$text = trim( preg_replace( '/\s+/u', ' ', str_replace( array( '<', '>' ), array( '‹', '›' ), strip_tags( (string) $text ) ) ) );
+		$text = trim( preg_replace( '/\s+/u', ' ', str_replace( array( '<', '>' ), array( '‹', '›' ), wp_strip_all_tags( (string) $text ) ) ) );
 		return mb_strlen( $text ) > $limit ? mb_substr( $text, 0, $limit ) : $text;
 	}
 

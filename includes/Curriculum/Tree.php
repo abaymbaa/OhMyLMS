@@ -14,7 +14,11 @@ namespace OhMyLMS\Curriculum;
  * and they stay safe on corrupted data: every walk stops at a repeated or missing ID.
  */
 final class Tree {
-	/** Ancestor IDs of $id, nearest parent first. Stops at a root, a missing parent or a loop. */
+	/** Ancestor IDs of $id, nearest parent first. Stops at a root, a missing parent or a loop.
+	 *
+	 * @param array $parents Parents.
+	 * @param mixed $id Id.
+	 */
 	public static function ancestors( array $parents, $id ) {
 		$result  = array();
 		$seen    = array( (int) $id => true );
@@ -27,12 +31,19 @@ final class Tree {
 		return $result;
 	}
 
-	/** Depth of $id with a root item at 1. */
+	/** Depth of $id with a root item at 1.
+	 *
+	 * @param array $parents Parents.
+	 * @param mixed $id Id.
+	 */
 	public static function depth( array $parents, $id ) {
 		return 1 + count( self::ancestors( $parents, $id ) );
 	}
 
-	/** Direct children of each parent, in the order the IDs appear in $parents. */
+	/** Direct children of each parent, in the order the IDs appear in $parents.
+	 *
+	 * @param array $parents Parents.
+	 */
 	public static function children_map( array $parents ) {
 		$map = array();
 		foreach ( $parents as $id => $parent ) {
@@ -40,7 +51,11 @@ final class Tree {
 		return $map;
 	}
 
-	/** Every descendant ID of $id, breadth first. Loops are ignored. */
+	/** Every descendant ID of $id, breadth first. Loops are ignored.
+	 *
+	 * @param array $parents Parents.
+	 * @param mixed $id Id.
+	 */
 	public static function descendants( array $parents, $id ) {
 		$map    = self::children_map( $parents );
 		$result = array();
@@ -59,7 +74,11 @@ final class Tree {
 		return $result;
 	}
 
-	/** Number of levels in the subtree under $id, counting $id itself as 1. */
+	/** Number of levels in the subtree under $id, counting $id itself as 1.
+	 *
+	 * @param array $parents Parents.
+	 * @param mixed $id Id.
+	 */
 	public static function height( array $parents, $id ) {
 		$map   = self::children_map( $parents );
 		$best  = 1;
@@ -84,7 +103,12 @@ final class Tree {
 		return $best;
 	}
 
-	/** Would placing $id under $new_parent make it its own ancestor? */
+	/** Would placing $id under $new_parent make it its own ancestor?
+	 *
+	 * @param array $parents Parents.
+	 * @param mixed $id Id.
+	 * @param mixed $new_parent New parent.
+	 */
 	public static function would_cycle( array $parents, $id, $new_parent ) {
 		$id         = (int) $id;
 		$new_parent = (int) $new_parent;
@@ -95,7 +119,12 @@ final class Tree {
 		return in_array( $id, self::ancestors( $parents, $new_parent ), true );
 	}
 
-	/** Insert $id into an ordered list of sibling IDs at a zero-based index (clamped; null appends). */
+	/** Insert $id into an ordered list of sibling IDs at a zero-based index (clamped; null appends).
+	 *
+	 * @param array $siblings Siblings.
+	 * @param mixed $id Id.
+	 * @param mixed $position Position.
+	 */
 	public static function insert_at( array $siblings, $id, $position = null ) {
 		$siblings = array_values(
 			array_filter(
@@ -110,7 +139,10 @@ final class Tree {
 		return $siblings;
 	}
 
-	/** Dense positions 0..n-1 for an ordered ID list. */
+	/** Dense positions 0..n-1 for an ordered ID list.
+	 *
+	 * @param array $ordered Ordered.
+	 */
 	public static function positions( array $ordered ) {
 		return array_flip( array_values( array_map( 'intval', $ordered ) ) );
 	}

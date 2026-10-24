@@ -23,11 +23,17 @@ defined( 'ABSPATH' ) || exit;
  *  - ready: unassessed skills whose prerequisites are all proficient or mastered.
  */
 final class Recommendations {
+	/**
+	 * For student for Recommendations.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param int   $limit Limit.
+	 */
 	public static function for_student( $student_id, $limit = 8 ) {
 		global $wpdb;
 		$student_id = (int) $student_id;
 		$states     = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT term_id, level, review_due FROM ' . Schema::table( 'student_skill_state' ) . ' WHERE student_id=%d', $student_id ), ARRAY_A ) as $row ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT term_id, level, review_due FROM %i WHERE student_id=%d', Schema::table( 'student_skill_state' ), $student_id ), ARRAY_A ) as $row ) {
 			$states[ (int) $row['term_id'] ] = $row;
 		}
 		$strong = static function ( $term_id ) use ( $states ) {
@@ -132,15 +138,15 @@ final class Recommendations {
 		return array_slice( $items, 0, $limit );
 	}
 
-	/** Two or more misses among the last three independent first tries. */
+	/** Two or more misses among the last three independent first tries.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function struggling( $student_id, $term_id ) {
 		global $wpdb;
 		$rows   = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT awarded, available FROM ' . Schema::table( 'skill_evidence' ) . " WHERE student_id=%d AND term_id=%d AND role='primary' AND superseded=0 AND independent=1 ORDER BY evidence_at DESC, id DESC LIMIT 3",
-				$student_id,
-				$term_id
-			),
+			$wpdb->prepare( 'SELECT awarded, available FROM %i WHERE student_id=%d AND term_id=%d AND role=\'primary\' AND superseded=0 AND independent=1 ORDER BY evidence_at DESC, id DESC LIMIT 3', Schema::table( 'skill_evidence' ), $student_id, $term_id ),
 			ARRAY_A
 		);
 		$misses = count(

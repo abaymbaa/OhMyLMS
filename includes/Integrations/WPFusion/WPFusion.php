@@ -19,13 +19,29 @@ use OhMyLMS\Integrations\WPFusion\Includes\Hooks;
 use OhMyLMS\Integrations\WPFusion\Includes\WPFusionMigration;
 use OhMyLMS\Integrations\WPFusion\Includes\TriggerHandler;
 
+/**
+ * Plugin wpfusion implementation.
+ */
 class WPFusion {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'WP Fusion';
-	public $integration_key  = 'wpfusion';
+	/**
+	 * Integration key.
+	 *
+	 * @var mixed
+	 */
+	public $integration_key = 'wpfusion';
 
 	const Version = '1.0.0';
 
+	/**
+	 * Initialize Wpfusion.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();

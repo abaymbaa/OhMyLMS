@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin checkout element implementation.
+ */
 class CheckoutElement extends Element {
 
 	/**
@@ -620,6 +623,9 @@ class CheckoutElement extends Element {
 		);
 	}
 
+	/**
+	 * Enqueue scripts for Checkout element.
+	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'ohmylms-checkout' );
 		wp_enqueue_script( 'ohmylms-tax-calculation' );
@@ -678,6 +684,9 @@ class CheckoutElement extends Element {
 		wp_add_inline_script( 'ohmylms-frontend', $inline_script );
 	}
 
+	/**
+	 * Render for Checkout element.
+	 */
 	public function render() {
 		$settings = $this->settings;
 		// Convert Bricks settings to shortcode attributes.
@@ -717,7 +726,7 @@ class CheckoutElement extends Element {
 	/**
 	 * Convert Bricks settings to shortcode attributes
 	 *
-	 * @param array $settings Bricks settings
+	 * @param array $settings Bricks settings.
 	 * @return array Shortcode attributes
 	 */
 	public function convert_settings_to_shortcode_attrs( $settings ) {
@@ -1419,7 +1428,7 @@ class CheckoutElement extends Element {
 	/**
 	 * Extract color value from Bricks color format
 	 *
-	 * @param mixed $color Color value from Bricks
+	 * @param mixed $color Color value from Bricks.
 	 * @return string Extracted color value
 	 */
 	private function extract_color_value( $color ) {
@@ -1440,7 +1449,7 @@ class CheckoutElement extends Element {
 	/**
 	 * Extract size value from Bricks size format
 	 *
-	 * @param mixed $size Size value from Bricks
+	 * @param mixed $size Size value from Bricks.
 	 * @return string Extracted size with unit
 	 */
 	private function extract_size_value( $size ) {
@@ -1460,8 +1469,8 @@ class CheckoutElement extends Element {
 	/**
 	 * Extract dimensions value (for border-radius, etc.)
 	 *
-	 * @param mixed  $dimensions Dimensions from Bricks
-	 * @param string $side Which side to extract (top, right, bottom, left)
+	 * @param mixed  $dimensions Dimensions from Bricks.
+	 * @param string $side Which side to extract (top, right, bottom, left).
 	 * @return string Extracted dimension value
 	 */
 	private function extract_dimensions_value( $dimensions, $side = 'top' ) {
@@ -1477,7 +1486,7 @@ class CheckoutElement extends Element {
 	/**
 	 * Extract box shadow value from Bricks box-shadow format
 	 *
-	 * @param mixed $shadow Box shadow from Bricks
+	 * @param mixed $shadow Box shadow from Bricks.
 	 * @return string CSS box-shadow value
 	 */
 	private function extract_box_shadow_value( $shadow ) {

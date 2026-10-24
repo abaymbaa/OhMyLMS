@@ -30,8 +30,8 @@ if ( ! $course->get_enable_reviews() ) {
 			'status'    => 'approve',
 		);
 
-		$comments_query       = new WP_Comment_Query();
-		$comments             = $comments_query->query( $args );
+		$comments_query = new WP_Comment_Query();
+		$comments       = $comments_query->query( $args );
 
 		if ( ! empty( $comments ) ) :
 			?>

@@ -40,11 +40,19 @@ final class Template {
 	const TYPES   = array( 'int', 'decimal', 'choice', 'expr' );
 	const NAME    = '/^[a-df-z]$/';
 
+	/**
+	 * Has for Template.
+	 *
+	 * @param array $settings Configuration settings.
+	 */
 	public static function has( array $settings ) {
 		return ! empty( $settings['template']['variables'] ) && is_array( $settings['template']['variables'] );
 	}
 
-	/** A positive 28-bit integer from any text, for derived seeds. */
+	/** A positive 28-bit integer from any text, for derived seeds.
+	 *
+	 * @param mixed $text Text.
+	 */
 	public static function seed_from( $text ) {
 		return (int) ( hexdec( substr( hash( 'sha256', (string) $text ), 0, 7 ) ) ?: 1 );
 	}
@@ -54,12 +62,19 @@ final class Template {
 		return random_int( 1, 0xFFFFFFF );
 	}
 
-	/** Same seed, same stream: draw $n of the stream as an integer up to 2^48. */
+	/** Same seed, same stream: draw $n of the stream as an integer up to 2^48.
+	 *
+	 * @param mixed $seed Seed.
+	 * @param mixed $n N.
+	 */
 	private static function draw( $seed, &$n ) {
 		return (int) hexdec( substr( hash( 'sha256', $seed . ':' . ( $n++ ) ), 0, 12 ) );
 	}
 
-	/** Only real numbers can appear in arithmetic. */
+	/** Only real numbers can appear in arithmetic.
+	 *
+	 * @param array $params Request parameters.
+	 */
 	private static function numeric( array $params ) {
 		return array_filter(
 			$params,
@@ -69,6 +84,12 @@ final class Template {
 		);
 	}
 
+	/**
+	 * Eval expression for Template.
+	 *
+	 * @param mixed $text Text.
+	 * @param array $params Request parameters.
+	 */
 	private static function eval_expression( $text, array $params ) {
 		$tree = Expression::parse( $text );
 		return null === $tree || '=' === $tree[0] ? null : Expression::evaluate( $tree, array_map( 'floatval', self::numeric( $params ) ) );
@@ -78,6 +99,8 @@ final class Template {
 	 * Draw the variables for a seed, retrying until every constraint holds.
 	 *
 	 * @return array{ok:bool,params:array}
+	 * @param array $template Template.
+	 * @param mixed $seed Seed.
 	 */
 	public static function generate( array $template, $seed ) {
 		$n      = 0;
@@ -109,7 +132,13 @@ final class Template {
 		);
 	}
 
-	/** One variable's value, or null when it must be redrawn. */
+	/** One variable's value, or null when it must be redrawn.
+	 *
+	 * @param array $def Def.
+	 * @param array $params Request parameters.
+	 * @param mixed $seed Seed.
+	 * @param mixed $n N.
+	 */
 	private static function value( array $def, array $params, $seed, &$n ) {
 		switch ( $def['type'] ?? '' ) {
 			case 'int':
@@ -141,7 +170,13 @@ final class Template {
 		return null;
 	}
 
-	/** "a>b", "gcd(a,b)=1", "mod(a,b)=0"; a bare expression must be non-zero. */
+	/**
+	 * Holds for Template.
+	 * "a>b", "gcd(a,b)=1", "mod(a,b)=0"; a bare expression must be non-zero.
+	 *
+	 * @param mixed $constraint Constraint.
+	 * @param array $params Request parameters.
+	 */
 	private static function holds( $constraint, array $params ) {
 		if ( ! preg_match( '/^(.+?)(<=|>=|!=|==|<|>|=)(.+)$/', $constraint, $m ) ) {
 			$value = self::eval_expression( $constraint, $params );
@@ -168,7 +203,14 @@ final class Template {
 		}
 	}
 
-	/** 3, -2.5, "0.50" with places, "+3" with a sign; never "-0" or float noise. */
+	/**
+	 * Format for Template.
+	 * 3, -2.5, "0.50" with places, "+3" with a sign; never "-0" or float noise.
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $places Places.
+	 * @param bool  $sign Sign.
+	 */
 	public static function format( $value, $places = null, $sign = false ) {
 		$value = (float) $value;
 		$text  = null === $places ? rtrim( rtrim( number_format( round( $value, 9 ), 9, '.', '' ), '0' ), '.' ) : number_format( $value, (int) $places, '.', '' );
@@ -177,7 +219,14 @@ final class Template {
 		return ( $sign && '-' !== $text[0] ? '+' : '' ) . $text;
 	}
 
-	/** @return array{0:mixed,1:bool} value and whether it is a number */
+	/**
+	 * Placeholder for Template.
+	 *
+	 * @return array{0:mixed,1:bool} value and whether it is a number
+	 * @param mixed $body Body.
+	 * @param array $params Request parameters.
+	 * @param mixed $errors Errors.
+	 */
 	private static function placeholder( $body, array $params, &$errors ) {
 		$places = null;
 		$sign   = false;
@@ -196,7 +245,12 @@ final class Template {
 		return array( array( $value, $places, $sign ), true );
 	}
 
-	/** Replace {{…}} in one string; a lone placeholder with no sign becomes a number. */
+	/** Replace {{…}} in one string; a lone placeholder with no sign becomes a number.
+	 *
+	 * @param mixed $text Text.
+	 * @param array $params Request parameters.
+	 * @param array $errors Errors.
+	 */
 	public static function substitute( $text, array $params, array &$errors = array() ) {
 		// Older MathLive authoring stored typed double braces as literal LaTeX delimiters.
 		// Recognize them only inside explicit equation markers, leaving prose untouched.
@@ -258,7 +312,12 @@ final class Template {
 		return $preserve_text && is_string( $value ) ? (string) $substituted : $substituted;
 	}
 
-	/** Assign $value at a dotted path such as "blanks.a.answer" or "parts.0.answer". */
+	/** Assign $value at a dotted path such as "blanks.a.answer" or "parts.0.answer".
+	 *
+	 * @param array $settings Configuration settings.
+	 * @param mixed $path Path.
+	 * @param mixed $value Value to process.
+	 */
 	private static function set_path( array $settings, $path, $value ) {
 		$keys = explode( '.', $path );
 		$ref  = &$settings;
@@ -278,6 +337,11 @@ final class Template {
 	 * so nothing about how the numbers were made reaches a learner.
 	 *
 	 * @return array{ok:bool,params:array,errors:string[],title:string,body:string,settings:array,options:array}
+	 * @param mixed $title Title.
+	 * @param mixed $body Body.
+	 * @param array $settings Configuration settings.
+	 * @param array $options Operation options.
+	 * @param mixed $seed Seed.
 	 */
 	public static function apply( $title, $body, array $settings, array $options, $seed ) {
 		$template = (array) ( $settings['template'] ?? array() );
@@ -316,7 +380,10 @@ final class Template {
 		);
 	}
 
-	/** Identifies the numbers an instance got, to avoid giving a learner the same ones twice. */
+	/** Identifies the numbers an instance got, to avoid giving a learner the same ones twice.
+	 *
+	 * @param array $params Request parameters.
+	 */
 	public static function signature( array $params ) {
 		return md5( wp_json_encode( $params ) );
 	}
@@ -324,7 +391,8 @@ final class Template {
 	/**
 	 * A seed whose numbers differ from every signature in $seen (best effort).
 	 *
-	 * @param string[] $seen
+	 * @param array    $settings Configuration settings.
+	 * @param string[] $seen Seen.
 	 */
 	public static function fresh_seed( array $settings, array $seen ) {
 		$seed = self::new_seed();
@@ -343,6 +411,10 @@ final class Template {
 	 * Check a template and prove it works: several seeds must generate, resolve every
 	 * placeholder, give different numbers, and yield a valid question of the question's type.
 	 *
+	 * @param array         $settings Configuration settings.
+	 * @param mixed         $title Title.
+	 * @param mixed         $body Body.
+	 * @param array         $options Operation options.
 	 * @param callable|null $check Receives instantiated settings; returns true or a message.
 	 * @return true|string
 	 */
@@ -361,11 +433,20 @@ final class Template {
 			if ( ! in_array( $type, self::TYPES, true ) ) {
 				return sprintf( /* translators: %s: variable name */ __( 'Variable %s needs a type: int, decimal, choice or expr.', 'ohmylms' ), $name ); }
 			if ( in_array( $type, array( 'int', 'decimal' ), true ) && ( ! is_numeric( $def['min'] ?? null ) || ! is_numeric( $def['max'] ?? null ) || (float) $def['max'] < (float) $def['min'] ) ) {
-				return sprintf( __( 'Variable %s needs a minimum and a maximum that are numbers, with the maximum not smaller.', 'ohmylms' ), $name ); }
+				return sprintf( /* translators: %s: text value. */
+					__( 'Variable %s needs a minimum and a maximum that are numbers, with the maximum not smaller.', 'ohmylms' ),
+					$name
+				); }
 			if ( 'choice' === $type && ( ! is_array( $def['values'] ?? null ) || ! $def['values'] || count( $def['values'] ) > 50 ) ) {
-				return sprintf( __( 'Variable %s needs between 1 and 50 values to choose from.', 'ohmylms' ), $name ); }
+				return sprintf( /* translators: %s: text value. */
+					__( 'Variable %s needs between 1 and 50 values to choose from.', 'ohmylms' ),
+					$name
+				); }
 			if ( 'expr' === $type && Expression::parse( $def['expr'] ?? '' ) === null ) {
-				return sprintf( __( 'Variable %s has a formula that cannot be read.', 'ohmylms' ), $name ); }
+				return sprintf( /* translators: %s: text value. */
+					__( 'Variable %s has a formula that cannot be read.', 'ohmylms' ),
+					$name
+				); }
 		}
 		$constraints = (array) ( $template['constraints'] ?? array() );
 		if ( count( $constraints ) > 10 ) {
@@ -393,7 +474,12 @@ final class Template {
 		return true;
 	}
 
-	/** Correct answer in words, for previews and feedback. */
+	/** Correct answer in words, for previews and feedback.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $settings Configuration settings.
+	 * @param array $options Operation options.
+	 */
 	public static function expected_text( $type, array $settings, array $options ) {
 		if ( Interactive::is_interactive( $type ) ) {
 			return implode( ', ', Interactive::expected( $type, $settings ) ); }
@@ -412,6 +498,12 @@ final class Template {
 	 * A few concrete examples of a draft template, for the author to read before saving.
 	 *
 	 * @return array[] each: seed, params, title, body, expected, errors
+	 * @param mixed $type Type.
+	 * @param mixed $title Title.
+	 * @param mixed $body Body.
+	 * @param array $settings Configuration settings.
+	 * @param array $options Operation options.
+	 * @param int   $count Count.
 	 */
 	public static function samples( $type, $title, $body, array $settings, array $options, $count = 5 ) {
 		$out = array();

@@ -12,11 +12,32 @@ use WP_REST_Request;
 use WP_REST_Response;
 use WP_REST_Server;
 
+/**
+ * Plugin google meet settings controller implementation.
+ */
 class GoogleMeetSettingsController {
+	/**
+	 * Instance.
+	 *
+	 * @var mixed
+	 */
 	protected static $instance = null;
-	protected $base            = 'googlemeet/settings';
-	protected $namespace       = 'ohmylms/v1';
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
+	protected $base = 'googlemeet/settings';
+	/**
+	 * Namespace.
+	 *
+	 * @var mixed
+	 */
+	protected $namespace = 'ohmylms/v1';
 
+	/**
+	 * Instance for Google meet settings controller.
+	 */
 	public static function instance() {
 		if ( is_null( self::$instance ) ) {
 			self::$instance = new self();
@@ -24,6 +45,9 @@ class GoogleMeetSettingsController {
 		return self::$instance;
 	}
 
+	/**
+	 * Register routes for Google meet settings controller.
+	 */
 	public function register_routes() {
 		// Save & Get credentials.
 		\register_rest_route(
@@ -144,6 +168,9 @@ class GoogleMeetSettingsController {
 		);
 	}
 
+	/**
+	 * Admin permission for Google meet settings controller.
+	 */
 	public function admin_permission() {
 		return \current_user_can( 'manage_options' );
 	}
@@ -151,6 +178,11 @@ class GoogleMeetSettingsController {
 	// -------------------------
 	// SETTINGS METHODS
 	// -------------------------
+	/**
+	 * Save credentials for Google meet settings controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save_credentials( WP_REST_Request $request ) {
 		$client_id     = \sanitize_text_field( $request->get_param( 'client_id' ) );
 		$client_secret = \sanitize_text_field( $request->get_param( 'client_secret' ) );
@@ -172,6 +204,11 @@ class GoogleMeetSettingsController {
 		);
 	}
 
+	/**
+	 * Get credentials for Google meet settings controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_credentials( $request ) {
 		$user_id            = \get_current_user_id();
 		$settings           = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
@@ -180,7 +217,7 @@ class GoogleMeetSettingsController {
 		return new WP_REST_Response(
 			array(
 				'success' => true,
-				'data'    => $settings ?: array(),
+				'data'    => $settings ? $settings : array(),
 			),
 			200
 		);
@@ -189,6 +226,9 @@ class GoogleMeetSettingsController {
 	// -------------------------
 	// OAUTH HANDLING
 	// -------------------------
+	/**
+	 * Get auth url for Google meet settings controller.
+	 */
 	public function get_auth_url() {
 		$user_id     = \get_current_user_id();
 		$credentials = \get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
@@ -232,6 +272,11 @@ class GoogleMeetSettingsController {
 		);
 	}
 
+	/**
+	 * Handle oauth callback for Google meet settings controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function handle_oauth_callback( WP_REST_Request $request ) {
 		$code    = $request->get_param( 'code' );
 		$user_id = get_current_user_id();
@@ -304,6 +349,11 @@ class GoogleMeetSettingsController {
 	// -------------------------
 	// TOKEN HELPER
 	// -------------------------
+	/**
+	 * Refresh access token for Google meet settings controller.
+	 *
+	 * @param mixed $user_id User identifier.
+	 */
 	private function refresh_access_token( $user_id ) {
 		$creds  = get_user_meta( $user_id, 'ohmylms_googlemeet_api_credentials', true );
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
@@ -340,6 +390,11 @@ class GoogleMeetSettingsController {
 		return false;
 	}
 
+	/**
+	 * Get valid token for Google meet settings controller.
+	 *
+	 * @param mixed $user_id User identifier.
+	 */
 	private function get_valid_token( $user_id ) {
 		$tokens = get_user_meta( $user_id, 'ohmylms_googlemeet_tokens', true );
 		if ( empty( $tokens['access_token'] ) ) {
@@ -356,6 +411,11 @@ class GoogleMeetSettingsController {
 	// -------------------------
 	// MEETING METHODS
 	// -------------------------
+	/**
+	 * Create meeting for Google meet settings controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create_meeting( WP_REST_Request $request ) {
 		$user_id      = get_current_user_id();
 		$access_token = $this->get_valid_token( $user_id );
@@ -431,6 +491,11 @@ class GoogleMeetSettingsController {
 		);
 	}
 
+	/**
+	 * Update meeting for Google meet settings controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update_meeting( WP_REST_Request $request ) {
 		$user_id      = get_current_user_id();
 		$access_token = $this->get_valid_token( $user_id );
@@ -511,6 +576,9 @@ class GoogleMeetSettingsController {
 		);
 	}
 
+	/**
+	 * Get save credentials args for Google meet settings controller.
+	 */
 	public function get_save_credentials_args() {
 		return array(
 			'client_id'     => array(

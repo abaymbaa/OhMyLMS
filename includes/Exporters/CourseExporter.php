@@ -16,13 +16,18 @@ defined( 'ABSPATH' ) || exit;
  */
 class CourseExporter {
 
+	/**
+	 * Course ids.
+	 *
+	 * @var mixed
+	 */
 	public $course_ids;
 
 	/**
 	 * CourseExporter constructor.
 	 *
 	 * @param array $course_ids An array of course IDs to export.
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function __construct( $course_ids ) {
@@ -84,7 +89,7 @@ class CourseExporter {
 		// Get the course post object.
 		$course_post = get_post( $course_id );
 
-		if ( ! $course_post || $course_post->post_type !== OHMYLMS_COURSE_CPT ) {
+		if ( ! $course_post || OHMYLMS_COURSE_CPT !== $course_post->post_type ) {
 			return null;
 		}
 
@@ -181,12 +186,13 @@ class CourseExporter {
 
 		// Fetch chapters for the course.
 		$chapter_query = $wpdb->prepare(
-			"
+			'
             SELECT * 
-            FROM {$wpdb->prefix}ohmylms_chapter_relationship 
+            FROM %i
             WHERE course_id = %d 
             ORDER BY order_number ASC
-        ",
+        ',
+			$wpdb->prefix . 'ohmylms_chapter_relationship',
 			$course_id
 		);
 
@@ -205,12 +211,13 @@ class CourseExporter {
 
 			// Fetch contents for each chapter.
 			$content_query = $wpdb->prepare(
-				"
+				'
                 SELECT * 
-                FROM {$wpdb->prefix}ohmylms_content_relationship 
+                FROM %i
                 WHERE chapter_id = %d 
                 ORDER BY order_number ASC
-            ",
+            ',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				$chapter_id
 			);
 
@@ -234,12 +241,13 @@ class CourseExporter {
 					if ( 'ohmylms-quiz' === $content_post->post_type ) {
 						// Fetch questions for the quiz.
 						$questions_query = $wpdb->prepare(
-							"
+							'
                             SELECT * 
-                            FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship 
+                            FROM %i
                             WHERE quiz_id = %d 
                             ORDER BY order_number ASC
-                        ",
+                        ',
+							$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
 							$content_id
 						);
 
@@ -254,12 +262,13 @@ class CourseExporter {
 
 								// Fetch answers for the question.
 								$answers_query = $wpdb->prepare(
-									"
+									'
                                     SELECT * 
-                                    FROM {$wpdb->prefix}ohmylms_question_answers 
+                                    FROM %i
                                     WHERE question_id = %d 
                                     ORDER BY order_number ASC
-                                ",
+                                ',
+									$wpdb->prefix . 'ohmylms_question_answers',
 									$question_id
 								);
 
@@ -269,11 +278,12 @@ class CourseExporter {
 								foreach ( $answers_results as $answer ) {
 									// Fetch answer metadata.
 									$answer_meta_query = $wpdb->prepare(
-										"
+										'
                                         SELECT * 
-                                        FROM {$wpdb->prefix}ohmylms_question_answermeta 
+                                        FROM %i
                                         WHERE answer_id = %d
-                                    ",
+                                    ',
+										$wpdb->prefix . 'ohmylms_question_answermeta',
 										$answer['id']
 									);
 

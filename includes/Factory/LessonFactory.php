@@ -21,9 +21,9 @@ class LessonFactory {
 	/**
 	 * Get lesson object
 	 *
-	 * @param bool $lesson_id
+	 * @param bool $lesson_id Lesson identifier.
 	 * @return bool|Lesson
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_lesson( $lesson_id = false ) {
@@ -38,7 +38,7 @@ class LessonFactory {
 	/**
 	 * Get lesson id
 	 *
-	 * @param $lesson
+	 * @param mixed $lesson Lesson.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */

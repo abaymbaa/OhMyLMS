@@ -8,8 +8,18 @@ use OhMyLMS\Utility\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin completion policy implementation.
+ */
 final class CompletionPolicy {
-	/** Pure policy evaluation. Optional items never enter required denominators. */
+	/** Pure policy evaluation. Optional items never enter required denominators.
+	 *
+	 * @param array $program Program.
+	 * @param array $activities Activities.
+	 * @param array $skills Skills.
+	 * @param array $assessments Assessments.
+	 * @param bool  $pending Pending.
+	 */
 	public static function evaluate( array $program, array $activities, array $skills, array $assessments, $pending = false ) {
 		$missing = array();
 		$counts  = array(
@@ -64,6 +74,12 @@ final class CompletionPolicy {
 		);
 	}
 
+	/**
+	 * Status for Completion policy.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function status( $student_id, $course_id ) {
 		global $wpdb;
 		$enrollment = CourseProgram::enrollment( $student_id, $course_id );
@@ -72,7 +88,7 @@ final class CompletionPolicy {
 		$program = CourseProgram::for_enrollment( $enrollment );
 		if ( ! $program ) {
 			return CourseProgram::error( __( 'This enrollment uses the original course curriculum.', 'ohmylms' ), 404 ); }
-		$activities = array_fill_keys( array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT content_id FROM {$wpdb->prefix}ohmylms_user_progress WHERE enrollment_id=%d AND status='completed'", $enrollment['id'] ) ) ), true );
+		$activities = array_fill_keys( array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT content_id FROM %i WHERE enrollment_id=%d AND status=\'completed\'', $wpdb->prefix . 'ohmylms_user_progress', $enrollment['id'] ) ) ), true );
 		foreach ( $program['items'] as $item ) {
 			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
 				unset( $activities[ $item['content_id'] ] ); }
@@ -81,7 +97,7 @@ final class CompletionPolicy {
 		foreach ( $program['items'] as $item ) {
 			if ( 'quiz' !== $item['type'] ) {
 				continue; }
-			$attempt                            = $wpdb->get_row( $wpdb->prepare( "SELECT a.*,r.total_marks,c.finalize_reason FROM {$wpdb->prefix}ohmylms_quiz_attempts a LEFT JOIN " . AssessmentSchema::table( 'attempt_context' ) . ' c ON c.attempt_id=a.id LEFT JOIN ' . AssessmentSchema::table( 'quiz_revisions' ) . " r ON r.id=c.revision_id WHERE a.student_id=%d AND a.quiz_id=%d AND a.status IN ('completed','passed','failed','in-review') ORDER BY a.id DESC LIMIT 1", $student_id, $item['content_id'] ), ARRAY_A );
+			$attempt                            = $wpdb->get_row( $wpdb->prepare( 'SELECT a.*,r.total_marks,c.finalize_reason FROM %i a LEFT JOIN %i c ON c.attempt_id=a.id LEFT JOIN %i r ON r.id=c.revision_id WHERE a.student_id=%d AND a.quiz_id=%d AND a.status IN (\'completed\',\'passed\',\'failed\',\'in-review\') ORDER BY a.id DESC LIMIT 1', $wpdb->prefix . 'ohmylms_quiz_attempts', AssessmentSchema::table( 'attempt_context' ), AssessmentSchema::table( 'quiz_revisions' ), $student_id, $item['content_id'] ), ARRAY_A );
 			$maximum                            = $attempt && null !== $attempt['total_marks'] ? (float) $attempt['total_marks'] : (float) ohmylms_get_quiz( $item['content_id'] )->get_total_marks();
 			$score                              = $attempt && $maximum > 0 ? min( 100, 100 * (float) $attempt['total'] / $maximum ) : null;
 			$assessments[ $item['content_id'] ] = array(
@@ -123,8 +139,8 @@ final class CompletionPolicy {
 							'content_id'
 						)
 					);
-					$where  .= " AND e.evidence_at>=%s AND ((e.source_type IN ('practice','inline') AND p.course_id=%d) OR (e.source_type='quiz' AND a.quiz_id IN (" . implode( ',', $quizzes ?: array( 0 ) ) . ')))';
-					$bound   = $wpdb->get_var( $wpdb->prepare( 'SELECT bound_at FROM ' . Schema::table( 'enrollments' ) . ' WHERE enrollment_id=%d', $enrollment['id'] ) );
+					$where  .= " AND e.evidence_at>=%s AND ((e.source_type IN ('practice','inline') AND p.course_id=%d) OR (e.source_type='quiz' AND a.quiz_id IN (" . implode( ',', $quizzes ? $quizzes : array( 0 ) ) . ')))';
+					$bound   = $wpdb->get_var( $wpdb->prepare( 'SELECT bound_at FROM %i WHERE enrollment_id=%d', Schema::table( 'enrollments' ), $enrollment['id'] ) );
 					array_push( $args, $bound, $course_id );
 				}
 				$rows    = $wpdb->get_results( $wpdb->prepare( 'SELECT e.* FROM ' . AssessmentSchema::table( 'skill_evidence' ) . ' e LEFT JOIN ' . AssessmentSchema::table( 'practice_sessions' ) . " p ON p.id=e.source_id AND e.source_type IN ('practice','inline') LEFT JOIN {$wpdb->prefix}ohmylms_quiz_attempts a ON a.id=e.source_id AND e.source_type='quiz' WHERE e.student_id=%d AND e.term_id IN ($ids) AND e.role='primary' AND e.superseded=0 $where ORDER BY e.evidence_at,e.id", $args ), ARRAY_A );
@@ -150,7 +166,7 @@ final class CompletionPolicy {
 		}
 		$blocked = get_post_status( $course_id ) !== 'publish';
 		$result  = self::evaluate( $program, $activities, $skills, $assessments, $pending || $blocked );
-		$award   = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id,awarded_at FROM ' . Schema::table( 'awards' ) . ' WHERE enrollment_id=%d', $enrollment['id'] ), ARRAY_A );
+		$award   = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id,awarded_at FROM %i WHERE enrollment_id=%d', Schema::table( 'awards' ), $enrollment['id'] ), ARRAY_A );
 		foreach ( $program['items'] as &$item ) {
 			$item['name']      = 'practice' === $item['type'] ? ( get_term( $item['content_id'], Taxonomy::NAME )->name ?? __( 'Unavailable skill', 'ohmylms' ) ) : get_the_title( $item['content_id'] );
 			$item['name']      = $item['title'] ?? $item['name'];
@@ -189,6 +205,12 @@ final class CompletionPolicy {
 		);
 	}
 
+	/**
+	 * Award for Completion policy.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function award( $student_id, $course_id ) {
 		global $wpdb;
 		if ( ! CourseProgram::managed( $student_id, $course_id ) ) {
@@ -199,7 +221,7 @@ final class CompletionPolicy {
 		try {
 			$won = Transaction::run(
 				static function () use ( $wpdb, $state ) {
-					$enrollment = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE id=%d FOR UPDATE", $state['enrollment_id'] ), ARRAY_A );
+					$enrollment = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d FOR UPDATE', $wpdb->prefix . 'ohmylms_user_enrollment', $state['enrollment_id'] ), ARRAY_A );
 					if ( ! $enrollment || 'enrolled' !== $enrollment['status'] || 'completed' === $enrollment['progress'] ) {
 						return null; }
 					$confirmed = self::status( $enrollment['user_id'], $enrollment['course_id'] );
@@ -239,7 +261,10 @@ final class CompletionPolicy {
 		return self::status( $student_id, $course_id );
 	}
 
-	/** Compatibility meter uses the least complete dimension, with 100 reserved for an award. */
+	/** Compatibility meter uses the least complete dimension, with 100 reserved for an award.
+	 *
+	 * @param array $state State.
+	 */
 	public static function percentage( array $state ) {
 		if ( $state['completed'] ) {
 			return 100; }

@@ -10,6 +10,9 @@ namespace OhMyLMS\Shortcodes;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin shortcodes implementation.
+ */
 class Shortcodes {
 
 	/**
@@ -43,7 +46,7 @@ class Shortcodes {
 	/**
 	 * Buy Now button shortcode
 	 *
-	 * @param $atts
+	 * @param mixed $atts Atts.
 	 * @return false|string
 	 */
 	public static function buy_now( $atts ) {
@@ -53,9 +56,9 @@ class Shortcodes {
 	/**
 	 * Shortcode wrapper
 	 *
-	 * @param callable $callback The callback function to execute
-	 * @param array    $atts     Shortcode attributes
-	 * @param array    $wrapper  Wrapper configuration
+	 * @param callable $callback The callback function to execute.
+	 * @param array    $atts Shortcode attributes.
+	 * @param array    $wrapper Wrapper configuration.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -80,7 +83,7 @@ class Shortcodes {
 	/**
 	 * Checkout page shortcode.
 	 *
-	 * @param $atts
+	 * @param mixed $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -95,7 +98,7 @@ class Shortcodes {
 	/**
 	 * Membership plan shortcode
 	 *
-	 * @param $atts
+	 * @param mixed $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -106,7 +109,7 @@ class Shortcodes {
 	/**
 	 * Course list shortcode
 	 *
-	 * @param $atts
+	 * @param mixed $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -118,7 +121,7 @@ class Shortcodes {
 	/**
 	 * Dashboard page shortcode.
 	 *
-	 * @param array $atts
+	 * @param array $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -133,7 +136,7 @@ class Shortcodes {
 	/**
 	 * Student dashboard shortcode.
 	 *
-	 * @param array $atts
+	 * @param array $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -148,7 +151,7 @@ class Shortcodes {
 	/**
 	 * Student profile shortcode.
 	 *
-	 * @param array $atts
+	 * @param array $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -163,7 +166,7 @@ class Shortcodes {
 	/**
 	 * Student my courses shortcode.
 	 *
-	 * @param array $atts
+	 * @param array $atts Atts.
 	 * @return false|string
 	 * @since 1.0.0
 	 */
@@ -175,6 +178,11 @@ class Shortcodes {
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeMyCourses', 'output' ), $atts );
 	}
 
+	/**
+	 * Offer button for Shortcodes.
+	 *
+	 * @param mixed $atts Atts.
+	 */
 	public static function offer_button( $atts ) {
 		return self::shortcode_wrapper( array( 'OhMyLMS\Shortcodes\ShortCodeOfferButton', 'output' ), $atts );
 	}

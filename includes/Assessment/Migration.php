@@ -24,6 +24,9 @@ final class Migration {
 	const VERSION = 1;
 	const BATCH   = 50;
 
+	/**
+	 * State for Migration.
+	 */
 	public static function state() {
 		$state = get_option( self::OPTION );
 		return is_array( $state ) ? $state + array(
@@ -40,6 +43,9 @@ final class Migration {
 		);
 	}
 
+	/**
+	 * Done for Migration.
+	 */
 	public static function done() {
 		$state = self::state();
 		return 'done' === $state['status'] && (int) ( $state['version'] ?? 0 ) >= self::VERSION;
@@ -57,8 +63,8 @@ final class Migration {
 			return (int) $wpdb->get_var( $sql );
 		};
 		$result    = array(
-			'questions'              => $count( $wpdb->prepare( "SELECT COUNT(*) FROM $p WHERE post_type=%s AND post_status NOT IN ('auto-draft','trash')", OHMYLMS_QUESTION_CPT ) ),
-			'quizzes'                => $count( $wpdb->prepare( "SELECT COUNT(*) FROM $p WHERE post_type=%s AND post_status NOT IN ('auto-draft','trash')", OHMYLMS_QUIZ_CPT ) ),
+			'questions'              => $count( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE post_type=%s AND post_status NOT IN (\'auto-draft\',\'trash\')', $p, OHMYLMS_QUESTION_CPT ) ),
+			'quizzes'                => $count( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE post_type=%s AND post_status NOT IN (\'auto-draft\',\'trash\')', $p, OHMYLMS_QUIZ_CPT ) ),
 			'quiz_question_links'    => $count( "SELECT COUNT(*) FROM $links" ),
 			'orphan_links'           => $count( "SELECT COUNT(*) FROM $links l LEFT JOIN $p q ON q.ID=l.question_id LEFT JOIN $p z ON z.ID=l.quiz_id WHERE q.ID IS NULL OR z.ID IS NULL" ),
 			'options'                => $count( "SELECT COUNT(*) FROM $answers" ),
@@ -78,7 +84,10 @@ final class Migration {
 		return $result;
 	}
 
-	/** Process one batch. Safe to call repeatedly and concurrently (named lock). */
+	/** Process one batch. Safe to call repeatedly and concurrently (named lock).
+	 *
+	 * @param mixed $size Size.
+	 */
 	public static function run_batch( $size = self::BATCH ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -93,12 +102,7 @@ final class Migration {
 			$state['status']     = 'running';
 			$state['started_at'] = $state['started_at'] ?? current_time( 'mysql', true );
 			$ids                 = $wpdb->get_col(
-				$wpdb->prepare(
-					"SELECT ID FROM {$wpdb->posts} WHERE post_type=%s AND post_status NOT IN ('auto-draft') AND ID>%d ORDER BY ID ASC LIMIT %d",
-					OHMYLMS_QUESTION_CPT,
-					(int) $state['last_id'],
-					max( 1, (int) $size )
-				)
+				$wpdb->prepare( 'SELECT ID FROM %i WHERE post_type=%s AND post_status NOT IN (\'auto-draft\') AND ID>%d ORDER BY ID ASC LIMIT %d', $wpdb->posts, OHMYLMS_QUESTION_CPT, (int) $state['last_id'], max( 1, (int) $size ) )
 			);
 			foreach ( $ids as $id ) {
 				try {
@@ -139,8 +143,8 @@ final class Migration {
 			return true; }
 		$attempts = $wpdb->prefix . 'ohmylms_quiz_attempts';
 		$answers  = $wpdb->prefix . 'ohmylms_quiz_attempts_answers';
-		$wpdb->query( "ALTER TABLE $attempts MODIFY total decimal(12,4) NOT NULL DEFAULT 0" );
-		$wpdb->query( "ALTER TABLE $answers MODIFY question_marks decimal(12,4) DEFAULT 0, MODIFY achive_mark decimal(12,4) DEFAULT 0, MODIFY minus_mark decimal(12,4) DEFAULT 0" );
+		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i MODIFY total decimal(12,4) NOT NULL DEFAULT 0', $attempts ) );
+		$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i MODIFY question_marks decimal(12,4) DEFAULT 0, MODIFY achive_mark decimal(12,4) DEFAULT 0, MODIFY minus_mark decimal(12,4) DEFAULT 0', $answers ) );
 		$types = array();
 		foreach ( array( array( $attempts, 'total' ), array( $answers, 'question_marks' ), array( $answers, 'achive_mark' ), array( $answers, 'minus_mark' ) ) as [$table, $column] ) {
 			$types[] = strtolower( (string) $wpdb->get_var( $wpdb->prepare( 'SELECT DATA_TYPE FROM information_schema.COLUMNS WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME=%s AND COLUMN_NAME=%s', $table, $column ) ) );
@@ -152,7 +156,10 @@ final class Migration {
 		return true;
 	}
 
-	/** Run to completion (CLI, tests, admin "run now"). */
+	/** Run to completion (CLI, tests, admin "run now").
+	 *
+	 * @param int $max_batches Max batches.
+	 */
 	public static function run_all( $max_batches = 1000 ) {
 		$state = self::state();
 		for ( $i = 0; $i < $max_batches && ! in_array( $state['status'], array( 'done', 'needs-attention' ), true ); $i++ ) {
@@ -170,12 +177,18 @@ final class Migration {
 		return self::run_all();
 	}
 
+	/**
+	 * Maybe schedule for Migration.
+	 */
 	public static function maybe_schedule() {
 		if ( ! Schema::ready() || in_array( self::state()['status'], array( 'done', 'needs-attention' ), true ) || wp_next_scheduled( self::HOOK ) ) {
 			return; }
 		wp_schedule_single_event( time() + 5, self::HOOK );
 	}
 
+	/**
+	 * Run scheduled for Migration.
+	 */
 	public static function run_scheduled() {
 		$state = self::run_batch();
 		if ( ! in_array( $state['status'], array( 'done', 'needs-attention' ), true ) ) {

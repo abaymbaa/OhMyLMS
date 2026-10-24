@@ -14,10 +14,18 @@ defined( 'ABSPATH' ) || exit;
  * Handles the theme support for Hestia theme.
  */
 class Hestia {
+	/**
+	 * Init for Hestia.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles for Hestia.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-hestia.css' ),

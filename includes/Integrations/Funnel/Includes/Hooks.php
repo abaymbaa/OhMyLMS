@@ -2,8 +2,14 @@
 
 namespace OhMyLMS\Integrations\Funnel\Includes;
 
+/**
+ * Plugin hooks implementation.
+ */
 class Hooks {
 
+	/**
+	 * Initialize Hooks.
+	 */
 	public function __construct() {
 		add_filter( 'ohmylms_integrations', array( $this, 'add_funnel' ) );
 		add_filter( 'ohmylms_should_show_funnel', array( $this, 'should_show_funnel' ) );
@@ -33,7 +39,7 @@ class Hooks {
 	/**
 	 * Check if funnel is enabled
 	 *
-	 * @param bool $should_show Default value
+	 * @param bool $should_show Default value.
 	 * @return bool Whether funnel is enabled
 	 * @since 1.0.0
 	 */

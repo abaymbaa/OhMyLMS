@@ -16,13 +16,22 @@ defined( 'ABSPATH' ) || exit;
  * A request is [ 'system' => string, 'user' => string, 'max_tokens' => int ].
  */
 interface Provider {
-	/** @return array{url:string,headers:array,body:array} */
+	/**
+	 * Request for Provider.
+	 *
+	 * @return array{url:string,headers:array,body:array}
+	 * @param array $settings Configuration settings.
+	 * @param mixed $key Lookup key.
+	 * @param array $request REST request.
+	 */
 	public function request( array $settings, $key, array $request );
 
 	/**
 	 * Read a decoded JSON response.
 	 *
 	 * @return array{text:string,input_tokens:int,output_tokens:int}|\WP_Error
+	 * @param array $decoded Decoded.
+	 * @param mixed $status Status.
 	 */
 	public function parse( array $decoded, $status );
 }

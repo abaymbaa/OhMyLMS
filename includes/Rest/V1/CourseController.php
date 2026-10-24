@@ -37,10 +37,18 @@ class CourseController extends RestController {
 	 */
 	protected $base = 'courses';
 
+	/**
+	 * Check course permission for Course controller.
+	 */
 	public function check_course_permission() {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * Check course scorm export permission for Course controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function check_course_scorm_export_permission( $request ) {
 		// Allow cookie authentication with nonce for direct download links
 		// WordPress REST API automatically handles cookie + nonce authentication
@@ -53,6 +61,9 @@ class CourseController extends RestController {
 	}
 
 
+	/**
+	 * Check course delete permission for Course controller.
+	 */
 	public function check_course_delete_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -413,7 +424,7 @@ class CourseController extends RestController {
 	/**
 	 * Check if a given request has access to read an item.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 *
 	 * @since 1.0.0
@@ -578,7 +589,7 @@ class CourseController extends RestController {
 		$page        = (int) $query_args['paged'];
 		$total_posts = $posts_query->found_posts;
 
-		if ( $total_posts < 1 && $page > 1 ) {
+		if ( 1 > $total_posts && 1 < $page ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
 			$count_query->query( $query_args );
@@ -749,10 +760,11 @@ class CourseController extends RestController {
 		// Validate course IDs.
 		foreach ( $course_ids as $course_id ) {
 			$course = get_post( $course_id );
-			if ( ! $course || $course->post_type !== OHMYLMS_COURSE_CPT ) {
+			if ( ! $course || OHMYLMS_COURSE_CPT !== $course->post_type ) {
 				return new \WP_Error(
 					'invalid_course',
-					sprintf( __( 'Invalid course ID: %d', 'ohmylms' ), $course_id ),
+					sprintf( /* translators: %d: number. */
+					__( 'Invalid course ID: %d', 'ohmylms' ), $course_id ),
 					array( 'status' => 400 )
 				);
 			}
@@ -766,7 +778,7 @@ class CourseController extends RestController {
 		try {
 			// Increase memory limit for large courses.
 			if ( function_exists( 'ini_set' ) ) {
-				@ini_set( 'memory_limit', '512M' );
+				wp_raise_memory_limit( 'admin' );
 			}
 
 			$exporter = new \OhMyLMS\Exporters\ScormExporter( $course_ids, $scorm_version );
@@ -779,7 +791,8 @@ class CourseController extends RestController {
 		} catch ( \Exception $e ) {
 			return new \WP_Error(
 				'scorm_export_error',
-				sprintf( __( 'SCORM export failed: %s', 'ohmylms' ), $e->getMessage() ),
+				sprintf( /* translators: %s: text value. */
+				__( 'SCORM export failed: %s', 'ohmylms' ), $e->getMessage() ),
 				array( 'status' => 500 )
 			);
 		}
@@ -822,11 +835,7 @@ class CourseController extends RestController {
 			if ( $student && ! $student->maybe_enrolled( $course_id ) ) {
 				// Check if the record exists.
 				$existing_record = $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
-						$student_id,
-						$course_id
-					)
+					$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $enrollment_table, $student_id, $course_id )
 				);
 
 				if ( $existing_record ) {
@@ -886,11 +895,7 @@ class CourseController extends RestController {
 
 			// Check if the enrollment exists.
 			$existing_record = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
-					$student_id,
-					$course_id
-				)
+				$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $enrollment_table, $student_id, $course_id )
 			);
 
 			if ( ! $existing_record ) {
@@ -937,9 +942,9 @@ class CourseController extends RestController {
 	/**
 	 * Generate a unique alphanumeric-only username from a name or email fallback.
 	 *
-	 * @param string $first_name
-	 * @param string $last_name
-	 * @param string $email
+	 * @param string $first_name First name.
+	 * @param string $last_name Last name.
+	 * @param string $email Email.
 	 * @return string
 	 */
 	private function generate_username( $first_name, $last_name, $email ) {
@@ -973,7 +978,7 @@ class CourseController extends RestController {
 	 * Enroll a student by email. Creates a new account if no user with that email exists.
 	 * Fires ohmylms_manual_enrollment_by_email after enrollment so emails can be sent.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_REST_Response|WP_Error
 	 */
 	public function enroll_by_email( \WP_REST_Request $request ) {
@@ -1029,11 +1034,7 @@ class CourseController extends RestController {
 			update_user_meta( $student_id, '_is_ohmylms_user', 'yes' );
 
 			$existing_status = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT status FROM $enrollment_table WHERE user_id = %d AND course_id = %d",
-					$student_id,
-					$course_id
-				)
+				$wpdb->prepare( 'SELECT status FROM %i WHERE user_id = %d AND course_id = %d', $enrollment_table, $student_id, $course_id )
 			);
 
 			if ( 'enrolled' === $existing_status ) {
@@ -1098,7 +1099,7 @@ class CourseController extends RestController {
 	/**
 	 * Create a single course
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -1166,7 +1167,7 @@ class CourseController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_COURSE_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_COURSE_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_course_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -1255,7 +1256,7 @@ class CourseController extends RestController {
 	/**
 	 * Delete course
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -1331,7 +1332,7 @@ class CourseController extends RestController {
 	/**
 	 * Duplicate a course
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -1534,7 +1535,7 @@ class CourseController extends RestController {
 	 *
 	 * @param array                $prepared_args The prepared arguments for the query.
 	 * @param WP_REST_Request|null $request The REST request object.
-	 *
+	 * .
 	 * @return array The filtered and prepared query arguments.
 	 * @since 1.0.0
 	 */
@@ -1682,7 +1683,7 @@ class CourseController extends RestController {
 	 * @param \WP_REST_Request $request The REST request object containing the meta data.
 	 * @return bool True on success, false on failure.
 	 *
-	 * @throws DataException
+	 * @throws DataException When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
@@ -1870,7 +1871,7 @@ class CourseController extends RestController {
 	/**
 	 * Update course map
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -1885,7 +1886,7 @@ class CourseController extends RestController {
 	/**
 	 * Get course map
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -1898,7 +1899,7 @@ class CourseController extends RestController {
 	/**
 	 * Get default course map
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -1911,7 +1912,7 @@ class CourseController extends RestController {
 	/**
 	 * Fetch course settings
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -1942,7 +1943,7 @@ class CourseController extends RestController {
 	/**
 	 * Save course settings
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return WP_Error|WP_REST_Response|\WP_HTTP_Response
 	 * @since 1.0.0
 	 */
@@ -1954,6 +1955,11 @@ class CourseController extends RestController {
 		return rest_ensure_response( $response );
 	}
 
+	/**
+	 * Get filtered courses for Course controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_filtered_courses( $request ) {
 		$args = array(
 			'post_type'    => 'ohmylms-course',
@@ -1985,7 +1991,7 @@ class CourseController extends RestController {
 	/**
 	 * Save featured image for a course.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -2026,7 +2032,7 @@ class CourseController extends RestController {
 	/**
 	 * Remove featured image for a course.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -2065,7 +2071,7 @@ class CourseController extends RestController {
 	/**
 	 * Get course data.
 	 *
-	 * @param Course $course
+	 * @param Course $course Course.
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -2140,8 +2146,8 @@ class CourseController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $course
-	 * @param $request
+	 * @param mixed $course Course.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0
@@ -2163,9 +2169,9 @@ class CourseController extends RestController {
 	/**
 	 * Prepare a single course for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Course|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_item_for_database( $request ) {
@@ -2213,7 +2219,7 @@ class CourseController extends RestController {
 	 * Prepare a single course for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -2409,7 +2415,7 @@ class CourseController extends RestController {
 	 *
 	 * @param int              $post_id The ID of the course post.
 	 * @param \WP_REST_Request $request The REST request object containing the term data.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	protected function handle_terms( $post_id, $request ) {
@@ -2475,8 +2481,8 @@ class CourseController extends RestController {
 	/**
 	 * Save cohort settings for a course.
 	 *
-	 * @param int             $course_id
-	 * @param WP_REST_Request $request
+	 * @param int             $course_id Course identifier.
+	 * @param WP_REST_Request $request REST request.
 	 * @return bool
 	 */
 	protected function save_cohort_settings( $course_id, $request ) {
@@ -2541,8 +2547,8 @@ class CourseController extends RestController {
 			$ids_placeholder = implode( ',', array_fill( 0, count( $existing_ids ), '%d' ) );
 			$wpdb->query(
 				$wpdb->prepare(
-					"DELETE FROM $table WHERE course_id = %d AND id NOT IN ($ids_placeholder)",
-					array_merge( array( $course_id ), $existing_ids )
+					"DELETE FROM %i WHERE course_id = %d AND id NOT IN ($ids_placeholder)",
+					array_merge( array( $table, $course_id ), $existing_ids )
 				)
 			);
 		} else {

@@ -45,7 +45,7 @@ class ZoomApiClient implements ZoomApiInterface {
 	 * Make a GET request to the Zoom API.
 	 *
 	 * @param string $endpoint The API endpoint.
-	 * @param array  $params   The query parameters.
+	 * @param array  $params The query parameters.
 	 *
 	 * @return array The API response.
 	 */
@@ -61,7 +61,7 @@ class ZoomApiClient implements ZoomApiInterface {
 	 * Make a POST request to the Zoom API.
 	 *
 	 * @param string $endpoint The API endpoint.
-	 * @param array  $data     The request body.
+	 * @param array  $data The request body.
 	 *
 	 * @return array The API response.
 	 */
@@ -73,7 +73,7 @@ class ZoomApiClient implements ZoomApiInterface {
 	 * Make a PUT request to the Zoom API.
 	 *
 	 * @param string $endpoint The API endpoint.
-	 * @param array  $data     The request body.
+	 * @param array  $data The request body.
 	 *
 	 * @return array The API response.
 	 */
@@ -81,6 +81,12 @@ class ZoomApiClient implements ZoomApiInterface {
 		return $this->request( 'PUT', $this->base_uri . $endpoint, $data );
 	}
 
+	/**
+	 * Patch for Zoom api client.
+	 *
+	 * @param mixed $endpoint Endpoint.
+	 * @param array $data Input data.
+	 */
 	public function patch( $endpoint, $data = array() ) {
 		return $this->request( 'PATCH', $this->base_uri . $endpoint, $data );
 	}
@@ -99,9 +105,9 @@ class ZoomApiClient implements ZoomApiInterface {
 	/**
 	 * Make a request to the Zoom API.
 	 *
-	 * @param string $method   The HTTP method.
-	 * @param string $url      The request URL.
-	 * @param array  $data     The request body.
+	 * @param string $method The HTTP method.
+	 * @param string $url The request URL.
+	 * @param array  $data The request body.
 	 *
 	 * @return array The API response.
 	 */

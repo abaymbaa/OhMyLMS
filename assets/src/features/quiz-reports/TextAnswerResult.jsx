@@ -29,10 +29,11 @@ export function createTextAnswerResult( readRuntime ) {
 				var _oLocal = a
 						.filter( function ( _eLocal ) {
 							return (
-								1 ==
-								( _eLocal === null || _eLocal === void 0
-									? void 0
-									: _eLocal.is_correct )
+								Number(
+									_eLocal === null || _eLocal === void 0
+										? void 0
+										: _eLocal.is_correct
+								) === 1
 							);
 						} )
 						.map( function ( _eLocal2 ) {

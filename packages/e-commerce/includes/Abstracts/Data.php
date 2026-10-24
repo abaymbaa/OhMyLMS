@@ -5,6 +5,9 @@ namespace OhMyLMS\Commerce\Abstracts;
 use OhMyLMS\Commerce\DataException;
 use OhMyLMS\Commerce\EcommerceDateTime;
 
+/**
+ * Plugin data implementation.
+ */
 abstract class Data {
 
 	/**
@@ -67,6 +70,11 @@ abstract class Data {
 	 */
 	protected string $object_type = 'data';
 
+	/**
+	 * Initialize Data.
+	 *
+	 * @param int $data Input data.
+	 */
 	public function __construct( $data = 0 ) {
 		$this->data = array_merge( $this->data, $this->extra_data );
 	}
@@ -145,18 +153,26 @@ abstract class Data {
 	/**
 	 * Set ID of object
 	 *
-	 * @param $id
+	 * @param mixed $id Id.
 	 */
 	public function set_id( $id ) {
 		$this->id = $id;
 	}
 
 
+	/**
+	 * Set date created for Data.
+	 *
+	 * @param mixed $date Date.
+	 */
 	public function set_date_created( $date ) {
 		$this->set_date_prop( 'date_created', $date );
 	}
 
 
+	/**
+	 * Get date created for Data.
+	 */
 	public function get_date_created() {
 		$this->get_prop( 'date_created' );
 	}
@@ -175,7 +191,7 @@ abstract class Data {
 	/**
 	 * Set collection of params to the object
 	 *
-	 * @param $props
+	 * @param mixed $props Props.
 	 * @return bool|\WP_Error
 	 */
 	public function set_props( $props ) {
@@ -205,8 +221,8 @@ abstract class Data {
 	/**
 	 * Set prop
 	 *
-	 * @param $prop
-	 * @param $value
+	 * @param mixed $prop Prop.
+	 * @param mixed $value Value to process.
 	 * @since 1.0.0
 	 */
 	protected function set_prop( $prop, $value ) {
@@ -331,7 +347,7 @@ abstract class Data {
 	 * @param string $message The error message.
 	 * @param int    $http_status_code The HTTP status code (default is 400).
 	 * @param array  $data Additional data to pass with the exception.
-	 * @throws \OhMyLMS\DataException
+	 * @throws \OhMyLMS\DataException When the operation cannot be completed.
 	 *
 	 * @since 1.0.0
 	 */

@@ -40,7 +40,7 @@ class MicrosoftAuthService {
 	 */
 	private static $link_user_id = 0;
 
-	const OPTION_KEY= 'ohmylms_microsoft_oauth';
+	const OPTION_KEY         = 'ohmylms_microsoft_oauth';
 	const STATE_TRANSIENT    = 'ohmylms_lms_microsoft_state_';
 	const STATE_COOKIE       = 'ohmylms_microsoft_state';
 	const STATE_TTL          = 600; // 10 minutes.

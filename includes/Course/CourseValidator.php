@@ -70,7 +70,7 @@ class CourseValidator {
 	/**
 	 * Validate course general settings fields
 	 *
-	 * @param $general_settings_items
+	 * @param mixed $general_settings_items General settings items.
 	 * @return array
 	 * @since 1.0.0
 	 */

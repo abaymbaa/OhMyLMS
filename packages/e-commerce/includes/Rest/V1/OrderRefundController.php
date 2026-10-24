@@ -17,12 +17,25 @@ use OhMyLMS\Commerce\Data\OrderRefund;
  */
 class OrderRefundController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'orders/(?P<order_id>[\d]+)/refunds';
 
+	/**
+	 * Create item permissions check for Order refund controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function create_item_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * Register routes for Order refund controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -60,7 +73,8 @@ class OrderRefundController extends RestController {
 	 */
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
-			return new \WP_Error( 'ohmylms_rest_ohmylms_order_refund_exists', __( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
+			return new \WP_Error( 'ohmylms_rest_ohmylms_order_refund_exists', /* translators: %s: text value. */
+			__( 'Cannot create existing %s.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 
 		$order_data = get_post( (int) $request['order_id'] );

@@ -40,7 +40,7 @@ class CourseHelper {
 	/**
 	 * Add course
 	 *
-	 * @param $map_data
+	 * @param mixed $map_data Map data.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -113,8 +113,8 @@ class CourseHelper {
 	/**
 	 * Update course
 	 *
-	 * @param $post_id
-	 * @param array $map_data
+	 * @param mixed $post_id Post identifier.
+	 * @param array $map_data Map data.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -183,7 +183,7 @@ class CourseHelper {
 	/**
 	 * Delete course
 	 *
-	 * @param $post_id
+	 * @param mixed $post_id Post identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -233,8 +233,8 @@ class CourseHelper {
 	/**
 	 * Insert course section relation
 	 *
-	 * @param $course_id
-	 * @param $section_id
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $section_id Section identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -281,8 +281,8 @@ class CourseHelper {
 	/**
 	 * Update course map
 	 *
-	 * @param $course_id
-	 * @param $map
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $map Map.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -308,7 +308,7 @@ class CourseHelper {
 	/**
 	 * Get course map
 	 *
-	 * @param $course_id
+	 * @param mixed $course_id Course identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -338,7 +338,7 @@ class CourseHelper {
 	/**
 	 * Fetch default course data map
 	 *
-	 * @param $course_id
+	 * @param mixed $course_id Course identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -363,6 +363,9 @@ class CourseHelper {
 		return $course_data;
 	}
 
+	/**
+	 * Ohmylms save course general settings for Course helper.
+	 */
 	public static function ohmylms_save_course_general_settings() {
 
 		check_ajax_referer( 'ohmylms-course', 'nonce' );
@@ -399,8 +402,8 @@ class CourseHelper {
 	/**
 	 * Save course settings
 	 *
-	 * @param int $course_id
-	 * @param $settings_data
+	 * @param int   $course_id Course identifier.
+	 * @param mixed $settings_data Settings data.
 	 * @return array
 	 * @since 1.0.0
 	 */

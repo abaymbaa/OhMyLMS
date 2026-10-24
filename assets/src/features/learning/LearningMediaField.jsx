@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createLearningMediaField( readRuntime ) {
@@ -212,7 +213,7 @@ export function createLearningMediaField( readRuntime ) {
 					( 'audio' === e && 'audio' === _iLocal.type ) ||
 					_iLocal.type === e;
 				if ( 'image' === e && _oLocal2 > 5242880 ) {
-					alert(
+					showRequestError(
 						( 0, I18n.__ )(
 							'Image exceeds the 5MB size limit. Please choose a smaller file.',
 							'ohmylms'
@@ -254,7 +255,7 @@ export function createLearningMediaField( readRuntime ) {
 						onUploadComplete( _iLocal, e );
 					}
 				} else {
-					alert( 'Invalid file type or media type.' );
+					showRequestError( 'Invalid file type or media type.' );
 				}
 			} );
 			c.open();

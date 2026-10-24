@@ -163,10 +163,7 @@ class WPFusionTriggersController {
 
 		// Filter by wpfusion CRM type since this is the WP Fusion controller.
 		$triggers = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$table_name} WHERE crm_type = %s ORDER BY created_at DESC",
-				'wpfusion'
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE crm_type = %s ORDER BY created_at DESC', $table_name, 'wpfusion' ),
 			ARRAY_A
 		);
 
@@ -202,7 +199,7 @@ class WPFusionTriggersController {
 		$table_name = WPFusionMigration::get_table_name();
 
 		$trigger = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $table_name, $id ),
 			ARRAY_A
 		);
 

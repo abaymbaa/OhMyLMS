@@ -178,11 +178,7 @@ class VideoProgressTracker {
 		}
 
 		return $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT id, watched_duration, total_duration, watch_percentage, last_position, is_completed FROM {$this->table_name} WHERE user_id = %d AND lesson_id = %d",
-				$user_id,
-				$lesson_id
-			)
+			$wpdb->prepare( 'SELECT id, watched_duration, total_duration, watch_percentage, last_position, is_completed FROM %i WHERE user_id = %d AND lesson_id = %d', $this->table_name, $user_id, $lesson_id )
 		);
 	}
 
@@ -202,11 +198,7 @@ class VideoProgressTracker {
 		}
 
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT id, watched_duration, total_duration, watch_percentage, last_position, is_completed FROM {$this->table_name} WHERE user_id = %d AND course_id = %d",
-				$user_id,
-				$course_id
-			)
+			$wpdb->prepare( 'SELECT id, watched_duration, total_duration, watch_percentage, last_position, is_completed FROM %i WHERE user_id = %d AND course_id = %d', $this->table_name, $user_id, $course_id )
 		);
 	}
 
@@ -223,12 +215,7 @@ class VideoProgressTracker {
 
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$count            = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$enrollment_table} WHERE user_id = %d AND course_id = %d AND status = %s",
-				$user_id,
-				$course_id,
-				'enrolled'
-			)
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d AND status = %s', $enrollment_table, $user_id, $course_id, 'enrolled' )
 		);
 
 		return $count > 0;
@@ -294,19 +281,11 @@ class VideoProgressTracker {
 		global $wpdb;
 
 		$total = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$this->table_name} WHERE user_id = %d AND course_id = %d",
-				$user_id,
-				$course_id
-			)
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d', $this->table_name, $user_id, $course_id )
 		);
 
 		$completed = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$this->table_name} WHERE user_id = %d AND course_id = %d AND is_completed = 1",
-				$user_id,
-				$course_id
-			)
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d AND is_completed = 1', $this->table_name, $user_id, $course_id )
 		);
 
 		$completion_percentage = $total > 0 ? ( $completed / $total ) * 100 : 0;

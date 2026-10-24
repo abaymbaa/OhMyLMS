@@ -68,9 +68,9 @@ if ( $_course_id && function_exists( 'apply_filters' ) ) {
 echo $icon_class . ' ';
 echo $is_active;
 ?>
-<?php echo $is_lesson_locked ? ' lesson-locked' : ''; ?>">
-	<a href="<?php echo $is_lesson_locked ? '#' : esc_url( $lesson->get_permalink() ); ?>"
-		lesson-id="<?php echo $lesson_id; ?>"
+<?php echo esc_attr( $is_lesson_locked ? ' lesson-locked' : '' ); ?>">
+	<a href="<?php echo esc_url( $is_lesson_locked ? '#' : esc_url( $lesson->get_permalink() ) ); ?>"
+		lesson-id="<?php echo esc_attr( $lesson_id ); ?>"
 		<?php
 		if ( $is_lesson_locked ) {
 			echo 'onclick="return false;" style="cursor:not-allowed;opacity:0.6;"'; }
@@ -84,7 +84,7 @@ echo $is_active;
 			<?php include OHMYLMS_DIR . '/assets/images/icon/lock-icon.php'; ?>
 		</span>
 	<?php else : ?>
-		<span class="lesson-status <?php echo $is_checked ? 'checked' : ''; ?>">
+		<span class="lesson-status <?php echo esc_attr( $is_checked ? 'checked' : '' ); ?>">
 			<svg width="18" height="18" fill="none" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><rect width="18" height="18" fill="#19AA32" rx="9"/><path fill="#fff" d="M12.373 5.818l-4.628 4.628-2.122-2.121a.818.818 0 00-1.157 1.157l2.7 2.7a.818.818 0 001.157 0l5.207-5.207a.818.818 0 10-1.157-1.157z"/></svg>
 		</span>
 	<?php endif; ?>

@@ -107,7 +107,7 @@ $details = implode(
 	PHP_EOL,
 	array(
 		"Topic: {$topic}",
-		'Agenda: ' . wp_strip_all_tags( $post_content_raw ?: $meeting_data['agenda'] ),
+		'Agenda: ' . wp_strip_all_tags( $post_content_raw ? $post_content_raw : $meeting_data['agenda'] ),
 		"Join URL: {$join_url}",
 		"ID: {$meeting_id}",
 		'Password: ' . ( $has_password ? $password : 'N/A' ),

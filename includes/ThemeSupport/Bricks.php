@@ -15,10 +15,18 @@ defined( 'ABSPATH' ) || exit;
  * Handles the theme support for Bricks theme.
  */
 class Bricks {
+	/**
+	 * Init for Bricks.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles for Bricks.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-bricks.css' ),

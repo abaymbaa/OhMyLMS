@@ -16,15 +16,65 @@ use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
  */
 class GatewayPaypal extends PaymentGateway {
 
+	/**
+	 * Client id.
+	 *
+	 * @var mixed
+	 */
 	private $client_id;
+	/**
+	 * Client secret.
+	 *
+	 * @var mixed
+	 */
 	private $client_secret;
+	/**
+	 * Access token.
+	 *
+	 * @var mixed
+	 */
 	private $access_token;
+	/**
+	 * Api url.
+	 *
+	 * @var mixed
+	 */
 	private $api_url;
+	/**
+	 * Currency.
+	 *
+	 * @var mixed
+	 */
 	private $currency;
+	/**
+	 * Min amount.
+	 *
+	 * @var mixed
+	 */
 	private $min_amount;
+	/**
+	 * Webhook url.
+	 *
+	 * @var mixed
+	 */
 	private $webhook_url;
+	/**
+	 * Webhook id.
+	 *
+	 * @var mixed
+	 */
 	private $webhook_id;
+	/**
+	 * Supports subscription api.
+	 *
+	 * @var mixed
+	 */
 	public $supports_subscription_api = true;
+	/**
+	 * Paypal api.
+	 *
+	 * @var mixed
+	 */
 	private $paypal_api;
 
 	/**
@@ -327,7 +377,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * Confirm with PayPal that an order was really captured for the expected amount.
 	 *
 	 * @param string $paypal_order_id The PayPal order ID named in the request.
-	 * @param int    $order_id        The local order ID being completed.
+	 * @param int    $order_id The local order ID being completed.
 	 * @return true|\WP_Error
 	 */
 	private function confirm_paypal_capture( $paypal_order_id, $order_id ) {
@@ -369,7 +419,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Handles the PayPal webhook requests.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return array|WP_REST_Response
 	 */
 	public function handle_webhook( $request ) {
@@ -458,9 +508,8 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Processes the payment by creating an order and optionally vaulting the payment method.
 	 *
-	 * @param int  $order_id
-	 * @param bool $is_subscription
-	 * @param bool $vault_payment_method
+	 * @param int  $order_id Order identifier.
+	 * @param bool $is_subscription Is subscription.
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -482,8 +531,9 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Creates a PayPal order for the given order ID.
 	 *
-	 * @param $order_id
-	 * @param $is_subscription
+	 * @param mixed $order_id Order identifier.
+	 * @param int   $renewal_order_id Renewal order identifier.
+	 * @param bool  $is_subscription Is subscription.
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -508,7 +558,9 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Prepares the data for creating a PayPal order.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param mixed $order_id Order identifier.
+	 * @param int   $renewal_order_id Renewal order identifier.
+	 * @param bool  $is_subscription Is subscription.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -598,8 +650,8 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Retrieves the payment source data for recurring payments.
 	 *
-	 * @param $data
-	 * @param $order
+	 * @param mixed $data Input data.
+	 * @param mixed $order Order.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -642,8 +694,8 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Retrieves the payment source data for recurring payments using a vaulted payment method.
 	 *
-	 * @param $data
-	 * @param $order
+	 * @param mixed $data Input data.
+	 * @param mixed $order Order.
 	 * @return void
 	 */
 	public function get_payment_source_for_recurring( &$data, $order ) {
@@ -690,8 +742,8 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Retrieves the URL for a specific link relation from the PayPal response.
 	 *
-	 * @param $links
-	 * @param $rel
+	 * @param mixed $links Links.
+	 * @param mixed $rel Rel.
 	 * @return mixed|string|null
 	 * @since 1.0.0
 	 */
@@ -703,7 +755,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Retrieves the amount data for the order.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -727,11 +779,11 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Processes a recurring payment using a vaulted payment method.
 	 *
-	 * @param int    $original_order_id
-	 * @param int    $renewal_order_id
-	 * @param float  $amount
-	 * @param string $subscription_id
-	 * @param int    $student_id
+	 * @param int    $original_order_id Original order identifier.
+	 * @param int    $renewal_order_id Renewal order identifier.
+	 * @param float  $amount Amount.
+	 * @param string $subscription_id Subscription identifier.
+	 * @param int    $student_id Student identifier.
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -775,9 +827,9 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Process refund.
 	 *
-	 * @param int        $order_id
-	 * @param float|null $amount
-	 * @param string     $reason
+	 * @param int        $order_id Order identifier.
+	 * @param float|null $amount Amount.
+	 * @param string     $reason Reason.
 	 * @return bool|WP_Error
 	 * @since 1.0.0
 	 */
@@ -805,7 +857,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Checks if the order can be refunded.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -816,12 +868,13 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Issues a refund for a captured payment.
 	 *
-	 * @param string                       $capture_id
-	 * @param float|null                   $amount
-	 * @param string                       $reason
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param string                       $capture_id Capture identifier.
+	 * @param float|null                   $amount Amount.
+	 * @param string                       $reason Reason.
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return array|WP_Error
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	private function issue_refund( $capture_id, $amount, $reason, $order ) {
 		try {
@@ -833,8 +886,9 @@ class GatewayPaypal extends PaymentGateway {
 			}
 			$order->add_order_note(
 				sprintf(
+					/* translators: %s: text value. */
 					__( 'Refund processed via Paypal.Reason: %s', 'ohmylms' ),
-					$reason ?: __( 'No reason provided', 'ohmylms' )
+					$reason ? $reason : __( 'No reason provided', 'ohmylms' )
 				)
 			);
 			return $response;
@@ -846,7 +900,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get payment gateway meta data for display on order details.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return array
 	 */
 	public function get_payment_gateway_meta( $order ) {
@@ -876,7 +930,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get the transaction URL for this gateway.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return string
 	 */
 	public function get_transaction_url( $order ) {
@@ -892,7 +946,7 @@ class GatewayPaypal extends PaymentGateway {
 	/**
 	 * Get shipping information for the order.
 	 *
-	 * @param \OhMyLMS\Commerce\Data\Order $order
+	 * @param \OhMyLMS\Commerce\Data\Order $order Order.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -926,7 +980,7 @@ class GatewayPaypal extends PaymentGateway {
 				'admin_area_2'   => $city,      // City is admin_area_2.
 				'admin_area_1'   => $state,     // State/Province is admin_area_1.
 				'postal_code'    => $post_code,
-				'country_code'   => $country ?: 'US',
+				'country_code'   => $country ? $country : 'US',
 			),
 		);
 	}
@@ -946,8 +1000,8 @@ class GatewayPaypal extends PaymentGateway {
 		}
 
 		global $wpdb;
-		$order_id      = sanitize_text_field( $_GET['order_id'] );
-		$token         = sanitize_text_field( $_GET['token'] );
+		$order_id      = sanitize_text_field( wp_unslash( $_GET['order_id'] ));
+		$token         = sanitize_text_field( wp_unslash( $_GET['token'] ));
 		$response_data = $this->paypal_api->get_order_details( $token );
 
 		if ( is_wp_error( $response_data ) ) {
@@ -1094,7 +1148,7 @@ class GatewayPaypal extends PaymentGateway {
 	 * @param object $course The course object for which the upsell/downsell is being processed.
 	 * @param float  $amount The amount to charge for the upsell/downsell.
 	 * @param array  $step_data Additional step data, including step ID.
-	 *
+	 * .
 	 * @return array|WP_Error An array with success status or a WP_Error on failure.
 	 */
 	public function process_offer_payment( $original_order, $course, $amount, $step_data ) {

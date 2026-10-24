@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Plugin gateway autoloader implementation.
+ */
 class GatewayAutoloader {
 
 	/**
@@ -29,10 +32,10 @@ class GatewayAutoloader {
 	/**
 	 * Constructor
 	 *
-	 * @param string $base_dir The base directory for the plugin
+	 * @param string $base_dir The base directory for the plugin.
 	 */
 	public function __construct( $base_dir = null ) {
-		$this->base_dir = $base_dir ?: dirname( OHMYLMS_PRO_FILE );
+		$this->base_dir = $base_dir ? $base_dir : dirname( OHMYLMS_PRO_FILE );
 	}
 
 	/**

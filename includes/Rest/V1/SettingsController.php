@@ -26,6 +26,11 @@ class SettingsController extends RestController {
 	 */
 	protected $base = 'settings/(?P<group_id>[\w-]+)';
 
+	/**
+	 * Search.
+	 *
+	 * @var mixed
+	 */
 	protected $search = 'page/search';
 
 
@@ -134,7 +139,7 @@ class SettingsController extends RestController {
 	/**
 	 * Get integration status
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return \WP_REST_Response
 	 */
 	public function get_integration_status( $request ) {
@@ -162,7 +167,7 @@ class SettingsController extends RestController {
 	/**
 	 * Permission check for getting integration status
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return bool
 	 */
 	public function get_integration_status_permission_check( $request ) {
@@ -475,7 +480,7 @@ class SettingsController extends RestController {
 	/**
 	 * Restore missing default pages.
 	 *
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return \WP_REST_Response
 	 */
 	public function restore_pages( $request ) {
@@ -563,6 +568,11 @@ class SettingsController extends RestController {
 		);
 	}
 
+	/**
+	 * Get page for Settings controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_page( $request ) {
 		$search_text = $request->get_param( 'value' );
 		$limit       = $request->get_param( 'limit' ) ? absint( $request->get_param( 'limit' ) ) : -1;

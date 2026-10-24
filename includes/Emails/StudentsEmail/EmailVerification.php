@@ -20,6 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class EmailVerification {
 
+	/**
+	 * Initialize Email verification.
+	 */
 	public function __construct() {
 		add_action( 'ohmylms_send_email_verification', array( $this, 'send' ), 10, 2 );
 	}
@@ -27,8 +30,8 @@ class EmailVerification {
 	/**
 	 * Send the verification email.
 	 *
-	 * @param int    $user_id
-	 * @param string $token
+	 * @param int    $user_id User identifier.
+	 * @param string $token Token.
 	 * @return bool
 	 */
 	public function send( int $user_id, string $token ): bool {
@@ -69,6 +72,8 @@ class EmailVerification {
 
 	/**
 	 * Build the HTML email body.
+	 *
+	 * @param array $data Input data.
 	 */
 	private function get_template( array $data ): string {
 		$defaults = array(
@@ -98,7 +103,8 @@ class EmailVerification {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?php echo esc_html( sprintf( __( 'Confirm your email for %s', 'ohmylms' ), $data['site_name'] ) ); ?></title>
+<title><?php echo esc_html( sprintf( /* translators: %s: text value. */
+__( 'Confirm your email for %s', 'ohmylms' ), $data['site_name'] ) ); ?></title>
 </head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background-color:<?php echo esc_attr( $bg_color ); ?>;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background-color:<?php echo esc_attr( $bg_color ); ?>;padding:40px 20px;">
@@ -126,10 +132,12 @@ class EmailVerification {
 </div>
 
 <p style="margin:0 0 16px;font-size:16px;color:<?php echo esc_attr( $text_color ); ?>;line-height:1.6;">
-		<?php echo esc_html( sprintf( __( 'Hi %s,', 'ohmylms' ), $data['user_name'] ) ); ?>
+		<?php echo esc_html( sprintf( /* translators: %s: text value. */
+		__( 'Hi %s,', 'ohmylms' ), $data['user_name'] ) ); ?>
 </p>
 <p style="margin:0 0 24px;font-size:16px;color:<?php echo esc_attr( $text_color ); ?>;line-height:1.6;">
-		<?php echo esc_html( sprintf( __( 'Thanks for joining %s! Please verify your email address to activate your account and access your courses.', 'ohmylms' ), $data['site_name'] ) ); ?>
+		<?php echo esc_html( sprintf( /* translators: %s: text value. */
+		__( 'Thanks for joining %s! Please verify your email address to activate your account and access your courses.', 'ohmylms' ), $data['site_name'] ) ); ?>
 </p>
 
 <div style="text-align:center;margin:32px 0;">

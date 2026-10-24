@@ -14,6 +14,9 @@ use OhMyLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin helpers implementation.
+ */
 class Helpers {
 
 	/**
@@ -71,7 +74,7 @@ class Helpers {
 	/**
 	 * Get trigger by ID
 	 *
-	 * @param int $trigger_id Trigger ID
+	 * @param int $trigger_id Trigger ID.
 	 * @return array|null
 	 * @since 1.0.0
 	 */
@@ -81,7 +84,7 @@ class Helpers {
 		$table_name = WPFusionMigration::get_table_name();
 
 		$trigger = $wpdb->get_row(
-			$wpdb->prepare( "SELECT * FROM {$table_name} WHERE id = %d", $trigger_id ),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $table_name, $trigger_id ),
 			ARRAY_A
 		);
 
@@ -100,7 +103,7 @@ class Helpers {
 	/**
 	 * Get all triggers
 	 *
-	 * @param string $status Filter by status (active, inactive, all)
+	 * @param string $status Filter by status (active, inactive, all).
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -111,15 +114,12 @@ class Helpers {
 
 		if ( 'all' === $status ) {
 			$triggers = $wpdb->get_results(
-				"SELECT * FROM {$table_name} ORDER BY created_at DESC",
+				$wpdb->prepare( 'SELECT * FROM %i ORDER BY created_at DESC', $table_name ),
 				ARRAY_A
 			);
 		} else {
 			$triggers = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$table_name} WHERE status = %s ORDER BY created_at DESC",
-					$status
-				),
+				$wpdb->prepare( 'SELECT * FROM %i WHERE status = %s ORDER BY created_at DESC', $table_name, $status ),
 				ARRAY_A
 			);
 		}
@@ -137,8 +137,8 @@ class Helpers {
 	/**
 	 * Get triggers by event
 	 *
-	 * @param string $event_name Event name
-	 * @param string $status Filter by status (active, inactive, all)
+	 * @param string $event_name Event name.
+	 * @param string $status Filter by status (active, inactive, all).
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -149,19 +149,12 @@ class Helpers {
 
 		if ( 'all' === $status ) {
 			$triggers = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$table_name} WHERE trigger_event = %s ORDER BY created_at DESC",
-					$event_name
-				),
+				$wpdb->prepare( 'SELECT * FROM %i WHERE trigger_event = %s ORDER BY created_at DESC', $table_name, $event_name ),
 				ARRAY_A
 			);
 		} else {
 			$triggers = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$table_name} WHERE trigger_event = %s AND status = %s ORDER BY created_at DESC",
-					$event_name,
-					$status
-				),
+				$wpdb->prepare( 'SELECT * FROM %i WHERE trigger_event = %s AND status = %s ORDER BY created_at DESC', $table_name, $event_name, $status ),
 				ARRAY_A
 			);
 		}
@@ -210,7 +203,7 @@ class Helpers {
 	/**
 	 * Validate trigger data
 	 *
-	 * @param array $data Trigger data
+	 * @param array $data Trigger data.
 	 * @return array Validation result with 'valid' and 'errors'
 	 * @since 1.0.0
 	 */
@@ -260,7 +253,7 @@ class Helpers {
 	/**
 	 * Format trigger for display
 	 *
-	 * @param array $trigger Trigger data
+	 * @param array $trigger Trigger data.
 	 * @return array Formatted trigger
 	 * @since 1.0.0
 	 */
@@ -286,7 +279,7 @@ class Helpers {
 	/**
 	 * Delete trigger
 	 *
-	 * @param int $trigger_id Trigger ID
+	 * @param int $trigger_id Trigger ID.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -307,8 +300,8 @@ class Helpers {
 	/**
 	 * Update trigger status
 	 *
-	 * @param int    $trigger_id Trigger ID
-	 * @param string $status New status
+	 * @param int    $trigger_id Trigger ID.
+	 * @param string $status New status.
 	 * @return bool
 	 * @since 1.0.0
 	 */

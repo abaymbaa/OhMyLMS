@@ -13,12 +13,15 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code my courses implementation.
+ */
 class ShortCodeMyCourses {
 
 	/**
 	 * Render the my courses page
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	public static function output( $atts ) {
@@ -48,7 +51,7 @@ class ShortCodeMyCourses {
 	/**
 	 * Display my courses content
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function my_courses( $atts ) {
@@ -156,8 +159,8 @@ class ShortCodeMyCourses {
 	/**
 	 * Output custom styles for the My Courses shortcode.
 	 *
-	 * @param string $unique_id Unique identifier for this instance
-	 * @param array  $args Shortcode attributes
+	 * @param string $unique_id Unique identifier for this instance.
+	 * @param array  $args Shortcode attributes.
 	 * @since 1.2.5
 	 */
 	private static function output_custom_styles( $unique_id, $args ) {
@@ -290,7 +293,7 @@ class ShortCodeMyCourses {
 	/**
 	 * Add JavaScript to handle navigation links
 	 *
-	 * @param array $args Shortcode attributes
+	 * @param array $args Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function add_navigation_handler( $args = array() ) {

@@ -1,5 +1,12 @@
 /* Learner-facing practice, inline checks and skill progress. */
-.ohmylms-inline-check,
+.ohmylms-inline-check {
+	border: 1px solid #e4e4e7;
+	border-radius: 8px;
+	padding: 16px;
+	margin: 16px 0;
+	background: #fff;
+}
+
 .ohmylms-practice-question {
 	border: 1px solid #e4e4e7;
 	border-radius: 8px;
@@ -8,16 +15,12 @@
 	background: #fff;
 }
 
-.ohmylms-inline-check .the-question,
-.ohmylms-inline-check-question,
-.ohmylms-practice-question .the-question {
+.ohmylms-inline-check-question {
 	font-weight: 600;
 	margin: 0 0 12px;
 }
 
-.ohmylms-inline-check label,
-.ohmylms-practice-option,
-.ohmylms-practice-match {
+.ohmylms-practice-option {
 	display: flex;
 	align-items: center;
 	gap: 8px;
@@ -28,18 +31,15 @@
 	cursor: pointer;
 }
 
-.ohmylms-inline-check label:focus-within,
-.ohmylms-practice-option:focus-within {
-	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
-	outline-offset: 1px;
-}
-
-.ohmylms-inline-check .ohmylms-text-input,
-.ohmylms-practice-inputs .ohmylms-text-input {
-	width: 100%;
-	max-width: 420px;
-	padding: 8px;
-	margin: 4px 0;
+.ohmylms-practice-match {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	margin: 6px 0;
+	border: 1px solid #e4e4e7;
+	border-radius: 6px;
+	cursor: pointer;
 }
 
 .ohmylms-inline-answer {
@@ -57,16 +57,12 @@
 	font-weight: 600;
 }
 
-.ohmylms-inline-check-feedback,
-.ohmylms-practice-feedback {
+.ohmylms-inline-check-feedback {
 	margin-top: 12px;
 }
 
-.ohmylms-practice-reorder li {
-	display: flex;
-	gap: 8px;
-	align-items: center;
-	padding: 6px 0;
+.ohmylms-practice-feedback {
+	margin-top: 12px;
 }
 
 .ohmylms-practice-progress {
@@ -79,13 +75,6 @@
 	border-collapse: collapse;
 }
 
-.ohmylms-skill-table th,
-.ohmylms-skill-table td {
-	text-align: left;
-	padding: 8px;
-	border-bottom: 1px solid #e4e4e7;
-}
-
 .ohmylms-skill-level {
 	display: inline-block;
 	padding: 2px 8px;
@@ -95,7 +84,9 @@
 	color: var(--ohmylms-body-text-color, #3f3f46);
 }
 
-.ohmylms-skill-attempted, .ohmylms-skill-familiar { background: #fef3c7; color: #92400e; }
+.ohmylms-skill-attempted { background: #fef3c7; color: #92400e; }
+
+.ohmylms-skill-familiar { background: #fef3c7; color: #92400e; }
 
 .ohmylms-skill-proficient { background: #dbeafe; color: #1e40af; }
 
@@ -112,6 +103,7 @@
 }
 
 .ohmylms-guidance-session { margin: -4px 0 8px; color: #52525b; font-size: 13px; }
+
 .ohmylms-guidance {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -127,24 +119,11 @@
 	background: #fff;
 }
 
-.ohmylms-guidance-card h3 {
-	margin: 0 0 12px;
-	font-size: 1.05em;
-}
-
-.ohmylms-guidance-card > p {
-	margin: 0 0 12px;
-	color: var(--ohmylms-body-text-color, #52525b);
-	font-size: 0.9em;
-}
-
 .ohmylms-guidance-next {
 	grid-column: 1 / -1;
 }
 
-.ohmylms-guidance .ohmylms-recommendations,
-.ohmylms-guidance-bars,
-.ohmylms-guidance-covered {
+.ohmylms-guidance-bars {
 	display: grid;
 	gap: 12px;
 	margin: 0;
@@ -152,8 +131,12 @@
 	list-style: none;
 }
 
-.ohmylms-guidance .ohmylms-recommendations {
-	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+.ohmylms-guidance-covered {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
 }
 
 .ohmylms-recommendation {
@@ -164,11 +147,6 @@
 	border-left: 4px solid #a1a1aa;
 	border-radius: 8px;
 	background: #fafafa;
-}
-
-.ohmylms-recommendation p {
-	margin: 0;
-	font-size: 0.9em;
 }
 
 .ohmylms-recommendation-help { border-left-color: #d97706; }
@@ -207,16 +185,6 @@
 	gap: 8px;
 }
 
-.ohmylms-guidance-bar-label strong {
-	min-width: 0;
-	overflow-wrap: anywhere;
-}
-
-.ohmylms-guidance-bar-label span {
-	flex-shrink: 0;
-	font-variant-numeric: tabular-nums;
-}
-
 .ohmylms-guidance-meter {
 	display: block;
 	height: 8px;
@@ -226,31 +194,132 @@
 	background: #f4f4f5;
 }
 
-.ohmylms-guidance-meter span {
-	display: block;
-	height: 100%;
-	border-radius: inherit;
-	background: var(--ohmylms-primary-color, #6e42d3);
-}
-
-.ohmylms-area-strong .ohmylms-guidance-meter span { background: #16a34a; }
-
-.ohmylms-area-steady .ohmylms-guidance-meter span { background: #2563eb; }
-
-.ohmylms-area-building .ohmylms-guidance-meter span { background: #d97706; }
-
 .ohmylms-guidance-bar-detail {
 	display: block;
 	color: var(--ohmylms-body-text-color, #52525b);
 	font-size: 0.85em;
 }
 
-.ohmylms-guidance-covered li {
+.ohmylms-skill-map {
+	margin: 0 0 24px;
+}
+
+.ohmylms-skill-map-subjects {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0 0 8px;
+}
+
+.ohmylms-skill-map-legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px 14px;
+	margin: 0 0 10px;
+	padding: 0;
+	list-style: none;
+	font-size: 0.85em;
+}
+
+.ohmylms-skill-map-scroll {
+	position: relative;
+	overflow-x: auto;
+	border: 1px solid #e4e4e7;
+	border-radius: 12px;
+}
+
+.ohmylms-skill-map-table {
+	min-width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	font-size: 0.85em;
+}
+
+.ohmylms-skill-map-strength {
+	display: block;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-weight: 400;
+	font-variant-numeric: tabular-nums;
+}
+
+.ohmylms-map-chip {
+	position: relative;
+	display: block;
+	margin: 0 0 4px;
+	padding: 3px 8px;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	line-height: 1.3;
+}
+
+.ohmylms-map-not-started {
+	border: 1px dashed #a1a1aa;
+	color: var(--ohmylms-body-text-color, #52525b);
+}
+
+.ohmylms-map-attempted { background: #fef3c7; color: #92400e; }
+
+.ohmylms-map-familiar { background: #fef3c7; color: #92400e; border-color: #f59e0b; }
+
+.ohmylms-map-proficient { background: #dbeafe; color: #1e40af; }
+
+.ohmylms-map-mastered { background: #dcfce7; color: #166534; }
+
+.ohmylms-placement-page {
+	box-sizing: border-box;
+	max-width: 760px;
+	margin: 32px auto;
+	padding: 0 16px;
+}
+
+.ohmylms-placement-grade {
+	display: block;
+	max-width: 100%;
+	margin-top: 4px;
+}
+
+.ohmylms-placement-areas {
+	margin: 0 0 12px;
+	padding-left: 1.2em;
+}
+
+.ohmylms-placement-start {
+	margin: 0 0 12px;
+	padding-left: 1.2em;
+}
+
+.ohmylms-placement-summary {
+	margin: 0 0 24px;
+}
+
+.ohmylms-placement-when {
+	display: block;
+	color: var(--ohmylms-body-text-color, #52525b);
 	font-size: 0.9em;
 }
 
-.ohmylms-guidance-covered strong {
+.ohmylms-placement-grades {
 	display: block;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+
+.ohmylms-placement-first {
+	display: block;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+
+.ohmylms-placement-link {
+	display: inline-block;
+	margin-top: 4px;
+	font-size: 0.9em;
+}
+
+.ohmylms-autosave-status {
+	font-size: 0.85em;
+	color: var(--ohmylms-body-text-color, #52525b);
+	margin: 0 12px;
 }
 
 @media (max-width: 600px) {
@@ -259,15 +328,10 @@
 		grid-template-columns: minmax(0, 1fr);
 	}
 
-	.ohmylms-guidance .ohmylms-recommendations {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
 	.ohmylms-guidance-card {
 		padding: 12px;
 	}
 
-	/* Each skill becomes a small card: name and level, then the evidence beside Practice. */
 	.ohmylms-skill-table thead {
 		position: absolute;
 		width: 1px;
@@ -276,8 +340,9 @@
 		clip-path: inset(50%);
 	}
 
-	.ohmylms-skill-table tbody,
-	.ohmylms-skill-table td {
+	/* Each skill becomes a small card: name and level, then the evidence beside Practice. */
+
+	.ohmylms-skill-table tbody {
 		display: block;
 	}
 
@@ -291,22 +356,28 @@
 	}
 
 	.ohmylms-skill-table td {
+		display: block;
 		grid-column: 1;
 		padding: 0;
 		border: 0;
+	}
+
+	.ohmylms-guidance .ohmylms-recommendations {
+		grid-template-columns: minmax(0, 1fr);
 	}
 
 	.ohmylms-skill-table td:first-child {
 		font-weight: 600;
 	}
 
-	.ohmylms-skill-table td:nth-child(2),
 	.ohmylms-skill-table td:last-child {
 		grid-column: 2;
 		justify-self: end;
 	}
 
 	.ohmylms-skill-table td:nth-child(2) {
+		grid-column: 2;
+		justify-self: end;
 		grid-row: 1;
 	}
 
@@ -333,241 +404,15 @@
 	}
 }
 
-.ohmylms-skill-map {
-	margin: 0 0 24px;
-}
-
-.ohmylms-skill-map > p {
-	margin: 0 0 8px;
-	color: var(--ohmylms-body-text-color, #52525b);
-	font-size: 0.9em;
-}
-
-.ohmylms-skill-map-subjects {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 8px;
-	margin: 0 0 8px;
-}
-
-.ohmylms-skill-map-subjects a {
-	padding: 2px 10px;
-	border: 1px solid #e4e4e7;
-	border-radius: 999px;
-	font-size: 0.9em;
-	text-decoration: none;
-}
-
-.ohmylms-skill-map-subjects a[aria-current="page"] {
-	border-color: var(--ohmylms-primary-color, #6e42d3);
-	font-weight: 600;
-}
-
-.ohmylms-skill-map-legend {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px 14px;
-	margin: 0 0 10px;
-	padding: 0;
-	list-style: none;
-	font-size: 0.85em;
-}
-
-.ohmylms-skill-map-legend li {
-	display: flex;
-	gap: 6px;
-	align-items: center;
-}
-
-.ohmylms-skill-map-scroll {
-	position: relative;
-	overflow-x: auto;
-	border: 1px solid #e4e4e7;
-	border-radius: 12px;
-}
-
-.ohmylms-skill-map-table {
-	min-width: 100%;
-	border-collapse: separate;
-	border-spacing: 0;
-	font-size: 0.85em;
-}
-
-.ohmylms-skill-map-table th,
-.ohmylms-skill-map-table td {
-	min-width: 120px;
-	padding: 8px;
-	border-bottom: 1px solid #f4f4f5;
-	text-align: left;
-	vertical-align: top;
-}
-
-.ohmylms-skill-map-table thead th {
-	color: var(--ohmylms-body-text-color, #52525b);
-	font-weight: 600;
-	white-space: nowrap;
-}
-
-.ohmylms-skill-map-table tbody th {
-	position: sticky;
-	left: 0;
-	z-index: 1;
-	min-width: 110px;
-	background: var(--ohmylms-background-color, #fff);
-}
-
-.ohmylms-skill-map-strength {
-	display: block;
-	color: var(--ohmylms-body-text-color, #52525b);
-	font-weight: 400;
-	font-variant-numeric: tabular-nums;
-}
-
-/* Positioned, so the hidden level text stays inside the scrolling frame. */
-.ohmylms-map-chip {
-	position: relative;
-	display: block;
-	margin: 0 0 4px;
-	padding: 3px 8px;
-	border: 1px solid transparent;
-	border-radius: 6px;
-	line-height: 1.3;
-}
-
-.ohmylms-map-not-started {
-	border: 1px dashed #a1a1aa;
-	color: var(--ohmylms-body-text-color, #52525b);
-}
-
-.ohmylms-map-attempted,
-.ohmylms-map-familiar { background: #fef3c7; color: #92400e; }
-
-.ohmylms-map-familiar { border-color: #f59e0b; }
-
-.ohmylms-map-proficient { background: #dbeafe; color: #1e40af; }
-
-.ohmylms-map-mastered { background: #dcfce7; color: #166534; }
-
-.ohmylms-skill-map-legend .ohmylms-map-chip {
-	width: 14px;
-	height: 14px;
-	margin: 0;
-	padding: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-
-	.ohmylms-skill-map-scroll,
-	.ohmylms-skill-map-subjects a {
-		border-color: rgba(161, 161, 170, 0.45);
-	}
-
-	.ohmylms-skill-map-table th,
-	.ohmylms-skill-map-table td {
-		border-bottom-color: rgba(161, 161, 170, 0.2);
-	}
-}
-
-.ohmylms-placement-page {
-	box-sizing: border-box;
-	max-width: 760px;
-	margin: 32px auto;
-	padding: 0 16px;
-}
-
-.ohmylms-placement-grade {
-	display: block;
-	max-width: 100%;
-	margin-top: 4px;
-}
-
-.ohmylms-placement-areas,
-.ohmylms-placement-start,
-.ohmylms-placement-summary ul {
-	margin: 0 0 12px;
-	padding-left: 1.2em;
-}
-
-.ohmylms-placement-areas li,
-.ohmylms-placement-start li,
-.ohmylms-placement-summary li {
-	margin: 0 0 6px;
-}
-
-.ohmylms-placement-start a {
-	margin-left: 4px;
-}
-
-.ohmylms-placement-summary {
-	margin: 0 0 24px;
-}
-
-.ohmylms-placement-when,
-.ohmylms-placement-grades,
-.ohmylms-placement-first {
-	display: block;
-	color: var(--ohmylms-body-text-color, #52525b);
-	font-size: 0.9em;
-}
-
-.ohmylms-placement-link {
-	display: inline-block;
-	margin-top: 4px;
-	font-size: 0.9em;
-}
-
-.ohmylms-autosave-status {
-	font-size: 0.85em;
-	color: var(--ohmylms-body-text-color, #52525b);
-	margin: 0 12px;
-}
-
 .ohmylms-quiz-section-title {
 	margin: 24px 0 8px;
 	font-size: 1.2em;
-}
-
-@media (prefers-color-scheme: dark) {
-
-	.ohmylms-inline-check,
-	.ohmylms-practice-question {
-		background: transparent;
-		border-color: #3f3f46;
-	}
-
-	.ohmylms-inline-check label,
-	.ohmylms-practice-option,
-	.ohmylms-practice-match {
-		border-color: #3f3f46;
-	}
-
-	.ohmylms-inline-answer {
-		background: rgba(22, 163, 74, 0.15);
-	}
-}
-
-.ohmylms-structured-question .ohmylms-structured-part {
-	display: block;
-	margin: 12px 0;
-}
-
-.ohmylms-structured-question .ohmylms-structured-part label {
-	display: block;
-	margin-bottom: 6px;
-}
-
-.ohmylms-numerical-answer .ohmylms-text-input,
-.ohmylms-structured-question .ohmylms-structured-part .ohmylms-text-input {
-	width: 100%;
-	max-width: 420px;
-	box-sizing: border-box;
 }
 
 .ohmylms-numerical-unit {
 	margin-left: 6px;
 }
 
-/* Fast-feedback lessons and the AI tutor */
 .ohmylms-lesson-header {
 	margin: 8px 0 12px;
 }
@@ -584,14 +429,6 @@
 	background: #e5e7eb;
 }
 
-.ohmylms-lesson-seg.is-done {
-	background: #22c55e;
-}
-
-.ohmylms-lesson-seg.is-current {
-	background: #93c5fd;
-}
-
 .ohmylms-lesson-stages {
 	display: flex;
 	flex-wrap: wrap;
@@ -599,20 +436,6 @@
 	margin: 8px 0 0;
 	padding: 0;
 	list-style: none;
-}
-
-.ohmylms-lesson-stages li {
-	padding: 2px 10px;
-	border-radius: 999px;
-	background: #f3f4f6;
-	color: #6b7280;
-	font-size: 0.85em;
-}
-
-.ohmylms-lesson-stages li.is-active {
-	background: #1d4ed8;
-	color: #fff;
-	font-weight: 600;
 }
 
 .ohmylms-practice-sound {
@@ -628,23 +451,6 @@
 	border-left: 4px solid #f59e0b;
 	background: #fffbeb;
 	font-weight: 600;
-}
-
-.ohmylms-practice-feedback.is-correct,
-.ohmylms-practice-feedback.is-wrong {
-	margin-top: 14px;
-	padding: 12px 16px;
-	border-radius: 12px;
-}
-
-.ohmylms-practice-feedback.is-correct {
-	background: #dcfce7;
-	border: 2px solid #22c55e;
-}
-
-.ohmylms-practice-feedback.is-wrong {
-	background: #fee2e2;
-	border: 2px solid #ef4444;
 }
 
 .ohmylms-solution {
@@ -663,44 +469,10 @@
 	white-space: pre-wrap;
 }
 
-.ohmylms-ai-reply:empty {
-	display: none;
-}
-
-.ohmylms-ai-reply.is-waiting {
-	opacity: 0.7;
-	font-style: italic;
-}
-
-.ohmylms-ai-reply:not(.is-error):not(.is-waiting):not(:empty) {
-	padding: 10px 12px;
-	border-left: 4px solid #7c3aed;
-	background: #f5f3ff;
-	border-radius: 0 8px 8px 0;
-}
-
-.ohmylms-ai-reply.is-error {
-	color: #991b1b;
-}
-
 .ohmylms-missed {
 	margin: 8px 0 16px 20px;
 }
 
-.ohmylms-missed .is-fixed em {
-	color: #15803d;
-}
-
-.ohmylms-missed .is-open em {
-	color: #b45309;
-}
-
-.ohmylms-tutor-button[aria-disabled="true"] {
-	opacity: 0.6;
-	cursor: default;
-}
-
-/* Rewards after a lesson: XP, mastery score, medals, streak */
 .ohmylms-reward {
 	display: grid;
 	gap: 14px;
@@ -716,6 +488,8 @@
 	color: #b45309;
 }
 
+/* Positioned, so the hidden level text stays inside the scrolling frame. */
+
 .ohmylms-reward-parts {
 	display: flex;
 	flex-wrap: wrap;
@@ -723,18 +497,6 @@
 	margin: 6px 0;
 	padding: 0;
 	list-style: none;
-}
-
-.ohmylms-reward-parts li {
-	padding: 2px 10px;
-	border-radius: 999px;
-	background: #fef3c7;
-	font-size: 0.85em;
-}
-
-.ohmylms-reward progress {
-	width: 100%;
-	height: 12px;
 }
 
 .ohmylms-reward-goal {
@@ -763,27 +525,11 @@
 	font-weight: 700;
 }
 
-.ohmylms-reward-medal.is-80 {
-	background: #fed7aa;
-	color: #9a3412;
-}
-
-.ohmylms-reward-medal.is-90 {
-	background: #e5e7eb;
-	color: #374151;
-}
-
-.ohmylms-reward-medal.is-100 {
-	background: #fde68a;
-	color: #92400e;
-}
-
 .ohmylms-reward-streak {
 	margin: 0;
 	font-weight: 700;
 }
 
-/* The existing form owns submission; this footer only keeps its controls in reach. */
 .ohmylms-practice-controls {
 	position: sticky;
 	z-index: 2;
@@ -797,10 +543,6 @@
 	background: #fff;
 }
 
-.ohmylms-practice-controls [hidden] {
-	display: none;
-}
-
 .ohmylms-practice-meter {
 	display: block;
 	width: 100%;
@@ -808,7 +550,25 @@
 	accent-color: #5753fa;
 }
 
-/* Progress dots: one per problem. Shape and the hidden label carry the state as well as colour. */
+@media (prefers-color-scheme: dark) {
+
+	.ohmylms-skill-map-scroll {
+		border-color: rgba(161, 161, 170, 0.45);
+	}
+
+	.ohmylms-skill-map-subjects a {
+		border-color: rgba(161, 161, 170, 0.45);
+	}
+
+	.ohmylms-skill-map-table th {
+		border-bottom-color: rgba(161, 161, 170, 0.2);
+	}
+
+	.ohmylms-skill-map-table td {
+		border-bottom-color: rgba(161, 161, 170, 0.2);
+	}
+}
+
 .ohmylms-practice-bar {
 	display: flex;
 	align-items: center;
@@ -826,6 +586,205 @@
 	list-style: none;
 }
 
+.ohmylms-practice-restart {
+	padding: 4px 8px;
+	border: 0;
+	background: transparent;
+	color: #5753fa;
+	font: inherit;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.ohmylms-practice-skip {
+	margin-inline-start: auto;
+}
+
+.ohmylms-exam-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-top: 12px; }
+
+.ohmylms-exam-error { color: #b91c1c; }
+
+.ohmylms-exam-schedule { margin: 0; padding-left: 20px; font-size: 14px; }
+
+.ohmylms-inline-check label {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	margin: 6px 0;
+	border: 1px solid #e4e4e7;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.ohmylms-practice-reorder li {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	padding: 6px 0;
+}
+
+.ohmylms-skill-table th {
+	text-align: left;
+	padding: 8px;
+	border-bottom: 1px solid #e4e4e7;
+}
+
+.ohmylms-skill-table td {
+	text-align: left;
+	padding: 8px;
+	border-bottom: 1px solid #e4e4e7;
+}
+
+.ohmylms-guidance-card h3 {
+	margin: 0 0 12px;
+	font-size: 1.05em;
+}
+
+.ohmylms-guidance-card > p {
+	margin: 0 0 12px;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+
+.ohmylms-recommendation p {
+	margin: 0;
+	font-size: 0.9em;
+}
+
+.ohmylms-guidance-bar-label strong {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-guidance-bar-label span {
+	flex-shrink: 0;
+	font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-color-scheme: dark) {
+
+	.ohmylms-inline-check {
+		background: transparent;
+		border-color: #3f3f46;
+	}
+
+	.ohmylms-practice-question {
+		background: transparent;
+		border-color: #3f3f46;
+	}
+
+	.ohmylms-practice-option {
+		border-color: #3f3f46;
+	}
+
+	.ohmylms-practice-match {
+		border-color: #3f3f46;
+	}
+
+	.ohmylms-inline-answer {
+		background: rgba(22, 163, 74, 0.15);
+	}
+
+	.ohmylms-inline-check label {
+		border-color: #3f3f46;
+	}
+}
+
+.ohmylms-guidance-meter span {
+	display: block;
+	height: 100%;
+	border-radius: inherit;
+	background: var(--ohmylms-primary-color, #6e42d3);
+}
+
+.ohmylms-guidance-covered li {
+	font-size: 0.9em;
+}
+
+.ohmylms-guidance-covered strong {
+	display: block;
+}
+
+.ohmylms-skill-map > p {
+	margin: 0 0 8px;
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-size: 0.9em;
+}
+
+.ohmylms-skill-map-subjects a {
+	padding: 2px 10px;
+	border: 1px solid #e4e4e7;
+	border-radius: 999px;
+	font-size: 0.9em;
+	text-decoration: none;
+}
+
+/* Fast-feedback lessons and the AI tutor */
+
+.ohmylms-skill-map-legend li {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+}
+
+.ohmylms-skill-map-table th {
+	min-width: 120px;
+	padding: 8px;
+	border-bottom: 1px solid #f4f4f5;
+	text-align: left;
+	vertical-align: top;
+}
+
+.ohmylms-skill-map-table td {
+	min-width: 120px;
+	padding: 8px;
+	border-bottom: 1px solid #f4f4f5;
+	text-align: left;
+	vertical-align: top;
+}
+
+.ohmylms-placement-summary ul {
+	margin: 0 0 12px;
+	padding-left: 1.2em;
+}
+
+.ohmylms-placement-areas li {
+	margin: 0 0 6px;
+}
+
+.ohmylms-placement-start li {
+	margin: 0 0 6px;
+}
+
+.ohmylms-placement-summary li {
+	margin: 0 0 6px;
+}
+
+.ohmylms-placement-start a {
+	margin-left: 4px;
+}
+
+.ohmylms-lesson-stages li {
+	padding: 2px 10px;
+	border-radius: 999px;
+	background: #f3f4f6;
+	color: #6b7280;
+	font-size: 0.85em;
+}
+
+.ohmylms-reward-parts li {
+	padding: 2px 10px;
+	border-radius: 999px;
+	background: #fef3c7;
+	font-size: 0.85em;
+}
+
+.ohmylms-reward progress {
+	width: 100%;
+	height: 12px;
+}
+
 .ohmylms-practice-dots li {
 	position: relative;
 	box-sizing: border-box;
@@ -836,6 +795,197 @@
 	background: transparent;
 }
 
+.ohmylms-practice-question img {
+	max-width: 100%;
+	height: auto;
+}
+
+.ohmylms-exam-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
+
+.ohmylms-exam-schedule span { margin: 0 6px; color: #52525b; font-size: 12px; text-transform: uppercase; }
+
+.ohmylms-exam-day-review span { color: #7c3aed; }
+
+.ohmylms-skill-map-table thead th {
+	color: var(--ohmylms-body-text-color, #52525b);
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.ohmylms-skill-map-table tbody th {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	min-width: 110px;
+	background: var(--ohmylms-background-color, #fff);
+}
+
+.ohmylms-inline-check .the-question {
+	font-weight: 600;
+	margin: 0 0 12px;
+}
+
+.ohmylms-practice-question .the-question {
+	font-weight: 600;
+	margin: 0 0 12px;
+}
+
+.ohmylms-practice-option:focus-within {
+	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
+	outline-offset: 1px;
+}
+
+.ohmylms-inline-check .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	padding: 8px;
+	margin: 4px 0;
+}
+
+.ohmylms-practice-inputs .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	padding: 8px;
+	margin: 4px 0;
+}
+
+.ohmylms-guidance .ohmylms-recommendations {
+	display: grid;
+	gap: 12px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+}
+
+/* Rewards after a lesson: XP, mastery score, medals, streak */
+
+.ohmylms-skill-map-legend .ohmylms-map-chip {
+	width: 14px;
+	height: 14px;
+	margin: 0;
+	padding: 0;
+}
+
+.ohmylms-structured-question .ohmylms-structured-part {
+	display: block;
+	margin: 12px 0;
+}
+
+.ohmylms-numerical-answer .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	box-sizing: border-box;
+}
+
+.ohmylms-lesson-seg.is-done {
+	background: #22c55e;
+}
+
+.ohmylms-lesson-seg.is-current {
+	background: #93c5fd;
+}
+
+.ohmylms-practice-feedback.is-correct {
+	margin-top: 14px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: #dcfce7;
+	border: 2px solid #22c55e;
+}
+
+.ohmylms-practice-feedback.is-wrong {
+	margin-top: 14px;
+	padding: 12px 16px;
+	border-radius: 12px;
+	background: #fee2e2;
+	border: 2px solid #ef4444;
+}
+
+.ohmylms-ai-reply:empty {
+	display: none;
+}
+
+.ohmylms-ai-reply.is-waiting {
+	opacity: 0.7;
+	font-style: italic;
+}
+
+.ohmylms-ai-reply.is-error {
+	color: #991b1b;
+}
+
+.ohmylms-tutor-button[aria-disabled="true"] {
+	opacity: 0.6;
+	cursor: default;
+}
+
+/* The existing form owns submission; this footer only keeps its controls in reach. */
+
+.ohmylms-reward-medal.is-80 {
+	background: #fed7aa;
+	color: #9a3412;
+}
+
+.ohmylms-reward-medal.is-90 {
+	background: #e5e7eb;
+	color: #374151;
+}
+
+.ohmylms-reward-medal.is-100 {
+	background: #fde68a;
+	color: #92400e;
+}
+
+/* Progress dots: one per problem. Shape and the hidden label carry the state as well as colour. */
+
+.ohmylms-practice-controls [hidden] {
+	display: none;
+}
+
+.ohmylms-practice-hint-step + .ohmylms-practice-hint-step {
+	margin-top: 8px;
+}
+
+.ohmylms-practice-hint-step + .ohmylms-practice-more-hint {
+	margin-top: 8px;
+}
+
+.ohmylms-inline-check label:focus-within {
+	outline: 2px solid var(--ohmylms-outline-color, #6e42d3);
+	outline-offset: 1px;
+}
+
+.ohmylms-area-strong .ohmylms-guidance-meter span { background: #16a34a; }
+
+.ohmylms-area-steady .ohmylms-guidance-meter span { background: #2563eb; }
+
+.ohmylms-area-building .ohmylms-guidance-meter span { background: #d97706; }
+
+.ohmylms-skill-map-subjects a[aria-current="page"] {
+	border-color: var(--ohmylms-primary-color, #6e42d3);
+	font-weight: 600;
+}
+
+.ohmylms-structured-question .ohmylms-structured-part label {
+	display: block;
+	margin-bottom: 6px;
+}
+
+.ohmylms-lesson-stages li.is-active {
+	background: #1d4ed8;
+	color: #fff;
+	font-weight: 600;
+}
+
+.ohmylms-missed .is-fixed em {
+	color: #15803d;
+}
+
+.ohmylms-missed .is-open em {
+	color: #b45309;
+}
+
 .ohmylms-practice-dots li.is-current {
 	border-color: #5753fa;
 	box-shadow: 0 0 0 2px #dcdcff;
@@ -844,17 +994,6 @@
 .ohmylms-practice-dots li.is-right {
 	border-color: #15803d;
 	background: #15803d;
-}
-
-.ohmylms-practice-dots li.is-right::after {
-	position: absolute;
-	top: -3px;
-	left: 2px;
-	color: #fff;
-	font-size: 10px;
-	font-weight: 700;
-	line-height: 14px;
-	content: "\2713";
 }
 
 .ohmylms-practice-dots li.is-done {
@@ -872,6 +1011,17 @@
 	background: #fff;
 }
 
+.ohmylms-practice-dots li.is-right::after {
+	position: absolute;
+	top: -3px;
+	left: 2px;
+	color: #fff;
+	font-size: 10px;
+	font-weight: 700;
+	line-height: 14px;
+	content: "\2713";
+}
+
 .ohmylms-practice-dots li.is-wrong::after {
 	position: absolute;
 	top: -3px;
@@ -883,32 +1033,15 @@
 	content: "\00d7";
 }
 
-.ohmylms-practice-restart {
-	padding: 4px 8px;
-	border: 0;
-	background: transparent;
-	color: #5753fa;
-	font: inherit;
-	text-decoration: underline;
-	cursor: pointer;
+.ohmylms-structured-question .ohmylms-structured-part .ohmylms-text-input {
+	width: 100%;
+	max-width: 420px;
+	box-sizing: border-box;
 }
 
-.ohmylms-practice-skip {
-	margin-inline-start: auto;
+.ohmylms-ai-reply:not(.is-error):not(.is-waiting):not(:empty) {
+	padding: 10px 12px;
+	border-left: 4px solid #7c3aed;
+	background: #f5f3ff;
+	border-radius: 0 8px 8px 0;
 }
-
-.ohmylms-practice-hint-step + .ohmylms-practice-hint-step,
-.ohmylms-practice-hint-step + .ohmylms-practice-more-hint {
-	margin-top: 8px;
-}
-
-.ohmylms-practice-question img {
-	max-width: 100%;
-	height: auto;
-}
-.ohmylms-exam-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; margin-top: 12px; }
-.ohmylms-exam-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; }
-.ohmylms-exam-error { color: #b91c1c; }
-.ohmylms-exam-schedule { margin: 0; padding-left: 20px; font-size: 14px; }
-.ohmylms-exam-schedule span { margin: 0 6px; color: #52525b; font-size: 12px; text-transform: uppercase; }
-.ohmylms-exam-day-review span { color: #7c3aed; }

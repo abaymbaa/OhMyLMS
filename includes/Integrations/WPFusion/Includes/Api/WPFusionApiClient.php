@@ -12,6 +12,9 @@ namespace OhMyLMS\Integrations\WPFusion\Includes\Api;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin wpfusion api client implementation.
+ */
 class WPFusionApiClient {
 
 	/**
@@ -31,8 +34,8 @@ class WPFusionApiClient {
 	/**
 	 * Constructor
 	 *
-	 * @param string $api_base_url Base URL for WP Fusion API
-	 * @param string $api_key API key for authentication
+	 * @param string $api_base_url Base URL for WP Fusion API.
+	 * @param string $api_key API key for authentication.
 	 */
 	public function __construct( $api_base_url = '', $api_key = '' ) {
 		$this->api_base_url = $api_base_url;
@@ -131,8 +134,8 @@ class WPFusionApiClient {
 	/**
 	 * Apply tag to a user
 	 *
-	 * @param int   $user_id WordPress user ID
-	 * @param array $tags Tags to apply
+	 * @param int   $user_id WordPress user ID.
+	 * @param array $tags Tags to apply.
 	 * @return array Response
 	 */
 	public function apply_tags( $user_id, $tags ) {
@@ -183,8 +186,8 @@ class WPFusionApiClient {
 	/**
 	 * Remove tag from a user
 	 *
-	 * @param int   $user_id WordPress user ID
-	 * @param array $tags Tags to remove
+	 * @param int   $user_id WordPress user ID.
+	 * @param array $tags Tags to remove.
 	 * @return array Response
 	 */
 	public function remove_tags( $user_id, $tags ) {
@@ -235,8 +238,8 @@ class WPFusionApiClient {
 	/**
 	 * Update user fields
 	 *
-	 * @param int   $user_id WordPress user ID
-	 * @param array $fields Fields to update
+	 * @param int   $user_id WordPress user ID.
+	 * @param array $fields Fields to update.
 	 * @return array Response
 	 */
 	public function update_fields( $user_id, $fields ) {

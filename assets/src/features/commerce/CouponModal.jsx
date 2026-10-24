@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 import { validateCoupon } from './model.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
@@ -182,14 +183,14 @@ export function createCouponModal( readRuntime ) {
 				}
 				const errors = validateCoupon( coupon, I18n.__ );
 				if ( Object.keys( errors ).length ) {
-					alert( Object.values( errors )[ 0 ] );
+					showRequestError( Object.values( errors )[ 0 ] );
 					return;
 				}
 				setSaving( true );
 				try {
 					await createCoupon( coupon );
 				} catch ( error ) {
-					console.error( error );
+					showRequestError( error );
 				} finally {
 					setSaving( false );
 				}

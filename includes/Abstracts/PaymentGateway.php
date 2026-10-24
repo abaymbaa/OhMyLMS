@@ -4,6 +4,9 @@ namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin payment gateway implementation.
+ */
 abstract class PaymentGateway {
 
 	/**

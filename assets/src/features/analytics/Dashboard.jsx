@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createDashboard( readRuntime ) {
@@ -98,7 +99,7 @@ export function createDashboard( readRuntime ) {
 											case 3:
 												_tLocal3.p = 3;
 												_aLocal = _tLocal3.v;
-												console.error(
+												showRequestError(
 													'Error exporting course:',
 													_aLocal
 												);
@@ -131,7 +132,8 @@ export function createDashboard( readRuntime ) {
 							for (;;) {
 								switch ( _eLocal6.n ) {
 									case 0:
-										S( ! 0 ); // Falls through to the shared async state cleanup.
+										S( ! 0 );
+									// Falls through to the shared async state cleanup.
 									// Falls through to the shared async state cleanup.
 									case 1:
 										return _eLocal6.a( 2 );

@@ -93,7 +93,7 @@ class DashboardController extends RestController {
 	 * @param string $filter The filter to apply ('daily', 'monthly', 'yearly', or 'custom').
 	 * @param string $start_date The start date for the date range (optional).
 	 * @param string $end_date The end date for the date range (optional).
-	 *
+	 * .
 	 * @return array An associative array containing:
 	 * - total_earning: Total earnings from completed orders.
 	 * - total_students: Total number of students enrolled in courses.
@@ -255,6 +255,9 @@ class DashboardController extends RestController {
 	}
 
 
+	/**
+	 * Get earning overview for Dashboard controller.
+	 */
 	public function get_earning_overview() {
 		global $wpdb;
 
@@ -368,7 +371,7 @@ class DashboardController extends RestController {
 	 * - url: The URL to view the course on the site
 	 *
 	 * @param WP_REST_Request $request The request object containing filter parameters.
-	 *
+	 * .
 	 * @return array An array of courses with their associated details.
 	 */
 	public function get_courses( $request ) {
@@ -494,7 +497,7 @@ class DashboardController extends RestController {
 	 * @param string $start_date The start date for the custom filter (format: 'YYYY-MM-DD').
 	 * @param string $end_date The end date for the custom filter (format: 'YYYY-MM-DD').
 	 * @param string $status The status of the courses to fetch (default is 'publish').
-	 *
+	 * .
 	 * @return array An associative array containing:
 	 *   - 'total_reviews' (int): The total number of reviews across all courses.
 	 *   - 'total_students' (int): The total number of distinct students enrolled across all courses.
@@ -554,11 +557,14 @@ class DashboardController extends RestController {
 			$total_reviews = (int) $course_obj->get_review_count() + $total_reviews;
 			// Fetch the number of sales for the course.
 			$sales_query = $wpdb->prepare(
-				"SELECT COUNT(*) as sales_count
-				 FROM {$wpdb->prefix}ohmylms_order_items oi
-				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.ID
-				 WHERE m.meta_key = %s AND m.meta_value = %d AND p.post_status = 'ohmylms-completed'",
+				'SELECT COUNT(*) as sales_count
+				 FROM %i oi
+				 INNER JOIN %i m ON oi.order_item_id = m.order_item_id
+				 INNER JOIN %i p ON oi.order_id = p.ID
+				 WHERE m.meta_key = %s AND m.meta_value = %d AND p.post_status = \'ohmylms-completed\'',
+				$wpdb->prefix . 'ohmylms_order_items',
+				$wpdb->prefix . 'ohmylms_order_itemmeta',
+				$wpdb->prefix . 'posts',
 				'_course_id',
 				$course['ID']
 			);
@@ -567,9 +573,10 @@ class DashboardController extends RestController {
 
 			// Fetch the number of enrolled students for the course with 'enrolled' status.
 			$enrollment_query = $wpdb->prepare(
-				"SELECT COUNT(*) as enrolled_count
-                 FROM {$wpdb->prefix}ohmylms_user_enrollment ue
-                 WHERE ue.course_id = %d AND ue.status = %s",
+				'SELECT COUNT(*) as enrolled_count
+                 FROM %i ue
+                 WHERE ue.course_id = %d AND ue.status = %s',
+				$wpdb->prefix . 'ohmylms_user_enrollment',
 				$course['ID'],
 				'enrolled'  // Only count users with 'enrolled' status.
 			);
@@ -624,6 +631,9 @@ class DashboardController extends RestController {
 		return $data;
 	}
 
+	/**
+	 * Get recent courses with 30 day stats for Dashboard controller.
+	 */
 	public function get_recent_courses_with_30_day_stats() {
 		global $wpdb;
 
@@ -635,11 +645,12 @@ class DashboardController extends RestController {
 
 		// Query to get the latest 5 courses.
 		$query = $wpdb->prepare(
-			"SELECT p.ID, p.post_title, p.post_status, p.post_date
-			 FROM {$wpdb->posts} p
+			'SELECT p.ID, p.post_title, p.post_status, p.post_date
+			 FROM %i p
 			 WHERE post_type = %s AND post_status = %s
 			 ORDER BY p.post_date DESC
-			 LIMIT 5",
+			 LIMIT 5',
+			$wpdb->posts,
 			'ohmylms-course',
 			'publish'
 		);
@@ -660,29 +671,35 @@ class DashboardController extends RestController {
 
 			// Sales in the last 30 days including the current day.
 			$sales_query = $wpdb->prepare(
-				"SELECT COUNT(*)
-				 FROM {$wpdb->prefix}ohmylms_order_items oi
-				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
+				'SELECT COUNT(*)
+				 FROM %i oi
+				 INNER JOIN %i m ON oi.order_item_id = m.order_item_id
+				 INNER JOIN %i p ON oi.order_id = p.id
 				 WHERE m.meta_key = %s AND m.meta_value = %d
 				 AND p.post_date BETWEEN %s AND %s
-				 AND p.post_status IN ('ohmylms-completed')",
+				 AND p.post_status IN (\'ohmylms-completed\')',
+				$wpdb->prefix . 'ohmylms_order_items',
+				$wpdb->prefix . 'ohmylms_order_itemmeta',
+				$wpdb->prefix . 'posts',
 				'_course_id',
 				$course['ID'],
-				$start_30_days . ' 00:00:00', // Start of the 30-day period.
+				$start_30_days . ' 00:00:00',
+				// Start of the 30-day period.
 				$today . ' 23:59:59' // End of the current day (midnight).
 			);
 			$sales_count = (int) $wpdb->get_var( $sales_query );
 
 			// Enrollments in the last 30 days including the current day.
-			$enrollment_query   = $wpdb->prepare(
-				"SELECT COUNT(DISTINCT user_id)
-				 FROM {$wpdb->prefix}ohmylms_user_enrollment
+			$enrollment_query = $wpdb->prepare(
+				'SELECT COUNT(DISTINCT user_id)
+				 FROM %i
 				 WHERE course_id = %d AND status = %s
-				 AND start_date BETWEEN %s AND %s",
+				 AND start_date BETWEEN %s AND %s',
+				$wpdb->prefix . 'ohmylms_user_enrollment',
 				$course['ID'],
 				'enrolled',
-				$start_30_days . ' 00:00:00', // Start of the 30-day period.
+				$start_30_days . ' 00:00:00',
+				// Start of the 30-day period.
 				$today . ' 23:59:59' // End of the current day (midnight).
 			);
 			$enrolled_count     = (int) $wpdb->get_var( $enrollment_query );
@@ -690,18 +707,22 @@ class DashboardController extends RestController {
 			$total_enrollments += $enrolled_count;
 			// Fetch sales in the previous 30 days for sales growth calculation.
 			$prev_sales_query = $wpdb->prepare(
-				"SELECT COUNT(*)
-				 FROM {$wpdb->prefix}ohmylms_order_items oi
-				 INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-				 INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
+				'SELECT COUNT(*)
+				 FROM %i oi
+				 INNER JOIN %i m ON oi.order_item_id = m.order_item_id
+				 INNER JOIN %i p ON oi.order_id = p.id
 				 WHERE m.meta_key = %s AND m.meta_value = %d
-				 AND p.post_date BETWEEN %s AND %s",
+				 AND p.post_date BETWEEN %s AND %s',
+				$wpdb->prefix . 'ohmylms_order_items',
+				$wpdb->prefix . 'ohmylms_order_itemmeta',
+				$wpdb->prefix . 'posts',
 				'_course_id',
 				$course['ID'],
-				$prev_30_start . ' 00:00:00', // Start of the previous 30-day period.
+				$prev_30_start . ' 00:00:00',
+				// Start of the previous 30-day period.
 				$prev_30_end . ' 23:59:59' // End of the previous period (midnight).
 			);
-			$previous_sales   = (int) $wpdb->get_var( $prev_sales_query );
+			$previous_sales = (int) $wpdb->get_var( $prev_sales_query );
 
 			// Calculate sales growth rate for each course.
 			$sales_growth_rate = $previous_sales > 0
@@ -728,17 +749,21 @@ class DashboardController extends RestController {
 
 		// Fetch total sales in previous 30 days (for growth).
 		$prev_sales_query = $wpdb->prepare(
-			"SELECT COUNT(*)
-			FROM {$wpdb->prefix}ohmylms_order_items oi
-			INNER JOIN {$wpdb->prefix}ohmylms_order_itemmeta m ON oi.order_item_id = m.order_item_id
-			INNER JOIN {$wpdb->prefix}posts p ON oi.order_id = p.id
+			'SELECT COUNT(*)
+			FROM %i oi
+			INNER JOIN %i m ON oi.order_item_id = m.order_item_id
+			INNER JOIN %i p ON oi.order_id = p.id
 			WHERE m.meta_key = %s
-			AND p.post_date BETWEEN %s AND %s",
+			AND p.post_date BETWEEN %s AND %s',
+			$wpdb->prefix . 'ohmylms_order_items',
+			$wpdb->prefix . 'ohmylms_order_itemmeta',
+			$wpdb->prefix . 'posts',
 			'_course_id',
-			$prev_30_start . ' 00:00:00', // Start of the previous 30-day period.
+			$prev_30_start . ' 00:00:00',
+			// Start of the previous 30-day period.
 			$prev_30_end . ' 23:59:59' // End of the previous period (midnight).
 		);
-		$previous_sales   = (int) $wpdb->get_var( $prev_sales_query );
+		$previous_sales = (int) $wpdb->get_var( $prev_sales_query );
 
 		// Calculate growth rate.
 		$sales_growth_rate = $previous_sales > 0
@@ -747,15 +772,17 @@ class DashboardController extends RestController {
 
 		// Enrollments in the last 30 days including the current day.
 		$prev_enrollment_query = $wpdb->prepare(
-			"SELECT COUNT(DISTINCT user_id) as unique_students
-			 FROM {$wpdb->prefix}ohmylms_user_enrollment
+			'SELECT COUNT(DISTINCT user_id) as unique_students
+			 FROM %i
 			 WHERE status = %s
-			 AND start_date BETWEEN %s AND %s",
+			 AND start_date BETWEEN %s AND %s',
+			$wpdb->prefix . 'ohmylms_user_enrollment',
 			'enrolled',
-			$prev_30_start . ' 00:00:00', // Start of the previous 30-day period.
+			$prev_30_start . ' 00:00:00',
+			// Start of the previous 30-day period.
 			$prev_30_end . ' 23:59:59' // End of the previous period (midnight).
 		);
-		$previous_enrollment   = (int) $wpdb->get_var( $prev_enrollment_query );
+		$previous_enrollment = (int) $wpdb->get_var( $prev_enrollment_query );
 
 		// Calculate sales growth rate for each course.
 		$enrollment_growth_rate = $previous_enrollment > 0
@@ -783,10 +810,11 @@ class DashboardController extends RestController {
 		global $wpdb;
 
 		$query = $wpdb->prepare(
-			"SELECT COUNT(DISTINCT user_id) as unique_students
-            FROM {$wpdb->prefix}ohmylms_user_enrollment
+			'SELECT COUNT(DISTINCT user_id) as unique_students
+            FROM %i
             WHERE status = %s
-            AND start_date BETWEEN %s AND %s",
+            AND start_date BETWEEN %s AND %s',
+			$wpdb->prefix . 'ohmylms_user_enrollment',
 			'enrolled',
 			$start_date . ' 00:00:00',
 			$end_date . ' 23:59:59'
@@ -799,7 +827,7 @@ class DashboardController extends RestController {
 	/**
 	 * Get taxonomy terms for a course.
 	 *
-	 * @param Course $course The course object.
+	 * @param mixed  $course_id Course identifier.
 	 * @param string $taxonomy The taxonomy to retrieve terms for. Default is 'category'.
 	 * @return array The array of terms with their IDs and names.
 	 *
@@ -820,6 +848,9 @@ class DashboardController extends RestController {
 
 
 
+	/**
+	 * Get top performed course last 30 days for Dashboard controller.
+	 */
 	public function get_top_performed_course_last_30_days() {
 		global $wpdb;
 
@@ -827,14 +858,15 @@ class DashboardController extends RestController {
 
 		// Get the course with the highest number of enrollments in the last 30 days.
 		$top_course_query = $wpdb->prepare(
-			"
+			'
 			SELECT course_id, COUNT(*) as enrolled_count
-			FROM {$wpdb->prefix}ohmylms_user_enrollment
+			FROM %i
 			WHERE status = %s AND start_date >= %s
 			GROUP BY course_id
 			ORDER BY enrolled_count DESC
 			LIMIT 1
-		",
+		',
+			$wpdb->prefix . 'ohmylms_user_enrollment',
 			'enrolled',
 			$thirty_days_ago
 		);
@@ -857,11 +889,12 @@ class DashboardController extends RestController {
 
 		// Get completed students count for this course.
 		$completed_query = $wpdb->prepare(
-			"
+			'
 			SELECT COUNT(*)
-			FROM {$wpdb->prefix}ohmylms_user_enrollment
+			FROM %i
 			WHERE course_id = %d AND progress = %s AND start_date >= %s
-		",
+		',
+			$wpdb->prefix . 'ohmylms_user_enrollment',
 			$course_id,
 			'completed',
 			$thirty_days_ago
@@ -892,7 +925,7 @@ class DashboardController extends RestController {
 	 * @param string $filter The filter type to apply. Can be one of 'monthly', 'weekly', 'yearly', or 'custom'.
 	 * @param string $start_date The start date for the custom filter (format: 'YYYY-MM-DD'). Required if $filter is 'custom'.
 	 * @param string $end_date The end date for the custom filter (format: 'YYYY-MM-DD'). Required if $filter is 'custom'.
-	 *
+	 * .
 	 * @return string The modified SQL query with the applied filters.
 	 */
 	public function get_filter_query( $query, $filter, $start_date, $end_date ) {

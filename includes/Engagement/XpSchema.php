@@ -19,11 +19,19 @@ final class XpSchema {
 	const VERSION = '1';
 	const OPTION  = 'ohmylms_xp_schema';
 
+	/**
+	 * Table for Xp schema.
+	 *
+	 * @param mixed $name Name.
+	 */
 	public static function table( $name ) {
 		global $wpdb;
 		return $wpdb->prefix . 'ohmylms_' . $name;
 	}
 
+	/**
+	 * Ready for Xp schema.
+	 */
 	public static function ready() {
 		return get_option( self::OPTION ) === self::VERSION;
 	}
@@ -38,6 +46,9 @@ final class XpSchema {
 		);
 	}
 
+	/**
+	 * Install for Xp schema.
+	 */
 	public static function install() {
 		if ( self::ready() ) {
 			return true; }

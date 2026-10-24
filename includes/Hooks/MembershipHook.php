@@ -9,8 +9,14 @@ namespace OhMyLMS\Hooks;
 
 use OhMyLMS\Data\Membership;
 use function OhMyLMS\Commerce\ecommerce;
+/**
+ * Plugin membership hook implementation.
+ */
 class MembershipHook {
 
+	/**
+	 * Register hooks for Membership hook.
+	 */
 	public function register_hooks() {
 		\OhMyLMS\Membership\CourseSelection::init();
 		// add_action('ohmylms_after_review_order', array( __CLASS__, 'display_recurring_totals' ), 10, 2 );.
@@ -32,7 +38,7 @@ class MembershipHook {
 	/**
 	 * Display recurring totals
 	 *
-	 * @param $membership Membership
+	 * @param mixed $membership Membership.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -56,7 +62,7 @@ class MembershipHook {
 	/**
 	 * Display order details
 	 *
-	 * @param $order Order
+	 * @param mixed $order Order.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -93,7 +99,7 @@ class MembershipHook {
 	/**
 	 * Get recurring subscription totals
 	 *
-	 * @param $membership Membership
+	 * @param mixed $membership Membership.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -159,9 +165,9 @@ class MembershipHook {
 	/**
 	 * Change the thankyou text for memberships
 	 *
-	 * @param $thankyou_text
-	 * @param $order
-	 * @param $is_course
+	 * @param mixed $thankyou_text Thankyou text.
+	 * @param mixed $order Order.
+	 * @param mixed $is_course Is course.
 	 * @return mixed|string
 	 * @since 1.0.0
 	 */
@@ -187,6 +193,7 @@ class MembershipHook {
 		}
 
 		$thankyou_text = sprintf(
+			/* translators: %1$s: text value; %2$s: text value. */
 			__( '<strong>Your subscription is %1$s!</strong> A confirmation email has been sent to <br/> <span>%2$s</span>.', 'ohmylms' ),
 			$subscription->get_status(),
 			$order->get_email()
@@ -195,6 +202,12 @@ class MembershipHook {
 	}
 
 
+	/**
+	 * Show subscription info for Membership hook.
+	 *
+	 * @param mixed $order Order.
+	 * @param mixed $is_course Is course.
+	 */
 	public function show_subscription_info( $order, $is_course ) {
 		if ( $is_course ) {
 			return;
@@ -231,7 +244,7 @@ class MembershipHook {
 	 *
 	 * @param array $products The products to enroll students in.
 	 * @param int   $membership_id The ID of the membership.
-	 *
+	 * .
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -247,7 +260,7 @@ class MembershipHook {
 	 * @param string $price_html The HTML for the course price.
 	 * @param float  $course_price The price of the course.
 	 * @param object $membership The membership object.
-	 *
+	 * .
 	 * @return string The formatted price HTML.
 	 *
 	 * @since 1.0.0
@@ -271,9 +284,10 @@ class MembershipHook {
 	/**
 	 * Format the cart subtotal price HTML for memberships
 	 *
+	 * @param mixed  $cart_subtotal_html Cart subtotal html.
 	 * @param string $cart_subtotal The cart subtotal price.
 	 * @param object $membership The membership object.
-	 *
+	 * .
 	 * @return string The formatted cart subtotal price HTML.
 	 * @since 1.0.0
 	 */
@@ -299,7 +313,7 @@ class MembershipHook {
 	 * @param array  $item The cart item data.
 	 * @param string $item_key The cart item key.
 	 * @param object $cart The cart object.
-	 *
+	 * .
 	 * @return float The final discounted price after applying any coupon discounts.
 	 * @since 1.0.0
 	 */
@@ -320,7 +334,7 @@ class MembershipHook {
 	 * @param array  $item The cart item data.
 	 * @param string $item_key The cart item key.
 	 * @param object $cart The cart object.
-	 *
+	 * .
 	 * @return float The final subtotal price after adding the signup fee.
 	 * @since 1.0.0
 	 */
@@ -344,9 +358,9 @@ class MembershipHook {
 	 *
 	 * @param float  $price The original price of the item.
 	 * @param array  $item The cart item data.
-	 * @param string $cart_item_key The cart item key.
+	 * @param mixed  $cart_item Cart item.
 	 * @param object $cart The cart object.
-	 *
+	 * .
 	 * @return float The final price after adding the signup fee.
 	 * @since 1.0.0
 	 */
@@ -370,7 +384,7 @@ class MembershipHook {
 	 * @param float  $subtotal The original subtotal price.
 	 * @param object $membership The membership object.
 	 * @param object $order The order object.
-	 *
+	 * .
 	 * @return float The final subtotal price after adding the signup fee.
 	 * @since 1.0.0
 	 */

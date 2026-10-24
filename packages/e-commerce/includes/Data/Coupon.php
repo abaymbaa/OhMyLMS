@@ -5,12 +5,30 @@ namespace OhMyLMS\Commerce\Data;
 use OhMyLMS\Commerce\Abstracts\Data;
 use OhMyLMS\Commerce\DataStores;
 
+/**
+ * Plugin coupon implementation.
+ */
 class Coupon extends Data {
 
+	/**
+	 * Data store name.
+	 *
+	 * @var mixed
+	 */
 	protected string $data_store_name = 'coupon';
 
+	/**
+	 * Object type.
+	 *
+	 * @var mixed
+	 */
 	protected string $object_type = 'coupon';
 
+	/**
+	 * Data.
+	 *
+	 * @var mixed
+	 */
 	protected array $data = array(
 		'title'                => '',
 		'code'                 => '',
@@ -34,6 +52,11 @@ class Coupon extends Data {
 		'used_by'              => array(),
 	);
 
+	/**
+	 * Initialize Coupon.
+	 *
+	 * @param int $data Input data.
+	 */
 	public function __construct( $data = 0 ) {
 		parent::__construct( $data );
 		if ( is_int( $data ) ) {
@@ -82,7 +105,7 @@ class Coupon extends Data {
 	/**
 	 * Set title
 	 *
-	 * @param $title
+	 * @param mixed $name Name.
 	 * @since 1.0.0
 	 */
 	public function set_title( $name ) {
@@ -444,7 +467,7 @@ class Coupon extends Data {
 	/**
 	 * Set the course IDs associated with the coupon.
 	 *
-	 * @param array $course_ids The course IDs to set.
+	 * @param mixed $type Type.
 	 * @since 1.0.0
 	 */
 	public function set_course_id_type( $type ) {

@@ -10,6 +10,13 @@ defined( 'ABSPATH' ) || exit;
 
 /** Claude Messages API (platform.claude.com). */
 final class Anthropic implements Provider {
+	/**
+	 * Request for Anthropic.
+	 *
+	 * @param array $settings Configuration settings.
+	 * @param mixed $key Lookup key.
+	 * @param array $request REST request.
+	 */
 	public function request( array $settings, $key, array $request ) {
 		return array(
 			'url'     => 'https://api.anthropic.com/v1/messages',
@@ -32,6 +39,12 @@ final class Anthropic implements Provider {
 		);
 	}
 
+	/**
+	 * Parse for Anthropic.
+	 *
+	 * @param array $decoded Decoded.
+	 * @param mixed $status Status.
+	 */
 	public function parse( array $decoded, $status ) {
 		if ( $status >= 400 || ( $decoded['type'] ?? '' ) === 'error' ) {
 			return Errors::from_status( $status, (string) ( $decoded['error']['message'] ?? '' ) ); }

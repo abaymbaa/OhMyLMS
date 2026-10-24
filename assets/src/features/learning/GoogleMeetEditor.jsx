@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createGoogleMeetEditor( readRuntime ) {
@@ -203,7 +204,7 @@ export function createGoogleMeetEditor( readRuntime ) {
 										case 4:
 											_eLocal3.p = 4;
 											_lLocal = _eLocal3.v;
-											console.error( _lLocal );
+											showRequestError( _lLocal );
 										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
@@ -298,7 +299,7 @@ export function createGoogleMeetEditor( readRuntime ) {
 										case 4:
 											_eLocal5.p = 4;
 											t = _eLocal5.v;
-											console.error( t );
+											showRequestError( t );
 										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
@@ -452,7 +453,7 @@ export function createGoogleMeetEditor( readRuntime ) {
 										case 3:
 											_eLocal7.p = 3;
 											t = _eLocal7.v;
-											console.error(
+											showRequestError(
 												'Error fetching course data:',
 												t
 											);

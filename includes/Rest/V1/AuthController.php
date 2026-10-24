@@ -193,7 +193,7 @@ class AuthController extends RestController {
 	private function google_error_redirect_url( $error_code ) {
 		return add_query_arg(
 			array(
-				'google_error' => $error_code ?: 'google_auth_failed',
+				'google_error' => $error_code ? $error_code : 'google_auth_failed',
 			),
 			$this->dashboard_url()
 		);

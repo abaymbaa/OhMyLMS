@@ -9,17 +9,31 @@ if ( ! defined( 'ABSPATH' ) ) {
 use OhMyLMS\Integrations\GoogleMeet\Includes\Hooks;
 use OhMyLMS\Integrations\GoogleMeet\Includes\SessionReminderScheduler;
 
+/**
+ * Plugin google meet implementation.
+ */
 class GoogleMeet {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'GoogleMeet';
 
 	const Version = '1.0.0';
 
+	/**
+	 * Initialize Google meet.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();
 	}
 
+	/**
+	 * Init classes for Google meet.
+	 */
 	private function init_classes() {
 		// Register REST API routes for Google Meet settings.
         // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedFunctionFound
@@ -33,6 +47,9 @@ class GoogleMeet {
 		SessionReminderScheduler::init();
 	}
 
+	/**
+	 * Define constants for Google meet.
+	 */
 	private function define_constants() {
 		define( 'OHMYLMS_GOOGLEMEET_INTEGRATION_URL', plugins_url( '', OHMYLMS_PRO_FILE ) );
 	}

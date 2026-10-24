@@ -118,15 +118,19 @@
   padding-bottom: 8px;
 }
 
-.oml-dashboard-course-grid,
+.oml-dashboard-course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
 .oml-dashboard-skill-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
-.oml-dashboard-course,
-.oml-dashboard-skill {
+.oml-dashboard-course {
   border: 1px solid var(--dash-line);
   border-radius: 12px;
   overflow: hidden;
@@ -134,6 +138,10 @@
 }
 
 .oml-dashboard-skill {
+  border: 1px solid var(--dash-line);
+  border-radius: 12px;
+  overflow: hidden;
+  min-width: 0;
   padding: 16px;
 }
 
@@ -205,8 +213,59 @@
   margin: 16px 0;
 }
 
-.oml-student-dashboard::before,
-.oml-student-dashboard::after {
+.oml-xp-card {
+	display: grid;
+	gap: 8px;
+	padding: 16px;
+	border-radius: 16px;
+	background: var(--oml-card, #fff);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+}
+
+.oml-xp-met {
+	color: #15803d;
+	font-weight: 700;
+}
+
+.oml-xp-week {
+	display: flex;
+	align-items: flex-end;
+	gap: 6px;
+	height: 56px;
+	margin: 4px 0;
+	padding: 0;
+	list-style: none;
+}
+
+.oml-xp-bar {
+	display: block;
+	width: 100%;
+	border-radius: 4px 4px 0 0;
+	background: #f59e0b;
+}
+
+.oml-xp-goals {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+
+.oml-mastery-score {
+	display: flex;
+	align-items: baseline;
+	gap: 4px;
+}
+
+.oml-mastery-medal {
+	margin-left: 8px;
+	padding: 1px 10px;
+	border-radius: 999px;
+	background: #fde68a;
+	font-size: 0.8em;
+	font-weight: 700;
+}
+
+.oml-student-dashboard::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -222,6 +281,14 @@
 }
 
 .oml-student-dashboard::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  background: var(--dash-accent);
+  width: 700px;
+  height: 260px;
   left: auto;
   right: -300px;
   bottom: -70px;
@@ -229,28 +296,31 @@
   opacity: 0.05;
 }
 
-.oml-student-dashboard h1,
-.oml-student-dashboard h2,
-.oml-student-dashboard h3 {
+.oml-student-dashboard h1 {
   color: var(--dash-ink);
   font-family: inherit;
   line-height: 1.35;
   letter-spacing: normal;
-}
-
-.oml-student-dashboard h1 {
   font-size: 25px;
   margin: 3px 0 0;
   font-weight: 700;
 }
 
 .oml-student-dashboard h2 {
+  color: var(--dash-ink);
+  font-family: inherit;
+  line-height: 1.35;
+  letter-spacing: normal;
   font-size: 20px;
   margin: 0 0 16px;
   font-weight: 650;
 }
 
 .oml-student-dashboard h3 {
+  color: var(--dash-ink);
+  font-family: inherit;
+  line-height: 1.35;
+  letter-spacing: normal;
   font-size: 16px;
   margin: 0 0 8px;
   font-weight: 600;
@@ -428,6 +498,48 @@
   border-top: 1px solid var(--dash-line);
 }
 
+.oml-xp-card h3 {
+	margin: 0;
+}
+
+.oml-xp-card p {
+	margin: 0;
+}
+
+.oml-xp-total strong {
+	font-size: 1.8em;
+	color: #b45309;
+}
+
+.oml-xp-card progress {
+	width: 100%;
+	height: 10px;
+}
+
+.oml-dashboard-skill progress {
+	width: 100%;
+	height: 10px;
+}
+
+.oml-xp-week li {
+	display: flex;
+	flex: 1;
+	align-items: flex-end;
+	height: 100%;
+}
+
+.oml-xp-goals button {
+	padding: 4px 12px;
+	border: 1px solid #d97706;
+	border-radius: 999px;
+	background: transparent;
+	cursor: pointer;
+}
+
+.oml-mastery-score strong {
+	font-size: 1.5em;
+}
+
 .oml-student-dashboard h3 a {
   color: var(--dash-ink);
 }
@@ -475,15 +587,6 @@
   font-weight: 700;
 }
 
-.oml-dashboard-aside .ohmylms-streak-card {
-  background: #fff;
-  border: 1px solid var(--dash-line);
-  border-radius: 14px;
-  padding: 24px;
-  box-shadow: 0 4px 16px #15382b05;
-  min-width: 0;
-}
-
 .oml-student-dashboard [hidden] {
   display: none !important;
 }
@@ -511,85 +614,13 @@
 }
 
 .oml-dashboard-aside .ohmylms-streak-card {
+  background: #fff;
+  border: 1px solid var(--dash-line);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px #15382b05;
+  min-width: 0;
   margin: 0;
   padding: 20px;
-}
-
-.oml-dashboard-aside .ohmylms-streak-totals {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.oml-dashboard-aside .ohmylms-streak-week {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 4px;
-}
-
-.oml-dashboard-aside .ohmylms-streak-day {
-  font-size: 10px;
-  padding: 8px 2px;
-}
-
-.oml-student-dashboard .ohmylms-bundles {
-  background: #fff;
-  border-radius: 14px;
-  margin-top: 24px;
-  padding: 24px;
-  border: 1px solid var(--dash-line);
-}
-
-.oml-dashboard-theme-picker button[aria-pressed='true'] {
-  border-color: var(--dash-accent);
-  outline: 1px solid var(--dash-accent);
-}
-
-.oml-dashboard-tabs button[aria-selected='true'] {
-  background: var(--dash-bg);
-  color: var(--dash-accent);
-}
-
-.oml-student-dashboard a:hover {
-  text-decoration: underline;
-}
-
-.oml-dashboard-metrics > div:first-child {
-  border-left: 0;
-  padding-left: 0;
-}
-
-.oml-dashboard-aside .ohmylms-streak-totals > div {
-  display: block;
-  font-size: 11px;
-}
-
-.oml-dashboard-aside .ohmylms-streak-totals dd {
-  font-size: 20px;
-}
-
-.oml-dashboard-aside .ohmylms-streak-day small {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-}
-
-.oml-dashboard-aside .ohmylms-streak-card select {
-  max-width: 100%;
-}
-
-.oml-student-dashboard .oml-dashboard-button:hover {
-  filter: brightness(0.9);
-}
-
-.oml-dashboard-bottom-grid > .oml-dashboard-card:only-child {
-  grid-column: 1/-1;
-}
-
-.oml-student-dashboard :is(a, button, summary, [tabindex]):focus-visible {
-  outline: 3px solid var(--dash-accent);
-  outline-offset: 3px;
 }
 
 @media (max-width: 1100px) {
@@ -628,9 +659,18 @@
     left: 0;
   }
 
-  .oml-dashboard-course-grid,
-  .oml-dashboard-skill-grid,
-  .oml-dashboard-bottom-grid,
+  .oml-dashboard-course-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oml-dashboard-skill-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .oml-dashboard-bottom-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
   .oml-dashboard-aside {
     grid-template-columns: minmax(0, 1fr);
   }
@@ -680,91 +720,29 @@
 }
 
 /* XP card and mastery score */
-.oml-xp-card {
-	display: grid;
-	gap: 8px;
-	padding: 16px;
-	border-radius: 16px;
-	background: var(--oml-card, #fff);
-	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+
+.oml-dashboard-aside .ohmylms-streak-totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.oml-xp-met {
-	color: #15803d;
-	font-weight: 700;
+.oml-dashboard-aside .ohmylms-streak-week {
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
 }
 
-.oml-xp-week {
-	display: flex;
-	align-items: flex-end;
-	gap: 6px;
-	height: 56px;
-	margin: 4px 0;
-	padding: 0;
-	list-style: none;
+.oml-dashboard-aside .ohmylms-streak-day {
+  font-size: 10px;
+  padding: 8px 2px;
 }
 
-.oml-xp-bar {
-	display: block;
-	width: 100%;
-	border-radius: 4px 4px 0 0;
-	background: #f59e0b;
-}
-
-.oml-xp-goals {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 6px;
-}
-
-.oml-mastery-score {
-	display: flex;
-	align-items: baseline;
-	gap: 4px;
-}
-
-.oml-mastery-medal {
-	margin-left: 8px;
-	padding: 1px 10px;
-	border-radius: 999px;
-	background: #fde68a;
-	font-size: 0.8em;
-	font-weight: 700;
-}
-
-.oml-xp-card h3,
-.oml-xp-card p {
-	margin: 0;
-}
-
-.oml-xp-total strong {
-	font-size: 1.8em;
-	color: #b45309;
-}
-
-.oml-xp-card progress,
-.oml-dashboard-skill progress {
-	width: 100%;
-	height: 10px;
-}
-
-.oml-xp-week li {
-	display: flex;
-	flex: 1;
-	align-items: flex-end;
-	height: 100%;
-}
-
-.oml-xp-goals button {
-	padding: 4px 12px;
-	border: 1px solid #d97706;
-	border-radius: 999px;
-	background: transparent;
-	cursor: pointer;
-}
-
-.oml-mastery-score strong {
-	font-size: 1.5em;
+.oml-student-dashboard .ohmylms-bundles {
+  background: #fff;
+  border-radius: 14px;
+  margin-top: 24px;
+  padding: 24px;
+  border: 1px solid var(--dash-line);
 }
 
 .oml-mastery-medal.is-bronze {
@@ -775,7 +753,60 @@
 	background: #e5e7eb;
 }
 
+.oml-dashboard-theme-picker button[aria-pressed='true'] {
+  border-color: var(--dash-accent);
+  outline: 1px solid var(--dash-accent);
+}
+
+.oml-dashboard-tabs button[aria-selected='true'] {
+  background: var(--dash-bg);
+  color: var(--dash-accent);
+}
+
+.oml-student-dashboard a:hover {
+  text-decoration: underline;
+}
+
+.oml-dashboard-metrics > div:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.oml-dashboard-aside .ohmylms-streak-totals > div {
+  display: block;
+  font-size: 11px;
+}
+
+.oml-dashboard-aside .ohmylms-streak-totals dd {
+  font-size: 20px;
+}
+
+.oml-dashboard-aside .ohmylms-streak-day small {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+
+.oml-dashboard-aside .ohmylms-streak-card select {
+  max-width: 100%;
+}
+
 .oml-xp-goals button[aria-pressed="true"] {
 	background: #f59e0b;
 	color: #fff;
+}
+
+.oml-student-dashboard .oml-dashboard-button:hover {
+  filter: brightness(0.9);
+}
+
+.oml-dashboard-bottom-grid > .oml-dashboard-card:only-child {
+  grid-column: 1/-1;
+}
+
+.oml-student-dashboard :is(a, button, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--dash-accent);
+  outline-offset: 3px;
 }

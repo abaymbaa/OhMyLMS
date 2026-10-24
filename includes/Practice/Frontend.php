@@ -59,7 +59,7 @@ final class Frontend {
 			$clear ? 0 : absint( wp_unslash( $_POST['syllabus_id'] ?? 0 ) ),
 			$clear ? '' : sanitize_text_field( wp_unslash( $_POST['exam_date'] ?? '' ) )
 		);
-		$back = wp_get_referer() ? wp_get_referer() : home_url( '/' );
+		$back  = wp_get_referer() ? wp_get_referer() : home_url( '/' );
 		if ( is_wp_error( $saved ) ) {
 			$back = add_query_arg( 'ohmylms_exam_error', rawurlencode( $saved->get_error_message() ), $back );
 		} else {

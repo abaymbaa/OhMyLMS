@@ -1268,7 +1268,7 @@ class CourseListWidget extends Widget_Base {
 	/**
 	 * Convert Elementor settings to shortcode attributes
 	 *
-	 * @param array $settings Elementor settings
+	 * @param array $settings Elementor settings.
 	 * @return array Shortcode attributes
 	 */
 	private function convert_settings_to_shortcode_attrs( $settings ) {

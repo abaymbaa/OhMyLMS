@@ -142,6 +142,9 @@ class Question extends PostTypeData {
 		return $this->data_store->get_questions( $this );
 	}
 
+	/**
+	 * Get image id for Question.
+	 */
 	public function get_image_id() {
 		return $this->get_thumbnail_id();
 	}

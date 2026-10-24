@@ -42,7 +42,7 @@ if ( $now >= $start_time && $now <= $end_time ) {
 			</svg>
 		</div>
 		<div class="googlemeet-info">
-			<h2 class="googlemeet-title"><?php echo esc_html( $meeting_topic ?: get_the_title() ); ?></h2>
+			<h2 class="googlemeet-title"><?php echo esc_html( $meeting_topic ? $meeting_topic : get_the_title() ); ?></h2>
 			<div class="googlemeet-status <?php echo esc_attr( $meeting_status ); ?>">
 				<?php if ( 'live' === $meeting_status ) : ?>
 					<span class="status-badge live"><?php esc_html_e( 'Live Now', 'ohmylms' ); ?></span>

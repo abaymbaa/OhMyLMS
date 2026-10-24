@@ -7,9 +7,9 @@
 /**
  * Props for a text input holding a number or a {{formula}}.
  *
- * @param {number|string|undefined} value    Stored value.
- * @param {Function}                onChange Receives a number, a formula string, or undefined when empty.
- * @param {Object}                  extra    Extra input props, spread last.
+ * @param {number|string|undefined}                  value    Stored value.
+ * @param {(value: number|string|undefined) => void} onChange Receives a number, a formula string, or undefined when empty.
+ * @param {Object}                                   extra    Extra input props, spread last.
  * @return {Object} Input props.
  */
 export const numberOrFormula = ( value, onChange, extra = {} ) => ( {
@@ -33,9 +33,9 @@ export const numberOrFormula = ( value, onChange, extra = {} ) => ( {
 /**
  * A tolerance: never negative when it is a number; a formula is kept as typed.
  *
- * @param {number|string|undefined} value    Stored value.
- * @param {Function}                onChange Receives a number, a formula string, or 0 when empty.
- * @param {Object}                  extra    Extra input props.
+ * @param {number|string|undefined}                  value    Stored value.
+ * @param {(value: number|string|undefined) => void} onChange Receives a number, a formula string, or 0 when empty.
+ * @param {Object}                                   extra    Extra input props.
  * @return {Object} Input props.
  */
 export const toleranceOrFormula = ( value, onChange, extra = {} ) =>

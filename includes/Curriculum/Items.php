@@ -28,6 +28,9 @@ final class Items {
 	const LOCK            = 'ohmylms-curriculum';
 	const SUGGESTED_TYPES = array( 'framework', 'qualification', 'level', 'grade', 'section', 'subject', 'syllabus', 'strand', 'topic', 'unit', 'custom' );
 
+	/**
+	 * Table for Items.
+	 */
 	public static function table() {
 		return Schema::table( 'curriculum_items' ); }
 
@@ -36,12 +39,20 @@ final class Items {
 		return array_values( array_unique( array_filter( array_map( 'sanitize_key', (array) apply_filters( 'ohmylms_curriculum_item_types', self::SUGGESTED_TYPES ) ) ) ) );
 	}
 
+	/**
+	 * Get for Items.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function get( $id ) {
 		global $wpdb;
 		$id = (int) $id;
 		return $id > 0 ? ( $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id=%d', $id ), ARRAY_A ) ?: null ) : null;
 	}
 
+	/**
+	 * Missing for Items.
+	 */
 	public static function missing() {
 		return Access::error( 'ohmylms_curriculum_missing', __( 'Curriculum item not found.', 'ohmylms' ), 404 );
 	}
@@ -55,24 +66,36 @@ final class Items {
 		return $map;
 	}
 
-	/** @return array[] Rows ordered for display: by parent, then sibling position. */
+	/**
+	 * All for Items.
+	 *
+	 * @return array[] Rows ordered for display: by parent, then sibling position. */
 	public static function all() {
 		global $wpdb;
 		return $wpdb->get_results( 'SELECT * FROM ' . self::table() . ' ORDER BY parent_id, position, id', ARRAY_A ) ?: array();
 	}
 
-	/** Ordered child IDs of a parent. */
+	/** Ordered child IDs of a parent.
+	 *
+	 * @param mixed $parent_id Parent identifier.
+	 */
 	public static function child_ids( $parent_id ) {
 		global $wpdb;
 		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM ' . self::table() . ' WHERE parent_id=%d ORDER BY position, id', (int) $parent_id ) ) );
 	}
 
-	/** The item itself followed by every descendant ID. */
+	/** The item itself followed by every descendant ID.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function with_descendants( $id ) {
 		return array_merge( array( (int) $id ), Tree::descendants( self::parents(), $id ) );
 	}
 
-	/** Ancestor rows from the root down to the item's parent. */
+	/** Ancestor rows from the root down to the item's parent.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function path( $id ) {
 		$parents = self::parents();
 		$rows    = array();
@@ -84,7 +107,11 @@ final class Items {
 		return $rows;
 	}
 
-	/** Human readable ancestry such as "Cambridge > IGCSE > Mathematics". */
+	/** Human readable ancestry such as "Cambridge > IGCSE > Mathematics".
+	 *
+	 * @param mixed $id Id.
+	 * @param bool  $include_self Include self.
+	 */
 	public static function path_names( $id, $include_self = true ) {
 		$names = array_map(
 			static function ( $row ) {
@@ -100,7 +127,11 @@ final class Items {
 		return $names;
 	}
 
-	/** Validate and clean writable fields. With $partial, only supplied fields are returned. */
+	/** Validate and clean writable fields. With $partial, only supplied fields are returned.
+	 *
+	 * @param array $data Input data.
+	 * @param bool  $partial Partial.
+	 */
 	public static function clean( array $data, $partial = false ) {
 		$fields = array();
 		if ( array_key_exists( 'icon', $data ) ) {
@@ -144,14 +175,18 @@ final class Items {
 			if ( ! $partial || array_key_exists( $key, $data ) ) {
 				$value = trim( sanitize_text_field( (string) ( $data[ $key ] ?? '' ) ) );
 				if ( mb_strlen( $value ) > 60 ) {
-					return Access::error( 'ohmylms_curriculum_invalid', sprintf( __( '%s can have at most 60 characters.', 'ohmylms' ), $label ) ); }
+					return Access::error( 'ohmylms_curriculum_invalid', sprintf( /* translators: %s: text value. */
+					__( '%s can have at most 60 characters.', 'ohmylms' ), $label ) ); }
 				$fields[ $key ] = $value;
 			}
 		}
 		return $fields;
 	}
 
-	/** Run structural work under the global curriculum lock and one transaction. */
+	/** Run structural work under the global curriculum lock and one transaction.
+	 *
+	 * @param callable $work Work.
+	 */
 	public static function exclusive( callable $work ) {
 		global $wpdb;
 		$lock = self::LOCK . '-' . md5( $wpdb->prefix );
@@ -169,7 +204,12 @@ final class Items {
 		}
 	}
 
-	/** Write dense 0..n-1 positions for a sibling group, touching only rows that changed. */
+	/** Write dense 0..n-1 positions for a sibling group, touching only rows that changed.
+	 *
+	 * @param mixed $parent_id Parent identifier.
+	 * @param array $ordered Ordered.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function renumber( $parent_id, array $ordered ) {
 		global $wpdb;
 		$current = array();
@@ -181,6 +221,11 @@ final class Items {
 		}
 	}
 
+	/**
+	 * Create for Items.
+	 *
+	 * @param array $data Input data.
+	 */
 	public static function create( array $data ) {
 		global $wpdb;
 		$fields = self::clean( $data );
@@ -201,17 +246,23 @@ final class Items {
 	 * and a transaction (create() does, and so does a syllabus import that adds many items at once).
 	 *
 	 * @return int|\WP_Error The new item ID.
+	 * @param array $fields Fields.
+	 * @param mixed $parent_id Parent identifier.
+	 * @param mixed $position Position.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function insert_locked( array $fields, $parent_id, $position = null ) {
 		global $wpdb;
 		$parent_id = (int) $parent_id;
 		$parents   = self::parents();
 		if ( count( $parents ) >= self::MAX_ITEMS ) {
-			return Access::error( 'ohmylms_curriculum_limit', sprintf( __( 'A curriculum can have at most %d items.', 'ohmylms' ), self::MAX_ITEMS ), 409 ); }
+			return Access::error( 'ohmylms_curriculum_limit', sprintf( /* translators: %d: number. */
+			__( 'A curriculum can have at most %d items.', 'ohmylms' ), self::MAX_ITEMS ), 409 ); }
 		if ( $parent_id && ! isset( $parents[ $parent_id ] ) ) {
 			return Access::error( 'ohmylms_curriculum_invalid', __( 'The parent item does not exist.', 'ohmylms' ) ); }
 		if ( $parent_id && Tree::depth( $parents, $parent_id ) + 1 > self::MAX_DEPTH ) {
-			return Access::error( 'ohmylms_curriculum_depth', sprintf( __( 'Curriculum items can be nested at most %d levels deep.', 'ohmylms' ), self::MAX_DEPTH ) ); }
+			return Access::error( 'ohmylms_curriculum_depth', sprintf( /* translators: %d: number. */
+			__( 'Curriculum items can be nested at most %d levels deep.', 'ohmylms' ), self::MAX_DEPTH ) ); }
 		$now = current_time( 'mysql', true );
 		$row = $fields + array(
 			'uuid'       => wp_generate_uuid4(),
@@ -228,7 +279,11 @@ final class Items {
 		return $id;
 	}
 
-	/** Child IDs of a parent, leaving one item out (used while placing it). */
+	/** Child IDs of a parent, leaving one item out (used while placing it).
+	 *
+	 * @param mixed $parent_id Parent identifier.
+	 * @param mixed $except Except.
+	 */
 	private static function child_ids_except( $parent_id, $except ) {
 		return array_values(
 			array_filter(
@@ -240,7 +295,13 @@ final class Items {
 		);
 	}
 
-	/** Update details. The parent is changed only through move(). */
+	/** Update details. The parent is changed only through move().
+	 *
+	 * @param mixed $id Id.
+	 * @param array $data Input data.
+	 * @param mixed $expected_updated_at Expected updated at.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function update( $id, array $data, $expected_updated_at = null ) {
 		global $wpdb;
 		$fields = self::clean( $data, true );
@@ -272,6 +333,11 @@ final class Items {
 	/**
 	 * Move an item under a new parent (0 = root) at a zero-based index among its new siblings.
 	 * Reordering is a move to a new index under the same parent.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $parent_id Parent identifier.
+	 * @param mixed $position Position.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function move( $id, $parent_id, $position = null ) {
 		$parent_id = (int) $parent_id;
@@ -286,7 +352,8 @@ final class Items {
 					return Access::error( 'ohmylms_curriculum_cycle', __( 'An item cannot be moved under itself or one of its own descendants.', 'ohmylms' ) ); }
 				$base = $parent_id ? Tree::depth( $parents, $parent_id ) : 0;
 				if ( $base + Tree::height( $parents, $id ) > self::MAX_DEPTH ) {
-					return Access::error( 'ohmylms_curriculum_depth', sprintf( __( 'Curriculum items can be nested at most %d levels deep.', 'ohmylms' ), self::MAX_DEPTH ) ); }
+					return Access::error( 'ohmylms_curriculum_depth', sprintf( /* translators: %d: number. */
+					__( 'Curriculum items can be nested at most %d levels deep.', 'ohmylms' ), self::MAX_DEPTH ) ); }
 				global $wpdb;
 				$old_parent = (int) $parents[ (int) $id ];
 				if ( $old_parent !== $parent_id ) {
@@ -310,7 +377,10 @@ final class Items {
 		return is_wp_error( $result ) ? $result : self::get( $id );
 	}
 
-	/** What deleting an item would affect: children, content links and bundle memberships. */
+	/** What deleting an item would affect: children, content links and bundle memberships.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function dependents( $id ) {
 		global $wpdb;
 		$ids          = self::with_descendants( $id );
@@ -323,7 +393,7 @@ final class Items {
 			'children'    => count( self::child_ids( $id ) ),
 			'descendants' => count( $ids ) - 1,
 			'links'       => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'curriculum_links' ) . " WHERE item_id IN ($placeholders)", $ids ) ),
-			'own_links'   => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'curriculum_links' ) . ' WHERE item_id=%d', (int) $id ) ),
+			'own_links'   => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE item_id=%d', Schema::table( 'curriculum_links' ), (int) $id ) ),
 			'bundles'     => $bundles( $ids ),
 			'own_bundles' => $bundles( array( (int) $id ) ),
 			// Skill groups go with the item they sit under; the skills in them stay in the skill library.
@@ -338,6 +408,11 @@ final class Items {
 	 * `$confirm`; an item with children also needs a strategy for them:
 	 *   'promote' - children move up to the item's parent, keeping their order;
 	 *   'delete'  - the whole branch is removed.
+	 *
+	 * @param mixed  $id Id.
+	 * @param string $strategy Strategy.
+	 * @param bool   $confirm Confirm.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function delete( $id, $strategy = '', $confirm = false ) {
 		global $wpdb;
@@ -397,7 +472,11 @@ final class Items {
 		);
 	}
 
-	/** Remove item rows plus every link and bundle membership that points at them. */
+	/** Remove item rows plus every link and bundle membership that points at them.
+	 *
+	 * @param array $ids Ids.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function delete_rows( array $ids ) {
 		global $wpdb;
 		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
@@ -414,7 +493,11 @@ final class Items {
 		);
 	}
 
-	/** Public, JSON-safe description of one item. */
+	/** Public, JSON-safe description of one item.
+	 *
+	 * @param array $row Row.
+	 * @param array $counts Counts.
+	 */
 	public static function describe( array $row, array $counts = array() ) {
 		return array(
 			'id'          => (int) $row['id'],
@@ -438,10 +521,10 @@ final class Items {
 	public static function tree() {
 		global $wpdb;
 		$links = array();
-		foreach ( $wpdb->get_results( 'SELECT item_id, object_type, COUNT(*) AS total FROM ' . Schema::table( 'curriculum_links' ) . ' GROUP BY item_id, object_type', ARRAY_A ) as $row ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT item_id, object_type, COUNT(*) AS total FROM %i GROUP BY item_id, object_type', Schema::table( 'curriculum_links' ) ), ARRAY_A ) as $row ) {
 			$links[ (int) $row['item_id'] ][ $row['object_type'] ] = (int) $row['total']; }
 		$bundles = array();
-		foreach ( $wpdb->get_results( 'SELECT item_id, COUNT(DISTINCT bundle_id) AS total FROM ' . Schema::table( 'bundle_items' ) . " WHERE item_type='curriculum' GROUP BY item_id", ARRAY_A ) as $row ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT item_id, COUNT(DISTINCT bundle_id) AS total FROM %i WHERE item_type=\'curriculum\' GROUP BY item_id', Schema::table( 'bundle_items' ) ), ARRAY_A ) as $row ) {
 			$bundles[ (int) $row['item_id'] ] = (int) $row['total']; }
 		$rows     = self::all();
 		$children = array();

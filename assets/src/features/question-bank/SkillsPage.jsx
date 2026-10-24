@@ -2,6 +2,7 @@ import {
 	createElement,
 	Fragment,
 	useContext,
+	useCallback,
 	useEffect,
 	useState,
 } from '@wordpress/element';
@@ -364,13 +365,16 @@ function LinkedPosts( { type, legend, searchLabel, value, onChange } ) {
 	const [ titles, setTitles ] = useState( {} );
 	const [ search, setSearch ] = useState( '' );
 	const [ results, setResults ] = useState( [] );
-	const remember = ( rows ) =>
-		setTitles( ( known ) => ( {
-			...known,
-			...Object.fromEntries(
-				( rows || [] ).map( ( row ) => [ row.id, row.title ] )
-			),
-		} ) );
+	const remember = useCallback(
+		( rows ) =>
+			setTitles( ( known ) => ( {
+				...known,
+				...Object.fromEntries(
+					( rows || [] ).map( ( row ) => [ row.id, row.title ] )
+				),
+			} ) ),
+		[]
+	);
 	useEffect( () => {
 		const missing = value.filter( ( id ) => ! ( id in titles ) );
 		if ( missing.length ) {
@@ -378,7 +382,7 @@ function LinkedPosts( { type, legend, searchLabel, value, onChange } ) {
 				.then( remember )
 				.catch( () => {} );
 		}
-	}, [ type, value.join( ',' ) ] );
+	}, [ type, value, titles, remember ] );
 	useEffect( () => {
 		if ( ! search.trim() ) {
 			return setResults( [] );
@@ -392,7 +396,7 @@ function LinkedPosts( { type, legend, searchLabel, value, onChange } ) {
 				.catch( () => setResults( [] ) );
 		}, 300 );
 		return () => clearTimeout( timer );
-	}, [ type, search ] );
+	}, [ type, search, remember ] );
 	const toggle = ( id, checked ) =>
 		onChange(
 			checked

@@ -2,8 +2,14 @@
 
 namespace OhMyLMS\Integrations\Cohorts\Includes;
 
+/**
+ * Plugin hooks implementation.
+ */
 class Hooks {
 
+	/**
+	 * Initialize Hooks.
+	 */
 	public function __construct() {
 		add_filter( 'ohmylms_integrations', array( $this, 'add_chort' ) );
 		add_filter( 'ohmylms_show_sessions_menu', array( $this, 'register_session_menu' ) );
@@ -11,6 +17,11 @@ class Hooks {
 	}
 
 
+	/**
+	 * Is cohort enabled for Hooks.
+	 *
+	 * @param mixed $should_show Should show.
+	 */
 	public function is_cohort_enabled( $should_show ) {
 		$integrations = get_option( 'ohmylms_integrations' );
 		return is_array( $integrations ) && isset( $integrations['cohort']['is_enable'] ) && $integrations['cohort']['is_enable'];
@@ -42,6 +53,7 @@ class Hooks {
 	 * Check if zoom is enable
 	 *
 	 * @since 1.0.0
+	 * @param mixed $should_show Should show.
 	 */
 	public function register_session_menu( $should_show ) {
 		$integrations = get_option( 'ohmylms_integrations' );

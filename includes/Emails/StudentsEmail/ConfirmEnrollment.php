@@ -5,12 +5,21 @@ namespace OhMyLMS\Emails\StudentsEmail;
 use OhMyLMS\Emails\Emails;
 use function OhMyLMS\Commerce\ecommerce;
 
+/**
+ * Plugin confirm enrollment implementation.
+ */
 class ConfirmEnrollment {
 
+	/**
+	 * Initialize Confirm enrollment.
+	 */
 	public function __construct() {
 		add_action( 'ohmylms_after_enrolled_student', array( $this, 'trigger' ), 10 );
 	}
 
+	/**
+	 * Basic settings for Confirm enrollment.
+	 */
 	public function basic_settings(): array {
 		$basic = array(
 			'id'             => 'student_confirm_enrollment',
@@ -23,6 +32,9 @@ class ConfirmEnrollment {
 		return $basic;
 	}
 
+	/**
+	 * Default settings for Confirm enrollment.
+	 */
 	public function default_settings(): array {
 		$default_settings = array(
 			'enable'             => false,
@@ -37,6 +49,11 @@ class ConfirmEnrollment {
 		return $default_settings;
 	}
 
+	/**
+	 * Trigger for Confirm enrollment.
+	 *
+	 * @param mixed $order Order.
+	 */
 	public function trigger( $order ) {
 
 		if ( ! is_object( $order ) ) {
@@ -66,7 +83,7 @@ class ConfirmEnrollment {
 
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ), ARRAY_A );
 		$course      = false;
 
 		if ( empty( $enroll_data['course_id'] ) ) {

@@ -78,15 +78,35 @@ abstract class PaymentGateway extends SettingsApi {
 	 */
 	public $enabled;
 
+	/**
+	 * Testmode.
+	 *
+	 * @var mixed
+	 */
 	public $testmode;
 
 
+	/**
+	 * Subscription support.
+	 *
+	 * @var mixed
+	 */
 	public $subscription_support = false;
 
 
+	/**
+	 * Transaction url.
+	 *
+	 * @var mixed
+	 */
 	public $transaction_url = '';
 
 
+	/**
+	 * Settings.
+	 *
+	 * @var mixed
+	 */
 	public array $settings;
 
 	/**
@@ -104,6 +124,9 @@ abstract class PaymentGateway extends SettingsApi {
 	public array $required_checkout_fields = array();
 
 
+	/**
+	 * Get settings for Payment gateway.
+	 */
 	abstract function get_settings();
 
 
@@ -155,6 +178,9 @@ abstract class PaymentGateway extends SettingsApi {
 	}
 
 
+	/**
+	 * Init settings for Payment gateway.
+	 */
 	public function init_settings() {
 		parent::init_settings();
 	}
@@ -189,7 +215,8 @@ abstract class PaymentGateway extends SettingsApi {
 	/**
 	 * Process Payment
 	 *
-	 * @param int $order_id Order ID.
+	 * @param int  $order_id Order ID.
+	 * @param bool $is_subscription Is subscription.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -201,7 +228,9 @@ abstract class PaymentGateway extends SettingsApi {
 	/**
 	 * Process refund
 	 *
-	 * @param int $order_id Order ID.
+	 * @param int    $order_id Order ID.
+	 * @param mixed  $amount Amount.
+	 * @param string $reason Reason.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -220,6 +249,9 @@ abstract class PaymentGateway extends SettingsApi {
 	}
 
 
+	/**
+	 * Get order total for Payment gateway.
+	 */
 	protected function get_order_total() {
 
 		$total    = 0;
@@ -292,6 +324,9 @@ abstract class PaymentGateway extends SettingsApi {
 		return $this->settings[ $key ];
 	}
 
+	/**
+	 * Validate fields for Payment gateway.
+	 */
 	public function validate_fields() {
 		return true;
 	}
@@ -318,6 +353,7 @@ abstract class PaymentGateway extends SettingsApi {
 	 * It should NOT handle subscription status changes or rescheduling, only the payment attempt.
 	 *
 	 * @param int   $original_order_id The ID of the original order that created the subscription.
+	 * @param mixed $renewal_order_id Renewal order identifier.
 	 * @param float $amount The amount to charge for this renewal.
 	 * @param int   $subscription_id The ID of the ohmylms-subscription post.
 	 * @param int   $student_id The ID of the student/user.
@@ -368,6 +404,9 @@ abstract class PaymentGateway extends SettingsApi {
 	}
 
 
+	/**
+	 * Is test mode for Payment gateway.
+	 */
 	public function is_test_mode() {
 		return $this->testmode;
 	}

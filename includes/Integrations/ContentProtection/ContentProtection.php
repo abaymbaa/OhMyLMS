@@ -8,10 +8,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use OhMyLMS\Integrations\ContentProtection\Includes\Hooks;
 
+/**
+ * Plugin content protection implementation.
+ */
 class ContentProtection {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'Content Protection';
 
+	/**
+	 * Initialize Content protection.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();

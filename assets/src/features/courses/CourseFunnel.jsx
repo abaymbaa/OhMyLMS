@@ -1,7 +1,8 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseFunnel( readRuntime ) {
-	return function CourseFunnel( props ) {
+	return function CourseFunnel() {
 		const {
 			$e,
 			BH,
@@ -172,7 +173,7 @@ export function createCourseFunnel( readRuntime ) {
 											return (
 												( _eLocal2.p = 2 ),
 												( _aLocal = _eLocal2.v ),
-												console.error(
+												showRequestError(
 													'Error fetching pages:',
 													_aLocal
 												),
@@ -315,7 +316,7 @@ export function createCourseFunnel( readRuntime ) {
 											return (
 												( _eLocal8.p = 2 ),
 												( _aLocal2 = _eLocal8.v ),
-												console.error(
+												showRequestError(
 													'Error fetching courses:',
 													_aLocal2
 												),
@@ -458,7 +459,7 @@ export function createCourseFunnel( readRuntime ) {
 											return (
 												( _eLocal12.p = 2 ),
 												( _aLocal3 = _eLocal12.v ),
-												console.error(
+												showRequestError(
 													'Error fetching memberships:',
 													_aLocal3
 												),
@@ -947,7 +948,7 @@ export function createCourseFunnel( readRuntime ) {
 																		_tLocal15
 																	) {
 																		var _nLocal9,
-																			r =
+																			_rValue =
 																				_eLocal20.step_type
 																					? ( null ===
 																							( _nLocal9 =
@@ -993,7 +994,7 @@ export function createCourseFunnel( readRuntime ) {
 																					_tLocal15 +
 																					1,
 																				stepType:
-																					r,
+																					_rValue,
 																				courseName:
 																					_oLocal,
 																			}

@@ -25,6 +25,9 @@ defined( 'ABSPATH' ) || exit;
  * with the syllabus's fresh outline and the item tree (for the counts shown on the rows).
  */
 class SyllabusController extends RestController {
+	/**
+	 * Register routes for Syllabus controller.
+	 */
 	public function register_routes() {
 		$admin = array( Access::class, 'admin' );
 		$base  = '/curriculum/items/(?P<id>\d+)/syllabus';
@@ -182,6 +185,9 @@ class SyllabusController extends RestController {
 	 * The fresh outline plus the tree, merged with anything the operation wants to report. A syllabus is also a
 	 * course, so a change first brings the course up to date; if the course cannot follow, the change still stands
 	 * and the response says so in `course_error`.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $extra Extra.
 	 */
 	private function outline( $syllabus_id, array $extra = array() ) {
 		$synced  = SyllabusCourse::sync_quietly( $syllabus_id );
@@ -197,6 +203,11 @@ class SyllabusController extends RestController {
 		return rest_ensure_response( $extra + SyllabusCourse::decorate( $outline, $syllabus_id ) + array( 'items' => Items::tree() ) );
 	}
 
+	/**
+	 * Show for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		$outline = Syllabus::outline( (int) $request['id'] );
 		return is_wp_error( $outline ) ? $outline : rest_ensure_response(
@@ -207,24 +218,40 @@ class SyllabusController extends RestController {
 		);
 	}
 
+	/**
+	 * Settings for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function settings( WP_REST_Request $request ) {
 		$result = SyllabusSettings::save( (int) $request['id'], (array) $request->get_json_params() );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Publish for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function publish( WP_REST_Request $request ) {
 		$result = SyllabusSettings::publish( (int) $request['id'] );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
-	/** Give the syllabus its course if it has none, and make the course match the syllabus. */
+	/** Give the syllabus its course if it has none, and make the course match the syllabus.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function course( WP_REST_Request $request ) {
 		$syllabus = (int) $request['id'];
 		$course   = SyllabusCourse::ensure( $syllabus );
 		return is_wp_error( $course ) ? $course : $this->outline( $syllabus );
 	}
 
-	/** Which skills the course requires, and at what target: `skills` is `[{term_id, required, target}]`. */
+	/** Which skills the course requires, and at what target: `skills` is `[{term_id, required, target}]`.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function course_skills( WP_REST_Request $request ) {
 		$skills = $request->get_param( 'skills' );
 		if ( ! is_array( $skills ) ) {
@@ -246,6 +273,11 @@ class SyllabusController extends RestController {
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Import for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function import( WP_REST_Request $request ) {
 		$rows = $request->get_param( 'rows' );
 		if ( ! is_array( $rows ) ) {
@@ -257,26 +289,51 @@ class SyllabusController extends RestController {
 		return $report['applied'] ? $this->outline( (int) $request['id'], array( 'report' => $report ) ) : rest_ensure_response( array( 'report' => $report ) );
 	}
 
+	/**
+	 * Add group for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function add_group( WP_REST_Request $request ) {
 		$result = Syllabus::add_group( (int) $request['id'], $request->get_params() );
 		return is_wp_error( $result ) ? $result : $this->created( $this->outline( (int) $request['id'], array( 'group_id' => (int) $result ) ) );
 	}
 
+	/**
+	 * Update group for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update_group( WP_REST_Request $request ) {
 		$result = Syllabus::update_group( (int) $request['id'], (int) $request['group'], $request->get_params() );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Move group for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function move_group( WP_REST_Request $request ) {
 		$result = Syllabus::move_group( (int) $request['id'], (int) $request['group'], (int) $request->get_param( 'item_id' ), $request->get_param( 'position' ) );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Delete group for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function delete_group( WP_REST_Request $request ) {
 		$result = Syllabus::delete_group( (int) $request['id'], (int) $request['group'], rest_sanitize_boolean( $request->get_param( 'confirm' ) ) );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'], $result );
 	}
 
+	/**
+	 * Add skill for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function add_skill( WP_REST_Request $request ) {
 		$syllabus = (int) $request['id'];
 		$group    = (int) $request['group'];
@@ -288,21 +345,41 @@ class SyllabusController extends RestController {
 		return is_wp_error( $result ) ? $result : $this->created( $this->outline( $syllabus, array( 'skill' => $result ) ) );
 	}
 
+	/**
+	 * Update skill for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update_skill( WP_REST_Request $request ) {
 		$result = Syllabus::update_skill( (int) $request['id'], (int) $request['term'], $request->get_params() );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Remove skill for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function remove_skill( WP_REST_Request $request ) {
 		$result = Syllabus::remove_skill( (int) $request['id'], (int) $request['group'], (int) $request['term'] );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Move skill for Syllabus controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function move_skill( WP_REST_Request $request ) {
 		$result = Syllabus::move_skill( (int) $request['id'], (int) $request['group'], (int) $request['term'], (int) $request->get_param( 'group_id' ), $request->get_param( 'position' ) );
 		return is_wp_error( $result ) ? $result : $this->outline( (int) $request['id'] );
 	}
 
+	/**
+	 * Created for Syllabus controller.
+	 *
+	 * @param mixed $response Response data.
+	 */
 	private function created( $response ) {
 		if ( ! is_wp_error( $response ) ) {
 			$response->set_status( 201 ); }

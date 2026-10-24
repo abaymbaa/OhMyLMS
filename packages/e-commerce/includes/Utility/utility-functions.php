@@ -1,4 +1,10 @@
 <?php
+/**
+ * Utility functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 
 if ( ! function_exists( 'ecommerce_form_field' ) ) {

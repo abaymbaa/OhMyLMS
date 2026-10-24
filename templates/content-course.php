@@ -27,7 +27,7 @@ if ( isset( $atts ) && is_array( $atts ) && isset( $atts['layout'] ) && isset( $
 $card_class = isset( $card_class ) ? $card_class : '';
 
 ?>
-<div id="course-<?php echo the_ID(); ?>" class="course-card <?php echo esc_attr( $card_class ); ?>">
+<div id="course-<?php echo esc_attr( the_ID() ); ?>" class="course-card <?php echo esc_attr( $card_class ); ?>">
 	<?php
 	/**
 	 * Hook: ohmylms_before_courses_loop_item.

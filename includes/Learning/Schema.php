@@ -3,18 +3,32 @@ namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin schema implementation.
+ */
 final class Schema {
 	const VERSION = '1';
 	const OPTION  = 'ohmylms_learning_schema';
 
+	/**
+	 * Table for Schema.
+	 *
+	 * @param mixed $name Name.
+	 */
 	public static function table( $name ) {
 		global $wpdb;
 		return $wpdb->prefix . 'ohmylms_learning_' . $name;
 	}
 
+	/**
+	 * Ready for Schema.
+	 */
 	public static function ready() {
 		return get_option( self::OPTION ) === self::VERSION; }
 
+	/**
+	 * Install for Schema.
+	 */
 	public static function install() {
 		if ( self::ready() ) {
 			return; }

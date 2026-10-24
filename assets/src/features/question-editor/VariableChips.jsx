@@ -17,9 +17,9 @@ export const variableNames = ( settings ) =>
 /**
  * Buttons that insert a defined variable into a field, so authors need not type the braces.
  *
- * @param {Object}               props          Component properties.
- * @param {string[]}             props.names    Variable names.
- * @param {(name: string)=>void} props.onPick   Called with the chosen name.
+ * @param {Object}               props        Component properties.
+ * @param {string[]}             props.names  Variable names.
+ * @param {(name: string)=>void} props.onPick Called with the chosen name.
  * @return {Element|null} Chips, or nothing when there are no variables.
  */
 export function VariableChips( { names, onPick } ) {
@@ -38,8 +38,12 @@ export function VariableChips( { names, onPick } ) {
 					key={ name }
 					variant="tertiary"
 					size="small"
-					/* translators: %s: variable name. */
-					label={ sprintf( __( 'Insert variable %s', 'ohmylms' ), name ) }
+					/* translators: %s: variable name. */ label={
+						/* translators: %s: item label. */ sprintf(
+							__( 'Insert variable %s', 'ohmylms' ),
+							name
+						)
+					}
 					onClick={ () => onPick( name ) }
 				>
 					{ `{{${ name }}}` }

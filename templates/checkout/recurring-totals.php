@@ -18,6 +18,8 @@ defined( 'ABSPATH' ) || exit;
 <?php
 
 		/**
+		 * Membership.
+		 *
 		 *
 		 * @since 1.0.0
 		 */

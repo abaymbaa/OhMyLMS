@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createMembershipList( readRuntime ) {
@@ -158,7 +159,7 @@ export function createMembershipList( readRuntime ) {
 										case 3:
 											_tLocal3.p = 3;
 											a = _tLocal3.v;
-											console.error( a );
+											showRequestError( a );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
@@ -238,7 +239,8 @@ export function createMembershipList( readRuntime ) {
 										function () {
 											s( ! 1 );
 										}
-									); // Falls through to the shared async state cleanup.
+									);
+								// Falls through to the shared async state cleanup.
 								// Falls through to the shared async state cleanup.
 								case 2:
 									return _tLocal5.a( 2 );
@@ -275,7 +277,8 @@ export function createMembershipList( readRuntime ) {
 									S( 1 );
 									N( null );
 									_( ! 1 );
-									K( ! 0 ); // Falls through to the shared async state cleanup.
+									K( ! 0 );
+								// Falls through to the shared async state cleanup.
 								// Falls through to the shared async state cleanup.
 								case 2:
 									return _tLocal7.a( 2 );

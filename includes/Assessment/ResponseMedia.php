@@ -52,8 +52,8 @@ final class ResponseMedia {
 	 */
 	public static function script_data() {
 		return array(
-			'url'      => is_user_logged_in() ? esc_url_raw( rest_url( 'ohmylms/v1/response-media' ) ) : '',
-			'nonce'    => wp_create_nonce( 'wp_rest' ),
+			'url'        => is_user_logged_in() ? esc_url_raw( rest_url( 'ohmylms/v1/response-media' ) ) : '',
+			'nonce'      => wp_create_nonce( 'wp_rest' ),
 			'audioBytes' => self::limit( 'audio' ),
 			'videoBytes' => self::limit( 'video' ),
 		);
@@ -134,7 +134,7 @@ final class ResponseMedia {
 			$dirs['url']    = $dirs['baseurl'] . $dirs['subdir'];
 			return $dirs;
 		};
-		$mimes = array();
+		$mimes     = array();
 		foreach ( self::EXTENSIONS[ $kind ] as $allowed ) {
 			$mimes[ $allowed ] = $kind . '/' . ( 'mp3' === $allowed ? 'mpeg' : $allowed );
 		}

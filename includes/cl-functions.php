@@ -1,4 +1,10 @@
 <?php
+/**
+ * Cl functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -1166,7 +1172,6 @@ function ohmylms_get_states( $country_code ) {
 			'mafes' => __( 'Fès-Dar-Dbibegh', 'ohmylms' ),
 			'mafig' => __( 'Figuig', 'ohmylms' ),
 			'mafqh' => __( 'Fquih Ben Salah', 'ohmylms' ),
-			'mafes' => __( 'Fès-Dar-Dbibegh', 'ohmylms' ),
 			'mague' => __( 'Guelmim', 'ohmylms' ),
 			'maguf' => __( 'Guercif', 'ohmylms' ),
 			'mahaj' => __( 'El Hajeb', 'ohmylms' ),
@@ -2233,7 +2238,7 @@ function ohmylms_get_states( $country_code ) {
 /**
  * Get navigation link URL from General Settings
  *
- * @param string $link_type 'profile' or 'courses'
+ * @param string $link_type 'profile' or 'courses'.
  * @return string URL
  * @since 1.2.5
  */

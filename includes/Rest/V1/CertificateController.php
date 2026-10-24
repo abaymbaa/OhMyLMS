@@ -33,6 +33,9 @@ class CertificateController extends RestController {
 	 */
 	protected $base = 'certificates';
 
+	/**
+	 * Check certificate permission for Certificate controller.
+	 */
 	public function check_certificate_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -107,7 +110,7 @@ class CertificateController extends RestController {
 	/**
 	 * Check if a given request has access to read an item.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 *
 	 * @since 1.0.0
@@ -215,7 +218,7 @@ class CertificateController extends RestController {
 		}
 
 		$total_posts    = $posts_query->found_posts;
-		$posts_per_page = (int) ( $query_args['posts_per_page'] > 0 ? $query_args['posts_per_page'] : $total_posts );
+		$posts_per_page = (int) ( 0 < $query_args['posts_per_page'] ? $query_args['posts_per_page'] : $total_posts );
 		$max_pages      = ceil( $total_posts / $posts_per_page );
 
 		$response = rest_ensure_response( $filter_posts );
@@ -231,7 +234,7 @@ class CertificateController extends RestController {
 	/**
 	 * Create a single certificate
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -279,7 +282,7 @@ class CertificateController extends RestController {
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_CERTIFICATE_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_CERTIFICATE_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_certificate_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -323,7 +326,7 @@ class CertificateController extends RestController {
 	/**
 	 * Delete certificate
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -373,7 +376,7 @@ class CertificateController extends RestController {
 	 * @param \WP_REST_Request $request The REST request object containing the meta data.
 	 * @return bool True on success, false on failure.
 	 *
-	 * @throws DataException
+	 * @throws DataException When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
@@ -424,8 +427,8 @@ class CertificateController extends RestController {
 	/**
 	 * Upload template thumbnail from URL to media library
 	 *
-	 * @param string $image_url The URL of the template thumbnail
-	 * @param int    $post_id   The certificate post ID
+	 * @param string $image_url The URL of the template thumbnail.
+	 * @param int    $post_id The certificate post ID.
 	 * @return int|false The attachment ID or false on failure
 	 */
 	private function upload_template_thumbnail( $image_url, $post_id ) {
@@ -489,15 +492,15 @@ class CertificateController extends RestController {
 	/**
 	 * Prepare a single certificate for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Certificate|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_item_for_database( $request ) {
 		$id = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 
-		if ( $id > 0 ) {
+		if ( 0 < $id ) {
 			$certificate = ohmylms_get_certificate( $id );
 		} else {
 			$certificate = new Certificate();
@@ -526,7 +529,7 @@ class CertificateController extends RestController {
 	 *
 	 * @param array                $prepared_args The prepared arguments for the query.
 	 * @param WP_REST_Request|null $request The REST request object.
-	 *
+	 * .
 	 * @return array The filtered and prepared query arguments.
 	 * @since 1.0.0
 	 */
@@ -648,7 +651,7 @@ class CertificateController extends RestController {
 	 * Prepare a single certificate for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -679,7 +682,7 @@ class CertificateController extends RestController {
 	 * Prepare a single certificate for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -709,8 +712,8 @@ class CertificateController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $certificate
-	 * @param $request
+	 * @param mixed $certificate Certificate.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0
@@ -732,7 +735,7 @@ class CertificateController extends RestController {
 	/**
 	 * Get certificate data.
 	 *
-	 * @param Certificate $certificate
+	 * @param Certificate $certificate Certificate.
 	 * @return array
 	 *
 	 * @since 1.0.0

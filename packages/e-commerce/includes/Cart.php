@@ -13,6 +13,9 @@ require_once __DIR__ . '/Tax/EuVatApi.php';
 require_once __DIR__ . '/Tax/EuVatApiResponse.php';
 require_once __DIR__ . '/Tax/TaxCalculator.php';
 
+/**
+ * Plugin cart implementation.
+ */
 class Cart {
 
 	/**
@@ -67,6 +70,11 @@ class Cart {
 	);
 
 
+	/**
+	 * Default totals.
+	 *
+	 * @var mixed
+	 */
 	public $default_totals = array(
 		'subtotal'            => 0,
 		'discounts_total'     => 0,
@@ -87,8 +95,9 @@ class Cart {
 
 
 	/**
-	 * @throws \Exception
-	 */
+	 * Construct.
+	 *
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function __construct() {
 		$this->session = new CartSession( $this );
 		$this->session->init();
@@ -101,7 +110,7 @@ class Cart {
 	/**
 	 * Set the contents of the cart
 	 *
-	 * @param array $value - cart array
+	 * @param array $value - cart array.
 	 * @return void
 	 */
 	public function set_cart_contents( $value ) {
@@ -168,8 +177,8 @@ class Cart {
 	/**
 	 * Generate a unique id for cart
 	 *
-	 * @param int   $course_id Id of course
-	 * @param array $cart_item_data other cart item data
+	 * @param int   $course_id Id of course.
+	 * @param array $cart_item_data other cart item data.
 	 * @return string cart item key
 	 *
 	 * @since 1.0.0
@@ -264,12 +273,13 @@ class Cart {
 	/**
 	 * Add to cart functionality of course
 	 *
-	 * @param $course_id
-	 * @param int   $quantity
-	 * @param array $cart_item_data
+	 * @param mixed $course_id Course identifier.
+	 * @param int   $quantity Quantity.
+	 * @param array $cart_item_data Cart item data.
 	 * @return bool|string
 	 *
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function add_to_cart( $course_id, $quantity = 1, $cart_item_data = array() ) {
 		try {
@@ -277,12 +287,12 @@ class Cart {
 			$course_id = absint( $course_id );
 			$post_type = get_post_type( $course_id );
 			$course    = null;
-			if ( $post_type === OHMYLMS_COURSE_CPT ) {
+			if ( OHMYLMS_COURSE_CPT === $post_type ) {
 				$course = ohmylms_get_course( $course_id );
 				if ( ! $course ) {
 					throw new \Exception( __( 'Invalid course.', 'ohmylms' ) );
 				}
-			} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
+			} elseif ( OHMYLMS_MEMBERSHIP_CPT === $post_type ) {
 				$course = ohmylms_get_membership( $course_id );
 				if ( ! $course ) {
 					throw new \Exception( __( 'Invalid membership.', 'ohmylms' ) );
@@ -380,7 +390,7 @@ class Cart {
 		// Subtract total discount from cart total.
 		$discount_total = isset( $this->totals['discounts_total'] ) ? $this->totals['discounts_total'] : 0;
 		$cart_total     = $total - $discount_total;
-		if ( $cart_total < 0 ) {
+		if ( 0 > $cart_total ) {
 			$cart_total = 0;
 		}
 
@@ -548,7 +558,7 @@ class Cart {
 	/**
 	 * Empty cart data
 	 *
-	 * @param bool $clear_persistent_cart
+	 * @param bool $clear_persistent_cart Clear persistent cart.
 	 */
 	public function empty_cart( $clear_persistent_cart = true ) {
 		do_action( 'ohmylms_before_cart_emptied', $clear_persistent_cart );
@@ -573,8 +583,7 @@ class Cart {
 	/**
 	 * Gets cart total after calculation
 	 *
-	 * @param array $cart_data
-	 * @param int   $discount
+	 * @param string $context Context.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -630,8 +639,7 @@ class Cart {
 	/**
 	 * Set the total amount for a specific key in the cart totals.
 	 *
-	 * @param string $key The key to set the total for.
-	 * @param float  $value The total amount to set.
+	 * @param float $value The total amount to set.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -770,9 +778,9 @@ class Cart {
 	/**
 	 * Validate coupon
 	 *
-	 * @param object $coupon
-	 * @param array  $items_to_apply
-	 *
+	 * @param object $coupon Coupon.
+	 * @param array  $items_to_apply Items to apply.
+	 * .
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -898,7 +906,7 @@ class Cart {
 	 */
 	public function get_country_tax_rate( $country, $state = '', $vat_number = '' ) {
 		$tax_rate = TaxService::get_instance()->get_country_tax_rate( $country, $state );
-		if ( $tax_rate > 0 ) {
+		if ( 0 < $tax_rate ) {
 			if ( TaxService::get_instance()->is_eu_vat_enabled() && TaxService::get_instance()->is_eu_countries( $country ) ) {
 				if ( ! empty( $vat_number ) ) {
 					$session_data = array(
@@ -980,7 +988,7 @@ class Cart {
 	public function recalculate_totals_with_tax() {
 		// Check if we have tax information in the session.
 		$stored_totals = ecommerce()->session->get( 'cart_totals' );
-		if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && $stored_totals['tax_rate'] > 0 ) {
+		if ( ! empty( $stored_totals ) && isset( $stored_totals['tax_rate'] ) && 0 < $stored_totals['tax_rate'] ) {
 			$tax_rate = $stored_totals['tax_rate'];
 			$this->calculate_totals();
 

@@ -12,119 +12,119 @@ export function createCourseImportDialog( readRuntime ) {
 			g: ReactHooks,
 			zG,
 		} = readRuntime();
-		var t = props.isOpen,
-			n = props.onClose,
-			r = props.onAction,
-			a = ( props.modalPosition, props.cancelBtnText ),
-			o = void 0 === a ? ( 0, I18n.__ )( 'Cancel', 'ohmylms' ) : a,
-			i = props.actionBtnText,
-			l = void 0 === i ? ( 0, I18n.__ )( 'Import', 'ohmylms' ) : i,
-			c = props.loading,
-			u = void 0 !== c && c,
-			s = props.supportScorm,
-			d = void 0 !== s && s,
-			m = props.jsonImportEnabled,
-			p = void 0 === m || m,
-			f = ( function ( e, _tLocal ) {
-				if ( e === null || e === void 0 ) {
-					return {};
-				}
-				var _nLocal,
-					_rLocal,
-					_aLocal = ( function ( _eLocal, _tLocal2 ) {
-						if ( _eLocal === null || _eLocal === void 0 ) {
-							return {};
-						}
-						var _nLocal2 = {};
-						for ( var _rLocal2 in _eLocal ) {
-							if ( {}.hasOwnProperty.call( _eLocal, _rLocal2 ) ) {
-								if ( -1 !== _tLocal2.indexOf( _rLocal2 ) ) {
-									continue;
-								}
-								_nLocal2[ _rLocal2 ] = _eLocal[ _rLocal2 ];
-							}
-						}
-						return _nLocal2;
-					} )( e, _tLocal );
-				if ( Object.getOwnPropertySymbols ) {
-					var _oLocal = Object.getOwnPropertySymbols( e );
-					for ( _rLocal = 0; _rLocal < _oLocal.length; _rLocal++ ) {
-						_nLocal = _oLocal[ _rLocal ];
-						if (
-							-1 === _tLocal.indexOf( _nLocal ) &&
-							{}.propertyIsEnumerable.call( e, _nLocal )
-						) {
-							_aLocal[ _nLocal ] = e[ _nLocal ];
-						}
-					}
-				}
-				return _aLocal;
-			} )( props, DG ),
-			v = zG( ( 0, ReactHooks.useState )( null ), 2 ),
-			y = v[ 0 ],
-			_ = v[ 1 ],
-			w = zG( ( 0, ReactHooks.useState )( '' ), 2 ),
-			E = w[ 0 ],
-			S = w[ 1 ],
-			R = zG( ( 0, ReactHooks.useState )( ! 0 ), 2 ),
-			x = R[ 0 ],
-			C = R[ 1 ],
-			P = zG( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			O = P[ 0 ],
-			k = P[ 1 ],
-			j = zG( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			A = j[ 0 ],
-			M = j[ 1 ],
-			T = zG( ( 0, ReactHooks.useState )( p ? 'json' : 'scorm' ), 2 ),
-			F = T[ 0 ],
-			N = T[ 1 ];
+		var t = props.isOpen;
+		var n = props.onClose;
+		var r = props.onAction;
+		var a = ( props.modalPosition, props.cancelBtnText );
+		var o = void 0 === a ? ( 0, I18n.__ )( 'Cancel', 'ohmylms' ) : a;
+		var i = props.actionBtnText;
+		var l = void 0 === i ? ( 0, I18n.__ )( 'Import', 'ohmylms' ) : i;
+		var c = props.loading;
+		var u = void 0 !== c && c;
+		var s = props.supportScorm;
+		var d = void 0 !== s && s;
+		var m = props.jsonImportEnabled;
+		var p = void 0 === m || m;
+		var v = zG( ( 0, ReactHooks.useState )( null ), 2 );
+		var y = v[ 0 ];
+		var _ = v[ 1 ];
+		var w = zG( ( 0, ReactHooks.useState )( '' ), 2 );
+		var E = w[ 0 ];
+		var S = w[ 1 ];
+		var R = zG( ( 0, ReactHooks.useState )( ! 0 ), 2 );
+		var x = R[ 0 ];
+		var C = R[ 1 ];
+		var P = zG( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var O = P[ 0 ];
+		var k = P[ 1 ];
+		var j = zG( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var A = j[ 0 ];
+		var M = j[ 1 ];
+		var T = zG( ( 0, ReactHooks.useState )( p ? 'json' : 'scorm' ), 2 );
+		var F = T[ 0 ];
+		var N = T[ 1 ];
 		if ( ! t ) {
 			return null;
 		}
 		var D = function ( e ) {
-				var _tLocal3 = e.target.files[ 0 ];
-				if ( ! _tLocal3 ) {
-					return ( C( ! 1 ), k( ! 1 ), S( '' ), void _( null ) );
+			var _tLocal3 = e.target.files[ 0 ];
+			if ( ! _tLocal3 ) {
+				return ( C( ! 1 ), k( ! 1 ), S( '' ), void _( null ) );
+			}
+			var _nLocal3 = ! 1;
+			if ( 'json' === F ) {
+				_nLocal3 = 'application/json' === _tLocal3.type;
+			} else if ( 'scorm' === F ) {
+				_nLocal3 =
+					[
+						'application/zip',
+						'application/x-zip-compressed',
+						'multipart/x-zip',
+					].includes( _tLocal3.type ) ||
+					_tLocal3.name.toLowerCase().endsWith( '.zip' );
+			}
+			if ( _nLocal3 ) {
+				{
+					S( _tLocal3.name );
+					C( ! 0 );
+					k( ! 0 );
+					_( _tLocal3 );
 				}
-				var _nLocal3 = ! 1;
-				if ( 'json' === F ) {
-					_nLocal3 = 'application/json' === _tLocal3.type;
-				} else if ( 'scorm' === F ) {
-					_nLocal3 =
-						[
-							'application/zip',
-							'application/x-zip-compressed',
-							'multipart/x-zip',
-						].includes( _tLocal3.type ) ||
-						_tLocal3.name.toLowerCase().endsWith( '.zip' );
+			} else {
+				{
+					C( ! 1 );
+					k( ! 1 );
+					S( '' );
+					_( null );
 				}
-				if ( _nLocal3 ) {
-					{
-						S( _tLocal3.name );
-						C( ! 0 );
-						k( ! 0 );
-						_( _tLocal3 );
+			}
+		};
+		var W = function ( e ) {
+			if ( 'json' !== e || p ) {
+				{
+					N( e );
+					_( null );
+					S( '' );
+					C( ! 0 );
+					k( ! 1 );
+				}
+			}
+		};
+		var f = ( function ( e, _tLocal ) {
+			if ( e === null || e === void 0 ) {
+				return {};
+			}
+			var _nLocal;
+			var _rLocal;
+			var _aLocal = ( function ( _eLocal, _tLocal2 ) {
+				if ( _eLocal === null || _eLocal === void 0 ) {
+					return {};
+				}
+				var _nLocal2 = {};
+				for ( var _rLocal2 in _eLocal ) {
+					if ( {}.hasOwnProperty.call( _eLocal, _rLocal2 ) ) {
+						if ( -1 !== _tLocal2.indexOf( _rLocal2 ) ) {
+							continue;
+						}
+						_nLocal2[ _rLocal2 ] = _eLocal[ _rLocal2 ];
 					}
-				} else {
-					{
-						C( ! 1 );
-						k( ! 1 );
-						S( '' );
-						_( null );
+				}
+				return _nLocal2;
+			} )( e, _tLocal );
+			if ( Object.getOwnPropertySymbols ) {
+				var _oLocal = Object.getOwnPropertySymbols( e );
+				for ( _rLocal = 0; _rLocal < _oLocal.length; _rLocal++ ) {
+					_nLocal = _oLocal[ _rLocal ];
+					if (
+						-1 === _tLocal.indexOf( _nLocal ) &&
+						{}.propertyIsEnumerable.call( e, _nLocal )
+					) {
+						_aLocal[ _nLocal ] = e[ _nLocal ];
 					}
 				}
-			},
-			W = function ( e ) {
-				if ( 'json' !== e || p ) {
-					{
-						N( e );
-						_( null );
-						S( '' );
-						C( ! 0 );
-						k( ! 1 );
-					}
-				}
-			};
+			}
+			return _aLocal;
+		} )( props, DG );
 		return (
 			<React.Fragment>
 				{ t && (

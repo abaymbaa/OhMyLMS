@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
 final class SyllabusSettings {
 	const META = '_ohmylms_syllabus_settings';
 
+	/**
+	 * Defaults for Syllabus settings.
+	 */
 	public static function defaults() {
 		return array(
 			'grade'           => '',
@@ -24,16 +27,33 @@ final class SyllabusSettings {
 		);
 	}
 
+	/**
+	 * Category allowed for Syllabus settings.
+	 *
+	 * @param mixed $category Category.
+	 * @param array $categories Categories.
+	 */
 	public static function category_allowed( $category, array $categories ) {
 		return '' === $category || in_array( $category, $categories, true );
 	}
 
+	/**
+	 * Check category for Syllabus settings.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $fields Fields.
+	 */
 	public static function check_category( $syllabus_id, array $fields ) {
 		if ( ! isset( $fields['category'] ) || self::category_allowed( $fields['category'], self::get( $syllabus_id )['categories'] ) ) {
 			return true; }
 		return Access::error( 'ohmylms_syllabus_category_unknown', __( 'Choose a category created on the syllabus home.', 'ohmylms' ) );
 	}
 
+	/**
+	 * Clean for Syllabus settings.
+	 *
+	 * @param array $data Input data.
+	 */
 	public static function clean( array $data ) {
 		$clean = array();
 		foreach ( array( 'grade', 'subject', 'language' ) as $field ) {
@@ -85,12 +105,23 @@ final class SyllabusSettings {
 		return $clean;
 	}
 
+	/**
+	 * Get for Syllabus settings.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	public static function get( $syllabus_id ) {
 		$course = SyllabusCourse::course_id( $syllabus_id );
 		$saved  = $course ? get_post_meta( $course, self::META, true ) : array();
 		return ( is_array( $saved ) ? $saved : array() ) + self::defaults();
 	}
 
+	/**
+	 * Save for Syllabus settings.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $data Input data.
+	 */
 	public static function save( $syllabus_id, array $data ) {
 		$clean = self::clean( $data );
 		if ( is_wp_error( $clean ) ) {
@@ -120,7 +151,8 @@ final class SyllabusSettings {
 							if ( empty( $skill['category_assigned'] ) && in_array( $group['name'], self::get( $syllabus_id )['categories'], true ) ) {
 								$category = $group['name']; }
 							if ( in_array( $category, $removed, true ) ) {
-								return Access::error( 'ohmylms_syllabus_category_used', sprintf( __( 'The category “%s” is used by skills. Change their category before removing it.', 'ohmylms' ), $category ), 409 );
+								return Access::error( 'ohmylms_syllabus_category_used', sprintf( /* translators: %s: text value. */
+								__( 'The category “%s” is used by skills. Change their category before removing it.', 'ohmylms' ), $category ), 409 );
 							}
 						}
 					}
@@ -133,6 +165,11 @@ final class SyllabusSettings {
 		return true;
 	}
 
+	/**
+	 * Publish for Syllabus settings.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	public static function publish( $syllabus_id ) {
 		$course = SyllabusCourse::course_id( $syllabus_id );
 		if ( ! $course ) {

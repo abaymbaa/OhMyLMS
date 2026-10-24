@@ -598,6 +598,7 @@ class DashboardWidget extends Widget_Base {
 	 * Render widget output on the frontend
 	 *
 	 * @return void
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	protected function render() {
 		// Enqueue frontend assets.

@@ -16,10 +16,18 @@ defined( 'ABSPATH' ) || exit;
 class Storefront {
 
 
+	/**
+	 * Init for Storefront.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles for Storefront.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-storefront.css' ),

@@ -270,7 +270,7 @@ class AssignmentController extends RestController {
 		$total_posts          = $posts_query->found_posts;
 		$total_filtered_posts = $total_posts;
 
-		if ( $total_posts < 1 && $page > 1 ) {
+		if ( 1 > $total_posts && 1 < $page ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
 			$count_query->query( $query_args );
@@ -331,7 +331,7 @@ class AssignmentController extends RestController {
 		}
 		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
 
-		if ( $page > 1 ) {
+		if ( 1 < $page ) {
 			$prev_page = $page - 1;
 			if ( $prev_page > $max_pages ) {
 				$prev_page = $max_pages;
@@ -350,7 +350,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Add assignment
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -389,7 +389,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Update assignment settings
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -452,7 +452,7 @@ class AssignmentController extends RestController {
 	 * @param \WP_REST_Request $request The REST request object containing the meta data.
 	 * @return bool True on success, false on failure.
 	 *
-	 * @throws DataException
+	 * @throws DataException When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
@@ -624,7 +624,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Save assignment settings
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -640,14 +640,14 @@ class AssignmentController extends RestController {
 	/**
 	 * Get assignment content
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_ASSIGNMENT_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_assignment_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -663,14 +663,14 @@ class AssignmentController extends RestController {
 	/**
 	 * Get assignment content
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
 	public function get_assignment_report( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_ASSIGNMENT_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_assignment_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -687,11 +687,16 @@ class AssignmentController extends RestController {
 	}
 
 
+	/**
+	 * Get attempt report for Assignment controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_attempt_report( $request ) {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['user_id'];
 		$post       = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_ASSIGNMENT_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$assignment           = ohmylms_get_assignment( $post->ID );
@@ -722,12 +727,17 @@ class AssignmentController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Update attempt report for Assignment controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function update_attempt_report( $request ) {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['user_id'];
 
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_ASSIGNMENT_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_ASSIGNMENT_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_assignemnt_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -789,7 +799,7 @@ class AssignmentController extends RestController {
 		if ( (int) ( $completion_rate ) === 100 && (int) ( $previous_completion_rate ) !== 100 && ! \OhMyLMS\Learning\CourseProgram::managed( $attempt_id, $course_id ) ) {
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-			$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND course_id = %d", $attempt_id, $course_id ), ARRAY_A );
+			$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND course_id = %d', $table_name, $attempt_id, $course_id ), ARRAY_A );
 			if ( isset( $enroll_data['order_id'] ) ) {
 				do_action( 'ohmylms_course_completed', $attempt_id, $course_id, $enroll_data['order_id'] );
 			}
@@ -801,7 +811,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Delete a single assignment.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -840,7 +850,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Save assignment
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -852,7 +862,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Prepare a assignment for database.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return Assignment
 	 *
 	 * @since 1.0.0
@@ -891,7 +901,7 @@ class AssignmentController extends RestController {
 	/**
 	 * Get assignment data.
 	 *
-	 * @param Assignment $assignment
+	 * @param Assignment $assignment Assignment.
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -948,7 +958,7 @@ class AssignmentController extends RestController {
 	 * Prepare a single assignment for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -977,8 +987,8 @@ class AssignmentController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $product
-	 * @param $request
+	 * @param mixed $product Product.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0

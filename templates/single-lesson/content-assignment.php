@@ -57,34 +57,34 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 	<?php the_post(); ?>
 
 	<div class="ohmylms-lesson-content-body content-type-assignment" >
-		<h1><?php echo $assignment->get_name(); ?></h1>
+		<h1><?php echo esc_html( $assignment->get_name() ); ?></h1>
 
 		<ul class="ohmylms-assignment-quiz-meta">
 			<?php if ( $assignment->get_enable_time_limit() && $assignment->get_time_limit_type() && $assignment->get_time_limit() ) { ?>
 				<li class="duratioin">
 					<strong><?php echo esc_html__( 'Duration: ', 'ohmylms' ); ?></strong>
-				<?php echo $assignment->get_time_limit(); ?>  <?php echo $assignment->get_time_limit_type(); ?>
+				<?php echo esc_html( $assignment->get_time_limit() ); ?>  <?php echo esc_html( $assignment->get_time_limit_type() ); ?>
 				</li>
 			<?php } ?>
 			
 			<?php if ( $deadline ) : ?>
 				<li class="deadline">
 					<strong><?php echo esc_html__( 'Deadline: ', 'ohmylms' ); ?></strong>
-					<?php echo $formattedTimer; ?>
+					<?php echo esc_html( $formattedTimer ); ?>
 				</li>
 			<?php endif; ?>
 
 			<?php if ( ! empty( $assignment->get_total_points() ) ) { ?>
 				<li class="total-marks">
 					<strong><?php echo esc_html__( 'Total Marks: ', 'ohmylms' ); ?></strong>
-					<?php echo $assignment->get_total_points(); ?>
+					<?php echo esc_html( $assignment->get_total_points() ); ?>
 				</li>
 			<?php } ?>
 
 			<?php if ( ! empty( $assignment->get_maximum_pass_points() ) ) { ?>
 				<li class="pass-mark">
 					<strong><?php echo esc_html__( 'Passing Mark: ', 'ohmylms' ); ?></strong>
-					<?php echo $assignment->get_maximum_pass_points(); ?>
+					<?php echo esc_html( $assignment->get_maximum_pass_points() ); ?>
 				</li>
 			<?php } ?>
 		</ul>
@@ -110,11 +110,11 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 								<span class="resource-icon">
 								<?php include OHMYLMS_DIR . '/assets/images/icon/file-icon.php'; ?>
 								</span>
-								<span class="resource-name"><?php echo $resource['name']; ?></span>
-								<span class="resource-size"><?php echo $resource['size']; ?></span>
+								<span class="resource-name"><?php echo esc_html( $resource['name'] ); ?></span>
+								<span class="resource-size"><?php echo esc_html( $resource['size'] ); ?></span>
 							</div>
 
-							<a href="<?php echo $resource['url']; ?>" class="resource-action" download>
+							<a href="<?php echo esc_url( $resource['url'] ); ?>" class="resource-action" download>
 							<?php include OHMYLMS_DIR . '/assets/images/icon/download-icon.php'; ?>
 							</a>
 						</li>
@@ -138,8 +138,8 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 				<div class="ohmylms-timer submission-time-limit" style="display: none;">
 					<span class="clock">
 						<?php include OHMYLMS_DIR . '/assets/images/icon/clock-icon.php'; ?>
-						<span class="timer-display" data-timer="<?php echo $timeInMinutes; ?>">
-							<!-- <?php echo $formattedTimer; ?>:00 -->
+						<span class="timer-display" data-timer="<?php echo esc_attr( $timeInMinutes ); ?>">
+							<!-- <?php echo esc_html( $formattedTimer ); ?>:00 -->
 						</span>
 					</span>
 
@@ -182,7 +182,7 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 								name="ohmylms-submission-file" 
 								draggable="true"
 								accept=".jpg,.jpeg,.png,.webp,.pdf,.doc,.docx,.xls,.xlsx,.csv,.mp3,.mp4,.zip"
-								upload-limit="<?php echo $assignment->get_max_file_size_limit(); ?>"
+								upload-limit="<?php echo esc_attr( $assignment->get_max_file_size_limit() ); ?>"
 								aria-describedby="submission-max-file-limit submission-instructions"
 							>
 							<span class="ohmylms-button" role="button" aria-hidden="true">
@@ -195,7 +195,8 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 						</label>
 
 						<span class="submission-max-file-limit">
-							<?php printf( __( 'Max File size: %sMB', 'ohmylms' ), $assignment->get_max_file_size_limit() ); ?>
+							<?php printf( /* translators: %s: text value. */
+							__( 'Max File size: %sMB', 'ohmylms' ), $assignment->get_max_file_size_limit() ); ?>
 						</span>
 					</div>
 				<?php } ?>
@@ -232,8 +233,8 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 										<span class="resource-icon">
 											<?php include OHMYLMS_DIR . '/assets/images/icon/file-icon.php'; ?>
 										</span>
-										<span class="resource-name"><?php echo $name; ?></span>
-										<span class="resource-size"><?php echo $file_size; ?></span>
+										<span class="resource-name"><?php echo esc_html( $name ); ?></span>
+										<span class="resource-size"><?php echo esc_html( $file_size ); ?></span>
 									</div>
 
 									<a href="#" class="resource-action" title="Remove">
@@ -247,14 +248,15 @@ $formattedTimer = str_pad( $hours, 2, '0', STR_PAD_LEFT ) . 'h ' . str_pad( $min
 					</ul>
 
 					<span class="submission-max-file-limit-alert" style="display: none">
-						<?php printf( __( 'File size exceeds the allowed limit of : %sMB', 'ohmylms' ), $assignment->get_max_file_size_limit() ); ?>
+						<?php printf( /* translators: %s: text value. */
+						__( 'File size exceeds the allowed limit of : %sMB', 'ohmylms' ), $assignment->get_max_file_size_limit() ); ?>
 					</span>
 				</div>
 				<input type="hidden" name="action" value="save_assignment_submission_file">
-				<input type="hidden" name="assignment_id" value="<?php echo $assignment->get_id(); ?>">
-				<input type="hidden" name="ohmylms_assignment_id" value="<?php echo $assignment->get_id(); ?>">
-				<input type="hidden" name="ohmylms_assignment_deadline" value="<?php echo $deadline; ?>">
-				<input type="hidden" name="course_id" value="<?php echo ohmylms_get_course_by_content_id( $assignment->get_id() ); ?>">
+				<input type="hidden" name="assignment_id" value="<?php echo esc_attr( $assignment->get_id() ); ?>">
+				<input type="hidden" name="ohmylms_assignment_id" value="<?php echo esc_attr( $assignment->get_id() ); ?>">
+				<input type="hidden" name="ohmylms_assignment_deadline" value="<?php echo esc_attr( $deadline ); ?>">
+				<input type="hidden" name="course_id" value="<?php echo esc_attr( ohmylms_get_course_by_content_id( $assignment->get_id() ) ); ?>">
 
 				<div class="ohmylms-form-group submission-submit">
 					<p class="assignment-submit-alert">

@@ -11,10 +11,18 @@ defined( 'ABSPATH' ) || exit;
 /** Additive, independently versioned school schema. Existing learning tables stay intact. */
 final class Schema {
 	const VERSION = '2';
+	/**
+	 * Table for Schema.
+	 *
+	 * @param mixed $name Name.
+	 */
 	public static function table( $name ) {
 		global $wpdb;
 		return $wpdb->prefix . 'ohmylms_' . $name;
 	}
+	/**
+	 * Install for Schema.
+	 */
 	public static function install() {
 		if ( get_option( 'ohmylms_school_schema' ) === self::VERSION ) {
 			return; }

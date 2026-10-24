@@ -101,11 +101,12 @@ export function createDashboardStats( readRuntime ) {
 															}
 															isBorderLess={ ! 0 }
 														>
-															{ 0 !=
-																( l === null ||
-																l === void 0
+															{ Number(
+																l === null ||
+																	l === void 0
 																	? void 0
-																	: l.sales_growth_rate ) && (
+																	: l.sales_growth_rate
+															) !== 0 && (
 																<svg
 																	style={ {
 																		transform:
@@ -305,11 +306,12 @@ export function createDashboardStats( readRuntime ) {
 															}
 															isBorderLess={ ! 0 }
 														>
-															{ 0 !=
-																( l === null ||
-																l === void 0
+															{ Number(
+																l === null ||
+																	l === void 0
 																	? void 0
-																	: l.enrollment_growth_rate ) && (
+																	: l.enrollment_growth_rate
+															) !== 0 && (
 																<svg
 																	style={ {
 																		transform:

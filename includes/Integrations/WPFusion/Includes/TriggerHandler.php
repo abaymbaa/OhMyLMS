@@ -14,6 +14,9 @@ use OhMyLMS\Integrations\WPFusion\Includes\Api\WPFusionApiClient;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin trigger handler implementation.
+ */
 class TriggerHandler {
 
 	/**
@@ -74,8 +77,8 @@ class TriggerHandler {
 	 * Cancel student enrollment when an order is refunded.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\OrderRefund $refund The refund object.
-	 * @param \OhMyLMS\Commerce\Data\Order       $order  The order object.
-	 *
+	 * @param \OhMyLMS\Commerce\Data\Order       $order The order object.
+	 * .
 	 * @since 1.0.0
 	 */
 	public function cancel_student_enrollment( $refund, $order ) {
@@ -85,7 +88,7 @@ class TriggerHandler {
 		$student_id     = $order->get_student_id();
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ), ARRAY_A );
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
 		}
@@ -108,14 +111,14 @@ class TriggerHandler {
 	 * Delete order.
 	 *
 	 * @param int $order_id The order ID.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function rest_delete_order( $order_id ) {
 		global $wpdb;
 
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE order_id = %d", $order_id ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE order_id = %d', $table_name, $order_id ), ARRAY_A );
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
 		}
@@ -135,7 +138,7 @@ class TriggerHandler {
 	 * Trigger after a course is deleted
 	 *
 	 * @param int $course_id The ID of the course.
-	 *
+	 * .
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -146,7 +149,7 @@ class TriggerHandler {
 
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE course_id = %d", $course_id ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE course_id = %d', $table_name, $course_id ), ARRAY_A );
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
 		}
@@ -166,9 +169,9 @@ class TriggerHandler {
 	 * Trigger after an assignment is reviewed (pass/fail)
 	 *
 	 * @param int    $assignment_id Assignment ID.
-	 * @param int    $course_id     Course ID.
-	 * @param int    $student_id    Student ID.
-	 * @param string $status        Review status (pass/fail).
+	 * @param int    $course_id Course ID.
+	 * @param int    $student_id Student ID.
+	 * @param string $status Review status (pass/fail).
 	 * @return void
 	 */
 	public function after_assignment_review( $assignment_id, $course_id, $student_id, $status ) {
@@ -204,7 +207,7 @@ class TriggerHandler {
 		$student_id = $order->get_student_id();
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ), ARRAY_A );
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
 		}
@@ -223,9 +226,9 @@ class TriggerHandler {
 	/**
 	 * Trigger when course completion rate is updated
 	 *
-	 * @param int   $student_id       Student ID.
-	 * @param int   $course_id        Course ID.
-	 * @param float $completion_rate  Completion rate percentage.
+	 * @param int   $student_id Student ID.
+	 * @param int   $course_id Course ID.
+	 * @param float $completion_rate Completion rate percentage.
 	 * @return void
 	 */
 	public function course_completion_rate( $student_id, $course_id, $completion_rate ) {
@@ -244,9 +247,9 @@ class TriggerHandler {
 	/**
 	 * Handle course completed event
 	 *
-	 * @param int $student_id Student ID
-	 * @param int $course_id Course ID
-	 * @param int $order_id Order ID
+	 * @param int $student_id Student ID.
+	 * @param int $course_id Course ID.
+	 * @param int $order_id Order ID.
 	 * @since 1.0.0
 	 */
 	public function handle_course_completed( $student_id, $course_id, $order_id = 0 ) {
@@ -264,8 +267,8 @@ class TriggerHandler {
 	/**
 	 * Handle course enrollment event
 	 *
-	 * @param int $student_id Student ID
-	 * @param int $course_id Course ID
+	 * @param int $student_id Student ID.
+	 * @param int $course_id Course ID.
 	 * @since 1.0.0
 	 */
 	public function handle_manual_course_enrollment( $student_id, $course_id ) {
@@ -283,7 +286,7 @@ class TriggerHandler {
 	/**
 	 * Handle enrollment event from order completion
 	 *
-	 * @param int|object $order Order ID or Order object
+	 * @param int|object $order Order ID or Order object.
 	 * @since 1.0.0
 	 */
 	public function handle_enrollment( $order ) {
@@ -297,7 +300,7 @@ class TriggerHandler {
 		$student_id = $order->get_student_id();
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d", $student_id, $order->get_id() ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ), ARRAY_A );
 
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
@@ -316,8 +319,8 @@ class TriggerHandler {
 	/**
 	 * Handle course unenrollment event
 	 *
-	 * @param int $student_id Student ID
-	 * @param int $course_id Course ID
+	 * @param int $student_id Student ID.
+	 * @param int $course_id Course ID.
 	 * @since 1.0.0
 	 */
 	public function handle_course_unenrollment( $student_id, $course_id ) {
@@ -334,9 +337,9 @@ class TriggerHandler {
 	/**
 	 * Handle lesson completed event
 	 *
-	 * @param int $lesson_id Lesson ID
-	 * @param int $course_id Course ID
-	 * @param int $student_id Student ID
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
+	 * @param int $student_id Student ID.
 	 * @since 1.0.0
 	 */
 	public function handle_lesson_completed( $lesson_id, $course_id, $student_id ) {
@@ -354,10 +357,10 @@ class TriggerHandler {
 	/**
 	 * Handle quiz submitted event
 	 *
-	 * @param int   $quiz_id Quiz ID
-	 * @param int   $course_id Course ID
-	 * @param int   $student_id Student ID
-	 * @param array $argc Additional arguments
+	 * @param int   $quiz_id Quiz ID.
+	 * @param int   $course_id Course ID.
+	 * @param int   $student_id Student ID.
+	 * @param array $argc Additional arguments.
 	 * @since 1.0.0
 	 */
 	public function handle_quiz_submitted( $quiz_id, $course_id, $student_id, $argc ) {
@@ -376,9 +379,9 @@ class TriggerHandler {
 	/**
 	 * Handle assignment submitted event
 	 *
-	 * @param int $assignment_id Assignment ID
-	 * @param int $course_id Course ID
-	 * @param int $student_id Student ID
+	 * @param int $assignment_id Assignment ID.
+	 * @param int $course_id Course ID.
+	 * @param int $student_id Student ID.
 	 * @since 1.0.0
 	 */
 	public function handle_assignment_submitted( $assignment_id, $course_id, $student_id ) {
@@ -396,9 +399,9 @@ class TriggerHandler {
 	/**
 	 * Process triggers for a given event
 	 *
-	 * @param string $event_name Event name (WordPress action hook)
-	 * @param array  $event_data Event data
-	 * @param string $trigger_type Trigger type for matching (e.g., 'course_completed', 'lesson_completed')
+	 * @param string $event_name Event name (WordPress action hook).
+	 * @param array  $event_data Event data.
+	 * @param string $trigger_type Trigger type for matching (e.g., 'course_completed', 'lesson_completed').
 	 * @since 1.0.0
 	 */
 	private function process_triggers( $event_name, $event_data, $trigger_type = '' ) {
@@ -430,12 +433,13 @@ class TriggerHandler {
 		// 2. Multiple events: trigger_event = 'multiple' with actions array.
 		$triggers = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$table_name} 
-                 WHERE (trigger_event = %s OR trigger_event = 'multiple')
-                 AND crm_type = 'wpfusion'
+				'SELECT * FROM %i
+                 WHERE (trigger_event = %s OR trigger_event = \'multiple\')
+                 AND crm_type = \'wpfusion\'
                  AND content_type = %s 
                  AND content_id = %d 
-                 AND status = 'active'",
+                 AND status = \'active\'',
+				$table_name,
 				$trigger_type,
 				$content_type,
 				$content_id
@@ -501,8 +505,8 @@ class TriggerHandler {
 	/**
 	 * Queue integration for background processing
 	 *
-	 * @param array $trigger Trigger data
-	 * @param array $event_data Event data
+	 * @param array $trigger Trigger data.
+	 * @param array $event_data Event data.
 	 * @since 1.0.0
 	 */
 	private function queue_integration_processing( $trigger, $event_data ) {
@@ -560,8 +564,8 @@ class TriggerHandler {
 	/**
 	 * Process integration in background
 	 *
-	 * @param array $trigger Trigger data
-	 * @param array $event_data Event data
+	 * @param array $trigger Trigger data.
+	 * @param array $event_data Event data.
 	 * @since 1.0.0
 	 */
 	public function process_integration_background( $trigger, $event_data ) {
@@ -593,8 +597,8 @@ class TriggerHandler {
 	/**
 	 * Execute a single trigger
 	 *
-	 * @param array $trigger Trigger data
-	 * @param array $event_data Event data
+	 * @param array $trigger Trigger data.
+	 * @param array $event_data Event data.
 	 * @since 1.0.0
 	 */
 	private function execute_trigger( $trigger, $event_data ) {
@@ -654,8 +658,8 @@ class TriggerHandler {
 	/**
 	 * Execute apply tags action
 	 *
-	 * @param int   $student_id Student ID
-	 * @param array $action_data Action data
+	 * @param int   $student_id Student ID.
+	 * @param array $action_data Action data.
 	 * @since 1.0.0
 	 */
 	private function execute_apply_tags( $student_id, $action_data ) {
@@ -714,8 +718,8 @@ class TriggerHandler {
 	/**
 	 * Execute remove tags action
 	 *
-	 * @param int   $student_id Student ID
-	 * @param array $action_data Action data
+	 * @param int   $student_id Student ID.
+	 * @param array $action_data Action data.
 	 * @since 1.0.0
 	 */
 	private function execute_remove_tags( $student_id, $action_data ) {

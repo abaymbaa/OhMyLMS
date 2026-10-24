@@ -7,8 +7,14 @@
  */
 namespace OhMyLMS\Hooks;
 
+/**
+ * Plugin lesson hook implementation.
+ */
 class LessonHook {
 
+	/**
+	 * Register hooks for Lesson hook.
+	 */
 	public function register_hooks() {
 		add_filter( 'ohmylms_get_content_object', array( $this, 'get_content_object' ), 10, 3 );
 	}

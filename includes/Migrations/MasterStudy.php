@@ -1,5 +1,7 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
+ * Ms course id.
+ *
  * @access public
  * @package OhMyLMS\Migrations
  *
@@ -444,10 +446,7 @@ class MasterStudy {
 		}
 
 		$sections = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT id, title, `order` FROM {$sections_table} WHERE course_id = %d ORDER BY `order` ASC, id ASC",
-				intval( $this->ms_course_id )
-			),
+			$wpdb->prepare( 'SELECT id, title, `order` FROM %i WHERE course_id = %d ORDER BY `order` ASC, id ASC', $sections_table, intval( $this->ms_course_id ) ),
 			ARRAY_A
 		);
 
@@ -1193,11 +1192,7 @@ class MasterStudy {
 			$this->migrate_question_answers( $new_question_id, get_post_meta( $old_question_id ) );
 
 			$exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship WHERE quiz_id = %d AND question_id = %d",
-					$new_quiz_id,
-					$new_question_id
-				)
+				$wpdb->prepare( 'SELECT id FROM %i WHERE quiz_id = %d AND question_id = %d', $wpdb->prefix . 'ohmylms_quiz_questions_relationship', $new_quiz_id, $new_question_id )
 			);
 
 			if ( ! $exists ) {
@@ -1358,11 +1353,7 @@ class MasterStudy {
 			}
 
 			$exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}ohmylms_question_answers WHERE question_id = %d AND answer = %s",
-					$new_question_id,
-					$answer_text
-				)
+				$wpdb->prepare( 'SELECT id FROM %i WHERE question_id = %d AND answer = %s', $wpdb->prefix . 'ohmylms_question_answers', $new_question_id, $answer_text )
 			);
 
 			if ( $exists ) {
@@ -1419,11 +1410,7 @@ class MasterStudy {
 
 		foreach ( $meta_entries as $meta_key => $meta_value ) {
 			$exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT id FROM {$table} WHERE answer_id = %d AND meta_key = %s LIMIT 1",
-					$answer_id,
-					$meta_key
-				)
+				$wpdb->prepare( 'SELECT id FROM %i WHERE answer_id = %d AND meta_key = %s LIMIT 1', $table, $answer_id, $meta_key )
 			);
 
 			$serialized_value = maybe_serialize( $meta_value );
@@ -1482,11 +1469,7 @@ class MasterStudy {
 		global $wpdb;
 		foreach ( $enrolled_user_ids as $user_id ) {
 			$exists = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id = %d AND course_id = %d",
-					$user_id,
-					$new_course_id
-				)
+				$wpdb->prepare( 'SELECT id FROM %i WHERE user_id = %d AND course_id = %d', $wpdb->prefix . 'ohmylms_user_enrollment', $user_id, $new_course_id )
 			);
 
 			if ( $exists ) {
@@ -1520,11 +1503,7 @@ class MasterStudy {
 		global $wpdb;
 
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id = %d AND chapter_id = %d",
-				$course_id,
-				$chapter_id
-			)
+			$wpdb->prepare( 'SELECT id FROM %i WHERE course_id = %d AND chapter_id = %d', $wpdb->prefix . 'ohmylms_chapter_relationship', $course_id, $chapter_id )
 		);
 
 		if ( $exists ) {
@@ -1554,12 +1533,7 @@ class MasterStudy {
 		global $wpdb;
 
 		$exact_match = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d AND content_type = %s LIMIT 1",
-				$chapter_id,
-				$content_id,
-				$content_type
-			)
+			$wpdb->prepare( 'SELECT id FROM %i WHERE chapter_id = %d AND content_id = %d AND content_type = %s LIMIT 1', $wpdb->prefix . 'ohmylms_content_relationship', $chapter_id, $content_id, $content_type )
 		);
 
 		if ( $exact_match ) {
@@ -1575,22 +1549,13 @@ class MasterStudy {
 				array( '%d' )
 			);
 			$wpdb->query(
-				$wpdb->prepare(
-					"DELETE FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d AND id <> %d",
-					$chapter_id,
-					$content_id,
-					intval( $exact_match )
-				)
+				$wpdb->prepare( 'DELETE FROM %i WHERE chapter_id = %d AND content_id = %d AND id <> %d', $wpdb->prefix . 'ohmylms_content_relationship', $chapter_id, $content_id, intval( $exact_match ) )
 			);
 			return;
 		}
 
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE chapter_id = %d AND content_id = %d LIMIT 1",
-				$chapter_id,
-				$content_id
-			)
+			$wpdb->prepare( 'SELECT id FROM %i WHERE chapter_id = %d AND content_id = %d LIMIT 1', $wpdb->prefix . 'ohmylms_content_relationship', $chapter_id, $content_id )
 		);
 
 		if ( $exists ) {

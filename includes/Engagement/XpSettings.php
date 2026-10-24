@@ -16,6 +16,9 @@ defined( 'ABSPATH' ) || exit;
 final class XpSettings {
 	const OPTION = 'ohmylms_xp_settings';
 
+	/**
+	 * Defaults for Xp settings.
+	 */
 	public static function defaults() {
 		return array(
 			'enable'       => false,
@@ -34,16 +37,27 @@ final class XpSettings {
 		);
 	}
 
+	/**
+	 * Get for Xp settings.
+	 */
 	public static function get() {
 		$settings = self::validate( array_replace( self::defaults(), (array) get_option( self::OPTION, array() ) ) );
 		return is_wp_error( $settings ) ? self::defaults() : $settings;
 	}
 
+	/**
+	 * Enabled for Xp settings.
+	 */
 	public static function enabled() {
 		return ! empty( self::get()['enable'] );
 	}
 
-	/** @return array|\WP_Error */
+	/**
+	 * Validate for Xp settings.
+	 *
+	 * @return array|\WP_Error
+	 * @param mixed $settings Configuration settings.
+	 */
 	public static function validate( $settings ) {
 		$fail = static function () {
 			return new \WP_Error( 'xp_settings', __( 'Invalid XP settings.', 'ohmylms' ), array( 'status' => 400 ) );

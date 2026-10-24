@@ -106,9 +106,9 @@ export const saveLinks = ( courseId, links, fetch = request ) =>
 
 /**
  * Courses matching a search, as [{id, title, status}], without the course being edited.
- * @param {number}   courseId Course being edited.
- * @param {string}   search   Search text.
- * @param {Function} fetch    Request function.
+ * @param {number}                               courseId Course being edited.
+ * @param {string}                               search   Search text.
+ * @param {(request: Object) => Promise<Object>} fetch    Request function.
  * @return {Promise<Object[]>} Matches.
  */
 export async function searchCourses( courseId, search, fetch = request ) {

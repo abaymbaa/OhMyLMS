@@ -35,16 +35,16 @@ $save_calculation        = $regular_price ? number_format( ( ( floatval( $regula
 		$negative        = $price < 0;
 		$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $price );
 
-		echo $formatted_price;
+		echo wp_kses_post( $formatted_price );
 
 
-		echo '<small>' . '/' . $period . '</small>';
+		echo '<small>' . '/' . esc_html( $period ) . '</small>';
 
 		// Append sign-up fee if greater than zero, with shorter wording and small font.
 	if ( floatval( $signup_fee ) > 0 ) {
 		$negative_signup      = $signup_fee < 0;
 		$formatted_signup_fee = ( $negative_signup ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $signup_fee );
-		echo ' <small>+ ' . $formatted_signup_fee . ' sign-up</small>';
+		echo ' <small>+ ' . wp_kses_post( $formatted_signup_fee ) . ' sign-up</small>';
 	}
 	?>
 </p>
@@ -58,9 +58,9 @@ $save_calculation        = $regular_price ? number_format( ( ( floatval( $regula
 			$negative        = $regular_price < 0;
 			$formatted_price = ( $negative ? '-' : '' ) . sprintf( ohmylms_get_price_format(), '<span class="ohmylms-price-currency-symbol">' . get_ohmylms_currency_symbol( get_ohmylms_currency() ) . '</span>', $regular_price );
 
-			echo '<del>' . $formatted_price . '</del>';
+			echo '<del>' . wp_kses_post( $formatted_price ) . '</del>';
 
 		?>
-		<span class="discount-percent">save <?php echo $save_calculation; ?>%</span>
+		<span class="discount-percent">save <?php echo esc_html( $save_calculation ); ?>%</span>
 	</p>
 <?php } ?>

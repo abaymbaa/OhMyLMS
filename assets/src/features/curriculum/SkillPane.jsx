@@ -61,7 +61,7 @@ export function SkillPane( { node } ) {
 				? current
 				: next;
 		} );
-	}, [ inCourse?.required, inCourse?.target ] );
+	}, [ inCourse, inCourse?.required, inCourse?.target ] );
 	const shown = inCourse
 		? {
 				...inCourse,

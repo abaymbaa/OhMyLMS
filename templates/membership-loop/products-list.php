@@ -31,8 +31,8 @@ if ( empty( $courses ) && ! is_array( $courses ) ) {
 		}
 		?>
 		<li>
-			<a href="<?php echo $course->get_permalink(); ?>">
-				<?php echo $course->get_name(); ?>
+			<a href="<?php echo esc_url( $course->get_permalink() ); ?>">
+				<?php echo esc_html( $course->get_name() ); ?>
 			</a>
 		</li>
 		<?php

@@ -10,20 +10,34 @@ use OhMyLMS\Utility\Transaction;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin course program implementation.
+ */
 final class CourseProgram {
 	const MODES   = array( 'traditional', 'skill-based', 'blended' );
 	const CURRENT = '_ohmylms_learning_program';
 	const DRAFT   = '_ohmylms_learning_draft';
 
+	/**
+	 * Error for Course program.
+	 *
+	 * @param mixed $message Message.
+	 * @param int   $status Status.
+	 */
 	public static function error( $message, $status = 400 ) {
 		return new \WP_Error( 'ohmylms_learning_invalid', $message, array( 'status' => $status ) );
 	}
 
+	/**
+	 * Get for Course program.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function get( $id ) {
 		global $wpdb;
 		if ( ! $id || ! Schema::ready() ) {
 			return null; }
-		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'programs' ) . ' WHERE id=%d', $id ), ARRAY_A );
+		$row     = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', Schema::table( 'programs' ), $id ), ARRAY_A );
 		$program = $row ? array(
 			'id'        => (int) $row['id'],
 			'version'   => (int) $row['version'],
@@ -35,16 +49,23 @@ final class CourseProgram {
 		return $program;
 	}
 
+	/**
+	 * Current for Course program.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function current( $course_id ) {
 		return self::get( (int) get_post_meta( $course_id, self::CURRENT, true ) ); }
 
+	/**
+	 * Defaults for Course program.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function defaults( $course_id ) {
 		global $wpdb;
 		$rows  = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT c.content_id, c.content_type, r.chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship r JOIN {$wpdb->prefix}ohmylms_content_relationship c ON c.chapter_id=r.chapter_id WHERE r.course_id=%d ORDER BY r.order_number,c.order_number",
-				$course_id
-			),
+			$wpdb->prepare( 'SELECT c.content_id, c.content_type, r.chapter_id FROM %i r JOIN %i c ON c.chapter_id=r.chapter_id WHERE r.course_id=%d ORDER BY r.order_number,c.order_number', $wpdb->prefix . 'ohmylms_chapter_relationship', $wpdb->prefix . 'ohmylms_content_relationship', $course_id ),
 			ARRAY_A
 		);
 		$items = array();
@@ -71,6 +92,11 @@ final class CourseProgram {
 		);
 	}
 
+	/**
+	 * Editor for Course program.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function editor( $course_id ) {
 		$current = self::current( $course_id );
 		$draft   = get_post_meta( $course_id, self::DRAFT, true );
@@ -85,25 +111,42 @@ final class CourseProgram {
 		);
 	}
 
+	/**
+	 * Enrollment for Course program.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function enrollment( $student_id, $course_id ) {
 		global $wpdb;
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d AND status='enrolled' ORDER BY id DESC LIMIT 1", $student_id, $course_id ), ARRAY_A );
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id=%d AND course_id=%d AND status=\'enrolled\' ORDER BY id DESC LIMIT 1', $wpdb->prefix . 'ohmylms_user_enrollment', $student_id, $course_id ), ARRAY_A );
 	}
 
+	/**
+	 * For enrollment for Course program.
+	 *
+	 * @param array $enrollment Enrollment.
+	 */
 	public static function for_enrollment( array $enrollment ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
 			return null; }
 		$bindings = Schema::table( 'enrollments' );
-		$bound    = $wpdb->get_row( $wpdb->prepare( "SELECT program_id FROM $bindings WHERE enrollment_id=%d", $enrollment['id'] ), ARRAY_A );
+		$bound    = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id FROM %i WHERE enrollment_id=%d', $bindings, $enrollment['id'] ), ARRAY_A );
 		if ( ! $bound ) {
 			$id = (int) get_post_meta( $enrollment['course_id'], self::CURRENT, true );
-			$wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO $bindings (enrollment_id,program_id,bound_at) VALUES (%d,%d,%s)", $enrollment['id'], $id, current_time( 'mysql', true ) ) );
-			$bound = $wpdb->get_row( $wpdb->prepare( "SELECT program_id FROM $bindings WHERE enrollment_id=%d", $enrollment['id'] ), ARRAY_A );
+			$wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (enrollment_id,program_id,bound_at) VALUES (%d,%d,%s)', $bindings, $enrollment['id'], $id, current_time( 'mysql', true ) ) );
+			$bound = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id FROM %i WHERE enrollment_id=%d', $bindings, $enrollment['id'] ), ARRAY_A );
 		}
 		return $bound ? self::get( (int) $bound['program_id'] ) : null;
 	}
 
+	/**
+	 * Managed for Course program.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function managed( $student_id, $course_id ) {
 		if ( ! Schema::ready() || ! get_post_meta( $course_id, self::CURRENT, true ) ) {
 			return false; }
@@ -111,6 +154,11 @@ final class CourseProgram {
 		return $enrollment && self::for_enrollment( $enrollment ) !== null;
 	}
 
+	/**
+	 * Needs skills for Course program.
+	 *
+	 * @param array $program Program.
+	 */
 	public static function needs_skills( array $program ) {
 		return 'traditional' !== $program['mode'] || ! empty( $program['outcomes'] ) || (bool) array_filter(
 			$program['items'],
@@ -122,14 +170,21 @@ final class CourseProgram {
 
 	const MAX_OUTCOMES = 200;
 
-	/** A program lists at most 200 skills, except the course of a syllabus, which can hold every skill of its syllabus. */
+	/** A program lists at most 200 skills, except the course of a syllabus, which can hold every skill of its syllabus.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $count Count.
+	 */
 	public static function too_many_outcomes( $course_id, $count ) {
 		if ( $count <= self::MAX_OUTCOMES ) {
 			return false; }
 		return $count > ( \OhMyLMS\Curriculum\SyllabusCourse::owner( (int) $course_id ) ? \OhMyLMS\Curriculum\Syllabus::MAX_SKILLS : self::MAX_OUTCOMES );
 	}
 
-	/** The IDs among these that are skills, as a set. A short list is checked one by one, a long one (a syllabus's course) in one query. */
+	/** The IDs among these that are skills, as a set. A short list is checked one by one, a long one (a syllabus's course) in one query.
+	 *
+	 * @param array $outcomes Outcomes.
+	 */
 	private static function known_skills( array $outcomes ) {
 		$ids = array();
 		foreach ( $outcomes as $outcome ) {
@@ -158,6 +213,12 @@ final class CourseProgram {
 		return is_array( $found ) ? array_flip( array_map( 'intval', $found ) ) : array();
 	}
 
+	/**
+	 * Normalize for Course program.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $data Input data.
+	 */
 	public static function normalize( $course_id, array $data ) {
 		global $wpdb;
 		if ( ! in_array( $data['mode'] ?? '', self::MODES, true ) ) {
@@ -179,7 +240,7 @@ final class CourseProgram {
 		}
 		$program['bank_ids'] = array_values( array_unique( $program['bank_ids'] ) );
 		$skills              = array();
-		$chapters            = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d ORDER BY order_number,id", $course_id ) ) );
+		$chapters            = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT chapter_id FROM %i WHERE course_id=%d ORDER BY order_number,id', $wpdb->prefix . 'ohmylms_chapter_relationship', $course_id ) ) );
 		$chapter_set         = array_flip( $chapters );
 		$known               = self::known_skills( $data['outcomes'] );
 		$groups              = ProgramGroups::normalize( $data['groups'] ?? null, $chapters );
@@ -230,7 +291,7 @@ final class CourseProgram {
 				'content_id' => $content,
 				'required'   => ! empty( $item['required'] ),
 			);
-			$member = ProgramGroups::check_member( $groups, $item['group_id'] ?? null, $chapter );
+			$member  = ProgramGroups::check_member( $groups, $item['group_id'] ?? null, $chapter );
 			if ( array_key_exists( 'title', $item ) ) {
 				if ( ! is_string( $item['title'] ) || mb_strlen( $item['title'] ) > 200 ) {
 					return self::error( __( 'Use an activity name of up to 200 characters.', 'ohmylms' ) );
@@ -268,7 +329,7 @@ final class CourseProgram {
 				$resources[ $content ] = true;
 				if ( 'quiz' === $item['type'] ) {
 					$pass = $item['pass_percent'] ?? 80;
-					if ( ! is_numeric( $pass ) || $pass < 0 || $pass > 100 ) {
+					if ( ! is_numeric( $pass ) || 0 > $pass || 100 < $pass ) {
 						return self::error( __( 'Checkpoint pass percentage must be between 0 and 100.', 'ohmylms' ) ); }
 					$entry['pass_percent'] = (float) $pass;
 				}
@@ -310,7 +371,7 @@ final class CourseProgram {
 	 * follow their unit. Content the copy shares with the original (placements) keeps its ID; a row whose
 	 * unit was not copied becomes unplaced and ungrouped. Pure, so it needs no database.
 	 *
-	 * @param array $program  Program as returned by portable().
+	 * @param array $program Program as returned by portable().
 	 * @param array $chapters Old chapter ID => new chapter ID.
 	 * @param array $contents Old content ID => new content ID.
 	 * @return array
@@ -335,7 +396,7 @@ final class CourseProgram {
 				$groups[ $group['id'] ] = $group;
 			}
 		}
-		$place = static function ( array $row ) use ( $chapters, $groups ) {
+		$place               = static function ( array $row ) use ( $chapters, $groups ) {
 			$old = (int) ( $row['chapter_id'] ?? 0 );
 			if ( isset( $chapters[ $old ] ) ) {
 				$row['chapter_id'] = (int) $chapters[ $old ];
@@ -371,9 +432,9 @@ final class CourseProgram {
 	 * Store a program copied from another course as the new course's draft (not published).
 	 *
 	 * @param int   $course_id New course post ID.
-	 * @param array $program   Program from portable().
-	 * @param array $chapters  Old chapter ID => new chapter ID.
-	 * @param array $contents  Old content ID => new content ID.
+	 * @param array $program Program from portable().
+	 * @param array $chapters Old chapter ID => new chapter ID.
+	 * @param array $contents Old content ID => new content ID.
 	 */
 	public static function store_copy( $course_id, array $program, array $chapters, array $contents ) {
 		$program              = self::remap( $program, $chapters, $contents );
@@ -381,7 +442,10 @@ final class CourseProgram {
 		update_post_meta( (int) $course_id, self::DRAFT, $program );
 	}
 
-	/** The error for a rejected group list or membership (codes come from ProgramGroups). */
+	/** The error for a rejected group list or membership (codes come from ProgramGroups).
+	 *
+	 * @param mixed $code Code.
+	 */
 	private static function group_error( $code ) {
 		$messages = array(
 			'oversized'     => __( 'Too many lesson groups.', 'ohmylms' ),
@@ -395,6 +459,12 @@ final class CourseProgram {
 		return self::error( $messages[ $code ] ?? $messages['invalid'] );
 	}
 
+	/**
+	 * Pool for Course program.
+	 *
+	 * @param array $program Program.
+	 * @param mixed $skill Skill.
+	 */
 	public static function pool( array $program, $skill ) {
 		$author = (int) ( $program['author_id'] ?? get_current_user_id() );
 		return array_values(
@@ -411,6 +481,12 @@ final class CourseProgram {
 		);
 	}
 
+	/**
+	 * Completion readiness for Course program.
+	 *
+	 * @param array $program Program.
+	 * @param bool  $syllabus Syllabus.
+	 */
 	public static function completion_readiness( array $program, $syllabus = false ) {
 		$errors            = array();
 		$required          = array_filter(
@@ -434,8 +510,14 @@ final class CourseProgram {
 		return $errors;
 	}
 
+	/**
+	 * Readiness for Course program.
+	 *
+	 * @param array $program Program.
+	 * @param int   $course_id Course identifier.
+	 */
 	public static function readiness( array $program, $course_id = 0 ) {
-		$syllabus          = $course_id > 0 && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
+		$syllabus          = 0 < $course_id && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
 		$errors            = self::completion_readiness( $program, $syllabus );
 		$rules             = Mastery::rules();
 		$required_outcomes = $syllabus ? array() : array_filter(
@@ -446,7 +528,8 @@ final class CourseProgram {
 		);
 		foreach ( $program['items'] as $item ) {
 			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
-				$errors[] = sprintf( __( 'Publish the learning resource %s first.', 'ohmylms' ), get_the_title( $item['content_id'] ) ); }
+				$errors[] = sprintf( /* translators: %s: text value. */
+				__( 'Publish the learning resource %s first.', 'ohmylms' ), get_the_title( $item['content_id'] ) ); }
 		}
 		foreach ( $required_outcomes as $outcome ) {
 			$pool     = self::pool( $program, $outcome['term_id'] );
@@ -454,14 +537,15 @@ final class CourseProgram {
 			$families = array_unique(
 				array_map(
 					static function ( $row ) {
-						return $row['family_id'] ?: 'q:' . $row['question_id'];
+						return $row['family_id'] ? $row['family_id'] : 'q:' . $row['question_id'];
 					},
 					$pool
 				)
 			);
 			if ( count( array_unique( array_column( $pool, 'question_id' ) ) ) < $minimum || count( $families ) < $rules[ $outcome['target'] . '_families' ] ) {
 				$term     = get_term( $outcome['term_id'], Taxonomy::NAME );
-				$errors[] = sprintf( __( 'Skill %1$s needs at least %2$d approved questions and %3$d question families in its allowed pool.', 'ohmylms' ), $term->name, $minimum, $rules[ $outcome['target'] . '_families' ] );
+				$errors[] = sprintf( /* translators: %1$s: text value; %2$d: number; %3$d: number. */
+				__( 'Skill %1$s needs at least %2$d approved questions and %3$d question families in its allowed pool.', 'ohmylms' ), $term->name, $minimum, $rules[ $outcome['target'] . '_families' ] );
 			}
 		}
 		return $errors;
@@ -471,15 +555,15 @@ final class CourseProgram {
 	 * The same checks as readiness(), grouped for a person: what is missing per skill and which resources
 	 * are still unpublished, so an author can see the gap before trying to publish.
 	 *
-	 * @param array $program   Draft program.
+	 * @param array $program Draft program.
 	 * @param int   $course_id Course ID.
-	 * @return array{ready:bool,completion:string[],resources:array,skills:array}
+	 * @return array{ready:bool,completion:string[],resources:array,skills:array,practice_skills:array}
 	 */
 	public static function readiness_report( array $program, $course_id = 0 ) {
-		$syllabus  = $course_id > 0 && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
-		$rules     = Mastery::rules();
+		$syllabus   = 0 < $course_id && \OhMyLMS\Curriculum\SyllabusCourse::owner( $course_id ) > 0;
+		$rules      = Mastery::rules();
 		$completion = self::completion_readiness( $program, $syllabus );
-		$resources = array();
+		$resources  = array();
 		foreach ( $program['items'] as $item ) {
 			if ( 'practice' !== $item['type'] && get_post_status( $item['content_id'] ) !== 'publish' ) {
 				$resources[] = array(
@@ -490,49 +574,65 @@ final class CourseProgram {
 				);
 			}
 		}
-		$skills = array();
+		$practice_skills = array();
 		foreach ( $syllabus ? array() : $program['outcomes'] as $outcome ) {
-			if ( empty( $outcome['required'] ) ) {
-				continue;
-			}
-			$pool     = self::pool( $program, $outcome['term_id'] );
-			$families = array_unique(
+			$pool              = self::pool( $program, $outcome['term_id'] );
+			$families          = array_unique(
 				array_map(
 					static function ( $row ) {
-						return $row['family_id'] ?: 'q:' . $row['question_id'];
+						return ! empty( $row['family_id'] ) ? $row['family_id'] : 'q:' . $row['question_id'];
 					},
 					$pool
 				)
 			);
-			$questions = count( array_unique( array_column( $pool, 'question_id' ) ) );
-			$term      = get_term( $outcome['term_id'], Taxonomy::NAME );
-			$valid     = $term && ! is_wp_error( $term );
-			$skills[]  = array(
-				'term_id'         => (int) $outcome['term_id'],
-				'name'            => $valid ? $term->name : __( 'Unavailable skill', 'ohmylms' ),
-				'code'            => $valid ? (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ) : '',
-				'target'          => (string) $outcome['target'],
-				'chapter_id'      => (int) ( $outcome['chapter_id'] ?? 0 ),
-				'questions'       => $questions,
-				'questions_need'  => (int) $rules[ $outcome['target'] . '_min' ],
-				'families'        => count( $families ),
-				'families_need'   => (int) $rules[ $outcome['target'] . '_families' ],
-				'ready'           => $questions >= $rules[ $outcome['target'] . '_min' ] && count( $families ) >= $rules[ $outcome['target'] . '_families' ],
+			$questions         = count( array_unique( array_column( $pool, 'question_id' ) ) );
+			$term              = get_term( $outcome['term_id'], Taxonomy::NAME );
+			$valid             = $term && ! is_wp_error( $term );
+			$practice_skills[] = array(
+				'term_id'        => (int) $outcome['term_id'],
+				'name'           => $valid ? $term->name : __( 'Unavailable skill', 'ohmylms' ),
+				'code'           => $valid ? (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true ) : '',
+				'target'         => (string) $outcome['target'],
+				'required'       => ! empty( $outcome['required'] ),
+				'group_id'       => (string) ( $outcome['group_id'] ?? '' ),
+				'chapter_id'     => (int) ( $outcome['chapter_id'] ?? 0 ),
+				'questions'      => $questions,
+				'questions_need' => (int) $rules[ $outcome['target'] . '_min' ],
+				'families'       => count( $families ),
+				'families_need'  => (int) $rules[ $outcome['target'] . '_families' ],
+				'ready'          => $questions >= $rules[ $outcome['target'] . '_min' ] && count( $families ) >= $rules[ $outcome['target'] . '_families' ],
 			);
 		}
+		$skills = array_values(
+			array_filter(
+				$practice_skills,
+				static function ( $row ) {
+					return $row['required'];
+				}
+			)
+		);
 		return array(
-			'ready'      => ! $completion && ! $resources && ! array_filter(
+			'ready'           => ! $completion && ! $resources && ! array_filter(
 				$skills,
 				static function ( $row ) {
 					return ! $row['ready'];
 				}
 			),
-			'completion' => $completion,
-			'resources'  => $resources,
-			'skills'     => $skills,
+			'completion'      => $completion,
+			'resources'       => $resources,
+			'skills'          => $skills,
+			'practice_skills' => $practice_skills,
 		);
 	}
 
+	/**
+	 * Save for Course program.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 * @param array $data Input data.
+	 * @param bool  $publish Publish.
+	 * @param bool  $apply_existing Apply existing.
+	 */
 	public static function save( $course_id, array $data, $publish = false, $apply_existing = false ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -572,9 +672,9 @@ final class CourseProgram {
 					$bindings = Schema::table( 'enrollments' );
 					$programs = Schema::table( 'programs' );
 					// Pin every existing enrollment before moving the published pointer.
-					if ( $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO $bindings (enrollment_id,program_id,bound_at) SELECT id,%d,%s FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE course_id=%d", $old, current_time( 'mysql', true ), $course_id ) ) === false ) {
+					if ( $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO %i (enrollment_id,program_id,bound_at) SELECT id,%d,%s FROM %i WHERE course_id=%d', $bindings, $old, current_time( 'mysql', true ), $wpdb->prefix . 'ohmylms_user_enrollment', $course_id ) ) === false ) {
 						throw new \RuntimeException( 'Binding failed' ); }
-					$version = 1 + (int) $wpdb->get_var( $wpdb->prepare( "SELECT MAX(version) FROM $programs WHERE course_id=%d", $course_id ) );
+					$version = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(version) FROM %i WHERE course_id=%d', $programs, $course_id ) );
 					if ( ! $wpdb->insert(
 						$programs,
 						array(
@@ -601,7 +701,7 @@ final class CourseProgram {
 						) ) {
 							throw new \RuntimeException( 'Outcome write failed' ); }
 					}
-					if ( $apply_existing && $wpdb->query( $wpdb->prepare( "UPDATE $bindings b JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON e.id=b.enrollment_id SET b.program_id=%d,b.bound_at=%s WHERE e.course_id=%d AND e.status='enrolled' AND e.progress<>'completed'", $id, current_time( 'mysql', true ), $course_id ) ) === false ) {
+					if ( $apply_existing && $wpdb->query( $wpdb->prepare( 'UPDATE %i b JOIN %i e ON e.id=b.enrollment_id SET b.program_id=%d,b.bound_at=%s WHERE e.course_id=%d AND e.status=\'enrolled\' AND e.progress<>\'completed\'', $bindings, $wpdb->prefix . 'ohmylms_user_enrollment', $id, current_time( 'mysql', true ), $course_id ) ) === false ) {
 						throw new \RuntimeException( 'Upgrade failed' ); }
 					if ( ! \OhMyLMS\Curriculum\Directory::capture( $course_id, $program ) ) {
 						throw new \RuntimeException( 'Directory publish failed' ); }

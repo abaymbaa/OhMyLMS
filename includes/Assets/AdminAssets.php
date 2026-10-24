@@ -7,13 +7,22 @@ use OhMyLMS\Membership\MembershipHelper;
 
 use function OhMyLMS\Commerce\ecommerce;
 
+/**
+ * Plugin admin assets implementation.
+ */
 class AdminAssets extends Assets {
 
+	/**
+	 * Init for Admin assets.
+	 */
 	public function init() {
 		add_action( 'admin_enqueue_scripts', array( $this, 'load_scripts' ) );
 		add_action( 'admin_print_scripts', array( $this, 'localize_printed_scripts' ) );
 	}
 
+	/**
+	 * Get scripts for Admin assets.
+	 */
 	public function get_scripts() {
 		$suffix = '';
 
@@ -65,6 +74,9 @@ class AdminAssets extends Assets {
 		return is_array( $scripts ) ? array_filter( $scripts ) : array();
 	}
 
+	/**
+	 * Get styles for Admin assets.
+	 */
 	public function get_styles() {
 		$suffix = '';
 		$styles = array(
@@ -120,6 +132,11 @@ class AdminAssets extends Assets {
 		return is_array( $styles ) ? array_filter( $styles ) : array();
 	}
 
+	/**
+	 * Get script data for Admin assets.
+	 *
+	 * @param mixed $handle Handle.
+	 */
 	public function get_script_data( $handle ) {
 		$admin_email = get_option( 'admin_email' );
 		$admin_user  = get_user_by( 'email', $admin_email );
@@ -228,6 +245,9 @@ class AdminAssets extends Assets {
 		return $result;
 	}
 
+	/**
+	 * Load scripts for Admin assets.
+	 */
 	public function load_scripts() {
 		$this->register_scripts();
 		$this->register_styles();
@@ -273,6 +293,9 @@ class AdminAssets extends Assets {
 		}
 	}
 
+	/**
+	 * Get community addon data for Admin assets.
+	 */
 	public function get_community_addon_data() {
 		if ( ! function_exists( 'get_plugins' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/plugin.php';

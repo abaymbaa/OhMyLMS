@@ -3,11 +3,14 @@ namespace OhMyLMS\Factory;
 
 use OhMyLMS\Data\Attempt;
 
+/**
+ * Plugin attempt factory implementation.
+ */
 class AttemptFactory {
 	/**
 	 * Get attempt object
 	 *
-	 * @param bool $attempt_id
+	 * @param bool $attempt_id Attempt identifier.
 	 * @return bool|Attempt
 	 */
 	public function get_attempt( $attempt_id = false ) {
@@ -21,7 +24,7 @@ class AttemptFactory {
 	/**
 	 * Get attempt id
 	 *
-	 * @param $attempt
+	 * @param mixed $attempt Attempt.
 	 * @return bool|int
 	 */
 	private function get_attempt_id( $attempt ) {

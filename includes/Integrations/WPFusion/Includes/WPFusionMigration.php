@@ -12,6 +12,9 @@ namespace OhMyLMS\Integrations\WPFusion\Includes;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin wpfusion migration implementation.
+ */
 class WPFusionMigration {
 
 	/**
@@ -148,7 +151,7 @@ class WPFusionMigration {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . 'ohmylms_integrations';
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
 
 		// Remove the option.
 		delete_option( self::WPFUSION_TABLE_CREATED_OPTION );

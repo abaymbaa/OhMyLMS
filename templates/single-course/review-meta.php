@@ -25,7 +25,7 @@ $rating_percentage = ( $rating / 5 ) * 100;
 <?php } ?>
 
 <div class="review-content">
-	<p class="author-name"><?php echo get_comment_author( $comment ); ?></p>
+	<p class="author-name"><?php echo esc_html( get_comment_author( $comment ) ); ?></p>
 
 	<?php do_action( 'ohmylms_review_rating_area', $comment ); ?>
 </div>

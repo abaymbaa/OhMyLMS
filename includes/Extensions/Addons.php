@@ -17,10 +17,18 @@ final class Addons {
 	/** Bundled modules that still have an Add-ons switch. */
 	const IDS = array();
 
+	/**
+	 * Definitions for Addons.
+	 */
 	public static function definitions() {
 		return array();
 	}
 
+	/**
+	 * Enabled for Addons.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function enabled( $id ) {
 		if ( in_array( $id, self::CORE, true ) ) {
 			return true; }
@@ -28,10 +36,18 @@ final class Addons {
 		return is_array( $settings ) && 1 === (int) ( $settings[ $id ]['is_enable'] ?? 0 );
 	}
 
+	/**
+	 * Init for Addons.
+	 */
 	public static function init() {
 		add_filter( 'ohmylms_integrations', array( __CLASS__, 'manifest' ) );
 	}
 
+	/**
+	 * Manifest for Addons.
+	 *
+	 * @param mixed $manifest Manifest.
+	 */
 	public static function manifest( $manifest ) {
 		unset( $manifest['question_bank'], $manifest['skills'] );
 		foreach ( self::definitions() as $id => $definition ) {

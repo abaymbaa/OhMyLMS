@@ -60,9 +60,6 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		savedPrompts.current = new Map();
 		submittedPrompts.current = new Map();
 		setSaving( false );
-		if ( ! state.types.length ) {
-			registerTypes();
-		}
 		if ( state.quizId ) {
 			setLoading( true );
 			setError( null );
@@ -101,15 +98,20 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 		}
 		return () => {
 			active = false;
-			generation.current++;
+			generation.current = current + 1;
 		};
-	}, [ state.quizId, store ] );
+	}, [ state.quizId, store, actions ] );
+	useEffect( () => {
+		if ( ! state.types.length ) {
+			registerTypes();
+		}
+	}, [ state.types.length, registerTypes ] );
 	useEffect(
 		() => () => {
 			actions.resetQuizState();
 			actions.resetQuestionState();
 		},
-		[ store ]
+		[ store, actions ]
 	);
 	function validateCurrentQuestion() {
 		if ( canLeaveQuestion( state.question, validate ) ) {
@@ -255,7 +257,7 @@ export function useQuizEditor( { store, chapterId, validate, registerTypes } ) {
 			1200
 		);
 		return () => clearTimeout( timer );
-	}, [ editSnapshot, loading, saving, chapterId ] );
+	}, [ editSnapshot, loading, saving, chapterId, state.quiz?.id ] );
 	/** Save, then publish the quiz content as an immutable revision for new attempts. */
 	async function publish() {
 		if ( ! ( await save() ) ) {

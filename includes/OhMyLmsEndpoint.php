@@ -14,6 +14,8 @@ namespace OhMyLMS;
 class OhMyLmsEndpoint {
 
 	/**
+	 * Query variables for custom endpoints.
+	 *
 	 * @var array $query_vars Query variables for custom endpoints.
 	 */
 	public $query_vars = array();
@@ -135,6 +137,9 @@ class OhMyLmsEndpoint {
 		return $title;
 	}
 
+	/**
+	 * Parse request for Oh my lms endpoint.
+	 */
 	public function parse_request() {
 		global $wp;
 

@@ -1,5 +1,11 @@
 <?php
 /**
+ * Coupon functions.
+ *
+ * @package OhMyLMS
+ */
+
+/**
  * Get the coupon ID by code.
  *
  * @param string $code The coupon code.

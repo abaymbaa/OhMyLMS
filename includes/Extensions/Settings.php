@@ -8,9 +8,26 @@ namespace OhMyLMS\Extensions;
 
 /** Schema-validated, namespaced extension settings for LMS content. */
 final class Settings {
+	/**
+	 * Definitions.
+	 *
+	 * @var mixed
+	 */
 	private static $definitions = array();
-	private static $contexts    = array( 'course', 'lesson', 'quiz', 'question', 'membership', 'assignment', 'certificate', 'session' );
+	/**
+	 * Contexts.
+	 *
+	 * @var mixed
+	 */
+	private static $contexts = array( 'course', 'lesson', 'quiz', 'question', 'membership', 'assignment', 'certificate', 'session' );
 
+	/**
+	 * Register for Settings.
+	 *
+	 * @param mixed $id Id.
+	 * @param array $definition Definition.
+	 * @throws \InvalidArgumentException When the operation cannot be completed.
+	 */
 	public static function register( $id, array $definition ) {
 		if ( ! is_string( $id ) || ! preg_match( '/^[a-z][a-z0-9_-]*$/D', $id ) || isset( self::$definitions[ $id ] ) ) {
 			throw new \InvalidArgumentException( 'Invalid or duplicate settings ID.' );
@@ -21,8 +38,14 @@ final class Settings {
 		$definition['schema']['additionalProperties'] = false;
 		self::$definitions[ $id ]                     = $definition;
 	}
+	/**
+	 * Manifest for Settings.
+	 */
 	public static function manifest() {
 		return self::$definitions; }
+	/**
+	 * Init for Settings.
+	 */
 	public static function init() {
 		add_filter(
 			'rest_dispatch_request',
@@ -55,6 +78,11 @@ final class Settings {
 			}
 		);
 	}
+	/**
+	 * Permission for Settings.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function permission( $request ) {
 		$post = get_post( (int) $request['id'] );
 		if ( ! in_array( $request['type'], self::$contexts, true ) || ! $post || $post->post_type !== 'ohmylms-' . $request['type'] ) {
@@ -62,6 +90,11 @@ final class Settings {
 		}
 		return current_user_can( 'edit_post', $post->ID ) ? true : new \WP_Error( 'ohmylms_forbidden', 'You cannot edit this content.', array( 'status' => rest_authorization_required_code() ) );
 	}
+	/**
+	 * Read for Settings.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function read( $request ) {
 		$saved  = (array) get_post_meta( (int) $request['id'], '_ohmylms_extension_settings', true );
 		$result = array();
@@ -71,6 +104,11 @@ final class Settings {
 		}
 		return rest_ensure_response( array( 'settings' => (object) $result ) );
 	}
+	/**
+	 * Save for Settings.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function save( $request ) {
 		$incoming = $request->get_param( 'settings' );
 		$saved    = self::prepare( $request['type'], $incoming, (array) get_post_meta( (int) $request['id'], '_ohmylms_extension_settings', true ) );
@@ -79,6 +117,13 @@ final class Settings {
 		update_post_meta( (int) $request['id'], '_ohmylms_extension_settings', wp_slash( $saved ) );
 		return self::read( $request );
 	}
+	/**
+	 * Prepare for Settings.
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $incoming Incoming.
+	 * @param array $saved Saved.
+	 */
 	public static function prepare( $type, $incoming, $saved = array() ) {
 		if ( ! is_array( $incoming ) ) {
 			return new \WP_Error( 'ohmylms_invalid_settings', 'settings must be an object.', array( 'status' => 400 ) ); }
@@ -99,6 +144,11 @@ final class Settings {
 		}
 		return $saved;
 	}
+	/**
+	 * Content type for Settings.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	private static function content_type( $request ) {
 		if ( ! preg_match( '#^/(?:ohmylms|ohmylms)/v1/(courses|lessons|quiz|question|membership|assignment|certificates)(?:/\d+)?/?$#', $request->get_route(), $match ) ) {
 			return null; }
@@ -108,6 +158,13 @@ final class Settings {
 			'certificates' => 'certificate',
 		)[ $match[1] ] ?? $match[1];
 	}
+	/**
+	 * Before content for Settings.
+	 *
+	 * @param mixed $response Response data.
+	 * @param mixed $handler Handler.
+	 * @param mixed $request REST request.
+	 */
 	public static function before_content( $response, $handler, $request ) {
 		if ( null !== $response || ! in_array( $request->get_method(), array( 'POST', 'PUT', 'PATCH' ), true ) || ! $request->has_param( 'extension_settings' ) ) {
 			return $response; }
@@ -117,6 +174,13 @@ final class Settings {
 		$prepared = self::prepare( $type, $request['extension_settings'] );
 		return is_wp_error( $prepared ) ? $prepared : $response;
 	}
+	/**
+	 * After content for Settings.
+	 *
+	 * @param mixed $response Response data.
+	 * @param mixed $handler Handler.
+	 * @param mixed $request REST request.
+	 */
 	public static function after_content( $response, $handler, $request ) {
 		$type = self::content_type( $request );
 		if ( ! $type || is_wp_error( $response ) || $request->get_method() === 'DELETE' ) {

@@ -3,26 +3,67 @@ namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin service implementation.
+ */
 final class Service {
+	/**
+	 * Now for Service.
+	 */
 	public static function now() {
 		return gmdate( 'Y-m-d H:i:s' ); }
+	/**
+	 * Text for Service.
+	 *
+	 * @param mixed $value Value to process.
+	 * @param int   $max Max.
+	 */
 	public static function text( $value, $max = 190 ) {
 		return mb_substr( sanitize_text_field( (string) $value ), 0, $max ); }
+	/**
+	 * Need for Service.
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $message Message.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function need( $value, $message ) {
 		if ( ! $value ) {
 			throw new \RuntimeException( $message, 400 ); }
 	}
+	/**
+	 * Insert for Service.
+	 *
+	 * @param mixed $table Table.
+	 * @param array $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function insert( $table, array $data ) {
 		global $wpdb;
 		if ( false === $wpdb->insert( Schema::table( $table ), $data ) ) {
 			throw new \RuntimeException( 'Unable to save this record. It may already exist.', 409 ); }
 		return (int) $wpdb->insert_id;
 	}
+	/**
+	 * Update for Service.
+	 *
+	 * @param mixed $table Table.
+	 * @param mixed $data Input data.
+	 * @param mixed $where Where.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function update( $table, $data, $where ) {
 		global $wpdb;
 		if ( false === $wpdb->update( Schema::table( $table ), $data, $where ) ) {
 			throw new \RuntimeException( 'Unable to update this record.', 500 ); }
 	}
+	/**
+	 * Audit for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $action Action.
+	 * @param int   $object Object.
+	 */
 	public static function audit( $school, $action, $object = 0 ) {
 		self::insert(
 			'school_audit_log',
@@ -35,11 +76,24 @@ final class Service {
 			)
 		);
 	}
+	/**
+	 * Row for Service.
+	 *
+	 * @param mixed $table Table.
+	 * @param mixed $id Id.
+	 */
 	public static function row( $table, $id ) {
 		global $wpdb;
 		$name = Schema::table( $table );
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $name WHERE id=%d", $id ), ARRAY_A );
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', $name, $id ), ARRAY_A );
 	}
+	/**
+	 * Membership for Service.
+	 *
+	 * @param mixed $table Table.
+	 * @param array $key Lookup key.
+	 * @param bool  $active Active.
+	 */
 	public static function membership( $table, array $key, $active = true ) {
 		global $wpdb;
 		$name    = Schema::table( $table );
@@ -56,6 +110,11 @@ final class Service {
 		self::need( $active, 'Membership does not exist.' );
 		return self::insert( $table, array_merge( $key, $data, array( 'joined_at' => self::now() ) ) );
 	}
+	/**
+	 * Transaction for Service.
+	 *
+	 * @param mixed $callback Callback to invoke.
+	 */
 	public static function transaction( $callback ) {
 		global $wpdb;
 		$wpdb->query( 'START TRANSACTION' );
@@ -66,13 +125,23 @@ final class Service {
 			$wpdb->query( 'ROLLBACK' );
 			throw $error; }
 	}
+	/**
+	 * Schools for Service.
+	 *
+	 * @param int $page Page.
+	 */
 	public static function schools( $page = 1 ) {
 		global $wpdb;
 		$s     = Schema::table( 'schools' );
 		$m     = Schema::table( 'school_memberships' );
-		$where = Access::platform() ? '1=1' : $wpdb->prepare( "s.status='active' AND EXISTS (SELECT 1 FROM $m m WHERE m.school_id=s.id AND m.user_id=%d AND m.status='active')", get_current_user_id() );
+		$where = Access::platform() ? '1=1' : $wpdb->prepare( 's.status=\'active\' AND EXISTS (SELECT 1 FROM %i m WHERE m.school_id=s.id AND m.user_id=%d AND m.status=\'active\')', $m, get_current_user_id() );
 		return $wpdb->get_results( $wpdb->prepare( "SELECT s.* FROM $s s WHERE $where ORDER BY s.name LIMIT 50 OFFSET %d", ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 	}
+	/**
+	 * Create school for Service.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	public static function create_school( $data ) {
 		// Platform administrators may create any school; a teacher may create one school and becomes its administrator.
 		Access::require_access( Access::platform() || Access::teacher() );
@@ -116,6 +185,12 @@ final class Service {
 		self::audit( $id, 'school_created', $id );
 		return array( 'id' => $id );
 	}
+	/**
+	 * Update school for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function update_school( $school, $data ) {
 		Access::require_access( Access::school( $school ) );
 		$name = self::text( $data['name'] ?? '' );
@@ -132,12 +207,23 @@ final class Service {
 		self::audit( $school, 'school_updated', $school );
 		return array( 'success' => true );
 	}
+	/**
+	 * Years for Service.
+	 *
+	 * @param mixed $school School.
+	 */
 	public static function years( $school ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school, array( 'school_admin', 'teacher' ) ) );
 		$table = Schema::table( 'academic_years' );
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE school_id=%d ORDER BY starts_at DESC LIMIT 100", $school ), ARRAY_A );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE school_id=%d ORDER BY starts_at DESC LIMIT 100', $table, $school ), ARRAY_A );
 	}
+	/**
+	 * Create year for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function create_year( $school, $data ) {
 		Access::require_access( Access::school( $school ) );
 		$start = $data['starts_at'] ?? '';
@@ -160,15 +246,27 @@ final class Service {
 		self::audit( $school, 'year_created', $id );
 		return array( 'id' => $id );
 	}
+	/**
+	 * Classes for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param int   $page Page.
+	 */
 	public static function classes( $school, $page = 1 ) {
 		global $wpdb;
 		Access::require_access( $school ? Access::school( $school, array( 'school_admin', 'teacher', 'student' ) ) : Access::teacher() );
 		$c     = Schema::table( 'classes' );
 		$m     = Schema::table( 'class_memberships' );
 		$audit = Schema::table( 'school_audit_log' );
-		$scope = ( $school ? Access::school( $school ) : Access::platform() ) ? '' : $wpdb->prepare( " AND EXISTS (SELECT 1 FROM $m m WHERE m.class_id=c.id AND m.user_id=%d AND m.status='active')", get_current_user_id() );
+		$scope = ( $school ? Access::school( $school ) : Access::platform() ) ? '' : $wpdb->prepare( ' AND EXISTS (SELECT 1 FROM %i m WHERE m.class_id=c.id AND m.user_id=%d AND m.status=\'active\')', $m, get_current_user_id() );
 		return $wpdb->get_results( $wpdb->prepare( "SELECT c.*,(SELECT MIN(a.created_at) FROM $audit a WHERE a.action='class_created' AND a.object_id=c.id) AS created_at FROM $c c WHERE c.school_id=%d $scope ORDER BY c.id DESC LIMIT 50 OFFSET %d", $school, ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 	}
+	/**
+	 * Create class for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function create_class( $school, $data ) {
 		Access::require_access( $school ? Access::school( $school ) : Access::teacher() );
 		$year = $school ? self::row( 'academic_years', absint( $data['academic_year_id'] ?? 0 ) ) : array( 'id' => 0 );
@@ -209,6 +307,14 @@ final class Service {
 			}
 		);
 	}
+	/**
+	 * Roster for Service.
+	 *
+	 * @param mixed  $school School.
+	 * @param int    $class Class.
+	 * @param int    $page Page.
+	 * @param string $search Search.
+	 */
 	public static function roster( $school, $class = 0, $page = 1, $search = '' ) {
 		global $wpdb;
 		if ( $class ) {
@@ -219,15 +325,21 @@ final class Service {
 		if ( ! $school && $class ) {
 			$c    = Schema::table( 'class_memberships' );
 			$like = '%' . $wpdb->esc_like( $search ) . '%';
-			return $wpdb->get_results( $wpdb->prepare( "SELECT m.id,m.user_id,m.role,m.status,u.display_name,u.user_login FROM $c m JOIN {$wpdb->users} u ON u.ID=m.user_id WHERE m.class_id=%d AND m.status='active' AND u.display_name LIKE %s ORDER BY u.display_name,m.id LIMIT 50 OFFSET %d", $class, $like, ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
+			return $wpdb->get_results( $wpdb->prepare( 'SELECT m.id,m.user_id,m.role,m.status,u.display_name,u.user_login FROM %i m JOIN %i u ON u.ID=m.user_id WHERE m.class_id=%d AND m.status=\'active\' AND u.display_name LIKE %s ORDER BY u.display_name,m.id LIMIT 50 OFFSET %d', $c, $wpdb->users, $class, $like, ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 		}
 		$m     = Schema::table( 'school_memberships' );
 		$c     = Schema::table( 'class_memberships' );
 		$p     = Schema::table( 'school_student_profiles' );
-		$scope = $class ? $wpdb->prepare( " AND EXISTS (SELECT 1 FROM $c cm WHERE cm.class_id=%d AND cm.user_id=m.user_id AND cm.role=m.role AND cm.status='active')", $class ) : '';
+		$scope = $class ? $wpdb->prepare( ' AND EXISTS (SELECT 1 FROM %i cm WHERE cm.class_id=%d AND cm.user_id=m.user_id AND cm.role=m.role AND cm.status=\'active\')', $c, $class ) : '';
 		$like  = '%' . $wpdb->esc_like( $search ) . '%';
 		return $wpdb->get_results( $wpdb->prepare( "SELECT m.id,m.user_id,m.role,m.status,u.display_name,u.user_login,p.external_student_id FROM $m m JOIN {$wpdb->users} u ON u.ID=m.user_id LEFT JOIN $p p ON p.school_id=m.school_id AND p.user_id=m.user_id WHERE m.school_id=%d AND m.status='active' $scope AND (u.display_name LIKE %s OR p.external_student_id LIKE %s) ORDER BY u.display_name,m.id LIMIT 50 OFFSET %d", $school, $like, $like, ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 	}
+	/**
+	 * Class member for Service.
+	 *
+	 * @param mixed $class Class.
+	 * @param mixed $data Input data.
+	 */
 	public static function class_member( $class, $data ) {
 		$record = Access::classroom( $class, true );
 		Access::require_access( $record );
@@ -251,6 +363,12 @@ final class Service {
 		self::audit( $record['school_id'], $active ? 'class_member_added' : 'class_member_removed', $user );
 		return array( 'success' => true );
 	}
+	/**
+	 * Remove member for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $id Id.
+	 */
 	public static function remove_member( $school, $id ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
@@ -272,7 +390,7 @@ final class Service {
 				self::update( 'school_memberships', array( 'status' => 'inactive' ), array( 'id' => $id ) );
 				$c = Schema::table( 'classes' );
 				$m = Schema::table( 'class_memberships' );
-				$wpdb->query( $wpdb->prepare( "UPDATE $m m JOIN $c c ON c.id=m.class_id SET m.status='inactive' WHERE c.school_id=%d AND m.user_id=%d AND m.role=%s", $school, $record['user_id'], $record['role'] ) );
+				$wpdb->query( $wpdb->prepare( 'UPDATE %i m JOIN %i c ON c.id=m.class_id SET m.status=\'inactive\' WHERE c.school_id=%d AND m.user_id=%d AND m.role=%s', $m, $c, $school, $record['user_id'], $record['role'] ) );
 				if ( 'student' === $record['role'] ) {
 					self::update(
 						'guardian_links',
@@ -287,6 +405,14 @@ final class Service {
 		);
 		return array( 'success' => true );
 	}
+	/**
+	 * Create a managed student account and its school membership.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the account cannot be created.
+	 * @throws \Throwable When a failed membership transaction is rolled back.
+	 */
 	public static function create_student( $school, $data ) {
 		Access::require_access( Access::school( $school ) );
 		$name     = self::text( $data['name'] ?? '' );
@@ -294,7 +420,7 @@ final class Service {
 		self::need( $name && $external, 'Student name and school student ID are required.' );
 		global $wpdb;
 		$p = Schema::table( 'school_student_profiles' );
-		self::need( ! $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $p WHERE school_id=%d AND external_student_id=%s", $school, $external ) ), 'This school student ID already exists. Use the existing roster entry.' );
+		self::need( ! $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE school_id=%d AND external_student_id=%s', $p, $school, $external ) ), 'This school student ID already exists. Use the existing roster entry.' );
 		$role = function_exists( 'ohmylms_get_assignable_student_role' ) ? ohmylms_get_assignable_student_role() : 'subscriber';
 		$id   = wp_insert_user(
 			array(
@@ -339,6 +465,12 @@ final class Service {
 			'username' => get_userdata( $id )->user_login,
 		);
 	}
+	/**
+	 * Invite for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function invite( $school, $data ) {
 		Access::require_access( Access::school( $school ) );
 		$role    = $data['role'] ?? '';
@@ -382,12 +514,23 @@ final class Service {
 			'email_sent' => isset( $sent ) ? (bool) $sent : false,
 		);
 	}
+	/**
+	 * Invitations for Service.
+	 *
+	 * @param mixed $school School.
+	 */
 	public static function invitations( $school ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
 		$table = Schema::table( 'school_invitations' );
-		return $wpdb->get_results( $wpdb->prepare( "SELECT id,role,email,student_user_id,expires_at,consumed_at,revoked_at FROM $table WHERE school_id=%d ORDER BY id DESC LIMIT 50", $school ), ARRAY_A );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT id,role,email,student_user_id,expires_at,consumed_at,revoked_at FROM %i WHERE school_id=%d ORDER BY id DESC LIMIT 50', $table, $school ), ARRAY_A );
 	}
+	/**
+	 * Revoke invite for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $id Id.
+	 */
 	public static function revoke_invite( $school, $id ) {
 		Access::require_access( Access::school( $school ) );
 		$invite = self::row( 'school_invitations', $id );
@@ -410,6 +553,12 @@ final class Service {
 		$role = $wpdb->get_var( $wpdb->prepare( 'SELECT role FROM %i WHERE token_hash=%s AND consumed_at IS NULL AND revoked_at IS NULL AND expires_at>%s', Schema::table( 'school_invitations' ), hash( 'sha256', $token ), self::now() ) );
 		return $role ? (string) $role : '';
 	}
+	/**
+	 * Accept for Service.
+	 *
+	 * @param mixed  $token Token.
+	 * @param string $password Password.
+	 */
 	public static function accept( $token, $password = '' ) {
 		global $wpdb;
 		self::need( is_string( $token ) && preg_match( '/^[a-f0-9]{64}$/', $token ), 'Invalid invitation.' );
@@ -422,7 +571,7 @@ final class Service {
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Match recovery's user-then-invitation lock order to avoid reset/accept deadlocks.
 					$wpdb->get_var( $wpdb->prepare( 'SELECT ID FROM %i WHERE ID=%d FOR UPDATE', $wpdb->users, $candidate['student_user_id'] ) );
 				}
-				$invite = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE token_hash=%s FOR UPDATE", hash( 'sha256', $token ) ), ARRAY_A );
+				$invite = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE token_hash=%s FOR UPDATE', $table, hash( 'sha256', $token ) ), ARRAY_A );
 				self::need( $invite && ! $invite['consumed_at'] && ! $invite['revoked_at'] && $invite['expires_at'] > self::now(), 'This invitation has expired or has already been used.' );
 				$school = (int) $invite['school_id'];
 				if ( 0 === $school ) {
@@ -440,7 +589,7 @@ final class Service {
 					$updated_user = get_userdata( $user_id );
 					self::need( $updated_user && wp_check_password( $password, $updated_user->user_pass, $user_id ), 'Unable to save the new password.' );
 					// Invalidate other outstanding recovery links for this child.
-					$wpdb->query( $wpdb->prepare( "UPDATE $table SET revoked_at=%s WHERE student_user_id=%d AND role='activation' AND id<>%d AND consumed_at IS NULL", self::now(), $user_id, $invite['id'] ) );
+					$wpdb->query( $wpdb->prepare( 'UPDATE %i SET revoked_at=%s WHERE student_user_id=%d AND role=\'activation\' AND id<>%d AND consumed_at IS NULL', $table, self::now(), $user_id, $invite['id'] ) );
 				} else {
 					$user    = wp_get_current_user();
 					$user_id = $user->ID;
@@ -451,7 +600,7 @@ final class Service {
 					if ( 'guardian' === $invite['role'] ) {
 						Access::require_access( Access::student( $school, $invite['student_user_id'] ) );
 						$links  = Schema::table( 'guardian_links' );
-						$link   = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM $links WHERE school_id=%d AND guardian_user_id=%d AND student_user_id=%d", $school, $user_id, $invite['student_user_id'] ) );
+						$link   = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE school_id=%d AND guardian_user_id=%d AND student_user_id=%d', $links, $school, $user_id, $invite['student_user_id'] ) );
 						$record = array(
 							'status'      => 'active',
 							'approved_by' => $invite['invited_by'],
@@ -510,12 +659,23 @@ final class Service {
 			}
 		);
 	}
+	/**
+	 * Guardians for Service.
+	 *
+	 * @param mixed $school School.
+	 */
 	public static function guardians( $school ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
 		$g = Schema::table( 'guardian_links' );
-		return $wpdb->get_results( $wpdb->prepare( "SELECT g.id,g.student_user_id,g.status,u.display_name AS parent_name,s.display_name AS student_name FROM $g g JOIN {$wpdb->users} u ON u.ID=g.guardian_user_id JOIN {$wpdb->users} s ON s.ID=g.student_user_id WHERE g.school_id=%d ORDER BY g.id DESC LIMIT 100", $school ), ARRAY_A );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT g.id,g.student_user_id,g.status,u.display_name AS parent_name,s.display_name AS student_name FROM %i g JOIN %i u ON u.ID=g.guardian_user_id JOIN %i s ON s.ID=g.student_user_id WHERE g.school_id=%d ORDER BY g.id DESC LIMIT 100', $g, $wpdb->users, $wpdb->users, $school ), ARRAY_A );
 	}
+	/**
+	 * Revoke guardian for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $id Id.
+	 */
 	public static function revoke_guardian( $school, $id ) {
 		Access::require_access( Access::school( $school ) );
 		$link = self::row( 'guardian_links', $id );
@@ -524,13 +684,23 @@ final class Service {
 		self::audit( $school, 'guardian_revoked', $id );
 		return array( 'success' => true );
 	}
+	/**
+	 * Children for Service.
+	 */
 	public static function children() {
 		global $wpdb;
 		$g = Schema::table( 'guardian_links' );
 		$s = Schema::table( 'schools' );
 		$m = Schema::table( 'school_memberships' );
-		return $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT g.student_user_id,g.school_id,u.display_name,s.name AS school_name FROM $g g JOIN $s s ON s.id=g.school_id AND s.status='active' JOIN {$wpdb->users} u ON u.ID=g.student_user_id JOIN $m m ON m.school_id=g.school_id AND m.user_id=g.student_user_id AND m.role='student' AND m.status='active' WHERE g.guardian_user_id=%d AND g.status='active' ORDER BY u.display_name LIMIT 100", get_current_user_id() ), ARRAY_A );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT DISTINCT g.student_user_id,g.school_id,u.display_name,s.name AS school_name FROM %i g JOIN %i s ON s.id=g.school_id AND s.status=\'active\' JOIN %i u ON u.ID=g.student_user_id JOIN %i m ON m.school_id=g.school_id AND m.user_id=g.student_user_id AND m.role=\'student\' AND m.status=\'active\' WHERE g.guardian_user_id=%d AND g.status=\'active\' ORDER BY u.display_name LIMIT 100', $g, $s, $wpdb->users, $m, get_current_user_id() ), ARRAY_A );
 	}
+	/**
+	 * Create assignment for Service.
+	 *
+	 * @param mixed $class Class.
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function create_assignment( $class, $data ) {
 		global $wpdb;
 		$record = Access::classroom( $class, true );
@@ -538,16 +708,16 @@ final class Service {
 		$course_id = absint( $data['course_id'] ?? 0 );
 		$content   = absint( $data['content_id'] ?? 0 );
 		$course    = get_post( $course_id );
-		self::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && 'publish' === $course->post_status, 'Select a published course.' );
+		self::need( $course && OHMYLMS_COURSE_CPT === $course->post_type && 'publish' === $course->post_status, 'Select a published course.' );
 		// Content distribution does not grant access or change purchases/enrollments.
 		if ( $content ) {
 			$rel      = Schema::table( 'content_relationship' );
 			$chapters = Schema::table( 'chapter_relationship' );
-			self::need( $wpdb->get_var( $wpdb->prepare( "SELECT r.id FROM $rel r JOIN $chapters c ON c.chapter_id=r.chapter_id WHERE c.course_id=%d AND r.content_id=%d", $course_id, $content ) ), 'This activity does not belong to the selected course.' );
+			self::need( $wpdb->get_var( $wpdb->prepare( 'SELECT r.id FROM %i r JOIN %i c ON c.chapter_id=r.chapter_id WHERE c.course_id=%d AND r.content_id=%d', $rel, $chapters, $course_id, $content ) ), 'This activity does not belong to the selected course.' );
 		}
 		$m     = Schema::table( 'class_memberships' );
 		$sm    = Schema::table( 'school_memberships' );
-		$users = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT cm.user_id FROM $m cm JOIN $sm sm ON sm.user_id=cm.user_id AND sm.school_id=%d AND sm.role='student' AND sm.status='active' WHERE cm.class_id=%d AND cm.role='student' AND cm.status='active'", $record['school_id'], $class ) ) );
+		$users = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT cm.user_id FROM %i cm JOIN %i sm ON sm.user_id=cm.user_id AND sm.school_id=%d AND sm.role=\'student\' AND sm.status=\'active\' WHERE cm.class_id=%d AND cm.role=\'student\' AND cm.status=\'active\'', $m, $sm, $record['school_id'], $class ) ) );
 		if ( ! empty( $data['student_ids'] ) ) {
 			$selected = array_unique( array_map( 'absint', (array) $data['student_ids'] ) );
 			self::need( ! array_diff( $selected, $users ), 'A selected student is outside this class.' );
@@ -603,6 +773,15 @@ final class Service {
 			}
 		);
 	}
+	/**
+	 * Assignments for Service.
+	 *
+	 * @param int $class Class.
+	 * @param int $student Student.
+	 * @param int $school School.
+	 * @param int $page Page.
+	 * @param int $filter_class Filter class.
+	 */
 	public static function assignments( $class = 0, $student = 0, $school = 0, $page = 1, $filter_class = 0 ) {
 		global $wpdb;
 		$a  = Schema::table( 'learning_assignments' );
@@ -615,7 +794,7 @@ final class Service {
 			Access::require_access( Access::classroom( $class ) );
 			$scope = $wpdb->prepare( 'a.class_id=%d', $class );
 		} else {
-			$student = $student ?: get_current_user_id();
+			$student = $student ? $student : get_current_user_id();
 			Access::require_access( $student === get_current_user_id() || ( $school && Access::guardian( $school, $student ) ) );
 			$scope = $wpdb->prepare( 'r.student_user_id=%d', $student );
 			if ( $school ) {
@@ -626,13 +805,33 @@ final class Service {
 		// Report only distributed school work and current memberships; never global student history.
 		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT a.id,a.title,a.course_id,a.content_id,a.due_at,a.created_at,a.class_id,c.name AS class_name,a.school_id,r.student_user_id,u.display_name AS student_name,r.completed_at FROM $a a JOIN $r r ON r.assignment_id=a.id JOIN $c c ON c.id=a.class_id JOIN $s s ON s.id=a.school_id AND s.status='active' JOIN {$wpdb->users} u ON u.ID=r.student_user_id JOIN $sm sm ON sm.school_id=a.school_id AND sm.user_id=r.student_user_id AND sm.role='student' AND sm.status='active' JOIN $cm cm ON cm.class_id=a.class_id AND cm.user_id=r.student_user_id AND cm.role='student' AND cm.status='active' WHERE a.status='active' AND $scope ORDER BY a.id DESC,r.student_user_id LIMIT 50 OFFSET %d", ( max( 1, $page ) - 1 ) * 50 ), ARRAY_A );
 		foreach ( $rows as &$row ) {
-			$row['url'] = get_permalink( $row['content_id'] ?: $row['course_id'] ); }
+			$row['url'] = get_permalink( $row['content_id'] ? $row['content_id'] : $row['course_id'] ); }
 		return $rows;
 	}
+	/**
+	 * Course completed for Service.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course Course.
+	 */
 	public static function course_completed( $student, $course ) {
 		self::mark_completed( $student, $course, 0 ); }
+	/**
+	 * Content completed for Service.
+	 *
+	 * @param mixed $content Content.
+	 * @param mixed $course Course.
+	 * @param mixed $student Student.
+	 */
 	public static function content_completed( $content, $course, $student ) {
 		self::mark_completed( $student, $course, $content ); }
+	/**
+	 * Mark completed for Service.
+	 *
+	 * @param mixed $student Student.
+	 * @param mixed $course Course.
+	 * @param mixed $content Content.
+	 */
 	private static function mark_completed( $student, $course, $content ) {
 		global $wpdb;
 		$a = Schema::table( 'learning_assignments' );
@@ -641,17 +840,26 @@ final class Service {
 		$person = new \OhMyLMS\Data\Student( $student );
 		if ( ! ( $content ? $person->maybe_completed( $content ) : $person->is_course_completed( $course ) ) ) {
 			return; }
-		$wpdb->query( $wpdb->prepare( "UPDATE $r r JOIN $a a ON a.id=r.assignment_id SET r.completed_at=%s WHERE r.student_user_id=%d AND a.course_id=%d AND a.content_id=%d AND a.status='active' AND r.completed_at IS NULL", self::now(), $student, $course, $content ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i r JOIN %i a ON a.id=r.assignment_id SET r.completed_at=%s WHERE r.student_user_id=%d AND a.course_id=%d AND a.content_id=%d AND a.status=\'active\' AND r.completed_at IS NULL', $r, $a, self::now(), $student, $course, $content ) );
 	}
+	/**
+	 * Report for Service.
+	 *
+	 * @param mixed $school School.
+	 */
 	public static function report( $school ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
 		$a = Schema::table( 'learning_assignments' );
 		$r = Schema::table( 'assignment_recipients' );
 		$c = Schema::table( 'classes' );
-		return $wpdb->get_results( $wpdb->prepare( "SELECT c.id,c.name,c.status,COUNT(r.id) AS assigned,SUM(CASE WHEN r.completed_at IS NOT NULL THEN 1 ELSE 0 END) AS completed FROM $c c LEFT JOIN $a a ON a.class_id=c.id AND a.status='active' LEFT JOIN $r r ON r.assignment_id=a.id WHERE c.school_id=%d GROUP BY c.id,c.name,c.status ORDER BY c.name LIMIT 200", $school ), ARRAY_A );
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT c.id,c.name,c.status,COUNT(r.id) AS assigned,SUM(CASE WHEN r.completed_at IS NOT NULL THEN 1 ELSE 0 END) AS completed FROM %i c LEFT JOIN %i a ON a.class_id=c.id AND a.status=\'active\' LEFT JOIN %i r ON r.assignment_id=a.id WHERE c.school_id=%d GROUP BY c.id,c.name,c.status ORDER BY c.name LIMIT 200', $c, $a, $r, $school ), ARRAY_A );
 	}
-	/** Limit grading to an explicitly distributed activity, current roster, and its submission. */
+	/** Limit grading to an explicitly distributed activity, current roster, and its submission.
+	 *
+	 * @param mixed $learning_id Learning identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function submission_scope( $learning_id, $attempt_id ) {
 		$learning = self::row( 'learning_assignments', $learning_id );
 		Access::require_access( $learning && 'active' === $learning['status'] && Access::classroom( $learning['class_id'], true ) );
@@ -660,7 +868,7 @@ final class Service {
 		global $wpdb;
 		$r        = Schema::table( 'assignment_recipients' );
 		$m        = Schema::table( 'class_memberships' );
-		$assigned = $wpdb->get_var( $wpdb->prepare( "SELECT r.assigned_at FROM $r r JOIN $m m ON m.user_id=r.student_user_id AND m.class_id=%d AND m.role='student' AND m.status='active' WHERE r.assignment_id=%d AND r.student_user_id=%d", $learning['class_id'], $learning_id, $attempt['user_id'] ) );
+		$assigned = $wpdb->get_var( $wpdb->prepare( 'SELECT r.assigned_at FROM %i r JOIN %i m ON m.user_id=r.student_user_id AND m.class_id=%d AND m.role=\'student\' AND m.status=\'active\' WHERE r.assignment_id=%d AND r.student_user_id=%d', $r, $m, $learning['class_id'], $learning_id, $attempt['user_id'] ) );
 		Access::require_access( $assigned && Access::student( $learning['school_id'], $attempt['user_id'] ) );
 		Access::require_access( $learning['prior_completion'] || get_gmt_from_date( $attempt['start_date'] ) >= $assigned );
 		return array( $learning, $attempt );
@@ -728,11 +936,19 @@ final class Service {
 		}
 		return $result;
 	}
+	/**
+	 * Grade for Service.
+	 *
+	 * @param mixed $learning_id Learning identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function grade( $learning_id, $attempt_id, $data ) {
 		[$learning, $attempt] = self::submission_scope( $learning_id, $attempt_id );
 		$total                = (int) get_post_meta( $attempt['assignment_id'], '_total_points', true );
 		$score                = $data['score'] ?? null;
-		self::need( is_numeric( $score ) && (float) $score === (float) (int) $score && $score >= 0 && $score <= $total, 'Score must be a whole number between zero and the total points.' );
+		self::need( is_numeric( $score ) && (float) $score === (float) (int) $score && 0 <= $score && $score <= $total, 'Score must be a whole number between zero and the total points.' );
 		// Reuse the existing grading/completion pipeline with only the verified attempt ID.
 		$request = new \WP_REST_Request( 'POST' );
 		$request->set_url_params(
@@ -761,6 +977,11 @@ final class Service {
 		self::audit( $learning['school_id'], 'submission_graded', $attempt_id );
 		return array( 'success' => true );
 	}
+	/**
+	 * Archive class for Service.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function archive_class( $id ) {
 		$class = self::row( 'classes', $id );
 		Access::require_access( $class && ( (int) $class['school_id'] ? Access::school( $class['school_id'] ) : Access::classroom( $id, true ) ) );
@@ -768,6 +989,12 @@ final class Service {
 		self::audit( $class['school_id'], 'class_archived', $id );
 		return array( 'success' => true );
 	}
+	/**
+	 * Rollover for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function rollover( $school, $data ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
@@ -783,10 +1010,10 @@ final class Service {
 				self::need( $target && 'active' === $target['status'], 'The destination year is no longer active.' );
 				$years = Schema::table( 'academic_years' );
 				// Serialize rollover; repeated requests must never duplicate classes.
-				$status = $wpdb->get_var( $wpdb->prepare( "SELECT status FROM $years WHERE id=%d FOR UPDATE", $from['id'] ) );
+				$status = $wpdb->get_var( $wpdb->prepare( 'SELECT status FROM %i WHERE id=%d FOR UPDATE', $years, $from['id'] ) );
 				self::need( 'active' === $status, 'This year has already been archived.' );
 				$c       = Schema::table( 'classes' );
-				$classes = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $c WHERE academic_year_id=%d AND school_id=%d AND status='active' ORDER BY id FOR UPDATE", $from['id'], $school ), ARRAY_A );
+				$classes = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE academic_year_id=%d AND school_id=%d AND status=\'active\' ORDER BY id FOR UPDATE', $c, $from['id'], $school ), ARRAY_A );
 				if ( isset( $data['preview_hash'] ) ) {
 					self::need( hash_equals( $data['preview_hash'], Lifecycle::signature( self::row( 'academic_years', $from['id'] ), self::row( 'academic_years', $to['id'] ), $classes ) ), 'The academic years or source classes changed. Preview the rollover again.' );
 				}
@@ -810,6 +1037,12 @@ final class Service {
 			}
 		);
 	}
+	/**
+	 * Import roster for Service.
+	 *
+	 * @param mixed $school School.
+	 * @param mixed $data Input data.
+	 */
 	public static function import_roster( $school, $data ) {
 		global $wpdb;
 		Access::require_access( Access::school( $school ) );
@@ -828,7 +1061,7 @@ final class Service {
 		$line    = 1;
 		while ( ( $values = fgetcsv( $stream ) ) !== false ) {
 			++$line;
-			self::need( $line <= 201, 'Import up to 200 students at a time.' );
+			self::need( 201 >= $line, 'Import up to 200 students at a time.' );
 			if ( $values === array( null ) ) {
 				continue; }
 			$result = array( 'line' => $line );
@@ -840,7 +1073,7 @@ final class Service {
 				self::need( $name && $external && ! isset( $seen[ $external ] ), 'Missing name/student ID or repeated student ID in this file.' );
 				$seen[ $external ] = true;
 				$table             = Schema::table( 'school_student_profiles' );
-				$existing          = $wpdb->get_var( $wpdb->prepare( "SELECT user_id FROM $table WHERE school_id=%d AND external_student_id=%s", $school, $external ) );
+				$existing          = $wpdb->get_var( $wpdb->prepare( 'SELECT user_id FROM %i WHERE school_id=%d AND external_student_id=%s', $table, $school, $external ) );
 				$result           += array(
 					'name'                => $name,
 					'external_student_id' => $external,

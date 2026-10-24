@@ -13,6 +13,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** The shipped quiz player, with an author-only, non-recording session. */
 final class PreviewPlayer {
+	/**
+	 * Init for Preview player.
+	 */
 	public static function init() {
 		add_filter(
 			'show_admin_bar',
@@ -64,6 +67,9 @@ final class PreviewPlayer {
 		}
 		return admin_url( 'admin.php?page=ohmylms#/quiz-edit/' . absint( $id ) );
 	}
+	/**
+	 * Render for Preview player.
+	 */
 	public static function render() {
 		if ( ! isset( $_GET['ohmylms_quiz_preview'] ) ) {
 			return;
@@ -74,7 +80,7 @@ final class PreviewPlayer {
 		}
 		nocache_headers();
 		$quiz    = ohmylms_get_quiz( $id );
-		$session = sanitize_key( is_string( $_POST['preview_session'] ?? null ) ? $_POST['preview_session'] : '' );
+		$session = sanitize_key( wp_unslash( is_string( $_POST['preview_session'] ?? null ) ? $_POST['preview_session'] : '' ) );
 		$saved   = $session ? get_transient( 'ohmylms_quiz_preview_' . $session ) : false;
 		if ( $session && ( ! $saved || $saved['user'] !== get_current_user_id() || $saved['quiz'] !== $id ) ) {
 			wp_die( esc_html__( 'Preview expired. Open Preview again from the editor.', 'ohmylms' ), '', array( 'response' => 403 ) );
@@ -127,12 +133,12 @@ final class PreviewPlayer {
 			}
 			foreach ( $saved['snapshots'] as $data ) {
 				// A template question keeps the same numbers for the whole preview session.
-				$snapshot         = QuestionSnapshot::from_row( $data )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
+				$snapshot = QuestionSnapshot::from_row( $data )->instantiate( Template::seed_from( $session . ':' . (int) ( $data['question_id'] ?? 0 ) ) );
 				$response = $answers[ $snapshot->get_id() ] ?? array();
 				if ( 'structured' === $snapshot->get_type() ) {
 					$response = Structured::map_response( $snapshot, $response, 'preview:' . $session, true );
 				}
-				$grade = Grader::grade( $snapshot, $response );
+				$grade            = Grader::grade( $snapshot, $response );
 				$marks            = max( 0, (float) ( $snapshot->get_settings()['score']['value'] ?? 1 ) );
 				$result['total'] += $marks;
 				if ( is_wp_error( $grade ) ) {

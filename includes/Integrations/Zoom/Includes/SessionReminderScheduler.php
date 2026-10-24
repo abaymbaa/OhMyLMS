@@ -18,9 +18,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use WP_Query;
 
+/**
+ * Plugin session reminder scheduler implementation.
+ */
 class SessionReminderScheduler {
 	const ACTION_HOOK = 'ohmylms_send_zoom_session_reminders';
 
+	/**
+	 * Init for Session reminder scheduler.
+	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'schedule_reminder' ) );
 		add_action( self::ACTION_HOOK, array( __CLASS__, 'handle_reminder' ) );
@@ -117,8 +123,8 @@ class SessionReminderScheduler {
 	/**
 	 * Check if the user has already received the email
 	 *
-	 * @param int $user_id
-	 * @param int $session_id
+	 * @param int $user_id User identifier.
+	 * @param int $session_id Session identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -129,8 +135,8 @@ class SessionReminderScheduler {
 	/**
 	 * Mark the email as sent
 	 *
-	 * @param int $user_id
-	 * @param int $session_id
+	 * @param int $user_id User identifier.
+	 * @param int $session_id Session identifier.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -141,9 +147,9 @@ class SessionReminderScheduler {
 	/**
 	 * Send the email to the user
 	 *
-	 * @param int   $user_id
-	 * @param int   $course_id
-	 * @param array $session_data
+	 * @param int   $user_id User identifier.
+	 * @param int   $course_id Course identifier.
+	 * @param array $session_data Session data.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -154,7 +160,7 @@ class SessionReminderScheduler {
 		}
 
 		$start_time   = date_i18n( 'M j, g:i A', strtotime( $session_data['start_time'] ) );
-		$zoom_link    = $session_data['zoom_link'] ?: '#';
+		$zoom_link    = $session_data['zoom_link'] ? $session_data['zoom_link'] : '#';
 		$course_title = $session_data['course_title'];
 		$course_link  = $session_data['course_link'];
 

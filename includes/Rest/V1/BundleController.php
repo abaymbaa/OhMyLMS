@@ -19,6 +19,9 @@ defined( 'ABSPATH' ) || exit;
 
 /** Course Bundle administration: create, describe, edit members, publish and delete. */
 class BundleController extends RestController {
+	/**
+	 * Register routes for Bundle controller.
+	 */
 	public function register_routes() {
 		$admin = array( Access::class, 'admin' );
 		register_rest_route(
@@ -93,6 +96,11 @@ class BundleController extends RestController {
 		);
 	}
 
+	/**
+	 * Detail for Bundle controller.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 */
 	private function detail( $bundle_id ) {
 		$bundle = Bundles::get( $bundle_id );
 		return $bundle ? array(
@@ -101,6 +109,9 @@ class BundleController extends RestController {
 		) : null;
 	}
 
+	/**
+	 * Index for Bundle controller.
+	 */
 	public function index() {
 		return rest_ensure_response(
 			array(
@@ -113,6 +124,11 @@ class BundleController extends RestController {
 		);
 	}
 
+	/**
+	 * Create for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create( WP_REST_Request $request ) {
 		$bundle = Bundles::create( $request->get_params() );
 		if ( is_wp_error( $bundle ) ) {
@@ -122,17 +138,32 @@ class BundleController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Show for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		$detail = $this->detail( (int) $request['id'] );
 		return $detail ? rest_ensure_response( $detail ) : Bundles::missing();
 	}
 
+	/**
+	 * Update for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update( WP_REST_Request $request ) {
 		$params = $request->get_params();
 		$bundle = Bundles::update( (int) $request['id'], array_intersect_key( $params, array_flip( array( 'title', 'description' ) ) ), $params['expected_updated_at'] ?? null );
 		return is_wp_error( $bundle ) ? $bundle : rest_ensure_response( $this->detail( (int) $bundle['id'] ) );
 	}
 
+	/**
+	 * Set members for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function set_members( WP_REST_Request $request ) {
 		$items = $request->get_param( 'items' );
 		if ( ! is_array( $items ) ) {
@@ -141,18 +172,31 @@ class BundleController extends RestController {
 		return is_wp_error( $bundle ) ? $bundle : rest_ensure_response( $this->detail( (int) $bundle['id'] ) );
 	}
 
+	/**
+	 * Publish for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function publish( WP_REST_Request $request ) {
 		$published = $request->has_param( 'published' ) ? rest_sanitize_boolean( $request->get_param( 'published' ) ) : true;
 		$bundle    = Bundles::set_status( (int) $request['id'], $published );
 		return is_wp_error( $bundle ) ? $bundle : rest_ensure_response( $this->detail( (int) $bundle['id'] ) );
 	}
 
+	/**
+	 * Delete for Bundle controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function delete( WP_REST_Request $request ) {
 		$result = Bundles::delete( (int) $request['id'], rest_sanitize_boolean( $request->get_param( 'force' ) ) );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
-	/** Courses or curriculum items an administrator can add to a bundle. */
+	/** Courses or curriculum items an administrator can add to a bundle.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function targets( WP_REST_Request $request ) {
 		global $wpdb;
 		$type   = (string) $request->get_param( 'type' );
@@ -162,7 +206,7 @@ class BundleController extends RestController {
 		if ( 'curriculum' !== $type ) {
 			return Access::error( 'ohmylms_bundle_invalid', __( 'Choose courses or curriculum items.', 'ohmylms' ) ); }
 		$like = '%' . $wpdb->esc_like( $search ) . '%';
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Items::table() . ' WHERE name LIKE %s OR code LIKE %s ORDER BY name LIMIT 20', $like, $like ), ARRAY_A ) ?: array();
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE name LIKE %s OR code LIKE %s ORDER BY name LIMIT 20', Items::table(), $like, $like ), ARRAY_A ) ?: array();
 		return rest_ensure_response(
 			array_map(
 				static function ( $row ) {

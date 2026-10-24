@@ -39,6 +39,9 @@ class QuizController extends RestController {
 	 */
 	protected $base = 'quiz';
 
+	/**
+	 * Check quiz permission for Quiz controller.
+	 */
 	public function check_quiz_permission() {
 		return AccessPolicy::check( AccessPolicy::can_author() );
 	}
@@ -46,7 +49,7 @@ class QuizController extends RestController {
 	/**
 	 * Object-level permission for single-quiz routes: GET/PUT edit, DELETE delete.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return true|WP_Error
 	 */
 	public function check_item_permission( $request ) {
@@ -60,7 +63,7 @@ class QuizController extends RestController {
 	/**
 	 * Reports and grading are limited to people who may edit that quiz.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return true|WP_Error
 	 */
 	public function check_grading_permission( $request ) {
@@ -77,7 +80,7 @@ class QuizController extends RestController {
 	/**
 	 * Removing a question from a quiz edits the quiz; it never deletes the question.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return true|WP_Error
 	 */
 	public function check_item_permission_for_edit( $request ) {
@@ -91,7 +94,7 @@ class QuizController extends RestController {
 	/**
 	 * Remove one question from this quiz. The question stays in the bank.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function remove_question( $request ) {
@@ -102,6 +105,12 @@ class QuizController extends RestController {
 		return rest_ensure_response( $result + array( 'status' => 'success' ) );
 	}
 
+	/**
+	 * Attempt belongs to quiz for Quiz controller.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	private function attempt_belongs_to_quiz( $attempt_id, $quiz_id ) {
 		global $wpdb;
 		return (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d AND quiz_id=%d", $attempt_id, $quiz_id ) );
@@ -478,7 +487,7 @@ class QuizController extends RestController {
 		$total_posts          = $posts_query->found_posts;
 		$total_filtered_posts = $total_posts;
 
-		if ( $total_posts < 1 && $page > 1 ) {
+		if ( 1 > $total_posts && 1 < $page ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
 			$count_query->query( $query_args );
@@ -539,7 +548,7 @@ class QuizController extends RestController {
 		}
 		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
 
-		if ( $page > 1 ) {
+		if ( 1 < $page ) {
 			$prev_page = $page - 1;
 			if ( $prev_page > $max_pages ) {
 				$prev_page = $max_pages;
@@ -617,7 +626,7 @@ class QuizController extends RestController {
 		$page        = (int) $query_args['paged'];
 		$total_posts = $posts_query->found_posts;
 
-		if ( $total_posts < 1 && $page > 1 ) {
+		if ( 1 > $total_posts && 1 < $page ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
 			$count_query->query( $query_args );
@@ -637,7 +646,7 @@ class QuizController extends RestController {
 		}
 		$base = add_query_arg( $request_params, rest_url( sprintf( '/%s/%s', $this->namespace, $this->rest_base ) ) );
 
-		if ( $page > 1 ) {
+		if ( 1 < $page ) {
 			$prev_page = $page - 1;
 			if ( $prev_page > $max_pages ) {
 				$prev_page = $max_pages;
@@ -656,9 +665,9 @@ class QuizController extends RestController {
 	/**
 	 * Add quiz
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function create_item( $request ) {
@@ -707,9 +716,9 @@ class QuizController extends RestController {
 	/**
 	 * Add quiz
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function create_item_with_content( $request ) {
@@ -778,7 +787,7 @@ class QuizController extends RestController {
 	/**
 	 * Update Quiz settings
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -851,6 +860,8 @@ class QuizController extends RestController {
 	 * Save nested quiz questions through the authorized batch writer.
 	 *
 	 * @return array|WP_Error Saved IDs, or an error listing every failing question.
+	 * @param mixed $post Post.
+	 * @param mixed $request REST request.
 	 */
 	public function save_question( $post, $request ) {
 		$questions = $request['content'] ?? array();
@@ -863,14 +874,14 @@ class QuizController extends RestController {
 	/**
 	 * Get quiz content
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
 	public function get_item( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_QUIZ_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 
@@ -891,7 +902,7 @@ class QuizController extends RestController {
 	/**
 	 * Delete a single quiz.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -931,7 +942,7 @@ class QuizController extends RestController {
 	/**
 	 * Save quiz
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -941,10 +952,15 @@ class QuizController extends RestController {
 	}
 
 
+	/**
+	 * Get report for Quiz controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_report( $request ) {
 		$id   = (int) $request['id'];
 		$post = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_QUIZ_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$quiz = ohmylms_get_quiz( $post->ID );
@@ -974,7 +990,7 @@ class QuizController extends RestController {
 		$id         = (int) $request['id'];
 		$attempt_id = (int) $request['attempt_id'];
 		$post       = get_post( $id );
-		if ( empty( $id ) || empty( $post->ID ) || $post->post_type !== OHMYLMS_QUIZ_CPT ) {
+		if ( empty( $id ) || empty( $post->ID ) || OHMYLMS_QUIZ_CPT !== $post->post_type ) {
 			return new WP_Error( 'ohmylms_rest_invalid_quiz_id', __( 'Invalid ID.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
 		$quiz      = ohmylms_get_quiz( $post->ID );
@@ -1095,10 +1111,10 @@ class QuizController extends RestController {
 	/**
 	 * Prepare a quiz for database.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return bool|Quiz
 	 *
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_item_for_database( $request ) {
@@ -1133,10 +1149,10 @@ class QuizController extends RestController {
 	 * Prepare a single quiz for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function prepare_item_for_response( $post, $request ) {
@@ -1166,7 +1182,7 @@ class QuizController extends RestController {
 	/**
 	 * Get quiz data.
 	 *
-	 * @param quiz $quiz
+	 * @param quiz $quiz Quiz.
 	 * @return array
 	 *
 	 * @since 1.0.0
@@ -1211,8 +1227,8 @@ class QuizController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $product
-	 * @param $request
+	 * @param mixed $product Product.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0
@@ -1241,7 +1257,7 @@ class QuizController extends RestController {
 	 * @param \WP_REST_Request $request The REST request object containing the meta data.
 	 * @return bool True on success, false on failure.
 	 *
-	 * @throws DataException
+	 * @throws DataException When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function update_post_meta_fields( $post, $request ) {

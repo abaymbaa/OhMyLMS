@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { normalizeQuizReport } from './model.mjs';
@@ -79,7 +80,7 @@ export function createQuizGrading( readRuntime ) {
 										case 3:
 											_eLocal3.p = 3;
 											_nLocal = _eLocal3.v;
-											console.error( _nLocal );
+											showRequestError( _nLocal );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
@@ -154,7 +155,7 @@ export function createQuizGrading( readRuntime ) {
 										case 2:
 											_eLocal6.p = 2;
 											_nLocal2 = _eLocal6.v;
-											console.error( _nLocal2 );
+											showRequestError( _nLocal2 );
 										// Falls through to the shared async state cleanup.
 										case 3:
 											return _eLocal6.a( 2 );

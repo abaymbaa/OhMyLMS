@@ -39,11 +39,15 @@ class Membership extends Data {
 
 
 	/**
+	 * Subscription data.
+	 *
 	 * @var mixed|null Subscription data
 	 */
 	public $subscription = null;
 
 	/**
+	 * Order data.
+	 *
 	 * @var mixed|null Order data
 	 */
 	public $order = null;
@@ -85,8 +89,8 @@ class Membership extends Data {
 	/**
 	 * Membership constructor.
 	 *
-	 * @param $membership
-	 * @throws \Exception
+	 * @param string $membership Membership.
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function __construct( $membership = '' ) {
@@ -106,6 +110,9 @@ class Membership extends Data {
 		}
 	}
 
+	/**
+	 * Get thumbnail url for Membership.
+	 */
 	public function get_thumbnail_url() {
 		return '';
 	}
@@ -197,7 +204,7 @@ class Membership extends Data {
 	/**
 	 * Get price of the membership
 	 *
-	 * @param string $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -209,7 +216,7 @@ class Membership extends Data {
 	/**
 	 * Get regular price of the membership
 	 *
-	 * @param string $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -220,7 +227,7 @@ class Membership extends Data {
 	/**
 	 * Get sale price of the membership
 	 *
-	 * @param string $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -229,8 +236,11 @@ class Membership extends Data {
 	}
 
 
+	/**
+	 * Is free for Membership.
+	 */
 	public function is_free() {
-		return $this->get_price_type() == 'free';
+		return 'free' === $this->get_price_type();
 	}
 
 	/**
@@ -270,7 +280,7 @@ class Membership extends Data {
 	/**
 	 * Get membership created date.
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 *
 	 * @since 1.0.0
@@ -283,7 +293,7 @@ class Membership extends Data {
 	/**
 	 * Get membership created date.
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 *
 	 * @since 1.0.0
@@ -296,7 +306,7 @@ class Membership extends Data {
 	/**
 	 * Get membership featured image id
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -307,7 +317,7 @@ class Membership extends Data {
 	/**
 	 * Get date on sale from.
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -318,7 +328,7 @@ class Membership extends Data {
 	/**
 	 * Get date on sale to.
 	 *
-	 * @param $context
+	 * @param string $context Context.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -416,7 +426,7 @@ class Membership extends Data {
 	/**
 	 * Check if membership is on sale
 	 *
-	 * @param string $context
+	 * @param string $context Context.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -429,14 +439,14 @@ class Membership extends Data {
 			if ( empty( $from_date ) && empty( $to_date ) ) {
 				$on_sale = true;
 			} else {
-				$nowDate = current_time( 'Y-m-d' );
+				$now_date = current_time( 'Y-m-d' );
 				if ( $from_date instanceof \DateTime && $to_date instanceof \DateTime ) {
 					// Extract only the date (YYYY-MM-DD) for comparison.
-					$startDate = $from_date->format( 'Y-m-d' );
-					$endDate   = $to_date->format( 'Y-m-d' );
+					$start_date = $from_date->format( 'Y-m-d' );
+					$end_date   = $to_date->format( 'Y-m-d' );
 
 					// Validate if today's date is within the sale period (ignoring time).
-					if ( $nowDate >= $startDate && $nowDate <= $endDate ) {
+					if ( $now_date >= $start_date && $now_date <= $end_date ) {
 						return true;
 					} else {
 						return false;
@@ -449,21 +459,24 @@ class Membership extends Data {
 	}
 
 
+	/**
+	 * Validate on sale for Membership.
+	 */
 	public function validate_on_sale() {
-		$start   = $this->get_sale_price_dates_from();
-		$to      = $this->get_sale_price_dates_to();
-		$nowDate = current_time( 'Y-m-d' );
+		$start    = $this->get_sale_price_dates_from();
+		$to       = $this->get_sale_price_dates_to();
+		$now_date = current_time( 'Y-m-d' );
 		if ( ! $start || ! $to ) {
 			return true;
 		}
 		// Convert to DateTime if necessary.
 		if ( $start instanceof \DateTime && $to instanceof \DateTime ) {
 			// Extract only the date (YYYY-MM-DD) for comparison.
-			$startDate = $start->format( 'Y-m-d' );
-			$endDate   = $to->format( 'Y-m-d' );
+			$start_date = $start->format( 'Y-m-d' );
+			$end_date   = $to->format( 'Y-m-d' );
 
 			// Validate if today's date is within the sale period (ignoring time).
-			if ( $nowDate >= $startDate && $nowDate <= $endDate ) {
+			if ( $now_date >= $start_date && $now_date <= $end_date ) {
 				return true;
 			} else {
 				return false;
@@ -529,45 +542,108 @@ class Membership extends Data {
 	 *
 	 * @return array
 	 * @since 1.0.0
+	 * @param string $context Context.
 	 */
 	public function get_products( $context = 'view' ) {
 		$products = $this->get_prop( 'products', $context ) ?? array();
 		return 'edit' === $context ? $products : \OhMyLMS\Membership\CourseSelection::resolve( $products, $this->get_course_categories(), $this->get_course_tags(), $this->get_excluded_courses(), $this->get_course_curriculum(), $this->get_course_bundles() );
 	}
+	/**
+	 * Get course categories for Membership.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_course_categories( $context = 'view' ) {
 		return $this->get_prop( 'course_categories', $context ) ?? array(); }
+	/**
+	 * Get course tags for Membership.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_course_tags( $context = 'view' ) {
 		return $this->get_prop( 'course_tags', $context ) ?? array(); }
+	/**
+	 * Get course curriculum for Membership.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_course_curriculum( $context = 'view' ) {
 		return $this->get_prop( 'course_curriculum', $context ) ?? array(); }
+	/**
+	 * Get course bundles for Membership.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_course_bundles( $context = 'view' ) {
 		return $this->get_prop( 'course_bundles', $context ) ?? array(); }
+	/**
+	 * Get excluded courses for Membership.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_excluded_courses( $context = 'view' ) {
 		return $this->get_prop( 'excluded_courses', $context ) ?? array(); }
+	/**
+	 * Set course categories for Membership.
+	 *
+	 * @param mixed $ids Ids.
+	 */
 	public function set_course_categories( $ids ) {
 		$this->set_prop( 'course_categories', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
+	/**
+	 * Set course tags for Membership.
+	 *
+	 * @param mixed $ids Ids.
+	 */
 	public function set_course_tags( $ids ) {
 		$this->set_prop( 'course_tags', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
+	/**
+	 * Set course curriculum for Membership.
+	 *
+	 * @param mixed $ids Ids.
+	 */
 	public function set_course_curriculum( $ids ) {
 		$this->set_prop( 'course_curriculum', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
+	/**
+	 * Set course bundles for Membership.
+	 *
+	 * @param mixed $ids Ids.
+	 */
 	public function set_course_bundles( $ids ) {
 		$this->set_prop( 'course_bundles', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
+	/**
+	 * Set excluded courses for Membership.
+	 *
+	 * @param mixed $ids Ids.
+	 */
 	public function set_excluded_courses( $ids ) {
 		$this->set_prop( 'excluded_courses', \OhMyLMS\Membership\CourseSelection::ids( $ids ) ); }
 
+	/**
+	 * Get subscription duration for Membership.
+	 */
 	public function get_subscription_duration() {
 		$subscription_length = $this->get_subscription_length();
 		return $subscription_length['duration'] ?? '';
 	}
 
+	/**
+	 * Get subscription period for Membership.
+	 */
 	public function get_subscription_period() {
 		return $this->get_prop( 'subscription_period' );
 	}
 
+	/**
+	 * Get billing period for Membership.
+	 */
 	public function get_billing_period() {
 		return $this->data_store->get_billing_period( $this );
 	}
 
+	/**
+	 * Get billing interval for Membership.
+	 */
 	public function get_billing_interval() {
 		return $this->data_store->get_billing_interval( $this );
 	}
@@ -583,7 +659,7 @@ class Membership extends Data {
 	/**
 	 * Set status
 	 *
-	 * @param $status
+	 * @param mixed $status Status.
 	 * @since 1.0.0
 	 */
 	public function set_status( $status ) {
@@ -593,7 +669,7 @@ class Membership extends Data {
 	/**
 	 * Set status
 	 *
-	 * @param $status
+	 * @param mixed $status Status.
 	 * @since 1.0.0
 	 */
 	public function set_get_visibility_status( $status ) {
@@ -603,7 +679,7 @@ class Membership extends Data {
 	/**
 	 * Set status
 	 *
-	 * @param $status
+	 * @param mixed $password Password.
 	 * @since 1.0.0
 	 */
 	public function set_password_protected( $password ) {
@@ -612,7 +688,7 @@ class Membership extends Data {
 	/**
 	 * Set post_date
 	 *
-	 * @param $status
+	 * @param mixed $data Input data.
 	 * @since 1.0.0
 	 */
 	public function set_post_date( $data ) {
@@ -623,7 +699,7 @@ class Membership extends Data {
 	/**
 	 * Set name
 	 *
-	 * @param $name
+	 * @param mixed $name Name.
 	 * @since 1.0.0
 	 */
 	public function set_name( $name ) {
@@ -632,7 +708,7 @@ class Membership extends Data {
 	/**
 	 * Set short description
 	 *
-	 * @param $short_description
+	 * @param mixed $short_description Short description.
 	 * @since 1.0.0
 	 */
 	public function set_short_description( $short_description ) {
@@ -642,7 +718,7 @@ class Membership extends Data {
 	/**
 	 * Set description
 	 *
-	 * @param $description
+	 * @param mixed $description Description.
 	 * @since 1.0.0
 	 */
 	public function set_description( $description ) {
@@ -652,7 +728,7 @@ class Membership extends Data {
 	/**
 	 * Set slug
 	 *
-	 * @param $slug
+	 * @param mixed $slug Slug.
 	 * @since 1.0.0
 	 */
 	public function set_slug( $slug ) {
@@ -663,7 +739,7 @@ class Membership extends Data {
 	/**
 	 * Set price of the membership
 	 *
-	 * @param $price
+	 * @param mixed $price Price.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -675,7 +751,7 @@ class Membership extends Data {
 	/**
 	 * Set regular price of the membership
 	 *
-	 * @param $regular_price
+	 * @param mixed $regular_price Regular price.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -687,7 +763,7 @@ class Membership extends Data {
 	/**
 	 * Set sale price of the membership
 	 *
-	 * @param $sale_price
+	 * @param mixed $sale_price Sale price.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -739,7 +815,7 @@ class Membership extends Data {
 	 * Set the accessibility date of the membership.
 	 *
 	 * @param mixed $accessibility The limit date of the membership.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function set_access_type( $accessibility ) {
@@ -803,7 +879,7 @@ class Membership extends Data {
 	/**
 	 * Delete membership data
 	 *
-	 * @param array $args
+	 * @param array $args Operation arguments.
 	 * @since 1.0.0
 	 */
 	public function delete( $args = array() ) {
@@ -812,7 +888,7 @@ class Membership extends Data {
 	/**
 	 * Set sign up fee
 	 *
-	 * @param $sign_up_fee
+	 * @param mixed $sign_up_fee Sign up fee.
 	 * @since 1.0.0
 	 */
 	public function set_sign_up_fee( $sign_up_fee ) {
@@ -822,7 +898,7 @@ class Membership extends Data {
 	/**
 	 * Set free trial
 	 *
-	 * @param array $free_trial
+	 * @param array $free_trial Free trial.
 	 * @since 1.0.0
 	 */
 	public function set_free_trial( array $free_trial ) {
@@ -832,7 +908,7 @@ class Membership extends Data {
 	/**
 	 * Set stop renew
 	 *
-	 * @param array $stop_renew
+	 * @param array $stop_renew Stop renew.
 	 * @since 1.0.0
 	 */
 	public function set_stop_renew( array $stop_renew ) {
@@ -842,7 +918,7 @@ class Membership extends Data {
 	/**
 	 * Set subscription length
 	 *
-	 * @param array $subscription_length
+	 * @param array $subscription_length Subscription length.
 	 * @since 1.0.0
 	 */
 	public function set_subscription_length( $subscription_length ) {
@@ -852,7 +928,7 @@ class Membership extends Data {
 	/**
 	 * Set products
 	 *
-	 * @param array $products
+	 * @param array $products Products.
 	 * @since 1.0.0
 	 */
 	public function set_products( array $products ) {
@@ -860,18 +936,35 @@ class Membership extends Data {
 	}
 
 
+	/**
+	 * Is already purchased for Membership.
+	 */
 	public function is_already_purchased() {
 		return $this->data_store->is_already_purchased( $this );
 	}
 
+	/**
+	 * Count membership members for Membership.
+	 */
 	public function count_membership_members() {
 		return $this->data_store->count_membership_members( $this );
 	}
 
+	/**
+	 * Update membership status for Membership.
+	 *
+	 * @param mixed $new_status New status.
+	 */
 	public function update_membership_status( $new_status ) {
 		return $this->data_store->update_membership_status( $this, $new_status );
 	}
 
+	/**
+	 * Cancel enrollment for Membership.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $order_id Order identifier.
+	 */
 	public function cancel_enrollment( $student_id, $order_id ) {
 		return $this->data_store->cancel_enrollment( $this, $student_id, $order_id );
 	}
@@ -889,7 +982,7 @@ class Membership extends Data {
 	/**
 	 * Set subscription period interval
 	 *
-	 * @param int $interval
+	 * @param int $interval Interval.
 	 * @since 1.0.0
 	 */
 	public function set_subscription_period_interval( $interval ) {
@@ -899,7 +992,7 @@ class Membership extends Data {
 	/**
 	 * Set subscription period interval
 	 *
-	 * @param int $interval
+	 * @param mixed $period Period.
 	 * @since 1.0.0
 	 */
 	public function set_subscription_period( $period ) {
@@ -909,7 +1002,7 @@ class Membership extends Data {
 	/**
 	 * Set trial length
 	 *
-	 * @param $trial_length
+	 * @param mixed $trial_length Trial length.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -920,10 +1013,10 @@ class Membership extends Data {
 	/**
 	 * Get first renewal payment date
 	 *
-	 * @param $from_date
-	 * @param $timezone
+	 * @param string $from_date From date.
+	 * @param string $timezone Timezone.
 	 * @return mixed|null
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_first_renewal_payment_date( $from_date = '', $timezone = 'gmt' ) {
@@ -940,10 +1033,10 @@ class Membership extends Data {
 	/**
 	 * Get first renewal payment time
 	 *
-	 * @param $from_date
-	 * @param $timezone
+	 * @param string $from_date From date.
+	 * @param string $timezone Timezone.
 	 * @return false|int|mixed
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_first_renewal_payment_time( $from_date = '', $timezone = 'gmt' ) {

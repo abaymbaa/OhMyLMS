@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 import { MovableTabPanel } from '../navigation/MovableTabPanel';
@@ -122,7 +123,7 @@ export function createSettingsPage( readRuntime ) {
 										throw (
 											( _eLocal11.p = 3 ),
 											( _oLocal = _eLocal11.v ),
-											console.error( _oLocal ),
+											showRequestError( _oLocal ),
 											_oLocal
 										 );
 									case 4:
@@ -149,15 +150,7 @@ export function createSettingsPage( readRuntime ) {
 		var N = ( function () {
 			var _nLocal4 = P6(
 				R6().m( function _nLocal5() {
-					var _lLocal,
-						_sLocal,
-						_dLocal,
-						_mLocal,
-						f,
-						_vLocal,
-						g,
-						_hLocal,
-						y;
+					var _lLocal, _sLocal, _dLocal, _mLocal, f, _vLocal, g, y;
 					return R6().w(
 						function ( _nLocal6 ) {
 							for (;;) {
@@ -171,17 +164,16 @@ export function createSettingsPage( readRuntime ) {
 											( f = j( c ) ),
 											( _vLocal = j( u ) ),
 											( g = ! 0 ),
-											( _hLocal =
-												'layout_2' !==
-													( _mLocal === null ||
-													_mLocal === void 0
-														? void 0
-														: _mLocal.ohmylms_single_course_page_layout ) ||
+											'layout_2' !==
+												( _mLocal === null ||
+												_mLocal === void 0
+													? void 0
+													: _mLocal.ohmylms_single_course_page_layout ) ||
 												'grid-style1' !==
 													( _mLocal === null ||
 													_mLocal === void 0
 														? void 0
-														: _mLocal.ohmylms_archive_page_layout_style ) ),
+														: _mLocal.ohmylms_archive_page_layout_style ),
 											false,
 											( _nLocal6.p = 1 ),
 											k( ! 0 ),
@@ -225,7 +217,7 @@ export function createSettingsPage( readRuntime ) {
 									case 8:
 										_nLocal6.p = 8;
 										y = _nLocal6.v;
-										console.error( y );
+										showRequestError( y );
 										p(
 											'error',
 											( 0, I18n.__ )(
@@ -311,7 +303,7 @@ export function createSettingsPage( readRuntime ) {
 									case 6:
 										_eLocal14.p = 6;
 										_aLocal2 = _eLocal14.v;
-										console.error( _aLocal2 );
+										showRequestError( _aLocal2 );
 										p(
 											'error',
 											( 0, I18n.__ )(

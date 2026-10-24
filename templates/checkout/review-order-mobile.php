@@ -23,13 +23,13 @@ defined( 'ABSPATH' ) || exit;
 		<span class="total-price">
 			<?php
 			if ( isset( $_GET['membership_id'] ) ) {
-				$membership_id = sanitize_text_field( $_GET['membership_id'] );
+				$membership_id = sanitize_text_field( wp_unslash( $_GET['membership_id'] ));
 				$total         = MembershipHelper::get_plan_price( $membership_id );
 			} else {
 				$cart_items = \OhMyLMS\Commerce\ecommerce()->cart->get_cart_contents();
 				$total      = \OhMyLMS\Commerce\ecommerce()->cart->get_total( $cart_items );
 			}
-			echo ohmylms_price( $total );
+			echo wp_kses_post( ohmylms_price( $total ) );
 			?>
 		</span>
 	</div>

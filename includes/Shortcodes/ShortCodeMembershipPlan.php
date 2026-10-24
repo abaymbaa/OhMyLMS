@@ -31,6 +31,7 @@ class ShortCodeMembershipPlan {
 	 * Render the membership plan
 	 *
 	 * @since 1.0.0
+	 * @param mixed $atts Atts.
 	 */
 	public static function output( $atts ): void {
 		self::membership_plan( $atts );
@@ -41,6 +42,7 @@ class ShortCodeMembershipPlan {
 	 * Show the plan.
 	 *
 	 * @since 1.0.0
+	 * @param mixed $atts Atts.
 	 */
 	private static function membership_plan( $atts ) {
 		$atts = shortcode_atts(
@@ -117,7 +119,7 @@ class ShortCodeMembershipPlan {
 	/**
 	 * Remove a title override added by apply_custom_title().
 	 *
-	 * @param callable|null $filter
+	 * @param callable|null $filter Filter.
 	 * @return void
 	 * @since 1.0.0
 	 */

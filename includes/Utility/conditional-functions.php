@@ -1,5 +1,14 @@
 <?php
+/**
+ * Conditional functions.
+ *
+ * @package OhMyLMS
+ */
 
+
+/**
+ * Is ohmylms for Conditional-functions.
+ */
 function is_ohmylms() {
 	// add a apply filters here if needed in future.
 	$maybe_yes = ohmylms_is_courses_page() || ohmylms_is_single_course_page() || ohmylms_is_course_taxonomy() || ohmylms_is_course_category() || is_ohmylms_profile() || ohmylms_is_content_page() || ohmylms_is_membership_page() || ohmylms_is_membership_plan_shortcode() || ohmylms_is_course_list_shortcode() || is_ohmylms_buy_now() || is_ohmylms_dashboard() || is_ohmylms_profile_shortcode() || is_ohmylms_my_courses_shortcode();
@@ -60,6 +69,9 @@ function is_ohmylms_checkout() {
 }
 
 
+/**
+ * Is ohmylms buy now for Conditional-functions.
+ */
 function is_ohmylms_buy_now() {
 	return ohmylms_post_content_has_shortcode( 'ohmylms_buy_now' ) ||
 			ohmylms_page_has_buy_now_widget() ||
@@ -218,8 +230,8 @@ function ohmylms_page_has_buy_now_widget( $page_id = 0 ) {
 /**
  * Recursively search Elementor data for a specific widget type.
  *
- * @param array  $data Elementor data array
- * @param string $widget_type Widget type to search for
+ * @param array  $data Elementor data array.
+ * @param string $widget_type Widget type to search for.
  * @return bool True if widget is found, false otherwise.
  * @since 1.0.0
  */
@@ -477,8 +489,8 @@ function ohmylms_page_has_bricks_element( $element_name, $page_id = 0 ) {
 /**
  * Recursively search Bricks data for a specific element type.
  *
- * @param array  $data Bricks data array
- * @param string $element_name Element name to search for
+ * @param array  $data Bricks data array.
+ * @param string $element_name Element name to search for.
  * @return bool True if element is found, false otherwise.
  * @since 1.0.0
  */
@@ -504,10 +516,16 @@ function ohmylms_search_bricks_data_for_element( $data, $element_name ) {
 	return false;
 }
 
+/**
+ * Ohmylms is courses page for Conditional-functions.
+ */
 function ohmylms_is_courses_page() {
 	return ( is_post_type_archive( OHMYLMS_COURSE_CPT ) || is_page( ohmylms_get_page_id( 'course' ) ) );
 }
 
+/**
+ * Ohmylms is course list shortcode for Conditional-functions.
+ */
 function ohmylms_is_course_list_shortcode() {
 	// Check for shortcode, Elementor widget, Bricks element, or WPBakery element.
 	return ohmylms_post_content_has_shortcode( 'ohmylms_course_list' ) ||
@@ -516,10 +534,16 @@ function ohmylms_is_course_list_shortcode() {
 			ohmylms_page_has_course_list_wpbakery_element();
 }
 
+/**
+ * Ohmylms is membership page for Conditional-functions.
+ */
 function ohmylms_is_membership_page() {
 	return ( is_post_type_archive( OHMYLMS_MEMBERSHIP_CPT ) || is_page( ohmylms_get_page_id( 'membership' ) ) );
 }
 
+/**
+ * Ohmylms is membership plan shortcode for Conditional-functions.
+ */
 function ohmylms_is_membership_plan_shortcode() {
 	return ohmylms_post_content_has_shortcode( 'ohmylms_membership_plan' ) ||
 			ohmylms_page_has_membership_list_block();
@@ -544,6 +568,9 @@ function ohmylms_page_has_membership_list_block( $page_id = 0 ) {
 	return has_block( 'ohmylms/membership-list', $page_id );
 }
 
+/**
+ * Ohmylms is single course page for Conditional-functions.
+ */
 function ohmylms_is_single_course_page() {
 	return is_singular( OHMYLMS_COURSE_CPT );
 }
@@ -566,22 +593,39 @@ function ohmylms_is_single_assignment_page() {
 	return is_singular( OHMYLMS_ASSIGNMENT_CPT );
 }
 
+/**
+ * Ohmylms is single quiz page for Conditional-functions.
+ */
 function ohmylms_is_single_quiz_page() {
 	return is_singular( OHMYLMS_QUIZ_CPT );
 }
+/**
+ * Ohmylms is single session for Conditional-functions.
+ */
 function ohmylms_is_single_session() {
 	return is_singular( 'ohmylms-session' );
 }
+/**
+ * Ohmylms is content page for Conditional-functions.
+ */
 function ohmylms_is_content_page() {
 	return ohmylms_is_single_lesson_page() || ohmylms_is_single_assignment_page() || ohmylms_is_single_quiz_page() || ohmylms_is_single_session();
 }
 
 
+/**
+ * Ohmylms is course taxonomy for Conditional-functions.
+ */
 function ohmylms_is_course_taxonomy() {
 	return is_tax( get_object_taxonomies( OHMYLMS_COURSE_CPT ) );
 }
 
 
+/**
+ * Ohmylms is course category for Conditional-functions.
+ *
+ * @param string $term Term.
+ */
 function ohmylms_is_course_category( $term = '' ) {
 	return is_tax( 'course_category', $term );
 }

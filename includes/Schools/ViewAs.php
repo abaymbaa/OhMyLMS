@@ -16,10 +16,24 @@ final class ViewAs {
 	/** Admin user meta prefix remembering the person last previewed for each role. */
 	const LAST_META = '_ohmylms_view_as_last_';
 
+	/**
+	 * Cookie name for View as.
+	 */
 	private static function cookie_name() {
 		return 'ohmylms_view_as_' . COOKIEHASH; }
+	/**
+	 * Key for View as.
+	 *
+	 * @param mixed $token Token.
+	 */
 	private static function key( $token ) {
 		return 'ohmylms_view_as_' . hash( 'sha256', $token ); }
+	/**
+	 * Cookie for View as.
+	 *
+	 * @param mixed $token Token.
+	 * @param mixed $expires Expires.
+	 */
 	private static function cookie( $token, $expires ) {
 		setcookie(
 			self::cookie_name(),
@@ -33,6 +47,9 @@ final class ViewAs {
 			)
 		);
 	}
+	/**
+	 * Register for View as.
+	 */
 	public static function register() {
 		foreach ( array(
 			'options' => 'GET',
@@ -63,6 +80,17 @@ final class ViewAs {
 			);
 		}
 	}
+	/**
+	 * Candidates for View as.
+	 *
+	 * @param mixed  $role Role.
+	 * @param int    $class Class.
+	 * @param int    $course Course.
+	 * @param string $search Search.
+	 * @param int    $page Page.
+	 * @param int    $only Only.
+	 * @param bool   $newest Newest.
+	 */
 	public static function candidates( $role, $class = 0, $course = 0, $search = '', $page = 1, $only = 0, $newest = false ) {
 		global $wpdb;
 		Service::need( in_array( $role, array_merge( self::ROLES, array( 'instructor' ) ), true ), 'Choose a valid view.' );
@@ -78,12 +106,12 @@ final class ViewAs {
 		if ( $class ) {
 			Service::need( in_array( $role, array( 'student', 'instructor' ), true ) && Service::row( 'classes', $class ), 'Class not available.' );
 			$m               = Schema::table( 'class_memberships' );
-			$args['include'] = $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE class_id=%d AND role=%s AND status='active'", $class, 'instructor' === $role ? 'teacher' : 'student' ) ) ?: array( 0 );
+			$args['include'] = $wpdb->get_col( $wpdb->prepare( 'SELECT user_id FROM %i WHERE class_id=%d AND role=%s AND status=\'active\'', $m, $class, 'instructor' === $role ? 'teacher' : 'student' ) ) ?: array( 0 );
 		} elseif ( $course ) {
 			$post = get_post( $course );
-			Service::need( in_array( $role, array( 'student', 'instructor' ), true ) && $post && $post->post_type === OHMYLMS_COURSE_CPT, 'Course not available.' );
+			Service::need( in_array( $role, array( 'student', 'instructor' ), true ) && $post && OHMYLMS_COURSE_CPT === $post->post_type, 'Course not available.' );
 			$m               = Schema::table( 'user_enrollment' );
-			$args['include'] = 'instructor' === $role ? array( (int) $post->post_author ) : ( $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE course_id=%d AND status='enrolled'", $course ) ) ?: array( 0 ) );
+			$args['include'] = 'instructor' === $role ? array( (int) $post->post_author ) : ( $wpdb->get_col( $wpdb->prepare( 'SELECT user_id FROM %i WHERE course_id=%d AND status=\'enrolled\'', $m, $course ) ) ?: array( 0 ) );
 		} else {
 			$roles = array(
 				'student'    => array( 'subscriber', 'ohmylms_student' ),
@@ -102,10 +130,10 @@ final class ViewAs {
 			);
 			if ( in_array( $role, array( 'student', 'teacher', 'school' ), true ) ) {
 				$m   = Schema::table( 'school_memberships' );
-				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( "SELECT user_id FROM $m WHERE role=%s AND status='active'", 'school' === $role ? 'school_admin' : $role ) ) );
+				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( 'SELECT user_id FROM %i WHERE role=%s AND status=\'active\'', $m, 'school' === $role ? 'school_admin' : $role ) ) );
 			} elseif ( 'parent' === $role ) {
 				$m   = Schema::table( 'guardian_links' );
-				$ids = array_merge( $ids, $wpdb->get_col( "SELECT guardian_user_id FROM $m WHERE status='active'" ) );
+				$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( 'SELECT guardian_user_id FROM %i WHERE status=\'active\'', $m ) ) );
 			}
 			$args['include'] = array_unique( array_map( 'intval', $ids ) ) ?: array( 0 );
 		}
@@ -131,6 +159,11 @@ final class ViewAs {
 			)
 		);
 	}
+	/**
+	 * Options for View as.
+	 *
+	 * @param mixed $r R.
+	 */
 	public static function options( $r ) {
 		return self::candidates( sanitize_key( $r['role'] ), absint( $r['class_id'] ), absint( $r['course_id'] ), Service::text( $r['search'] ?? '' ), absint( $r['page'] ) );
 	}
@@ -141,8 +174,8 @@ final class ViewAs {
 	 * otherwise the most recently signed-in person, otherwise the newest account.
 	 *
 	 * @param array $remembered Candidate rows for the remembered user (empty when none or no longer eligible).
-	 * @param array $pool       Eligible people, newest account first.
-	 * @param array $activity   Last sign-in time by user ID.
+	 * @param array $pool Eligible people, newest account first.
+	 * @param array $activity Last sign-in time by user ID.
 	 * @return array Keys: person (array|null), source (remembered|recent|empty string).
 	 */
 	public static function pick_default( array $remembered, array $pool, array $activity ) {
@@ -189,6 +222,11 @@ final class ViewAs {
 		}
 		return array_merge( array( 'role' => $role ), self::pick_default( $remembered, $pool, $activity ) );
 	}
+	/**
+	 * Start for View as.
+	 *
+	 * @param mixed $r R.
+	 */
 	public static function start( $r ) {
 		Access::require_access( current_user_can( 'manage_options' ) && ! self::session() );
 		$user = absint( $r['user_id'] );
@@ -232,7 +270,7 @@ final class ViewAs {
 				$url
 			); } elseif ( 'student' === $role && function_exists( 'ohmylms_get_page_id' ) ) {
 				$profile = ohmylms_get_page_id( 'student_dashboard' );
-				if ( $profile > 0 ) {
+				if ( 0 < $profile ) {
 					$url = get_permalink( $profile ); }
 			}
 			if ( ! $r['course_id'] && ! ( 'student' === $role && ! $r['class_id'] && $url !== Views::portal_url() ) ) {
@@ -258,6 +296,9 @@ final class ViewAs {
 			}
 				return array( 'url' => $url );
 	}
+	/**
+	 * Session for View as.
+	 */
 	public static function session() {
 		$token = $_COOKIE[ self::cookie_name() ] ?? '';
 		if ( ! is_string( $token ) || ! preg_match( '/^[a-zA-Z0-9]{64}$/', $token ) ) {
@@ -267,6 +308,9 @@ final class ViewAs {
 			return false; }
 		return $record;
 	}
+	/**
+	 * Protect session for View as.
+	 */
 	public static function protect_session() {
 		if ( ! self::session() ) {
 			return; }
@@ -286,6 +330,9 @@ final class ViewAs {
 		Service::audit( 0, 'view_as_returned', $record['target'] );
 		return array( 'url' => admin_url( 'admin.php?page=' . OHMYLMS_SLUG ) . '#/accounthub' );
 	}
+	/**
+	 * Banner for View as.
+	 */
 	public static function banner() {
 		if ( ! self::session() ) {
 			return; }
@@ -293,7 +340,8 @@ final class ViewAs {
 			'url'   => rest_url( 'ohmylms/v1/school/view-as/return' ),
 			'nonce' => wp_create_nonce( 'wp_rest' ),
 		);
-		echo '<div id="ohmylms-view-as-banner" style="position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#14213d;color:white;padding:12px 24px;display:flex;align-items:center;gap:16px">' . esc_html( sprintf( __( 'Viewing and acting as %s', 'ohmylms' ), wp_get_current_user()->display_name ) ) . ' <button type="button">' . esc_html__( 'Return to admin', 'ohmylms' ) . '</button><span role="alert"></span></div>';
+		echo '<div id="ohmylms-view-as-banner" style="position:fixed;bottom:0;left:0;right:0;z-index:999999;background:#14213d;color:white;padding:12px 24px;display:flex;align-items:center;gap:16px">' . esc_html( sprintf( /* translators: %s: text value. */
+		__( 'Viewing and acting as %s', 'ohmylms' ), wp_get_current_user()->display_name ) ) . ' <button type="button">' . esc_html__( 'Return to admin', 'ohmylms' ) . '</button><span role="alert"></span></div>';
 		echo '<script>(function(c){const b=document.getElementById("ohmylms-view-as-banner"),x=b.querySelector("button");x.onclick=async function(){x.disabled=true;try{const r=await fetch(c.url,{method:"POST",credentials:"same-origin",headers:{"X-WP-Nonce":c.nonce}}),d=await r.json();if(!r.ok)throw Error(d.message);location.href=d.url;}catch(e){b.querySelector("span").textContent=e.message;x.disabled=false;}};})(' . wp_json_encode( $config, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT ) . ');</script>';
 	}
 }

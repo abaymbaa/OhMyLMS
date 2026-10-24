@@ -21,6 +21,9 @@ defined( 'ABSPATH' ) || exit;
  * what every learner's combined skill view shows.
  */
 class SkillMappingController extends RestController {
+	/**
+	 * Register routes for Skill mapping controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -45,6 +48,11 @@ class SkillMappingController extends RestController {
 		);
 	}
 
+	/**
+	 * Index for Skill mapping controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function index( WP_REST_Request $request ) {
 		$skill = (int) $request->get_param( 'skill_id' );
 		if ( $skill ) {
@@ -66,6 +74,11 @@ class SkillMappingController extends RestController {
 		);
 	}
 
+	/**
+	 * Save for Skill mapping controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save( WP_REST_Request $request ) {
 		$mapping = SkillMappings::save( (int) $request->get_param( 'specific_id' ), (int) $request->get_param( 'shared_id' ), (string) ( $request->get_param( 'relation' ) ?: 'equivalent' ), (string) $request->get_param( 'note' ) );
 		return is_wp_error( $mapping ) ? $mapping : rest_ensure_response(
@@ -76,6 +89,11 @@ class SkillMappingController extends RestController {
 		);
 	}
 
+	/**
+	 * Remove for Skill mapping controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function remove( WP_REST_Request $request ) {
 		SkillMappings::remove( (int) $request->get_param( 'specific_id' ), (int) $request->get_param( 'shared_id' ) );
 		return rest_ensure_response(

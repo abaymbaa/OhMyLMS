@@ -2,16 +2,36 @@
 
 namespace OhMyLMS\Commerce;
 
+/**
+ * Plugin discounts implementation.
+ */
 class Discounts {
 
+	/**
+	 * Items.
+	 *
+	 * @var mixed
+	 */
 	public $items = array();
 
+	/**
+	 * Discounts.
+	 *
+	 * @var mixed
+	 */
 	public $discounts = array();
 
+	/**
+	 * Object.
+	 *
+	 * @var mixed
+	 */
 	public $object;
 
 	/**
 	 * Constructor for the Discount class.
+	 *
+	 * @param mixed $object Object.
 	 */
 	public function __construct( $object = null ) {
 		$this->set_items_from_cart( $object );
@@ -20,7 +40,7 @@ class Discounts {
 	/**
 	 * Set items from the cart.
 	 *
-	 * @param  $cart
+	 * @param mixed $cart Cart.
 	 */
 	public function set_items_from_cart( $cart ) {
 		$this->items     = array();
@@ -48,6 +68,11 @@ class Discounts {
 		}
 	}
 
+	/**
+	 * Apply coupon for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 */
 	public function apply_coupon( $coupon ) {
 
 		$coupon_code = $coupon->get_code();
@@ -78,6 +103,11 @@ class Discounts {
 		return true;
 	}
 
+	/**
+	 * Get items to apply coupon for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 */
 	protected function get_items_to_apply_coupon( $coupon ) {
 		$items_to_apply = array();
 
@@ -92,15 +122,31 @@ class Discounts {
 		return $items_to_apply;
 	}
 
+	/**
+	 * Get discounted price in cents for Discounts.
+	 *
+	 * @param mixed $item Item.
+	 */
 	protected function get_discounted_price_in_cents( $item ) {
 		return absint( round( $item->price - $this->get_discount( $item->key, true ) ) );
 	}
 
+	/**
+	 * Get discount for Discounts.
+	 *
+	 * @param mixed $key Lookup key.
+	 * @param bool  $in_cents In cents.
+	 */
 	public function get_discount( $key, $in_cents = false ) {
 		$item_discount_totals = $this->get_discounts_by_item( $in_cents );
 		return isset( $item_discount_totals[ $key ] ) ? $item_discount_totals[ $key ] : 0;
 	}
 
+	/**
+	 * Get discounts by item for Discounts.
+	 *
+	 * @param bool $in_cents In cents.
+	 */
 	public function get_discounts_by_item( $in_cents = false ) {
 		$discounts            = $this->discounts;
 		$item_discount_totals = (array) array_shift( $discounts );
@@ -112,6 +158,12 @@ class Discounts {
 		return $item_discount_totals;
 	}
 
+	/**
+	 * Apply coupon percent for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 * @param mixed $items_to_apply Items to apply.
+	 */
 	private function apply_coupon_percent( $coupon, $items_to_apply ) {
 		$total_discount = 0;
 		$cart_total     = 0;
@@ -132,8 +184,20 @@ class Discounts {
 		return $total_discount;
 	}
 
+	/**
+	 * Apply coupon fixed product for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 * @param array $items_to_apply Items to apply.
+	 */
 	private function apply_coupon_fixed_product( $coupon, array $items_to_apply ) {}
 
+	/**
+	 * Apply coupon fixed cart for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 * @param array $items_to_apply Items to apply.
+	 */
 	private function apply_coupon_fixed_cart( $coupon, array $items_to_apply ) {
 		$total_discount = 0;
 		$cart_total     = 0;
@@ -158,13 +222,19 @@ class Discounts {
 		return $cart_total_discount;
 	}
 
+	/**
+	 * Apply coupon custom for Discounts.
+	 *
+	 * @param mixed $coupon Coupon.
+	 * @param array $items_to_apply Items to apply.
+	 */
 	private function apply_coupon_custom( $coupon, array $items_to_apply ) {}
 
 	/**
 	 * Validate coupon
 	 *
-	 * @param object $coupon
-	 * @param array  $items_to_apply
+	 * @param object $coupon Coupon.
+	 * @param array  $items_to_apply Items to apply.
 	 *
 	 * @return array
 	 *

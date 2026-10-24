@@ -61,10 +61,7 @@ export function createSubscriptionList( readRuntime ) {
 		const [ currentPage, setCurrentPage ] = ReactHooks.useState( 1 );
 		const [ perPage ] = ReactHooks.useState( 10 );
 		const [ searchTerm, setSearchTerm ] = ReactHooks.useState( '' );
-		const [ isDeleteModalOpen, setIsDeleteModalOpen ] =
-			ReactHooks.useState( false );
-		const [ targetDeleteId, setTargetDeleteId ] =
-			ReactHooks.useState( null );
+		const [ , setIsDeleteModalOpen ] = ReactHooks.useState( false );
 		const [ sorting, setSorting ] = ReactHooks.useState( {
 			field: 'start_date',
 			order: 'DESC',

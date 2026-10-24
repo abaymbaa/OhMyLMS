@@ -20,6 +20,9 @@ defined( 'ABSPATH' ) || exit;
 final class Taxonomy {
 	const NAME = 'ohmylms_skill';
 
+	/**
+	 * Register for Taxonomy.
+	 */
 	public static function register() {
 		register_taxonomy(
 			self::NAME,
@@ -72,7 +75,10 @@ final class Taxonomy {
 		);
 	}
 
-	/** Stable UUID for a skill, assigned on first use. */
+	/** Stable UUID for a skill, assigned on first use.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function uuid( $term_id ) {
 		$term_id = (int) $term_id;
 		if ( ! $term_id ) {
@@ -85,6 +91,11 @@ final class Taxonomy {
 		return $uuid;
 	}
 
+	/**
+	 * By uuid for Taxonomy.
+	 *
+	 * @param mixed $uuid Uuid.
+	 */
 	public static function by_uuid( $uuid ) {
 		$terms = get_terms(
 			array(
@@ -99,13 +110,22 @@ final class Taxonomy {
 		return is_array( $terms ) && $terms ? (int) $terms[0] : 0;
 	}
 
-	/** @return int[] */
+	/**
+	 * Prerequisites for Taxonomy.
+	 *
+	 * @return int[]
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function prerequisites( $term_id ) {
 		$value = get_term_meta( (int) $term_id, '_ohmylms_prerequisites', true );
 		return array_values( array_filter( array_map( 'intval', is_array( $value ) ? $value : array() ) ) );
 	}
 
-	/** Set prerequisites after rejecting unknown terms, self-references and cycles. */
+	/** Set prerequisites after rejecting unknown terms, self-references and cycles.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 * @param array $prerequisites Prerequisites.
+	 */
 	public static function set_prerequisites( $term_id, array $prerequisites ) {
 		$term_id       = (int) $term_id;
 		$prerequisites = array_values( array_unique( array_filter( array_map( 'intval', $prerequisites ) ) ) );
@@ -129,7 +149,12 @@ final class Taxonomy {
 		return $prerequisites;
 	}
 
-	/** Does following prerequisites from $from eventually reach $target? */
+	/** Does following prerequisites from $from eventually reach $target?
+	 *
+	 * @param mixed $from From.
+	 * @param mixed $target Target.
+	 * @param array $seen Seen.
+	 */
 	public static function reaches( $from, $target, array $seen = array() ) {
 		if ( (int) $from === (int) $target ) {
 			return true; }
@@ -147,12 +172,17 @@ final class Taxonomy {
 	 * WordPress stores a term's name and notes with HTML entities ("a < 0" is saved as "a &lt; 0"). The JSON
 	 * API and the editors want the text itself, which the page escapes when it draws it, so objectives full
 	 * of < and > (as maths syllabuses are) read correctly instead of showing "&lt;".
+	 *
+	 * @param mixed $value Value to process.
 	 */
 	public static function plain( $value ) {
 		return html_entity_decode( (string) $value, ENT_QUOTES | ENT_HTML5, 'UTF-8' );
 	}
 
-	/** Public, JSON-safe description of a skill. */
+	/** Public, JSON-safe description of a skill.
+	 *
+	 * @param mixed $term Term.
+	 */
 	public static function describe( $term ) {
 		$term = $term instanceof \WP_Term ? $term : get_term( (int) $term, self::NAME );
 		if ( ! $term || is_wp_error( $term ) ) {
@@ -174,7 +204,13 @@ final class Taxonomy {
 		);
 	}
 
-	/** @return int[] */
+	/**
+	 * Linked posts for Taxonomy.
+	 *
+	 * @return int[]
+	 * @param mixed $term_id Term identifier.
+	 * @param mixed $post_type Post type.
+	 */
 	public static function linked_posts( $term_id, $post_type ) {
 		return array_map(
 			'intval',

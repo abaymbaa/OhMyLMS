@@ -24,17 +24,8 @@
 	font-family: "Plus Jakarta Sans", "Noto Sans", system-ui, sans-serif;
 }
 
-.ohmylms-student-hub[data-theme="dark"] {
-	--hub-bg: #252531;
-	--hub-surface: #151521;
-	--hub-rail: #151521;
-	--hub-text: #ededee;
-	--hub-muted: #a0a1a4;
-	--hub-border: #4a4c53;
-	--hub-selected-bg: #222149;
-	--hub-selected-text: #7389ff;
-	--hub-hero: #1f1f5a;
-	--hub-accent-shadow: #363498;
+.oml-hub-page {
+	margin: 0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -53,8 +44,53 @@
 	}
 }
 
-.oml-hub-page {
-	margin: 0;
+.ohmylms-student-hub * {
+	box-sizing: border-box;
+}
+
+.ohmylms-student-hub progress {
+	width: 100%;
+	appearance: none;
+	height: 10px;
+	accent-color: var(--hub-accent);
+	border: 0;
+	border-radius: 999px;
+	background: var(--hub-border);
+	overflow: hidden;
+}
+
+.oml-hub-editor iframe {
+	width: 100%;
+	max-width: 100%;
+	height: 760px;
+	border: 1px solid #dcdcde;
+}
+
+.ohmylms-student-hub progress::-webkit-progress-bar {
+	background: var(--hub-border);
+}
+
+.ohmylms-student-hub progress::-webkit-progress-value {
+	border-radius: 999px;
+	background: var(--hub-accent);
+}
+
+.ohmylms-student-hub progress::-moz-progress-bar {
+	border-radius: 999px;
+	background: var(--hub-accent);
+}
+
+.ohmylms-student-hub[data-theme="dark"] {
+	--hub-bg: #252531;
+	--hub-surface: #151521;
+	--hub-rail: #151521;
+	--hub-text: #ededee;
+	--hub-muted: #a0a1a4;
+	--hub-border: #4a4c53;
+	--hub-selected-bg: #222149;
+	--hub-selected-text: #7389ff;
+	--hub-hero: #1f1f5a;
+	--hub-accent-shadow: #363498;
 }
 
 .ohmylms-student-hub.oml-hub-signin {
@@ -68,25 +104,6 @@
 	border-radius: 0;
 	background: var(--hub-bg);
 	text-align: center;
-}
-
-.ohmylms-student-hub.oml-hub-signin a {
-	color: var(--hub-selected-text);
-	font-weight: 700;
-}
-
-.ohmylms-student-hub.oml-hub-signin a.oml-hub-button {
-	color: #fff;
-}
-
-.ohmylms-student-hub * {
-	box-sizing: border-box;
-}
-
-.ohmylms-student-hub a:focus-visible,
-.ohmylms-student-hub button:focus-visible {
-	outline: 3px solid var(--hub-selected-text);
-	outline-offset: 2px;
 }
 
 .ohmylms-student-hub .oml-hub-rail {
@@ -118,13 +135,14 @@
 	text-decoration: none;
 }
 
+/* An image uploaded in Settings > Design system replaces the built-in mark. */
+
 .ohmylms-student-hub .oml-hub-logo {
 	color: var(--hub-accent);
 	font-size: 28px;
 	line-height: 1;
 }
 
-/* An image uploaded in Settings > Design system replaces the built-in mark. */
 .ohmylms-student-hub .oml-hub-logo--custom {
 	display: block;
 	flex: none;
@@ -133,7 +151,17 @@
 	object-fit: contain;
 }
 
-.ohmylms-student-hub .oml-hub-rail-close,
+.ohmylms-student-hub .oml-hub-rail-close {
+	display: none;
+	padding: 8px;
+	border: 0;
+	background: none;
+	color: var(--hub-text);
+	font-size: 24px;
+	line-height: 1;
+	cursor: pointer;
+}
+
 .ohmylms-student-hub .oml-hub-menu {
 	display: none;
 	padding: 8px;
@@ -151,11 +179,6 @@
 	font-size: 13px;
 }
 
-.ohmylms-student-hub .oml-hub-role-switch summary {
-	padding: 8px;
-	cursor: pointer;
-}
-
 .ohmylms-student-hub .oml-hub-role-options {
 	position: absolute;
 	z-index: 5;
@@ -164,22 +187,16 @@
 	box-shadow: 0 4px 12px #0002;
 }
 
-.ohmylms-student-hub .oml-hub-role-switch a {
-	display: block;
-	padding: 10px 16px;
-	border: 1px solid var(--hub-border);
-	background: var(--hub-surface);
-	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-hub-nav,
-.ohmylms-student-hub .oml-hub-rail-foot {
+.ohmylms-student-hub .oml-hub-nav {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
 }
 
 .ohmylms-student-hub .oml-hub-rail-foot {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
 	margin-top: auto;
 	padding-top: 16px;
 }
@@ -201,35 +218,6 @@
 	text-decoration: none;
 }
 
-.ohmylms-student-hub .oml-hub-pill:hover,
-.ohmylms-student-hub .oml-hub-pill[aria-current="page"] {
-	border-color: var(--hub-selected-text);
-	background: var(--hub-selected-bg);
-	color: var(--hub-selected-text);
-}
-
-.ohmylms-student-hub .oml-hub-nav a,
-.ohmylms-student-hub .oml-hub-rail-foot > a {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	min-height: 40px;
-	padding: 0 12px;
-	border-radius: 8px;
-	color: var(--hub-muted);
-	font-size: 14px;
-	font-weight: 600;
-	text-decoration: none;
-}
-
-.ohmylms-student-hub .oml-hub-nav a:hover,
-.ohmylms-student-hub .oml-hub-rail-foot > a:hover,
-.ohmylms-student-hub .oml-hub-nav a[aria-current="page"],
-.ohmylms-student-hub .oml-hub-rail-foot > a[aria-current="page"] {
-	background: var(--hub-selected-bg);
-	color: var(--hub-selected-text);
-}
-
 .ohmylms-student-hub .oml-hub-icon {
 	flex: none;
 }
@@ -241,24 +229,6 @@
 	padding: 4px;
 	border: 1px solid var(--hub-border);
 	border-radius: 8px;
-}
-
-.ohmylms-student-hub .oml-hub-theme button {
-	flex: 1;
-	padding: 6px 4px;
-	border: 0;
-	border-radius: 6px;
-	background: none;
-	color: var(--hub-muted);
-	font: inherit;
-	font-size: 12px;
-	font-weight: 600;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-theme button[aria-pressed="true"] {
-	background: var(--hub-selected-bg);
-	color: var(--hub-selected-text);
 }
 
 .ohmylms-student-hub .oml-hub-account {
@@ -310,21 +280,6 @@
 	font-weight: 700;
 }
 
-.ohmylms-student-hub .oml-hub-content.ohmylms-dashboard {
-	min-width: 0;
-	max-width: 1120px;
-	padding: 32px;
-	background: transparent;
-	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-hub-content h1,
-.ohmylms-student-hub .oml-hub-content h2,
-.ohmylms-student-hub .oml-hub-content h3 {
-	color: var(--hub-text);
-}
-
-/* Legacy views are still light-styled; keep them on a readable surface until replaced. */
 .ohmylms-student-hub .oml-hub-legacy {
 	padding: 24px;
 	border-radius: 12px;
@@ -333,59 +288,14 @@
 	color-scheme: light;
 }
 
-.ohmylms-student-hub .oml-hub-legacy h1,
-.ohmylms-student-hub .oml-hub-legacy h2,
-.ohmylms-student-hub .oml-hub-legacy h3 {
-	color: #17233a;
-}
-
-.ohmylms-student-hub .ohmylms-student-profile::before {
-	content: none;
-}
-
-.ohmylms-student-hub .ohmylms-student-profile .ohmylms-student-profile-tab-content {
-	padding: 0;
-}
-
-.ohmylms-student-hub .oml-hub-greeting h1 {
-	margin: 8px 0 12px;
-	font-size: clamp(24px, 3vw, 36px);
-	line-height: 1.25;
-}
-
-.ohmylms-student-hub .oml-hub-greeting p {
-	color: var(--hub-muted);
-}
-
 .ohmylms-student-hub .oml-hub-personalize {
 	margin: 20px 0;
-}
-
-.ohmylms-student-hub .oml-hub-personalize summary {
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-personalize .oml-student-dashboard {
-	min-height: 0;
-	padding: 16px;
 }
 
 .ohmylms-student-hub .oml-hub-cards {
 	display: grid;
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 	gap: 20px;
-}
-
-.ohmylms-student-hub .oml-hub-cards[data-hub-theme="meadow"] {
-	--hub-card-tint: #2f9e6a;
-}
-
-.ohmylms-student-hub .oml-hub-cards[data-hub-theme="ocean"] {
-	--hub-card-tint: #4c8dff;
-}
-
-.ohmylms-student-hub .oml-hub-cards[data-hub-theme="sunset"] {
-	--hub-card-tint: #ff8a4c;
 }
 
 .ohmylms-student-hub .oml-hub-card {
@@ -395,23 +305,6 @@
 	border-radius: 8px;
 	background: var(--hub-surface);
 	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-hub-card h2,
-.ohmylms-student-hub .oml-hub-class-panel > h1 {
-	margin: 0 0 20px;
-	font-size: 20px;
-}
-
-.ohmylms-student-hub .oml-hub-card h3 {
-	margin: 0 0 10px;
-	font-size: 17px;
-}
-
-.ohmylms-student-hub .oml-hub-list-item + .oml-hub-list-item {
-	margin-top: 20px;
-	padding-top: 20px;
-	border-top: 1px solid var(--hub-border);
 }
 
 .ohmylms-student-hub .oml-hub-button {
@@ -425,31 +318,6 @@
 	text-decoration: none;
 }
 
-.ohmylms-student-hub progress {
-	width: 100%;
-	appearance: none;
-	height: 10px;
-	accent-color: var(--hub-accent);
-	border: 0;
-	border-radius: 999px;
-	background: var(--hub-border);
-	overflow: hidden;
-}
-
-.ohmylms-student-hub progress::-webkit-progress-bar {
-	background: var(--hub-border);
-}
-
-.ohmylms-student-hub progress::-webkit-progress-value {
-	border-radius: 999px;
-	background: var(--hub-accent);
-}
-
-.ohmylms-student-hub progress::-moz-progress-bar {
-	border-radius: 999px;
-	background: var(--hub-accent);
-}
-
 .ohmylms-student-hub .oml-hub-class-switcher {
 	display: flex;
 	flex-wrap: wrap;
@@ -458,37 +326,10 @@
 	margin: 24px 0;
 }
 
-.ohmylms-student-hub [data-hub-invitation] label {
-	display: block;
-	margin: 16px 0 8px;
-}
-
-.ohmylms-student-hub [data-hub-invitation] input,
-.ohmylms-student-hub .oml-hub-class-switcher select {
-	max-width: 100%;
-	padding: 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 12px;
-	background: var(--hub-surface);
-	color: var(--hub-text);
-	font: inherit;
-}
-
-.ohmylms-student-hub [data-hub-invitation] input {
-	width: 100%;
-	margin-bottom: 16px;
-}
-
 .ohmylms-student-hub .oml-hub-stats {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: 12px;
-}
-
-.ohmylms-student-hub .oml-hub-stats dd {
-	margin: 8px 0;
-	font-size: 28px;
-	font-weight: 700;
 }
 
 .ohmylms-student-hub .oml-hub-empty {
@@ -508,46 +349,15 @@
 	text-align: center;
 }
 
-.ohmylms-student-hub .oml-hub-banner h1 {
-	margin: 0 0 4px;
-	font-size: 28px;
-}
-
-.ohmylms-student-hub .oml-hub-banner p {
-	margin: 0;
-	color: var(--hub-muted);
-}
-
 .ohmylms-student-hub .oml-hub-search {
 	display: flex;
 	gap: 12px;
 	margin-bottom: 24px;
 }
 
-.ohmylms-student-hub .oml-hub-search input[type="search"] {
-	flex: 1;
-	min-width: 0;
-	padding: 12px 16px;
-	border: 1px solid var(--hub-border);
-	border-radius: 12px;
-	background: var(--hub-surface);
-	color: var(--hub-text);
-	font: inherit;
-}
-
-.ohmylms-student-hub .oml-hub-search button {
-	border: 0;
-	font: inherit;
-	cursor: pointer;
-}
-
 .ohmylms-student-hub .oml-hub-library-heading {
 	margin: 0 0 16px;
 	font-size: 18px;
-}
-
-.ohmylms-student-hub .oml-hub-subjects + .oml-hub-library-heading {
-	margin-top: 32px;
 }
 
 .ohmylms-student-hub .oml-hub-subjects {
@@ -562,54 +372,6 @@
 	border: 1px solid var(--hub-border);
 	border-radius: 8px;
 	background: var(--hub-surface);
-}
-
-.ohmylms-student-hub .oml-hub-subject[data-tone="1"] {
-	--hub-tone: #e8590c;
-}
-
-.ohmylms-student-hub .oml-hub-subject[data-tone="2"] {
-	--hub-tone: #d6336c;
-}
-
-.ohmylms-student-hub .oml-hub-subject[data-tone="3"] {
-	--hub-tone: #1c7ed6;
-}
-
-.ohmylms-student-hub .oml-hub-subject[data-tone="4"] {
-	--hub-tone: #f08c00;
-}
-
-.ohmylms-student-hub .oml-hub-subject[data-tone="5"] {
-	--hub-tone: #7048e8;
-}
-
-.ohmylms-student-hub .oml-hub-subject summary {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 16px;
-	list-style: none;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-subject summary::-webkit-details-marker {
-	display: none;
-}
-
-.ohmylms-student-hub .oml-hub-disclosure::after {
-	content: "";
-	width: 8px;
-	height: 8px;
-	margin-inline-start: auto;
-	border-right: 2px solid var(--hub-muted);
-	border-bottom: 2px solid var(--hub-muted);
-	transform: rotate(45deg);
-	transition: transform 0.15s ease;
-}
-
-.ohmylms-student-hub details[open] > .oml-hub-disclosure::after {
-	transform: rotate(-135deg);
 }
 
 .ohmylms-student-hub .oml-hub-subject-icon {
@@ -631,6 +393,8 @@
 	font-weight: 700;
 	overflow-wrap: anywhere;
 }
+
+/* Legacy views are still light-styled; keep them on a readable surface until replaced. */
 
 .ohmylms-student-hub .oml-hub-subject-count {
 	color: var(--hub-muted);
@@ -665,11 +429,6 @@
 	overflow-wrap: anywhere;
 }
 
-.ohmylms-student-hub .oml-hub-course-link:hover {
-	color: var(--hub-selected-text);
-	text-decoration: underline;
-}
-
 .ohmylms-student-hub .oml-hub-crumb {
 	margin: 0 0 16px;
 	font-size: 14px;
@@ -689,42 +448,11 @@
 	background: var(--hub-hero);
 }
 
-.ohmylms-student-hub .oml-hub-hero h1 {
-	margin: 0 0 8px;
-	font-size: 28px;
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-hero p {
-	max-width: 70ch;
-	margin: 0 0 16px;
-	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-hub-hero .oml-hub-meta {
-	color: var(--hub-muted);
-	font-size: 13px;
-}
-
 .ohmylms-student-hub .oml-hub-progress {
 	margin-bottom: 28px;
 	border: 1px solid var(--hub-border);
 	border-radius: 8px;
 	background: var(--hub-surface);
-}
-
-.ohmylms-student-hub .oml-hub-progress > summary {
-	display: grid;
-	grid-template-columns: auto auto 1fr minmax(120px, 280px);
-	align-items: center;
-	gap: 8px 12px;
-	padding: 16px 20px;
-	list-style: none;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-progress > summary::-webkit-details-marker {
-	display: none;
 }
 
 .ohmylms-student-hub .oml-hub-progress-title {
@@ -749,10 +477,6 @@
 	margin: 0;
 	padding: 4px 20px 20px;
 	list-style: none;
-}
-
-.ohmylms-student-hub .oml-hub-strip li {
-	margin-top: 16px;
 }
 
 .ohmylms-student-hub .oml-hub-strip-title {
@@ -780,33 +504,11 @@
 	place-items: center;
 }
 
-.ohmylms-student-hub .oml-hub-dot.is-complete,
-.ohmylms-student-hub .oml-hub-dot.is-proficient {
-	--dot: #2f9e6a;
-}
-
-.ohmylms-student-hub .oml-hub-dot.is-attempted {
-	--dot: #d9a404;
-}
-
-.ohmylms-student-hub .oml-hub-dot.is-familiar {
-	--dot: #e8780c;
-}
-
-.ohmylms-student-hub .oml-hub-dot.is-mastered {
-	--dot: #7048e8;
-}
-
 .ohmylms-student-hub .oml-hub-units-head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
 	margin-bottom: 12px;
-}
-
-.ohmylms-student-hub .oml-hub-units-head h2 {
-	margin: 0;
-	font-size: 18px;
 }
 
 .ohmylms-student-hub .oml-hub-link-button {
@@ -829,19 +531,6 @@
 	border: 1px solid var(--hub-border);
 	border-radius: 8px;
 	background: var(--hub-surface);
-}
-
-.ohmylms-student-hub .oml-hub-unit > summary {
-	display: flex;
-	align-items: center;
-	gap: 12px;
-	padding: 16px 20px;
-	list-style: none;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-unit > summary::-webkit-details-marker {
-	display: none;
 }
 
 .ohmylms-student-hub .oml-hub-unit-title {
@@ -872,10 +561,6 @@
 	text-decoration: none;
 }
 
-.ohmylms-student-hub .oml-hub-row:hover {
-	background: var(--hub-selected-bg);
-}
-
 .ohmylms-student-hub .oml-hub-row-icon {
 	display: grid;
 	flex: none;
@@ -887,33 +572,11 @@
 	place-items: center;
 }
 
-/* Images uploaded in Settings > Design system replace the built-in icons. */
 .ohmylms-student-hub .oml-hub-kind--custom {
 	display: block;
 	width: 16px;
 	height: 16px;
 	object-fit: contain;
-}
-
-.ohmylms-student-hub .oml-hub-row-icon.is-complete,
-.ohmylms-student-hub .oml-hub-row-icon.is-proficient {
-	background: #2f9e6a;
-	color: #fff;
-}
-
-.ohmylms-student-hub .oml-hub-row-icon.is-attempted {
-	background: #d9a404;
-	color: #fff;
-}
-
-.ohmylms-student-hub .oml-hub-row-icon.is-familiar {
-	background: #e8780c;
-	color: #fff;
-}
-
-.ohmylms-student-hub .oml-hub-row-icon.is-mastered {
-	background: #7048e8;
-	color: #fff;
 }
 
 .ohmylms-student-hub .oml-hub-row-name {
@@ -937,44 +600,10 @@
 	margin-bottom: 20px;
 }
 
-.ohmylms-student-hub .oml-hub-filters select {
-	min-width: 150px;
-	padding: 10px 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 12px;
-	background: var(--hub-surface);
-	color: var(--hub-text);
-	font: inherit;
-}
-
-.ohmylms-student-hub .oml-hub-filters button {
-	border: 0;
-	font: inherit;
-	cursor: pointer;
-}
-
 .ohmylms-student-hub .oml-hub-totals {
 	display: flex;
 	gap: 24px;
 	margin: 0 0 0 auto;
-}
-
-.ohmylms-student-hub .oml-hub-totals div {
-	display: flex;
-	align-items: baseline;
-	gap: 6px;
-}
-
-.ohmylms-student-hub .oml-hub-totals dd {
-	order: -1;
-	margin: 0;
-	font-size: 22px;
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-totals dt {
-	color: var(--hub-muted);
-	font-size: 12px;
 }
 
 .ohmylms-student-hub .oml-hub-table-wrap {
@@ -991,47 +620,10 @@
 	font-size: 14px;
 }
 
-.ohmylms-student-hub .oml-hub-table th,
-.ohmylms-student-hub .oml-hub-table td {
-	padding: 14px 16px;
-	border-bottom: 1px solid var(--hub-border);
-	text-align: start;
-	vertical-align: middle;
-}
-
-.ohmylms-student-hub .oml-hub-table th {
-	color: var(--hub-muted);
-	font-size: 12px;
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-gradebook-table th,
-.ohmylms-student-hub .oml-hub-gradebook-table td {
-	padding: 12px;
-	border: 1px solid var(--hub-border);
-	text-align: left;
-	vertical-align: top;
-}
-
-.ohmylms-student-hub .oml-hub-table tbody tr:last-child td {
-	border-bottom: 0;
-}
-
-.ohmylms-student-hub .oml-hub-table small {
-	display: block;
-	color: var(--hub-muted);
-	font-size: 12px;
-}
-
 .ohmylms-student-hub .oml-hub-activity {
 	display: flex;
 	align-items: center;
 	gap: 12px;
-}
-
-.ohmylms-student-hub .oml-hub-activity .oml-hub-kind {
-	flex: none;
-	color: var(--hub-muted);
 }
 
 .ohmylms-student-hub .oml-hub-pager {
@@ -1046,11 +638,6 @@
 
 .ohmylms-student-hub .oml-hub-section {
 	margin-bottom: 32px;
-}
-
-.ohmylms-student-hub .oml-hub-section > h2 {
-	margin: 0 0 16px;
-	font-size: 18px;
 }
 
 .ohmylms-student-hub .oml-hub-muted {
@@ -1080,22 +667,6 @@
 	background: var(--hub-surface);
 }
 
-.ohmylms-student-hub .oml-hub-tile.is-attempted {
-	--tile: #d9a404;
-}
-
-.ohmylms-student-hub .oml-hub-tile.is-familiar {
-	--tile: #e8780c;
-}
-
-.ohmylms-student-hub .oml-hub-tile.is-proficient {
-	--tile: #2f9e6a;
-}
-
-.ohmylms-student-hub .oml-hub-tile.is-mastered {
-	--tile: #7048e8;
-}
-
 .ohmylms-student-hub .oml-hub-tile-count {
 	font-size: 30px;
 	font-weight: 700;
@@ -1120,10 +691,6 @@
 	text-align: center;
 }
 
-.ohmylms-student-hub .oml-hub-hero-center p {
-	margin-inline: auto;
-}
-
 .ohmylms-student-hub .oml-hub-classgrid {
 	display: grid;
 	grid-template-columns: minmax(0, 1fr) 300px;
@@ -1131,12 +698,12 @@
 	align-items: start;
 }
 
-.ohmylms-student-hub .oml-hub-classmain,
-.ohmylms-student-hub .oml-hub-classaside {
+.ohmylms-student-hub .oml-hub-classmain {
 	min-width: 0;
 }
 
 .ohmylms-student-hub .oml-hub-classaside {
+	min-width: 0;
 	display: grid;
 	gap: 16px;
 }
@@ -1164,32 +731,11 @@
 	background: var(--hub-surface);
 }
 
-.ohmylms-student-hub .oml-hub-assignment > div {
-	flex: 1;
-	min-width: 0;
-}
-
-.ohmylms-student-hub .oml-hub-assignment .oml-hub-button {
-	padding: 8px 18px;
-	font-size: 14px;
-}
-
 .ohmylms-student-hub .oml-hub-textlink {
 	color: var(--hub-selected-text);
 	font-size: 14px;
 	font-weight: 700;
 	text-decoration: underline;
-}
-
-.ohmylms-student-hub .oml-hub-assignment small {
-	display: block;
-	color: var(--hub-muted);
-	font-size: 12px;
-}
-
-.ohmylms-student-hub .oml-hub-assignment.is-done .oml-hub-assignment-title {
-	color: var(--hub-muted);
-	text-decoration: line-through;
 }
 
 .ohmylms-student-hub .oml-hub-badge {
@@ -1201,11 +747,6 @@
 	font-weight: 700;
 }
 
-.ohmylms-student-hub .oml-hub-badge.is-overdue {
-	background: #5c1d2a;
-	color: #ffb4c0;
-}
-
 .ohmylms-student-hub .oml-hub-legend {
 	display: grid;
 	gap: 10px;
@@ -1214,58 +755,12 @@
 	list-style: none;
 }
 
-.ohmylms-student-hub .oml-hub-legend li {
-	--sw: var(--hub-border);
-	display: flex;
-	align-items: center;
-	gap: 10px;
-	font-size: 14px;
-}
-
 .ohmylms-student-hub .oml-hub-legend-count {
 	margin-inline-start: auto;
 }
 
-.ohmylms-student-hub .oml-hub-legend .oml-hub-swatch {
-	width: 14px;
-	height: 14px;
-	border-radius: 50%;
-	background: var(--sw);
-}
-
-.ohmylms-student-hub .oml-hub-legend li.is-attempted {
-	--sw: #d9a404;
-}
-
-.ohmylms-student-hub .oml-hub-legend li.is-familiar {
-	--sw: #e8780c;
-}
-
-.ohmylms-student-hub .oml-hub-legend li.is-proficient {
-	--sw: #2f9e6a;
-}
-
-.ohmylms-student-hub .oml-hub-legend li.is-mastered {
-	--sw: #7048e8;
-}
-
 .ohmylms-student-hub .oml-hub-resume {
 	margin-bottom: 28px;
-}
-
-.ohmylms-student-hub .oml-hub-resume h2 {
-	margin: 4px 0 8px;
-	font-size: 24px;
-}
-
-.ohmylms-student-hub .oml-hub-resume progress {
-	max-width: 420px;
-	margin-bottom: 16px;
-}
-
-.ohmylms-student-hub .oml-hub-commerce-list p {
-	margin: 4px 0 0;
-	font-size: 14px;
 }
 
 .ohmylms-student-hub .oml-hub-coursecards {
@@ -1287,33 +782,9 @@
 	background: var(--hub-surface);
 }
 
-.ohmylms-student-hub .oml-hub-coursecard.is-complete {
-	border-top: 4px solid #2f9e6a;
-}
-
-.ohmylms-student-hub .oml-hub-coursecard h3 {
-	margin: 0;
-	font-size: 17px;
-	overflow-wrap: anywhere;
-}
-
 .ohmylms-student-hub .oml-hub-coursecard-title {
 	color: var(--hub-text);
 	text-decoration: none;
-}
-
-.ohmylms-student-hub .oml-hub-coursecard p {
-	margin: 0;
-}
-
-.ohmylms-student-hub .oml-hub-school-reports details > p,
-.ohmylms-student-hub .oml-hub-school-reports details > ul {
-	margin: 16px;
-}
-
-.ohmylms-student-hub .oml-hub-coursecard > p:last-child {
-	margin-top: auto;
-	padding-top: 8px;
 }
 
 .ohmylms-student-hub .oml-hub-settings {
@@ -1335,44 +806,6 @@
 	margin-bottom: 16px;
 }
 
-.ohmylms-student-hub .oml-hub-field label {
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-field input,
-.ohmylms-student-hub .oml-hub-field textarea {
-	width: 100%;
-	box-sizing: border-box;
-	padding: 10px 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 8px;
-	background: var(--hub-bg);
-	color: var(--hub-text);
-	font: inherit;
-}
-
-.ohmylms-student-hub .oml-hub-field input[type="color"] {
-	width: 72px;
-	height: 44px;
-	padding: 4px;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-field input[type="checkbox"] {
-	width: auto;
-	margin-right: 8px;
-}
-
-.ohmylms-student-hub .oml-hub-field img {
-	align-self: flex-start;
-	border-radius: 8px;
-	object-fit: contain;
-}
-
-.ohmylms-student-hub .oml-hub-field small {
-	color: var(--hub-muted);
-}
-
 .ohmylms-student-hub .oml-hub-check {
 	display: flex;
 	align-items: center;
@@ -1392,21 +825,9 @@
 	cursor: pointer;
 }
 
-.ohmylms-student-hub .oml-hub-save:disabled {
-	background: var(--hub-border);
-	box-shadow: none;
-	color: var(--hub-muted);
-	cursor: not-allowed;
-}
-
 .ohmylms-student-hub .oml-hub-theme-large {
 	max-width: 420px;
 	margin: 16px 0 0;
-}
-
-.ohmylms-student-hub .oml-hub-theme-large button {
-	padding: 12px 8px;
-	font-size: 14px;
 }
 
 .ohmylms-student-hub .oml-hub-notice {
@@ -1417,10 +838,6 @@
 	border-radius: 8px;
 	background: var(--hub-surface);
 	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-hub-notice.is-error {
-	border-left-color: #d92916;
 }
 
 .ohmylms-student-hub .oml-hub-notice-line {
@@ -1441,11 +858,6 @@
 	background: #fff;
 }
 
-.oml-hub-editor .oml-hub-editor-panel > label {
-	display: block;
-	margin: 16px 0 8px;
-}
-
 .oml-hub-editor .oml-hub-checklist {
 	margin: 12px 0;
 	padding: 0;
@@ -1462,21 +874,6 @@
 	background: #f8f9fc;
 }
 
-.oml-hub-editor [data-sort-row] label,
-.oml-hub-editor [data-sort-row] input[type="text"] {
-	min-width: 0;
-	flex: 1;
-}
-
-.oml-hub-editor [data-sort-row] label:has(.screen-reader-text) {
-	flex: 0;
-}
-
-.oml-hub-editor [data-sort-row] button {
-	padding: 4px 8px;
-	cursor: pointer;
-}
-
 .oml-hub-editor .oml-hub-drag {
 	cursor: grab;
 }
@@ -1488,103 +885,6 @@
 .oml-hub-editor .oml-hub-preview {
 	margin-top: 32px;
 	max-width: 1400px;
-}
-
-.oml-hub-editor iframe {
-	width: 100%;
-	max-width: 100%;
-	height: 760px;
-	border: 1px solid #dcdcde;
-}
-
-.admin-bar .ohmylms-student-hub .oml-hub-rail {
-	top: 32px;
-	height: calc(100vh - 32px);
-}
-
-.ohmylms-student-hub .oml-hub-content h1 {
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-greeting > p:first-child {
-	margin: 0;
-	color: var(--hub-muted);
-	font-size: 12px;
-	font-weight: 700;
-	letter-spacing: 0.08em;
-}
-
-@media (max-width: 782px) {
-
-	.admin-bar .ohmylms-student-hub .oml-hub-rail {
-		top: 46px;
-		height: calc(100vh - 46px);
-	}
-}
-
-@media (max-width: 800px) {
-
-	.ohmylms-student-hub {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.ohmylms-student-hub .oml-hub-rail {
-		position: fixed;
-		inset: 0 auto 0 0;
-		z-index: 100000;
-		width: min(280px, 85vw);
-		transform: translateX(-100%);
-		transition: transform 0.2s ease;
-	}
-
-	.ohmylms-student-hub.is-rail-open .oml-hub-rail {
-		transform: none;
-	}
-
-	.ohmylms-student-hub .oml-hub-rail-close,
-	.ohmylms-student-hub .oml-hub-menu {
-		display: block;
-	}
-
-	.ohmylms-student-hub .oml-hub-topbar {
-		padding: 0 16px;
-	}
-
-	.ohmylms-student-hub .oml-hub-content.ohmylms-dashboard {
-		padding: 20px 16px;
-	}
-
-	.ohmylms-student-hub .oml-hub-progress > summary {
-		grid-template-columns: auto 1fr;
-	}
-
-	.ohmylms-student-hub .oml-hub-totals {
-		margin: 0;
-	}
-
-	.ohmylms-student-hub .oml-hub-classgrid {
-		grid-template-columns: minmax(0, 1fr);
-	}
-
-	.ohmylms-student-hub .oml-hub-assignment {
-		flex-wrap: wrap;
-	}
-
-	.ohmylms-student-hub .oml-hub-assignment > div {
-		flex-basis: 100%;
-	}
-
-	.ohmylms-student-hub .oml-hub-cards,
-	.ohmylms-student-hub .oml-hub-subjects {
-		grid-template-columns: minmax(0, 1fr);
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-
-	.ohmylms-student-hub .oml-hub-rail {
-		transition: none;
-	}
 }
 
 .ohmylms-student-hub .oml-hub-commerce-grid {
@@ -1600,27 +900,10 @@
 	list-style: none;
 }
 
-.ohmylms-student-hub .oml-hub-commerce-list > li {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	justify-content: space-between;
-	gap: 16px;
-	padding: 16px 0;
-	border-bottom: 1px solid var(--hub-border);
-	overflow-wrap: anywhere;
-}
-
 .ohmylms-student-hub .oml-hub-teacher-header {
 	padding: 8px 0 24px;
 	margin-bottom: 24px;
 	border-bottom: 1px solid var(--hub-border);
-}
-
-.ohmylms-student-hub .oml-hub-teacher-header h1 {
-	margin: 0 0 8px;
-	color: var(--hub-text);
-	font-size: clamp(24px, 3vw, 32px);
 }
 
 .ohmylms-student-hub .oml-hub-teacher-description {
@@ -1632,20 +915,6 @@
 	margin-bottom: 24px;
 }
 
-.ohmylms-student-hub .oml-hub-class-create > summary,
-.ohmylms-student-hub .oml-hub-class-add > summary,
-.ohmylms-student-hub .oml-hub-roster-remove > summary {
-	cursor: pointer;
-	font-weight: 600;
-	padding: 12px 0;
-}
-
-.ohmylms-student-hub .oml-hub-class-create form,
-.ohmylms-student-hub .oml-hub-class-add form {
-	margin-top: 16px;
-	max-width: 640px;
-}
-
 .ohmylms-student-hub .oml-hub-roster-search {
 	display: flex;
 	flex-wrap: wrap;
@@ -1654,7 +923,6 @@
 	margin: 24px 0;
 }
 
-.ohmylms-student-hub .oml-hub-roster-search input,
 .ohmylms-student-hub .oml-hub-invite-link {
 	min-width: 0;
 	max-width: 100%;
@@ -1663,15 +931,17 @@
 	background: var(--hub-surface);
 	border: 1px solid var(--hub-border);
 	border-radius: 6px;
-}
-
-.ohmylms-student-hub .oml-hub-invite-link {
 	display: block;
 	width: 100%;
 	margin-top: 8px;
 }
 
-.ohmylms-student-hub .oml-hub-class-lifecycle,
+.ohmylms-student-hub .oml-hub-class-lifecycle {
+	margin-top: 24px;
+	padding-top: 20px;
+	border-top: 1px solid var(--hub-border);
+}
+
 .ohmylms-student-hub .oml-hub-class-add {
 	margin-top: 24px;
 	padding-top: 20px;
@@ -1686,25 +956,10 @@
 	margin-bottom: 12px;
 }
 
-.ohmylms-student-hub.oml-hub-signin .oml-hub-settings-card {
-	margin-top: 24px;
-	text-align: left;
-}
-
-.ohmylms-student-hub.oml-hub-signin .oml-hub-subnav {
-	justify-content: center;
-}
-
 .ohmylms-student-hub .oml-hub-family {
 	display: grid;
 	gap: 16px;
 	max-width: 880px;
-}
-
-.ohmylms-student-hub .oml-hub-family .oml-hub-banner,
-.ohmylms-student-hub .oml-hub-family .oml-hub-settings-card {
-	max-width: none;
-	margin-bottom: 0;
 }
 
 .ohmylms-student-hub .oml-hub-family-flash-text {
@@ -1715,26 +970,6 @@
 	display: block;
 	margin-bottom: 4px;
 	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-family-flash input[type="text"] {
-	width: 100%;
-	padding: 10px 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 8px;
-	background: var(--hub-bg);
-	color: var(--hub-text);
-	font-family: ui-monospace, Menlo, Consolas, monospace;
-	font-size: 13px;
-}
-
-.ohmylms-student-hub .oml-hub-family h2 {
-	margin: 0 0 8px;
-}
-
-.ohmylms-student-hub .oml-hub-family h3 {
-	margin: 24px 0 0;
-	font-size: 16px;
 }
 
 .ohmylms-student-hub .oml-hub-family-meta {
@@ -1748,14 +983,6 @@
 	gap: 8px 16px;
 }
 
-.ohmylms-student-hub .oml-hub-family-actions form {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px;
-	margin: 0;
-}
-
 .ohmylms-student-hub .oml-hub-family-confirm {
 	display: inline-flex;
 	align-items: center;
@@ -1763,55 +990,8 @@
 	font-size: 13px;
 }
 
-/* Keep the remove/reset confirmations and the people search at least 24px (WCAG 2.5.8). */
-.ohmylms-student-hub .oml-hub-family-confirm input[type="checkbox"] {
-	width: 24px;
-	height: 24px;
-	margin: 0;
-	flex: none;
-}
-
-.ohmylms-student-hub .oml-hub-people-search input[type="search"] {
-	min-height: 40px;
-	box-sizing: border-box;
-	padding: 8px 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 6px;
-	background: var(--hub-surface);
-	color: inherit;
-	font: inherit;
-}
-
-.ohmylms-student-hub .oml-hub-people-search .oml-hub-pill {
-	display: inline-flex;
-	align-items: center;
-	min-height: 40px;
-	box-sizing: border-box;
-}
-
 .ohmylms-student-hub .oml-hub-pill-danger {
 	color: #b3261e;
-}
-
-.ohmylms-student-hub .oml-hub-family details {
-	margin-top: 16px;
-	border: 1px solid var(--hub-border);
-	border-radius: 8px;
-}
-
-.ohmylms-student-hub .oml-hub-family details > summary {
-	padding: 12px 16px;
-	font-weight: 700;
-	cursor: pointer;
-}
-
-.ohmylms-student-hub .oml-hub-family details > form {
-	padding: 0 16px 16px;
-}
-
-.ohmylms-student-hub .oml-hub-school-reports summary .oml-hub-family-meta {
-	display: block;
-	margin: 8px 0 0;
 }
 
 .ohmylms-student-hub .oml-hub-gradebook-scroll {
@@ -1829,10 +1009,7 @@
 	border-collapse: collapse;
 }
 
-
-.ohmylms-student-hub .oml-hub-family details .oml-hub-actions {
-	margin-bottom: 0;
-}
+/* Images uploaded in Settings > Design system replace the built-in icons. */
 
 .ohmylms-student-hub .oml-hub-family-choices {
 	flex: 1 0 100%;
@@ -1847,40 +1024,6 @@
 	border: 0;
 }
 
-.ohmylms-student-hub .oml-hub-family-fieldset legend {
-	margin-bottom: 8px;
-	font-weight: 700;
-}
-
-.ohmylms-student-hub .oml-hub-settings-card.oml-hub-class-panel {
-	max-width: 880px;
-}
-
-.ohmylms-student-hub .oml-hub-class-panel .oml-hub-field {
-	max-width: 640px;
-}
-
-.ohmylms-student-hub .oml-hub-field select {
-	width: 100%;
-	box-sizing: border-box;
-	padding: 10px 12px;
-	border: 1px solid var(--hub-border);
-	border-radius: 8px;
-	background: var(--hub-bg);
-	color: var(--hub-text);
-	font: inherit;
-}
-
-.ohmylms-student-hub .oml-hub-family-report h1 {
-	font-size: 2rem;
-	line-height: 1.2;
-}
-
-.oml-hub-family-report .oml-hub-pill[aria-current="page"] {
-	background: #5753fa;
-	color: #fff;
-}
-
 .ohmylms-student-hub .oml-hub-family-collection {
 	display: flex;
 	align-items: flex-start;
@@ -1891,30 +1034,10 @@
 	cursor: pointer;
 }
 
-.ohmylms-student-hub .oml-hub-family-collection input {
-	margin-top: 4px;
-}
-
-.ohmylms-student-hub .oml-hub-family-collection small {
-	display: block;
-	margin-top: 4px;
-	color: var(--hub-muted);
-}
-
 .ohmylms-student-hub .oml-hub-family-cancel {
 	margin-top: 16px;
 }
 
-.ohmylms-student-hub [data-family-step] h3 {
-	margin-top: 16px;
-}
-
-.ohmylms-student-hub [data-family-step][hidden],
-.ohmylms-student-hub [data-family-choices] [hidden] {
-	display: none;
-}
-
-/* Level up (the unit test) and the course challenge. */
 .ohmylms-student-hub .oml-hub-levelup {
 	display: flex;
 	flex-wrap: wrap;
@@ -1925,10 +1048,6 @@
 	border-top: 1px solid var(--hub-border);
 }
 
-.ohmylms-student-hub .oml-hub-levelup span {
-	color: var(--hub-muted);
-}
-
 .ohmylms-student-hub .oml-hub-challenge {
 	margin-top: 24px;
 	padding: 24px;
@@ -1937,32 +1056,16 @@
 	text-align: center;
 }
 
-.ohmylms-student-hub .oml-hub-challenge h2 {
-	margin: 0 0 8px;
-	font-size: 18px;
-}
-
 .ohmylms-student-hub .oml-hub-challenge-text {
 	margin: 0 0 16px;
 	color: var(--hub-muted);
 }
 
-/* Unit groups retain real activity types and the original activity URLs. */
 .ohmylms-student-hub .oml-hub-unit-group {
 	padding: 16px 20px;
 	border-top: 1px solid var(--hub-border);
 }
 
-.ohmylms-student-hub .oml-hub-unit-group h3 {
-	margin: 0 0 8px;
-	font-size: 16px;
-}
-
-.ohmylms-student-hub .oml-hub-unit-group .oml-hub-rows {
-	padding: 0;
-}
-
-/* Khan-style course page: unit rail, unit headers with skill grids, mastery legend and Up next. */
 .ohmylms-student-hub.oml-hub-embedded {
 	display: block;
 	max-width: 1200px;
@@ -2003,30 +1106,6 @@
 	font-size: 13px;
 }
 
-.ohmylms-student-hub .oml-course-rail ol {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.ohmylms-student-hub .oml-course-rail a {
-	display: block;
-	padding: 12px 16px;
-	border-left: 4px solid transparent;
-	border-bottom: 1px solid var(--hub-border);
-	color: var(--hub-text);
-	text-decoration: none;
-}
-
-.ohmylms-student-hub .oml-course-rail a:hover,
-.ohmylms-student-hub .oml-course-rail a[aria-current] {
-	background: var(--hub-selected-bg);
-}
-
-.ohmylms-student-hub .oml-course-rail a[aria-current] {
-	border-left-color: var(--hub-accent);
-}
-
 .ohmylms-student-hub .oml-course-unit-label {
 	display: block;
 	margin: 0;
@@ -2034,10 +1113,6 @@
 	font-size: 11px;
 	font-weight: 700;
 	letter-spacing: 0.05em;
-}
-
-.ohmylms-student-hub .oml-course-rail a[aria-current] .oml-course-unit-label {
-	color: var(--hub-selected-text);
 }
 
 .ohmylms-student-hub .oml-course-main {
@@ -2074,10 +1149,6 @@
 	text-transform: uppercase;
 }
 
-.ohmylms-student-hub .oml-course-upnext a {
-	font-weight: 600;
-}
-
 .ohmylms-student-hub .oml-course-upnext-unit {
 	margin-left: auto;
 	color: var(--hub-muted);
@@ -2098,12 +1169,6 @@
 	border-radius: 8px;
 	background: var(--hub-surface);
 	scroll-margin-top: 24px;
-}
-
-.ohmylms-student-hub .oml-course-unit h2 {
-	margin: 2px 0 4px;
-	font-size: 24px;
-	line-height: 1.2;
 }
 
 .ohmylms-student-hub .oml-course-unit-meta {
@@ -2135,7 +1200,962 @@
 	place-items: center;
 }
 
-.ohmylms-student-hub .oml-course-cell.is-complete,
+.ohmylms-student-hub .oml-course-reviews {
+	margin-top: 32px;
+}
+
+.ohmylms-student-hub .oml-course-links {
+	display: grid;
+	gap: 8px;
+	margin: 0 0 16px;
+}
+
+.ohmylms-student-hub .oml-course-links-group {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.ohmylms-student-hub .oml-course-links-label {
+	font-weight: 600;
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub.oml-hub-signin a {
+	color: var(--hub-selected-text);
+	font-weight: 700;
+}
+
+.ohmylms-student-hub a:focus-visible {
+	outline: 3px solid var(--hub-selected-text);
+	outline-offset: 2px;
+}
+
+.ohmylms-student-hub button:focus-visible {
+	outline: 3px solid var(--hub-selected-text);
+	outline-offset: 2px;
+}
+
+.ohmylms-student-hub .oml-hub-role-switch summary {
+	padding: 8px;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-role-switch a {
+	display: block;
+	padding: 10px 16px;
+	border: 1px solid var(--hub-border);
+	background: var(--hub-surface);
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-hub-nav a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 40px;
+	padding: 0 12px;
+	border-radius: 8px;
+	color: var(--hub-muted);
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ohmylms-student-hub .oml-hub-rail-foot > a {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	min-height: 40px;
+	padding: 0 12px;
+	border-radius: 8px;
+	color: var(--hub-muted);
+	font-size: 14px;
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.ohmylms-student-hub .oml-hub-theme button {
+	flex: 1;
+	padding: 6px 4px;
+	border: 0;
+	border-radius: 6px;
+	background: none;
+	color: var(--hub-muted);
+	font: inherit;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-content h2 {
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-hub-content h3 {
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-hub-legacy h1 {
+	color: #17233a;
+}
+
+.ohmylms-student-hub .oml-hub-legacy h2 {
+	color: #17233a;
+}
+
+.ohmylms-student-hub .oml-hub-legacy h3 {
+	color: #17233a;
+}
+
+.ohmylms-student-hub .ohmylms-student-profile::before {
+	content: none;
+}
+
+.ohmylms-student-hub .oml-hub-greeting h1 {
+	margin: 8px 0 12px;
+	font-size: clamp(24px, 3vw, 36px);
+	line-height: 1.25;
+}
+
+.ohmylms-student-hub .oml-hub-greeting p {
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-personalize summary {
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-card h2 {
+	margin: 0 0 20px;
+	font-size: 20px;
+}
+
+.ohmylms-student-hub .oml-hub-class-panel > h1 {
+	margin: 0 0 20px;
+	font-size: 20px;
+}
+
+.ohmylms-student-hub .oml-hub-card h3 {
+	margin: 0 0 10px;
+	font-size: 17px;
+}
+
+.ohmylms-student-hub [data-hub-invitation] label {
+	display: block;
+	margin: 16px 0 8px;
+}
+
+.ohmylms-student-hub .oml-hub-class-switcher select {
+	max-width: 100%;
+	padding: 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 12px;
+	background: var(--hub-surface);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub [data-hub-invitation] input {
+	max-width: 100%;
+	padding: 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 12px;
+	background: var(--hub-surface);
+	color: var(--hub-text);
+	font: inherit;
+	width: 100%;
+	margin-bottom: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-stats dd {
+	margin: 8px 0;
+	font-size: 28px;
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-banner h1 {
+	margin: 0 0 4px;
+	font-size: 28px;
+}
+
+.ohmylms-student-hub .oml-hub-banner p {
+	margin: 0;
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-search button {
+	border: 0;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-subject summary {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px;
+	list-style: none;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-disclosure::after {
+	content: "";
+	width: 8px;
+	height: 8px;
+	margin-inline-start: auto;
+	border-right: 2px solid var(--hub-muted);
+	border-bottom: 2px solid var(--hub-muted);
+	transform: rotate(45deg);
+	transition: transform 0.15s ease;
+}
+
+.ohmylms-student-hub .oml-hub-hero h1 {
+	margin: 0 0 8px;
+	font-size: 28px;
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-hero p {
+	max-width: 70ch;
+	margin: 0 0 16px;
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-hub-progress > summary {
+	display: grid;
+	grid-template-columns: auto auto 1fr minmax(120px, 280px);
+	align-items: center;
+	gap: 8px 12px;
+	padding: 16px 20px;
+	list-style: none;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-strip li {
+	margin-top: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-units-head h2 {
+	margin: 0;
+	font-size: 18px;
+}
+
+.ohmylms-student-hub .oml-hub-unit > summary {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	padding: 16px 20px;
+	list-style: none;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-filters select {
+	min-width: 150px;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 12px;
+	background: var(--hub-surface);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-filters button {
+	border: 0;
+	font: inherit;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-totals div {
+	display: flex;
+	align-items: baseline;
+	gap: 6px;
+}
+
+.ohmylms-student-hub .oml-hub-totals dd {
+	order: -1;
+	margin: 0;
+	font-size: 22px;
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-totals dt {
+	color: var(--hub-muted);
+	font-size: 12px;
+}
+
+.ohmylms-student-hub .oml-hub-table td {
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--hub-border);
+	text-align: start;
+	vertical-align: middle;
+}
+
+.ohmylms-student-hub .oml-hub-table th {
+	padding: 14px 16px;
+	border-bottom: 1px solid var(--hub-border);
+	text-align: start;
+	vertical-align: middle;
+	color: var(--hub-muted);
+	font-size: 12px;
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-gradebook-table th {
+	padding: 12px;
+	border: 1px solid var(--hub-border);
+	text-align: left;
+	vertical-align: top;
+}
+
+.ohmylms-student-hub .oml-hub-gradebook-table td {
+	padding: 12px;
+	border: 1px solid var(--hub-border);
+	text-align: left;
+	vertical-align: top;
+}
+
+.ohmylms-student-hub .oml-hub-table small {
+	display: block;
+	color: var(--hub-muted);
+	font-size: 12px;
+}
+
+.ohmylms-student-hub .oml-hub-section > h2 {
+	margin: 0 0 16px;
+	font-size: 18px;
+}
+
+.ohmylms-student-hub .oml-hub-hero-center p {
+	margin-inline: auto;
+}
+
+.ohmylms-student-hub .oml-hub-assignment > div {
+	flex: 1;
+	min-width: 0;
+}
+
+.ohmylms-student-hub .oml-hub-assignment small {
+	display: block;
+	color: var(--hub-muted);
+	font-size: 12px;
+}
+
+.ohmylms-student-hub .oml-hub-legend li {
+	--sw: var(--hub-border);
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 14px;
+}
+
+.ohmylms-student-hub .oml-hub-resume h2 {
+	margin: 4px 0 8px;
+	font-size: 24px;
+}
+
+.ohmylms-student-hub .oml-hub-resume progress {
+	max-width: 420px;
+	margin-bottom: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-commerce-list p {
+	margin: 4px 0 0;
+	font-size: 14px;
+}
+
+.ohmylms-student-hub .oml-hub-coursecard h3 {
+	margin: 0;
+	font-size: 17px;
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-student-hub .oml-hub-coursecard p {
+	margin: 0;
+}
+
+.ohmylms-student-hub .oml-hub-field label {
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-field input {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	background: var(--hub-bg);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-field textarea {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	background: var(--hub-bg);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-field img {
+	align-self: flex-start;
+	border-radius: 8px;
+	object-fit: contain;
+}
+
+.ohmylms-student-hub .oml-hub-field small {
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-theme-large button {
+	padding: 12px 8px;
+	font-size: 14px;
+}
+
+.oml-hub-editor .oml-hub-editor-panel > label {
+	display: block;
+	margin: 16px 0 8px;
+}
+
+.oml-hub-editor [data-sort-row] label {
+	min-width: 0;
+	flex: 1;
+}
+
+.oml-hub-editor [data-sort-row] button {
+	padding: 4px 8px;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-content h1 {
+	color: var(--hub-text);
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-commerce-list > li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 0;
+	border-bottom: 1px solid var(--hub-border);
+	overflow-wrap: anywhere;
+}
+
+.ohmylms-student-hub .oml-hub-teacher-header h1 {
+	margin: 0 0 8px;
+	color: var(--hub-text);
+	font-size: clamp(24px, 3vw, 32px);
+}
+
+.ohmylms-student-hub .oml-hub-class-create > summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 12px 0;
+}
+
+.ohmylms-student-hub .oml-hub-class-add > summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 12px 0;
+}
+
+.ohmylms-student-hub .oml-hub-roster-remove > summary {
+	cursor: pointer;
+	font-weight: 600;
+	padding: 12px 0;
+}
+
+.ohmylms-student-hub .oml-hub-class-create form {
+	margin-top: 16px;
+	max-width: 640px;
+}
+
+.ohmylms-student-hub .oml-hub-class-add form {
+	margin-top: 16px;
+	max-width: 640px;
+}
+
+.ohmylms-student-hub .oml-hub-roster-search input {
+	min-width: 0;
+	max-width: 100%;
+	padding: 10px 12px;
+	color: inherit;
+	background: var(--hub-surface);
+	border: 1px solid var(--hub-border);
+	border-radius: 6px;
+}
+
+.ohmylms-student-hub .oml-hub-family h2 {
+	margin: 0 0 8px;
+}
+
+.ohmylms-student-hub .oml-hub-family h3 {
+	margin: 24px 0 0;
+	font-size: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-family-actions form {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.ohmylms-student-hub .oml-hub-family details {
+	margin-top: 16px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+}
+
+.ohmylms-student-hub .oml-hub-family-fieldset legend {
+	margin-bottom: 8px;
+	font-weight: 700;
+}
+
+.ohmylms-student-hub .oml-hub-field select {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	background: var(--hub-bg);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-family-report h1 {
+	font-size: 2rem;
+	line-height: 1.2;
+}
+
+@media (max-width: 782px) {
+
+	.admin-bar .ohmylms-student-hub .oml-hub-rail {
+		top: 46px;
+		height: calc(100vh - 46px);
+	}
+}
+
+@media (max-width: 800px) {
+
+	.ohmylms-student-hub {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-student-hub .oml-hub-rail {
+		position: fixed;
+		inset: 0 auto 0 0;
+		z-index: 100000;
+		width: min(280px, 85vw);
+		transform: translateX(-100%);
+		transition: transform 0.2s ease;
+	}
+
+	.ohmylms-student-hub .oml-hub-rail-close {
+		display: block;
+	}
+
+	.ohmylms-student-hub .oml-hub-menu {
+		display: block;
+	}
+
+	.ohmylms-student-hub .oml-hub-topbar {
+		padding: 0 16px;
+	}
+
+	.ohmylms-student-hub .oml-hub-totals {
+		margin: 0;
+	}
+
+	.ohmylms-student-hub .oml-hub-classgrid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-student-hub .oml-hub-assignment {
+		flex-wrap: wrap;
+	}
+
+	.ohmylms-student-hub .oml-hub-cards {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-student-hub .oml-hub-subjects {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-student-hub .oml-hub-progress > summary {
+		grid-template-columns: auto 1fr;
+	}
+
+	.ohmylms-student-hub .oml-hub-assignment > div {
+		flex-basis: 100%;
+	}
+
+	.ohmylms-student-hub.is-rail-open .oml-hub-rail {
+		transform: none;
+	}
+
+	.ohmylms-student-hub .oml-hub-content.ohmylms-dashboard {
+		padding: 20px 16px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+	.ohmylms-student-hub .oml-hub-rail {
+		transition: none;
+	}
+}
+
+.ohmylms-student-hub .oml-hub-family-collection input {
+	margin-top: 4px;
+}
+
+.ohmylms-student-hub .oml-hub-family-collection small {
+	display: block;
+	margin-top: 4px;
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub [data-family-step] h3 {
+	margin-top: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-levelup span {
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-challenge h2 {
+	margin: 0 0 8px;
+	font-size: 18px;
+}
+
+.ohmylms-student-hub .oml-hub-unit-group h3 {
+	margin: 0 0 8px;
+	font-size: 16px;
+}
+
+.ohmylms-student-hub .oml-course-rail ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-student-hub .oml-course-rail a {
+	display: block;
+	padding: 12px 16px;
+	border-left: 4px solid transparent;
+	border-bottom: 1px solid var(--hub-border);
+	color: var(--hub-text);
+	text-decoration: none;
+}
+
+.ohmylms-student-hub .oml-course-unit h2 {
+	margin: 2px 0 4px;
+	font-size: 24px;
+	line-height: 1.2;
+}
+
+.ohmylms-student-hub .oml-course-upnext a {
+	font-weight: 600;
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .oml-hub-lesson-group h3 {
+	margin-top: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-subject summary::-webkit-details-marker {
+	display: none;
+}
+
+.ohmylms-student-hub .oml-hub-progress > summary::-webkit-details-marker {
+	display: none;
+}
+
+.ohmylms-student-hub .oml-hub-unit > summary::-webkit-details-marker {
+	display: none;
+}
+
+.ohmylms-student-hub .oml-hub-school-reports details > p {
+	margin: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-school-reports details > ul {
+	margin: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-family details > summary {
+	padding: 12px 16px;
+	font-weight: 700;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-family details > form {
+	padding: 0 16px 16px;
+}
+
+.ohmylms-student-hub .oml-hub-pill:hover {
+	border-color: var(--hub-selected-text);
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-pill[aria-current="page"] {
+	border-color: var(--hub-selected-text);
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-content.ohmylms-dashboard {
+	min-width: 0;
+	max-width: 1120px;
+	padding: 32px;
+	background: transparent;
+	color: var(--hub-text);
+}
+
+.ohmylms-student-hub .ohmylms-student-profile .ohmylms-student-profile-tab-content {
+	padding: 0;
+}
+
+.ohmylms-student-hub .oml-hub-personalize .oml-student-dashboard {
+	min-height: 0;
+	padding: 16px;
+}
+
+.ohmylms-student-hub .oml-hub-cards[data-hub-theme="meadow"] {
+	--hub-card-tint: #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-cards[data-hub-theme="ocean"] {
+	--hub-card-tint: #4c8dff;
+}
+
+.ohmylms-student-hub .oml-hub-cards[data-hub-theme="sunset"] {
+	--hub-card-tint: #ff8a4c;
+}
+
+.ohmylms-student-hub .oml-hub-list-item + .oml-hub-list-item {
+	margin-top: 20px;
+	padding-top: 20px;
+	border-top: 1px solid var(--hub-border);
+}
+
+.ohmylms-student-hub .oml-hub-subjects + .oml-hub-library-heading {
+	margin-top: 32px;
+}
+
+.ohmylms-student-hub .oml-hub-subject[data-tone="1"] {
+	--hub-tone: #e8590c;
+}
+
+.ohmylms-student-hub .oml-hub-subject[data-tone="2"] {
+	--hub-tone: #d6336c;
+}
+
+.ohmylms-student-hub .oml-hub-subject[data-tone="3"] {
+	--hub-tone: #1c7ed6;
+}
+
+.ohmylms-student-hub .oml-hub-subject[data-tone="4"] {
+	--hub-tone: #f08c00;
+}
+
+.ohmylms-student-hub .oml-hub-subject[data-tone="5"] {
+	--hub-tone: #7048e8;
+}
+
+/* Keep the remove/reset confirmations and the people search at least 24px (WCAG 2.5.8). */
+
+.ohmylms-student-hub .oml-hub-course-link:hover {
+	color: var(--hub-selected-text);
+	text-decoration: underline;
+}
+
+.ohmylms-student-hub .oml-hub-hero .oml-hub-meta {
+	color: var(--hub-muted);
+	font-size: 13px;
+}
+
+.ohmylms-student-hub .oml-hub-dot.is-complete {
+	--dot: #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-dot.is-proficient {
+	--dot: #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-dot.is-attempted {
+	--dot: #d9a404;
+}
+
+.ohmylms-student-hub .oml-hub-dot.is-familiar {
+	--dot: #e8780c;
+}
+
+.ohmylms-student-hub .oml-hub-dot.is-mastered {
+	--dot: #7048e8;
+}
+
+.ohmylms-student-hub .oml-hub-row:hover {
+	background: var(--hub-selected-bg);
+}
+
+.ohmylms-student-hub .oml-hub-row-icon.is-complete {
+	background: #2f9e6a;
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-row-icon.is-proficient {
+	background: #2f9e6a;
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-row-icon.is-attempted {
+	background: #d9a404;
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-row-icon.is-familiar {
+	background: #e8780c;
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-row-icon.is-mastered {
+	background: #7048e8;
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-activity .oml-hub-kind {
+	flex: none;
+	color: var(--hub-muted);
+}
+
+.ohmylms-student-hub .oml-hub-tile.is-attempted {
+	--tile: #d9a404;
+}
+
+.ohmylms-student-hub .oml-hub-tile.is-familiar {
+	--tile: #e8780c;
+}
+
+.ohmylms-student-hub .oml-hub-tile.is-proficient {
+	--tile: #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-tile.is-mastered {
+	--tile: #7048e8;
+}
+
+.ohmylms-student-hub .oml-hub-assignment .oml-hub-button {
+	padding: 8px 18px;
+	font-size: 14px;
+}
+
+.ohmylms-student-hub .oml-hub-badge.is-overdue {
+	background: #5c1d2a;
+	color: #ffb4c0;
+}
+
+.ohmylms-student-hub .oml-hub-legend .oml-hub-swatch {
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	background: var(--sw);
+}
+
+.ohmylms-student-hub .oml-hub-coursecard.is-complete {
+	border-top: 4px solid #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-save:disabled {
+	background: var(--hub-border);
+	box-shadow: none;
+	color: var(--hub-muted);
+	cursor: not-allowed;
+}
+
+.ohmylms-student-hub .oml-hub-notice.is-error {
+	border-left-color: #d92916;
+}
+
+.admin-bar .ohmylms-student-hub .oml-hub-rail {
+	top: 32px;
+	height: calc(100vh - 32px);
+}
+
+.ohmylms-student-hub.oml-hub-signin .oml-hub-settings-card {
+	margin-top: 24px;
+	text-align: left;
+}
+
+.ohmylms-student-hub.oml-hub-signin .oml-hub-subnav {
+	justify-content: center;
+}
+
+/* Level up (the unit test) and the course challenge. */
+
+.ohmylms-student-hub .oml-hub-family .oml-hub-banner {
+	max-width: none;
+	margin-bottom: 0;
+}
+
+.ohmylms-student-hub .oml-hub-family .oml-hub-settings-card {
+	max-width: none;
+	margin-bottom: 0;
+}
+
+.ohmylms-student-hub .oml-hub-people-search .oml-hub-pill {
+	display: inline-flex;
+	align-items: center;
+	min-height: 40px;
+	box-sizing: border-box;
+}
+
+.ohmylms-student-hub .oml-hub-settings-card.oml-hub-class-panel {
+	max-width: 880px;
+}
+
+.ohmylms-student-hub .oml-hub-class-panel .oml-hub-field {
+	max-width: 640px;
+}
+
+/* Unit groups retain real activity types and the original activity URLs. */
+
+.oml-hub-family-report .oml-hub-pill[aria-current="page"] {
+	background: #5753fa;
+	color: #fff;
+}
+
+.ohmylms-student-hub [data-family-step][hidden] {
+	display: none;
+}
+
+.ohmylms-student-hub [data-family-choices] [hidden] {
+	display: none;
+}
+
+/* Khan-style course page: unit rail, unit headers with skill grids, mastery legend and Up next. */
+
+.ohmylms-student-hub .oml-hub-unit-group .oml-hub-rows {
+	padding: 0;
+}
+
+.ohmylms-student-hub .oml-course-cell.is-complete {
+	--dot: #2f9e6a;
+	border-color: #2f9e6a;
+	color: #fff;
+}
+
 .ohmylms-student-hub .oml-course-cell.is-proficient {
 	--dot: #2f9e6a;
 	border-color: #2f9e6a;
@@ -2165,46 +2185,6 @@
 	outline-offset: 2px;
 }
 
-.ohmylms-student-hub .oml-course-reviews {
-	margin-top: 32px;
-}
-
-@media (max-width: 800px) {
-	.ohmylms-student-hub .oml-course {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 16px;
-	}
-
-	.ohmylms-student-hub .oml-course-rail {
-		position: static;
-		max-height: none;
-		overflow: visible;
-	}
-
-	.ohmylms-student-hub .oml-course-rail ol {
-		display: flex;
-		overflow-x: auto;
-	}
-
-	.ohmylms-student-hub .oml-course-rail li {
-		flex: none;
-		max-width: 200px;
-	}
-
-	.ohmylms-student-hub .oml-course-rail a {
-		border-left: 0;
-		border-bottom: 4px solid transparent;
-	}
-
-	.ohmylms-student-hub .oml-course-rail a[aria-current] {
-		border-bottom-color: var(--hub-accent);
-	}
-
-	.ohmylms-student-hub .oml-course-unit {
-		padding: 16px;
-	}
-}
-
 .ohmylms-student-hub .oml-course-main .oml-hub-legend {
 	display: flex;
 	flex-wrap: wrap;
@@ -2212,35 +2192,8 @@
 	margin-bottom: 16px;
 }
 
-.ohmylms-student-hub .oml-course-upnext a {
-	color: var(--hub-text);
-}
-
-.ohmylms-student-hub .oml-course-links {
-	display: grid;
-	gap: 8px;
-	margin: 0 0 16px;
-}
-
-.ohmylms-student-hub .oml-course-links-group {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 8px;
-	margin: 0;
-}
-
-.ohmylms-student-hub .oml-course-links-label {
-	font-weight: 600;
-	color: var(--hub-text);
-}
-
 .ohmylms-student-hub .oml-course-links .oml-hub-chip {
 	text-decoration: none;
-}
-
-.ohmylms-student-hub .oml-hub-lesson-group h3 {
-	margin-top: 16px;
 }
 
 .ohmylms-student-hub.oml-hub-signin .oml-hub-signin-options {
@@ -2265,7 +2218,200 @@
 	justify-content: center;
 }
 
+.ohmylms-student-hub.oml-hub-signin a.oml-hub-button {
+	color: #fff;
+}
+
+.ohmylms-student-hub .oml-hub-nav a:hover {
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-rail-foot > a:hover {
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-nav a[aria-current="page"] {
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-rail-foot > a[aria-current="page"] {
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-theme button[aria-pressed="true"] {
+	background: var(--hub-selected-bg);
+	color: var(--hub-selected-text);
+}
+
+.ohmylms-student-hub .oml-hub-search input[type="search"] {
+	flex: 1;
+	min-width: 0;
+	padding: 12px 16px;
+	border: 1px solid var(--hub-border);
+	border-radius: 12px;
+	background: var(--hub-surface);
+	color: var(--hub-text);
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-legend li.is-attempted {
+	--sw: #d9a404;
+}
+
+.ohmylms-student-hub .oml-hub-legend li.is-familiar {
+	--sw: #e8780c;
+}
+
+.ohmylms-student-hub .oml-hub-legend li.is-proficient {
+	--sw: #2f9e6a;
+}
+
+.ohmylms-student-hub .oml-hub-legend li.is-mastered {
+	--sw: #7048e8;
+}
+
+.ohmylms-student-hub .oml-hub-coursecard > p:last-child {
+	margin-top: auto;
+	padding-top: 8px;
+}
+
+.ohmylms-student-hub .oml-hub-field input[type="color"] {
+	width: 72px;
+	height: 44px;
+	padding: 4px;
+	cursor: pointer;
+}
+
+.ohmylms-student-hub .oml-hub-field input[type="checkbox"] {
+	width: auto;
+	margin-right: 8px;
+}
+
+.oml-hub-editor [data-sort-row] input[type="text"] {
+	min-width: 0;
+	flex: 1;
+}
+
+.oml-hub-editor [data-sort-row] label:has(.screen-reader-text) {
+	flex: 0;
+}
+
+.ohmylms-student-hub .oml-hub-greeting > p:first-child {
+	margin: 0;
+	color: var(--hub-muted);
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.ohmylms-student-hub .oml-hub-family-flash input[type="text"] {
+	width: 100%;
+	padding: 10px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 8px;
+	background: var(--hub-bg);
+	color: var(--hub-text);
+	font-family: ui-monospace, Menlo, Consolas, monospace;
+	font-size: 13px;
+}
+
+.ohmylms-student-hub .oml-hub-family-confirm input[type="checkbox"] {
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	flex: none;
+}
+
+@media (max-width: 800px) {
+
+	.ohmylms-student-hub .oml-course {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 16px;
+	}
+
+	.ohmylms-student-hub .oml-course-rail {
+		position: static;
+		max-height: none;
+		overflow: visible;
+	}
+
+	.ohmylms-student-hub .oml-course-unit {
+		padding: 16px;
+	}
+
+	.ohmylms-student-hub .oml-course-rail ol {
+		display: flex;
+		overflow-x: auto;
+	}
+
+	.ohmylms-student-hub .oml-course-rail li {
+		flex: none;
+		max-width: 200px;
+	}
+
+	.ohmylms-student-hub .oml-course-rail a {
+		border-left: 0;
+		border-bottom: 4px solid transparent;
+	}
+
+	.ohmylms-student-hub .oml-course-rail a[aria-current] {
+		border-bottom-color: var(--hub-accent);
+	}
+}
+
+.ohmylms-student-hub .oml-hub-people-search input[type="search"] {
+	min-height: 40px;
+	box-sizing: border-box;
+	padding: 8px 12px;
+	border: 1px solid var(--hub-border);
+	border-radius: 6px;
+	background: var(--hub-surface);
+	color: inherit;
+	font: inherit;
+}
+
+.ohmylms-student-hub .oml-hub-school-reports summary .oml-hub-family-meta {
+	display: block;
+	margin: 8px 0 0;
+}
+
+
+.ohmylms-student-hub .oml-hub-family details .oml-hub-actions {
+	margin-bottom: 0;
+}
+
+.ohmylms-student-hub .oml-course-rail a:hover {
+	background: var(--hub-selected-bg);
+}
+
+.ohmylms-student-hub .oml-course-rail a[aria-current] {
+	background: var(--hub-selected-bg);
+	border-left-color: var(--hub-accent);
+}
+
+.ohmylms-student-hub details[open] > .oml-hub-disclosure::after {
+	transform: rotate(-135deg);
+}
+
+.ohmylms-student-hub .oml-hub-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.ohmylms-student-hub .oml-hub-assignment.is-done .oml-hub-assignment-title {
+	color: var(--hub-muted);
+	text-decoration: line-through;
+}
+
+.ohmylms-student-hub .oml-course-rail a[aria-current] .oml-course-unit-label {
+	color: var(--hub-selected-text);
+}
+
 @media (min-width: 900px) {
+
 	.ohmylms-student-hub.oml-hub-signin {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -2275,7 +2421,11 @@
 		padding: 48px max(48px, calc((100% - 960px) / 2));
 	}
 
-	.ohmylms-student-hub.oml-hub-signin > h2,
+	.ohmylms-student-hub.oml-hub-signin > h2 {
+		grid-column: 1 / -1;
+		margin: 0;
+	}
+
 	.ohmylms-student-hub.oml-hub-signin > .oml-hub-subnav {
 		grid-column: 1 / -1;
 		margin: 0;

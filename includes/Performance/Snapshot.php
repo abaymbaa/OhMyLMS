@@ -116,7 +116,7 @@ final class Snapshot {
 		if ( ! Schema::ready() ) {
 			return array();
 		}
-		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'student_skill_state' ) . ' WHERE student_id=%d', (int) $student_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fresh read of the learner's own states.
+		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE student_id=%d', Schema::table( 'student_skill_state' ), (int) $student_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Fresh read of the learner's own states.
 		$scores = Score::summary( (int) $student_id );
 		$result = array();
 		foreach ( $rows as $row ) {

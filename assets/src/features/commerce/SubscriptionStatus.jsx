@@ -3,7 +3,6 @@
  * Controls subscription status dropdown and update action.
  */
 import { createElement } from '@wordpress/element';
-
 export function createSubscriptionStatus( readRuntime ) {
 	return function SubscriptionStatus( { subscription, status } ) {
 		const {
@@ -15,7 +14,6 @@ export function createSubscriptionStatus( readRuntime ) {
 			vn: SelectControl,
 			y: WordPressData,
 		} = readRuntime();
-
 		const dispatch = WordPressData.useDispatch( StoreModule.default );
 		const {
 			updateSubscription,
@@ -23,10 +21,8 @@ export function createSubscriptionStatus( readRuntime ) {
 			showNotification,
 			updateSubscriptionState,
 		} = dispatch;
-
 		const [ loading, setLoading ] = ReactHooks.useState( false );
 		const [ isOpen, setIsOpen ] = ReactHooks.useState( true );
-
 		const handleUpdate = async () => {
 			setLoading( true );
 			try {
@@ -38,7 +34,7 @@ export function createSubscriptionStatus( readRuntime ) {
 					);
 					await fetchSubscription( subscription.id );
 				}
-			} catch ( err ) {
+			} catch {
 				showNotification(
 					I18n.__( 'Something went wrong!', 'ohmylms' ),
 					'error'
@@ -47,19 +43,32 @@ export function createSubscriptionStatus( readRuntime ) {
 				setLoading( false );
 			}
 		};
-
 		const statusOptions = [
-			{ value: 'pending', label: I18n.__( 'Pending', 'ohmylms' ) },
-			{ value: 'active', label: I18n.__( 'Active', 'ohmylms' ) },
-			{ value: 'on-hold', label: I18n.__( 'On-hold', 'ohmylms' ) },
+			{
+				value: 'pending',
+				label: I18n.__( 'Pending', 'ohmylms' ),
+			},
+			{
+				value: 'active',
+				label: I18n.__( 'Active', 'ohmylms' ),
+			},
+			{
+				value: 'on-hold',
+				label: I18n.__( 'On-hold', 'ohmylms' ),
+			},
 			{
 				value: 'pending-cancel',
 				label: I18n.__( 'Pending cancel', 'ohmylms' ),
 			},
-			{ value: 'cancelled', label: I18n.__( 'Cancelled', 'ohmylms' ) },
-			{ value: 'expired', label: I18n.__( 'Expired', 'ohmylms' ) },
+			{
+				value: 'cancelled',
+				label: I18n.__( 'Cancelled', 'ohmylms' ),
+			},
+			{
+				value: 'expired',
+				label: I18n.__( 'Expired', 'ohmylms' ),
+			},
 		];
-
 		return (
 			<React.Fragment>
 				<Controls.FlexWP
@@ -107,7 +116,9 @@ export function createSubscriptionStatus( readRuntime ) {
 							align="center"
 						>
 							<Controls.FlexItemWP
-								style={ { width: 'calc(100% - 53px)' } }
+								style={ {
+									width: 'calc(100% - 53px)',
+								} }
 							>
 								<SelectControl.A
 									defaultValue={ status }
@@ -130,7 +141,9 @@ export function createSubscriptionStatus( readRuntime ) {
 								} }
 							>
 								<svg
-									style={ { margin: '0 auto' } }
+									style={ {
+										margin: '0 auto',
+									} }
 									width="7"
 									height="12"
 									fill="none"

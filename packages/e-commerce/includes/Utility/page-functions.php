@@ -1,6 +1,17 @@
 <?php
+/**
+ * Page functions.
+ *
+ * @package OhMyLMS
+ */
+
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Ohmylms ecommerce page endpoint title for Page-functions.
+ *
+ * @param mixed $title Title.
+ */
 function ohmylms_ecommerce_page_endpoint_title( $title ) {
 	global $wp_query;
 
@@ -20,6 +31,13 @@ add_filter( 'the_title', 'ohmylms_ecommerce_page_endpoint_title' );
 
 
 
+/**
+ * Ohmylms ecommerce get endpoint url for Page-functions.
+ *
+ * @param mixed  $endpoint Endpoint.
+ * @param string $value Value to process.
+ * @param string $permalink Permalink.
+ */
 function ohmylms_ecommerce_get_endpoint_url( $endpoint, $value = '', $permalink = '' ) {
 
 	if ( ! $permalink ) {

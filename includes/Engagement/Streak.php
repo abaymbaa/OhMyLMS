@@ -10,17 +10,36 @@ use OhMyLMS\Utility\Transaction;
 
 /** One overall learning streak per learner, independent of spendable points/mastery. */
 final class Streak {
+	/**
+	 * Now for Streak.
+	 */
 	public static function now() {
 		return gmdate( 'Y-m-d H:i:s', (int) apply_filters( 'ohmylms_streak_clock', time() ) ); }
+	/**
+	 * Timezone for Streak.
+	 *
+	 * @param mixed $timezone Timezone.
+	 */
 	public static function timezone( $timezone ) {
 		return is_string( $timezone ) && in_array( $timezone, \DateTimeZone::listIdentifiers( \DateTimeZone::ALL_WITH_BC ), true );
 	}
+	/**
+	 * Default timezone for Streak.
+	 *
+	 * @param mixed $user User.
+	 */
 	public static function default_timezone( $user ) {
 		$saved = get_user_meta( $user, '_ohmylms_learning_timezone', true );
 		if ( ! self::timezone( $saved ) ) {
 			$saved = get_user_meta( $user, 'timezone', true ); }
 		return self::timezone( $saved ) ? $saved : wp_timezone()->getName();
 	}
+	/**
+	 * Initial for Streak.
+	 *
+	 * @param mixed $user User.
+	 * @param mixed $settings Configuration settings.
+	 */
 	private static function initial( $user, $settings ) {
 		return array(
 			'user_id'        => (int) $user,
@@ -33,13 +52,24 @@ final class Streak {
 			'last_activity'  => null,
 		);
 	}
+	/**
+	 * Require write for Streak.
+	 *
+	 * @param mixed $result Result.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function require_write( $result ) {
 		if ( false === $result ) {
 			throw new \RuntimeException( 'Streak persistence failed.' ); }
 		return $result;
 	}
 
-	/** All read/reconcile/write paths lock the same state row. */
+	/** All read/reconcile/write paths lock the same state row.
+	 *
+	 * @param mixed    $user User.
+	 * @param callable $work Work.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function mutate( $user, callable $work ) {
 		global $wpdb;
 		$settings = StreakSettings::get();
@@ -50,8 +80,8 @@ final class Streak {
 				static function () use ( $wpdb, $user, $settings, $work ) {
 					$initial = self::initial( $user, $settings );
 					$table   = StreakSchema::table( 'state' );
-					self::require_write( $wpdb->query( $wpdb->prepare( "INSERT INTO $table (user_id,timezone,freezes) VALUES (%d,%s,%d) ON DUPLICATE KEY UPDATE user_id=user_id", $user, $initial['timezone'], $initial['freezes'] ) ) );
-					$state = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table WHERE user_id=%d FOR UPDATE", $user ), ARRAY_A );
+					self::require_write( $wpdb->query( $wpdb->prepare( 'INSERT INTO %i (user_id,timezone,freezes) VALUES (%d,%s,%d) ON DUPLICATE KEY UPDATE user_id=user_id', $table, $user, $initial['timezone'], $initial['freezes'] ) ) );
+					$state = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id=%d FOR UPDATE', $table, $user ), ARRAY_A );
 					if ( ! $state ) {
 						throw new \RuntimeException( 'Streak state unavailable.' ); }
 					foreach ( array( 'user_id', 'current_streak', 'longest_streak', 'freezes', 'refill' ) as $key ) {
@@ -72,6 +102,15 @@ final class Streak {
 		}
 	}
 
+	/**
+	 * Day for Streak.
+	 *
+	 * @param mixed $user User.
+	 * @param mixed $date Date.
+	 * @param mixed $status Status.
+	 * @param mixed $zone Zone.
+	 * @param mixed $now Now.
+	 */
 	private static function day( $user, $date, $status, $zone, $now ) {
 		global $wpdb;
 		self::require_write(
@@ -88,7 +127,12 @@ final class Streak {
 		);
 	}
 
-	/** Called only by verified persistence hooks. No activity-write REST endpoint exists. */
+	/** Called only by verified persistence hooks. No activity-write REST endpoint exists.
+	 *
+	 * @param mixed $user User.
+	 * @param mixed $type Type.
+	 * @param mixed $source_id Source identifier.
+	 */
 	public static function record( $user, $type, $source_id ) {
 		if ( ! in_array( $type, array( 'lesson', 'quiz', 'practice' ), true ) || ! $source_id || strlen( (string) $source_id ) > 64 ) {
 			return false; }
@@ -99,7 +143,7 @@ final class Streak {
 				if ( ! $settings[ $type ] ) {
 					return array( $state, false ); }
 				$events = StreakSchema::table( 'activities' );
-				if ( $wpdb->get_var( $wpdb->prepare( "SELECT source_id FROM $events WHERE user_id=%d AND source_type=%s AND source_id=%s", $user, $type, (string) $source_id ) ) ) {
+				if ( $wpdb->get_var( $wpdb->prepare( 'SELECT source_id FROM %i WHERE user_id=%d AND source_type=%s AND source_id=%s', $events, $user, $type, (string) $source_id ) ) ) {
 					return array( $state, false ); }
 				self::require_write(
 					$wpdb->insert(
@@ -122,7 +166,7 @@ final class Streak {
 					if ( $state['current_streak'] < $reward['days'] ) {
 						continue; }
 					$milestones = StreakSchema::table( 'milestones' );
-					self::require_write( $wpdb->query( $wpdb->prepare( "INSERT INTO $milestones (user_id,days,badge_id,points) VALUES (%d,%d,%s,%d) ON DUPLICATE KEY UPDATE user_id=user_id", $user, $reward['days'], $reward['badge'], $reward['points'] ) ) );
+					self::require_write( $wpdb->query( $wpdb->prepare( 'INSERT INTO %i (user_id,days,badge_id,points) VALUES (%d,%d,%s,%d) ON DUPLICATE KEY UPDATE user_id=user_id', $milestones, $user, $reward['days'], $reward['badge'], $reward['points'] ) ) );
 				}
 				return array( $state, true );
 			}
@@ -133,7 +177,10 @@ final class Streak {
 		return $result;
 	}
 
-	/** Durable milestone queue: duplicate achievements are successful retries, never new celebrations. */
+	/** Durable milestone queue: duplicate achievements are successful retries, never new celebrations.
+	 *
+	 * @param mixed $user User.
+	 */
 	public static function deliver( $user ) {
 		if ( ! StreakSettings::enabled() || ! StreakSchema::ready() ) {
 			return; }
@@ -142,7 +189,7 @@ final class Streak {
 			static function () use ( $user ) {
 				global $wpdb;
 				$table = StreakSchema::table( 'milestones' );
-				foreach ( (array) $wpdb->get_results( $wpdb->prepare( "SELECT * FROM $table WHERE user_id=%d AND status='pending'", $user ), ARRAY_A ) as $reward ) {
+				foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id=%d AND status=\'pending\'', $table, $user ), ARRAY_A ) as $reward ) {
 					$badge    = $reward['badge_id'];
 					$days     = (int) $reward['days'];
 					$points   = (int) $reward['points'];
@@ -167,6 +214,12 @@ final class Streak {
 		);
 	}
 
+	/**
+	 * Snapshot for Streak.
+	 *
+	 * @param mixed $user User.
+	 * @param int   $history_days History days.
+	 */
 	public static function snapshot( $user, $history_days = 7 ) {
 		$result = self::mutate(
 			(int) $user,
@@ -180,7 +233,7 @@ final class Streak {
 		global $wpdb;
 		$history_days             = max( 7, min( 366, (int) $history_days ) );
 		$date                     = ( new \DateTimeImmutable( $result['today'] ) )->modify( '-' . ( $history_days - 1 ) . ' days' )->format( 'Y-m-d' );
-		$history                  = $wpdb->get_results( $wpdb->prepare( 'SELECT local_date,status FROM ' . StreakSchema::table( 'days' ) . ' WHERE user_id=%d AND local_date >= %s ORDER BY local_date', $user, $date ), ARRAY_A );
+		$history                  = $wpdb->get_results( $wpdb->prepare( 'SELECT local_date,status FROM %i WHERE user_id=%d AND local_date >= %s ORDER BY local_date', StreakSchema::table( 'days' ), $user, $date ), ARRAY_A );
 		$result['history']        = $history;
 		$result['today_complete'] = (bool) array_filter(
 			$history,
@@ -191,7 +244,11 @@ final class Streak {
 		return $result;
 	}
 
-	/** A timezone cannot move an active streak across dates or mint a second daily award. */
+	/** A timezone cannot move an active streak across dates or mint a second daily award.
+	 *
+	 * @param mixed $user User.
+	 * @param mixed $zone Zone.
+	 */
 	public static function set_timezone( $user, $zone ) {
 		if ( ! self::timezone( $zone ) ) {
 			return new \WP_Error( 'streak_timezone', __( 'Choose a valid timezone identifier.', 'ohmylms' ), array( 'status' => 400 ) ); }

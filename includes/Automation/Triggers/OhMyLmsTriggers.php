@@ -278,11 +278,7 @@ class OhMyLmsTriggers {
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 			$enroll_data = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d",
-					$student_id,
-					$order->get_id()
-				),
+				$wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ),
 				ARRAY_A
 			);
 
@@ -362,11 +358,7 @@ class OhMyLmsTriggers {
 			global $wpdb;
 			$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 			$enroll_data = $wpdb->get_row(
-				$wpdb->prepare(
-					"SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d",
-					$student_id,
-					$order->get_id()
-				),
+				$wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d', $table_name, $student_id, $order->get_id() ),
 				ARRAY_A
 			);
 

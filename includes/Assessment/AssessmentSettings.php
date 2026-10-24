@@ -23,6 +23,9 @@ final class AssessmentSettings {
 	const STYLES   = array( 'quiz', 'unit-test', 'course-challenge' );
 	const FEEDBACK = array( 'immediate', 'after_close', 'manual' );
 
+	/**
+	 * Defaults for Assessment settings.
+	 */
 	public static function defaults() {
 		return array(
 			'kind'             => 'quiz',
@@ -47,12 +50,21 @@ final class AssessmentSettings {
 		);
 	}
 
+	/**
+	 * Get for Assessment settings.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	public static function get( $quiz_id ) {
 		$saved = get_post_meta( (int) $quiz_id, self::META, true );
 		return array_merge( self::defaults(), is_array( $saved ) ? $saved : array() );
 	}
 
-	/** Validate input against the quiz; returns the full normalized settings or WP_Error. */
+	/** Validate input against the quiz; returns the full normalized settings or WP_Error.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param array $input Input.
+	 */
 	public static function validate( $quiz_id, array $input ) {
 		$settings = array_merge( self::get( $quiz_id ), array_intersect_key( $input, self::defaults() ) );
 		if ( ! empty( $input['preset'] ) && 'exam' === $input['preset'] ) {
@@ -69,7 +81,12 @@ final class AssessmentSettings {
 			if ( '' !== $value ) {
 				$time = strtotime( $value . ( preg_match( '/(Z|[+-]\d\d:?\d\d|UTC)$/i', $value ) ? '' : ' UTC' ) );
 				if ( ! $time ) {
-					return self::invalid( sprintf( __( '%s is not a valid date and time.', 'ohmylms' ), $key ) ); }
+					return self::invalid(
+						sprintf( /* translators: %s: text value. */
+							__( '%s is not a valid date and time.', 'ohmylms' ),
+							$key
+						)
+					); }
 				$value = gmdate( 'Y-m-d H:i:s', $time );
 			}
 			$settings[ $key ] = $value;
@@ -121,6 +138,12 @@ final class AssessmentSettings {
 		return $settings;
 	}
 
+	/**
+	 * Save for Assessment settings.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param array $input Input.
+	 */
 	public static function save( $quiz_id, array $input ) {
 		$settings = self::validate( $quiz_id, $input );
 		if ( is_wp_error( $settings ) ) {
@@ -129,7 +152,10 @@ final class AssessmentSettings {
 		return $settings;
 	}
 
-	/** Values frozen into a revision (merged over legacy quiz settings). */
+	/** Values frozen into a revision (merged over legacy quiz settings).
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	public static function frozen( $quiz_id ) {
 		$settings = self::get( $quiz_id );
 		return array(
@@ -141,12 +167,23 @@ final class AssessmentSettings {
 		);
 	}
 
-	/** Is the quiz open for a new attempt now? */
+	/** Is the quiz open for a new attempt now?
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $now Now.
+	 */
 	public static function availability( $quiz_id, $now = null ) {
 		$settings = self::get( $quiz_id );
 		$now      = $now ?? time();
 		if ( $settings['available_from'] && $now < strtotime( $settings['available_from'] . ' UTC' ) ) {
-			return new \WP_Error( 'quiz_not_open', sprintf( __( 'This assessment opens at %s.', 'ohmylms' ), wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $settings['available_from'] . ' UTC' ) ) ), array( 'status' => 403 ) );
+			return new \WP_Error(
+				'quiz_not_open',
+				sprintf( /* translators: %s: text value. */
+					__( 'This assessment opens at %s.', 'ohmylms' ),
+					wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $settings['available_from'] . ' UTC' ) )
+				),
+				array( 'status' => 403 )
+			);
 		}
 		if ( $settings['available_until'] && $now >= strtotime( $settings['available_until'] . ' UTC' ) ) {
 			return new \WP_Error( 'quiz_closed', __( 'This assessment is closed.', 'ohmylms' ), array( 'status' => 403 ) );
@@ -154,7 +191,12 @@ final class AssessmentSettings {
 		return true;
 	}
 
-	/** Extra time for the learner of a new attempt (filter: ohmylms_attempt_extra_seconds). */
+	/** Extra time for the learner of a new attempt (filter: ohmylms_attempt_extra_seconds).
+	 *
+	 * @param mixed $seconds Seconds.
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $revision Revision.
+	 */
 	public static function extra_seconds( $seconds, $attempt_id, $revision ) {
 		global $wpdb;
 		$student  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d", (int) $attempt_id ) );
@@ -162,7 +204,10 @@ final class AssessmentSettings {
 		return (int) $seconds + (int) ( $settings['accommodations'][ $student ] ?? 0 );
 	}
 
-	/** Whether the learner may see marks and correctness for this attempt yet. */
+	/** Whether the learner may see marks and correctness for this attempt yet.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function feedback_visible( $attempt_id ) {
 		$context = AttemptItems::context( $attempt_id );
 		if ( ! $context ) {
@@ -178,6 +223,11 @@ final class AssessmentSettings {
 		return ! empty( $current['released'] ) || ( $current['available_until'] && time() >= strtotime( $current['available_until'] . ' UTC' ) );
 	}
 
+	/**
+	 * Invalid for Assessment settings.
+	 *
+	 * @param mixed $message Message.
+	 */
 	private static function invalid( $message ) {
 		return new \WP_Error( 'ohmylms_assessment_settings_invalid', $message, array( 'status' => 400 ) );
 	}

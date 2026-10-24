@@ -33,6 +33,7 @@ class MailMintAutomationController extends RestController {
 	 * Checks if the user has the required permission to manage automations.
 	 *
 	 * @return bool True if the user can edit posts, otherwise false.
+	 * @param mixed $request REST request.
 	 */
 	public function check_automation_permission( $request ) {
 		if ( ! current_user_can( 'edit_posts' ) ) {

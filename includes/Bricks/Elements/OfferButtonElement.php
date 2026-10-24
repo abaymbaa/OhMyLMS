@@ -7,17 +7,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin offer button element implementation.
+ */
 class OfferButtonElement extends Element {
 
-	public $category     = 'ohmylms';
-	public $name         = 'ohmylms-offer-button';
-	public $icon         = 'ti-gift';
+	/**
+	 * Category.
+	 *
+	 * @var mixed
+	 */
+	public $category = 'ohmylms';
+	/**
+	 * Name.
+	 *
+	 * @var mixed
+	 */
+	public $name = 'ohmylms-offer-button';
+	/**
+	 * Icon.
+	 *
+	 * @var mixed
+	 */
+	public $icon = 'ti-gift';
+	/**
+	 * Css selector.
+	 *
+	 * @var mixed
+	 */
 	public $css_selector = '.ohmylms-offer-btn';
 
+	/**
+	 * Get label for Offer button element.
+	 */
 	public function get_label() {
 		return __( 'Offer Button', 'ohmylms' );
 	}
 
+	/**
+	 * Set controls for Offer button element.
+	 */
 	public function set_controls() {
 		// Content controls.
 		$this->controls['action'] = array(
@@ -252,6 +281,9 @@ class OfferButtonElement extends Element {
 		);
 	}
 
+	/**
+	 * Render for Offer button element.
+	 */
 	public function render() {
 		$defaults = array(
 			'action'          => 'accept',
@@ -423,6 +455,8 @@ class OfferButtonElement extends Element {
 
 	/**
 	 * Generate offer action URL
+	 *
+	 * @param mixed $action Action.
 	 */
 	private function get_offer_action_url( $action ) {
 		// Get funnel session data.
@@ -439,7 +473,7 @@ class OfferButtonElement extends Element {
 			if ( empty( $current_step ) ) {
 				$current_step = get_query_var( 'step' );
 				if ( empty( $current_step ) && isset( $_GET['step'] ) ) {
-					$current_step = sanitize_text_field( $_GET['step'] );
+					$current_step = sanitize_text_field( wp_unslash( $_GET['step'] ));
 				}
 			}
 
@@ -461,6 +495,9 @@ class OfferButtonElement extends Element {
 		return '#';
 	}
 
+	/**
+	 * Enqueue scripts for Offer button element.
+	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'ohmylms-frontend' );
 		wp_enqueue_script( 'ohmylms-add-to-cart' );

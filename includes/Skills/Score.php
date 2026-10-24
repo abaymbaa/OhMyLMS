@@ -22,6 +22,9 @@ defined( 'ABSPATH' ) || exit;
 final class Score {
 	const OPTION = 'ohmylms_score_settings';
 
+	/**
+	 * Defaults for Score.
+	 */
 	public static function defaults() {
 		return array(
 			'enable'           => false,
@@ -41,11 +44,17 @@ final class Score {
 		);
 	}
 
+	/**
+	 * Get for Score.
+	 */
 	public static function get() {
 		$settings = self::validate( array_replace( self::defaults(), (array) get_option( self::OPTION, array() ) ) );
 		return is_wp_error( $settings ) ? self::defaults() : $settings;
 	}
 
+	/**
+	 * Enabled for Score.
+	 */
 	public static function enabled() {
 		return ! empty( self::get()['enable'] );
 	}
@@ -64,7 +73,12 @@ final class Score {
 		);
 	}
 
-	/** @return array|\WP_Error */
+	/**
+	 * Validate for Score.
+	 *
+	 * @return array|\WP_Error
+	 * @param mixed $settings Configuration settings.
+	 */
 	public static function validate( $settings ) {
 		$fail = static function () {
 			return new \WP_Error( 'score_settings', __( 'Invalid mastery score settings.', 'ohmylms' ), array( 'status' => 400 ) );
@@ -107,20 +121,24 @@ final class Score {
 		return array_intersect_key( $settings, self::defaults() );
 	}
 
-	/** Primary-skill evidence of one learner and skill, oldest first. */
+	/** Primary-skill evidence of one learner and skill, oldest first.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function rows( $student_id, $term_id ) {
 		global $wpdb;
 		return $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT id, grade_event_id, awarded, available, independent, first_try, difficulty, evidence_at, source_type, source_id, question_id FROM ' . Schema::table( 'skill_evidence' ) . " WHERE student_id=%d AND term_id=%d AND role='primary' AND superseded=0 ORDER BY evidence_at ASC, id ASC",
-				(int) $student_id,
-				(int) $term_id
-			),
+			$wpdb->prepare( 'SELECT id, grade_event_id, awarded, available, independent, first_try, difficulty, evidence_at, source_type, source_id, question_id FROM %i WHERE student_id=%d AND term_id=%d AND role=\'primary\' AND superseded=0 ORDER BY evidence_at ASC, id ASC', Schema::table( 'skill_evidence' ), (int) $student_id, (int) $term_id ),
 			ARRAY_A
 		);
 	}
 
-	/** The score story of a skill, row by row; keyed by grade event for lookups. */
+	/** The score story of a skill, row by row; keyed by grade event for lookups.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function trace( $student_id, $term_id ) {
 		$run   = ScoreModel::run( self::rows( $student_id, $term_id ), self::config() );
 		$by_id = array();
@@ -135,6 +153,9 @@ final class Score {
 	 * Score before and after one practice session, from the same evidence, for the lesson summary.
 	 *
 	 * @return array{before:float,after:float,delta:float,medal:string,reached:int[]}
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $term_id Term identifier.
+	 * @param mixed $session_id Session identifier.
 	 */
 	public static function for_session( $student_id, $term_id, $session_id ) {
 		$rows    = self::rows( $student_id, $term_id );
@@ -163,10 +184,14 @@ final class Score {
 		);
 	}
 
-	/** One skill's presentable score, or null if the skill has not been scored. */
+	/** One skill's presentable score, or null if the skill has not been scored.
+	 *
+	 * @param array $row Row.
+	 * @param mixed $now Now.
+	 */
 	public static function describe( array $row, $now = null ) {
 		$config    = self::config();
-		$now       = $now ?: time();
+		$now       = $now ? $now : time();
 		$effective = ScoreModel::effective( (float) $row['mastery'], $row['last_scored_at'] ? strtotime( $row['last_scored_at'] . ' UTC' ) : null, $now, $config );
 		$score     = $effective['score'];
 		return array(
@@ -184,6 +209,8 @@ final class Score {
 	/**
 	 * Every scored skill of a learner by term ID. A skill with evidence but no stored score
 	 * (practised before the feature was switched on) is computed here, once.
+	 *
+	 * @param mixed $student_id Student identifier.
 	 */
 	public static function summary( $student_id ) {
 		return self::summary_many( array( $student_id ) )[ (int) $student_id ] ?? array();

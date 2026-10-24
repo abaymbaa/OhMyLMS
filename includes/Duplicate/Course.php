@@ -1,5 +1,7 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 /**
+ * Template data and rendering context.
+ *
  * @package    OhMyLMS\Duplicate
  * @subpackage OhMyLMSPro
  * @since      1.0.0
@@ -31,7 +33,7 @@ class Course {
 	 * Constructor
 	 *
 	 * @param int $course_id Course ID.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function __construct( $course_id ) {
@@ -43,13 +45,14 @@ class Course {
 	 * Duplicate a course and return the new course ID.
 	 *
 	 * @return int New course ID.
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function duplicate() {
 		global $wpdb;
 
 		// Duplicate the course post.
 		$original_post = get_post( $this->course_id );
-		if ( ! $original_post || $original_post->post_type !== OHMYLMS_COURSE_CPT ) {
+		if ( ! $original_post || OHMYLMS_COURSE_CPT !== $original_post->post_type ) {
 			throw new \Exception( __( 'Invalid course type.', 'ohmylms' ) );
 		}
 
@@ -102,11 +105,12 @@ class Course {
 
 		// Duplicate chapters and contents.
 		$chapter_query = $wpdb->prepare(
-			"
-            SELECT * FROM {$wpdb->prefix}ohmylms_chapter_relationship
+			'
+            SELECT * FROM %i
             WHERE course_id = %d
             ORDER BY order_number ASC
-        ",
+        ',
+			$wpdb->prefix . 'ohmylms_chapter_relationship',
 			$this->course_id
 		);
 
@@ -143,11 +147,12 @@ class Course {
 
 			// Duplicate contents.
 			$content_query = $wpdb->prepare(
-				"
-                SELECT * FROM {$wpdb->prefix}ohmylms_content_relationship
+				'
+                SELECT * FROM %i
                 WHERE chapter_id = %d
                 ORDER BY order_number ASC
-            ",
+            ',
+				$wpdb->prefix . 'ohmylms_content_relationship',
 				$original_chapter_id
 			);
 
@@ -201,9 +206,9 @@ class Course {
 	 * Duplicate all post meta from one post to another, with option to exclude certain meta keys.
 	 * Uses update_post_meta to update if exists, or add if not.
 	 *
-	 * @param int   $from_id   Source post ID.
-	 * @param int   $to_id     Destination post ID.
-	 * @param array $exclude   (Optional) Meta keys to exclude from duplication.
+	 * @param int   $from_id Source post ID.
+	 * @param int   $to_id Destination post ID.
+	 * @param array $exclude (Optional) Meta keys to exclude from duplication.
 	 */
 	private function duplicate_meta( $from_id, $to_id, $exclude = array() ) {
 		$meta = get_post_meta( $from_id );
@@ -219,17 +224,21 @@ class Course {
 
 	/**
 	 * Duplicate all questions and answers for a quiz.
+	 *
+	 * @param mixed $from_quiz_id From quiz identifier.
+	 * @param mixed $to_quiz_id To quiz identifier.
 	 */
 	private function duplicate_quiz_questions( $from_quiz_id, $to_quiz_id ) {
 		global $wpdb;
 
 		$questions = $wpdb->get_results(
 			$wpdb->prepare(
-				"
-            SELECT * FROM {$wpdb->prefix}ohmylms_quiz_questions_relationship
+				'
+            SELECT * FROM %i
             WHERE quiz_id = %d
             ORDER BY order_number ASC
-        ",
+        ',
+				$wpdb->prefix . 'ohmylms_quiz_questions_relationship',
 				$from_quiz_id
 			),
 			ARRAY_A
@@ -263,11 +272,12 @@ class Course {
 			// Duplicate answers.
 			$answers = $wpdb->get_results(
 				$wpdb->prepare(
-					"
-                SELECT * FROM {$wpdb->prefix}ohmylms_question_answers
+					'
+                SELECT * FROM %i
                 WHERE question_id = %d
                 ORDER BY order_number ASC
-            ",
+            ',
+					$wpdb->prefix . 'ohmylms_question_answers',
 					$original_question_id
 				),
 				ARRAY_A
@@ -289,10 +299,11 @@ class Course {
 				// Duplicate answer meta.
 				$answer_meta = $wpdb->get_results(
 					$wpdb->prepare(
-						"
-                    SELECT * FROM {$wpdb->prefix}ohmylms_question_answermeta
+						'
+                    SELECT * FROM %i
                     WHERE answer_id = %d
-                ",
+                ',
+						$wpdb->prefix . 'ohmylms_question_answermeta',
 						$answer['id']
 					),
 					ARRAY_A

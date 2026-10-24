@@ -12,6 +12,9 @@ defined( 'ABSPATH' ) || exit;
 final class Directory {
 	const META = '_ohmylms_syllabus_directory';
 
+	/**
+	 * Init for Directory.
+	 */
 	public static function init() {
 		add_filter(
 			'query_vars',
@@ -29,11 +32,22 @@ final class Directory {
 		);
 	}
 
+	/**
+	 * Url for Directory.
+	 *
+	 * @param mixed $id Id.
+	 * @param bool  $preview Preview.
+	 */
 	public static function url( $id, $preview = false ) {
 		return add_query_arg( array( 'ohmylms_syllabus' => (int) $id ) + ( $preview ? array( 'syllabus_preview' => 1 ) : array() ), home_url( '/' ) );
 	}
 
-	/** Keep only display data, never editor resources or unpublished learning content. */
+	/** Keep only display data, never editor resources or unpublished learning content.
+	 *
+	 * @param array $outline Outline.
+	 * @param array $settings Configuration settings.
+	 * @param mixed $allowed Allowed.
+	 */
 	public static function build( array $outline, array $settings, $allowed = null ) {
 		$topics = array();
 		$count  = 0;
@@ -73,6 +87,12 @@ final class Directory {
 		);
 	}
 
+	/**
+	 * Capture for Directory.
+	 *
+	 * @param mixed $course Course.
+	 * @param array $program Program.
+	 */
 	public static function capture( $course, array $program ) {
 		$id = SyllabusCourse::owner( $course );
 		if ( ! $id ) {
@@ -84,6 +104,12 @@ final class Directory {
 		return get_post_meta( $course, self::META, true ) === $snapshot || (bool) update_post_meta( $course, self::META, $snapshot );
 	}
 
+	/**
+	 * Data for Directory.
+	 *
+	 * @param mixed $id Id.
+	 * @param bool  $preview Preview.
+	 */
 	public static function data( $id, $preview = false ) {
 		$course = SyllabusCourse::course_id( $id );
 		if ( ! $course || post_password_required( $course ) ) {
@@ -98,6 +124,9 @@ final class Directory {
 		return is_array( $snapshot ) && isset( $snapshot['topics'] ) ? $snapshot : null;
 	}
 
+	/**
+	 * Page for Directory.
+	 */
 	public static function page() {
 		$id = (int) get_query_var( 'ohmylms_syllabus' );
 		if ( ! $id ) {
@@ -120,11 +149,23 @@ final class Directory {
 		exit;
 	}
 
+	/**
+	 * Icon for Directory.
+	 *
+	 * @param mixed  $icon Icon.
+	 * @param string $default Default.
+	 */
 	private static function icon( $icon, $default = 'category' ) {
 		$clean = Icons::clean( $icon );
 		return '<span aria-hidden="true" class="dashicons dashicons-' . esc_attr( is_wp_error( $clean ) || ! $clean ? $default : $clean ) . '"></span>';
 	}
 
+	/**
+	 * Render for Directory.
+	 *
+	 * @param mixed $id Id.
+	 * @param bool  $preview Preview.
+	 */
 	public static function render( $id, $preview = false ) {
 		$data = self::data( $id, $preview );
 		if ( ! $data ) {
@@ -155,7 +196,7 @@ final class Directory {
 			<div class="om-directory-layout">
 				<aside class="om-directory-nav" aria-label="<?php esc_attr_e( 'Syllabuses', 'ohmylms' ); ?>">
 					<div class="om-nav-title"><?php esc_html_e( 'Explore skills', 'ohmylms' ); ?></div>
-					<a class="om-grade is-current" href="<?php echo esc_url( $base ); ?>" aria-current="page"><?php echo esc_html( $data['settings']['grade'] ?: $data['name'] ); ?><small><?php echo esc_html( $data['settings']['subject'] ); ?></small></a>
+					<a class="om-grade is-current" href="<?php echo esc_url( $base ); ?>" aria-current="page"><?php echo esc_html( $data['settings']['grade'] ? $data['settings']['grade'] : $data['name'] ); ?><small><?php echo esc_html( $data['settings']['subject'] ); ?></small></a>
 					<?php
 					$courses = get_posts(
 						array(
@@ -174,7 +215,7 @@ final class Directory {
 						$profile = self::data( $other );
 						if ( ! $profile ) {
 							continue; }
-						echo '<a class="om-grade" href="' . esc_url( self::url( $other ) ) . '">' . esc_html( $profile['settings']['grade'] ?: $profile['name'] ) . '<small>' . esc_html( $profile['settings']['subject'] ) . '</small></a>';
+						echo '<a class="om-grade" href="' . esc_url( self::url( $other ) ) . '">' . esc_html( $profile['settings']['grade'] ? $profile['settings']['grade'] : $profile['name'] ) . '<small>' . esc_html( $profile['settings']['subject'] ) . '</small></a>';
 					}
 					?>
 				</aside>
@@ -182,7 +223,7 @@ final class Directory {
 					<header class="om-directory-hero">
 						<div class="om-eyebrow"><?php echo esc_html( implode( ' · ', array_filter( array( $data['settings']['subject'], $data['settings']['language'] ) ) ) ); ?></div>
 						<h1><?php echo esc_html( $data['name'] ); ?></h1>
-						<p><?php echo esc_html( $data['description'] ?: __( 'Explore topics, choose a skill, and practise at your own pace.', 'ohmylms' ) ); ?></p>
+						<p><?php echo esc_html( $data['description'] ? $data['description'] : __( 'Explore topics, choose a skill, and practise at your own pace.', 'ohmylms' ) ); ?></p>
 						<div class="om-directory-stats"><span><strong><?php echo esc_html( $data['count'] ); ?></strong> <?php esc_html_e( 'skills', 'ohmylms' ); ?></span><span><strong><?php echo esc_html( count( $data['topics'] ) ); ?></strong> <?php esc_html_e( 'topics', 'ohmylms' ); ?></span></div>
 					</header>
 					<?php if ( $selected ) { ?>

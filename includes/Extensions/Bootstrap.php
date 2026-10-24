@@ -1,7 +1,13 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
+/**
+ * Plugin bootstrap implementation.
+ */
 final class Bootstrap {
+	/**
+	 * Init for Bootstrap.
+	 */
 	public static function init() {
 		add_action( 'rest_api_init', array( TabPreferences::class, 'register_routes' ) );
 		QuestionTypes::register_defaults();
@@ -95,6 +101,12 @@ final class Bootstrap {
 			3
 		);
 	}
+	/**
+	 * Activity for Bootstrap.
+	 *
+	 * @param mixed  $attributes Attributes.
+	 * @param string $content Content.
+	 */
 	public static function activity( $attributes, $content = '' ) {
 		$definition = Registry::get( 'activity', $attributes['type'] ?? '' );
 		if ( ! $definition ) {
@@ -109,6 +121,11 @@ final class Bootstrap {
 		call_user_func( $definition['render'], $data );
 		return ob_get_clean();
 	}
+	/**
+	 * Lesson for Bootstrap.
+	 *
+	 * @param mixed $lesson Lesson.
+	 */
 	public static function lesson( $lesson ) {
 		$definition = Registry::get( 'lesson', $lesson->get_type() );
 		if ( $definition ) {

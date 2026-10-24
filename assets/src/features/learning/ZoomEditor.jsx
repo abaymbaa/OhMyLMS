@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createZoomEditor( readRuntime ) {
@@ -59,7 +60,7 @@ export function createZoomEditor( readRuntime ) {
 		var S = Pl( ( 0, ReactHooks.useState )( ! 1 ), 2 );
 		var R = S[ 0 ];
 		var x = S[ 1 ];
-		var C = Pl( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		Pl( ( 0, ReactHooks.useState )( ! 1 ), 2 );
 		var k = Pl(
 			( 0, ReactHooks.useState )(
 				( u === null || u === void 0 ? void 0 : u.timezone ) ||
@@ -267,7 +268,7 @@ export function createZoomEditor( readRuntime ) {
 									case 3:
 										_eLocal3.p = 3;
 										b = _eLocal3.v;
-										console.error( b );
+										showRequestError( b );
 									// Falls through to the shared async state cleanup.
 									case 4:
 										return (
@@ -403,7 +404,7 @@ export function createZoomEditor( readRuntime ) {
 									case 3:
 										_eLocal5.p = 3;
 										_sLocal = _eLocal5.v;
-										console.error( _sLocal );
+										showRequestError( _sLocal );
 									// Falls through to the shared async state cleanup.
 									case 4:
 										return (
@@ -564,7 +565,7 @@ export function createZoomEditor( readRuntime ) {
 									case 3:
 										_eLocal7.p = 3;
 										_tLocal8 = _eLocal7.v;
-										console.error(
+										showRequestError(
 											'Error fetching course data:',
 											_tLocal8
 										);

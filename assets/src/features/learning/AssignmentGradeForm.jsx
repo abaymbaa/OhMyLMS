@@ -137,13 +137,14 @@ export function createAssignmentGradeForm( readRuntime ) {
 							justify={ 'flex-start' }
 							align={ 'center' }
 						>
-							{ 'submitted' ==
-							( student === null ||
-							student === void 0 ||
-							null === ( t = student.submissions[ 0 ] ) ||
-							void 0 === t
-								? void 0
-								: t.status ) ? (
+							{ String(
+								student === null ||
+									student === void 0 ||
+									null === ( t = student.submissions[ 0 ] ) ||
+									void 0 === t
+									? void 0
+									: t.status
+							) === 'submitted' ? (
 								<Controls.BadgeWP
 									isBorderLess={ ! 0 }
 									variant={ 'warning' }

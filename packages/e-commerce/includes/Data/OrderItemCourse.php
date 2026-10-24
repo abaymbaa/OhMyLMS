@@ -2,6 +2,9 @@
 
 namespace OhMyLMS\Commerce\Data;
 
+/**
+ * Plugin order item course implementation.
+ */
 class OrderItemCourse extends OrderItem {
 
 	/**
@@ -134,6 +137,7 @@ class OrderItemCourse extends OrderItem {
 	 *
 	 * @return int The course ID of the order item.
 	 * @since 1.0.0
+	 * @param string $context Context.
 	 */
 	public function get_course_id( $context = 'view' ) {
 		return $this->get_prop( 'course_id', $context );

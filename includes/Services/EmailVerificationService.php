@@ -39,6 +39,8 @@ class EmailVerificationService {
 	 *
 	 * Users whose meta was never set (accounts created before this feature)
 	 * are treated as verified to avoid locking out existing students.
+	 *
+	 * @param int $user_id User identifier.
 	 */
 	public static function is_verified( int $user_id ): bool {
 		if ( ! self::is_required() ) {
@@ -54,6 +56,8 @@ class EmailVerificationService {
 
 	/**
 	 * Generate a verification token, store it in user meta, and return it.
+	 *
+	 * @param int $user_id User identifier.
 	 */
 	public static function generate_token( int $user_id ): string {
 		$token = bin2hex( random_bytes( 32 ) );
@@ -67,6 +71,7 @@ class EmailVerificationService {
 	 * Validate a token and mark the user as verified on success.
 	 *
 	 * @return int|false User ID on success, false on invalid or expired token.
+	 * @param string $token Token.
 	 */
 	public static function verify_token( string $token ) {
 		$result = self::verify_token_detailed( $token );
@@ -77,6 +82,7 @@ class EmailVerificationService {
 	 * Validate a token and return a detailed result.
 	 *
 	 * @return array{status: 'verified'|'expired'|'invalid', user_id: int}
+	 * @param string $token Token.
 	 */
 	public static function verify_token_detailed( string $token ): array {
 
@@ -129,6 +135,8 @@ class EmailVerificationService {
 	 *
 	 * Returns false if the user is already verified or a send was throttled within
 	 * the last 2 minutes (prevents inbox flooding via rapid resend clicks).
+	 *
+	 * @param int $user_id User identifier.
 	 */
 	public static function generate_and_send( int $user_id ): bool {
 		$value = get_user_meta( $user_id, self::META_VERIFIED, true );
@@ -150,6 +158,8 @@ class EmailVerificationService {
 	/**
 	 * Build the verification URL for a given token.
 	 * Handled via template_redirect in CommonHook.
+	 *
+	 * @param string $token Token.
 	 */
 	public static function get_verification_url( string $token ): string {
 		return add_query_arg(

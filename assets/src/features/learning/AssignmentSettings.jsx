@@ -99,11 +99,16 @@ export function createAssignmentSettings( readRuntime ) {
 											( _oLocal = _nLocal2.data.filter(
 												function ( _eLocal3 ) {
 													return (
-														( _eLocal3 === null ||
-														_eLocal3 === void 0
-															? void 0
-															: _eLocal3.value ) !=
-															assignment.id &&
+														String(
+															_eLocal3 === null ||
+																_eLocal3 ===
+																	void 0
+																? void 0
+																: _eLocal3.value
+														) !==
+															String(
+																assignment.id
+															) &&
 														_rLocal.indexOf(
 															String(
 																_eLocal3 ===

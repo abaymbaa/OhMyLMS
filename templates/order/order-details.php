@@ -72,7 +72,7 @@ defined( 'ABSPATH' ) || exit();
 			}
 
 			?>
-			<tr class="<?php echo $key; ?>">
+			<tr class="<?php echo esc_attr( $key ); ?>">
 				<?php
 				if ( in_array( $key, $update_value_keys ) && ! $maybe_by_point ) :
 					?>

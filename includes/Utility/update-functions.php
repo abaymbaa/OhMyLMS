@@ -1,4 +1,10 @@
 <?php
+/**
+ * Update functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 defined( 'ABSPATH' ) || exit;
 
@@ -12,7 +18,7 @@ function ohmylms_update_101_user_membership_table() {
 	if ( ohmylms_is_pro() ) {
 		global $wpdb;
 		if ( ! $wpdb->get_var( "SHOW COLUMNS FROM `{$wpdb->prefix}ohmylms_user_membership` LIKE 'subscription_id';" ) ) {
-			$wpdb->query( "ALTER TABLE {$wpdb->prefix}ohmylms_user_membership ADD COLUMN `subscription_id` BIGINT(20) UNSIGNED NOT NULL default 0;" );
+			$wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD COLUMN `subscription_id` BIGINT(20) UNSIGNED NOT NULL default 0;', $wpdb->prefix . 'ohmylms_user_membership' ) );
 		}
 	}
 }
@@ -173,10 +179,12 @@ function ohmylms_run_student_migration_batch() {
 
 	$user_ids = $wpdb->get_col(
 		$wpdb->prepare(
-			"SELECT DISTINCT ue.user_id FROM {$enrollment_table} ue
-			INNER JOIN {$wpdb->usermeta} um ON um.user_id = ue.user_id AND um.meta_key = %s
+			'SELECT DISTINCT ue.user_id FROM %i ue
+			INNER JOIN %i um ON um.user_id = ue.user_id AND um.meta_key = %s
 			WHERE um.meta_value LIKE %s
-			LIMIT %d",
+			LIMIT %d',
+			$enrollment_table,
+			$wpdb->usermeta,
 			$wpdb->prefix . 'capabilities',
 			'%"subscriber"%',
 			$batch_size

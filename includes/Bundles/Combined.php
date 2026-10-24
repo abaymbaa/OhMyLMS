@@ -26,7 +26,7 @@ final class Combined {
 	 * evidence_at and the fields Mastery::evaluate reads. Rows for one graded part (an event and
 	 * part) collapse to one; a question answered again later is kept but no longer a first try.
 	 *
-	 * @param array[] $rows
+	 * @param array[] $rows Rows.
 	 * @return array[]
 	 */
 	public static function merge( array $rows ) {
@@ -52,7 +52,12 @@ final class Combined {
 		return $merged;
 	}
 
-	/** Evaluate pooled evidence with the site's own mastery rules. */
+	/** Evaluate pooled evidence with the site's own mastery rules.
+	 *
+	 * @param array $rows Rows.
+	 * @param array $rules Rules.
+	 * @param mixed $now Now.
+	 */
 	public static function evaluate( array $rows, array $rules, $now ) {
 		return Mastery::evaluate( self::merge( $rows ), $rules, $now );
 	}
@@ -61,7 +66,7 @@ final class Combined {
 	 * The pooled state under the site's level policy (what a learner's own skill state would be).
 	 *
 	 * @param array[] $rows Pooled evidence rows.
-	 * @param int     $now  Timestamp.
+	 * @param int     $now Timestamp.
 	 * @return array
 	 */
 	public static function state( array $rows, $now ) {

@@ -69,7 +69,7 @@ export function ItemPanel( { id, item } ) {
 			setDraft( draftFrom( item ) );
 		}
 		setParent( String( item.parent_id || 0 ) );
-	}, [ item.updated_at, item.parent_id ] );
+	}, [ item.updated_at, item.parent_id, item, dirty ] );
 	useEffect( () => {
 		let current = true;
 		api.loadItem( item.id )

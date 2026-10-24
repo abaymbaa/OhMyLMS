@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCommunityList( readRuntime ) {
@@ -101,7 +102,7 @@ export function createCommunityList( readRuntime ) {
 										case 3:
 											_tLocal2.p = 3;
 											_nLocal = _tLocal2.v;
-											console.error(
+											showRequestError(
 												'Error in fetchData:',
 												_nLocal
 											);
@@ -136,7 +137,7 @@ export function createCommunityList( readRuntime ) {
 							? void 0
 							: _tLocal3.call( _nLocal2 ) ) || []
 					);
-				} catch ( _eLocal2 ) {
+				} catch {
 					return [];
 				}
 			}, [] ),
@@ -178,7 +179,7 @@ export function createCommunityList( readRuntime ) {
 										case 3:
 											_tLocal6.p = 3;
 											_aLocal = _tLocal6.v;
-											console.error( _aLocal );
+											showRequestError( _aLocal );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (

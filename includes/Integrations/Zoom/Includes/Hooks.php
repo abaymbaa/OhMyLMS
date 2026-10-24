@@ -7,7 +7,13 @@ use OhMyLMS\Integrations\Zoom\Includes\Api\ZoomApiClient;
 use OhMyLMS\Integrations\Zoom\Includes\Services\MeetingService;
 use OhMyLMS\Integrations\Zoom\Includes\Services\TokenService;
 
+/**
+ * Plugin hooks implementation.
+ */
 class Hooks {
+	/**
+	 * Initialize Hooks.
+	 */
 	public function __construct() {
 		add_filter( 'ohmylms_integrations', array( $this, 'register_zoom_integrations' ), 10, 1 );
 		add_action( 'ohmylms_zoom_session_created', array( $this, 'create_zoom_session' ), 10, 2 );
@@ -138,6 +144,11 @@ class Hooks {
 		}
 	}
 
+	/**
+	 * Register zoom integrations for Hooks.
+	 *
+	 * @param mixed $integrations Integrations.
+	 */
 	public function register_zoom_integrations( $integrations ) {
 		$integrations['zoom'] = array(
 			'label'       => __( 'Zoom', 'ohmylms' ),

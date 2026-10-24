@@ -27,20 +27,37 @@ final class Links {
 	const MAX_PER_ITEM  = 500;
 	const POST_STATUSES = array( 'publish', 'draft', 'pending', 'private', 'future' );
 
+	/**
+	 * Table for Links.
+	 */
 	public static function table() {
 		return Schema::table( 'curriculum_links' ); }
 
+	/**
+	 * Valid type for Links.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function valid_type( $type ) {
 		return in_array( $type, self::TYPES, true ); }
 
+	/**
+	 * Post type for Links.
+	 *
+	 * @param mixed $type Type.
+	 */
 	private static function post_type( $type ) {
 		return 'course' === $type ? OHMYLMS_COURSE_CPT : ( 'quiz' === $type ? OHMYLMS_QUIZ_CPT : '' );
 	}
 
-	/** Does a link target of this type and ID exist (and is it not in the trash)? */
+	/** Does a link target of this type and ID exist (and is it not in the trash)?
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $id Id.
+	 */
 	public static function target_exists( $type, $id ) {
 		$id = (int) $id;
-		if ( $id <= 0 ) {
+		if ( 0 >= $id ) {
 			return false; }
 		if ( 'course' === $type || 'quiz' === $type ) {
 			$status = get_post_status( $id );
@@ -53,7 +70,14 @@ final class Links {
 		return false;
 	}
 
-	/** @return true|\WP_Error */
+	/**
+	 * Add for Links.
+	 *
+	 * @return true|\WP_Error
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $type Type.
+	 * @param mixed $object_id Object identifier.
+	 */
 	public static function add( $item_id, $type, $object_id ) {
 		global $wpdb;
 		if ( ! Items::get( $item_id ) ) {
@@ -64,7 +88,8 @@ final class Links {
 			return Access::error( 'ohmylms_link_invalid', __( 'That content does not exist.', 'ohmylms' ), 404 ); }
 		$count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . self::table() . ' WHERE item_id=%d', (int) $item_id ) );
 		if ( $count >= self::MAX_PER_ITEM ) {
-			return Access::error( 'ohmylms_link_limit', sprintf( __( 'A curriculum item can link to at most %d pieces of content.', 'ohmylms' ), self::MAX_PER_ITEM ), 409 ); }
+			return Access::error( 'ohmylms_link_limit', sprintf( /* translators: %d: number. */
+			__( 'A curriculum item can link to at most %d pieces of content.', 'ohmylms' ), self::MAX_PER_ITEM ), 409 ); }
 		$ok = $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . self::table() . ' (item_id, object_type, object_id, created_by, created_at) VALUES (%d, %s, %d, %d, %s)', (int) $item_id, $type, (int) $object_id, get_current_user_id(), current_time( 'mysql', true ) ) );
 		if ( false === $ok ) {
 			return Access::error( 'ohmylms_link_failed', __( 'The link could not be saved.', 'ohmylms' ), 500 ); }
@@ -73,7 +98,12 @@ final class Links {
 		return true;
 	}
 
-	/** Removing a link that does not exist succeeds, so repeated requests are harmless. */
+	/** Removing a link that does not exist succeeds, so repeated requests are harmless.
+	 *
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $type Type.
+	 * @param mixed $object_id Object identifier.
+	 */
 	public static function remove( $item_id, $type, $object_id ) {
 		global $wpdb;
 		if ( ! Items::get( $item_id ) ) {
@@ -93,7 +123,11 @@ final class Links {
 		return true;
 	}
 
-	/** Titles and status for known IDs of one type; deleted content is reported as unavailable. */
+	/** Titles and status for known IDs of one type; deleted content is reported as unavailable.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $ids Ids.
+	 */
 	public static function labels( $type, array $ids ) {
 		$ids    = array_values( array_unique( array_filter( array_map( 'intval', $ids ) ) ) );
 		$labels = array();
@@ -126,7 +160,10 @@ final class Links {
 		return $labels;
 	}
 
-	/** Links of one item grouped by type, in the order they were added. */
+	/** Links of one item grouped by type, in the order they were added.
+	 *
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function for_item( $item_id ) {
 		global $wpdb;
 		$grouped = array_fill_keys( self::TYPES, array() );
@@ -149,7 +186,12 @@ final class Links {
 		return $grouped;
 	}
 
-	/** Find content to link: matching titles, or the given IDs. Administrators see all statuses. */
+	/** Find content to link: matching titles, or the given IDs. Administrators see all statuses.
+	 *
+	 * @param mixed  $type Type.
+	 * @param string $search Search.
+	 * @param array  $include Include.
+	 */
 	public static function targets( $type, $search = '', array $include = array() ) {
 		global $wpdb;
 		$include = array_values( array_filter( array_map( 'intval', $include ) ) );
@@ -198,7 +240,7 @@ final class Links {
 				$placeholders = implode( ',', array_fill( 0, count( $include ), '%d' ) );
 				$found        = $wpdb->get_results( $wpdb->prepare( "SELECT id, name, visibility FROM $table WHERE id IN ($placeholders) ORDER BY name", $include ), ARRAY_A );
 			} else {
-				$found = $wpdb->get_results( $wpdb->prepare( "SELECT id, name, visibility FROM $table WHERE name LIKE %s ORDER BY name LIMIT 20", '%' . $wpdb->esc_like( sanitize_text_field( (string) $search ) ) . '%' ), ARRAY_A );
+				$found = $wpdb->get_results( $wpdb->prepare( 'SELECT id, name, visibility FROM %i WHERE name LIKE %s ORDER BY name LIMIT 20', $table, '%' . $wpdb->esc_like( sanitize_text_field( (string) $search ) ) . '%' ), ARRAY_A );
 			}
 			foreach ( $found as $bank ) {
 				$rows[] = array(
@@ -210,7 +252,11 @@ final class Links {
 		return $rows;
 	}
 
-	/** Curriculum items an object belongs to, each with its full path (for display in other modules). */
+	/** Curriculum items an object belongs to, each with its full path (for display in other modules).
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $object_id Object identifier.
+	 */
 	public static function memberships( $type, $object_id ) {
 		global $wpdb;
 		$ids = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT item_id FROM ' . self::table() . ' WHERE object_type=%s AND object_id=%d ORDER BY item_id', $type, (int) $object_id ) ) );
@@ -227,7 +273,11 @@ final class Links {
 		return $result;
 	}
 
-	/** Distinct object IDs of one type linked to any of the given items. */
+	/** Distinct object IDs of one type linked to any of the given items.
+	 *
+	 * @param array $item_ids Item ids.
+	 * @param mixed $type Type.
+	 */
 	public static function object_ids( array $item_ids, $type ) {
 		global $wpdb;
 		$item_ids = array_values( array_filter( array_map( 'intval', $item_ids ) ) );
@@ -242,7 +292,11 @@ final class Links {
 		return $ids;
 	}
 
-	/** Drop every link to content that no longer exists. */
+	/** Drop every link to content that no longer exists.
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $object_id Object identifier.
+	 */
 	public static function remove_object( $type, $object_id ) {
 		global $wpdb;
 		if ( ! self::valid_type( $type ) || ! Schema::ready() ) {

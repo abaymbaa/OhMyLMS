@@ -7,7 +7,7 @@ export const MAX_GROUP_TITLE = 120;
 
 /**
  * Single-line, length-limited title, matching the server rule.
- * @param {*} value Raw title.
+ * @param {unknown} value Raw title.
  * @return {string} Clean title.
  */
 export const cleanGroupTitle = ( value ) =>

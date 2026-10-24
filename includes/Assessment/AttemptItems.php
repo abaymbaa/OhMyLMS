@@ -22,12 +22,16 @@ final class AttemptItems {
 	/**
 	 * Create the attempt context and items for an attempt row inside the caller's transaction.
 	 *
+	 * @param mixed $attempt_id Attempt identifier.
 	 * @param array $revision Published revision with slots.
+	 * @param mixed $started_ts Started ts.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 * @throws ErrorException When the operation cannot be completed.
 	 */
 	public static function create( $attempt_id, array $revision, $started_ts = null ) {
 		global $wpdb;
 		$attempt_id               = (int) $attempt_id;
-		$started_ts               = $started_ts ?: time();
+		$started_ts               = $started_ts ? $started_ts : time();
 		$seed                     = random_int( 1, PHP_INT_MAX );
 		$settings                 = $revision['settings'];
 		$minutes                  = (float) ( $settings['timer_minutes'] ?? 0 );
@@ -111,6 +115,14 @@ final class AttemptItems {
 		return $context;
 	}
 
+	/**
+	 * Seeded order for Attempt items.
+	 *
+	 * @param array $rows Rows.
+	 * @param mixed $seed Seed.
+	 * @param mixed $salt Salt.
+	 * @param mixed $key Lookup key.
+	 */
 	private static function seeded_order( array $rows, $seed, $salt, $key ) {
 		usort(
 			$rows,
@@ -121,6 +133,13 @@ final class AttemptItems {
 		return $rows;
 	}
 
+	/**
+	 * Seeded ids for Attempt items.
+	 *
+	 * @param array $ids Ids.
+	 * @param mixed $seed Seed.
+	 * @param mixed $salt Salt.
+	 */
 	private static function seeded_ids( array $ids, $seed, $salt ) {
 		usort(
 			$ids,
@@ -131,19 +150,34 @@ final class AttemptItems {
 		return $ids;
 	}
 
+	/**
+	 * Context for Attempt items.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function context( $attempt_id ) {
 		global $wpdb;
-		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'attempt_context' ) . ' WHERE attempt_id=%d', (int) $attempt_id ), ARRAY_A ) ?: null;
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE attempt_id=%d', Schema::table( 'attempt_context' ), (int) $attempt_id ), ARRAY_A ) ?: null;
 	}
 
+	/**
+	 * Is versioned for Attempt items.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function is_versioned( $attempt_id ) {
 		return (bool) self::context( $attempt_id );
 	}
 
-	/** @return array[] decoded items in delivery order. */
+	/**
+	 * Items for Attempt items.
+	 *
+	 * @return array[] decoded items in delivery order.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function items( $attempt_id ) {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'attempt_items' ) . ' WHERE attempt_id=%d ORDER BY position', (int) $attempt_id ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE attempt_id=%d ORDER BY position', Schema::table( 'attempt_items' ), (int) $attempt_id ), ARRAY_A );
 		foreach ( $rows as &$row ) {
 			$row['option_order'] = json_decode( $row['option_order'], true ) ?: array();
 			$row['display']      = json_decode( $row['display'], true ) ?: array();
@@ -155,6 +189,10 @@ final class AttemptItems {
 	/**
 	 * Opaque per-attempt token; reveals neither the option ID nor ordering. Matching
 	 * definitions use a separate kind so a definition never shares its answer's token.
+	 *
+	 * @param mixed  $scope Scope.
+	 * @param mixed  $option_id Option identifier.
+	 * @param string $kind Kind.
 	 */
 	public static function token( $scope, $option_id, $kind = 'o' ) {
 		// $scope is the attempt ID, or a practice/inline scope string such as "p42".
@@ -162,6 +200,13 @@ final class AttemptItems {
 		return $kind . substr( hash_hmac( 'sha256', $kind . ':' . (string) $scope . ':' . (int) $option_id, wp_salt( 'nonce' ) ), 0, 15 );
 	}
 
+	/**
+	 * Tokens for Attempt items.
+	 *
+	 * @param mixed  $attempt_id Attempt identifier.
+	 * @param array  $option_ids Option ids.
+	 * @param string $kind Kind.
+	 */
 	public static function tokens( $attempt_id, array $option_ids, $kind = 'o' ) {
 		$tokens = array();
 		foreach ( $option_ids as $option_id ) {
@@ -169,18 +214,27 @@ final class AttemptItems {
 		return $tokens;
 	}
 
-	/** The seed that fixes this item's numbers (0 for a question without a template). */
+	/** The seed that fixes this item's numbers (0 for a question without a template).
+	 *
+	 * @param array $item Item.
+	 */
 	public static function instance_seed( array $item ) {
 		return (int) ( $item['display']['instance_seed'] ?? 0 );
 	}
 
-	/** The frozen version as this item issued it: a template question gets its own numbers. */
+	/** The frozen version as this item issued it: a template question gets its own numbers.
+	 *
+	 * @param array $item Item.
+	 */
 	public static function snapshot( array $item ) {
 		$snapshot = VersionPublisher::snapshot( $item['version_id'] );
 		return $snapshot ? $snapshot->instantiate( self::instance_seed( $item ) ) : null;
 	}
 
-	/** Learner-safe questions for rendering, in delivery order. */
+	/** Learner-safe questions for rendering, in delivery order.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function delivery( $attempt_id ) {
 		$questions = array();
 		foreach ( self::items( $attempt_id ) as $item ) {
@@ -209,7 +263,12 @@ final class AttemptItems {
 		return $questions;
 	}
 
-	/** Inverse of untokenize(): a stored response expressed in this delivery's tokens (for resume). */
+	/** Inverse of untokenize(): a stored response expressed in this delivery's tokens (for resume).
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param array $item Item.
+	 * @param mixed $answer Answer.
+	 */
 	public static function tokenize( $attempt_id, array $item, $answer ) {
 		$snapshot = self::snapshot( $item );
 		if ( ! $snapshot || ! is_array( $answer ) ) {
@@ -242,6 +301,10 @@ final class AttemptItems {
 	 * For option-referencing types every value (and matching key) must be a token of this
 	 * delivery; anything else, including a raw option ID, is neutralized so it cannot match.
 	 * Text answers pass through unchanged.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param array $item Item.
+	 * @param mixed $answer Answer.
 	 */
 	public static function untokenize( $attempt_id, array $item, $answer ) {
 		$snapshot = self::snapshot( $item );

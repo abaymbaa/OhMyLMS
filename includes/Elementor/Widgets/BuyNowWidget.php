@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin buy now widget implementation.
+ */
 class BuyNowWidget extends Widget_Base {
 
 	/**
@@ -32,23 +35,38 @@ class BuyNowWidget extends Widget_Base {
 		}
 		return $options;
 	}
+	/**
+	 * Get name for Buy now widget.
+	 */
 	public function get_name() {
 		return 'ohmylms-buy-now';
 	}
 
+	/**
+	 * Get title for Buy now widget.
+	 */
 	public function get_title() {
 		return __( 'Buy Now', 'ohmylms' );
 	}
 
+	/**
+	 * Get icon for Buy now widget.
+	 */
 	public function get_icon() {
 		return 'eicon-cart';
 	}
 
+	/**
+	 * Get categories for Buy now widget.
+	 */
 	public function get_categories() {
 		return array( 'ohmylms' );
 	}
 
 
+	/**
+	 * Register controls for Buy now widget.
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_content',
@@ -174,6 +192,9 @@ class BuyNowWidget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render for Buy now widget.
+	 */
 	protected function render() {
 		$settings  = $this->get_settings_for_display();
 		$course_id = ! empty( $settings['course_id'] ) ? $settings['course_id'] : '';

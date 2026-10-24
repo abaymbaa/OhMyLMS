@@ -16,6 +16,12 @@ defined( 'ABSPATH' ) || exit;
  * is never part of any message.
  */
 final class Errors {
+	/**
+	 * From status for Errors.
+	 *
+	 * @param mixed $status Status.
+	 * @param mixed $message Message.
+	 */
 	public static function from_status( $status, $message ) {
 		$detail = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $message ) ) );
 		$detail = mb_strlen( $detail ) > 160 ? mb_substr( $detail, 0, 160 ) . '…' : $detail;
@@ -39,7 +45,10 @@ final class Errors {
 		return new \WP_Error( $code, '' !== $detail ? $text . ' (' . $detail . ')' : $text, array( 'status' => 502 ) );
 	}
 
-	/** A reply with no text: usually the token budget was used up before any text was written. */
+	/** A reply with no text: usually the token budget was used up before any text was written.
+	 *
+	 * @param mixed $ran_out Ran out.
+	 */
 	public static function empty_reply( $ran_out ) {
 		return new \WP_Error(
 			'ohmylms_ai_empty',

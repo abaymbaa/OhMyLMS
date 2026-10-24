@@ -1,4 +1,10 @@
 <?php
+/**
+ * Rest functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 use OhMyLMS\Commerce\EcommerceDateTime;
 

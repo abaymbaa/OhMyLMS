@@ -14,6 +14,9 @@ namespace OhMyLMS\PostTypes;
  */
 class SectionPostType {
 
+	/**
+	 * Initialize Section post type.
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'register_section_cpt' ) );
 	}

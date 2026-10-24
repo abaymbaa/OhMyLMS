@@ -11,6 +11,9 @@ final class TabPreferences {
 	private const META_KEY = '_ohmylms_tab_preferences';
 	private const SCOPES   = array( 'content-hub', 'memberships', 'account-hub', 'gamification', 'gamification-settings', 'settings', 'emails' );
 
+	/**
+	 * Register routes for Tab preferences.
+	 */
 	public static function register_routes() {
 		register_rest_route(
 			'ohmylms/v1',
@@ -24,11 +27,19 @@ final class TabPreferences {
 		);
 	}
 
+	/**
+	 * Read for Tab preferences.
+	 */
 	public static function read() {
 		$saved = get_user_meta( get_current_user_id(), self::META_KEY, true );
 		return is_array( $saved ) ? array_intersect_key( $saved, array_flip( self::SCOPES ) ) : array();
 	}
 
+	/**
+	 * Prepare for Tab preferences.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	public static function prepare( $data ) {
 		if ( ! is_array( $data ) || ! isset( $data['order'], $data['groups'], $data['assignments'] ) || ! is_array( $data['order'] ) || ! is_array( $data['groups'] ) || ! is_array( $data['assignments'] ) || count( $data['order'] ) > 60 || count( $data['groups'] ) > 30 ) {
 			return new \WP_Error( 'ohmylms_invalid_tabs', 'Invalid tab layout.', array( 'status' => 400 ) );
@@ -74,6 +85,11 @@ final class TabPreferences {
 		);
 	}
 
+	/**
+	 * Save for Tab preferences.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function save( $request ) {
 		if ( ! in_array( $request['scope'], self::SCOPES, true ) ) {
 			return new \WP_Error( 'ohmylms_invalid_tab_scope', 'Unknown tab section.', array( 'status' => 400 ) );

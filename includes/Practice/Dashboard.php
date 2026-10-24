@@ -13,9 +13,17 @@ defined( 'ABSPATH' ) || exit;
 
 /** Learner dashboard presentation; all learning rules remain in their existing services. */
 final class Dashboard {
-	const THEMES            = array( 'meadow', 'ocean', 'sunset' );
+	const THEMES = array( 'meadow', 'ocean', 'sunset' );
+	/**
+	 * Rendered.
+	 *
+	 * @var mixed
+	 */
 	public static $rendered = false;
 
+	/**
+	 * Init for Dashboard.
+	 */
 	public static function init() {
 		add_action(
 			'wp',
@@ -61,18 +69,26 @@ final class Dashboard {
 		);
 	}
 
+	/**
+	 * Assets for Dashboard.
+	 */
 	public static function assets() {
 		wp_enqueue_style( 'ohmylms-student-dashboard', plugins_url( 'assets/css/student-dashboard.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/student-dashboard.css' ) );
 		wp_enqueue_script( 'ohmylms-student-dashboard', plugins_url( 'assets/js/student-dashboard.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/student-dashboard.js' ), true );
 	}
 
+	/**
+	 * Data for Dashboard.
+	 *
+	 * @param mixed $user User.
+	 */
 	public static function data( $user ) {
 		global $wpdb;
 		$theme     = get_user_meta( $user, '_ohmylms_dashboard_theme', true );
 		$zone_name = get_user_meta( $user, '_ohmylms_learning_timezone', true );
 		$zone      = \OhMyLMS\Engagement\Streak::timezone( $zone_name ) ? new \DateTimeZone( $zone_name ) : wp_timezone();
 		if ( \OhMyLMS\Engagement\StreakSettings::enabled() && \OhMyLMS\Engagement\StreakSchema::ready() ) {
-			$saved_zone = $wpdb->get_var( $wpdb->prepare( "SELECT timezone FROM {$wpdb->prefix}ohmylms_streak_state WHERE user_id=%d", $user ) );
+			$saved_zone = $wpdb->get_var( $wpdb->prepare( 'SELECT timezone FROM %i WHERE user_id=%d', $wpdb->prefix . 'ohmylms_streak_state', $user ) );
 			if ( \OhMyLMS\Engagement\Streak::timezone( $saved_zone ) ) {
 				$zone = new \DateTimeZone( $saved_zone ); }
 		}
@@ -107,7 +123,7 @@ final class Dashboard {
 		);
 		$data['recent'] = array_slice( $recent, 0, 6 );
 		$utc            = new \DateTimeZone( 'UTC' );
-		$rows           = $wpdb->get_results( $wpdb->prepare( 'SELECT i.response,i.answered_at,s.term_id FROM ' . Schema::table( 'practice_items' ) . ' i JOIN ' . Schema::table( 'practice_sessions' ) . " s ON s.id=i.session_id WHERE s.student_id=%d AND s.mode='skill' AND i.answered_at >= %s AND i.answered_at < %s", $user, $start->setTimezone( $utc )->format( 'Y-m-d H:i:s' ), $end->setTimezone( $utc )->format( 'Y-m-d H:i:s' ) ), ARRAY_A );
+		$rows           = $wpdb->get_results( $wpdb->prepare( 'SELECT i.response,i.answered_at,s.term_id FROM %i i JOIN %i s ON s.id=i.session_id WHERE s.student_id=%d AND s.mode=\'skill\' AND i.answered_at >= %s AND i.answered_at < %s', Schema::table( 'practice_items' ), Schema::table( 'practice_sessions' ), $user, $start->setTimezone( $utc )->format( 'Y-m-d H:i:s' ), $end->setTimezone( $utc )->format( 'Y-m-d H:i:s' ) ), ARRAY_A );
 		$days           = array();
 		$skills         = array();
 		foreach ( $rows as $row ) {

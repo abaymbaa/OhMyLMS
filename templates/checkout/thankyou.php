@@ -74,7 +74,10 @@ $status        = $order ? $order->get_status() : '';
 
 								<h1 class="ohmylms-thankyou-title">
 									<?php
-										printf( __( 'Thank You %s', 'ohmylms' ), $student->get_name() );
+										printf( /* translators: %s: text value. */
+											esc_html__( 'Thank You %s', 'ohmylms' ),
+											esc_html( $student->get_name() )
+										);
 									?>
 								</h1>
 
@@ -82,14 +85,16 @@ $status        = $order ? $order->get_status() : '';
 									<?php
 									if ( 'completed' !== $status ) {
 										$thankyou_text = sprintf(
-										/* translators: %s: customer email */
-											__( '<strong>Your Order is ' . ucfirst( $status ) . '!</strong>', 'ohmylms' )
+										/* translators: %s: order status. */
+											__( '<strong>Your Order is %s!</strong>', 'ohmylms' ),
+											esc_html( ucfirst( $status ) )
 										);
 									} else {
 										$thankyou_text = sprintf(
-										/* translators: %s: customer email */
-											__( '<strong>Your Order is ' . ucfirst( $status ) . '!</strong> A confirmation mail has been sent to <br/> <span>%s</span>.', 'ohmylms' ),
-											$order->get_email()
+										/* translators: 1: order status, 2: customer email. */
+											__( '<strong>Your Order is %1$s!</strong> A confirmation mail has been sent to <br/> <span>%2$s</span>.', 'ohmylms' ),
+											esc_html( ucfirst( $status ) ),
+											esc_html( $order->get_email() )
 										);
 									}
 
@@ -100,13 +105,18 @@ $status        = $order ? $order->get_status() : '';
 									 * @param string $thankyou_text The thank you message.
 									 * @param WC_Order $order The order object.
 									 */
-									echo apply_filters( 'ohmylms_thankyou_text', $thankyou_text, $order, $is_course );
+									echo wp_kses_post( apply_filters( 'ohmylms_thankyou_text', $thankyou_text, $order, $is_course ) );
 									?>
 								</div>
 								<?php if ( 'completed' === $status ) : ?>
 								<div class="ohmylms-btn-area">
 									<a href="<?php echo esc_url( $dashboard_url ); ?>" class="ohmylms-button">
-										<?php printf( __( 'Access To Your %s', 'ohmylms' ), $item_object_name ); ?>
+										<?php
+										printf( /* translators: %s: text value. */
+											__( 'Access To Your %s', 'ohmylms' ),
+											$item_object_name
+										);
+										?>
 									</a>
 								</div>
 								<?php endif; ?>
@@ -120,12 +130,12 @@ $status        = $order ? $order->get_status() : '';
 
 								<p class="single-address email">
 									<strong><?php echo esc_html__( 'Email' ); ?></strong>
-									<?php echo $student->get_email(); ?>
+									<?php echo esc_html( $student->get_email() ); ?>
 								</p>
 
 								<p class="single-address country">
 									<strong><?php echo esc_html__( 'Country' ); ?></strong>
-									<?php echo ohmylms_get_country_name_by_code( $student->get_country() ); ?>
+									<?php echo esc_html( ohmylms_get_country_name_by_code( $student->get_country() ) ); ?>
 								</p>
 							</div>
 

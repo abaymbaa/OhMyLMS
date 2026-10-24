@@ -5,6 +5,7 @@ import {
 	useCallback,
 	useEffect,
 	useState,
+	useRef,
 } from '@wordpress/element';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -88,23 +89,19 @@ export function createCourseEditor( readRuntime ) {
 		} );
 		const { contextHolder, openNotificationWithIcon } = r.z.A();
 		const course = editor.course;
+		const shownNotice = useRef( null );
 		const syllabusContent = ! editor.loading && course?.syllabus_id > 0;
+		const syllabusPath = syllabusContent ? courseEditPath( course ) : '';
 		useEffect( () => {
 			if ( syllabusContent ) {
 				navigate(
-					`${ courseEditPath( course ) }${ step === 'content' ? '' : '?view=settings' }`,
+					`${ syllabusPath }${ step === 'content' ? '' : '?view=settings' }`,
 					{
 						replace: true,
 					}
 				);
 			}
-		}, [
-			syllabusContent,
-			course?.id,
-			course?.syllabus_id,
-			step,
-			navigate,
-		] );
+		}, [ syllabusContent, syllabusPath, step, navigate ] );
 		useEffect( () => {
 			const previous = document.body.style.background;
 			document.body.style.background = '#FFFFFF';
@@ -113,10 +110,20 @@ export function createCourseEditor( readRuntime ) {
 			};
 		}, [] );
 		useEffect( () => {
-			if ( ! editor.loading && editor.notice ) {
+			if (
+				! editor.loading &&
+				editor.notice &&
+				shownNotice.current !== editor.notice
+			) {
+				shownNotice.current = editor.notice;
 				openNotificationWithIcon( editor.noticeStatus, editor.notice );
 			}
-		}, [ editor.notice ] );
+		}, [
+			editor.loading,
+			editor.notice,
+			editor.noticeStatus,
+			openNotificationWithIcon,
+		] );
 		const setActiveStep = ( next ) =>
 			navigate( `/course-edit/${ courseId }/${ next }` );
 		async function uploadMedia( media, type ) {

@@ -94,7 +94,7 @@ function harness( states = [] ) {
 		useId: () => 'lint-test-commerce',
 		validateCoupon,
 		validateRefund,
-		alert: ( message ) => requests.push( { alert: message } ),
+		showRequestError: ( message ) => requests.push( { notice: message } ),
 		h: () => React,
 		console: { error() {} },
 		window: {},

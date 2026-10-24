@@ -26,11 +26,11 @@ $over_all_completion_rate = $student->get_over_all_completion_rate( $course_id )
 			<div class="lesson-single-progressbar ohmylms-progressbar overall-progress">
 				<p class="progressbar-title">
 					<span><?php echo esc_html( 'Overall progress', 'ohmylms' ); ?></span>
-					<span><?php echo $over_all_completion_rate; ?>%</span>
+					<span><?php echo esc_html( $over_all_completion_rate ); ?>%</span>
 				</p>
 
 				<span class="ohmylms-progressbar-outer">
-					<span class="ohmylms-progressbar-inner" style="width: <?php echo $over_all_completion_rate; ?>%;" ></span>
+					<span class="ohmylms-progressbar-inner" style="width: <?php echo esc_attr( $over_all_completion_rate ); ?>%;" ></span>
 				</span>
 			</div>
 
@@ -40,7 +40,7 @@ $over_all_completion_rate = $student->get_over_all_completion_rate( $course_id )
 				<p class="progressbar-title">
 					<span>Quiz</span>
 					<span>
-						<?php echo $quizProgress . '%'; ?>
+						<?php echo esc_html( $quizProgress . '%' ); ?>
 					</span>
 				</p>
 
@@ -57,7 +57,7 @@ $over_all_completion_rate = $student->get_over_all_completion_rate( $course_id )
 				<p class="progressbar-title">
 					<span>Assignments</span>
 					<span>
-						<?php echo $quizProgress . '%'; ?>
+						<?php echo esc_html( $quizProgress . '%' ); ?>
 					</span>
 				</p>
 

@@ -30,7 +30,13 @@ defined( 'ABSPATH' ) || exit;
 final class Sessions {
 	const MODES = array( 'skill', 'inline' );
 
-	/** @param array $owner ['student_id'=>int] or ['guest_id'=>int] */
+	/**
+	 * Start for Sessions.
+	 *
+	 * @param array $owner ['student_id'=>int] or ['guest_id'=>int].
+	 * @param mixed $term_id Term identifier.
+	 * @param array $options Operation options.
+	 */
 	public static function start( array $owner, $term_id, array $options = array() ) {
 		global $wpdb;
 		$term_id = (int) $term_id;
@@ -64,25 +70,41 @@ final class Sessions {
 		return self::get( $session['uuid'] );
 	}
 
+	/**
+	 * Get for Sessions.
+	 *
+	 * @param mixed $uuid Uuid.
+	 */
 	public static function get( $uuid ) {
 		global $wpdb;
-		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'practice_sessions' ) . ' WHERE uuid=%s', (string) $uuid ), ARRAY_A );
+		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE uuid=%s', Schema::table( 'practice_sessions' ), (string) $uuid ), ARRAY_A );
 		if ( $row ) {
 			$row['policy'] = json_decode( $row['policy'], true ) ?: array(); }
-		return $row ?: null;
+		return $row ? $row : null;
 	}
 
+	/**
+	 * Owns for Sessions.
+	 *
+	 * @param array $session Session.
+	 * @param array $owner Owner.
+	 */
 	public static function owns( array $session, array $owner ) {
 		if ( ! empty( $owner['student_id'] ) ) {
 			return (int) $session['student_id'] === (int) $owner['student_id']; }
 		return ! empty( $owner['guest_id'] ) && (int) $session['guest_id'] === (int) $owner['guest_id'] && ! (int) $session['student_id'];
 	}
 
+	/**
+	 * Items for Sessions.
+	 *
+	 * @param mixed $session_id Session identifier.
+	 */
 	public static function items( $session_id ) {
 		global $wpdb;
 		$items = Schema::table( 'practice_items' );
 		$bank  = Schema::table( 'qb_questions' );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT i.*, COALESCE(q.family_id,'') AS family_id FROM $items i LEFT JOIN $bank q ON q.question_id=i.question_id WHERE i.session_id=%d ORDER BY i.position", (int) $session_id ), ARRAY_A );
+		$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT i.*, COALESCE(q.family_id,\'\') AS family_id FROM %i i LEFT JOIN %i q ON q.question_id=i.question_id WHERE i.session_id=%d ORDER BY i.position', $items, $bank, (int) $session_id ), ARRAY_A );
 		foreach ( $rows as &$row ) {
 			$row['option_order'] = json_decode( $row['option_order'], true ) ?: array();
 			$row['display']      = json_decode( $row['display'], true ) ?: array();
@@ -91,7 +113,10 @@ final class Sessions {
 		return $rows;
 	}
 
-	/** Issue the next item, or complete the session when the limit or pool is reached. */
+	/** Issue the next item, or complete the session when the limit or pool is reached.
+	 *
+	 * @param array $session Session.
+	 */
 	private static function issue( array $session ) {
 		global $wpdb;
 		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {
@@ -136,12 +161,18 @@ final class Sessions {
 		return self::add_item( (int) $session['id'], (int) $next['version_id'], count( $items ) + 1 );
 	}
 
-	/** Whether an item was skipped by the learner instead of answered. */
+	/** Whether an item was skipped by the learner instead of answered.
+	 *
+	 * @param array $item Item.
+	 */
 	private static function skipped( array $item ) {
 		return ! empty( $item['display']['skipped'] );
 	}
 
-	/** Items that use up one of the session's problems: everything except skipped questions. */
+	/** Items that use up one of the session's problems: everything except skipped questions.
+	 *
+	 * @param array $items Items.
+	 */
 	private static function counted( array $items ) {
 		return count(
 			array_filter(
@@ -156,6 +187,9 @@ final class Sessions {
 	/**
 	 * The first missed question that has not been replayed yet, while replays are still allowed
 	 * (at most half the lesson length, and a replay that is missed again is not replayed).
+	 *
+	 * @param array $items Items.
+	 * @param mixed $planned Planned.
 	 */
 	private static function next_replay( array $items, $planned ) {
 		$replayed = array();
@@ -172,7 +206,10 @@ final class Sessions {
 		return null;
 	}
 
-	/** A short label for an item: the question text, or its title when the text is empty. */
+	/** A short label for an item: the question text, or its title when the text is empty.
+	 *
+	 * @param array $item Item.
+	 */
 	private static function label( array $item ) {
 		$snapshot = AttemptItems::snapshot( $item );
 		if ( ! $snapshot ) {
@@ -181,7 +218,14 @@ final class Sessions {
 		return '' !== $text ? $text : \OhMyLMS\AI\Feedback::plain( $snapshot->get_name(), 110 );
 	}
 
-	/** Freeze one version into a session as the next item. */
+	/** Freeze one version into a session as the next item.
+	 *
+	 * @param mixed $session_id Session identifier.
+	 * @param mixed $version_id Version identifier.
+	 * @param mixed $position Position.
+	 * @param mixed $instance_seed Instance seed.
+	 * @param array $extra_display Extra display.
+	 */
 	public static function add_item( $session_id, $version_id, $position, $instance_seed = null, array $extra_display = array() ) {
 		global $wpdb;
 		$snapshot = VersionPublisher::snapshot( $version_id );
@@ -208,7 +252,7 @@ final class Sessions {
 				if ( (int) $earlier['question_id'] === $snapshot->get_id() ) {
 					$seen[] = \OhMyLMS\Assessment\Template::signature( \OhMyLMS\Assessment\Template::generate( $snapshot->get_settings()['template'], AttemptItems::instance_seed( $earlier ) )['params'] ); }
 			}
-			$display['instance_seed'] = $instance_seed ?: \OhMyLMS\Assessment\Template::fresh_seed( $snapshot->get_settings(), $seen );
+			$display['instance_seed'] = $instance_seed ? $instance_seed : \OhMyLMS\Assessment\Template::fresh_seed( $snapshot->get_settings(), $seen );
 		}
 		$display += $extra_display;
 		$wpdb->insert(
@@ -230,7 +274,7 @@ final class Sessions {
 	 * Close a session and fire the completion hooks once.
 	 *
 	 * @param array  $session Session row, with the policy to keep.
-	 * @param string $reason  Why it ended.
+	 * @param string $reason Why it ended.
 	 * @return null
 	 */
 	public static function complete( array $session, $reason ) {
@@ -258,7 +302,10 @@ final class Sessions {
 		return null;
 	}
 
-	/** Learner-safe view of an item, with tokens scoped to the item. */
+	/** Learner-safe view of an item, with tokens scoped to the item.
+	 *
+	 * @param array $item Item.
+	 */
 	public static function item_view( array $item ) {
 		$snapshot = AttemptItems::snapshot( $item );
 		if ( ! $snapshot ) {
@@ -281,6 +328,8 @@ final class Sessions {
 	/**
 	 * How a finished lesson went: accuracy on the planned questions and which misses were put right
 	 * on replay. Labels are question text only.
+	 *
+	 * @param array $items Items.
 	 */
 	private static function lesson_result( array $items ) {
 		$replay_of = array();
@@ -322,7 +371,10 @@ final class Sessions {
 		);
 	}
 
-	/** Public state of a session for its owner. */
+	/** Public state of a session for its owner.
+	 *
+	 * @param array $session Session.
+	 */
 	public static function state( array $session ) {
 		$items   = self::items( $session['id'] );
 		$current = null;
@@ -422,7 +474,7 @@ final class Sessions {
 		if ( 'complete' === $session['status'] && (int) $session['student_id'] ) {
 			// What this practice did to the skill's level: the evidence is written first so it is included.
 			\OhMyLMS\Skills\Evidence::process( 50 );
-			$state['levels'] = \OhMyLMS\Performance\Engine::changes( (int) $session['student_id'], 'practice', (int) $session['id'] );
+			$state['levels']          = \OhMyLMS\Performance\Engine::changes( (int) $session['student_id'], 'practice', (int) $session['id'] );
 			$state['recommendations'] = \OhMyLMS\Placement\Placement::MODE === $session['mode'] ? array() : Recommendations::for_student( (int) $session['student_id'], 3 );
 			// XP, the daily goal, the mastery score change and the streak, when those are on.
 			$reward = \OhMyLMS\Engagement\SessionReward::for_session( $session );
@@ -435,6 +487,10 @@ final class Sessions {
 	/**
 	 * Grade the current item. Practice allows one graded answer per item; feedback then
 	 * reveals the correct response for that item only.
+	 *
+	 * @param array $session Session.
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $response Response data.
 	 */
 	public static function answer( array $session, $item_id, $response ) {
 		global $wpdb;
@@ -508,12 +564,7 @@ final class Sessions {
 		$display            = $item['display'];
 		$display['skipped'] = 1;
 		$updated            = $wpdb->query(
-			$wpdb->prepare(
-				'UPDATE ' . Schema::table( 'practice_items' ) . ' SET display=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL',
-				wp_json_encode( $display ),
-				current_time( 'mysql', true ),
-				(int) $item['id']
-			)
+			$wpdb->prepare( 'UPDATE %i SET display=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL', Schema::table( 'practice_items' ), wp_json_encode( $display ), current_time( 'mysql', true ), (int) $item['id'] )
 		);
 		if ( 1 !== $updated ) {
 			return new \WP_Error( 'ohmylms_practice_answered', __( 'This question was already answered.', 'ohmylms' ), array( 'status' => 409 ) ); }
@@ -524,13 +575,21 @@ final class Sessions {
 	/**
 	 * Shared grading for practice and inline items: record response, grade event and receipt.
 	 * $scope is the token scope the learner's form was rendered with (default: the item).
+	 *
+	 * @param array $session Session.
+	 * @param array $item Item.
+	 * @param mixed $response Response data.
+	 * @param mixed $source_type Source type.
+	 * @param mixed $scope Scope.
+	 * @param bool  $retry Retry.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function grade_item( array $session, array $item, $response, $source_type, $scope = null, $retry = false ) {
 		global $wpdb;
 		$snapshot = AttemptItems::snapshot( $item );
 		if ( ! $snapshot ) {
 			return new \WP_Error( 'ohmylms_practice_item', __( 'Question unavailable.', 'ohmylms' ), array( 'status' => 410 ) ); }
-		$scope  = $scope ?: 'p' . (int) $item['id'];
+		$scope  = $scope ? $scope : 'p' . (int) $item['id'];
 		$answer = AttemptItems::untokenize( $scope, $item, is_array( $response ) ? $response : array( $response ) );
 		$grade  = Grader::grade( $snapshot, $answer, array( 'ignore_manual' => false ) );
 		if ( is_wp_error( $grade ) ) {
@@ -547,15 +606,7 @@ final class Sessions {
 			Transaction::run(
 				static function () use ( $wpdb, $session, $item, $grade, $receipt, $source_type ) {
 					$updated = $wpdb->query(
-						$wpdb->prepare(
-							'UPDATE ' . Schema::table( 'practice_items' ) . ' SET response=%s, fraction=%f, correct=%d, tries=tries+1, receipt=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL',
-							wp_json_encode( $grade['answer'] ),
-							$grade['fraction'],
-							$grade['correct'] ? 1 : 0,
-							$receipt,
-							current_time( 'mysql', true ),
-							(int) $item['id']
-						)
+						$wpdb->prepare( 'UPDATE %i SET response=%s, fraction=%f, correct=%d, tries=tries+1, receipt=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL', Schema::table( 'practice_items' ), wp_json_encode( $grade['answer'] ), $grade['fraction'], $grade['correct'] ? 1 : 0, $receipt, current_time( 'mysql', true ), (int) $item['id'] )
 					);
 					if ( 1 !== $updated ) {
 						throw new \RuntimeException( 'Item already answered' ); }
@@ -610,12 +661,13 @@ final class Sessions {
 	 * wrong. A wrong first answer leaves the question open: nothing is revealed and the question is not closed.
 	 * Later answers are not new evidence; the first one that is right closes the question as "right with help".
 	 *
-	 * @param array            $session  Session row.
-	 * @param array            $item     Item row, read before this answer.
+	 * @param array            $session Session row.
+	 * @param array            $item Item row, read before this answer.
 	 * @param QuestionSnapshot $snapshot Frozen question.
-	 * @param string           $scope    Token scope.
-	 * @param array            $grade    Grader result.
+	 * @param string           $scope Token scope.
+	 * @param array            $grade Grader result.
 	 * @return array|\WP_Error|null Null when the ordinary path should handle it (a right first answer).
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	private static function grade_retry( array $session, array $item, QuestionSnapshot $snapshot, $scope, array $grade ) {
 		global $wpdb;
@@ -628,7 +680,7 @@ final class Sessions {
 			try {
 				Transaction::run(
 					static function () use ( $wpdb, $table, $session, $item, $grade, $first ) {
-						$updated = $wpdb->query( $wpdb->prepare( "UPDATE $table SET response=%s, fraction=%f, correct=0, tries=tries+1 WHERE id=%d AND answered_at IS NULL", wp_json_encode( $grade['answer'] ), $grade['fraction'], (int) $item['id'] ) );
+						$updated = $wpdb->query( $wpdb->prepare( 'UPDATE %i SET response=%s, fraction=%f, correct=0, tries=tries+1 WHERE id=%d AND answered_at IS NULL', $table, wp_json_encode( $grade['answer'] ), $grade['fraction'], (int) $item['id'] ) );
 						if ( 1 !== $updated ) {
 							throw new \RuntimeException( 'Item already answered' ); }
 						if ( $first ) {
@@ -665,7 +717,7 @@ final class Sessions {
 			);
 		}
 		$receipt = hash_hmac( 'sha256', $session['uuid'] . ':' . $item['id'] . ':' . $grade['fraction'], wp_salt( 'auth' ) );
-		$closed  = $wpdb->query( $wpdb->prepare( "UPDATE $table SET response=%s, fraction=%f, correct=1, assisted=1, tries=tries+1, receipt=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL", wp_json_encode( $grade['answer'] ), $grade['fraction'], $receipt, current_time( 'mysql', true ), (int) $item['id'] ) );
+		$closed  = $wpdb->query( $wpdb->prepare( 'UPDATE %i SET response=%s, fraction=%f, correct=1, assisted=1, tries=tries+1, receipt=%s, answered_at=%s WHERE id=%d AND answered_at IS NULL', $table, wp_json_encode( $grade['answer'] ), $grade['fraction'], $receipt, current_time( 'mysql', true ), (int) $item['id'] ) );
 		if ( 1 !== $closed ) {
 			return $taken; }
 		return array(
@@ -679,7 +731,11 @@ final class Sessions {
 		);
 	}
 
-	/** What the correct response was, in the item's own tokens (revealed only after answering). */
+	/** What the correct response was, in the item's own tokens (revealed only after answering).
+	 *
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 * @param mixed            $scope Scope.
+	 */
 	private static function feedback( QuestionSnapshot $snapshot, $scope ) {
 		$settings = $snapshot->get_settings();
 		$correct  = $snapshot->get_correct_options();
@@ -735,6 +791,9 @@ final class Sessions {
 	 * after it. Never affects grading. A hint counts as assisted exactly like the authored hint.
 	 *
 	 * @return array|\WP_Error
+	 * @param array $session Session.
+	 * @param mixed $item_id Item identifier.
+	 * @param mixed $kind Kind.
 	 */
 	public static function ai_help( array $session, $item_id, $kind ) {
 		global $wpdb;
@@ -763,7 +822,11 @@ final class Sessions {
 		return new \WP_Error( 'ohmylms_practice_item', __( 'This question is not part of the session.', 'ohmylms' ), array( 'status' => 404 ) );
 	}
 
-	/** Reveal the hint; the item no longer counts as independent evidence. */
+	/** Reveal the hint; the item no longer counts as independent evidence.
+	 *
+	 * @param array $session Session.
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function hint( array $session, $item_id ) {
 		global $wpdb;
 		if ( \OhMyLMS\Placement\Placement::MODE === $session['mode'] ) {

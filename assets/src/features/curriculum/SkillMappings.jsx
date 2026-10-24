@@ -29,11 +29,10 @@ const RELATIONS = () => [
  * Explicit links from the skills in this curriculum item to shared skills. Skills with the same
  * name are never merged automatically: each keeps its own requirements, difficulty and evidence.
  * @param root0
- * @param root0.item
  * @param root0.detail
  * @param root0.onChange
  */
-export function SkillMappings( { item, detail, onChange } ) {
+export function SkillMappings( { detail, onChange } ) {
 	useCurriculum();
 	const skills = detail.links?.skill || [];
 	if ( ! skills.length ) {

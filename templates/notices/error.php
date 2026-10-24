@@ -17,7 +17,7 @@ $className = count( $notices ) === 1 ? 'only-one-error' : '';
 ?>
 <div class="ohmylms-error-notices">
 	<div class="ohmylms-NoticeGroup">
-		<ul class="ohmylms-error <?php echo $className; ?>" role="alert">
+		<ul class="ohmylms-error <?php echo esc_attr( $className ); ?>" role="alert">
 			<?php
 			foreach ( $notices as $notice ) :
 				?>

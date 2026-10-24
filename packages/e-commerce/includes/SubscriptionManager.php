@@ -47,7 +47,7 @@ class SubscriptionManager {
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object for which the subscription is created.
 	 * @param int                          $membership_id The ID of the membership plan post.
 	 * @param array                        $gateway_meta Optional. Metadata from the payment gateway.
-	 *                                                   Expected keys: 'customer_id', 'payment_method_token'.
+	 *                                                                                                 Expected keys: 'customer_id', 'payment_method_token'.
 	 * @return int|\WP_Error The new subscription post ID on success, or \WP_Error on failure.
 	 */
 	public static function create_subscription( $order, $membership_id, $gateway_meta = array() ) {
@@ -68,6 +68,7 @@ class SubscriptionManager {
 		$subscription_data = array(
 			'post_type'   => self::POST_TYPE,
 			'post_title'  => sprintf(
+				/* translators: %1$s: text value; %2$s: text value. */
 				__( 'Subscription for Order #%1$s - Membership: %2$s', 'ohmylms' ),
 				$order->get_id(),
 				get_the_title( $membership_id )
@@ -136,7 +137,8 @@ class SubscriptionManager {
 		update_post_meta( $subscription_id, '_created_via', 'checkout' );
 		update_post_meta( $subscription_id, '_last_payment_date', current_time( 'mysql' ) );
 		update_post_meta( $order->get_id(), '_subscription_id', $subscription_id );
-		self::add_subscription_note( $subscription_id, sprintf( __( 'Subscription record created. Related Order ID: #%1$d, Membership ID: #%2$d.', 'ohmylms' ), $order->get_id(), $membership_id ) );
+		self::add_subscription_note( $subscription_id, sprintf( /* translators: %1$d: number; %2$d: number. */
+		__( 'Subscription record created. Related Order ID: #%1$d, Membership ID: #%2$d.', 'ohmylms' ), $order->get_id(), $membership_id ) );
 		return $subscription_id;
 	}
 
@@ -145,10 +147,10 @@ class SubscriptionManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int|\WP_Post $subscription_ref   Subscription post ID or object. Can be 0 if post not yet created (note will not be saved).
-	 * @param string       $note               The note content.
-	 * @param bool         $is_customer_note   Optional. Whether this is a customer-visible note. Default false.
-	 *                                         (Currently not implemented with specific visibility for subscriptions).
+	 * @param int|\WP_Post $subscription_ref Subscription post ID or object. Can be 0 if post not yet created (note will not be saved).
+	 * @param string       $note The note content.
+	 * @param bool         $is_customer_note Optional. Whether this is a customer-visible note. Default false.
+	 *                                                         (Currently not implemented with specific visibility for subscriptions).
 	 * @return int|false Comment ID on success, false on failure or if $subscription_ref is invalid/0.
 	 */
 	public static function add_subscription_note( $subscription_ref, $note, $is_customer_note = false ) {
@@ -178,9 +180,8 @@ class SubscriptionManager {
 		// If a logged-in user is performing an action that generates a note.
 		if ( is_user_logged_in() ) {
 			$current_user = wp_get_current_user();
-			// Check if current user can edit this specific subscription post or has a general capability.
-			// 'manage_subscriptions' is a hypothetical capability; replace with actual if available.
-			if ( current_user_can( 'edit_post', $post_id ) || current_user_can( 'manage_subscriptions' ) ) {
+			// Attribute the note only to a user who can edit this subscription.
+			if ( current_user_can( 'edit_post', $post_id ) ) {
 				$comment_author       = $current_user->display_name;
 				$comment_author_email = $current_user->user_email;
 				$comment_author_url   = $current_user->user_url;
@@ -314,6 +315,7 @@ class SubscriptionManager {
 	 * @since 1.0.0
 	 *
 	 * @param int $subscription_id The subscription ID.
+	 * @param int $user_id User identifier.
 	 * @return bool True if status updated successfully, false otherwise.
 	 */
 	public static function mark_subscription_cancelled( $subscription_id, $user_id = 0 ) {
@@ -324,7 +326,8 @@ class SubscriptionManager {
 			if ( $user_id ) {
 				$user = get_user_by( 'id', $user_id );
 				if ( $user && $user->exists() ) {
-					self::add_subscription_note( $subscription_id, sprintf( __( 'Subscription cancelled by user: %s.', 'ohmylms' ), $user->display_name ) );
+					self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+					__( 'Subscription cancelled by user: %s.', 'ohmylms' ), $user->display_name ) );
 				} else {
 					self::add_subscription_note( $subscription_id, __( 'Subscription status changed to Cancelled.', 'ohmylms' ) );
 				}
@@ -366,7 +369,7 @@ class SubscriptionManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int    $subscription_id   The subscription ID.
+	 * @param int    $subscription_id The subscription ID.
 	 * @param string $new_status_slug The new status slug (e.g., 'active', 'on-hold', without 'ohmylms' prefix).
 	 * @return bool True on success, false on failure.
 	 */
@@ -418,7 +421,7 @@ class SubscriptionManager {
 	 * @since 1.0.0
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object for which the subscription is created.
-	 * @param $membership
+	 * @param mixed                        $membership_id Membership identifier.
 	 * @return array An associative array with 'start_date', 'trial_end_date', 'next_payment_date', and 'end_date'.
 	 */
 	private static function calculate_subscription_dates( $order, $membership_id ) {
@@ -480,9 +483,9 @@ class SubscriptionManager {
 	 *
 	 * @since 1.0.0
 	 *
-	 * @param int  $subscription_id        The subscription ID.
-	 * @param int  $next_payment_gmt_ts    GMT timestamp for the next payment.
-	 * @param bool $is_retry               Optional. Whether this is a retry attempt (for logging purposes). Default false.
+	 * @param int  $subscription_id The subscription ID.
+	 * @param int  $next_payment_gmt_ts GMT timestamp for the next payment.
+	 * @param bool $is_retry Optional. Whether this is a retry attempt (for logging purposes). Default false.
 	 */
 	public static function schedule_renewal_payment( $subscription_id, $next_payment_gmt_ts, $is_retry = false ) {
 		$subscription_id     = absint( $subscription_id );
@@ -506,6 +509,7 @@ class SubscriptionManager {
 				self::add_subscription_note(
 					$subscription_id,
 					sprintf(
+						/* translators: %1$s: text value; %2$s: text value; %3$s: text value. */
 						__( 'Subscription scheduled to expire on %1$s GMT (%2$s site time). Action ID: %3$s.', 'ohmylms' ),
 						$formatted_gmt,
 						$formatted_local,
@@ -515,12 +519,14 @@ class SubscriptionManager {
 			} else {
 				$note = $is_retry
 					? sprintf(
+						/* translators: %1$s: text value; %2$s: text value; %3$s: text value. */
 						__( 'Subscription renewal payment retry scheduled for %1$s GMT (%2$s site time). Action ID: %3$s.', 'ohmylms' ),
 						$formatted_gmt,
 						$formatted_local,
 						$action_id
 					)
 					: sprintf(
+						/* translators: %1$s: text value; %2$s: text value; %3$s: text value. */
 						__( 'Next subscription renewal payment scheduled for %1$s GMT (%2$s site time). Action ID: %3$s.', 'ohmylms' ),
 						$formatted_gmt,
 						$formatted_local,
@@ -531,7 +537,8 @@ class SubscriptionManager {
 			}
 			update_post_meta( $subscription_id, '_scheduled_renewal_action_id', $action_id );
 		} else {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Failed to schedule next subscription renewal payment for %s GMT.', 'ohmylms' ), gmdate( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_payment_gmt_ts ) ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Failed to schedule next subscription renewal payment for %s GMT.', 'ohmylms' ), gmdate( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $next_payment_gmt_ts ) ) );
 		}
 	}
 
@@ -594,7 +601,8 @@ class SubscriptionManager {
 
 		// Only process if active or on-hold.
 		if ( ! in_array( $status, array( 'active', 'on-hold' ), true ) ) {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Subscription renewal skipped. Current status is "%s".', 'ohmylms' ), esc_html( $status ) ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Subscription renewal skipped. Current status is "%s".', 'ohmylms' ), esc_html( $status ) ) );
 			return;
 		}
 
@@ -630,7 +638,8 @@ class SubscriptionManager {
 
 		$original_order = ohmylms_ecommerce_get_order( $original_order_id );
 		if ( ! $original_order ) {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Original order #%d not found. Cannot process renewal.', 'ohmylms' ), $original_order_id ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %d: number. */
+			__( 'Original order #%d not found. Cannot process renewal.', 'ohmylms' ), $original_order_id ) );
 			self::mark_subscription_on_hold( $subscription_id );
 			return;
 		}
@@ -654,7 +663,8 @@ class SubscriptionManager {
 
 		$gateway = $available_gateways[ $gateway_id ];
 		if ( ! isset( $available_gateways[ $gateway_id ] ) ) {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Payment gateway "%s" not found or inactive.', 'ohmylms' ), esc_html( $gateway_id ) ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Payment gateway "%s" not found or inactive.', 'ohmylms' ), esc_html( $gateway_id ) ) );
 			self::mark_subscription_on_hold( $subscription_id );
 			return;
 		}
@@ -705,17 +715,20 @@ class SubscriptionManager {
 			}
 
 			$renewal_order_id = $renewal_order->save();
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Renewal order #%d created.', 'ohmylms' ), $renewal_order_id ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %d: number. */
+			__( 'Renewal order #%d created.', 'ohmylms' ), $renewal_order_id ) );
 			$renewal_order->add_order_note( __( 'Order created for subscription renewal.', 'ohmylms' ) );
 			update_post_meta( $subscription_id, '_last_renewal_order_id', $renewal_order_id );
 		} catch ( \Exception $e ) {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Failed to create renewal order: %s', 'ohmylms' ), $e->getMessage() ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Failed to create renewal order: %s', 'ohmylms' ), $e->getMessage() ) );
 			return;
 		}
 
 		// Check if gateway supports recurring payment.
 		if ( ! method_exists( $gateway, 'process_recurring_payment' ) ) {
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Gateway "%s" missing recurring payment method.', 'ohmylms' ), esc_html( $gateway->get_title() ) ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Gateway "%s" missing recurring payment method.', 'ohmylms' ), esc_html( $gateway->get_title() ) ) );
 			self::mark_subscription_on_hold( $subscription_id );
 			return;
 		}
@@ -723,7 +736,8 @@ class SubscriptionManager {
 		$payment_result = $gateway->process_recurring_payment( $original_order_id, $renewal_order_id, $amount_to_charge, $subscription_id, $student_id );
 		if ( is_wp_error( $payment_result ) || ( isset( $payment_result['result'] ) && 'failure' === $payment_result['result'] ) || ( isset( $payment_result['status'] ) && 'failed' === $payment_result['status'] ) ) {
 			$error_message = is_wp_error( $payment_result ) ? $payment_result->get_error_message() : ( $payment_result['message'] ?? __( 'Unknown payment error.', 'ohmylms' ) );
-			self::add_subscription_note( $subscription_id, sprintf( __( 'Renewal payment failed: %s', 'ohmylms' ), esc_html( $error_message ) ) );
+			self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+			__( 'Renewal payment failed: %s', 'ohmylms' ), esc_html( $error_message ) ) );
 			self::mark_subscription_on_hold( $subscription_id );
 			$renewal_order->set_status( 'failed' );
 			$renewal_order->save();
@@ -732,7 +746,8 @@ class SubscriptionManager {
 		}
 
 		$transaction_id = isset( $payment_result['transaction_id'] ) ? sanitize_text_field( $payment_result['transaction_id'] ) : __( 'N/A', 'ohmylms' );
-		self::add_subscription_note( $subscription_id, sprintf( __( 'Renewal payment successful. Transaction ID: %s', 'ohmylms' ), $transaction_id ) );
+		self::add_subscription_note( $subscription_id, sprintf( /* translators: %s: text value. */
+		__( 'Renewal payment successful. Transaction ID: %s', 'ohmylms' ), $transaction_id ) );
 
 		if ( ! empty( $payment_result['transaction_id'] ) ) {
 			update_post_meta( $subscription_id, '_last_renewal_transaction_id', $transaction_id );
@@ -778,7 +793,8 @@ class SubscriptionManager {
 		update_post_meta( $renewal_order_id, '_subscription_renewal_id', $subscription_id );
 		self::add_subscription_note(
 			$subscription_id,
-			sprintf( __( 'Next payment date set to %s.', 'ohmylms' ), $new_next_payment_date )
+			sprintf( /* translators: %s: text value. */
+			__( 'Next payment date set to %s.', 'ohmylms' ), $new_next_payment_date )
 		);
 
 		self::mark_subscription_active( $subscription_id );
@@ -806,8 +822,8 @@ class SubscriptionManager {
 	/**
 	 * Copy all meta from the order post to the subscription post, skipping protected meta keys.
 	 *
-	 * @param int $order_id
-	 * @param int $subscription_id
+	 * @param int $order_id Order identifier.
+	 * @param int $subscription_id Subscription identifier.
 	 */
 	private static function copy_order_meta_to_subscription( $order_id, $subscription_id ) {
 		$order_id        = absint( $order_id );

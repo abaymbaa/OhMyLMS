@@ -165,8 +165,8 @@ class TaxService {
 	/**
 	 * Get tax rate for specific country and state
 	 *
-	 * @param string $country Country code
-	 * @param string $state State code
+	 * @param string $country Country code.
+	 * @param string $state State code.
 	 * @return float Tax rate percentage
 	 */
 	public function get_tax_rate_for_location( $country, $state = '' ) {
@@ -217,7 +217,7 @@ class TaxService {
 	/**
 	 * Get states for specific country
 	 *
-	 * @param string $country Country code
+	 * @param string $country Country code.
 	 * @return array
 	 */
 	public function get_states_for_country( $country ) {
@@ -230,7 +230,7 @@ class TaxService {
 	/**
 	 * Get country name by code
 	 *
-	 * @param string $country_code Country code
+	 * @param string $country_code Country code.
 	 * @return string Country name
 	 */
 	public function get_country_name( $country_code ) {
@@ -248,8 +248,8 @@ class TaxService {
 	/**
 	 * Get state name by code
 	 *
-	 * @param string $country_code Country code
-	 * @param string $state_code State code
+	 * @param string $country_code Country code.
+	 * @param string $state_code State code.
 	 * @return string State name
 	 */
 	public function get_state_name( $country_code, $state_code ) {
@@ -267,8 +267,8 @@ class TaxService {
 	/**
 	 * Check if location has tax
 	 *
-	 * @param string $country Country code
-	 * @param string $state State code
+	 * @param string $country Country code.
+	 * @param string $state State code.
 	 * @return bool
 	 */
 	public function location_has_tax( $country, $state = '' ) {
@@ -283,8 +283,8 @@ class TaxService {
 	/**
 	 * Calculate tax amount for given total
 	 *
-	 * @param float $total Total amount
-	 * @param float $tax_rate Tax rate percentage
+	 * @param float $total Total amount.
+	 * @param float $tax_rate Tax rate percentage.
 	 */
 	public function calculate_tax( $total, $tax_rate ) {
 		if ( $this->prices_include_tax() ) {
@@ -310,9 +310,9 @@ class TaxService {
 	 *
 	 * This function retrieves the tax rate for a given country and state.
 	 *
-	 * @param string $country Country code
+	 * @param string $country Country code.
 	 * @param string $state State code (optional)
-	 *
+	 * .
 	 * @since 1.0.0
 	 * @return float Tax rate percentage
 	 */
@@ -416,7 +416,7 @@ class TaxService {
 	 *
 	 * This function checks if the given country code is part of the EU countries.
 	 *
-	 * @param string $country Country code to check
+	 * @param string $country Country code to check.
 	 * @return bool True if the country is an EU country, false otherwise
 	 * @since 1.0.0
 	 */

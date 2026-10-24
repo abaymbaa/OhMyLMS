@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 import { validateRefund } from './model.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement, useId } from '@wordpress/element';
@@ -67,7 +68,7 @@ export function createOrderItems( readRuntime ) {
 					I18n.__
 				);
 				if ( ! validation.valid ) {
-					alert( validation.error );
+					showRequestError( validation.error );
 					return;
 				}
 				setSubmitting( true );

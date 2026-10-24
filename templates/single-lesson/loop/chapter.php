@@ -22,14 +22,14 @@ ohmylms_enqueue_interactivity_module( 'ohmylms/ui' );
 ?>
 
 
-<div class="ohmylms-accordion-item <?php echo $is_active; ?>" data-wp-interactive="ohmylms/ui" <?php echo wp_interactivity_data_wp_context( array( 'open' => (bool) $is_active ) ); ?> data-wp-class--active="context.open">
-	<div class="ohmylms-accordion-head" role="button" tabindex="0" aria-expanded="<?php echo $is_active ? 'true' : 'false'; ?>" data-wp-bind--aria-expanded="context.open" data-wp-on--click="actions.toggle" data-wp-on--keydown="actions.keyToggle" aria-controls="lms-accordion-body-<?php echo $chapter_id; ?>" id="lms-accordion-head-<?php echo $chapter_id; ?>">
+<div class="ohmylms-accordion-item <?php echo esc_attr( $is_active ); ?>" data-wp-interactive="ohmylms/ui" <?php echo wp_interactivity_data_wp_context( array( 'open' => (bool) $is_active ) ); ?> data-wp-class--active="context.open">
+	<div class="ohmylms-accordion-head" role="button" tabindex="0" aria-expanded="<?php echo esc_attr( $is_active ? 'true' : 'false' ); ?>" data-wp-bind--aria-expanded="context.open" data-wp-on--click="actions.toggle" data-wp-on--keydown="actions.keyToggle" aria-controls="lms-accordion-body-<?php echo esc_attr( $chapter_id ); ?>" id="lms-accordion-head-<?php echo esc_attr( $chapter_id ); ?>">
 		<?php
 		$is_lesson_completed = $chapter->maybe_all_content_is_completed( get_current_user_id() );
 		$lessonProgress      = $chapter->total_completion_rate( get_current_user_id() );
 		?>
 		<p class="ohmylms-accordion-title">
-			<?php echo $chapter_title; ?>
+			<?php echo esc_html( $chapter_title ); ?>
 			<span class="publish-date">Released on <?php echo date( 'M d, Y', strtotime( $chapter->get_date_created() ) ); ?></span>
 		</p>
 		<div class="lesson-content-progrss">
@@ -40,7 +40,7 @@ ohmylms_enqueue_interactivity_module( 'ohmylms/ui' );
 				?>
 				<span class="ohmylms-circle-progressbar">
 					<?php echo ohmylms_circular_progressbar( 36, $lessonProgress, 2, '#E2E4EA', '#19AA32' ); ?>
-					<small><?php echo $lessonProgress . '%'; ?></small>
+					<small><?php echo esc_html( $lessonProgress . '%' ); ?></small>
 				</span>
 				<?php
 			}
@@ -48,7 +48,7 @@ ohmylms_enqueue_interactivity_module( 'ohmylms/ui' );
 		</div>
 	</div>
 
-	<div class="ohmylms-accordion-body" id="lms-accordion-body-<?php echo $chapter_id; ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo $chapter_id; ?>" style="display: <?php echo $display; ?>" data-wp-style--display="state.display">
+	<div class="ohmylms-accordion-body" id="lms-accordion-body-<?php echo esc_attr( $chapter_id ); ?>" role="region" aria-labelledby="lms-accordion-head-<?php echo esc_attr( $chapter_id ); ?>" style="display: <?php echo esc_attr( $display ); ?>" data-wp-style--display="state.display">
 		<ul class="ohmylms-lesson-list">
 			<?php
 			foreach ( $chapter_lessons as $lesson ) {

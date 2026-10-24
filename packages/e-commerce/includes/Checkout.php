@@ -12,6 +12,9 @@ use OhMyLMS\user\UserRepository;
 use OhMyLMS\Commerce\Data\Order;
 use OhMyLMS\Commerce\SubscriptionManager;
 
+/**
+ * Plugin checkout implementation.
+ */
 class Checkout {
 
 	/**
@@ -53,7 +56,7 @@ class Checkout {
 	/**
 	 * Get checkout fields
 	 *
-	 * @param string $fieldset
+	 * @param string $fieldset Fieldset.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -421,7 +424,8 @@ class Checkout {
 					}
 					$point_debited          = true;
 					$point_payment_complete = false;
-					$order->add_order_note( sprintf( __( 'Purchased by bonus point(%1$d PTS)', 'ohmylms' ), $points ) );
+					$order->add_order_note( sprintf( /* translators: %1$d: number. */
+					__( 'Purchased by bonus point(%1$d PTS)', 'ohmylms' ), $points ) );
 					update_post_meta( $order_id, '_purchased_by', 'point' );
 					update_post_meta( $order_id, '_purchased_point', $points );
 					$order->set_total( 0 );
@@ -517,10 +521,12 @@ class Checkout {
 							$gateway_meta_data = isset( $result['gateway_meta'] ) && is_array( $result['gateway_meta'] ) ? $result['gateway_meta'] : array();
 							$subscription_id   = SubscriptionManager::create_subscription( $order, $posted_data['membership_id'], $gateway_meta_data );
 							if ( is_wp_error( $subscription_id ) ) {
-								$order->add_order_note( sprintf( __( 'Automated subscription creation failed. Error: %s', 'ohmylms' ), $subscription_id->get_error_message() ) );
+								$order->add_order_note( sprintf( /* translators: %s: text value. */
+								__( 'Automated subscription creation failed. Error: %s', 'ohmylms' ), $subscription_id->get_error_message() ) );
 							} elseif ( $subscription_id ) {
 								SubscriptionManager::mark_subscription_active( $subscription_id );
-								$order->add_order_note( sprintf( __( 'Subscription #%1$d created and activated for membership: %2$s.', 'ohmylms' ), $subscription_id, get_the_title( $posted_data['membership_id'] ) ) );
+								$order->add_order_note( sprintf( /* translators: %1$d: number; %2$s: text value. */
+								__( 'Subscription #%1$d created and activated for membership: %2$s.', 'ohmylms' ), $subscription_id, get_the_title( $posted_data['membership_id'] ) ) );
 							}
 						}
 					}
@@ -583,7 +589,7 @@ class Checkout {
 	 * Maybe purchase by point.
 	 * This function checks if the course is being purchased using points.
 	 *
-	 * @param array $cart_item The cart item to check.
+	 * @param mixed $cart_items Cart items.
 	 * @return bool True if the course is purchased by points, false otherwise.
 	 *
 	 * @since 1.0.0
@@ -684,7 +690,7 @@ class Checkout {
 	/**
 	 * Validate enrollment
 	 *
-	 * @param $cart_items
+	 * @param mixed $cart_items Cart items.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -715,8 +721,8 @@ class Checkout {
 	/**
 	 * Handle enrollment after payment
 	 *
-	 * @param $order_id
-	 * @param $order_items
+	 * @param mixed $order_id Order identifier.
+	 * @param mixed $order_items Order items.
 	 * @return array|null
 	 * @since 1.0.0
 	 */
@@ -745,8 +751,8 @@ class Checkout {
 	/**
 	 * Attempt course enrollment
 	 *
-	 * @param $course_id
-	 * @param $order_id
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $order_id Order identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -785,6 +791,7 @@ class Checkout {
 	 *
 	 * @param array     $data The posted checkout data.
 	 * @param \WP_Error $errors The error object to store validation errors.
+	 * @param bool      $maybe_by_point Maybe by point.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -829,8 +836,8 @@ class Checkout {
 	 * that gateway is chosen. A field the admin has hidden cannot be enforced.
 	 *
 	 * @param \OhMyLMS\Commerce\Abstracts\PaymentGateway $gateway The chosen gateway.
-	 * @param array                                      $data    Posted checkout data.
-	 * @param \WP_Error                                  $errors  Error bag.
+	 * @param array                                      $data Posted checkout data.
+	 * @param \WP_Error                                  $errors Error bag.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -974,7 +981,7 @@ class Checkout {
 	/**
 	 * Update session data
 	 *
-	 * @param $posted_data
+	 * @param mixed $posted_data Posted data.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -988,10 +995,10 @@ class Checkout {
 	/**
 	 * Validate checkout
 	 *
-	 * @param $posted_data
-	 * @param $errors
+	 * @param mixed $posted_data Posted data.
+	 * @param mixed $errors Errors.
 	 * @return void
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function validate_checkout_data( $posted_data, $errors ): void {
@@ -1071,6 +1078,7 @@ class Checkout {
 			}
 
 			$message = sprintf(
+				/* translators: %1$s: text value; %2$s: text value; %3$s: text value; %4$s: text value; %5$s: text value; %6$s: text value; %7$s: text value. */
 				__( 'Hello %1$s,<br><br>Your account has been created on %2$s.<br><br>Username: %3$s<br>Password: %4$s<br><br>You can now log in and access your courses from here: <a href="%5$s">%6$s</a><br><br>You can change your password anytime from your account page after logging in.<br><br>Thank you<br>%7$s', 'ohmylms' ),
 				esc_html( $student_name ),
 				esc_html( get_bloginfo( 'name' ) ),
@@ -1136,8 +1144,8 @@ class Checkout {
 	/**
 	 * Set student to order
 	 *
-	 * @param $order
-	 * @param $student_id
+	 * @param mixed $order Order.
+	 * @param mixed $student_id Student identifier.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -1152,6 +1160,7 @@ class Checkout {
 	 * @return int|\WP_Error The order ID on success, or a WP_Error on failure.
 	 *
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function create_order( $data ) {
 		try {
@@ -1251,11 +1260,7 @@ class Checkout {
 				if ( ohmylms_is_pro() ) {
 					// Check if the record exists.
 					$existing_record = $wpdb->get_var(
-						$wpdb->prepare(
-							"SELECT COUNT(*) FROM $membership_table WHERE user_id = %d AND membership_id = %d",
-							$student_id,
-							$posted_data['membership_id']
-						)
+						$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND membership_id = %d', $membership_table, $student_id, $posted_data['membership_id'] )
 					);
 
 					if ( $existing_record ) {
@@ -1311,13 +1316,7 @@ class Checkout {
 				// batch of the same course (decision log #4, no carry-over).
 				$already_enrolled = $cohort_id
 					? (bool) $wpdb->get_var(
-						$wpdb->prepare(
-							"SELECT COUNT(*) FROM $enrollment_table WHERE user_id = %d AND course_id = %d AND cohort_id = %d AND status = %s",
-							$student_id,
-							$course_id,
-							$cohort_id,
-							'enrolled'
-						)
+						$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND course_id = %d AND cohort_id = %d AND status = %s', $enrollment_table, $student_id, $course_id, $cohort_id, 'enrolled' )
 					)
 					: (bool) $wpdb->get_var(
 						$wpdb->prepare(
@@ -1388,11 +1387,7 @@ class Checkout {
 
 						// Check if the record exists.
 						$existing_record = $wpdb->get_var(
-							$wpdb->prepare(
-								"SELECT COUNT(*) FROM $membership_table WHERE user_id = %d AND membership_id = %d",
-								$student_id,
-								$posted_data['membership_id']
-							)
+							$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE user_id = %d AND membership_id = %d', $membership_table, $student_id, $posted_data['membership_id'] )
 						);
 
 						if ( $existing_record ) {
@@ -1488,7 +1483,7 @@ class Checkout {
 	/**
 	 * Create membership order
 	 *
-	 * @param $posted_data
+	 * @param mixed $posted_data Posted data.
 	 * @return \WP_Error|int
 	 * @since 1.0.0
 	 */
@@ -1500,8 +1495,8 @@ class Checkout {
 	/**
 	 * Process the payment for an order.
 	 *
-	 * @param int    $order_id The ID of the order.
-	 * @param string $payment_method The payment method to use.
+	 * @param int   $order_id The ID of the order.
+	 * @param mixed $posted_data Posted data.
 	 * @return array The result of the payment process.
 	 *
 	 * @since 1.0.0
@@ -1547,7 +1542,7 @@ class Checkout {
 	/**
 	 * Handle offline payment
 	 *
-	 * @param $order_id
+	 * @param mixed $order_id Order identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -1629,6 +1624,12 @@ class Checkout {
 		}
 	}
 
+	/**
+	 * Set coupon meta for Checkout.
+	 *
+	 * @param mixed $order Order.
+	 * @param mixed $cart Cart.
+	 */
 	private function set_coupon_meta( $order, $cart ) {
 		foreach ( $cart->get_coupons() as $code => $coupon ) {
 			$current_uses = get_post_meta( $coupon->get_id(), 'usage_count', true );

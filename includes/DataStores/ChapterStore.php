@@ -45,7 +45,7 @@ class ChapterStore extends DataStore {
 	/**
 	 * Create chapter
 	 *
-	 * @param Chapter $chapter
+	 * @param Chapter $chapter Chapter.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -102,9 +102,9 @@ class ChapterStore extends DataStore {
 	/**
 	 * Read data
 	 *
-	 * @param Chapter $chapter
+	 * @param Chapter $chapter Chapter.
 	 * @return mixed|void
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function read( &$chapter ) {
@@ -197,8 +197,8 @@ class ChapterStore extends DataStore {
 	/**
 	 * Delete the chapter
 	 *
-	 * @param $chapter
-	 * @param array $args
+	 * @param mixed $chapter Chapter.
+	 * @param array $args Operation arguments.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -259,7 +259,8 @@ class ChapterStore extends DataStore {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
-		$values     = array();
+		$values       = array( $table_name );
+		$placeholders = array();
 		foreach ( $lessons as $index => $lesson ) {
 			$values[] = $chapter_id;
 			$values[] = $lesson['id'];
@@ -272,7 +273,7 @@ class ChapterStore extends DataStore {
 
 		// Construct the query with ON DUPLICATE KEY UPDATE.
 		$insert_query = "
-			INSERT INTO $table_name (chapter_id, content_id, order_number, content_type)
+			INSERT INTO %i (chapter_id, content_id, order_number, content_type)
 			VALUES " . implode( ', ', $placeholders ) . '
 			ON DUPLICATE KEY UPDATE
 			order_number = VALUES(order_number)
@@ -316,7 +317,7 @@ class ChapterStore extends DataStore {
 	/**
 	 * Helper function that reads chapter data
 	 *
-	 * @param Chapter $chapter
+	 * @param Chapter $chapter Chapter.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -336,8 +337,8 @@ class ChapterStore extends DataStore {
 	/**
 	 * Helper function that updates chapter meta
 	 *
-	 * @param Chapter $chapter
-	 * @param bool    $force
+	 * @param Chapter $chapter Chapter.
+	 * @param bool    $force Force.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -362,6 +363,7 @@ class ChapterStore extends DataStore {
 	 * @return array The list of lessons.
 	 *
 	 * @since 1.0.0
+	 * @param string  $return_type Return type.
 	 */
 	public function get_lessons( &$chapter, $return_type = 'array' ) {
 		$chapter_id = $chapter->get_id();
@@ -377,10 +379,7 @@ class ChapterStore extends DataStore {
 			global $wpdb;
 			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
-					$chapter_id
-				)
+				$wpdb->prepare( 'SELECT * FROM %i WHERE chapter_id = %d ORDER BY order_number ASC', $table_name, $chapter_id )
 			);
 		}
 
@@ -469,14 +468,21 @@ class ChapterStore extends DataStore {
 		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 
-		// Prepare the SQL query with search terms.
-		$sql = "SELECT * FROM {$table_name} WHERE chapter_id = %d";
 		if ( ! empty( $term ) ) {
-			$sql    .= " AND content_id IN (SELECT ID FROM {$wpdb->posts} WHERE post_type = 'ohmylms-lesson' AND post_title LIKE %s)";
 			$search  = '%' . $wpdb->esc_like( $term ) . '%';
-			$lessons = $wpdb->get_results( $wpdb->prepare( $sql . ' ORDER BY order_number ASC', $chapter_id, $search ) );
+			$lessons = $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM %i WHERE chapter_id = %d AND content_id IN (SELECT ID FROM %i WHERE post_type = 'ohmylms-lesson' AND post_title LIKE %s) ORDER BY order_number ASC",
+					$table_name,
+					$chapter_id,
+					$wpdb->posts,
+					$search
+				)
+			);
 		} else {
-			$lessons = $wpdb->get_results( $wpdb->prepare( $sql . ' ORDER BY order_number ASC', $chapter_id ) );
+			$lessons = $wpdb->get_results(
+				$wpdb->prepare( 'SELECT * FROM %i WHERE chapter_id = %d ORDER BY order_number ASC', $table_name, $chapter_id )
+			);
 		}
 
 		$filtered_lessons = array();
@@ -492,6 +498,11 @@ class ChapterStore extends DataStore {
 		return $filtered_lessons;
 	}
 
+	/**
+	 * Get all contents for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 */
 	public function get_all_contents( &$chapter ) {
 		$chapter_id = $chapter->get_id();
 		$cache_key  = $chapter_id . '_all_contents';
@@ -505,10 +516,7 @@ class ChapterStore extends DataStore {
 			global $wpdb;
 			$table_name                              = $wpdb->prefix . 'ohmylms_content_relationship';
 			self::$raw_contents_cache[ $chapter_id ] = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT * FROM {$table_name} WHERE chapter_id = %d ORDER BY order_number ASC",
-					$chapter_id
-				)
+				$wpdb->prepare( 'SELECT * FROM %i WHERE chapter_id = %d ORDER BY order_number ASC', $table_name, $chapter_id )
 			);
 		}
 
@@ -525,6 +533,11 @@ class ChapterStore extends DataStore {
 	}
 
 
+	/**
+	 * Get lesson count for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 */
 	public function get_lesson_count( &$chapter ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
@@ -533,6 +546,11 @@ class ChapterStore extends DataStore {
 		return count( $lessons );
 	}
 
+	/**
+	 * Get all content count for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 */
 	public function get_all_content_count( &$chapter ) {
 		$chapter_id = $chapter->get_id();
 
@@ -546,10 +564,12 @@ class ChapterStore extends DataStore {
 
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(r.content_id)
-				FROM {$table_name} r
-				INNER JOIN {$posts_table} p ON r.content_id = p.ID
-				WHERE r.chapter_id = %d AND p.post_status = %s",
+				'SELECT COUNT(r.content_id)
+				FROM %i r
+				INNER JOIN %i p ON r.content_id = p.ID
+				WHERE r.chapter_id = %d AND p.post_status = %s',
+				$table_name,
+				$posts_table,
 				$chapter_id,
 				'publish'
 			)
@@ -560,20 +580,28 @@ class ChapterStore extends DataStore {
 		return $result;
 	}
 
+	/**
+	 * Get content by order for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 * @param mixed $order Order.
+	 */
 	public function get_content_by_order( &$chapter, $order ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_content_relationship';
 		$chapter_id = $chapter->get_id();
 		$lesson     = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$table_name} WHERE chapter_id = %d AND order_number = %d",
-				$chapter_id,
-				$order
-			)
+			$wpdb->prepare( 'SELECT * FROM %i WHERE chapter_id = %d AND order_number = %d', $table_name, $chapter_id, $order )
 		);
 		return $lesson;
 	}
 
+	/**
+	 * Completed content count for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function completed_content_count( &$chapter, $student_id ) {
 		$get_all_content = $this->get_all_contents( $chapter );
 		$completed_count = 0;
@@ -608,17 +636,29 @@ class ChapterStore extends DataStore {
 	}
 
 
+	/**
+	 * Total completion rate for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function total_completion_rate( $chapter, $student_id ) {
 		$completed_count = $this->completed_content_count( $chapter, $student_id );
 
 		$total_content   = $this->get_all_content_count( $chapter );
 		$completion_rate = 0;
-		if ( $total_content > 0 ) {
+		if ( 0 < $total_content ) {
 			$completion_rate = number_format( ( $completed_count / $total_content ) * 100, 0 );
 		}
 		return $completion_rate;
 	}
 
+	/**
+	 * Maybe content all completed for Chapter store.
+	 *
+	 * @param mixed $chapter Chapter.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function maybe_content_all_completed( &$chapter, $student_id ) {
 		$completed_count = $this->completed_content_count( $chapter, $student_id );
 		$total_content   = $this->get_all_content_count( $chapter );

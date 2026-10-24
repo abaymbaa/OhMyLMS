@@ -10,24 +10,61 @@ defined( 'ABSPATH' ) || exit;
 
 /** Merchant V2 client. Tokens are isolated by environment AND credentials. */
 class QPayAPI {
+	/**
+	 * Id.
+	 *
+	 * @var mixed
+	 */
 	private $id;
+	/**
+	 * Secret.
+	 *
+	 * @var mixed
+	 */
 	private $secret;
+	/**
+	 * Sandbox.
+	 *
+	 * @var mixed
+	 */
 	private $sandbox;
 
+	/**
+	 * Initialize Qpay api.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $secret Secret.
+	 * @param mixed $sandbox Sandbox.
+	 */
 	public function __construct( $id, $secret, $sandbox ) {
 		$this->id      = (string) $id;
 		$this->secret  = (string) $secret;
 		$this->sandbox = (bool) $sandbox;
 	}
 
+	/**
+	 * Fingerprint for Qpay api.
+	 */
 	public function fingerprint() {
 		return hash_hmac( 'sha256', $this->id . ':' . $this->secret, wp_salt( 'auth' ) );
 	}
 
+	/**
+	 * Token key for Qpay api.
+	 */
 	private function token_key() {
 		return 'ohmylms_qpay_v2_' . ( $this->sandbox ? 'test_' : 'live_' ) . $this->fingerprint();
 	}
 
+	/**
+	 * Request for Qpay api.
+	 *
+	 * @param mixed  $path Path.
+	 * @param mixed  $body Body.
+	 * @param string $method Method.
+	 * @param bool   $authenticated Authenticated.
+	 * @param bool   $retry Retry.
+	 */
 	private function request( $path, $body = null, $method = 'POST', $authenticated = true, $retry = true ) {
 		$headers = array( 'Content-Type' => 'application/json' );
 		if ( $authenticated ) {
@@ -72,6 +109,9 @@ class QPayAPI {
 		return $data;
 	}
 
+	/**
+	 * Get token for Qpay api.
+	 */
 	private function get_token() {
 		$token = get_transient( $this->token_key() );
 		if ( $token ) {
@@ -94,12 +134,32 @@ class QPayAPI {
 		return $data['access_token'];
 	}
 
+	/**
+	 * Create invoice for Qpay api.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	public function create_invoice( $data ) {
 		return $this->request( 'invoice', $data ); }
+	/**
+	 * Get invoice for Qpay api.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public function get_invoice( $id ) {
 		return $this->request( 'invoice/' . rawurlencode( $id ), null, 'GET' ); }
+	/**
+	 * Cancel invoice for Qpay api.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public function cancel_invoice( $id ) {
 		return $this->request( 'invoice/' . rawurlencode( $id ), null, 'DELETE' ); }
+	/**
+	 * Check payment for Qpay api.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public function check_payment( $id ) {
 		return $this->request(
 			'payment/check',
@@ -114,6 +174,12 @@ class QPayAPI {
 		);
 	}
 
+	/**
+	 * Settings changed for Qpay api.
+	 *
+	 * @param mixed $old Old.
+	 * @param mixed $new New.
+	 */
 	public static function settings_changed( $old, $new ) {
 		foreach ( array( (array) $old, (array) $new ) as $settings ) {
 			foreach ( array( 'test', 'live' ) as $mode ) {

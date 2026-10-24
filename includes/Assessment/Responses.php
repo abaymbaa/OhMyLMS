@@ -20,12 +20,16 @@ final class Responses {
 	 * Save one item's response. Responses must be untokenized option IDs/text already.
 	 *
 	 * @return array|\WP_Error ['item_id','sequence','received_at','accepted'=>bool]
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param array $item Item.
+	 * @param mixed $response Response data.
+	 * @param mixed $sequence Sequence.
 	 */
 	public static function save( $attempt_id, array $item, $response, $sequence ) {
 		global $wpdb;
 		$sequence = max( 0, (int) $sequence );
 		$table    = Schema::table( 'response_drafts' );
-		$existing = $wpdb->get_row( $wpdb->prepare( "SELECT id, sequence FROM $table WHERE attempt_id=%d AND item_id=%d", $attempt_id, $item['id'] ), ARRAY_A );
+		$existing = $wpdb->get_row( $wpdb->prepare( 'SELECT id, sequence FROM %i WHERE attempt_id=%d AND item_id=%d', $table, $attempt_id, $item['id'] ), ARRAY_A );
 		$now      = current_time( 'mysql', true );
 		if ( $existing && (int) $existing['sequence'] > $sequence ) {
 			return array(
@@ -76,12 +80,17 @@ final class Responses {
 		);
 	}
 
-	/** @return array question_id => response for every server-received draft. */
+	/**
+	 * Saved for Responses.
+	 *
+	 * @return array question_id => response for every server-received draft.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function saved( $attempt_id ) {
 		global $wpdb;
 		$drafts = Schema::table( 'response_drafts' );
 		$items  = Schema::table( 'attempt_items' );
-		$rows   = $wpdb->get_results( $wpdb->prepare( "SELECT i.question_id, d.response FROM $drafts d JOIN $items i ON i.id=d.item_id AND i.attempt_id=d.attempt_id WHERE d.attempt_id=%d", (int) $attempt_id ), ARRAY_A );
+		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT i.question_id, d.response FROM %i d JOIN %i i ON i.id=d.item_id AND i.attempt_id=d.attempt_id WHERE d.attempt_id=%d', $drafts, $items, (int) $attempt_id ), ARRAY_A );
 		$result = array();
 		foreach ( $rows as $row ) {
 			$value = json_decode( $row['response'], true );
@@ -91,10 +100,13 @@ final class Responses {
 		return $result;
 	}
 
-	/** Saved drafts keyed by item ID, for resuming a delivery. */
+	/** Saved drafts keyed by item ID, for resuming a delivery.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function for_resume( $attempt_id ) {
 		global $wpdb;
-		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT item_id, response, sequence FROM ' . Schema::table( 'response_drafts' ) . ' WHERE attempt_id=%d', (int) $attempt_id ), ARRAY_A );
+		$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT item_id, response, sequence FROM %i WHERE attempt_id=%d', Schema::table( 'response_drafts' ), (int) $attempt_id ), ARRAY_A );
 		$result = array();
 		foreach ( $rows as $row ) {
 			$result[ (int) $row['item_id'] ] = array(

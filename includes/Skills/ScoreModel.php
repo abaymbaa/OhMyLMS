@@ -45,6 +45,9 @@ final class ScoreModel {
 		100 => 'gold',
 	);
 
+	/**
+	 * Defaults for Score model.
+	 */
 	public static function defaults() {
 		return array(
 			// Starting values within the ranges of the math.mn spec; tune them with real data.
@@ -79,7 +82,10 @@ final class ScoreModel {
 		);
 	}
 
-	/** Defaults with any provided values laid over them. */
+	/** Defaults with any provided values laid over them.
+	 *
+	 * @param array $over Over.
+	 */
 	public static function config( array $over = array() ) {
 		$config          = array_merge( self::defaults(), array_diff_key( array_intersect_key( $over, self::defaults() ), array( 'bands' => 1 ) ) );
 		$config['bands'] = self::defaults()['bands'];
@@ -96,7 +102,11 @@ final class ScoreModel {
 		return $config;
 	}
 
-	/** Index of the band a score is in. */
+	/** Index of the band a score is in.
+	 *
+	 * @param mixed $score Score.
+	 * @param array $bands Bands.
+	 */
 	public static function band_index( $score, array $bands ) {
 		$index = 0;
 		foreach ( $bands as $i => $band ) {
@@ -106,12 +116,19 @@ final class ScoreModel {
 		return $index;
 	}
 
-	/** Name of the band: learning, building, proficient or challenge. */
+	/** Name of the band: learning, building, proficient or challenge.
+	 *
+	 * @param mixed $score Score.
+	 * @param array $bands Bands.
+	 */
 	public static function band_name( $score, array $bands ) {
 		return array( 'learning', 'building', 'proficient', 'challenge' )[ self::band_index( $score, $bands ) ];
 	}
 
-	/** Highest medal for a score: bronze at 80, silver at 90, gold at 100; '' below 80. */
+	/** Highest medal for a score: bronze at 80, silver at 90, gold at 100; '' below 80.
+	 *
+	 * @param mixed $score Score.
+	 */
 	public static function medal( $score ) {
 		$medal = '';
 		foreach ( self::MEDALS as $at => $name ) {
@@ -124,12 +141,13 @@ final class ScoreModel {
 	/**
 	 * Run the evidence rows, oldest first.
 	 *
-	 * @param array[] $rows   each: awarded, available, independent, first_try, difficulty; optional grade_event_id
-	 * @param float   $start  the score before the first row
+	 * @param array[] $rows each: awarded, available, independent, first_try, difficulty; optional grade_event_id.
+	 * @param array   $config Config.
+	 * @param float   $start the score before the first row.
 	 * @return array{score:float,floor:int,scored:int,correct:int,peak:float,medal:string,struggling:bool,trace:array}
 	 */
 	public static function run( array $rows, array $config = null, $start = 0.0 ) {
-		$config  = $config ?: self::config();
+		$config  = $config ? $config : self::config();
 		$bands   = $config['bands'];
 		$score   = max( 0.0, min( 100.0, (float) $start ) );
 		$peak    = $score;
@@ -198,9 +216,13 @@ final class ScoreModel {
 	 * point a week, never going below the decay floor. The stored score is untouched.
 	 *
 	 * @return array{score:float,decay:float,review_due:bool,idle_days:int}
+	 * @param mixed $score Score.
+	 * @param mixed $last_scored_ts Last scored ts.
+	 * @param mixed $now Now.
+	 * @param array $config Config.
 	 */
 	public static function effective( $score, $last_scored_ts, $now, array $config = null ) {
-		$config = $config ?: self::config();
+		$config = $config ? $config : self::config();
 		$idle   = $last_scored_ts ? max( 0, (int) floor( ( $now - $last_scored_ts ) / 86400 ) ) : 0;
 		$decay  = 0.0;
 		if ( $score > $config['decay_floor'] && $idle > $config['decay_grace_days'] ) {

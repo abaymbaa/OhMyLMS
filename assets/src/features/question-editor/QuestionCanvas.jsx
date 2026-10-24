@@ -10,7 +10,6 @@ export function createQuestionCanvas( readRuntime ) {
 			Eu,
 			I: Controls,
 			Ie,
-			Iu,
 			Lc,
 			Pu,
 			React,
@@ -27,45 +26,54 @@ export function createQuestionCanvas( readRuntime ) {
 			tu,
 			y: WordPressData,
 		} = readRuntime();
-		const previewOptions = ( 0, WordPressData.useSelect )(
+		const { useSelect, useDispatch } = WordPressData;
+		const { useState } = ReactHooks;
+		const previewOptions = useSelect(
 			( select ) => select( StoreModule.default ).getQuestionContents(),
-			[]
+			[ StoreModule.default ]
 		);
 		var t;
 		var n;
 		var r;
 		var a;
-		var chapterId = props.chapterId;
+		const _questionSelection = useSelect(
+			function ( _eLocal ) {
+				return _eLocal( StoreModule.default ).getQuizTypes();
+			},
+			[ StoreModule.default ]
+		);
+		const _questionSelection2 = useSelect(
+			function ( _eLocal2 ) {
+				return _eLocal2(
+					StoreModule.default
+				).getInteractiveQuizTypes();
+			},
+			[ StoreModule.default ]
+		);
+		const _questionSelection3 = useSelect(
+			function ( _eLocal3 ) {
+				return _eLocal3( StoreModule.default ).selectQuestion();
+			},
+			[ StoreModule.default ]
+		);
 		var question = ( function () {
-			var e = ( 0, WordPressData.useSelect )( function ( _eLocal ) {
-					return _eLocal( StoreModule.default ).getQuizTypes();
-				}, [] ),
-				_tLocal = ( 0, WordPressData.useSelect )( function (
-					_eLocal2
-				) {
-					return _eLocal2(
-						StoreModule.default
-					).getInteractiveQuizTypes();
-				}, [] ),
-				_nLocal = [].concat( nu( e ), nu( _tLocal ) ),
-				_rLocal = ( 0, WordPressData.useSelect )( function (
-					_eLocal3
-				) {
-					return _eLocal3( StoreModule.default ).selectQuestion();
-				}, [] );
-			if ( ! _rLocal ) {
+			if ( ! _questionSelection3 ) {
 				return {
 					edit: tu,
 					showDefault: ! 0,
 				};
 			}
-			var _aLocal = _rLocal.settings;
+			var _aLocal = _questionSelection3.settings;
 			if ( _aLocal === null || _aLocal === void 0 || ! _aLocal.type ) {
 				return {
 					edit: tu,
 					showDefault: ! 0,
 				};
 			}
+			var _nLocal = [].concat(
+				nu( _questionSelection ),
+				nu( _questionSelection2 )
+			);
 			var o = _nLocal.find( function ( _eLocal4 ) {
 				return (
 					( _eLocal4 === null || _eLocal4 === void 0
@@ -88,204 +96,130 @@ export function createQuestionCanvas( readRuntime ) {
 		} )();
 		var edit = question.edit;
 		var showDefault = question.showDefault;
-		var s = ( 0, WordPressData.useDispatch )( StoreModule.default );
-		var quizId = ( 0, WordPressData.useSelect )( function ( e ) {
-			return e( StoreModule.default ).getSelectedQuizId();
-		}, [] );
+		var s = useDispatch( StoreModule.default );
+		var quizId = useSelect(
+			function ( e ) {
+				return e( StoreModule.default ).getSelectedQuizId();
+			},
+			[ StoreModule.default ]
+		);
 		var m =
-			( ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getQuiz();
-			}, [] ),
-			( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectSelectedQuestionId();
-			}, [] ),
-			( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).selectQuestion();
-			}, [] ) );
+			( useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).getQuiz();
+				},
+				[ StoreModule.default ]
+			),
+			useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).selectSelectedQuestionId();
+				},
+				[ StoreModule.default ]
+			),
+			useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).selectQuestion();
+				},
+				[ StoreModule.default ]
+			) );
 		var p =
-			( ( 0, WordPressData.useSelect )(
+			( useSelect(
 				function ( e ) {
 					return e( StoreModule.default ).getCourseChaptersContent();
 				},
-				[ chapterId ]
+				[ StoreModule.default ]
 			),
-			( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getAllQuestions();
-			}, [] ) );
-		var Router = ( 0, WordPressData.useSelect )( function ( e ) {
-			return e( StoreModule.default ).getQuestionErrors();
-		}, [] );
-		var v = ( function ( e, _tLocal2 ) {
-			return (
-				( function ( _eLocal5 ) {
-					if ( Array.isArray( _eLocal5 ) ) {
-						return _eLocal5;
-					}
-				} )( e ) ||
-				( function ( _eLocal6, _tLocal3 ) {
-					var _nLocal2 =
-						_eLocal6 === null || _eLocal6 === void 0
-							? null
-							: ( 'undefined' !== typeof Symbol &&
-									_eLocal6[ Symbol.iterator ] ) ||
-								_eLocal6[ '@@iterator' ];
-					if ( _nLocal2 !== null && _nLocal2 !== void 0 ) {
-						var _rLocal2,
-							_aLocal2,
-							o,
-							_iLocal,
-							l = [],
-							c = ! 0,
-							u = ! 1;
-						try {
-							if (
-								( ( o = ( _nLocal2 = _nLocal2.call( _eLocal6 ) )
-									.next ),
-								0 === _tLocal3 )
-							) {
-								if ( Object( _nLocal2 ) !== _nLocal2 ) {
-									return;
-								}
-								c = ! 1;
-							} else {
-								for (
-									;
-									! ( c = ( _rLocal2 = o.call( _nLocal2 ) )
-										.done ) &&
-									( l.push( _rLocal2.value ),
-									l.length !== _tLocal3 );
-									c = ! 0
-								) {}
-							}
-						} catch ( _eLocal7 ) {
-							u = ! 0;
-							_aLocal2 = _eLocal7;
-						} finally {
-							try {
-								if (
-									! c &&
-									( ( _nullableValue ) =>
-										_nullableValue !== null &&
-										_nullableValue !== void 0 )(
-										_nLocal2.return
-									) &&
-									( ( _iLocal = _nLocal2.return() ),
-									Object( _iLocal ) !== _iLocal )
-								) {
-									return;
-								}
-							} finally {
-								if ( u ) {
-									throw _aLocal2;
-								}
-							}
-						}
-						return l;
-					}
-				} )( e, _tLocal2 ) ||
-				( function ( _eLocal8, _tLocal4 ) {
-					if ( _eLocal8 ) {
-						if ( 'string' === typeof _eLocal8 ) {
-							return Iu( _eLocal8, _tLocal4 );
-						}
-						var _nLocal3 = {}.toString
-							.call( _eLocal8 )
-							.slice( 8, -1 );
-						return (
-							'Object' === _nLocal3 &&
-								_eLocal8.constructor &&
-								( _nLocal3 = _eLocal8.constructor.name ),
-							( () => {
-								if (
-									'Map' === _nLocal3 ||
-									'Set' === _nLocal3
-								) {
-									return Array.from( _eLocal8 );
-								}
-								if (
-									'Arguments' === _nLocal3 ||
-									/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-										_nLocal3
-									)
-								) {
-									return Iu( _eLocal8, _tLocal4 );
-								}
-								return void 0;
-							} )()
-						 );
-					}
-				} )( e, _tLocal2 ) ||
-				( function () {
-					throw new TypeError(
-						'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
-					);
-				} )()
-			);
-		} )( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+			useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).getAllQuestions();
+				},
+				[ StoreModule.default ]
+			) );
+		var Router = useSelect(
+			function ( e ) {
+				return e( StoreModule.default ).getQuestionErrors();
+			},
+			[ StoreModule.default ]
+		);
+		var v = useState( ! 1 );
 		var h = v[ 0 ];
 		var _ = v[ 1 ];
 		var w =
 			( Lc().isValidQuestion,
-			( 0, WordPressData.useSelect )( function ( e ) {
-				var _tLocal5, _nLocal4, _rLocal3, _aLocal3, o, _iLocal2, l, c;
-				return {
-					question:
-						null ===
-							( _tLocal5 = e(
-								StoreModule.default
-							).selectQuestion() ) || void 0 === _tLocal5
-							? void 0
-							: _tLocal5.name,
-					videoSrc:
-						null ===
-							( _nLocal4 = e(
-								StoreModule.default
-							).selectQuestion() ) || void 0 === _nLocal4
-							? void 0
-							: _nLocal4.video_src,
-					imgSrc:
-						null ===
-							( _rLocal3 = e(
-								StoreModule.default
-							).selectQuestion() ) || void 0 === _rLocal3
-							? void 0
-							: _rLocal3.image_src,
-					options:
-						null ===
-							( _aLocal3 = e(
-								StoreModule.default
-							).selectQuestion() ) || void 0 === _aLocal3
-							? void 0
-							: _aLocal3.options,
-					correctAnswerId:
-						null ===
-							( o = e( StoreModule.default ).selectQuestion() ) ||
-						void 0 === o
-							? void 0
-							: o.correctAnswerId,
-					id:
-						null ===
-							( _iLocal2 = e(
-								StoreModule.default
-							).selectQuestion() ) || void 0 === _iLocal2
-							? void 0
-							: _iLocal2.id,
-					quizType:
-						null ===
-							( l = e( StoreModule.default ).selectQuestion() ) ||
-						void 0 === l ||
-						null === ( l = l.settings ) ||
-						void 0 === l
-							? void 0
-							: l.type,
-					description:
-						null ===
-							( c = e( StoreModule.default ).selectQuestion() ) ||
-						void 0 === c
-							? void 0
-							: c.description,
-				};
-			}, [] ) );
+			useSelect(
+				function ( e ) {
+					var _tLocal5;
+					var _nLocal4;
+					var _rLocal3;
+					var _aLocal3;
+					var o;
+					var _iLocal2;
+					var l;
+					var c;
+					return {
+						question:
+							null ===
+								( _tLocal5 = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === _tLocal5
+								? void 0
+								: _tLocal5.name,
+						videoSrc:
+							null ===
+								( _nLocal4 = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === _nLocal4
+								? void 0
+								: _nLocal4.video_src,
+						imgSrc:
+							null ===
+								( _rLocal3 = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === _rLocal3
+								? void 0
+								: _rLocal3.image_src,
+						options:
+							null ===
+								( _aLocal3 = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === _aLocal3
+								? void 0
+								: _aLocal3.options,
+						correctAnswerId:
+							null ===
+								( o = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === o
+								? void 0
+								: o.correctAnswerId,
+						id:
+							null ===
+								( _iLocal2 = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === _iLocal2
+								? void 0
+								: _iLocal2.id,
+						quizType:
+							null ===
+								( l = e(
+									StoreModule.default
+								).selectQuestion() ) ||
+							void 0 === l ||
+							null === ( l = l.settings ) ||
+							void 0 === l
+								? void 0
+								: l.type,
+						description:
+							null ===
+								( c = e(
+									StoreModule.default
+								).selectQuestion() ) || void 0 === c
+								? void 0
+								: c.description,
+					};
+				},
+				[ StoreModule.default ]
+			) );
 		var E = w.question;
 		var videoSrc = w.videoSrc;
 		var imgSrc = w.imgSrc;
@@ -295,35 +229,46 @@ export function createQuestionCanvas( readRuntime ) {
 		var O = fc( quizType );
 		var k =
 			( ( t = quizType ),
-			( n = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getQuizTypes();
-			}, [] ) ),
-			( r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getInteractiveQuizTypes();
-			}, [] ) ),
+			( n = useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).getQuizTypes();
+				},
+				[ StoreModule.default ]
+			) ),
+			( r = useSelect(
+				function ( e ) {
+					return e( StoreModule.default ).getInteractiveQuizTypes();
+				},
+				[ StoreModule.default ]
+			) ),
 			( a = [].concat( Eu( n ), Eu( r ) ) ),
 			t
 				? a.find( function ( e ) {
 						return e.type === t;
 					} )
 				: null );
+		const _questionSelection4 = useSelect(
+			function ( _eLocal9 ) {
+				return _eLocal9( StoreModule.default ).getQuizTypes();
+			},
+			[ StoreModule.default ]
+		);
+		const _questionSelection5 = useSelect(
+			function ( _eLocal0 ) {
+				return _eLocal0(
+					StoreModule.default
+				).getInteractiveQuizTypes();
+			},
+			[ StoreModule.default ]
+		);
 		var j = ( function ( e ) {
-			var _tLocal6 = ( 0, WordPressData.useSelect )( function (
-					_eLocal9
-				) {
-					return _eLocal9( StoreModule.default ).getQuizTypes();
-				}, [] ),
-				_nLocal5 = ( 0, WordPressData.useSelect )( function (
-					_eLocal0
-				) {
-					return _eLocal0(
-						StoreModule.default
-					).getInteractiveQuizTypes();
-				}, [] ),
-				_rLocal4 = [].concat( Ru( _tLocal6 ), Ru( _nLocal5 ) );
 			if ( ! e ) {
 				return null;
 			}
+			var _rLocal4 = [].concat(
+				Ru( _questionSelection4 ),
+				Ru( _questionSelection5 )
+			);
 			var _aLocal4 = _rLocal4.find( function ( _tLocal7 ) {
 				return _tLocal7.type === e;
 			} );
@@ -357,7 +302,8 @@ export function createQuestionCanvas( readRuntime ) {
 									_tLocal8.temp = ! 0;
 									s.setQuestion( _tLocal8 );
 									s.setQuestions( _tLocal8 );
-									s.setSelectedQuestionId( _tLocal8.id ); // Falls through to the shared async state cleanup.
+									s.setSelectedQuestionId( _tLocal8.id );
+								// Falls through to the shared async state cleanup.
 								// Falls through to the shared async state cleanup.
 								case 3:
 									return _eLocal10.a( 2 );

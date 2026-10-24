@@ -123,7 +123,8 @@ export function createWebhooksPage( readRuntime ) {
 											function () {
 												c( ! 1 );
 											}
-										); // Falls through to the shared async state cleanup.
+										);
+									// Falls through to the shared async state cleanup.
 									case 1:
 										return _eLocal5.a( 2 );
 								}
@@ -312,7 +313,7 @@ export function createWebhooksPage( readRuntime ) {
 							value: 'active',
 							action:
 								( ( _rLocal3 = t4(
-									J5().m( function e() {
+									J5().m( function _eValue() {
 										return J5().w(
 											function ( _eLocal12 ) {
 												for (;;) {
@@ -367,7 +368,7 @@ export function createWebhooksPage( readRuntime ) {
 													}
 												}
 											},
-											e,
+											_eValue,
 											null,
 											[ [ 1, 3 ] ]
 										);
@@ -382,7 +383,7 @@ export function createWebhooksPage( readRuntime ) {
 							value: 'inactive',
 							action:
 								( ( _eLocal14 = t4(
-									J5().m( function e() {
+									J5().m( function _eValue2() {
 										return J5().w(
 											function ( _eLocal13 ) {
 												for (;;) {
@@ -437,7 +438,7 @@ export function createWebhooksPage( readRuntime ) {
 													}
 												}
 											},
-											e,
+											_eValue2,
 											null,
 											[ [ 1, 3 ] ]
 										);

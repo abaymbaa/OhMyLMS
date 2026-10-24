@@ -7,8 +7,14 @@
  */
 namespace OhMyLMS\Hooks;
 
+/**
+ * Plugin chapter hook implementation.
+ */
 class ChapterHook {
 
+	/**
+	 * Register hooks for Chapter hook.
+	 */
 	public function register_hooks() {
 	}
 }

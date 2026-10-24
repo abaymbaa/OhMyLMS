@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
+/**
+ * Plugin drip content implementation.
+ */
 class DripContent {
 
 	/**
@@ -22,10 +25,10 @@ class DripContent {
 	/**
 	 * Check if a lesson is locked based on drip settings
 	 *
-	 * @param bool $is_locked Current locked status of the lesson
-	 * @param int  $lesson_id ID of the lesson
-	 * @param int  $course_id ID of the course
-	 * @param int  $current_student_id ID of the current student
+	 * @param bool $is_locked Current locked status of the lesson.
+	 * @param int  $lesson_id ID of the lesson.
+	 * @param int  $course_id ID of the course.
+	 * @param int  $current_student_id ID of the current student.
 	 * @return bool True if the lesson is locked, false otherwise
 	 * @since 1.0.0
 	 */
@@ -132,10 +135,10 @@ class DripContent {
 	/**
 	 * Get the unlock date for a lesson based on drip settings
 	 *
-	 * @param string $unlock_date Current unlock date of the lesson
-	 * @param int    $lesson_id ID of the lesson
-	 * @param int    $course_id ID of the course
-	 * @param int    $current_student_id ID of the current student
+	 * @param string $unlock_date Current unlock date of the lesson.
+	 * @param int    $lesson_id ID of the lesson.
+	 * @param int    $course_id ID of the course.
+	 * @param int    $current_student_id ID of the current student.
 	 * @return string Formatted unlock date or the original unlock date if no drip settings apply
 	 * @since 1.0.0
 	 */
@@ -195,10 +198,10 @@ class DripContent {
 	/**
 	 * Generate a drip protection message for content
 	 *
-	 * @param string $output Current output message
-	 * @param int    $content_id ID of the content (lesson, quiz, assignment)
-	 * @param string $post_type Type of the content (lesson, quiz, assignment)
-	 * @param int    $student_id ID of the student
+	 * @param string $output Current output message.
+	 * @param int    $content_id ID of the content (lesson, quiz, assignment).
+	 * @param string $post_type Type of the content (lesson, quiz, assignment).
+	 * @param int    $student_id ID of the student.
 	 * @return string Modified output message with drip protection information
 	 * @since 1.0.0
 	 */

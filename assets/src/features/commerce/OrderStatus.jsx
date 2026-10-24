@@ -3,7 +3,6 @@
  * Displays order action card for updating order status.
  */
 import { createElement } from '@wordpress/element';
-
 export function createOrderStatus( readRuntime ) {
 	return function OrderStatus( { order, status } ) {
 		const {
@@ -15,14 +14,11 @@ export function createOrderStatus( readRuntime ) {
 			vn: SelectControl,
 			y: WordPressData,
 		} = readRuntime();
-
 		const dispatch = WordPressData.useDispatch( StoreModule.default );
 		const { updateOrder, fetchOrder, showNotification, updateOrderState } =
 			dispatch;
-
 		const [ loading, setLoading ] = ReactHooks.useState( false );
 		const [ isOpen, setIsOpen ] = ReactHooks.useState( true );
-
 		const handleUpdateStatus = async () => {
 			setLoading( true );
 			try {
@@ -34,7 +30,7 @@ export function createOrderStatus( readRuntime ) {
 					);
 					await fetchOrder( order.id );
 				}
-			} catch ( err ) {
+			} catch {
 				showNotification(
 					I18n.__( 'Something went wrong!', 'ohmylms' ),
 					'error'
@@ -43,7 +39,6 @@ export function createOrderStatus( readRuntime ) {
 				setLoading( false );
 			}
 		};
-
 		const statusOptions = ReactHooks.useMemo( () => {
 			const options = [];
 			if ( order?.status !== 'refunded' ) {
@@ -80,7 +75,6 @@ export function createOrderStatus( readRuntime ) {
 			}
 			return options;
 		}, [ order?.status, order?.total, I18n ] );
-
 		return (
 			<React.Fragment>
 				<Controls.FlexWP
@@ -128,12 +122,16 @@ export function createOrderStatus( readRuntime ) {
 							align="center"
 						>
 							<Controls.FlexItemWP
-								style={ { width: 'calc(100% - 53px)' } }
+								style={ {
+									width: 'calc(100% - 53px)',
+								} }
 							>
 								<SelectControl.A
 									value={ status }
 									onChange={ ( val ) =>
-										updateOrderState( { status: val } )
+										updateOrderState( {
+											status: val,
+										} )
 									}
 									options={ statusOptions }
 								/>
@@ -149,7 +147,9 @@ export function createOrderStatus( readRuntime ) {
 								} }
 							>
 								<svg
-									style={ { margin: '0 auto' } }
+									style={ {
+										margin: '0 auto',
+									} }
 									width="7"
 									height="12"
 									fill="none"

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCertificateTemplateCard( readRuntime ) {
@@ -93,7 +94,7 @@ export function createCertificateTemplateCard( readRuntime ) {
 											case 2:
 												_eLocal2.p = 2;
 												_uLocal = _eLocal2.v;
-												console.error( _uLocal );
+												showRequestError( _uLocal );
 											// Falls through to the shared async state cleanup.
 											case 3:
 												return (

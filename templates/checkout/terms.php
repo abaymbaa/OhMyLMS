@@ -38,7 +38,7 @@ defined( 'ABSPATH' ) || exit();
 				}
 					// releace the [privacy_policy] text with link.
 					$privacy_policy_text = str_replace( '[privacy_policy]', $privacy_policy_link, $privacy_policy_text );
-					echo $privacy_policy_text;
+					echo wp_kses_post( $privacy_policy_text );
 				?>
 			</span>
 		</label>

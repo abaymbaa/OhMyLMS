@@ -134,7 +134,7 @@ final class Guidance {
 				}
 			}
 		}
-		$exam    = self::exam( $student_id, $pooled, $pool, $info );
+		$exam = self::exam( $student_id, $pooled, $pool, $info );
 		if ( $exam && $exam['plan']['today'] ) {
 			// Preparing for an exam: help first, then today's part of the plan, then anything else due.
 			$general = self::exam_steps( $general, $exam['plan'], $pooled );
@@ -304,7 +304,7 @@ final class Guidance {
 		}
 		$now = time();
 		foreach ( $by as $skill => $evidence ) {
-			$state                       = Engine::evaluate( Combined::merge( $evidence ), $now );
+			$state                          = Engine::evaluate( Combined::merge( $evidence ), $now );
 			$pooled[ $skill ]['level']      = $state['level'];
 			$pooled[ $skill ]['struggling'] = ! empty( $state['struggling'] ) && Levels::is_developing( $state['level'] );
 			$pooled[ $skill ]['last']       = $state['last_evidence_at'] ? (int) strtotime( $state['last_evidence_at'] . ' UTC' ) : $pooled[ $skill ]['last'];
@@ -440,9 +440,9 @@ final class Guidance {
 			if ( isset( $seen[ $skill ] ) ) {
 				continue;
 			}
-			$level = (string) ( $pooled[ $skill ]['level'] ?? 'not-started' );
-			$type  = 'review' === $day ? 'review' : ( Levels::is_developing( $level ) ? 'continue' : 'ready' );
-			$steps[]         = array(
+			$level          = (string) ( $pooled[ $skill ]['level'] ?? 'not-started' );
+			$type           = 'review' === $day ? 'review' : ( Levels::is_developing( $level ) ? 'continue' : 'ready' );
+			$steps[]        = array(
 				'type'          => $type,
 				'skill'         => (int) $skill,
 				'prerequisites' => array(),

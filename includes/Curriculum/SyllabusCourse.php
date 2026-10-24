@@ -39,12 +39,15 @@ final class SyllabusCourse {
 
 	// ---- Planning (pure; no WordPress needed) -------------------------------------------------------
 
-	/** The chapter title for a skill group: "C1.1 · Types of number", or just the name. */
+	/** The chapter title for a skill group: "C1.1 · Types of number", or just the name.
+	 *
+	 * @param array $group Group.
+	 */
 	public static function chapter_title( array $group ) {
 		$name  = trim( (string) ( $group['name'] ?? '' ) );
 		$code  = trim( (string) ( $group['code'] ?? '' ) );
 		$title = ( '' === $code || $code === $name ) ? $name : $code . ' · ' . $name;
-		$title = trim( strip_tags( $title ) );
+		$title = trim( wp_strip_all_tags( $title ) );
 		return function_exists( 'mb_substr' ) ? mb_substr( $title, 0, self::TITLE_LIMIT ) : substr( $title, 0, self::TITLE_LIMIT );
 	}
 
@@ -52,7 +55,7 @@ final class SyllabusCourse {
 	 * What to do with the course's chapters so they mirror the groups.
 	 *
 	 * @param array[] $chapters Existing chapters in order: ['id' => int, 'name' => string, 'group' => uuid or ''].
-	 * @param array[] $groups   The syllabus's groups in outline order: ['uuid', 'name', 'code'].
+	 * @param array[] $groups The syllabus's groups in outline order: ['uuid', 'name', 'code'].
 	 * @return array{create:array,rename:array,keep:array,orphans:int[]}
 	 *   create: group uuid => title; rename: chapter id => title; keep: group uuid => chapter id; orphans: chapter ids
 	 */
@@ -75,7 +78,7 @@ final class SyllabusCourse {
 			if ( isset( $by_group[ $group['uuid'] ] ) ) {
 				$chapter                        = $by_group[ $group['uuid'] ];
 				$plan['keep'][ $group['uuid'] ] = (int) $chapter['id'];
-				if ( trim( strip_tags( (string) $chapter['name'] ) ) !== $title ) {
+				if ( trim( wp_strip_all_tags( (string) $chapter['name'] ) ) !== $title ) {
 					$plan['rename'][ (int) $chapter['id'] ] = $title; }
 			} else {
 				$plan['create'][ $group['uuid'] ] = $title;
@@ -94,10 +97,10 @@ final class SyllabusCourse {
 	 * outcome keeps its target and "required" flag; a new one starts at Proficient and not required, so a big
 	 * syllabus can be published before every skill has questions.
 	 *
-	 * @param array[] $current       The draft's outcomes.
-	 * @param array[] $groups        Groups in outline order: ['uuid', 'skills' => [['term_id' => int]]].
-	 * @param array   $chapter_of    group uuid => chapter id.
-	 * @param int[]   $managed       Chapter ids that mirror a group (including ones about to be removed).
+	 * @param array[] $current The draft's outcomes.
+	 * @param array[] $groups Groups in outline order: ['uuid', 'skills' => [['term_id' => int]]].
+	 * @param array   $chapter_of group uuid => chapter id.
+	 * @param int[]   $managed Chapter ids that mirror a group (including ones about to be removed).
 	 * @return array[]
 	 */
 	public static function plan_outcomes( array $current, array $groups, array $chapter_of, array $managed ) {
@@ -138,7 +141,7 @@ final class SyllabusCourse {
 	 * Apply requirement changes to outcomes, leaving everything else as it is.
 	 *
 	 * @param array[] $outcomes The draft's outcomes.
-	 * @param array[] $changes  `['term_id' => n, 'required' => bool, 'target' => 'proficient'|'mastered']`; either of the last two may be left out.
+	 * @param array[] $changes `['term_id' => n, 'required' => bool, 'target' => 'proficient'|'mastered']`; either of the last two may be left out.
 	 * @return array[]
 	 */
 	public static function plan_requirements( array $outcomes, array $changes ) {
@@ -161,7 +164,11 @@ final class SyllabusCourse {
 		return $next;
 	}
 
-	/** Do two outcome lists say the same thing, in the same order? */
+	/** Do two outcome lists say the same thing, in the same order?
+	 *
+	 * @param array $left Left.
+	 * @param array $right Right.
+	 */
 	public static function same_outcomes( array $left, array $right ) {
 		$shape = static function ( $outcome ) {
 			return array( (int) $outcome['term_id'], (string) $outcome['target'], ! empty( $outcome['required'] ), (int) ( $outcome['chapter_id'] ?? 0 ) );
@@ -169,7 +176,11 @@ final class SyllabusCourse {
 		return array_map( $shape, $left ) === array_map( $shape, $right );
 	}
 
-	/** Chapter ids in the order the course should show them: mirrored chapters as the groups run, then the rest as they were. */
+	/** Chapter ids in the order the course should show them: mirrored chapters as the groups run, then the rest as they were.
+	 *
+	 * @param array $current_ids Current ids.
+	 * @param array $mirrored_in_order Mirrored in order.
+	 */
 	public static function chapter_order( array $current_ids, array $mirrored_in_order ) {
 		$mirrored = array_values(
 			array_filter(
@@ -184,19 +195,30 @@ final class SyllabusCourse {
 
 	// ---- The link between a syllabus and its course -----------------------------------------------------
 
-	/** The syllabus's course, or 0 when it has none (or the course was deleted). */
+	/** The syllabus's course, or 0 when it has none (or the course was deleted).
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	public static function course_id( $syllabus_id ) {
 		$item = Items::get( $syllabus_id );
 		$id   = $item ? (int) ( $item['course_id'] ?? 0 ) : 0;
 		return $id > 0 && self::is_course( $id ) ? $id : 0;
 	}
 
+	/**
+	 * Is course for Syllabus course.
+	 *
+	 * @param mixed $id Id.
+	 */
 	private static function is_course( $id ) {
 		$status = get_post_status( $id );
 		return get_post_type( $id ) === OHMYLMS_COURSE_CPT && $status && ! in_array( $status, array( 'trash', 'auto-draft' ), true );
 	}
 
-	/** The syllabus a course belongs to (0 for an ordinary course). */
+	/** The syllabus a course belongs to (0 for an ordinary course).
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function owner( $course_id ) {
 		$course_id = (int) $course_id;
 		if ( $course_id <= 0 || ! Schema::ready() ) {
@@ -206,7 +228,10 @@ final class SyllabusCourse {
 		return $row && (int) ( $row['course_id'] ?? 0 ) === $course_id && ! empty( $row['is_syllabus'] ) ? $item : 0;
 	}
 
-	/** A light description of the course for the editor, or null when the syllabus has none yet. */
+	/** A light description of the course for the editor, or null when the syllabus has none yet.
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	public static function summary( $syllabus_id ) {
 		$course_id = self::course_id( $syllabus_id );
 		if ( ! $course_id ) {
@@ -219,7 +244,11 @@ final class SyllabusCourse {
 		);
 	}
 
-	/** The outline with each skill group told which chapter of the course it became (0 when there is no such chapter). */
+	/** The outline with each skill group told which chapter of the course it became (0 when there is no such chapter).
+	 *
+	 * @param array $outline Outline.
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 */
 	public static function decorate( array $outline, $syllabus_id ) {
 		$course_id  = self::course_id( $syllabus_id );
 		$chapter_of = array();
@@ -237,6 +266,11 @@ final class SyllabusCourse {
 		return $outline;
 	}
 
+	/**
+	 * Create course for Syllabus course.
+	 *
+	 * @param mixed $name Name.
+	 */
 	private static function create_course( $name ) {
 		$request = new \WP_REST_Request( 'POST', '/ohmylms/v1/courses' );
 		$request->set_body_params(
@@ -261,6 +295,7 @@ final class SyllabusCourse {
 	 * The course starts as a draft in skill-based mode and is placed under the syllabus in the curriculum.
 	 *
 	 * @return int|\WP_Error The course ID.
+	 * @param mixed $syllabus_id Syllabus identifier.
 	 */
 	public static function ensure( $syllabus_id ) {
 		global $wpdb;
@@ -313,7 +348,10 @@ final class SyllabusCourse {
 
 	// ---- Mirroring -------------------------------------------------------------------------------------
 
-	/** The syllabus's groups in outline order, as the planner wants them. */
+	/** The syllabus's groups in outline order, as the planner wants them.
+	 *
+	 * @param array $outline Outline.
+	 */
 	private static function groups_of( array $outline ) {
 		$groups = array();
 		foreach ( $outline['contents'] as $content ) {
@@ -326,6 +364,8 @@ final class SyllabusCourse {
 	/**
 	 * Make the course mirror the syllabus: its title, one chapter per skill group and one outcome per skill.
 	 * Nothing is written when nothing differs. @return true|\WP_Error
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
 	 */
 	public static function sync( $syllabus_id ) {
 		$course_id = self::course_id( $syllabus_id );
@@ -422,6 +462,9 @@ final class SyllabusCourse {
 	 * does not decide: a course can only be published once a skill is required, and a required skill needs approved
 	 * questions, so authors turn skills on as they become ready. Only the skills of this syllabus change, and only
 	 * their requirement and target. @return true|\WP_Error
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
+	 * @param array $changes Changes.
 	 */
 	public static function set_requirements( $syllabus_id, array $changes ) {
 		$course_id = self::course_id( $syllabus_id );
@@ -449,6 +492,8 @@ final class SyllabusCourse {
 	/**
 	 * Run a mirror step without ever failing the change that caused it: the syllabus is saved either way, and the
 	 * editor offers "Update course" when the course could not follow. @return true|\WP_Error
+	 *
+	 * @param mixed $syllabus_id Syllabus identifier.
 	 */
 	public static function sync_quietly( $syllabus_id ) {
 		try {
@@ -461,7 +506,10 @@ final class SyllabusCourse {
 		return $result;
 	}
 
-	/** After items change: bring the course of each syllabus they belong to up to date. */
+	/** After items change: bring the course of each syllabus they belong to up to date.
+	 *
+	 * @param array $syllabus_ids Syllabus ids.
+	 */
 	public static function after_items_changed( array $syllabus_ids ) {
 		foreach ( array_unique( array_filter( array_map( 'intval', $syllabus_ids ) ) ) as $id ) {
 			self::sync_quietly( $id ); }

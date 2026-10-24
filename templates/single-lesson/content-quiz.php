@@ -18,31 +18,31 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 <?php while ( have_posts() ) : ?>
 	<?php the_post(); ?>
 	<div class="ohmylms-lesson-content-body content-type-quiz">
-		<h1><?php echo get_the_title(); ?></h1>
+		<h1><?php echo esc_html( get_the_title() ); ?></h1>
 
 		<?php echo \OhMyLMS\Quiz\Intro::render( $quiz ); // phpcs:ignore WordPress.Security.EscapeOutput -- escaped by the intro. ?>
 
 		<ul class="ohmylms-assignment-quiz-meta">
 			<li class="duratioin">
 				<strong><?php echo esc_html__( 'Questions: ', 'ohmylms' ); ?></strong>
-				<?php echo $quiz->get_total_question(); ?>
+				<?php echo esc_html( $quiz->get_total_question() ); ?>
 			</li>
 
 			<?php if ( $quiz->get_timer() ) : ?>
 			<li class="duratioin">
 				<strong><?php echo esc_html__( 'Duration: ', 'ohmylms' ); ?></strong>
-				<?php echo $quiz->get_timer() . ' minutes'; ?>
+				<?php echo esc_html( $quiz->get_timer() . ' minutes' ); ?>
 			</li>
 			<?php endif; ?>
 
 			<li class="total-marks">
 				<strong><?php echo esc_html__( 'Total Marks: ', 'ohmylms' ); ?></strong>
-				<?php echo $quiz->get_total_marks(); ?>
+				<?php echo esc_html( $quiz->get_total_marks() ); ?>
 			</li>
 
 			<li class="pass-mark">
 				<strong><?php echo esc_html__( 'Passing Mark: ', 'ohmylms' ); ?></strong>
-				<?php echo $quiz->get_passing_grade(); ?>
+				<?php echo esc_html( $quiz->get_passing_grade() ); ?>
 			</li>
 		</ul>
 
@@ -82,7 +82,7 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 						</div>
 
 						<div class="ohmylms-td question">
-							<?php echo $attempt['total_answers_count']; ?>
+							<?php echo esc_html( $attempt['total_answers_count'] ); ?>
 						</div>
 						<div class="ohmylms-td total-marks">
 							<?php echo esc_html( \OhMyLMS\Assessment\Scoring::display( $basis['max'] ) ); ?>
@@ -114,7 +114,7 @@ $course_id = ohmylms_get_course_by_content_id( get_the_ID() );
 
 						<div class="ohmylms-mobile-td">
 							<div class="ohmylms-td question" data-title="<?php echo esc_attr__( 'Question', 'ohmylms' ); ?>">
-								<?php echo $attempt['total_answers_count']; ?>
+								<?php echo esc_html( $attempt['total_answers_count'] ); ?>
 							</div>
 
 							<div class="ohmylms-td total-marks" data-title="<?php echo esc_attr__( 'Total Marks', 'ohmylms' ); ?>">

@@ -1,9 +1,9 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /**
  * OrderNotes component (replaces recovered binding fQ).
  * Displays order notes timeline and handles adding new notes.
  */
 import { createElement } from '@wordpress/element';
-
 export function createOrderNotes( readRuntime ) {
 	return function OrderNotes( { notes = [], order } ) {
 		const {
@@ -18,14 +18,11 @@ export function createOrderNotes( readRuntime ) {
 			q: ExperimentalScrollable,
 			y: WordPressData,
 		} = readRuntime();
-
 		const [ noteContent, setNoteContent ] = ReactHooks.useState( '' );
 		const [ submitting, setSubmitting ] = ReactHooks.useState( false );
 		const [ isOpen, setIsOpen ] = ReactHooks.useState( true );
-
 		const dispatch = WordPressData.useDispatch( StoreModule.default );
 		const { setOrderNote, saveOrderNote, fetchOrder } = dispatch;
-
 		const handleAddNote = async () => {
 			if ( submitting || ! noteContent.trim() || ! order ) {
 				return;
@@ -38,12 +35,11 @@ export function createOrderNotes( readRuntime ) {
 					setNoteContent( '' );
 				}
 			} catch ( err ) {
-				console.error( 'Failed to add order note:', err );
+				showRequestError( 'Failed to add order note:', err );
 			} finally {
 				setSubmitting( false );
 			}
 		};
-
 		return (
 			<React.Fragment>
 				<Controls.FlexWP
@@ -91,7 +87,9 @@ export function createOrderNotes( readRuntime ) {
 									marginBottom={ 0 }
 								/>
 								<ExperimentalScrollable.__experimentalScrollable
-									style={ { maxHeight: 500 } }
+									style={ {
+										maxHeight: 500,
+									} }
 								>
 									{ notes.map( ( note, index ) => (
 										<div key={ index }>
@@ -164,11 +162,15 @@ export function createOrderNotes( readRuntime ) {
 									setNoteContent( val );
 									setOrderNote( val );
 								} }
-								style={ { marginBottom: '10px' } }
+								style={ {
+									marginBottom: '10px',
+								} }
 							/>
 							<Controls.ButtonWP
 								variant="primary"
-								style={ { marginRight: '10px' } }
+								style={ {
+									marginRight: '10px',
+								} }
 								onClick={ handleAddNote }
 								loading={ submitting }
 								iconPosition="end"

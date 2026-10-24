@@ -14,10 +14,18 @@ defined( 'ABSPATH' ) || exit;
  * Handles the theme support for Thrive Theme Builder theme.
  */
 class ThriveTheme {
+	/**
+	 * Init for Thrive theme.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 	}
 
+	/**
+	 * Enqueue styles for Thrive theme.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-thrive-theme-builder.css' ),

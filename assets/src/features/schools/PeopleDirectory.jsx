@@ -1,5 +1,6 @@
+import { confirmAction } from '../requestFeedback.mjs';
 import { createElement, useEffect, useState } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { ListTableFrame } from '../students/ListTableFrame';
 import { AddModal, EditModal, addLabel } from './AddModal';
 import { ViewAsModal, canViewAs } from './ViewAsModal';
@@ -114,7 +115,7 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 		return () => {
 			active = false;
 		};
-	}, [ tab, revision ] );
+	}, [ tab, revision, accounts ] );
 	const badge = ( value, variant = 'secondary' ) => (
 		<Controls.BadgeWP variant={ variant } isBorderLess>
 			{ value ?? '-' }
@@ -123,18 +124,15 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 	const name = ( row ) => ( accounts ? row.display_name : row.name );
 	const columns = [
 		{
-			title: __(
-				( () => {
-					if ( accounts ) {
-						return 'Name';
-					}
-					if ( tab === 'classes' ) {
-						return 'Class Name';
-					}
-					return 'School Name';
-				} )(),
-				'ohmylms'
-			),
+			title: ( () => {
+				if ( accounts ) {
+					return __( 'Name', 'ohmylms' );
+				}
+				if ( tab === 'classes' ) {
+					return __( 'Class Name', 'ohmylms' );
+				}
+				return __( 'School Name', 'ohmylms' );
+			} )(),
 			key: 'name',
 			size: '320px',
 			render: ( _, row ) => (
@@ -277,23 +275,27 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 						[ 'teachers', 'parents' ].includes( tab )
 							? [
 									{
-										title:
-											tab === 'teachers'
-												? __(
-														'View as teacher',
-														'ohmylms'
-													)
-												: __(
-														'View as parent',
-														'ohmylms'
-													),
+										title: ( () => {
+											if ( tab === 'teachers' ) {
+												return __(
+													'View as teacher',
+													'ohmylms'
+												);
+											}
+											return __(
+												'View as parent',
+												'ohmylms'
+											);
+										} )(),
 										key: 'view-as',
 										onClick: () =>
 											setViewAs( {
-												role:
-													tab === 'teachers'
-														? 'teacher'
-														: 'parent',
+												role: ( () => {
+													if ( tab === 'teachers' ) {
+														return 'teacher';
+													}
+													return 'parent';
+												} )(),
 												user: {
 													id: row.id,
 													name: row.display_name,
@@ -304,13 +306,18 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 							: [] ),
 						...( canViewAs() && tab === 'classes'
 							? [ 'student', 'instructor' ].map( ( role ) => ( {
-									title:
-										role === 'student'
-											? __( 'View as student', 'ohmylms' )
-											: __(
-													'View as instructor',
-													'ohmylms'
-												),
+									title: ( () => {
+										if ( role === 'student' ) {
+											return __(
+												'View as student',
+												'ohmylms'
+											);
+										}
+										return __(
+											'View as instructor',
+											'ohmylms'
+										);
+									} )(),
 									key: `view-as-${ role }`,
 									onClick: () =>
 										setViewAs( {
@@ -320,26 +327,46 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 								} ) )
 							: [] ),
 						...( accounts
-							? row.edit_url
-								? [
-										{
-											title: __( 'Edit user', 'ohmylms' ),
-											key: 'edit',
-											onClick: () => setEditing( row.id ),
-										},
-									]
-								: []
+							? ( () => {
+									if ( row.edit_url ) {
+										return [
+											{
+												title: __(
+													'Edit user',
+													'ohmylms'
+												),
+												key: 'edit',
+												onClick: () =>
+													setEditing( row.id ),
+											},
+										];
+									}
+									return [];
+								} )()
 							: [
 									{
 										title: __( 'Manage', 'ohmylms' ),
 										key: 'manage',
 										onClick: () => {
-											window.location.href = `admin.php?page=ohmylms-schools&school=${ tab === 'schools' ? row.id : row.school_id || '' }${ tab === 'classes' ? `&class=${ row.id }&tab=classes` : '' }`;
+											window.location.href = `admin.php?page=ohmylms-schools&school=${ ( () => {
+												if ( tab === 'schools' ) {
+													return row.id;
+												}
+												return row.school_id || '';
+											} )() }${ ( () => {
+												if ( tab === 'classes' ) {
+													return `&class=${ row.id }&tab=classes`;
+												}
+												return '';
+											} )() }`;
 										},
 									},
-									...( tab === 'classes' &&
-									row.status === 'active'
-										? [
+									...( () => {
+										if (
+											tab === 'classes' &&
+											row.status === 'active'
+										) {
+											return [
 												{
 													title: __(
 														'Archive class',
@@ -348,12 +375,12 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 													key: 'archive',
 													onClick: async () => {
 														if (
-															! window.confirm(
+															! ( await confirmAction(
 																__(
 																	'Archive this class?',
 																	'ohmylms'
 																)
-															)
+															) )
 														) {
 															return;
 														}
@@ -376,8 +403,10 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 														}
 													},
 												},
-											]
-										: [] ),
+											];
+										}
+										return [];
+									} )(),
 								] ),
 					] }
 				/>
@@ -405,7 +434,6 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 			return false;
 		}
 		const created = date()( row.created_at );
-		const now = date()();
 		if ( Array.isArray( dateFilter ) ) {
 			return (
 				created.isAfter(
@@ -416,6 +444,7 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 				created.isBefore( date()( dateFilter[ 1 ] ).endOf( 'day' ) )
 			);
 		}
+		const now = date()();
 		const starts = {
 			last_30_days: now.clone().subtract( 30, 'days' ),
 			current_month: now.clone().startOf( 'month' ),
@@ -433,15 +462,15 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 		);
 	} );
 	const options = [
-		[ '', 'All Times' ],
-		[ 'last_30_days', 'Last 30 days' ],
-		[ 'current_month', 'Current month' ],
-		[ 'previous_month', 'Previous month' ],
-		[ 'current_year', 'Current year' ],
-		[ 'last_12_months', 'Last 12 months' ],
+		[ '', __( 'All Times', 'ohmylms' ) ],
+		[ 'last_30_days', __( 'Last 30 days', 'ohmylms' ) ],
+		[ 'current_month', __( 'Current month', 'ohmylms' ) ],
+		[ 'previous_month', __( 'Previous month', 'ohmylms' ) ],
+		[ 'current_year', __( 'Current year', 'ohmylms' ) ],
+		[ 'last_12_months', __( 'Last 12 months', 'ohmylms' ) ],
 	].map( ( [ value, label ] ) => ( {
 		value,
-		label: __( label, 'ohmylms' ),
+		label,
 	} ) );
 	return (
 		<>
@@ -468,9 +497,12 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 							setPage( 1 );
 							setSelected( [] );
 						} }
-						searchPlaceholder={ __(
-							`Search ${ labels[ tab ] }`,
-							'ohmylms'
+						searchPlaceholder={ sprintf(
+							/* translators: %s: account or group type. */ __(
+								'Search %s',
+								'ohmylms'
+							),
+							labels[ tab ]
 						) }
 						handleFilterByDays={ ( value ) => {
 							setDateFilter( value );
@@ -496,7 +528,7 @@ export function PeopleDirectory( { tab, readRuntime } ) {
 					<Controls.ButtonWP
 						variant="secondary"
 						onClick={ () => setCreating( true ) }
-						children={ __( addLabel( tab ), 'ohmylms' ) }
+						children={ addLabel( tab ) }
 					/>
 				</div>
 				{ editing > 0 && (

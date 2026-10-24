@@ -1,14 +1,29 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
+/**
+ * Plugin layouts implementation.
+ */
 final class Layouts {
+	/**
+	 * Rendering.
+	 *
+	 * @var mixed
+	 */
 	private static $rendering = array();
+	/**
+	 * Resolve for Layouts.
+	 *
+	 * @param mixed $context Context.
+	 * @param mixed $id Id.
+	 * @param int   $course_id Course identifier.
+	 */
 	public static function resolve( $context, $id, $course_id = 0 ) {
 		$selected = get_post_meta( $id, '_ohmylms_layout', true );
 		if ( 'default' === $selected ) {
 			return null;
 		}
-		$defaults = (array) get_post_meta( $course_id ?: $id, '_ohmylms_layout_defaults', true );
+		$defaults = (array) get_post_meta( $course_id ? $course_id : $id, '_ohmylms_layout_defaults', true );
 		foreach ( array( $selected, $defaults[ $context ] ?? '' ) as $candidate ) {
 			if ( ! is_string( $candidate ) ) {
 				continue;
@@ -20,6 +35,14 @@ final class Layouts {
 		}
 		return null;
 	}
+	/**
+	 * Render for Layouts.
+	 *
+	 * @param mixed $context Context.
+	 * @param mixed $id Id.
+	 * @param int   $course_id Course identifier.
+	 * @param array $args Operation arguments.
+	 */
 	public static function render( $context, $id, $course_id = 0, array $args = array() ) {
 		$key = $context . ':' . $id;
 		if ( isset( self::$rendering[ $key ] ) ) {

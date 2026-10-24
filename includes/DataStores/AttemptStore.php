@@ -5,7 +5,15 @@ use OhMyLMS\Abstracts\DataStore;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin attempt store implementation.
+ */
 class AttemptStore extends DataStore {
+	/**
+	 * Create for Attempt store.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	public function create( &$data ) {}
 
 	/**
@@ -27,11 +35,10 @@ class AttemptStore extends DataStore {
 			return false;
 		}
 
-		$query  = $wpdb->prepare(
-			"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
-			$attempt_id
+		$result = $wpdb->get_row(
+			$wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts', $attempt_id ),
+			ARRAY_A
 		);
-		$result = $wpdb->get_row( $query, ARRAY_A );
 
 		if ( ! $result ) {
 			return false;
@@ -39,7 +46,18 @@ class AttemptStore extends DataStore {
 		$data->set_props( $result );
 	}
 
+	/**
+	 * Update for Attempt store.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	public function update( &$data ) {}
+	/**
+	 * Delete for Attempt store.
+	 *
+	 * @param mixed $data Input data.
+	 * @param array $args Operation arguments.
+	 */
 	public function delete( &$data, $args = array() ) {}
 
 	/**
@@ -57,10 +75,7 @@ class AttemptStore extends DataStore {
 
 		global $wpdb;
 		$student_id = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT student_id FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d",
-				$attempt->get_id()
-			)
+			$wpdb->prepare( 'SELECT student_id FROM %i WHERE id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts', $attempt->get_id() )
 		);
 		if ( ! $student_id ) {
 			return false;
@@ -83,10 +98,7 @@ class AttemptStore extends DataStore {
 		}
 		global $wpdb;
 		$total_score = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT SUM(achive_mark) FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id = %d",
-				$attempt->get_id()
-			)
+			$wpdb->prepare( 'SELECT SUM(achive_mark) FROM %i WHERE quiz_attempt_id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts_answers', $attempt->get_id() )
 		);
 		return $total_score ? (float) $total_score : 0.0;
 	}

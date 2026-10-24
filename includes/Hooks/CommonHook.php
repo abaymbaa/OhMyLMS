@@ -15,6 +15,9 @@ use MRM\Common\MrmCommon;
 
 use OhMyLMS\Abstracts\HookHandler;
 
+/**
+ * Plugin common hook implementation.
+ */
 class CommonHook extends HookHandler {
 
 	/**
@@ -93,7 +96,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Add Edit Course menu on admin bar for admin users
 	 *
-	 * @param \WP_Admin_Bar $admin_bar
+	 * @param \WP_Admin_Bar $admin_bar Admin bar.
 	 * @since 1.0.0
 	 */
 	public function add_edit_course_menu( \WP_Admin_Bar $admin_bar ) {
@@ -127,7 +130,7 @@ class CommonHook extends HookHandler {
 					$admin_bar->add_node(
 						array(
 							'id'    => 'edit-course', // Use the same ID to modify the existing one.
-							'title' => '<span class="ab-icon dashicons dashicons-edit"></span>' . esc_html__( 'Edit Course', 'wpfnl' ),
+							'title' => '<span class="ab-icon dashicons dashicons-edit"></span>' . esc_html__( 'Edit Course', 'ohmylms' ),
 							'href'  => $new_url, // New link for the "Edit Course".
 						)
 					);
@@ -558,6 +561,7 @@ class CommonHook extends HookHandler {
 										<p class="ohmylms-access-denied-description">
 											<?php
 											printf(
+												/* translators: %s: text value. */
 												esc_html__( 'You must complete the prerequisite "%s" before viewing this content.', 'ohmylms' ),
 												esc_html( $incomplete_course_name )
 											);
@@ -721,6 +725,8 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Delete enrollment
+	 *
+	 * @param mixed $course_id Course identifier.
 	 */
 	public function delete_enrollment( $course_id ) {
 		global $wpdb;
@@ -737,6 +743,8 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Delete enrollment
+	 *
+	 * @param mixed $order_id Order identifier.
 	 */
 	public function delete_enrollment_after_delete_order( $order_id ) {
 		global $wpdb;
@@ -764,6 +772,8 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Delete membership
+	 *
+	 * @param mixed $membership_id Membership identifier.
 	 */
 	public function delete_membership( $membership_id ) {
 		global $wpdb;
@@ -772,10 +782,7 @@ class CommonHook extends HookHandler {
 		$order_id      = null;
 		if ( ohmylms_is_pro() ) {
 			$order_id = $wpdb->get_var(
-				$wpdb->prepare(
-					"SELECT order_id FROM {$wpdb->prefix}ohmylms_user_membership WHERE membership_id = %d",
-					$membership_id
-				)
+				$wpdb->prepare( 'SELECT order_id FROM %i WHERE membership_id = %d', $wpdb->prefix . 'ohmylms_user_membership', $membership_id )
 			);
 		}
 
@@ -799,6 +806,11 @@ class CommonHook extends HookHandler {
 	}
 
 
+	/**
+	 * Delete membership and enrollment for Common hook.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public function delete_membership_and_enrollment( $id ) {
 		global $wpdb;
 
@@ -820,7 +832,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Load custom template
 	 *
-	 * @param string $template
+	 * @param string $template Template.
 	 * @return string
 	 */
 	public function load_custom_template( $template ) {
@@ -922,8 +934,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in blocks (handles nested blocks)
 	 *
-	 * @param array  $blocks Array of blocks to search
-	 * @param string $default_value Default value to return if not found
+	 * @param array  $blocks Array of blocks to search.
+	 * @param string $default_value Default value to return if not found.
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_blocks( $blocks, $default_value ) {
@@ -950,8 +962,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Find layoutType in Elementor widget data
 	 *
-	 * @param string|array $elementor_data JSON string or already decoded array of Elementor data
-	 * @param string       $default_value Default value to return if not found
+	 * @param string|array $elementor_data JSON string or already decoded array of Elementor data.
+	 * @param string       $default_value Default value to return if not found.
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_elementor_data( $elementor_data, $default_value ) {
@@ -968,8 +980,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in Elementor elements
 	 *
-	 * @param array  $elements Array of Elementor elements
-	 * @param string $default_value Default value to return if not found
+	 * @param array  $elements Array of Elementor elements.
+	 * @param string $default_value Default value to return if not found.
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_elementor_elements( $elements, $default_value ) {
@@ -996,8 +1008,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Find layoutType in Bricks element data
 	 *
-	 * @param array  $bricks_data Array of Bricks elements
-	 * @param string $default_value Default value to return if not found
+	 * @param array  $bricks_data Array of Bricks elements.
+	 * @param string $default_value Default value to return if not found.
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_bricks_data( $bricks_data, $default_value ) {
@@ -1011,8 +1023,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Recursively search for layoutType in Bricks elements
 	 *
-	 * @param array  $elements Array of Bricks elements
-	 * @param string $default_value Default value to return if not found
+	 * @param array  $elements Array of Bricks elements.
+	 * @param string $default_value Default value to return if not found.
 	 * @return string The found layoutType or default value
 	 */
 	private function find_layout_type_in_bricks_elements( $elements, $default_value ) {
@@ -1037,6 +1049,9 @@ class CommonHook extends HookHandler {
 	}
 
 
+	/**
+	 * Maybe bricks theme for Common hook.
+	 */
 	public function maybe_bricks_theme() {
 		$current_theme = wp_get_theme();
 		$parent_theme  = $current_theme->parent();
@@ -1056,7 +1071,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Register custom template
 	 *
-	 * @param array $templates
+	 * @param array $templates Templates.
 	 * @return array
 	 */
 	public function register_custom_template( $templates ) {
@@ -1076,6 +1091,12 @@ class CommonHook extends HookHandler {
 		return $templates;
 	}
 
+	/**
+	 * Add display post states for Common hook.
+	 *
+	 * @param mixed $post_states Post states.
+	 * @param mixed $post Post.
+	 */
 	public function add_display_post_states( $post_states, $post ) {
 		$state = __( 'OhMyLMS Page', 'ohmylms' );
 		if ( ohmylms_get_page_id( 'checkout' ) === get_post_field( 'ID', $post->ID ) ) {
@@ -1107,9 +1128,9 @@ class CommonHook extends HookHandler {
 	 * search results — must keep the real title, otherwise WordPress substitutes its
 	 * "#123 (no title)" placeholder for these pages.
 	 *
-	 * @param string  $title Page title
+	 * @param string  $title Page title.
 	 * @param int int $id Post id
-	 *
+	 * .
 	 * @return string $title
 	 * @since 1.0.0
 	 */
@@ -1148,7 +1169,7 @@ class CommonHook extends HookHandler {
 	 * makes WordPress build document_title from the CPT's archive label
 	 * instead of the page's own post_title. Restore the real page title here.
 	 *
-	 * @param array $title_parts
+	 * @param array $title_parts Title parts.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -1225,11 +1246,14 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Update earning
+	 *
+	 * @param mixed $order Order.
+	 * @param mixed $data Input data.
 	 */
 	public function update_earning( $order, $data ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_earning';
-		$query      = $wpdb->prepare( "SELECT order_id FROM $table_name WHERE order_id = %d", $order->get_id() );
+		$query      = $wpdb->prepare( 'SELECT order_id FROM %i WHERE order_id = %d', $table_name, $order->get_id() );
 		// Execute the query and return the result.
 		$result        = $wpdb->get_row( $query, ARRAY_A );
 		$membership_id = null;
@@ -1277,8 +1301,8 @@ class CommonHook extends HookHandler {
 	/**
 	 * Allow webhook url mail mint to create contact from setup wizard
 	 *
-	 * @param bool $is_allowed
-	 *
+	 * @param bool $is_allowed Is allowed.
+	 * .
 	 * @return bool
 	 *
 	 * @since 1.0.0
@@ -1310,6 +1334,11 @@ class CommonHook extends HookHandler {
 	}
 
 
+	/**
+	 * Create contact on mm from appsero optin for Common hook.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	function create_contact_on_mm_from_appsero_optin( $data ) {
 		if ( isset( $data['admin_email'], $data['first_name'], $data['last_name'] ) ) {
 			$json_body_data = wp_json_encode(
@@ -1340,6 +1369,8 @@ class CommonHook extends HookHandler {
 					}
 				}
 			} catch ( \Exception $e ) {
+				// Optional opt-in delivery must not interrupt the originating admin action.
+				return;
 			}
 		}
 	}
@@ -1364,9 +1395,9 @@ class CommonHook extends HookHandler {
 	/**
 	 * Set users last login
 	 *
-	 * @param string $user_login
+	 * @param mixed  $user_login User login.
 	 * @param object $user
-	 *
+	 * .
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -1396,7 +1427,7 @@ class CommonHook extends HookHandler {
 	 * After delete WP user
 	 * Delete enrollment and membership of the user if exists
 	 *
-	 * @param int $user_id User ID
+	 * @param int $user_id User ID.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -1430,7 +1461,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Add OhMyLMS specific body classes for admin pages
 	 *
-	 * @param string $classes Existing admin body classes
+	 * @param string $classes Existing admin body classes.
 	 * @return string Modified admin body classes
 	 * @since 1.0.0
 	 */
@@ -1446,7 +1477,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Customize admin footer text on OhMyLMS admin pages
 	 *
-	 * @param string $footer_text The existing footer text.
+	 * @param mixed $text Text.
 	 * @return string The modified footer text.
 	 */
 	public function review_text_in_footer( $text ) {
@@ -1469,6 +1500,9 @@ class CommonHook extends HookHandler {
 	}
 
 
+	/**
+	 * Is ohmylms page for Common hook.
+	 */
 	private function is_ohmylms_page() {
 		$screen = get_current_screen();
 
@@ -1499,9 +1533,12 @@ class CommonHook extends HookHandler {
 
 	/**
 	 * Add new row on plugins page for OhMyLMS
+	 *
+	 * @param mixed $links Links.
+	 * @param mixed $file File.
 	 */
 	public function add_row_meta( $links, $file ) {
-		if ( $file !== OHMYLMS_PLUGIN_BASENAME ) {
+		if ( OHMYLMS_PLUGIN_BASENAME !== $file ) {
 			return $links;
 		}
 
@@ -1544,7 +1581,7 @@ class CommonHook extends HookHandler {
 		}
 
 		if ( ! empty( $_GET['ohmylms_verify_error'] ) ) {
-			$error = sanitize_key( $_GET['ohmylms_verify_error'] );
+			$error = sanitize_key( wp_unslash( $_GET['ohmylms_verify_error'] ));
 			if ( 'expired' === $error ) {
 				$msg = __( 'The verification link has expired.', 'ohmylms' );
 			} else {
@@ -1569,9 +1606,9 @@ class CommonHook extends HookHandler {
 	/**
 	 * Render a styled inline notice.
 	 *
-	 * @param string $type    'success' | 'info' | 'warning'
+	 * @param string $type 'success' | 'info' | 'warning'.
 	 * @param string $message Already-escaped or safe HTML message.
-	 * @param bool   $escape  Whether to run esc_html on $message (default true).
+	 * @param bool   $escape Whether to run esc_html on $message (default true).
 	 */
 	private function render_verification_notice( string $type, string $message, bool $escape = true ): void {
 		$brand = get_option( 'ohmylms_notification_color', get_option( 'ohmylms_email_base_color', '#6E42D3' ) );
@@ -1613,7 +1650,7 @@ class CommonHook extends HookHandler {
 	 * Show an email verification notice on the order thank-you page.
 	 * Only shown when verification is required and the buyer's account is not yet verified.
 	 *
-	 * @param int $order_id
+	 * @param int $order_id Order identifier.
 	 */
 	public function output_thankyou_verification_notice( int $order_id ): void {
 		if ( ! \OhMyLMS\Services\EmailVerificationService::is_required() ) {
@@ -1640,7 +1677,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Trigger email verification after a new student account is created via ohmylms_create_new_student().
 	 *
-	 * @param int $student_id
+	 * @param int $student_id Student identifier.
 	 */
 	public function maybe_send_email_verification( int $student_id ): void {
 		if ( ! \OhMyLMS\Services\EmailVerificationService::is_required() ) {
@@ -1696,10 +1733,10 @@ class CommonHook extends HookHandler {
 	 * Lock lessons for logged-in users who have not yet verified their email.
 	 * Hooks into ohmylms_is_lesson_locked filter (priority 5, runs before drip/sequential).
 	 *
-	 * @param bool $is_locked
-	 * @param int  $lesson_id
-	 * @param int  $course_id
-	 * @param int  $user_id
+	 * @param bool $is_locked Is locked.
+	 * @param int  $lesson_id Lesson identifier.
+	 * @param int  $course_id Course identifier.
+	 * @param int  $user_id User identifier.
 	 * @return bool
 	 */
 	public function lock_lesson_for_unverified_user( bool $is_locked, int $lesson_id, int $course_id, int $user_id ): bool {
@@ -1722,8 +1759,8 @@ class CommonHook extends HookHandler {
 	 * Block adding an unverified user to a community space.
 	 * Hooks into ohmylms_allow_add_user_to_space filter (community plugin).
 	 *
-	 * @param bool $allow
-	 * @param int  $user_id
+	 * @param bool $allow Allow.
+	 * @param int  $user_id User identifier.
 	 * @return bool
 	 */
 	public function maybe_block_unverified_community_join( bool $allow, int $user_id ): bool {
@@ -1739,7 +1776,7 @@ class CommonHook extends HookHandler {
 	/**
 	 * Block course review submission for users with unverified emails.
 	 *
-	 * @param array $comment_data
+	 * @param array $comment_data Comment data.
 	 * @return array
 	 */
 	public function block_review_for_unverified_user( array $comment_data ): array {
@@ -1784,7 +1821,7 @@ class CommonHook extends HookHandler {
 
 		// Prefer the student dashboard page (shows LMS login/register form for guests).
 		$dashboard_id = ohmylms_get_page_id( 'student_dashboard' );
-		if ( $dashboard_id > 0 ) {
+		if ( 0 < $dashboard_id ) {
 			$dashboard_url = get_permalink( $dashboard_id );
 			if ( $dashboard_url ) {
 				$gate_redirect = add_query_arg( 'redirect_to', $current_url, $dashboard_url );
@@ -1842,6 +1879,14 @@ class CommonHook extends HookHandler {
 		}
 	}
 
+	/**
+	 * Is lesson sequentially locked for Common hook.
+	 *
+	 * @param mixed $locked Locked.
+	 * @param mixed $content_id Content identifier.
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function is_lesson_sequentially_locked( $locked, $content_id, $course_id, $student_id ) {
 		if ( $locked ) {
 			return true;
@@ -1849,6 +1894,11 @@ class CommonHook extends HookHandler {
 		return \OhMyLMS\SequentialMode::is_sequentially_locked( $content_id, $course_id, $student_id );
 	}
 
+	/**
+	 * Pro data stores for Common hook.
+	 *
+	 * @param mixed $stores Stores.
+	 */
 	public function pro_data_stores( $stores ) {
 		$stores['membership-pro'] = 'OhMyLMS\DataStores\MembershipStore';
 		$stores['assignment-pro'] = 'OhMyLMS\DataStores\AssignmentStore';
@@ -1858,6 +1908,9 @@ class CommonHook extends HookHandler {
 		return $stores;
 	}
 
+	/**
+	 * Register submenu for Common hook.
+	 */
 	public function register_submenu() {
 		$slug       = OHMYLMS_SLUG;
 		$capability = 'manage_options';
@@ -1871,15 +1924,28 @@ class CommonHook extends HookHandler {
 		);
 	}
 
+	/**
+	 * Ohmylms is pro for Common hook.
+	 *
+	 * @param mixed $is_pro Is pro.
+	 */
 	public function ohmylms_is_pro( $is_pro ) {
 		return true;
 	}
 
+	/**
+	 * Pro modules for Common hook.
+	 *
+	 * @param mixed $modules Modules.
+	 */
 	public function pro_modules( $modules ) {
 		array_push( $modules, 'membership', 'assignment' );
 		return $modules;
 	}
 
+	/**
+	 * Restrict session access for Common hook.
+	 */
 	public function restrict_session_access() {
 		if ( is_single() ) {
 			global $post;
@@ -1932,6 +1998,7 @@ class CommonHook extends HookHandler {
 													<p class="ohmylms-access-denied-description">
 														<?php
 														printf(
+															/* translators: %s: text value. */
 															esc_html__( 'This content will be available after "%s"', 'ohmylms' ),
 															esc_html( $drip_time . ' ' . wp_timezone_string() )
 														);
@@ -2028,6 +2095,7 @@ class CommonHook extends HookHandler {
 													<p class="ohmylms-access-denied-description">
 														<?php
 														printf(
+															/* translators: %s: text value. */
 															esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
 															esc_html( $drip_date . ' ' . wp_timezone_string() )
 														);
@@ -2111,11 +2179,7 @@ class CommonHook extends HookHandler {
 								$course_id  = $post->post_parent;
 								$table_name = $wpdb->prefix . 'ohmylms_user_enrollment';
 								$start_date = $wpdb->get_var(
-									$wpdb->prepare(
-										"SELECT start_date FROM {$table_name} WHERE user_id = %d AND course_id = %d",
-										$user_id,
-										$course_id
-									)
+									$wpdb->prepare( 'SELECT start_date FROM %i WHERE user_id = %d AND course_id = %d', $table_name, $user_id, $course_id )
 								);
 
 								if ( $start_date ) {
@@ -2146,6 +2210,7 @@ class CommonHook extends HookHandler {
 													<p class="ohmylms-access-denied-description">
 														<?php
 														printf(
+															/* translators: %s: text value. */
 															esc_html__( 'This content will be available on "%s"', 'ohmylms' ),
 															esc_html( $available_date->format( 'F j, Y' ) )
 														);
@@ -2248,6 +2313,7 @@ class CommonHook extends HookHandler {
 													<p class="ohmylms-access-denied-description">
 														<?php
 														printf(
+															/* translators: %s: text value. */
 															esc_html__( 'You must complete "%s" before viewing this content. Please complete it and try again.', 'ohmylms' ),
 															esc_html( $prev_content_title )
 														);
@@ -2337,6 +2403,12 @@ class CommonHook extends HookHandler {
 		}
 	}
 
+	/**
+	 * Ohmylms get admin script data for mm for Common hook.
+	 *
+	 * @param mixed $localized_data Localized data.
+	 * @param mixed $handle Handle.
+	 */
 	public function ohmylms_get_admin_script_data_for_mm( $localized_data, $handle ) {
 		if ( defined( 'MAILMINT' ) && 'ohmylms' === $handle ) {
 			$wc_active         = MrmCommon::is_wc_active();
@@ -2428,6 +2500,9 @@ class CommonHook extends HookHandler {
 		return $localized_data;
 	}
 
+	/**
+	 * Get editor source for Common hook.
+	 */
 	private function get_editor_source() {
 		// get product categories for email builder.
 		$wc_categories = $this->get_formatted_wc_categories();
@@ -2443,6 +2518,9 @@ class CommonHook extends HookHandler {
 		);
 	}
 
+	/**
+	 * Get formatted wc categories for Common hook.
+	 */
 	private function get_formatted_wc_categories() {
 		$taxonomy     = 'product_cat';
 		$orderby      = 'name';
@@ -2473,6 +2551,9 @@ class CommonHook extends HookHandler {
 		return $wc_categories;
 	}
 
+	/**
+	 * Get formatted wp post categories for Common hook.
+	 */
 	private function get_formatted_wp_post_categories() {
 		$taxonomy     = 'category';
 		$orderby      = 'name';
@@ -2502,6 +2583,12 @@ class CommonHook extends HookHandler {
 		return $categories;
 	}
 
+	/**
+	 * Session single url for Common hook.
+	 *
+	 * @param mixed $url Url.
+	 * @param mixed $id Id.
+	 */
 	public function session_single_url( $url, $id ) {
 		$post = get_post( $id );
 		if ( is_object( $post ) && 'ohmylms-session' === $post->post_type ) {

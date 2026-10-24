@@ -3,9 +3,20 @@ namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin bootstrap implementation.
+ */
 final class Bootstrap {
+	/**
+	 * Dirty.
+	 *
+	 * @var mixed
+	 */
 	private static $dirty = array();
 
+	/**
+	 * Init for Bootstrap.
+	 */
 	public static function init() {
 		add_action( 'init', array( Schema::class, 'install' ), 7 );
 		add_action(
@@ -46,7 +57,7 @@ final class Bootstrap {
 		add_action(
 			'transition_post_status',
 			static function ( $new, $old, $post ) {
-				if ( $post && $post->post_type === OHMYLMS_COURSE_CPT && $new !== $old ) {
+				if ( $post && OHMYLMS_COURSE_CPT === $post->post_type && $new !== $old ) {
 					Placements::flush(); }
 			},
 			10,
@@ -65,6 +76,9 @@ final class Bootstrap {
 		Frontend::init();
 	}
 
+	/**
+	 * Flush for Bootstrap.
+	 */
 	public static function flush() {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -72,7 +86,7 @@ final class Bootstrap {
 		$students    = array_keys( self::$dirty );
 		self::$dirty = array();
 		foreach ( $students as $student ) {
-			$courses = $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT e.course_id FROM ' . Schema::table( 'enrollments' ) . " b JOIN {$wpdb->prefix}ohmylms_user_enrollment e ON e.id=b.enrollment_id WHERE e.user_id=%d AND e.status='enrolled' AND e.progress<>'completed' AND b.program_id>0", $student ) );
+			$courses = $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT e.course_id FROM %i b JOIN %i e ON e.id=b.enrollment_id WHERE e.user_id=%d AND e.status=\'enrolled\' AND e.progress<>\'completed\' AND b.program_id>0', Schema::table( 'enrollments' ), $wpdb->prefix . 'ohmylms_user_enrollment', $student ) );
 			foreach ( $courses as $course ) {
 				CompletionPolicy::award( $student, (int) $course ); }
 		}

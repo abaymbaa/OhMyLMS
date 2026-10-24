@@ -1,4 +1,10 @@
 <?php
+/**
+ * Content functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 /**
  * Modify the permalink structure for lessons.
@@ -107,10 +113,7 @@ function ohmylms_get_chapter_id_by_content_id( $content_id ) {
 
 	global $wpdb;
 	$chapter_id = $wpdb->get_var(
-		$wpdb->prepare(
-			"SELECT chapter_id FROM {$wpdb->prefix}ohmylms_content_relationship WHERE content_id = %d LIMIT 1",
-			$content_id
-		)
+		$wpdb->prepare( 'SELECT chapter_id FROM %i WHERE content_id = %d LIMIT 1', $wpdb->prefix . 'ohmylms_content_relationship', $content_id )
 	);
 	$result     = $chapter_id ? (int) $chapter_id : 0;
 
@@ -131,10 +134,7 @@ function ohmylms_get_chapter_id_by_content_id( $content_id ) {
  */
 function ohmylms_get_content_type_id_by_content_id( $content_id ) {
 	global $wpdb;
-	$sql    = $wpdb->prepare(
-		"SELECT content_type FROM {$wpdb->prefix}ohmylms_content_relationship WHERE content_id = %d LIMIT 1",
-		$content_id
-	);
+	$sql    = $wpdb->prepare( 'SELECT content_type FROM %i WHERE content_id = %d LIMIT 1', $wpdb->prefix . 'ohmylms_content_relationship', $content_id );
 	$result = $wpdb->get_row( $sql );
 	return isset( $result->content_type ) ? $result->content_type : null;
 }
@@ -147,6 +147,7 @@ function ohmylms_get_content_type_id_by_content_id( $content_id ) {
  * @return int|null The course ID or null if not found.
  *
  * @since 1.0.0
+ * @param int $student_id Student identifier.
  */
 function ohmylms_get_course_by_content_id( $content_id, $student_id = 0 ) {
 	$home       = null;
@@ -164,6 +165,11 @@ function ohmylms_get_course_by_content_id( $content_id, $student_id = 0 ) {
 	return $course_id ? $course_id : null;
 }
 
+/**
+ * Ohmylms format file size for Content-functions.
+ *
+ * @param mixed $size Size.
+ */
 function ohmylms_format_file_size( $size ) {
 	if ( $size >= 1073741824 ) {
 		return number_format( $size / 1073741824, 2 ) . ' GB';
@@ -177,15 +183,17 @@ function ohmylms_format_file_size( $size ) {
 }
 
 
+/**
+ * Ohmylms get question ans by question id for Content-functions.
+ *
+ * @param mixed $question_id Question identifier.
+ */
 function ohmylms_get_question_ans_by_question_id( $question_id ) {
 	global $wpdb;
 	$table_name = $wpdb->prefix . 'ohmylms_question_answers'; // Replace 'your_table_name' with the actual table name.
 
 	$results = $wpdb->get_results(
-		$wpdb->prepare(
-			"SELECT * FROM $table_name WHERE question_id = %d AND is_correct = 1",
-			$question_id
-		),
+		$wpdb->prepare( 'SELECT * FROM %i WHERE question_id = %d AND is_correct = 1', $table_name, $question_id ),
 		ARRAY_A
 	);
 

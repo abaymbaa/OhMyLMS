@@ -7,8 +7,7 @@ import {
 import { emit } from 'ohmylms/interactivity';
 function select( button ) {
 	const root = button.closest( '[data-wp-interactive="ohmylms/tabs"]' );
-	const context = getContext(),
-		key = button.dataset.target.slice( 1 );
+	const key = button.dataset.target.slice( 1 );
 	if (
 		! emit(
 			root,
@@ -21,6 +20,7 @@ function select( button ) {
 	) {
 		return;
 	}
+	const context = getContext();
 	context.activeTab = key;
 	emit( root, 'tab-changed', {
 		tab: key,
@@ -53,8 +53,10 @@ store( 'ohmylms/tabs', {
 			}
 			event.preventDefault();
 			event.stopPropagation();
-			const button = getElement().ref,
-				root = button.closest( '[data-wp-interactive="ohmylms/tabs"]' );
+			const button = getElement().ref;
+			const root = button.closest(
+				'[data-wp-interactive="ohmylms/tabs"]'
+			);
 			const buttons = [ ...root.querySelectorAll( '[role=tab]' ) ];
 			const rtl = getComputedStyle( root ).direction === 'rtl';
 			const step =

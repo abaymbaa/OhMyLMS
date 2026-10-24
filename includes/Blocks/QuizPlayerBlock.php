@@ -15,7 +15,17 @@ defined( 'ABSPATH' ) || exit;
 
 /** Native interactive block; the previous player URL remains a compatible form fallback. */
 final class QuizPlayerBlock {
-	private static $instance    = 0;
+	/**
+	 * Instance.
+	 *
+	 * @var mixed
+	 */
+	private static $instance = 0;
+	/**
+	 * Inline quiz.
+	 *
+	 * @var mixed
+	 */
 	private static $inline_quiz = 0;
 
 	/** Register block, editor metadata endpoint and player navigation. */
@@ -356,7 +366,7 @@ final class QuizPlayerBlock {
 	/**
 	 * Render the existing active player or an explicit attempt start form.
 	 *
-	 * @param int $quiz_id   Authorized quiz ID.
+	 * @param int $quiz_id Authorized quiz ID.
 	 * @param int $course_id Authorized course ID.
 	 */
 	private static function player( $quiz_id, $course_id ) {

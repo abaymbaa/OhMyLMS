@@ -8,10 +8,21 @@ use function OhMyLMS\Commerce\ecommerce;
 defined( 'ABSPATH' ) || exit;
 
 
+/**
+ * Plugin payment gateway settings implementation.
+ */
 class PaymentGatewaySettings extends SettingsPage {
 
+	/**
+	 * Gateways.
+	 *
+	 * @var mixed
+	 */
 	public $gateways;
 
+	/**
+	 * Initialize Payment gateway settings.
+	 */
 	public function __construct() {
 		$this->id    = 'payments';
 		$this->label = __( 'Payment Gateways', 'ohmylms' );

@@ -13,21 +13,35 @@ use OhMyLMS\Elementor\ElementorManager;
 use OhMyLMS\Blocks\BlocksManager;
 use OhMyLMS\WPBakery\WPBakeryManager;
 
+/**
+ * Plugin oh my lms implementation.
+ */
 final class OhMyLMS {
+	/**
+	 * Session factory.
+	 *
+	 * @var mixed
+	 */
 	public $session_factory;
 
 	/**
+	 * OhMyLMS\Rest\Api.
+	 *
 	 * @var $rest_api OhMyLMS\Rest\Api
 	 */
 	public $rest_api;
 
 
 	/**
+	 * OhMyLMS\Admin\Admin.
+	 *
 	 * @var $admin OhMyLMS\Admin\Admin
 	 */
 	public \OhMyLMS\Admin\Admin $admin;
 
 	/**
+	 * \OhMyLMS\Admin\AdminNotices.
+	 *
 	 * @var $admin_notices \OhMyLMS\Admin\AdminNotices
 	 */
 	public $admin_notices;
@@ -47,90 +61,122 @@ final class OhMyLMS {
 	}
 
 	/**
+	 * \OhMyLMS\Admin\Menu.
+	 *
 	 * @var $admin_menu \OhMyLMS\Admin\Menu
 	 */
 	public $admin_menu;
 
 
 	/**
+	 * \OhMyLMS\Order\OrderLoader.
+	 *
 	 * @var $order_loader \OhMyLMS\Order\OrderLoader
 	 */
 	public $order_loader;
 
 
 	/**
+	 * \OhMyLMS\Order\SessionHandler.
+	 *
 	 * @var $session \OhMyLMS\Order\SessionHandler
 	 */
 	public $session;
 
 
 	/**
+	 * Course factory.
+	 *
 	 * @var \OhMyLMS\Factory\CourseFactory
 	 */
 	public $course_factory;
 
 	/**
+	 * Chapter factory.
+	 *
 	 * @var \OhMyLMS\Factory\ChapterFactory
 	 */
 	public $chapter_factory;
 
 	/**
+	 * Student factory.
+	 *
 	 * @var \OhMyLMS\Factory\StudentFactory
 	 */
 	public $student_factory;
 
 
 	/**
+	 * Lesson factory.
+	 *
 	 * @var \OhMyLMS\Factory\LessonFactory
 	 */
 	public $lesson_factory;
 
 
 	/**
+	 * Question factory.
+	 *
 	 * @var \OhMyLMS\Factory\LessonFactory
 	 */
 	public $question_factory;
 
 
 	/**
+	 * Quiz factory.
+	 *
 	 * @var \OhMyLMS\Factory\QuizFactory
 	 */
 	public $quiz_factory;
 
 	/**
+	 * Membership factory.
+	 *
 	 * @var \OhMyLMS\Factory\MembershipFactory
 	 */
 	public $membership_factory;
 
 	/**
+	 * Assignment factory.
+	 *
 	 * @var \OhMyLMS\Factory\AssignmentFactory
 	 */
 	public $assignment_factory;
 
 	/**
+	 * Certificate factory.
+	 *
 	 * @var \OhMyLMS\Factory\CertificateFactory
 	 */
 	public $certificate_factory;
 
 	/**
+	 * Attempt factory.
+	 *
 	 * @var \OhMyLMS\Factory\AttemptFactory
 	 */
 	public $attempt_factory;
 
 
 	/**
+	 * Shortcode.
+	 *
 	 * @var \OhMyLMS\Shortcodes\Shortcodes
 	 */
 	public $shortcode;
 
 
 	/**
+	 * Admin ajax.
+	 *
 	 * @var \OhMyLMS\Admin\Ajax
 	 */
 	public $admin_ajax;
 
 
 	/**
+	 * Settings pages.
+	 *
 	 * @var \OhMyLMS\Admin\Pages\AdminSettings
 	 */
 	public $settings_pages;
@@ -144,71 +190,99 @@ final class OhMyLMS {
 	private static $instance;
 
 	/**
+	 * Course hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\CourseHookHandler
 	 */
 	private $course_hook_handler;
 
 
 	/**
+	 * Chapter hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\ChapterHookHandler
 	 */
 	private $chapter_hook_handler;
 
 	/**
+	 * Lesson hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\LessonHookHandler
 	 */
 	private $lesson_hook_handler;
 
 	/**
+	 * Order hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\OrderHooks
 	 */
 	private $order_hook_handler;
 
 	/**
+	 * Question hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\QuestionHookHandler
 	 */
 	private $question_hook_handler;
 
 	/**
+	 * Quiz hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\QuizHookHandler
 	 */
 	private $quiz_hook_handler;
 
 	/**
+	 * Ohmylms endpoint.
+	 *
 	 * @var \OhMyLMS\OhMyLmsEndpoint
 	 */
 	public $ohmylms_endpoint;
 
 	/**
+	 * Course comment.
+	 *
 	 * @var \OhMyLMS\CourseComment
 	 */
 	private $course_comment;
 	/**
+	 * Common hook.
+	 *
 	 * @var \OhMyLMS\Hooks\CommonHook
 	 */
 	private $common_hook;
 	/**
+	 * Assignment hook handler.
+	 *
 	 * @var \OhMyLMS\Hooks\AssignmentHookHandler
 	 */
 	private $assignment_hook_handler;
 
 	/**
+	 * Rewrite rules.
+	 *
 	 * @var \OhMyLMS\RewriteRules
 	 */
 	private $rewrite_rules;
 
 
 	/**
+	 * Emails.
+	 *
 	 * @var \OhMyLMS\Emails\Emails
 	 */
 	public $emails;
 
 	/**
+	 * Drip content.
+	 *
 	 * @var \OhMyLMS\DripContent
 	 */
 	public $drip_content;
 
 	/**
+	 * Webhook manager.
+	 *
 	 * @var \OhMyLMS\WebhookManager
 	 */
 	public $webhook_manager;
@@ -258,6 +332,9 @@ final class OhMyLMS {
 		$this->register_bundled_features();
 	}
 
+	/**
+	 * Maybe run setup wizard for Oh my lms.
+	 */
 	public function maybe_run_setup_wizard() {
 		if ( get_transient( '_ohmylms_activation_redirect' ) ) {
 			delete_transient( '_ohmylms_activation_redirect' );
@@ -527,6 +604,9 @@ final class OhMyLMS {
 	}
 
 
+	/**
+	 * On plugins loaded for Oh my lms.
+	 */
 	public function on_plugins_loaded() {
 
 		$this->course_hook_handler = new CourseHookHandler();
@@ -587,7 +667,7 @@ final class OhMyLMS {
 	 * @since 1.0.0
 	 *
 	 * @param string $type admin, ajax, cron or frontend
-	 *
+	 * .
 	 * @return bool
 	 */
 	private function is_request( $type ) {
@@ -612,8 +692,8 @@ final class OhMyLMS {
 	/**
 	 * Plugin action links
 	 *
-	 * @param array $links
-	 *
+	 * @param array $links Links.
+	 * .
 	 * @since 0.2.0
 	 *
 	 * @return array
@@ -824,6 +904,9 @@ final class OhMyLMS {
 	}
 
 
+	/**
+	 * Register bundled features for Oh my lms.
+	 */
 	private function register_bundled_features() {
 		foreach ( array( 'membership-function', 'assignment-function', 'session-function' ) as $helper ) {
 			require_once OHMYLMS_DIR . '/includes/Utility/' . $helper . '.php';
@@ -838,6 +921,9 @@ final class OhMyLMS {
 		);
 		add_action( 'init', array( $this, 'register_sessions_post_type' ) );
 	}
+	/**
+	 * Load bundled features for Oh my lms.
+	 */
 	public function load_bundled_features() {
 		new \OhMyLMS\SequentialMode();
 		foreach ( array( 'CourseHook', 'ChapterHook', 'LessonHook', 'QuizHook', 'MembershipHook', 'SettingsHook', 'ApiHook', 'AutomationHook', 'LeaderboardHook', 'EngagementHook' ) as $name ) {
@@ -851,6 +937,9 @@ final class OhMyLMS {
 	}
 
 
+	/**
+	 * Register sessions post type for Oh my lms.
+	 */
 	public function register_sessions_post_type() {
 		$labels = array(
 			'name'               => \_x( 'Sessions', 'Post type general name', 'ohmylms' ),

@@ -25,8 +25,8 @@ export function createQuizQuestionHeader( readRuntime ) {
 			type = props.type,
 			u = void 0 === type ? '' : type,
 			s = ( props.fetchData, props.setData ),
-			isCorrect = props.isCorrect,
-			m = ( 0, Router.g )();
+			isCorrect = props.isCorrect;
+		( 0, Router.g )();
 		var p = ( () => {
 			if ( void 0 !== isCorrect ) {
 				if ( isCorrect ) {

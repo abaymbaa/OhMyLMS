@@ -4,8 +4,8 @@
 
 /**
  * Validate coupon fields for creation and updating.
- * @param {Object}   coupon    - The coupon payload.
- * @param {Function} [__=t=>t] - i18n translation helper.
+ * @param {Object}                   coupon    - The coupon payload.
+ * @param {(text: string) => string} [__=t=>t] - i18n translation helper.
  * @return {Object} Map of field name to error message.
  */
 export function validateCoupon( coupon, __ = ( t ) => t ) {
@@ -75,7 +75,7 @@ export function validateCoupon( coupon, __ = ( t ) => t ) {
 /**
  * Generate a random uppercase alphanumeric coupon code.
  * @param {number} [length=8]
- * @return {string}
+ * @return {string} Generated coupon code.
  */
 export function generateCouponCode( length = 8 ) {
 	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -88,10 +88,10 @@ export function generateCouponCode( length = 8 ) {
 
 /**
  * Validate refund fields before submission.
- * @param {Object}   refund    - { amount, reason }
- * @param {number}   maxAmount - Maximum allowable refund amount.
- * @param {Function} [__=t=>t]
- * @return {{ valid: boolean, error?: string }}
+ * @param {Object}                   refund    - { amount, reason }
+ * @param {number}                   maxAmount - Maximum allowable refund amount.
+ * @param {(text: string) => string} [__=t=>t]
+ * @return {{ valid: boolean, error?: string }} Validation result.
  */
 export function validateRefund( refund, maxAmount, __ = ( t ) => t ) {
 	const amount = Number( refund?.amount );
@@ -123,7 +123,7 @@ export function validateRefund( refund, maxAmount, __ = ( t ) => t ) {
 /**
  * Determine Badge variant for an order status.
  * @param {string} status
- * @return {'success' | 'warning' | 'danger' | 'secondary' | 'default'}
+ * @return {'success' | 'warning' | 'danger' | 'secondary' | 'default'} Badge variant.
  */
 export function getOrderStatusVariant( status ) {
 	switch ( status ) {
@@ -145,7 +145,7 @@ export function getOrderStatusVariant( status ) {
 /**
  * Determine Badge variant for a subscription status.
  * @param {string} status
- * @return {'success' | 'warning' | 'danger' | 'default'}
+ * @return {'success' | 'warning' | 'danger' | 'default'} Badge variant.
  */
 export function getSubscriptionStatusVariant( status ) {
 	switch ( status ) {

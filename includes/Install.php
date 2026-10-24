@@ -4,6 +4,9 @@ namespace OhMyLMS;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin install implementation.
+ */
 class Install {
 
 	/**
@@ -139,7 +142,7 @@ class Install {
 	/**
 	 * Update DB version to current.
 	 *
-	 * @param string|null $version
+	 * @param string|null $version Version.
 	 * @since 1.0.0
 	 */
 	public static function update_db_version( $version = null ) {
@@ -779,13 +782,16 @@ class Install {
 		}
 	}
 
+	/**
+	 * Save default permalink settings for Install.
+	 */
 	public static function save_default_permalink_settings() {
 		$permalink          = new \OhMyLMS\Admin\Settings\Permalink();
 		$permalink_settings = $permalink->get_settings();
 		if ( is_array( $permalink_settings ) ) {
 			foreach ( $permalink_settings as $setting ) {
 				if ( isset( $setting['id'], $setting['default'] ) ) {
-					if ( 'ohmylms_permalink' == $setting['id'] ) {
+					if ( 'ohmylms_permalink' === $setting['id'] ) {
 						update_option( $setting['id'], $setting['default'] );
 						flush_rewrite_rules( true );
 					}
@@ -794,6 +800,9 @@ class Install {
 		}
 	}
 
+	/**
+	 * Save default design settings for Install.
+	 */
 	public static function save_default_design_settings() {
 		$design          = new \OhMyLMS\Admin\Settings\Design();
 		$design_settings = $design->get_settings();
@@ -806,6 +815,9 @@ class Install {
 		}
 	}
 
+	/**
+	 * Save default email settings for Install.
+	 */
 	public static function save_default_email_settings() {
 		$email          = new \OhMyLMS\Admin\Settings\EmailSettings();
 		$email_settings = $email->get_settings();
@@ -818,6 +830,9 @@ class Install {
 		}
 	}
 
+	/**
+	 * Bundled get schema for Install.
+	 */
 	private static function bundled_get_schema() {
 		global $wpdb;
 		$charset_collate = $wpdb->get_charset_collate();
@@ -891,12 +906,18 @@ class Install {
 		return $tables;
 	}
 
+	/**
+	 * Bundled maybe create pages for Install.
+	 */
 	public static function bundled_maybe_create_pages() {
 		if ( empty( get_option( 'ohmylms_pro_db_version' ) ) ) {
 			self::bundled_create_pages();
 		}
 	}
 
+	/**
+	 * Bundled create pages for Install.
+	 */
 	public static function bundled_create_pages() {
 		$pages = apply_filters(
 			'ohmylms_pro_default_pages',
@@ -917,23 +938,6 @@ class Install {
 					update_option( 'ohmylms_' . $key . '_page_id', $existing_page->ID );
 				}
 				continue;
-				// Check if existing page has the same title and content.
-				if ( $existing_page->post_title === $page['title'] && $existing_page->post_content === $page['content'] ) {
-					// Store the existing page ID and skip creation.
-					update_option( 'ohmylms_' . $key . '_page_id', $existing_page->ID );
-					continue;
-				} else {
-					// Update existing page if needed.
-					wp_update_post(
-						array(
-							'ID'           => $existing_page->ID,
-							'post_title'   => $page['title'],
-							'post_content' => $page['content'],
-						)
-					);
-				}
-
-				$page_id = $existing_page->ID;
 			} else {
 				// Create the page if it doesn't exist.
 				$page_id = wp_insert_post(

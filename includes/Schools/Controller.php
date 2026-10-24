@@ -3,7 +3,13 @@ namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin controller implementation.
+ */
 final class Controller {
+	/**
+	 * Register for Controller.
+	 */
 	public static function register() {
 		$routes = array(
 			'/classes'                            => 'GET,POST',
@@ -39,6 +45,11 @@ final class Controller {
 			);
 		}
 	}
+	/**
+	 * Dispatch for Controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function dispatch( $request ) {
 		try {
 			$result   = self::handle( $request );
@@ -52,13 +63,25 @@ final class Controller {
 			return new \WP_Error( 'ohmylms_school_error', 500 === $status ? 'Unable to complete the request. Please try again.' : $error->getMessage(), array( 'status' => $status ) );
 		}
 	}
+	/**
+	 * Rate limit for Controller.
+	 *
+	 * @param mixed $purpose Purpose.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function rate_limit( $purpose ) {
 		$key      = 'ohmylms_' . $purpose . '_' . hash_hmac( 'sha256', $_SERVER['REMOTE_ADDR'] ?? 'local', wp_salt( 'nonce' ) );
 		$attempts = (int) get_transient( $key );
-		if ( $attempts >= 15 ) {
+		if ( 15 <= $attempts ) {
 			throw new \RuntimeException( 'Too many attempts. Please try again in 15 minutes.', 429 ); }
 		set_transient( $key, $attempts + 1, 15 * MINUTE_IN_SECONDS );
 	}
+	/**
+	 * Signup for Controller.
+	 *
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	public static function signup( $data ) {
 		self::rate_limit( 'school_signup' );
 		Service::need( ! is_user_logged_in(), 'You are already signed in.' );
@@ -97,6 +120,12 @@ final class Controller {
 			'login_url' => wp_login_url( Views::portal_url() ),
 		);
 	}
+	/**
+	 * Create account for Controller.
+	 *
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function create_account( $data ) {
 		Access::require_access( current_user_can( 'create_users' ) );
 		$role = sanitize_key( $data['role'] ?? '' );
@@ -107,7 +136,7 @@ final class Controller {
 		$last  = Service::text( $data['last_name'] ?? '' );
 		Service::need( '' !== $first, 'A first name is required.' );
 		$login = sanitize_user( $data['username'] ?? '', true ) ?: sanitize_user( strstr( $email, '@', true ), true );
-		$base  = $login ?: 'user';
+		$base  = $login ? $login : 'user';
 		$login = $base;
 		for ( $i = 2; username_exists( $login ); $i++ ) {
 			$login = $base . $i; }
@@ -139,6 +168,13 @@ final class Controller {
 			'message'  => __( 'Account created.', 'ohmylms' ),
 		);
 	}
+	/**
+	 * Account for Controller.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $data Input data.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function account( $id, $data = null ) {
 		$user = get_userdata( $id );
 		Access::require_access( $user && current_user_can( 'edit_user', $id ) );
@@ -176,6 +212,12 @@ final class Controller {
 			'username'   => $user->user_login,
 		);
 	}
+	/**
+	 * Handle for Controller.
+	 *
+	 * @param mixed $r R.
+	 * @throws \RuntimeException When the operation cannot be completed.
+	 */
 	private static function handle( $r ) {
 		global $wpdb;
 		$route   = $r->get_route();
@@ -208,10 +250,10 @@ final class Controller {
 				);
 				if ( 'teacher' === $filter ) {
 					$m   = Schema::table( 'school_memberships' );
-					$ids = array_merge( $ids, $wpdb->get_col( "SELECT user_id FROM $m WHERE role='teacher' AND status='active'" ) );
+					$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( 'SELECT user_id FROM %i WHERE role=\'teacher\' AND status=\'active\'', $m ) ) );
 				} else {
 					$g   = Schema::table( 'guardian_links' );
-					$ids = array_merge( $ids, $wpdb->get_col( "SELECT guardian_user_id FROM $g WHERE status='active'" ) );
+					$ids = array_merge( $ids, $wpdb->get_col( $wpdb->prepare( 'SELECT guardian_user_id FROM %i WHERE status=\'active\'', $g ) ) );
 				}
 				$extra['include'] = array_unique( array_map( 'intval', $ids ) ) ?: array( 0 );
 			}
@@ -265,7 +307,7 @@ final class Controller {
 				'platform_admin'   => Access::platform(),
 				'can_create_class' => Access::teacher(),
 				'can_list_users'   => current_user_can( 'list_users' ),
-				'memberships'      => $wpdb->get_results( $wpdb->prepare( "SELECT school_id,role FROM $m WHERE user_id=%d AND status='active'", get_current_user_id() ), ARRAY_A ),
+				'memberships'      => $wpdb->get_results( $wpdb->prepare( 'SELECT school_id,role FROM %i WHERE user_id=%d AND status=\'active\'', $m, get_current_user_id() ), ARRAY_A ),
 			);
 		}
 		if ( '/ohmylms/v1/school/classes' === $route ) {
@@ -300,10 +342,10 @@ final class Controller {
 		if ( $r['course'] ) {
 			Access::require_access( $r['class_id'] && Access::classroom( absint( $r['class_id'] ), true ) );
 			$course = get_post( absint( $r['course'] ) );
-			Service::need( $course && $course->post_type === OHMYLMS_COURSE_CPT && 'publish' === $course->post_status, 'Course not available.' );
+			Service::need( $course && OHMYLMS_COURSE_CPT === $course->post_type && 'publish' === $course->post_status, 'Course not available.' );
 			$rel      = Schema::table( 'content_relationship' );
 			$chapters = Schema::table( 'chapter_relationship' );
-			return $wpdb->get_results( $wpdb->prepare( "SELECT DISTINCT p.ID AS id,p.post_title AS title FROM $rel r JOIN $chapters c ON c.chapter_id=r.chapter_id JOIN {$wpdb->posts} p ON p.ID=r.content_id WHERE c.course_id=%d ORDER BY p.post_title LIMIT 200", $course->ID ), ARRAY_A );
+			return $wpdb->get_results( $wpdb->prepare( 'SELECT DISTINCT p.ID AS id,p.post_title AS title FROM %i r JOIN %i c ON c.chapter_id=r.chapter_id JOIN %i p ON p.ID=r.content_id WHERE c.course_id=%d ORDER BY p.post_title LIMIT 200', $rel, $chapters, $wpdb->posts, $course->ID ), ARRAY_A );
 		}
 		if ( $write && $r['learning'] && $r['attempt'] ) {
 			return Service::grade( absint( $r['learning'] ), absint( $r['attempt'] ), $data ); }

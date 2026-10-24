@@ -154,15 +154,15 @@ export function createStudentList( readRuntime ) {
 			},
 		];
 		const dateOptions = [
-			[ '', 'All Times' ],
-			[ 'last_30_days', 'Last 30 days' ],
-			[ 'current_month', 'Current month' ],
-			[ 'previous_month', 'Previous month' ],
-			[ 'current_year', 'Current year' ],
-			[ 'last_12_months', 'Last 12 months' ],
+			[ '', __( 'All Times', 'ohmylms' ) ],
+			[ 'last_30_days', __( 'Last 30 days', 'ohmylms' ) ],
+			[ 'current_month', __( 'Current month', 'ohmylms' ) ],
+			[ 'previous_month', __( 'Previous month', 'ohmylms' ) ],
+			[ 'current_year', __( 'Current year', 'ohmylms' ) ],
+			[ 'last_12_months', __( 'Last 12 months', 'ohmylms' ) ],
 		].map( ( [ value, label ] ) => ( {
 			value,
-			label: __( label, 'ohmylms' ),
+			label,
 		} ) );
 		async function confirm() {
 			if (

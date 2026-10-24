@@ -1,5 +1,8 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 
+/**
+ * Plugin oh my lms_eu_vat_api_response implementation.
+ */
 class OhMyLMS_EU_VAT_API_Response {
 
 	const NO_VAT_NUMBER                  = 1;
@@ -10,14 +13,39 @@ class OhMyLMS_EU_VAT_API_Response {
 	const INVALID_INPUT                  = 6;
 	const API_ERROR                      = 7;
 
+	/**
+	 * Vat number.
+	 *
+	 * @var mixed
+	 */
 	public $vat_number = '';
 
+	/**
+	 * Country code.
+	 *
+	 * @var mixed
+	 */
 	public $country_code = '';
 
+	/**
+	 * Valid.
+	 *
+	 * @var mixed
+	 */
 	public $valid = false;
 
+	/**
+	 * Name.
+	 *
+	 * @var mixed
+	 */
 	public $name = '';
 
+	/**
+	 * Address.
+	 *
+	 * @var mixed
+	 */
 	public $address = '';
 
 	/**
@@ -45,6 +73,9 @@ class OhMyLMS_EU_VAT_API_Response {
 		return (bool) $this->valid;
 	}
 
+	/**
+	 * Get error message for Eu vat api response.
+	 */
 	public function get_error_message() {
 		switch ( $this->error ) {
 			case self::NO_VAT_NUMBER:
@@ -75,6 +106,9 @@ class OhMyLMS_EU_VAT_API_Response {
 		return apply_filters( 'ohmylms_vat_error_code_to_string', $error_message, $this->error );
 	}
 
+	/**
+	 * To string for Eu vat api response.
+	 */
 	public function __toString() {
 		$result = array( $this->name, $this->address, $this->error );
 

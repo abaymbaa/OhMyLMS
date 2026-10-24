@@ -1,7 +1,7 @@
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createSetupCompletion( readRuntime ) {
-	return function SetupCompletion( props ) {
+	return function SetupCompletion() {
 		const {
 			Ane,
 			I: Controls,
@@ -42,7 +42,8 @@ export function createSetupCompletion( readRuntime ) {
 													plugin: 'ohmylms',
 													version: '1.1.16',
 												}
-											); // Falls through to the shared async state cleanup.
+											);
+										// Falls through to the shared async state cleanup.
 										case 1:
 											return _eLocal3.a( 2 );
 									}

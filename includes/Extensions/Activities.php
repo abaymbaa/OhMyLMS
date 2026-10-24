@@ -15,6 +15,9 @@ namespace OhMyLMS\Extensions;
  * cannot strip it. The behaviour runs on the WordPress Interactivity API (assets/extensions/*.js).
  */
 final class Activities {
+	/**
+	 * Register defaults for Activities.
+	 */
 	public static function register_defaults() {
 		Registry::register(
 			'activity',
@@ -26,6 +29,11 @@ final class Activities {
 		);
 	}
 
+	/**
+	 * Render reveal for Activities.
+	 *
+	 * @param array $data Input data.
+	 */
 	public static function render_reveal( array $data ) {
 		$prompt = isset( $data['prompt'] ) ? (string) $data['prompt'] : '';
 		$answer = isset( $data['answer'] ) ? (string) $data['answer'] : '';

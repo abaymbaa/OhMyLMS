@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createAssignmentReport( readRuntime ) {
@@ -84,7 +85,7 @@ export function createAssignmentReport( readRuntime ) {
 												case 3:
 													_eLocal4.p = 3;
 													_nLocal = _eLocal4.v;
-													console.error( _nLocal );
+													showRequestError( _nLocal );
 												// Falls through to the shared async state cleanup.
 												case 4:
 													return (

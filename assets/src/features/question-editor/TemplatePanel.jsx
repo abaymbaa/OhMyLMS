@@ -18,6 +18,12 @@ import {
 	variableDefaults,
 } from './templateModel.mjs';
 import { FormulaControl } from '../math/FormulaControl';
+const variableLabels = {
+	int: __( 'Whole number', 'ohmylms' ),
+	decimal: __( 'Decimal', 'ohmylms' ),
+	choice: __( 'Pick from a list', 'ohmylms' ),
+	expr: __( 'Calculated', 'ohmylms' ),
+};
 const request = ( options ) => window.wp.apiFetch( options );
 
 /**
@@ -218,7 +224,7 @@ export function TemplatePanel( { question, onChange, readOnly } ) {
 						options={ VARIABLE_TYPES.map(
 							( [ value, label ] ) => ( {
 								value,
-								label: __( label, 'ohmylms' ),
+								label: variableLabels[ value ] || label,
 							} )
 						) }
 						onChange={ ( type ) =>

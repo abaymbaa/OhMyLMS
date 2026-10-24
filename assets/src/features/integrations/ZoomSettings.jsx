@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createZoomSettings( readRuntime ) {
@@ -213,7 +214,7 @@ export function createZoomSettings( readRuntime ) {
 													)
 												);
 											}
-											console.error( _oLocal );
+											showRequestError( _oLocal );
 										// Falls through to the shared async state cleanup.
 										case 5:
 											return (

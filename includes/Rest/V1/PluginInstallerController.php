@@ -118,7 +118,8 @@ class PluginInstallerController extends RestController {
 			return rest_ensure_response(
 				array(
 					'success' => true,
-					'message' => sprintf( __( 'Plugin %s is already installed.' ), $plugin_slug ),
+					'message' => sprintf( /* translators: %s: text value. */
+					__( 'Plugin %s is already installed.' ), $plugin_slug ),
 				)
 			);
 		}
@@ -148,7 +149,8 @@ class PluginInstallerController extends RestController {
 		if ( is_wp_error( $api ) ) {
 			return new WP_Error(
 				'plugin_api_error',
-				sprintf( __( 'Unable to fetch plugin information for %s from WordPress.org.' ), $plugin_slug ),
+				sprintf( /* translators: %s: text value. */
+				__( 'Unable to fetch plugin information for %s from WordPress.org.' ), $plugin_slug ),
 				array( 'status' => 500 )
 			);
 		}
@@ -170,7 +172,8 @@ class PluginInstallerController extends RestController {
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'message' => sprintf( __( 'Plugin %s installed successfully.' ), $plugin_slug ),
+				'message' => sprintf( /* translators: %s: text value. */
+				__( 'Plugin %s installed successfully.' ), $plugin_slug ),
 			)
 		);
 	}
@@ -199,7 +202,8 @@ class PluginInstallerController extends RestController {
 		if ( empty( $plugin_basename ) ) {
 			return new WP_Error(
 				'plugin_not_found',
-				sprintf( __( 'Plugin %s is not installed.' ), $plugin_slug ),
+				sprintf( /* translators: %s: text value. */
+				__( 'Plugin %s is not installed.' ), $plugin_slug ),
 				array( 'status' => 404 )
 			);
 		}
@@ -207,7 +211,8 @@ class PluginInstallerController extends RestController {
 		if ( is_plugin_active( $plugin_basename ) ) {
 			return new WP_Error(
 				'plugin_already_active',
-				sprintf( __( 'Plugin %s is already active.' ), $plugin_slug ),
+				sprintf( /* translators: %s: text value. */
+				__( 'Plugin %s is already active.' ), $plugin_slug ),
 				array( 'status' => 400 )
 			);
 		}
@@ -238,7 +243,8 @@ class PluginInstallerController extends RestController {
 		return rest_ensure_response(
 			array(
 				'success' => true,
-				'message' => sprintf( __( 'Plugin %s activated successfully.' ), $plugin_slug ),
+				'message' => sprintf( /* translators: %s: text value. */
+				__( 'Plugin %s activated successfully.' ), $plugin_slug ),
 			)
 		);
 	}

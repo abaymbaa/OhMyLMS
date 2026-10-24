@@ -1,4 +1,4 @@
-import { createElement, useEffect, useMemo } from '@wordpress/element';
+import { createElement, useEffect } from '@wordpress/element';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { SelectControl } from '@wordpress/components';
@@ -89,10 +89,7 @@ export function createThemeSettings( {
 			text: value( 'ohmylms_body_text_color_scheme' ),
 			progress: value( 'ohmylms_body_progress_color_scheme' ),
 		};
-		const preset = useMemo(
-			() => matchingPreset( presets, learner ),
-			[ JSON.stringify( learner ) ]
-		);
+		const preset = matchingPreset( presets, learner );
 		useEffect( () => {
 			[
 				'ohmylms_admin_primary_color',

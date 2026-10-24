@@ -5,6 +5,8 @@
  * This template can be overridden by copying it to yourtheme/ohmylms/myaccount/navigation.php.
  *
  * @version 1.0.0
+ *
+ * @package OhMyLMS
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +19,7 @@ do_action( 'ohmylms_before_account_navigation' );
 
 <aside class="ohmylms-student-profile-sidebar">
 	<ul class="ohmylms-student-profile-tab">
-		<li class="item-profile <?php echo ohmylms_get_account_menu_item_classes( 'profile' ) . ' ' . ohmylms_get_account_menu_item_classes( 'profile-edit' ); ?> ">
+		<li class="item-profile <?php echo esc_attr( ohmylms_get_account_menu_item_classes( 'profile' ) . ' ' . ohmylms_get_account_menu_item_classes( 'profile-edit' ) ); ?> ">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'profile' ) ); ?>">
 				<span class="icon icon-regular">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/profile-icon.php'; ?>
@@ -31,7 +33,7 @@ do_action( 'ohmylms_before_account_navigation' );
 			</a>
 		</li>
 
-		<!-- <li class="item-notifications <?php echo ohmylms_get_account_menu_item_classes( 'notification' ); ?>">
+		<!-- <li class="item-notifications <?php echo esc_attr( ohmylms_get_account_menu_item_classes( 'notification' ) ); ?>">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'notification' ) ); ?>">
 				<span class="icon icon-regular">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/notification-o-icon.php'; ?>
@@ -45,7 +47,7 @@ do_action( 'ohmylms_before_account_navigation' );
 			</a>
 		</li> -->
 
-		<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes( 'transactions-history' ); ?>">
+		<li class="item-transaction-history <?php echo esc_attr( ohmylms_get_account_menu_item_classes( 'transactions-history' ) ); ?>">
 			<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'transactions-history' ) ); ?>">
 				<span class="icon icon-regular">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/cart-icon.php'; ?>
@@ -60,7 +62,7 @@ do_action( 'ohmylms_before_account_navigation' );
 		</li>
 
 		<?php if ( ohmylms_is_pro() ) : ?>
-			<li class="item-transaction-history <?php echo ohmylms_get_account_menu_item_classes( 'membership' ); ?>">
+			<li class="item-transaction-history <?php echo esc_attr( ohmylms_get_account_menu_item_classes( 'membership' ) ); ?>">
 				<a href="<?php echo esc_url( ohmylms_get_account_endpoint_url( 'membership' ) ); ?>">
 					<span class="icon icon-regular">
 						<?php include OHMYLMS_DIR . '/assets/images/icon/membership-icon.php'; ?>

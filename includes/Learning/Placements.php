@@ -25,13 +25,23 @@ final class Placements {
 	const OPTION = 'ohmylms_learning_placements';
 	const TYPES  = array( 'lesson', 'quiz', 'assignment' );
 
+	/**
+	 * Index.
+	 *
+	 * @var mixed
+	 */
 	private static $index;
+	/**
+	 * Enrolled.
+	 *
+	 * @var mixed
+	 */
 	private static $enrolled = array();
 
 	/**
 	 * Pure: content ID => course IDs, from rows of `[course_id, program JSON or array]`.
 	 *
-	 * @param array<int, array{0:int,1:string|array}> $rows
+	 * @param array<int, array{0:int,1:string|array}> $rows Rows.
 	 * @return array<int, int[]>
 	 */
 	public static function index_from( array $rows ) {
@@ -56,7 +66,7 @@ final class Placements {
 	 * so the home course stays the default; with no enrollment (or no learner) the first candidate.
 	 *
 	 * @param int[]    $candidates Home course first.
-	 * @param callable $enrolled   fn(int $course): bool
+	 * @param callable $enrolled fn(int $course): bool.
 	 */
 	public static function choose( array $candidates, callable $enrolled ) {
 		$candidates = array_values( array_unique( array_filter( array_map( 'intval', $candidates ) ) ) );
@@ -69,6 +79,9 @@ final class Placements {
 		return $candidates[0];
 	}
 
+	/**
+	 * Index for Placements.
+	 */
 	public static function index() {
 		if ( self::$index !== null ) {
 			return self::$index; }
@@ -77,16 +90,15 @@ final class Placements {
 		return self::$index;
 	}
 
+	/**
+	 * Rebuild for Placements.
+	 */
 	public static function rebuild() {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
 			return self::$index = array(); }
 		$rows  = $wpdb->get_results(
-			$wpdb->prepare(
-				'SELECT m.post_id AS course_id, p.program FROM ' . $wpdb->postmeta . ' m JOIN ' . Schema::table( 'programs' ) . ' p ON p.id = m.meta_value JOIN ' . $wpdb->posts . " c ON c.ID = m.post_id WHERE m.meta_key = %s AND c.post_type = %s AND c.post_status IN ('publish','private')",
-				CourseProgram::CURRENT,
-				OHMYLMS_COURSE_CPT
-			),
+			$wpdb->prepare( 'SELECT m.post_id AS course_id, p.program FROM %i m JOIN %i p ON p.id = m.meta_value JOIN %i c ON c.ID = m.post_id WHERE m.meta_key = %s AND c.post_type = %s AND c.post_status IN (\'publish\',\'private\')', $wpdb->postmeta, Schema::table( 'programs' ), $wpdb->posts, CourseProgram::CURRENT, OHMYLMS_COURSE_CPT ),
 			ARRAY_N
 		);
 		$index = self::index_from( is_array( $rows ) ? $rows : array() );
@@ -101,16 +113,27 @@ final class Placements {
 		delete_option( self::OPTION );
 	}
 
-	/** @return int[] Courses whose published program places this content. */
+	/**
+	 * Courses for for Placements.
+	 *
+	 * @return int[] Courses whose published program places this content.
+	 * @param mixed $content_id Content identifier.
+	 */
 	public static function courses_for( $content_id ) {
 		return self::index()[ (int) $content_id ] ?? array();
 	}
 
+	/**
+	 * Enrolled for Placements.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	private static function enrolled( $student_id, $course_id ) {
 		global $wpdb;
 		$key = $student_id . ':' . $course_id;
 		if ( ! isset( self::$enrolled[ $key ] ) ) {
-			self::$enrolled[ $key ] = (bool) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_user_enrollment WHERE user_id=%d AND course_id=%d AND status='enrolled' LIMIT 1", $student_id, $course_id ) );
+			self::$enrolled[ $key ] = (bool) $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE user_id=%d AND course_id=%d AND status=\'enrolled\' LIMIT 1', $wpdb->prefix . 'ohmylms_user_enrollment', $student_id, $course_id ) );
 		}
 		return self::$enrolled[ $key ];
 	}
@@ -118,6 +141,10 @@ final class Placements {
 	/**
 	 * The course a piece of content is opened in. `$home` is its original chapter-based course (or
 	 * null); it is returned untouched unless a published program places the content too.
+	 *
+	 * @param mixed $content_id Content identifier.
+	 * @param mixed $home Home.
+	 * @param int   $student_id Student identifier.
 	 */
 	public static function resolve( $content_id, $home, $student_id = 0 ) {
 		$placed = self::courses_for( $content_id );
@@ -126,11 +153,11 @@ final class Placements {
 		$candidates = array_values( array_unique( array_filter( array_merge( array( (int) $home ), $placed ) ) ) );
 		if ( count( $candidates ) === 1 ) {
 			return $candidates[0]; }
-		$student_id = (int) ( $student_id ?: get_current_user_id() );
+		$student_id = (int) ( $student_id ? $student_id : get_current_user_id() );
 		return self::choose(
 			$candidates,
 			static function ( $course ) use ( $student_id ) {
-				return $student_id > 0 && self::enrolled( $student_id, $course );
+				return 0 < $student_id && self::enrolled( $student_id, $course );
 			}
 		);
 	}

@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createPaymentSettings( readRuntime ) {
@@ -142,7 +143,7 @@ export function createPaymentSettings( readRuntime ) {
 										case 2:
 											_eLocal10.p = 2;
 											_oLocal = _eLocal10.v;
-											console.error( _oLocal );
+											showRequestError( _oLocal );
 											u(
 												'error',
 												'Failed to update settings. Please try again.'
@@ -221,7 +222,7 @@ export function createPaymentSettings( readRuntime ) {
 										case 2:
 											_tLocal6.p = 2;
 											_oLocal2 = _tLocal6.v;
-											console.error( _oLocal2 );
+											showRequestError( _oLocal2 );
 											u(
 												'error',
 												'Failed to update settings. Please try again.'
@@ -419,7 +420,7 @@ export function createPaymentSettings( readRuntime ) {
 										case 2:
 											_tLocal8.p = 2;
 											_pLocal = _tLocal8.v;
-											console.error( _pLocal );
+											showRequestError( _pLocal );
 											u(
 												'error',
 												'Failed to update settings. Please try again.'

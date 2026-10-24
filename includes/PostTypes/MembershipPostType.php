@@ -7,9 +7,14 @@ use OhMyLMS\Membership\MembershipHelper;
 
 defined( 'ABSPATH' ) || exit();
 
+/**
+ * Plugin membership post type implementation.
+ */
 class MembershipPostType extends PostType {
 
 	/**
+	 * Instance.
+	 *
 	 * @var null
 	 */
 	protected static $_instance = null;
@@ -30,6 +35,9 @@ class MembershipPostType extends PostType {
 
 
 
+	/**
+	 * Initialize Membership post type.
+	 */
 	public function __construct() {
 		$this->post_type = 'ohmylms-membership';
 		parent::__construct();
@@ -130,7 +138,7 @@ class MembershipPostType extends PostType {
 	/**
 	 * Membership details metabox callback
 	 *
-	 * @param $post
+	 * @param mixed $post Post.
 	 * @return void
 	 * @since 1.0.0
 	 */

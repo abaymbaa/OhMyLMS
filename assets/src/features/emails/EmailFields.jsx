@@ -167,7 +167,6 @@ export function createEmailFields( readRuntime ) {
 								onChange={ function ( e ) {
 									return c( 'subject', e );
 								} }
-								autoFocus={ ! 0 }
 							/>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP>

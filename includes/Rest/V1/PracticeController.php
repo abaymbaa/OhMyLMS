@@ -28,6 +28,9 @@ defined( 'ABSPATH' ) || exit;
  * X-OhMyLMS-Guest credential header. Nothing here exposes answers before grading.
  */
 class PracticeController extends RestController {
+	/**
+	 * Register routes for Practice controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -162,7 +165,10 @@ class PracticeController extends RestController {
 		);
 	}
 
-	/** Practice must be enabled; the owner is the logged-in learner or a valid guest credential. */
+	/** Practice must be enabled; the owner is the logged-in learner or a valid guest credential.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function owner_permission( WP_REST_Request $request ) {
 		if ( ! Schema::ready() || ! Engine::practice() ) {
 			return new WP_Error( 'ohmylms_practice_disabled', __( 'Practice is not available.', 'ohmylms' ), array( 'status' => 404 ) ); }
@@ -171,6 +177,9 @@ class PracticeController extends RestController {
 		return Guests::from_request( $request ) ? true : new WP_Error( 'ohmylms_guest_required', __( 'Start a guest session or log in.', 'ohmylms' ), array( 'status' => 401 ) );
 	}
 
+	/**
+	 * Guest permission for Practice controller.
+	 */
 	public function guest_permission() {
 		if ( ! Schema::ready() || ! Engine::practice() ) {
 			return new WP_Error( 'ohmylms_practice_disabled', __( 'Practice is not available.', 'ohmylms' ), array( 'status' => 404 ) ); }
@@ -185,6 +194,11 @@ class PracticeController extends RestController {
 		return true;
 	}
 
+	/**
+	 * Owner for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	private function owner( WP_REST_Request $request ) {
 		if ( is_user_logged_in() ) {
 			return array( 'student_id' => get_current_user_id() ); }
@@ -192,6 +206,11 @@ class PracticeController extends RestController {
 		return $guest ? array( 'guest_id' => (int) $guest['id'] ) : array();
 	}
 
+	/**
+	 * Session for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	private function session( WP_REST_Request $request ) {
 		$session = Sessions::get( (string) $request['uuid'] );
 		// Placement tests run through the same routes, for learners and guests alike.
@@ -204,6 +223,11 @@ class PracticeController extends RestController {
 		return $session;
 	}
 
+	/**
+	 * Start for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function start( WP_REST_Request $request ) {
 		$session = Sessions::start(
 			$this->owner( $request ),
@@ -221,11 +245,21 @@ class PracticeController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Show for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		$session = $this->session( $request );
 		return is_wp_error( $session ) ? $session : rest_ensure_response( Sessions::state( $session ) );
 	}
 
+	/**
+	 * Answer for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function answer( WP_REST_Request $request ) {
 		$session = $this->session( $request );
 		if ( is_wp_error( $session ) ) {
@@ -234,6 +268,11 @@ class PracticeController extends RestController {
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Hint for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function hint( WP_REST_Request $request ) {
 		$session = $this->session( $request );
 		if ( is_wp_error( $session ) ) {
@@ -242,6 +281,11 @@ class PracticeController extends RestController {
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Skip for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function skip( WP_REST_Request $request ) {
 		$session = $this->session( $request );
 		if ( is_wp_error( $session ) ) {
@@ -250,6 +294,11 @@ class PracticeController extends RestController {
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Ai for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function ai( WP_REST_Request $request ) {
 		$session = $this->session( $request );
 		if ( is_wp_error( $session ) ) {
@@ -258,11 +307,19 @@ class PracticeController extends RestController {
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Inline for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function inline( WP_REST_Request $request ) {
 		$result = Inline::answer( (string) $request['token'], $request['response'] ?? array(), $this->owner( $request ) );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Guest for Practice controller.
+	 */
 	public function guest() {
 		$guest    = Guests::create();
 		$response = rest_ensure_response( $guest );
@@ -270,6 +327,11 @@ class PracticeController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Claim for Practice controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function claim( WP_REST_Request $request ) {
 		$result = Guests::claim( (string) $request['guest_token'], get_current_user_id() );
 		if ( is_wp_error( $result ) ) {
@@ -278,6 +340,9 @@ class PracticeController extends RestController {
 		return rest_ensure_response( $result );
 	}
 
+	/**
+	 * My skills for Practice controller.
+	 */
 	public function my_skills() {
 		Evidence::process( 50 );
 		$student = get_current_user_id();

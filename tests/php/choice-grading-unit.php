@@ -12,6 +12,7 @@ $choice_checks = 0;
 foreach ( array( false, true ) as $partial_credit ) {
 	$snapshot = new \OhMyLMS\Assessment\QuestionSnapshot(
 		array(
+			'type'     => 'multiple-choice',
 			'settings' => array(
 				'type'           => 'multiple-choice',
 				'partial_credit' => $partial_credit,

@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 /**
  * Commands for the WordPress command palette (Ctrl+K / Cmd+K).
  *

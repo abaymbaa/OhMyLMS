@@ -1,177 +1,309 @@
 /** @jsx createElement */
 import { createElement, useEffect, useState } from '@wordpress/element';
-import { __, _n, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Button, Spinner } from '@wordpress/components';
 import { loadCatalog } from '../content-hub/api.mjs';
 import { ImportButton } from '../content-hub/ImportButton';
+import { LessonReadiness } from './LessonReadiness';
 
 /**
- * Whether the course can be published for learners, shown before anyone presses Publish: unpublished
- * resources, completion rules, and for each required skill how many approved questions and question
- * families it has against what it needs.
- *
- * @param {Object} root0          Component properties.
- * @param {number} root0.courseId The course being edited.
+ * Saved publication checks alongside current local lesson guidance.
+ * @param {Object}                                    props          Component properties.
+ * @param {number}                                    props.courseId Course ID.
+ * @param {Object}                                    props.draft    Current outline.
+ * @param {boolean}                                   props.dirty    Whether the outline has unsaved edits.
+ * @param {(type: string, id: string|number) => void} props.onSelect Select the repair destination.
  */
-export function CourseReadiness( { courseId } ) {
+export function CourseReadiness( { courseId, draft, dirty, onSelect } ) {
 	const [ report, setReport ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ attempt, setAttempt ] = useState( 0 );
-
+	const revision = draft.revision;
 	useEffect( () => {
 		let active = true;
+		setReport( null );
 		setError( '' );
 		loadCatalog( courseId )
-			.then( ( catalog ) => active && setReport( catalog.readiness ) )
-			.catch(
-				( cause ) =>
-					active &&
+			.then( ( catalog ) => {
+				if ( active ) {
+					setReport( {
+						...catalog.readiness,
+						attachments: catalog.attachments,
+					} );
+				}
+			} )
+			.catch( ( cause ) => {
+				if ( active ) {
 					setError(
 						cause.message ||
 							__( 'Could not check readiness.', 'ohmylms' )
-					)
-			);
+					);
+				}
+			} );
 		return () => {
 			active = false;
 		};
-	}, [ courseId, attempt ] );
-
-	if ( error ) {
-		return (
-			<p role="alert" className="ohmylms-course-readiness-error">
-				{ error }
-			</p>
+	}, [ courseId, revision, attempt ] );
+	const skills = ( report?.practice_skills || report?.skills || [] ).filter(
+		( skill ) => ! skill.ready
+	);
+	const blocked =
+		( report?.completion.length || 0 ) +
+		( report?.resources.length || 0 ) +
+		( report?.skills.filter( ( skill ) => ! skill.ready ).length || 0 );
+	function selectSkill( skill ) {
+		const outcome = draft.program.outcomes.find(
+			( row ) => row.term_id === skill.term_id
+		);
+		onSelect(
+			outcome?.group_id ? 'lesson' : 'course',
+			outcome?.group_id || 0
 		);
 	}
-	if ( ! report ) {
-		return <Spinner />;
-	}
-	const lacking = report.skills.filter( ( skill ) => ! skill.ready );
-	const open =
-		report.completion.length + report.resources.length + lacking.length;
-	if ( ! report.skills.length && ! report.resources.length && ! open ) {
-		return null;
-	}
 	return (
-		<details
-			className="ohmylms-course-readiness"
-			open={ ! report.ready }
-			data-ready={ report.ready ? 'true' : 'false' }
+		<section
+			className="ohmylms-outline-readiness"
+			aria-label={ __( 'Course readiness report', 'ohmylms' ) }
 		>
-			<summary>
-				{ report.ready
-					? __( 'Ready for learners', 'ohmylms' )
-					: sprintf(
-							/* translators: %d: number of things left to fix. */
-							_n(
-								'%d thing to fix before learners can use this course',
-								'%d things to fix before learners can use this course',
-								open,
-								'ohmylms'
-							),
-							open
-						) }
-			</summary>
-			{ report.completion.length > 0 && (
-				<ul>
-					{ report.completion.map( ( line ) => (
-						<li key={ line }>{ line }</li>
-					) ) }
-				</ul>
+			<h2>{ __( 'Course readiness', 'ohmylms' ) }</h2>
+			{ dirty ? (
+				<p role="status">
+					{ __(
+						'Save outline draft to check publishing requirements for your latest changes. Lesson guidance below reflects your current edits.',
+						'ohmylms'
+					) }
+				</p>
+			) : (
+				<>
+					{ error && <p role="alert">{ error }</p> }
+					{ ! report && ! error && <Spinner /> }
+					{ report && (
+						<>
+							<h3>
+								{ report.ready
+									? __(
+											'Saved draft passes publishing checks',
+											'ohmylms'
+										)
+									: sprintf(
+											/* translators: %d: number of publishing blockers. */ __(
+												'Publishing blockers: %d',
+												'ohmylms'
+											),
+											blocked
+										) }
+							</h3>
+							{ report.completion.length > 0 && (
+								<div>
+									<ul>
+										{ report.completion.map( ( line ) => (
+											<li key={ line }>{ line }</li>
+										) ) }
+									</ul>
+									<Button
+										variant="link"
+										onClick={ () =>
+											onSelect( 'course', 0 )
+										}
+									>
+										{ __(
+											'Edit completion requirements',
+											'ohmylms'
+										) }
+									</Button>
+								</div>
+							) }
+							{ report.resources.length > 0 && (
+								<>
+									<h4>
+										{ __(
+											'Unpublished resources — publishing blockers',
+											'ohmylms'
+										) }
+									</h4>
+									<ul>
+										{ report.resources.map(
+											( resource ) => {
+												const item =
+													draft.program.items.find(
+														( row ) =>
+															row.type ===
+																resource.type &&
+															row.content_id ===
+																resource.content_id
+													);
+												return (
+													<li
+														key={
+															resource.type +
+															':' +
+															resource.content_id
+														}
+													>
+														<Button
+															variant="link"
+															onClick={ () =>
+																onSelect(
+																	'activity',
+																	item?.id
+																)
+															}
+														>
+															{ item?.title ||
+																resource.title ||
+																__(
+																	'Unavailable resource',
+																	'ohmylms'
+																) }
+														</Button>
+														{ ' (' +
+															( resource.status ||
+																__(
+																	'missing',
+																	'ohmylms'
+																) ) +
+															') ' }
+														{ item?.edit_url && (
+															<Button
+																variant="link"
+																href={
+																	item.edit_url
+																}
+																target="_blank"
+																rel="noreferrer"
+															>
+																{ __(
+																	'Edit and publish resource',
+																	'ohmylms'
+																) }
+															</Button>
+														) }
+													</li>
+												);
+											}
+										) }
+									</ul>
+								</>
+							) }
+							{ skills.length > 0 && (
+								<>
+									<h4>
+										{ __(
+											'Skills needing approved questions',
+											'ohmylms'
+										) }
+									</h4>
+									<p>
+										{ __(
+											'Required skill gaps block publishing. Optional skill gaps are guidance. Counts use this course’s allowed question pool; importing questions alone does not approve them or add them to a restricted pool.',
+											'ohmylms'
+										) }
+									</p>
+									<ul>
+										{ skills.map( ( skill ) => (
+											<li key={ skill.term_id }>
+												<Button
+													variant="link"
+													onClick={ () =>
+														selectSkill( skill )
+													}
+												>
+													{ skill.name }
+												</Button>
+												<p>
+													{ skill.required === false
+														? __(
+																'Optional skill — guidance',
+																'ohmylms'
+															)
+														: __(
+																'Required skill — publishing blocker',
+																'ohmylms'
+															) }
+													{ ' · ' }
+													{ sprintf(
+														/* translators: 1: available questions, 2: needed questions, 3: available families, 4: needed families. */ __(
+															'Approved questions: %1$d / %2$d. Families: %3$d / %4$d.',
+															'ohmylms'
+														),
+														skill.questions,
+														skill.questions_need,
+														skill.families,
+														skill.families_need
+													) }
+												</p>
+												<Button
+													variant="link"
+													href="#/content-hub/question-bank"
+													target="_blank"
+													rel="noreferrer"
+												>
+													{ __(
+														'Review and approve questions',
+														'ohmylms'
+													) }
+												</Button>
+												<ImportButton
+													target="questions"
+													targets={ [ 'questions' ] }
+													withSkills
+													initialSkills={ [
+														{
+															id: skill.term_id,
+															name: skill.name,
+															code: skill.code,
+														},
+													] }
+												/>
+											</li>
+										) ) }
+									</ul>
+								</>
+							) }
+						</>
+					) }
+				</>
 			) }
-			{ report.resources.length > 0 && (
-				<div>
-					<h4>{ __( 'Publish these first', 'ohmylms' ) }</h4>
-					<ul>
-						{ report.resources.map( ( item ) => (
-							<li key={ item.content_id }>
-								{ item.title }{ ' ' }
-								<span className="description">
-									({ item.status })
-								</span>
-							</li>
-						) ) }
-					</ul>
-				</div>
-			) }
-			{ lacking.length > 0 && (
-				<div>
-					<h4>
-						{ __( 'Skills that need more questions', 'ohmylms' ) }
-					</h4>
-					<table className="ohmylms-course-readiness-table">
-						<thead>
-							<tr>
-								<th>{ __( 'Skill', 'ohmylms' ) }</th>
-								<th>{ __( 'Questions', 'ohmylms' ) }</th>
-								<th>{ __( 'Families', 'ohmylms' ) }</th>
-								<th>
-									<span className="screen-reader-text">
-										{ __( 'Add questions', 'ohmylms' ) }
-									</span>
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{ lacking.map( ( skill ) => (
-								<tr key={ skill.term_id }>
-									<td>
-										{ skill.code
-											? `${ skill.code } · `
-											: '' }
-										{ skill.name }
-									</td>
-									<td>
-										{ skill.questions } /{ ' ' }
-										{ skill.questions_need }
-									</td>
-									<td>
-										{ skill.families } /{ ' ' }
-										{ skill.families_need }
-									</td>
-									<td>
-										<ImportButton
-											target="questions"
-											targets={ [ 'questions' ] }
-											withSkills
-											initialSkills={ [
-												{
-													id: skill.term_id,
-													name: skill.name,
-													code: skill.code,
-												},
-											] }
-										/>
-									</td>
-								</tr>
-							) ) }
-						</tbody>
-					</table>
-					<p className="description">
-						{ __(
-							'Each required skill needs enough approved questions from different question families to be reached honestly, so a learner never sees the same question twice.',
-							'ohmylms'
-						) }
-					</p>
-				</div>
-			) }
-			{ report.ready && (
+			<Button
+				variant="secondary"
+				disabled={ dirty }
+				onClick={ () => setAttempt( ( value ) => value + 1 ) }
+			>
+				{ __( 'Check readiness again', 'ohmylms' ) }
+			</Button>
+			<h3>{ __( 'Lesson guidance', 'ohmylms' ) }</h3>
+			<p>
+				{ __(
+					'Coverage suggestions help you build complete lessons. They do not add publishing requirements.',
+					'ohmylms'
+				) }
+			</p>
+			{ ! ( draft.program.groups || [] ).length && (
 				<p>
-					{ sprintf(
-						/* translators: %d: number of skills. */
-						_n(
-							'%d required skill has enough approved questions.',
-							'%d required skills have enough approved questions.',
-							report.skills.length,
-							'ohmylms'
-						),
-						report.skills.length
+					{ __(
+						'No lessons yet. Add a unit and a lesson to organize activities and skills.',
+						'ohmylms'
 					) }
 				</p>
 			) }
-			<Button variant="link" onClick={ () => setAttempt( attempt + 1 ) }>
-				{ __( 'Check again', 'ohmylms' ) }
-			</Button>
-		</details>
+			<LessonReadiness
+				program={
+					dirty || ! report
+						? draft.program
+						: {
+								...draft.program,
+								items: draft.program.items.map( ( item ) => ( {
+									...item,
+									status:
+										report.attachments.find(
+											( row ) => row.id === item.id
+										)?.status || item.status,
+								} ) ),
+							}
+				}
+				names={ draft.skill_names }
+				onSelect={ ( id ) => onSelect( 'lesson', id ) }
+			/>
+		</section>
 	);
 }

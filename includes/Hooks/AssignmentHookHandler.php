@@ -17,6 +17,9 @@ use OhMyLMS\Data\Lesson;
  */
 class AssignmentHookHandler extends HookHandler {
 
+	/**
+	 * Register hooks for Assignment hook handler.
+	 */
 	public function register_hooks() {
 		add_action( 'ohmylms_rest_insert_assignment', array( $this, 'link_assignment_with_chapter' ), 10, 2 );
 		add_action( 'ohmylms_rest_delete_assignment', array( $this, 'unlink_chapter_from_assignment' ), 10 );
@@ -26,6 +29,9 @@ class AssignmentHookHandler extends HookHandler {
 	/**
 	 * Link lesson with chapter.
 	 * Update
+	 *
+	 * @param mixed $lesson Lesson.
+	 * @param mixed $request REST request.
 	 */
 	public function link_assignment_with_chapter( $lesson, $request ) {
 		if ( ! is_a( $lesson, 'WP_Post' ) ) {
@@ -50,7 +56,7 @@ class AssignmentHookHandler extends HookHandler {
 	 * @param int $chapter_id The ID of the chapter.
 	 * @param int $lesson_id The ID of the lesson.
 	 * @param int $order_number The order number of the lesson in the chapter.
-	 *
+	 * .
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -65,11 +71,7 @@ class AssignmentHookHandler extends HookHandler {
 
 		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT ID FROM $table_name WHERE chapter_id = %d AND content_id = %d LIMIT 1",
-				$chapter_id,
-				$lesson_id
-			)
+			$wpdb->prepare( 'SELECT ID FROM %i WHERE chapter_id = %d AND content_id = %d LIMIT 1', $table_name, $chapter_id, $lesson_id )
 		);
 
 		// If exists, update the relationship, otherwise insert a new one.
@@ -113,8 +115,7 @@ class AssignmentHookHandler extends HookHandler {
 	/**
 	 * Unlink a lesson from a chapter.
 	 *
-	 * @param \WP_Post $lesson The lesson post object.
-	 *
+	 * @param mixed $assignment_id Assignment identifier.
 	 * @return void
 	 *
 	 * @since 1.0.0

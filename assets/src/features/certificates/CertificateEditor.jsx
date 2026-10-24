@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCertificateEditor( readRuntime ) {
@@ -78,7 +79,7 @@ export function createCertificateEditor( readRuntime ) {
 											.save();
 									} )
 									.catch( function ( _eLocal ) {
-										console.error(
+										showRequestError(
 											'Failed to load html2pdf:',
 											_eLocal
 										);
@@ -91,7 +92,7 @@ export function createCertificateEditor( readRuntime ) {
 									)
 								);
 							} catch ( _eLocal2 ) {
-								console.error( _eLocal2 );
+								showRequestError( _eLocal2 );
 								s(
 									'error',
 									( 0, I18n.__ )( 'Saved failed', 'ohmylms' )

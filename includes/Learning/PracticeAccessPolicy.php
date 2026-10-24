@@ -6,7 +6,17 @@ use OhMyLMS\QuestionBank\Banks;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin practice access policy implementation.
+ */
 final class PracticeAccessPolicy {
+	/**
+	 * Check for Practice access policy.
+	 *
+	 * @param array $owner Owner.
+	 * @param mixed $skill Skill.
+	 * @param int   $course_id Course identifier.
+	 */
 	public static function check( array $owner, $skill, $course_id = 0 ) {
 		if ( ! $course_id ) {
 			return true; }
@@ -21,6 +31,14 @@ final class PracticeAccessPolicy {
 		return true;
 	}
 
+	/**
+	 * Pool for Practice access policy.
+	 *
+	 * @param array $pool Pool.
+	 * @param array $owner Owner.
+	 * @param mixed $skill Skill.
+	 * @param int   $course_id Course identifier.
+	 */
 	public static function pool( array $pool, array $owner, $skill, $course_id = 0 ) {
 		global $wpdb;
 		$check = self::check( $owner, $skill, $course_id );
@@ -56,6 +74,11 @@ final class PracticeAccessPolicy {
 		);
 	}
 
+	/**
+	 * Session for Practice access policy.
+	 *
+	 * @param array $session Session.
+	 */
 	public static function session( array $session ) {
 		if ( 'skill' !== $session['mode'] ) {
 			return true; }

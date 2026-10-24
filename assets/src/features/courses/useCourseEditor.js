@@ -26,7 +26,7 @@ export function useCourseEditor( {
 				noticeStatus: data.getNotificationStatus(),
 			};
 		},
-		[ store, courseId ]
+		[ store ]
 	);
 	const actions = useDispatch( store );
 	const [ loading, setLoading ] = useState( true );
@@ -56,6 +56,7 @@ export function useCourseEditor( {
 	const dirty = ! loading && savedKey !== null && savedKey !== currentKey;
 	const latestKey = useRef( currentKey );
 	latestKey.current = currentKey;
+	const saveLatest = useRef( null );
 	const latestCourse = useRef( state.course );
 	latestCourse.current = state.course;
 	useEffect( () => {
@@ -101,10 +102,10 @@ export function useCourseEditor( {
 		}
 		return () => {
 			active = false;
-			generation.current++;
+			generation.current = current + 1;
 			actions.resetCourseState();
 		};
-	}, [ store, courseId, enableSpin ] );
+	}, [ store, courseId, enableSpin, actions ] );
 	async function save( status, date, section, { silent = false } = {} ) {
 		if ( inFlight.current || loading || ! state.course ) {
 			return false;
@@ -195,6 +196,7 @@ export function useCourseEditor( {
 			}
 		}
 	}
+	saveLatest.current = save;
 	// The baseline is whatever was loaded, so only later edits count as unsaved.
 	useEffect( () => {
 		if ( ! loading ) {
@@ -216,7 +218,9 @@ export function useCourseEditor( {
 			return undefined;
 		}
 		const timer = setTimeout( () => {
-			save( 'draft', undefined, undefined, { silent: true } );
+			saveLatest.current( 'draft', undefined, undefined, {
+				silent: true,
+			} );
 		}, 800 );
 		return () => clearTimeout( timer );
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- Restart the timer on each edit.
@@ -235,11 +239,11 @@ export function useCourseEditor( {
 	}, [ dirty ] );
 	useEffect( () => {
 		if ( autoSave && ! loading ) {
-			save( undefined, undefined, undefined, {
+			saveLatest.current( undefined, undefined, undefined, {
 				silent: true,
 			} );
 		}
-	}, [ autoSave, state.course, state.chapters ] );
+	}, [ autoSave, state.course, state.chapters, loading ] );
 	async function toggleCommunity( enabled ) {
 		try {
 			await updateCourse( courseId, {

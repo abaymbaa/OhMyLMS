@@ -6,10 +6,21 @@ use OhMyLMS\Integrations\Funnel\Includes\Hooks;
 use OhMyLMS\Integrations\Funnel\Includes\FunnelManager;
 use OhMyLMS\Integrations\Funnel\Includes\FunnelEndpoint;
 
+/**
+ * Plugin funnel implementation.
+ */
 class Funnel {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'Funnel';
 
+	/**
+	 * Initialize Funnel.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();

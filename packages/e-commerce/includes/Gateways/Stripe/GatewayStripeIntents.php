@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 /**
  * Stripe Payment Intents Gateway.
  *
@@ -47,6 +47,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 */
 	private $secret_key;
 
+	/**
+	 * Supports subscription api.
+	 *
+	 * @var mixed
+	 */
 	public $supports_subscription_api = false;
 
 	/**
@@ -171,7 +176,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 		$currency        = $this->get_current_currency();
 		$fields[]        = array(
 			'title'             => __( 'Payment Methods', 'ohmylms' ),
-			'short_description' => sprintf( __( 'Select which payment methods to enable for your store. Current currency: %s. Only methods supported by your currency are shown.', 'ohmylms' ), strtoupper( $currency ) ),
+			'short_description' => sprintf( /* translators: %s: text value. */
+			__( 'Select which payment methods to enable for your store. Current currency: %s. Only methods supported by your currency are shown.', 'ohmylms' ), strtoupper( $currency ) ),
 			'input_type'        => 'section_header',
 			'option_name'       => 'payment_methods_section',
 		);
@@ -242,7 +248,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Get payment method display name with currency support
 	 *
-	 * @param array $method
+	 * @param array $method Method.
 	 * @return string
 	 */
 	private function get_payment_method_display_name( $method ) {
@@ -270,7 +276,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 
 		ob_start();
 		if ( 'yes' === $this->testmode ) {
-			$description .= ' ' . sprintf( __( 'TEST MODE ENABLED. In test mode, you can use the card number 4242424242424242 with any CVC and a valid expiration date or check the <a href="%s" target="_blank">Testing Stripe documentation</a> for more card numbers.', 'ohmylms' ), 'https://stripe.com/docs/testing' );
+			$description .= ' ' . sprintf( /* translators: %s: text value. */
+			__( 'TEST MODE ENABLED. In test mode, you can use the card number 4242424242424242 with any CVC and a valid expiration date or check the <a href="%s" target="_blank">Testing Stripe documentation</a> for more card numbers.', 'ohmylms' ), 'https://stripe.com/docs/testing' );
 		}
 		if ( $description ) {
 			echo wpautop( wp_kses_post( $description ) );
@@ -359,7 +366,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 * It might perform final validations or simply return success, relying on AJAX handlers
 	 * to update the order status based on Stripe's response.
 	 *
-	 * @param int $order_id The ID of the order being processed.
+	 * @param int  $order_id The ID of the order being processed.
+	 * @param bool $is_subscription Is subscription.
 	 * @return array An array containing the result of the payment processing ('success' or 'failure')
 	 *               and a 'redirect' URL if applicable.
 	 */
@@ -420,7 +428,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				// Update the default payment method for the customer.
 				StripeApi::update_customer_default_payment_method( $customer, $payment_method_id );
 			} catch ( \Exception $e ) {
-				$order->add_order_note( sprintf( __( 'Stripe PaymentMethod attachment failed: %s', 'ohmylms' ), $e->getMessage() ) );
+				$order->add_order_note( sprintf( /* translators: %s: text value. */
+				__( 'Stripe PaymentMethod attachment failed: %s', 'ohmylms' ), $e->getMessage() ) );
 			}
 
 			// Now create the PaymentIntent.
@@ -452,20 +461,23 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				$error_message = isset( $intent->last_payment_error->message )
 					? $intent->last_payment_error->message
 					: __( 'Payment failed. Please try another payment method.', 'ohmylms' );
-				$order->add_order_note( sprintf( __( 'Stripe payment failed: %s', 'ohmylms' ), $error_message ) );
+				$order->add_order_note( sprintf( /* translators: %s: text value. */
+				__( 'Stripe payment failed: %s', 'ohmylms' ), $error_message ) );
 				return array(
 					'result'  => 'failure',
 					'message' => $error_message,
 				);
 			} else {
-				$order->add_order_note( sprintf( __( 'Stripe PaymentIntent has an unexpected status: %s', 'ohmylms' ), $intent->status ?? 'Unknown' ) );
+				$order->add_order_note( sprintf( /* translators: %s: text value. */
+				__( 'Stripe PaymentIntent has an unexpected status: %s', 'ohmylms' ), $intent->status ?? 'Unknown' ) );
 				return array(
 					'result'  => 'failure',
 					'message' => __( 'An unexpected error occurred with the payment gateway.', 'ohmylms' ),
 				);
 			}
 		} catch ( \Exception $e ) {
-			$order->add_order_note( sprintf( __( 'Stripe API Error: %s', 'ohmylms' ), $e->getMessage() ) );
+			$order->add_order_note( sprintf( /* translators: %s: text value. */
+			__( 'Stripe API Error: %s', 'ohmylms' ), $e->getMessage() ) );
 			return array(
 				'result'  => 'failure',
 				'message' => __( 'There was an error processing your payment. Please try again or contact support.', 'ohmylms' ),
@@ -543,6 +555,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 										$order->payment_complete( $charge_id ? $charge_id : $payment_intent->id );
 										$order->add_order_note(
 											sprintf(
+												/* translators: %1$s: text value; %2$s: text value. */
 												__( 'Payment completed via Stripe. Charge ID: %1$s. Payment Method: %2$s', 'ohmylms' ),
 												isset( $charge_id ) ? $charge_id : $payment_intent->id,
 												$method_title
@@ -552,7 +565,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 								}
 							}
 						} catch ( \Exception $e ) {
-							$order->add_order_note( sprintf( __( 'Error verifying payment status: %s', 'ohmylms' ), $e->getMessage() ) );
+							$order->add_order_note( sprintf( /* translators: %s: text value. */
+							__( 'Error verifying payment status: %s', 'ohmylms' ), $e->getMessage() ) );
 						}
 					}
 				}
@@ -563,7 +577,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Get payment method title from predefined array
 	 *
-	 * @param string $method_type The payment method type from Stripe
+	 * @param string $method_type The payment method type from Stripe.
 	 * @return string The human readable title
 	 */
 	private function get_payment_method_title( $method_type ) {
@@ -600,8 +614,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Extract and save payment information from a Stripe intent
 	 *
-	 * @param object $intent The Stripe PaymentIntent object
-	 * @param int    $order_id The order ID
+	 * @param object $intent The Stripe PaymentIntent object.
+	 * @param int    $order_id The order ID.
 	 * @return array Array containing charge_id and payment_method_type
 	 */
 	private function extract_and_save_payment_info( $intent, $order_id ) {
@@ -639,10 +653,10 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Handle successful payment intent
 	 *
-	 * @param object $intent The Stripe PaymentIntent object
-	 * @param int    $order_id The order ID
-	 * @param object $order The order object
-	 * @param bool   $is_subscription Whether this is a subscription payment
+	 * @param object $intent The Stripe PaymentIntent object.
+	 * @param mixed  $order_id Order id.
+	 * @param object $order The order object.
+	 * @param bool   $is_subscription Whether this is a subscription payment.
 	 * @return array Result array
 	 */
 	private function handle_successful_intent( $intent, $order_id, $order, $is_subscription = false ) {
@@ -652,6 +666,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 		$payment_info = $this->extract_and_save_payment_info( $intent, $order_id );
 
 		$note = sprintf(
+			/* translators: %1$s: text value; %2$s: text value; %3$s: text value; %4$s: text value. */
 			__( 'Stripe %1$s payment successful (server-side). Intent ID: %2$s. Charge ID: %3$s. Payment Method: %4$s.', 'ohmylms' ),
 			$is_subscription ? 'subscription' : '',
 			$intent->id,
@@ -676,9 +691,9 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Handle intent requiring action
 	 *
-	 * @param object $intent The Stripe PaymentIntent object
-	 * @param int    $order_id The order ID
-	 * @param object $order The order object
+	 * @param object $intent The Stripe PaymentIntent object.
+	 * @param mixed  $order_id Order id.
+	 * @param object $order The order object.
 	 * @return array Result array
 	 */
 	private function handle_intent_requires_action( $intent, $order_id, $order ) {
@@ -713,6 +728,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 * @return array The response from the Stripe API with result status.
 	 *
 	 * @since 1.0.0
+	 * @throws \Exception When the operation cannot be completed.
 	 */
 	public function process_refund( $order_id, $amount = null, $reason = '' ) {
 		try {
@@ -773,8 +789,9 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			// Add order note about the refund.
 			$order->add_order_note(
 				sprintf(
+					/* translators: %s: text value. */
 					__( 'Refund processed via Stripe.Reason: %s', 'ohmylms' ),
-					$reason ?: __( 'No reason provided', 'ohmylms' )
+					$reason ? $reason : __( 'No reason provided', 'ohmylms' )
 				)
 			);
 
@@ -786,7 +803,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 
 		} catch ( \Exception $e ) {
 			if ( isset( $order ) && method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( sprintf( __( 'Refund failed: %s', 'ohmylms' ), $e->getMessage() ) );
+				$order->add_order_note( sprintf( /* translators: %s: text value. */
+				__( 'Refund failed: %s', 'ohmylms' ), $e->getMessage() ) );
 			}
 			return array(
 				'result'  => 'failure',
@@ -798,7 +816,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Validate order data
 	 *
-	 * @param object $order The order object
+	 * @param object $order The order object.
 	 * @return array|bool Array with error message if invalid, true if valid
 	 */
 	private function validate_order_data( $order ) {
@@ -815,7 +833,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Get Stripe customer ID for order
 	 *
-	 * @param object $order The order object
+	 * @param object $order The order object.
 	 * @return string|null The Stripe customer ID
 	 */
 	private function get_customer_id_for_order( $order ) {
@@ -842,13 +860,13 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Prepare intent parameters
 	 *
-	 * @param int         $order_id
-	 * @param int         $amount_in_cents
-	 * @param string      $currency
-	 * @param string      $payment_method_id
-	 * @param string|null $stripe_customer_id
-	 * @param string      $return_url
-	 * @param bool        $is_subscription
+	 * @param int    $order_id Order identifier.
+	 * @param int    $amount_in_cents Amount in cents.
+	 * @param string $currency Currency.
+	 * @param string $payment_method_id Payment method identifier.
+	 * @param mixed  $customer Customer.
+	 * @param string $return_url Return url.
+	 * @param bool   $is_subscription Is subscription.
 	 * @return array
 	 */
 	private function prepare_intent_params( $order_id, $amount_in_cents, $currency, $payment_method_id, $customer, $return_url, $is_subscription = false ) {
@@ -882,7 +900,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Get valid Stripe payment method types for the merchant account.
 	 *
-	 * @param string      $currency
+	 * @param string      $currency Currency.
 	 * @param string|null $stripe_customer_id Optional. Stripe customer ID to personalize methods.
 	 * @return array
 	 *
@@ -922,7 +940,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	/**
 	 * Get return URL for order
 	 *
-	 * @param int $order_id
+	 * @param int $order_id Order identifier.
 	 * @return string
 	 */
 	private function get_return_url_for_order( $order_id ) {
@@ -947,6 +965,11 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	}
 
 
+	/**
+	 * Get payment gateway meta for Gateway stripe intents.
+	 *
+	 * @param mixed $order Order.
+	 */
 	public function get_payment_gateway_meta( $order ) {
 		$order_id = $order->get_id();
 		return array(
@@ -974,6 +997,15 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	* @return array Result of the payment attempt. Details defined in parent::process_recurring_payment().
 	* @since 1.0.0
 	*/
+	/**
+	 * Process recurring payment for Gateway stripe intents.
+	 *
+	 * @param mixed $original_order_id Original order identifier.
+	 * @param mixed $renewal_order_id Renewal order identifier.
+	 * @param mixed $amount Amount.
+	 * @param mixed $subscription_id Subscription identifier.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function process_recurring_payment( $original_order_id, $renewal_order_id, $amount, $subscription_id, $student_id ) {
 		try {
 			$original_order_id = absint( $original_order_id );
@@ -1016,7 +1048,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				'confirm'             => 'true',
 				'off_session'         => 'one_off',
 				'confirmation_method' => 'automatic',
-				'description'         => sprintf( __( 'Subscription Renewal - Order #%1$s, Subscription #%2$s', 'ohmylms' ), $original_order_id, $subscription_id ),
+				'description'         => sprintf( /* translators: %1$s: text value; %2$s: text value. */
+				__( 'Subscription Renewal - Order #%1$s, Subscription #%2$s', 'ohmylms' ), $original_order_id, $subscription_id ),
 				'metadata'            => array(
 					'order_id'        => $renewal_order_id,
 					'subscription_id' => $subscription_id,
@@ -1046,7 +1079,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 			} else {
 				return array(
 					'result'   => 'failure',
-					'message'  => sprintf( __( 'Stripe payment intent status: %s', 'ohmylms' ), $payment_intent->status ),
+					'message'  => sprintf( /* translators: %s: text value. */
+					__( 'Stripe payment intent status: %s', 'ohmylms' ), $payment_intent->status ),
 					'order_id' => $renewal_order_id,
 				);
 			}
@@ -1067,7 +1101,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 * @param object $course The course object for which the upsell/downsell is being processed.
 	 * @param float  $amount The amount to charge for the upsell/downsell.
 	 * @param array  $step_data Additional step data, including step ID.
-	 *
+	 * .
 	 * @return array|WP_Error An array with success status or a WP_Error on failure.
 	 */
 	public function process_offer_payment( $original_order, $course, $amount, $step_data ) {
@@ -1113,7 +1147,8 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				'confirm'             => 'true',
 				'off_session'         => 'one_off',
 				'confirmation_method' => 'automatic',
-				'description'         => sprintf( __( 'Upsell/Downsell - Order #%s', 'ohmylms' ), $original_order->get_id() ),
+				'description'         => sprintf( /* translators: %s: text value. */
+				__( 'Upsell/Downsell - Order #%s', 'ohmylms' ), $original_order->get_id() ),
 				'metadata'            => array(
 					'order_id'   => $original_order->get_id(),
 					'type'       => 'upsell_downsell',
@@ -1173,10 +1208,12 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 				);
 			} else {
 				$status = $payment_intent->status ?? 'unknown';
-				return new \WP_Error( 'payment_incomplete', sprintf( __( 'Payment intent status: %s', 'ohmylms' ), $status ) );
+				return new \WP_Error( 'payment_incomplete', sprintf( /* translators: %s: text value. */
+				__( 'Payment intent status: %s', 'ohmylms' ), $status ) );
 			}
 		} catch ( \Exception $e ) {
-			return new \WP_Error( 'payment_exception', sprintf( __( 'Stripe payment failed: %s', 'ohmylms' ), $e->getMessage() ) );
+			return new \WP_Error( 'payment_exception', sprintf( /* translators: %s: text value. */
+			__( 'Stripe payment failed: %s', 'ohmylms' ), $e->getMessage() ) );
 		}
 	}
 
@@ -1187,7 +1224,7 @@ class OhMyLMS_Gateway_Stripe_Intents extends PaymentGateway {
 	 *
 	 * @param string $payment_method_id The Stripe payment method ID.
 	 * @param string $customer_id The Stripe customer ID.
-	 *
+	 * .
 	 * @return string|\WP_Error The payment method ID or a WP_Error on failure.
 	 */
 	private function ensure_payment_method_attached( $payment_method_id, $customer_id ) {

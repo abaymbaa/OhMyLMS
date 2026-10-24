@@ -65,7 +65,10 @@ export function createQuizPlayer( {
 	};
 	// Exam palette bookkeeping: which questions the learner has opened.
 	const visit = ( context ) => {
-		context.visited = { ...context.visited, [ context.page ]: true };
+		context.visited = {
+			...context.visited,
+			[ context.page ]: true,
+		};
 	};
 	const rootOf = () =>
 		getElement().ref.closest( '[data-wp-interactive="ohmylms/quiz"]' );
@@ -75,8 +78,8 @@ export function createQuizPlayer( {
 			next: withSyncEvent( ( event ) => {
 				event.preventDefault();
 				event.stopPropagation();
-				const c = getContext(),
-					root = rootOf();
+				const c = getContext();
+				const root = rootOf();
 				if (
 					c.submitting ||
 					c.page >= c.totalPages ||
@@ -88,7 +91,10 @@ export function createQuizPlayer( {
 					! emit(
 						root,
 						'quiz-before-navigate',
-						{ quizId: c.quizId, page: c.page + 1 },
+						{
+							quizId: c.quizId,
+							page: c.page + 1,
+						},
 						true
 					)
 				) {
@@ -105,9 +111,9 @@ export function createQuizPlayer( {
 			goTo: withSyncEvent( ( event ) => {
 				event.preventDefault();
 				event.stopPropagation();
-				const c = getContext(),
-					root = rootOf();
+				const c = getContext();
 				const target = Number( c.questionNumber );
+				const root = rootOf();
 				if (
 					c.submitting ||
 					! target ||
@@ -116,7 +122,10 @@ export function createQuizPlayer( {
 					! emit(
 						root,
 						'quiz-before-navigate',
-						{ quizId: c.quizId, page: target },
+						{
+							quizId: c.quizId,
+							page: target,
+						},
 						true
 					)
 				) {
@@ -143,11 +152,11 @@ export function createQuizPlayer( {
 			clearCurrent: withSyncEvent( ( event ) => {
 				event.preventDefault();
 				event.stopPropagation();
-				const c = getContext(),
-					box =
-						rootOf().querySelectorAll( '.ohmylms-quiz-box' )[
-							c.page - 1
-						];
+				const c = getContext();
+				const box =
+					rootOf().querySelectorAll( '.ohmylms-quiz-box' )[
+						c.page - 1
+					];
 				if ( ! box ) {
 					return;
 				}
@@ -162,16 +171,23 @@ export function createQuizPlayer( {
 						field.value = '';
 					}
 					field.dispatchEvent(
-						new Event( 'input', { bubbles: true } )
+						new Event( 'input', {
+							bubbles: true,
+						} )
 					);
 					field.dispatchEvent(
-						new Event( 'change', { bubbles: true } )
+						new Event( 'change', {
+							bubbles: true,
+						} )
 					);
 				} );
 				box.querySelectorAll( 'math-field' ).forEach( ( field ) => {
 					field.value = '';
 				} );
-				c.answered = { ...c.answered, [ c.page ]: false };
+				c.answered = {
+					...c.answered,
+					[ c.page ]: false,
+				};
 			} ),
 			// "Review and Submit": confirm when questions are blank, then submit the form normally.
 			reviewSubmit: withSyncEvent( ( event ) => {
@@ -204,15 +220,18 @@ export function createQuizPlayer( {
 			previous: withSyncEvent( ( event ) => {
 				event.preventDefault();
 				event.stopPropagation();
-				const c = getContext(),
-					root = rootOf();
+				const c = getContext();
+				const root = rootOf();
 				if (
 					c.submitting ||
 					c.page <= 1 ||
 					! emit(
 						root,
 						'quiz-before-navigate',
-						{ quizId: c.quizId, page: c.page - 1 },
+						{
+							quizId: c.quizId,
+							page: c.page - 1,
+						},
 						true
 					)
 				) {
@@ -230,21 +249,24 @@ export function createQuizPlayer( {
 			} ),
 			submit: withSyncEvent( ( event ) => {
 				event.stopPropagation();
-				const c = getContext(),
-					root = rootOf();
 				const exit = [
 					'ohmylms-quiz-exit-submission',
 					'ohmylms-quiz-preview-exit',
 				].includes(
 					event.target.querySelector( '[name=action]' )?.value
 				);
+				const c = getContext();
+				const root = rootOf();
 				if (
 					c.submitting ||
 					( ! exit && ! validate( root, c, false, isAnswered ) ) ||
 					! emit(
 						root,
 						'quiz-before-submit',
-						{ quizId: c.quizId, exit },
+						{
+							quizId: c.quizId,
+							exit,
+						},
 						true
 					)
 				) {
@@ -259,8 +281,7 @@ export function createQuizPlayer( {
 			} ),
 			answerChanged: withSyncEvent( ( event ) => {
 				event.stopPropagation();
-				const c = getContext(),
-					input = event.target;
+				const input = event.target;
 				const limit = Number( input.getAttribute( 'data-limit' ) );
 				if ( limit > 0 && input.value.length > limit ) {
 					input.value = input.value.slice( 0, limit );
@@ -275,8 +296,12 @@ export function createQuizPlayer( {
 					input.style.height = 'auto';
 					input.style.height = `${ input.scrollHeight }px`;
 				}
+				const c = getContext();
 				if ( c.questionNumber ) {
-					c.errors = { ...c.errors, [ c.questionNumber ]: false };
+					c.errors = {
+						...c.errors,
+						[ c.questionNumber ]: false,
+					};
 				}
 				markAnswered( rootOf(), c, input );
 				emit( rootOf(), 'quiz-answer-changed', {
@@ -309,12 +334,12 @@ export function createQuizPlayer( {
 				}
 			},
 			*expire() {
-				const c = getContext(),
-					root = rootOf();
+				const c = getContext();
 				if ( c.submitting ) {
 					return;
 				}
 				c.submitting = true;
+				const root = rootOf();
 				const form = root
 					.querySelector( '.ohmylms-quiz-form' )
 					.closest( 'form' );
@@ -345,7 +370,9 @@ export function createQuizPlayer( {
 					) {
 						throw new Error( c.submissionError );
 					}
-					emit( root, 'quiz-expired', { quizId: c.quizId } );
+					emit( root, 'quiz-expired', {
+						quizId: c.quizId,
+					} );
 					window.location.assign( c.returnUrl || result.data.url );
 				} catch {
 					c.error = c.submissionError;
@@ -359,11 +386,11 @@ export function createQuizPlayer( {
 		},
 		callbacks: {
 			mount() {
-				const root = getElement().ref,
-					c = getContext();
+				const root = getElement().ref;
 				if ( roots.has( root ) ) {
 					return;
 				}
+				const c = getContext();
 				const deadline = Date.now() + c.remaining * 1000;
 				if (
 					mathEnabled() &&
@@ -390,11 +417,15 @@ export function createQuizPlayer( {
 				}
 				scanAnswered( root, c );
 				roots.set( root, true );
-				emit( root, 'quiz-mounted', { quizId: c.quizId } );
+				emit( root, 'quiz-mounted', {
+					quizId: c.quizId,
+				} );
 				return () => {
 					clearInterval( timer );
 					roots.delete( root );
-					emit( root, 'quiz-unmounted', { quizId: c.quizId } );
+					emit( root, 'quiz-unmounted', {
+						quizId: c.quizId,
+					} );
 				};
 			},
 		},

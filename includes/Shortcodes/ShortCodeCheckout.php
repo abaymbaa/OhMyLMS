@@ -25,7 +25,7 @@ class ShortCodeCheckout {
 	/**
 	 * Render the checkout form
 	 *
-	 * @param array $atts Shortcode attributes for styling options
+	 * @param array $atts Shortcode attributes for styling options.
 	 * @since 1.0.0
 	 */
 	public static function output( $atts = array() ) {
@@ -337,7 +337,7 @@ class ShortCodeCheckout {
 	/**
 	 * Generate CSS from shortcode attributes
 	 *
-	 * @param array $attrs Shortcode attributes
+	 * @param array $attrs Shortcode attributes.
 	 * @return string Generated CSS
 	 * @since 1.0.0
 	 */

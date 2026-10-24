@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCertificateEditorHeader( readRuntime ) {
@@ -116,7 +117,7 @@ export function createCertificateEditorHeader( readRuntime ) {
 										case 5:
 											_eLocal2.p = 5;
 											_aLocal = _eLocal2.v;
-											console.error( _aLocal );
+											showRequestError( _aLocal );
 										// Falls through to the shared async state cleanup.
 										case 6:
 											return (
@@ -213,7 +214,7 @@ export function createCertificateEditorHeader( readRuntime ) {
 										case 8:
 											_eLocal4.p = 8;
 											_oLocal2 = _eLocal4.v;
-											console.error( _oLocal2 );
+											showRequestError( _oLocal2 );
 										// Falls through to the shared async state cleanup.
 										case 9:
 											return (
@@ -299,7 +300,7 @@ export function createCertificateEditorHeader( readRuntime ) {
 										case 6:
 											_eLocal6.p = 6;
 											_oLocal3 = _eLocal6.v;
-											console.error( _oLocal3 );
+											showRequestError( _oLocal3 );
 										// Falls through to the shared async state cleanup.
 										case 7:
 											return (
@@ -456,7 +457,6 @@ export function createCertificateEditorHeader( readRuntime ) {
 													} }
 													onPressEnter={ A }
 													onBlur={ A }
-													autoFocus={ ! 0 }
 												/>
 											) : (
 												<React.Fragment>

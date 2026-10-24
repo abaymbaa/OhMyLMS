@@ -91,7 +91,8 @@ class NotificationController extends RestController {
 			if ( empty( $request[ $param ] ) ) {
 				return new \WP_Error(
 					'rest_missing_param',
-					sprintf( __( 'Missing parameter: %s', 'ohmylms' ), $param ),
+					sprintf( /* translators: %s: text value. */
+					__( 'Missing parameter: %s', 'ohmylms' ), $param ),
 					array( 'status' => 400 )
 				);
 			}
@@ -175,6 +176,9 @@ class NotificationController extends RestController {
 		return $wpdb->insert_id;
 	}
 
+	/**
+	 * Check notification permission for Notification controller.
+	 */
 	public function check_notification_permission() {
 		return current_user_can( 'edit_posts' );
 	}

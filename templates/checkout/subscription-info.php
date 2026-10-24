@@ -104,7 +104,7 @@ if ( empty( $post_ids ) ) {
 				</tr>
 				<tr class="subscription-status">
 					<td><?php echo esc_html__( 'Status', 'ohmylms' ); ?></td>
-					<td class="status-<?php echo esc_attr( $subscription->get_status() ); ?>"><?php echo $subscription->get_status(); ?></td>
+					<td class="status-<?php echo esc_attr( $subscription->get_status() ); ?>"><?php echo esc_html( $subscription->get_status() ); ?></td>
 				</tr>
 				<tr class="subscription-started">
 					<td><?php echo esc_html__( 'Started', 'ohmylms' ); ?></td>
@@ -118,7 +118,7 @@ if ( empty( $post_ids ) ) {
 				<?php endif; ?>
 				<tr class="subscription-amount">
 					<td><?php echo esc_html__( 'Amount', 'ohmylms' ); ?></td>
-					<td style="font-weight: bold;"><?php echo ohmylms_price( $recurring_amount ) . '/' . $subscription->get_billing_period(); ?></td>
+					<td style="font-weight: bold;"><?php echo wp_kses_post( ohmylms_price( $recurring_amount ) . '/' . $subscription->get_billing_period() ); ?></td>
 				</tr>
 			</tbody>
 		</table>

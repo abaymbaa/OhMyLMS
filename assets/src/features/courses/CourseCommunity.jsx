@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCourseCommunity( readRuntime ) {
@@ -184,7 +185,7 @@ export function createCourseCommunity( readRuntime ) {
 													case 2:
 														_eLocal3.p = 2;
 														a = _eLocal3.v;
-														console.error(
+														showRequestError(
 															'Error fetching community data:',
 															a
 														);

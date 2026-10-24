@@ -352,7 +352,7 @@ export function createBrandingSettings( readRuntime ) {
 			},
 			[ w ]
 		);
-		[
+		void [
 			{
 				title: ( 0, I18n.__ )( 'Primary Color', 'ohmylms' ),
 				description: ( 0, I18n.__ )(

@@ -18,6 +18,9 @@ defined( 'ABSPATH' ) || exit;
  * Learners only ever reach bundles through the /me endpoints and their own records.
  */
 final class Access {
+	/**
+	 * Can manage for Access.
+	 */
 	public static function can_manage() {
 		return (bool) apply_filters( 'ohmylms_can_manage_curriculum', current_user_can( 'manage_options' ) );
 	}
@@ -36,6 +39,14 @@ final class Access {
 		return AccessPolicy::check( is_user_logged_in(), __( 'Sign in to use course bundles.', 'ohmylms' ) );
 	}
 
+	/**
+	 * Error for Access.
+	 *
+	 * @param mixed $code Code.
+	 * @param mixed $message Message.
+	 * @param int   $status Status.
+	 * @param array $data Input data.
+	 */
 	public static function error( $code, $message, $status = 400, array $data = array() ) {
 		return new \WP_Error( $code, $message, array( 'status' => $status ) + $data );
 	}

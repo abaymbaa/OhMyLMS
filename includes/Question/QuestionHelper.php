@@ -17,8 +17,8 @@ class QuestionHelper {
 	/**
 	 * Add new question
 	 *
-	 * @param string $title
-	 * @param string $description
+	 * @param string $title Title.
+	 * @param string $content Content.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -70,8 +70,8 @@ class QuestionHelper {
 	/**
 	 * Saved question
 	 *
-	 * @param int   $post_id
-	 * @param array $params
+	 * @param int   $post_id Post identifier.
+	 * @param array $question_data Question data.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -121,7 +121,7 @@ class QuestionHelper {
 	/**
 	 * Deleted question
 	 *
-	 * @param int $post_id
+	 * @param int $post_id Post identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */

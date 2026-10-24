@@ -10,10 +10,18 @@ defined( 'ABSPATH' ) || exit;
 
 /** Connection settings and authentication for the official WordPress MCP Adapter. */
 class Server {
-	const ROUTE                  = '/ohmylms/v1/mcp';
-	const OPTION                 = 'ohmylms_mcp_tokens';
+	const ROUTE  = '/ohmylms/v1/mcp';
+	const OPTION = 'ohmylms_mcp_tokens';
+	/**
+	 * Server error.
+	 *
+	 * @var mixed
+	 */
 	private static $server_error = '';
 
+	/**
+	 * Init for Server.
+	 */
 	public static function init() {
 		add_filter( 'ohmylms_integrations', array( __CLASS__, 'manifest' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register' ) );
@@ -26,11 +34,19 @@ class Server {
 		add_filter( 'rest_pre_serve_request', array( __CLASS__, 'serve_empty' ), 10, 4 );
 	}
 
+	/**
+	 * Enabled for Server.
+	 */
 	public static function enabled() {
 		$integrations = get_option( 'ohmylms_integrations', array() );
 		return is_array( $integrations ) && 1 === (int) ( $integrations['mcp']['is_enable'] ?? 0 );
 	}
 
+	/**
+	 * Manifest for Server.
+	 *
+	 * @param mixed $integrations Integrations.
+	 */
 	public static function manifest( $integrations ) {
 		unset( $integrations['ai_model'] );
 		$integrations['mcp'] = array(
@@ -46,6 +62,9 @@ class Server {
 		return $integrations;
 	}
 
+	/**
+	 * Register for Server.
+	 */
 	public static function register() {
 		register_rest_route(
 			'ohmylms/v1',
@@ -74,6 +93,9 @@ class Server {
 		);
 	}
 
+	/**
+	 * Boot adapter for Server.
+	 */
 	public static function boot_adapter() {
 		if ( ! self::enabled() ) {
 			return;
@@ -83,6 +105,11 @@ class Server {
 		}
 	}
 
+	/**
+	 * Register server for Server.
+	 *
+	 * @param mixed $adapter Adapter.
+	 */
 	public static function register_server( $adapter ) {
 		if ( ! self::enabled() ) {
 			return;
@@ -107,6 +134,9 @@ class Server {
 		}
 	}
 
+	/**
+	 * Readiness for Server.
+	 */
 	public static function readiness() {
 		$abilities = function_exists( 'wp_register_ability' );
 		$adapter   = class_exists( '\WP\MCP\Core\McpAdapter' );
@@ -119,12 +149,25 @@ class Server {
 		);
 	}
 
+	/**
+	 * Response for Server.
+	 *
+	 * @param mixed $data Input data.
+	 * @param int   $status Status.
+	 */
 	private static function response( $data, $status = 200 ) {
 		$response = new \WP_REST_Response( $data, $status );
 		$response->header( 'Cache-Control', 'no-store' );
 		return $response;
 	}
 
+	/**
+	 * No cache for Server.
+	 *
+	 * @param mixed $response Response data.
+	 * @param mixed $rest_server Rest server.
+	 * @param mixed $request REST request.
+	 */
 	public static function no_cache( $response, $rest_server, $request ) {
 		if ( $request->get_route() === self::ROUTE ) {
 			$response->header( 'Cache-Control', 'no-store' );
@@ -132,6 +175,14 @@ class Server {
 		return $response;
 	}
 
+	/**
+	 * Serve empty for Server.
+	 *
+	 * @param mixed $served Served.
+	 * @param mixed $response Response data.
+	 * @param mixed $request REST request.
+	 * @param mixed $rest_server Rest server.
+	 */
 	public static function serve_empty( $served, $response, $request, $rest_server ) {
 		// WordPress serializes null as JSON; adapter notification/termination responses require an empty body.
 		if ( $request->get_route() === self::ROUTE && $response->get_data() === null
@@ -141,10 +192,16 @@ class Server {
 		return $served;
 	}
 
+	/**
+	 * Can manage for Server.
+	 */
 	public static function can_manage() {
 		return current_user_can( 'manage_options' ) && current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * Settings for Server.
+	 */
 	public static function settings() {
 		$records   = (array) get_option( self::OPTION, array() );
 		$providers = array();
@@ -173,6 +230,11 @@ class Server {
 		);
 	}
 
+	/**
+	 * Update settings for Server.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function update_settings( $request ) {
 		$provider = $request['provider'];
 		$action   = $request['action'];
@@ -201,6 +263,11 @@ class Server {
 		return $response;
 	}
 
+	/**
+	 * Authorize for Server.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public static function authorize( $request ) {
 		if ( ! self::enabled() ) {
 			return new \WP_Error( 'mcp_disabled', 'The MCP add-on is disabled.', array( 'status' => 403 ) );
@@ -238,6 +305,9 @@ class Server {
 		return new \WP_Error( 'mcp_auth', 'Token is invalid, revoked, or its owner no longer has access.', array( 'status' => 401 ) );
 	}
 
+	/**
+	 * Tools for Server.
+	 */
 	public static function tools() {
 		$tools = array();
 		foreach ( array(

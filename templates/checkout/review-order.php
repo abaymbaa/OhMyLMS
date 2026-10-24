@@ -48,7 +48,7 @@ $total_savings = 0;
 									<?php endif; ?>
 
 								<div class="ohmylms-course-title" title="<?php echo esc_attr( $_course->get_name() ); ?>">
-								<?php echo $_course->get_name() . '&nbsp;'; ?>
+								<?php echo esc_html( $_course->get_name() ) . '&nbsp;'; ?>
 								</div>
 							</div>
 						</td>
@@ -56,7 +56,7 @@ $total_savings = 0;
 							<td class="ohmylms-course-total">
 							<?php
 							if ( $by_point ) {
-								echo $_course->get_purchase_point() . ' Pts';
+								echo esc_html( $_course->get_purchase_point() ) . ' Pts';
 							} else {
 								$course_price = $_course->is_on_sale() && $_course->validate_on_sale() ? $_course->get_price() : $_course->get_regular_price();
 								$price_html   = ohmylms_price( $course_price );
@@ -113,7 +113,7 @@ $total_savings = 0;
 						$cart_subtotal = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'subtotal' );
 						echo apply_filters( 'ohmylms_checkout_cart_subtotal', ohmylms_price( $cart_subtotal ), $cart_subtotal, $_course );
 					} else {
-						echo $_course->get_purchase_point() . ' Pts';
+						echo esc_html( $_course->get_purchase_point() ) . ' Pts';
 					}
 					?>
 				</td>
@@ -141,11 +141,11 @@ $total_savings = 0;
 				?>
 				<tr class="cart-tax">
 					<th>
-						<?php echo TaxService::get_instance()->get_tax_label(); ?>
+						<?php echo esc_html( TaxService::get_instance()->get_tax_label() ); ?>
 						<span class="cart-tax-span">
 							<?php
 							$tax_rate = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'tax_rate' );
-							echo $tax_rate . '%';
+							echo esc_html( $tax_rate ) . '%';
 							?>
 						</span>
 					</th>
@@ -171,7 +171,7 @@ $total_savings = 0;
 						$total = \OhMyLMS\Commerce\ecommerce()->cart->get_totals_by_key( 'total' );
 						echo apply_filters( 'ohmylms_checkout_order_total', ohmylms_price( $total ), $total, $_course );
 					} else {
-						echo $_course->get_purchase_point() . ' Pts';
+						echo esc_html( $_course->get_purchase_point() ) . ' Pts';
 					}
 
 					?>

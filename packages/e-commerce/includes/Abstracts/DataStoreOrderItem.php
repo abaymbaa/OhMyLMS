@@ -2,6 +2,9 @@
 
 namespace OhMyLMS\Commerce\Abstracts;
 
+/**
+ * Plugin data store order item implementation.
+ */
 abstract class DataStoreOrderItem {
 
 	/**
@@ -16,7 +19,7 @@ abstract class DataStoreOrderItem {
 	/**
 	 * Update an order item.
 	 *
-	 * @param int   $item_id The ID of the item.
+	 * @param mixed $item_id Item id.
 	 * @param mixed $item The item data to update.
 	 * @return mixed
 	 */

@@ -28,7 +28,10 @@ defined( 'ABSPATH' ) || exit;
 final class Feedback {
 	const KINDS = array( 'hint', 'explain' );
 
-	/** What the learner may ask for in this session. */
+	/** What the learner may ask for in this session.
+	 *
+	 * @param array $session Session.
+	 */
 	public static function availability( array $session ) {
 		$none = array(
 			'hint'    => false,
@@ -50,9 +53,13 @@ final class Feedback {
 
 	/* ---------- Pure helpers (no WordPress state) ---------- */
 
-	/** Text with markup, angle brackets and runaway whitespace removed, shortened to $limit characters. */
+	/** Text with markup, angle brackets and runaway whitespace removed, shortened to $limit characters.
+	 *
+	 * @param mixed $text Text.
+	 * @param int   $limit Limit.
+	 */
 	public static function plain( $text, $limit = 1500 ) {
-		$text = html_entity_decode( strip_tags( (string) $text ), ENT_QUOTES, 'UTF-8' );
+		$text = html_entity_decode( wp_strip_all_tags( (string) $text ), ENT_QUOTES, 'UTF-8' );
 		// Angle brackets could close the fence around the data, so they are neutralised.
 		$text = str_replace( array( '<', '>' ), array( '‹', '›' ), $text );
 		$text = trim( preg_replace( "/[ \t]+/", ' ', preg_replace( "/\r\n?/", "\n", $text ) ) );
@@ -60,9 +67,13 @@ final class Feedback {
 		return mb_strlen( $text ) > $limit ? mb_substr( $text, 0, $limit ) . '…' : $text;
 	}
 
-	/** The reply as safe plain text: no tags, fences or markdown emphasis, bounded in length. */
+	/** The reply as safe plain text: no tags, fences or markdown emphasis, bounded in length.
+	 *
+	 * @param mixed $text Text.
+	 * @param int   $limit Limit.
+	 */
 	public static function clean( $text, $limit = 900 ) {
-		$text = strip_tags( (string) $text );
+		$text = wp_strip_all_tags( (string) $text );
 		// Fence lines (with an optional language) go whole; any other triple backtick just disappears.
 		$text = str_replace( '```', '', preg_replace( '/^```[A-Za-z0-9_-]*[ \t]*\n/m', '', $text ) );
 		$text = preg_replace( '/(\*\*|__)(.+?)\1/su', '$2', $text );
@@ -79,7 +90,8 @@ final class Feedback {
 	 * Does a reply give away the expected answer? Short numeric answers are not tested (a lone
 	 * digit appears in any sentence); the prompt itself keeps the key from the model.
 	 *
-	 * @param string[] $answers expected answer strings
+	 * @param mixed    $reply Reply.
+	 * @param string[] $answers expected answer strings.
 	 */
 	public static function leaks( $reply, array $answers ) {
 		$haystack = mb_strtolower( preg_replace( '/\s+/', '', (string) $reply ) );
@@ -100,8 +112,8 @@ final class Feedback {
 	/**
 	 * The two messages sent to the model.
 	 *
-	 * @param string $kind hint|explain
-	 * @param array  $data skill, question, data (json), options (string[]), response, expected, solution
+	 * @param string $kind hint|explain.
+	 * @param array  $data skill, question, data (json), options (string[]), response, expected, solution.
 	 * @return array{system:string,user:string}
 	 */
 	public static function prompt( $kind, array $data ) {
@@ -133,7 +145,11 @@ final class Feedback {
 
 	/* ---------- From a practice item ---------- */
 
-	/** The learner's stored response as words, for the model. */
+	/** The learner's stored response as words, for the model.
+	 *
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 * @param mixed            $response Response data.
+	 */
 	public static function describe_response( QuestionSnapshot $snapshot, $response ) {
 		if ( null === $response || $response === array() || '' === $response ) {
 			return ''; }
@@ -170,7 +186,10 @@ final class Feedback {
 		return implode( '; ', $flat );
 	}
 
-	/** The correct answer(s) as words. Only used after the learner has answered. */
+	/** The correct answer(s) as words. Only used after the learner has answered.
+	 *
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 */
 	public static function expected_text( QuestionSnapshot $snapshot ) {
 		$type    = $snapshot->get_type();
 		$options = $snapshot->get_questions();
@@ -197,7 +216,10 @@ final class Feedback {
 		return \OhMyLMS\Assessment\Template::expected_text( $type, $snapshot->get_settings(), $options );
 	}
 
-	/** Expected answers as separate strings, for the leak check. */
+	/** Expected answers as separate strings, for the leak check.
+	 *
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 */
 	private static function expected_list( QuestionSnapshot $snapshot ) {
 		$settings = $snapshot->get_settings();
 		$list     = array();
@@ -220,7 +242,13 @@ final class Feedback {
 		return array_values( array_filter( array_map( 'strval', $list ), 'strlen' ) );
 	}
 
-	/** Everything the prompt needs from a concrete (instantiated) question and a stored item. */
+	/** Everything the prompt needs from a concrete (instantiated) question and a stored item.
+	 *
+	 * @param mixed            $kind Kind.
+	 * @param array            $item Item.
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 * @param string           $skill_name Skill name.
+	 */
 	public static function context( $kind, array $item, QuestionSnapshot $snapshot, $skill_name = '' ) {
 		$type     = $snapshot->get_type();
 		$settings = $snapshot->get_settings();
@@ -242,7 +270,10 @@ final class Feedback {
 		return $data;
 	}
 
-	/** One request is allowed, or an error says why not. */
+	/** One request is allowed, or an error says why not.
+	 *
+	 * @param array $session Session.
+	 */
 	private static function spend( array $session ) {
 		$limit = (int) Settings::get()['daily_limit'];
 		$day   = gmdate( 'Y-m-d' );
@@ -269,7 +300,10 @@ final class Feedback {
 		return true;
 	}
 
-	/** Give a daily credit back: a learner is not charged for help that failed. */
+	/** Give a daily credit back: a learner is not charged for help that failed.
+	 *
+	 * @param array $session Session.
+	 */
 	private static function refund( array $session ) {
 		$day = gmdate( 'Y-m-d' );
 		if ( (int) $session['student_id'] > 0 ) {
@@ -287,11 +321,15 @@ final class Feedback {
 		}
 		$key   = 'ohmylms_ai_g' . (int) $session['guest_id'] . '_' . $day;
 		$count = (int) get_transient( $key );
-		if ( $count > 0 ) {
+		if ( 0 < $count ) {
 			set_transient( $key, $count - 1, DAY_IN_SECONDS ); }
 	}
 
-	/** Remember a failed attempt on this item so a broken question cannot be retried endlessly. */
+	/** Remember a failed attempt on this item so a broken question cannot be retried endlessly.
+	 *
+	 * @param array $item Item.
+	 * @param mixed $kind Kind.
+	 */
 	private static function note_try( array $item, $kind ) {
 		global $wpdb;
 		$display                      = $item['display'];
@@ -302,7 +340,10 @@ final class Feedback {
 	/**
 	 * A hint or explanation for one practice item.  *
 	 *
-	 * @param array $item decoded practice_items row (display, response)
+	 * @param mixed            $kind Kind.
+	 * @param array            $session Session.
+	 * @param array            $item decoded practice_items row (display, response).
+	 * @param QuestionSnapshot $snapshot Snapshot.
 	 * @return array{text:string,kind:string,cached:bool}|\WP_Error
 	 */
 	public static function help( $kind, array $session, array $item, QuestionSnapshot $snapshot ) {

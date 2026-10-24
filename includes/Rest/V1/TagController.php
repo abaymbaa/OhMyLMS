@@ -18,12 +18,25 @@ use OhMyLMS\Curriculum\Placement;
  */
 class TagController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'tags';
 
+	/**
+	 * Get items permissions check for Tag controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_items_permissions_check( $request ) {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * Register routes for Tag controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -72,10 +85,20 @@ class TagController extends RestController {
 		);
 	}
 
+	/**
+	 * Get items for Tag controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_items( $request ) {
 		return rest_ensure_response( Placement::term_bundles( (string) $request['search'] ) );
 	}
 
+	/**
+	 * Replaced for Tag controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function replaced( $request ) {
 		return new \WP_Error(
 			'ohmylms_tags_replaced',

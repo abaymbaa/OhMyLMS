@@ -113,8 +113,10 @@ class SessionReminderScheduler {
 			}
 
 			// Send email reminder.
-			$subject = sprintf( __( 'Reminder: %s starts in 1 hour', 'ohmylms' ), $session_title );
+			$subject = sprintf( /* translators: %s: text value. */
+			__( 'Reminder: %s starts in 1 hour', 'ohmylms' ), $session_title );
 			$message = sprintf(
+				/* translators: %1$s: text value; %2$s: text value; %3$s: text value; %4$s: text value. */
 				__(
 					'Hi %1$s,
 

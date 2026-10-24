@@ -16,7 +16,12 @@ defined( 'ABSPATH' ) || exit;
  * in the skill's mastery score, and the streak. Read-only: it reports what the ledgers hold.
  */
 final class SessionReward {
-	/** @return array|null null when nothing is switched on or the session has no owner */
+	/**
+	 * For session for Session reward.
+	 *
+	 * @return array|null null when nothing is switched on or the session has no owner
+	 * @param array $session Session.
+	 */
 	public static function for_session( array $session ) {
 		$student = (int) ( $session['student_id'] ?? 0 );
 		if ( ! $student || ( $session['mode'] ?? '' ) !== 'skill' ) {
@@ -53,6 +58,6 @@ final class SessionReward {
 					'today_complete' => ! empty( $streak['today_complete'] ),
 				); }
 		}
-		return $reward ?: null;
+		return $reward ? $reward : null;
 	}
 }

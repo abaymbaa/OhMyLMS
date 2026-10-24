@@ -19,8 +19,8 @@ class SectionHelper {
 	/**
 	 * Add section under a course
 	 *
-	 * @param $title
-	 * @param $description
+	 * @param mixed $title Title.
+	 * @param mixed $description Description.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -81,8 +81,8 @@ class SectionHelper {
 	/**
 	 * Insert section lesson relation
 	 *
-	 * @param $section_id
-	 * @param $lesson_id
+	 * @param mixed $section_id Section identifier.
+	 * @param mixed $lesson_id Lesson identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */

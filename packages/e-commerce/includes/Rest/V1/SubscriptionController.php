@@ -8,9 +8,22 @@ use function OhMyLMS\Commerce\ecommerce;
 use OhMyLMS\Commerce\SubscriptionManager;
 
 
+/**
+ * Plugin subscription controller implementation.
+ */
 class SubscriptionController extends RestController {
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'subscriptions';
 
+	/**
+	 * Post type.
+	 *
+	 * @var mixed
+	 */
 	protected $post_type = 'ohmylms-subscription';
 
 	/**
@@ -42,86 +55,86 @@ class SubscriptionController extends RestController {
 			'type'       => 'object',
 			'properties' => array(
 				'id'                            => array(
-					'description' => __( 'Unique identifier for the object.', 'cx-ecommerce' ),
+					'description' => __( 'Unique identifier for the object.', 'ohmylms' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit', 'embed' ),
 					'readonly'    => true,
 				),
 				// Define properties for each meta field.
 				'_student_id'                   => array(
-					'description' => __( 'Student ID associated with the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Student ID associated with the subscription.', 'ohmylms' ),
 					'type'        => 'integer', // Or string, depending on ID format.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_membership_id'                => array(
-					'description' => __( 'Membership ID associated with the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Membership ID associated with the subscription.', 'ohmylms' ),
 					'type'        => 'integer', // Or string.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_original_order_id'            => array(
-					'description' => __( 'Original order ID that created the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Original order ID that created the subscription.', 'ohmylms' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_payment_gateway_id'           => array(
-					'description' => __( 'Payment gateway ID used for the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Payment gateway ID used for the subscription.', 'ohmylms' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_gateway_customer_id'          => array(
-					'description' => __( 'Customer ID from the payment gateway.', 'cx-ecommerce' ),
+					'description' => __( 'Customer ID from the payment gateway.', 'ohmylms' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_gateway_payment_method_token' => array(
-					'description' => __( 'Payment method token from the payment gateway.', 'cx-ecommerce' ),
+					'description' => __( 'Payment method token from the payment gateway.', 'ohmylms' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_schedule_start_date'          => array(
-					'description' => __( 'Start date of the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Start date of the subscription.', 'ohmylms' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_schedule_next_payment_date'   => array(
-					'description' => __( 'Next payment due date for the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Next payment due date for the subscription.', 'ohmylms' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_schedule_end_date'            => array(
-					'description' => __( 'End date for the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'End date for the subscription.', 'ohmylms' ),
 					'type'        => 'string',
 					'format'      => 'date-time', // ISO8601.
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_scheduled_renewal_action_id'  => array(
-					'description' => __( 'ID of the scheduled action for renewal (e.g., Action Scheduler ID).', 'cx-ecommerce' ),
+					'description' => __( 'ID of the scheduled action for renewal (e.g., Action Scheduler ID).', 'ohmylms' ),
 					'type'        => 'integer',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_status'                       => array(
-					'description' => __( 'Status of the subscription.', 'cx-ecommerce' ),
+					'description' => __( 'Status of the subscription.', 'ohmylms' ),
 					'type'        => 'string',
 					'enum'        => array( 'active', 'pending', 'on-hold', 'cancelled', 'expired', 'failed' ), // Example statuses.
 					'context'     => array( 'view', 'edit' ),
 				),
 				// Add new fields.
 				'_trial_end'                    => array(
-					'description' => __( 'End date of the trial period.', 'cx-ecommerce' ),
+					'description' => __( 'End date of the trial period.', 'ohmylms' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_last_payment_date'            => array(
-					'description' => __( 'Date of the last payment.', 'cx-ecommerce' ),
+					'description' => __( 'Date of the last payment.', 'ohmylms' ),
 					'type'        => 'string',
 					'format'      => 'date-time',
 					'context'     => array( 'view', 'edit' ),
 				),
 				'_recurring_amount'             => array(
-					'description' => __( 'Recurring payment amount.', 'cx-ecommerce' ),
+					'description' => __( 'Recurring payment amount.', 'ohmylms' ),
 					'type'        => 'string',
 					'context'     => array( 'view', 'edit' ),
 				),
@@ -178,7 +191,7 @@ class SubscriptionController extends RestController {
 			array(
 				'args'   => array(
 					'id' => array(
-						'description' => __( 'Unique identifier for the subscription.', 'cx-ecommerce' ),
+						'description' => __( 'Unique identifier for the subscription.', 'ohmylms' ),
 						'type'        => 'integer',
 					),
 				),
@@ -214,7 +227,7 @@ class SubscriptionController extends RestController {
 		if ( ! post_type_exists( $this->post_type ) ) {
 			return new WP_Error(
 				'rest_post_type_invalid',
-				__( 'The post type for subscriptions is not registered.', 'cx-ecommerce' ),
+				__( 'The post type for subscriptions is not registered.', 'ohmylms' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -285,7 +298,7 @@ class SubscriptionController extends RestController {
 
 		$total_posts = $query->found_posts;
 
-		if ( $total_posts < 1 ) {
+		if ( 1 > $total_posts ) {
 			// Out-of-bounds, run the query again without LIMIT for total count.
 			unset( $args['paged'], $args['posts_per_page'] );
 			$query_count = new \WP_Query();
@@ -305,7 +318,7 @@ class SubscriptionController extends RestController {
 
 		$response = rest_ensure_response( $response_data );
 		$response->header( 'X-WP-Total', (int) $total_posts );
-		$posts_per_page = isset( $args['posts_per_page'] ) && $args['posts_per_page'] > 0 ? $args['posts_per_page'] : 1;
+		$posts_per_page = isset( $args['posts_per_page'] ) && 0 < $args['posts_per_page'] ? $args['posts_per_page'] : 1;
 		$response->header( 'X-WP-TotalPages', (int) ceil( $total_posts / $posts_per_page ) );
 		return $response;
 	}
@@ -314,7 +327,6 @@ class SubscriptionController extends RestController {
 	 * Prepares a single subscription output for response.
 	 * (This is a placeholder, actual implementation will be in prepare_item_for_response)
 	 *
-	 * @param WP_Post         $post    Post object.
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response Response object.
 	 */
@@ -415,7 +427,7 @@ class SubscriptionController extends RestController {
 		if ( ! $post || $post->post_type !== $this->post_type ) {
 			return new WP_Error(
 				"cx_ecommerce_rest_{$this->post_type}_not_found",
-				__( 'Subscription not found.', 'cx-ecommerce' ),
+				__( 'Subscription not found.', 'ohmylms' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -447,7 +459,7 @@ class SubscriptionController extends RestController {
 		if ( ! empty( $request['id'] ) ) {
 			return new WP_Error(
 				"cx_ecommerce_rest_{$this->post_type}_exists",
-				__( 'Cannot create existing resource.', 'cx-ecommerce' ),
+				__( 'Cannot create existing resource.', 'ohmylms' ),
 				array( 'status' => 400 )
 			);
 		}
@@ -456,7 +468,7 @@ class SubscriptionController extends RestController {
 		if ( ! post_type_exists( $this->post_type ) ) {
 			return new WP_Error(
 				'rest_post_type_invalid',
-				__( 'The post type for subscriptions is not registered.', 'cx-ecommerce' ),
+				__( 'The post type for subscriptions is not registered.', 'ohmylms' ),
 				array( 'status' => 500 ) // Internal server error, as this should be configured correctly.
 			);
 		}
@@ -533,7 +545,7 @@ class SubscriptionController extends RestController {
 
 			$note = sprintf(
 				/* translators: 1: old status 2: new status */
-				__( 'Subscription status changed from %1$s to %2$s by %3$s.', 'cx-ecommerce' ),
+				__( 'Subscription status changed from %1$s to %2$s by %3$s.', 'ohmylms' ),
 				$get_previous_status,
 				$get_current_status,
 				wp_get_current_user()->display_name
@@ -600,7 +612,7 @@ class SubscriptionController extends RestController {
 	/**
 	 * Checks if a given request has access to read subscriptions.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return boolean|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_items_permissions_check( $request ) {
@@ -610,7 +622,7 @@ class SubscriptionController extends RestController {
 	/**
 	 * Checks if a given request has access to read a single subscription.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return boolean|WP_Error True if the request has read access, WP_Error object otherwise.
 	 */
 	public function get_item_permissions_check( $request ) {
@@ -620,7 +632,7 @@ class SubscriptionController extends RestController {
 	/**
 	 * Checks if a given request has access to create a subscription.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return boolean|WP_Error True if the request has create access, WP_Error object otherwise.
 	 */
 	public function create_item_permissions_check( $request ) {
@@ -630,7 +642,7 @@ class SubscriptionController extends RestController {
 	/**
 	 * Checks if a given request has access to update a subscription.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return boolean|WP_Error True if the request has update access, WP_Error object otherwise.
 	 */
 	public function update_item_permissions_check( $request ) {
@@ -689,9 +701,9 @@ class SubscriptionController extends RestController {
 			$payment_method_title = $order->get_payment_method_title();
 			foreach ( $order->get_items() as $item_id => $item ) {
 				$post_type = get_post_type( $item->get_course_id() );
-				if ( $post_type === OHMYLMS_COURSE_CPT ) {
+				if ( OHMYLMS_COURSE_CPT === $post_type ) {
 					$course = $item->get_course();
-				} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT ) {
+				} elseif ( OHMYLMS_MEMBERSHIP_CPT === $post_type ) {
 					$course = $item->get_membership();
 				} else {
 					$course = $item->get_course();
@@ -741,7 +753,7 @@ class SubscriptionController extends RestController {
 	/**
 	 * Prepares the item for the REST response.
 	 *
-	 * @param mixed           $item    WordPress representation of the item.
+	 * @param mixed           $item WordPress representation of the item.
 	 * @param WP_REST_Request $request Request object.
 	 * @return WP_REST_Response|WP_Error Response object on success, or WP_Error object on failure.
 	 */
@@ -782,7 +794,8 @@ class SubscriptionController extends RestController {
 
 		foreach ( $meta_fields_for_filtering as $field_name => $type ) {
 			$params[ $field_name ] = array(
-				'description'       => sprintf( __( 'Filter by subscription meta field: %s.', 'cx-ecommerce' ), $field_name ),
+				'description'       => sprintf( /* translators: %s: text value. */
+				__( 'Filter by subscription meta field: %s.', 'ohmylms' ), $field_name ),
 				'type'              => $type,
 				'sanitize_callback' => ( 'integer' === $type ) ? 'absint' : 'sanitize_text_field',
 				'validate_callback' => 'rest_validate_request_arg',

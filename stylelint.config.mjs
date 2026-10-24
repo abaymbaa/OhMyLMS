@@ -3,15 +3,26 @@ import fs from 'node:fs';
 // These shipped styles are immutable build inputs copied from the recovery manifest.
 // Lint the authored SCSS below; never rewrite the compiled CSS or Tailwind utilities.
 const recovery_manifest = JSON.parse(
-	fs.readFileSync( new URL( './assets/src/manifest.json', import.meta.url ), 'utf8' )
+	fs.readFileSync(
+		new URL( './assets/src/manifest.json', import.meta.url ),
+		'utf8'
+	)
 );
 const compiled_styles = recovery_manifest.assets
-	.filter( ( asset ) => asset.source.startsWith( 'static/' ) && asset.output.endsWith( '.css' ) )
+	.filter(
+		( asset ) =>
+			asset.source.startsWith( 'static/' ) &&
+			asset.output.endsWith( '.css' )
+	)
 	.map( ( asset ) => asset.output );
 
 // Public selectors already consumed by WordPress controls, checkout templates and extensions.
 // Keep this list exact: new plugin selectors must use WordPress's hyphenated convention.
 const public_classes = [
+	// Existing HubIcons markup and AI analysis status contract.
+	'oml-hub-logo--custom',
+	'oml-hub-kind--custom',
+	'is-new_skill',
 	'ohmylms-feature-settings-header__description',
 	'components-base-control__field',
 	'ohmylms-streak-settings__header',

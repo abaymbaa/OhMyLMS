@@ -22,10 +22,11 @@ export function createMultipleChoiceResult( readRuntime ) {
 				var a = r
 						.filter( function ( _eLocal ) {
 							return (
-								1 ==
-								( _eLocal === null || _eLocal === void 0
-									? void 0
-									: _eLocal.is_correct )
+								Number(
+									_eLocal === null || _eLocal === void 0
+										? void 0
+										: _eLocal.is_correct
+								) === 1
 							);
 						} )
 						.map( function ( _eLocal2 ) {
@@ -53,10 +54,11 @@ export function createMultipleChoiceResult( readRuntime ) {
 					) {
 						if (
 							_oLocal &&
-							1 ==
-								( _nLocal === null || _nLocal === void 0
+							Number(
+								_nLocal === null || _nLocal === void 0
 									? void 0
-									: _nLocal.length ) &&
+									: _nLocal.length
+							) === 1 &&
 							a !== null &&
 							a !== void 0 &&
 							a.includes( _nLocal[ 0 ] )
@@ -202,11 +204,12 @@ export function createMultipleChoiceResult( readRuntime ) {
 															'\n                                                    '
 														)
 														.concat(
-															1 ==
-																( e === null ||
-																e === void 0
+															Number(
+																e === null ||
+																	e === void 0
 																	? void 0
-																	: e.is_correct )
+																	: e.is_correct
+															) === 1
 																? 'ohmylms-correct'
 																: '',
 															'\n                                            '

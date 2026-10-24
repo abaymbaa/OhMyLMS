@@ -16,13 +16,18 @@ defined( 'ABSPATH' ) || exit;
  */
 class CourseImporter {
 
+	/**
+	 * File.
+	 *
+	 * @var mixed
+	 */
 	public $file;
 
 	/**
 	 * CourseImporter constructor.
 	 *
-	 * @param $assignment
-	 * @throws \Exception
+	 * @param mixed $file File.
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function __construct( $file ) {
@@ -32,7 +37,6 @@ class CourseImporter {
 	/**
 	 * Import a course from an uploaded JSON file.
 	 *
-	 * @param array $this->file Uploaded file data from $_FILES.
 	 * @return int|WP_Error The imported course ID or WP_Error on failure.
 	 */
 	public function import_course_from_json() {
@@ -405,6 +409,11 @@ class CourseImporter {
 		return $content;
 	}
 
+	/**
+	 * Import thumbnail for Course importer.
+	 *
+	 * @param mixed $thumbnail Thumbnail.
+	 */
 	private function import_thumbnail( $thumbnail ) {
 		if ( empty( $thumbnail['url'] ) ) {
 			return null; // No thumbnail to import.
@@ -413,6 +422,11 @@ class CourseImporter {
 	}
 
 
+	/**
+	 * Import attachment for Course importer.
+	 *
+	 * @param mixed $url Url.
+	 */
 	private function import_attachment( $url ) {
 		if ( ! $url ) {
 			return null;

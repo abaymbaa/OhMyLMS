@@ -22,7 +22,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 	<div class="ohmylms-profile-cover-area">
 		<div class="ohmylms-profile-cover" tabindex="0">
 			<figure>
-				<img src="<?php echo $student->get_cover_image(); ?>" alt="creator lms profile cover" id="student-cover-image">
+				<img src="<?php echo esc_url( $student->get_cover_image() ); ?>" alt="creator lms profile cover" id="student-cover-image">
 			</figure>
 
 			<div class="hoverlay" tabindex="0">
@@ -32,7 +32,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					<?php echo esc_html__( 'Edit', 'ohmylms' ); ?>
 				</label>
 
-				<button tabindex="0" type="button" aria-label="Delete" class="cover-action-btn cover-delete" id="cover-image-delete" style="<?php echo $student->has_cover_image() ? 'display: flex;' : 'display: none;'; ?>">
+				<button tabindex="0" type="button" aria-label="Delete" class="cover-action-btn cover-delete" id="cover-image-delete" style="<?php echo esc_attr( $student->has_cover_image() ? 'display: flex;' : 'display: none;' ); ?>">
 					<?php require OHMYLMS_DIR . '/assets/images/icon/delete-icon.php'; ?>
 					<?php echo esc_html__( 'Delete', 'ohmylms' ); ?>
 				</button>
@@ -45,7 +45,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					if ( $student_profile_photo ) {
 						echo '<img class="student-profile-photo" src="' . esc_url( $student_profile_photo ) . '" alt="Student Profile Photo" id="student-profile-photo">';
 					} else {
-						echo ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() );
+						echo esc_html( ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() ) );
 					}
 					?>
 				</figure>
@@ -73,7 +73,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="text" name="first_name" placeholder="<?php echo esc_attr( 'Enter first name', 'ohmylms' ); ?>" value="<?php echo $student->get_first_name(); ?>">
+							<input type="text" name="first_name" placeholder="<?php echo esc_attr( 'Enter first name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_first_name() ); ?>">
 						</span>
 					</div>
 
@@ -83,7 +83,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="text" name="last_name" placeholder="<?php echo esc_attr( 'Enter last name', 'ohmylms' ); ?>" value="<?php echo $student->get_last_name(); ?>">
+							<input type="text" name="last_name" placeholder="<?php echo esc_attr( 'Enter last name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_last_name() ); ?>">
 						</span>
 					</div>
 
@@ -94,7 +94,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="text" name="display_name" placeholder="<?php echo esc_attr__( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo $student->get_display_name(); ?>">
+							<input type="text" name="display_name" placeholder="<?php echo esc_attr__( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_display_name() ); ?>">
 						</span>
 					</div>
 
@@ -105,7 +105,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="email" name="email" placeholder="<?php echo esc_attr__( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo $student->get_email(); ?>">
+							<input type="email" name="email" placeholder="<?php echo esc_attr__( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_email() ); ?>">
 						</span>
 					</div>
 
@@ -115,7 +115,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<input type="text" name="address" placeholder="<?php echo esc_attr( 'Street address, P. O. box', 'ohmylms' ); ?>" value="<?php echo $student->get_address(); ?>">
+							<input type="text" name="address" placeholder="<?php echo esc_attr( 'Street address, P. O. box', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_address() ); ?>">
 						</span>
 					</div>
 
@@ -199,7 +199,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<textarea name="bio" id=""><?php echo $student->get_bio(); ?></textarea>
+							<textarea name="bio" id=""><?php echo esc_textarea( $student->get_bio() ); ?></textarea>
 						</span>
 					</div>
 
@@ -209,7 +209,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 						</label>
 
 						<span class="ohmylms-input-wrapper">
-							<textarea name="interests" id=""><?php echo $student->get_interest(); ?></textarea>
+							<textarea name="interests" id=""><?php echo esc_textarea( $student->get_interest() ); ?></textarea>
 						</span>
 					</div>
 

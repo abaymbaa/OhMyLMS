@@ -8,12 +8,16 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code my profile implementation.
+ */
 class ShortCodeMyProfile {
 
 	/**
 	 * Render the checkout form
 	 *
 	 * @since 1.0.0
+	 * @param mixed $atts Atts.
 	 */
 	public static function output( $atts ) {
 		global $wp;
@@ -35,6 +39,11 @@ class ShortCodeMyProfile {
 	}
 
 
+	/**
+	 * Dashboard for Short code my profile.
+	 *
+	 * @param mixed $atts Atts.
+	 */
 	private static function dashboard( $atts ) {
 		$args = shortcode_atts(
 			$atts,
@@ -120,6 +129,8 @@ class ShortCodeMyProfile {
 
 	/**
 	 * Edit account details page.
+	 *
+	 * @param mixed $current_page Current page.
 	 */
 	public static function transactions_history( $current_page ) {
 		$current_page   = empty( $current_page ) ? 1 : absint( $current_page );
@@ -144,6 +155,8 @@ class ShortCodeMyProfile {
 
 	/**
 	 * Profile's membership page.
+	 *
+	 * @param mixed $current_page Current page.
 	 */
 	public static function membership( $current_page ) {
 		$current_page   = empty( $current_page ) ? 1 : absint( $current_page );
@@ -171,10 +184,12 @@ class ShortCodeMyProfile {
 
 	/**
 	 * Profile's invoice details page.
+	 *
+	 * @param mixed $current_page Current page.
 	 */
 	public static function invoice_details( $current_page ) {
 		$current_page = empty( $current_page ) ? 1 : absint( $current_page );
-		$order_id     = ! empty( $_GET['id'] ) ? sanitize_text_field( $_GET['id'] ) : '';
+		$order_id     = ! empty( $_GET['id'] ) ? sanitize_text_field( wp_unslash( $_GET['id'] )) : '';
 		if ( ! $order_id ) {
 			return;
 		}

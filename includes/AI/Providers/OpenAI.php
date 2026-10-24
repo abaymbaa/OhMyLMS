@@ -14,6 +14,13 @@ defined( 'ABSPATH' ) || exit;
  * budget thinking; if a reply comes back empty for that reason the error says so.
  */
 final class OpenAI implements Provider {
+	/**
+	 * Request for Open ai.
+	 *
+	 * @param array $settings Configuration settings.
+	 * @param mixed $key Lookup key.
+	 * @param array $request REST request.
+	 */
 	public function request( array $settings, $key, array $request ) {
 		return array(
 			'url'     => 'https://api.openai.com/v1/responses',
@@ -31,6 +38,12 @@ final class OpenAI implements Provider {
 		);
 	}
 
+	/**
+	 * Parse for Open ai.
+	 *
+	 * @param array $decoded Decoded.
+	 * @param mixed $status Status.
+	 */
 	public function parse( array $decoded, $status ) {
 		if ( $status >= 400 || ! empty( $decoded['error'] ) ) {
 			return Errors::from_status( $status, (string) ( $decoded['error']['message'] ?? '' ) ); }

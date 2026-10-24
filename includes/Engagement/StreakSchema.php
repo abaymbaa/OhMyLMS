@@ -10,11 +10,22 @@ namespace OhMyLMS\Engagement;
 final class StreakSchema {
 	const VERSION = '1';
 	const OPTION  = 'ohmylms_streak_schema';
+	/**
+	 * Table for Streak schema.
+	 *
+	 * @param mixed $name Name.
+	 */
 	public static function table( $name ) {
 		global $wpdb;
 		return $wpdb->prefix . 'ohmylms_streak_' . $name; }
+	/**
+	 * Ready for Streak schema.
+	 */
 	public static function ready() {
 		return get_option( self::OPTION ) === self::VERSION; }
+	/**
+	 * Install for Streak schema.
+	 */
 	public static function install() {
 		if ( self::ready() ) {
 			return true; }

@@ -93,7 +93,7 @@ export function createCourseCapacity( readRuntime ) {
 								</Controls.FlexItemWP>
 							) }
 						</Controls.FlexWP>
-						{ capacityEnabled && 0 == capacity && (
+						{ capacityEnabled && Number( capacity ) === 0 && (
 							<React.Fragment>
 								<Controls.SpacerWP marginBottom={ 3 } />
 								<Controls.TextWP

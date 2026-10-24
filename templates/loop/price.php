@@ -13,8 +13,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 global $course;
+$price_html = $course->get_price_html();
 ?>
 
-<?php if ( $price_html = $course->get_price_html() ) : ?>
-	<p class="price"><?php echo $price_html; ?></p>
+<?php if ( $price_html ) : ?>
+	<p class="price"><?php echo wp_kses_post( $price_html ); ?></p>
 <?php endif; ?>

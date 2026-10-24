@@ -31,6 +31,9 @@ class StudentController extends RestController {
 	 */
 	protected $base = 'students';
 
+	/**
+	 * Check student permission for Student controller.
+	 */
 	public function check_student_permission() {
 		return current_user_can( 'manage_options' ) || current_user_can( 'manage_ohmylms' );
 	}
@@ -322,6 +325,14 @@ class StudentController extends RestController {
 	}
 
 
+	/**
+	 * Get filter query for Student controller.
+	 *
+	 * @param mixed $query Query.
+	 * @param mixed $filter Filter.
+	 * @param mixed $start_date Start date.
+	 * @param mixed $end_date End date.
+	 */
 	public function get_filter_query( $query, $filter, $start_date, $end_date ) {
 		global $wpdb;
 		switch ( $filter ) {

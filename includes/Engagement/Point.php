@@ -11,14 +11,21 @@ namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Engagement\Achievements;
 
+/**
+ * Plugin point implementation.
+ */
 class Point {
-	/** Restore a failed point order once, even if point earning has since been disabled. */
+	/** Restore a failed point order once, even if point earning has since been disabled.
+	 *
+	 * @param mixed $user_id User identifier.
+	 * @param mixed $order_id Order identifier.
+	 */
 	public static function refund_purchase( $user_id, $order_id ) {
 		return Achievements::locked(
 			$user_id,
 			static function () use ( $user_id, $order_id ) {
 				global $wpdb;
-				$spent = $wpdb->get_var( $wpdb->prepare( "SELECT points FROM {$wpdb->prefix}ohmylms_user_achievement WHERE user_id=%d AND type='point' AND reason='purchase_course' AND content_id=%d AND status='active' AND points < 0", $user_id, $order_id ) );
+				$spent = $wpdb->get_var( $wpdb->prepare( 'SELECT points FROM %i WHERE user_id=%d AND type=\'point\' AND reason=\'purchase_course\' AND content_id=%d AND status=\'active\' AND points < 0', $wpdb->prefix . 'ohmylms_user_achievement', $user_id, $order_id ) );
 				if ( ! $spent ) {
 					return false; }
 				$result = Achievements::insert_achievement(
@@ -63,6 +70,8 @@ class Point {
 	 *
 	 * @return bool
 	 * @since 1.0.0
+	 * @param mixed $event Event.
+	 * @param int   $threshold Threshold.
 	 */
 	public static function maybe_met_rules( $event, $threshold = 0 ) {
 		if ( ! self::maybe_enable() ) {
@@ -84,9 +93,13 @@ class Point {
 	/**
 	 * Add points to a user.
 	 *
-	 * @param int    $user_id
-	 * @param int    $points
-	 * @param string $reason
+	 * @param int    $user_id User identifier.
+	 * @param mixed  $type Type.
+	 * @param int    $points Points.
+	 * @param string $reason Reason.
+	 * @param mixed  $course_id Course identifier.
+	 * @param mixed  $membership_id Membership identifier.
+	 * @param mixed  $content_id Content identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -123,11 +136,16 @@ class Point {
 		return $response;
 	}
 
+	/**
+	 * Maybe enable email for a slug for Point.
+	 *
+	 * @param mixed $slug Slug.
+	 */
 	public static function maybe_enable_email_for_a_slug( $slug ) {
 		$settings = self::get_rules();
 		if ( ! empty( $settings['rules'] ) && is_array( $settings['rules'] ) ) {
 			foreach ( $settings['rules'] as $rule ) {
-				if ( isset( $rule['email'], $rule['email']['enable'] ) && $rule['slug'] == $slug && $rule['email']['enable'] ) {
+				if ( isset( $rule['email'], $rule['email']['enable'] ) && (string) $rule['slug'] === (string) $slug && $rule['email']['enable'] ) {
 					return true;
 				}
 			}
@@ -137,6 +155,10 @@ class Point {
 
 	/**
 	 * Send email
+	 *
+	 * @param mixed $body Body.
+	 * @param mixed $to To.
+	 * @param mixed $subject Subject.
 	 */
 	public static function send_email( $body, $to, $subject ) {
 		$headers = array( 'MIME-Version: 1.0', 'Content-Type: text/html; charset=UTF-8' );
@@ -147,9 +169,13 @@ class Point {
 	/**
 	 * Add points to a user.
 	 *
-	 * @param int    $user_id
-	 * @param int    $points
-	 * @param string $reason
+	 * @param int    $user_id User identifier.
+	 * @param mixed  $type Type.
+	 * @param int    $points Points.
+	 * @param string $reason Reason.
+	 * @param mixed  $course_id Course identifier.
+	 * @param mixed  $membership_id Membership identifier.
+	 * @param mixed  $content_id Content identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */
@@ -184,10 +210,11 @@ class Point {
 
 	/**
 	 * Get points for a rules slug.
-	 * * @param string $slug
+	 * * @param string $slug Slug.
 	 *
 	 * @return int
 	 * @since 1.0.0
+	 * @param mixed $slug Slug.
 	 */
 	public static function get_points_for_slug( $slug ) {
 		$settings = self::get_rules();
@@ -204,10 +231,11 @@ class Point {
 
 	/**
 	 * Get points for a rules slug.
-	 * * @param string $slug
+	 * * @param string $slug Slug.
 	 *
 	 * @return int
 	 * @since 1.0.0
+	 * @param mixed $slug Slug.
 	 */
 	public static function get_email_settings_for_slug( $slug ) {
 		$settings = self::get_rules();
@@ -224,7 +252,7 @@ class Point {
 	/**
 	 * Get the total points for a user.
 	 *
-	 * @param int $user_id
+	 * @param int $user_id User identifier.
 	 * @return int
 	 * @since 1.0.0
 	 */
@@ -232,10 +260,7 @@ class Point {
 		global $wpdb;
 		$table_name   = $wpdb->prefix . 'ohmylms_user_achievement';
 		$total_points = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT SUM(points) FROM {$table_name} WHERE user_id = %d AND status = 'active'",
-				$user_id
-			)
+			$wpdb->prepare( 'SELECT SUM(points) FROM %i WHERE user_id = %d AND status = \'active\'', $table_name, $user_id )
 		);
 		return intval( $total_points );
 	}

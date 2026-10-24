@@ -1,4 +1,10 @@
 <?php
+/**
+ * Attempt functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 /**
  * OhMyLMS Attempt Functions

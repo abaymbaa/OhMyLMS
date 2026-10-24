@@ -14,6 +14,11 @@ namespace OhMyLMS;
  * @since 1.0.0
  */
 class TemplateLoader {
+	/**
+	 * Relocated templates.
+	 *
+	 * @var mixed
+	 */
 	private static $relocated_templates = array(
 		'recurring-totals.php'              => 'checkout/',
 		'recurring-subscription-totals.php' => 'checkout/',
@@ -43,7 +48,7 @@ class TemplateLoader {
 	/**
 	 * Load the template
 	 *
-	 * @param $template
+	 * @param mixed $template Template.
 	 * @return string
 	 * @since 1.0.0
 	 */
@@ -94,7 +99,7 @@ class TemplateLoader {
 	/**
 	 * Get the files to search for the template loader.
 	 *
-	 * @param $default_file
+	 * @param mixed $default_file Default file.
 	 * @return mixed|null
 	 * @since 1.0.0
 	 */
@@ -132,7 +137,9 @@ class TemplateLoader {
 
 
 	/**
-	 * @param \WP_Query $q
+	 * Pre get posts.
+	 *
+	 * @param \WP_Query $q Q.
 	 * @return \WP_Query
 	 */
 	public static function pre_get_posts( \WP_Query $q ): \WP_Query {
@@ -156,6 +163,15 @@ class TemplateLoader {
 		return $q;
 	}
 
+	/**
+	 * Handle relocated templates for Template loader.
+	 *
+	 * @param mixed $template Template.
+	 * @param mixed $template_name Template name.
+	 * @param mixed $args Operation arguments.
+	 * @param mixed $template_path Template path.
+	 * @param mixed $default_path Default path.
+	 */
 	public static function handle_relocated_templates( $template, $template_name, $args, $template_path, $default_path ) {
 		if ( file_exists( $template ) ) {
 			return $template;

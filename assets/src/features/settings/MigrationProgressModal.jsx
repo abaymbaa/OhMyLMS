@@ -1,7 +1,8 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createMigrationProgressModal( readRuntime ) {
-	return function MigrationProgressModal( props ) {
+	return function MigrationProgressModal() {
 		const {
 			I: Controls,
 			M4,
@@ -15,136 +16,144 @@ export function createMigrationProgressModal( readRuntime ) {
 			j4,
 			y: WordPressData,
 		} = readRuntime();
-		var t = ( 0, WordPressData.useDispatch )( StoreModule.default ),
-			n = ( 0, Router.Zp )(),
-			r = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getMigrationModalOpen();
-			}, [] ),
-			a = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getMigrationStatus();
-			}, [] ),
-			o = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getMigrationCourses();
-			}, [] ),
-			i = ( 0, WordPressData.useSelect )( function ( e ) {
+		const { useCallback } = ReactHooks;
+		const { useSelect } = WordPressData;
+		var t = ( 0, WordPressData.useDispatch )( StoreModule.default );
+		var n = ( 0, Router.Zp )();
+		var r = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getMigrationModalOpen();
+		}, [] );
+		var a = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getMigrationStatus();
+		}, [] );
+		var o = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getMigrationCourses();
+		}, [] );
+		var i = useSelect(
+			function ( e ) {
 				return e( StoreModule.default ).getMigrationToolCourses();
-			}, [] ),
-			l = ( 0, WordPressData.useSelect )( function ( e ) {
+			},
+			[ StoreModule.default ]
+		);
+		var l = useSelect(
+			function ( e ) {
 				return e( StoreModule.default ).getMigratedCourse();
-			}, [] ),
-			c = ( 0, WordPressData.useSelect )( function ( e ) {
-				return e( StoreModule.default ).getMigrationTool();
-			}, [] ),
-			u = ( function ( e, _tLocal ) {
-				return (
-					( function ( _eLocal ) {
-						if ( Array.isArray( _eLocal ) ) {
-							return _eLocal;
-						}
-					} )( e ) ||
-					( function ( _eLocal2, _tLocal2 ) {
-						var _nLocal =
-							_eLocal2 === null || _eLocal2 === void 0
-								? null
-								: ( 'undefined' !== typeof Symbol &&
-										_eLocal2[ Symbol.iterator ] ) ||
-									_eLocal2[ '@@iterator' ];
-						if ( _nLocal !== null && _nLocal !== void 0 ) {
-							var _rLocal,
-								_aLocal,
-								_oLocal,
-								_iLocal,
-								_lLocal = [],
-								_cLocal = ! 0,
-								_uLocal = ! 1;
+			},
+			[ StoreModule.default ]
+		);
+		var c = ( 0, WordPressData.useSelect )( function ( e ) {
+			return e( StoreModule.default ).getMigrationTool();
+		}, [] );
+		var u = ( function ( e, _tLocal ) {
+			return (
+				( function ( _eLocal ) {
+					if ( Array.isArray( _eLocal ) ) {
+						return _eLocal;
+					}
+				} )( e ) ||
+				( function ( _eLocal2, _tLocal2 ) {
+					var _nLocal =
+						_eLocal2 === null || _eLocal2 === void 0
+							? null
+							: ( 'undefined' !== typeof Symbol &&
+									_eLocal2[ Symbol.iterator ] ) ||
+								_eLocal2[ '@@iterator' ];
+					if ( _nLocal !== null && _nLocal !== void 0 ) {
+						var _rLocal;
+						var _aLocal;
+						var _oLocal;
+						var _iLocal;
+						var _lLocal = [];
+						var _cLocal = ! 0;
+						var _uLocal = ! 1;
+						try {
+							if (
+								( ( _oLocal = ( _nLocal =
+									_nLocal.call( _eLocal2 ) ).next ),
+								0 === _tLocal2 )
+							) {
+								if ( Object( _nLocal ) !== _nLocal ) {
+									return;
+								}
+								_cLocal = ! 1;
+							} else {
+								for (
+									;
+									! ( _cLocal = ( _rLocal =
+										_oLocal.call( _nLocal ) ).done ) &&
+									( _lLocal.push( _rLocal.value ),
+									_lLocal.length !== _tLocal2 );
+									_cLocal = ! 0
+								) {}
+							}
+						} catch ( _eLocal3 ) {
+							_uLocal = ! 0;
+							_aLocal = _eLocal3;
+						} finally {
 							try {
 								if (
-									( ( _oLocal = ( _nLocal =
-										_nLocal.call( _eLocal2 ) ).next ),
-									0 === _tLocal2 )
+									! _cLocal &&
+									( ( _nullableValue ) =>
+										_nullableValue !== null &&
+										_nullableValue !== void 0 )(
+										_nLocal.return
+									) &&
+									( ( _iLocal = _nLocal.return() ),
+									Object( _iLocal ) !== _iLocal )
 								) {
-									if ( Object( _nLocal ) !== _nLocal ) {
-										return;
-									}
-									_cLocal = ! 1;
-								} else {
-									for (
-										;
-										! ( _cLocal = ( _rLocal =
-											_oLocal.call( _nLocal ) ).done ) &&
-										( _lLocal.push( _rLocal.value ),
-										_lLocal.length !== _tLocal2 );
-										_cLocal = ! 0
-									) {}
+									return;
 								}
-							} catch ( _eLocal3 ) {
-								_uLocal = ! 0;
-								_aLocal = _eLocal3;
 							} finally {
-								try {
-									if (
-										! _cLocal &&
-										( ( _nullableValue ) =>
-											_nullableValue !== null &&
-											_nullableValue !== void 0 )(
-											_nLocal.return
-										) &&
-										( ( _iLocal = _nLocal.return() ),
-										Object( _iLocal ) !== _iLocal )
-									) {
-										return;
-									}
-								} finally {
-									if ( _uLocal ) {
-										throw _aLocal;
-									}
+								if ( _uLocal ) {
+									throw _aLocal;
 								}
 							}
-							return _lLocal;
 						}
-					} )( e, _tLocal ) ||
-					( function ( _eLocal4, _tLocal3 ) {
-						if ( _eLocal4 ) {
-							if ( 'string' === typeof _eLocal4 ) {
-								return T4( _eLocal4, _tLocal3 );
-							}
-							var _nLocal2 = {}.toString
-								.call( _eLocal4 )
-								.slice( 8, -1 );
-							return (
-								'Object' === _nLocal2 &&
-									_eLocal4.constructor &&
-									( _nLocal2 = _eLocal4.constructor.name ),
-								( () => {
-									if (
-										'Map' === _nLocal2 ||
-										'Set' === _nLocal2
-									) {
-										return Array.from( _eLocal4 );
-									}
-									if (
-										'Arguments' === _nLocal2 ||
-										/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
-											_nLocal2
-										)
-									) {
-										return T4( _eLocal4, _tLocal3 );
-									}
-									return void 0;
-								} )()
-							 );
+						return _lLocal;
+					}
+				} )( e, _tLocal ) ||
+				( function ( _eLocal4, _tLocal3 ) {
+					if ( _eLocal4 ) {
+						if ( 'string' === typeof _eLocal4 ) {
+							return T4( _eLocal4, _tLocal3 );
 						}
-					} )( e, _tLocal ) ||
-					( function () {
-						throw new TypeError(
-							'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
-						);
-					} )()
-				);
-			} )( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			s = u[ 0 ],
-			d = u[ 1 ],
-			m = ( 0, ReactHooks.useRef )( ! 1 );
+						var _nLocal2 = {}.toString
+							.call( _eLocal4 )
+							.slice( 8, -1 );
+						return (
+							'Object' === _nLocal2 &&
+								_eLocal4.constructor &&
+								( _nLocal2 = _eLocal4.constructor.name ),
+							( () => {
+								if (
+									'Map' === _nLocal2 ||
+									'Set' === _nLocal2
+								) {
+									return Array.from( _eLocal4 );
+								}
+								if (
+									'Arguments' === _nLocal2 ||
+									/^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(
+										_nLocal2
+									)
+								) {
+									return T4( _eLocal4, _tLocal3 );
+								}
+								return void 0;
+							} )()
+						 );
+					}
+				} )( e, _tLocal ) ||
+				( function () {
+					throw new TypeError(
+						'Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.'
+					);
+				} )()
+			);
+		} )( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		var s = u[ 0 ];
+		var d = u[ 1 ];
+		var m = ( 0, ReactHooks.useRef )( ! 1 );
 		( 0, ReactHooks.useEffect )(
 			function () {
 				if (
@@ -157,107 +166,107 @@ export function createMigrationProgressModal( readRuntime ) {
 					m.current = ! 0;
 					t.setMigratedCourse( [] );
 					var e = ( function () {
-						var _eLocal5,
-							_nLocal3 =
-								( ( _eLocal5 = j4().m( function _eLocal6() {
-									var _nLocal4, _rLocal2;
-									return j4().w(
-										function ( _eLocal7 ) {
-											for (;;) {
-												switch (
-													( _eLocal7.p = _eLocal7.n )
-												) {
-													case 0:
-														_eLocal7.p = 0;
-														_nLocal4 = 0;
-													// Falls through to the shared async state cleanup.
-													case 1:
-														if (
-															! (
-																_nLocal4 <
-																o.length
-															)
-														) {
-															_eLocal7.n = 3;
-															break;
-														}
-														return (
-															( _eLocal7.n = 2 ),
-															t.migrateSingleCourse(
-																c,
-																o[ _nLocal4 ]
-															)
-														 );
-													case 2:
-														_nLocal4++;
-														_eLocal7.n = 1;
+						var _eLocal5;
+						var _nLocal3 =
+							( ( _eLocal5 = j4().m( function _eLocal6() {
+								var _nLocal4;
+								var _rLocal2;
+								return j4().w(
+									function ( _eLocal7 ) {
+										for (;;) {
+											switch (
+												( _eLocal7.p = _eLocal7.n )
+											) {
+												case 0:
+													_eLocal7.p = 0;
+													_nLocal4 = 0;
+												// Falls through to the shared async state cleanup.
+												case 1:
+													if (
+														! (
+															_nLocal4 < o.length
+														)
+													) {
+														_eLocal7.n = 3;
 														break;
-													case 3:
-														_eLocal7.n = 5;
-														break;
-													case 4:
-														_eLocal7.p = 4;
-														_rLocal2 = _eLocal7.v;
-														console.error(
-															'Migration failed',
-															_rLocal2
-														);
-													// Falls through to the shared async state cleanup.
-													case 5:
-														return (
-															( _eLocal7.p = 5 ),
-															t.setMigrationStatus(
-																null
-															),
-															d( ! 0 ),
-															_eLocal7.f( 5 )
-														 );
-													case 6:
-														return _eLocal7.a( 2 );
-												}
+													}
+													return (
+														( _eLocal7.n = 2 ),
+														t.migrateSingleCourse(
+															c,
+															o[ _nLocal4 ]
+														)
+													 );
+												case 2:
+													_nLocal4++;
+													_eLocal7.n = 1;
+													break;
+												case 3:
+													_eLocal7.n = 5;
+													break;
+												case 4:
+													_eLocal7.p = 4;
+													_rLocal2 = _eLocal7.v;
+													showRequestError(
+														'Migration failed',
+														_rLocal2
+													);
+												// Falls through to the shared async state cleanup.
+												case 5:
+													return (
+														( _eLocal7.p = 5 ),
+														t.setMigrationStatus(
+															null
+														),
+														d( ! 0 ),
+														_eLocal7.f( 5 )
+													 );
+												case 6:
+													return _eLocal7.a( 2 );
 											}
-										},
-										_eLocal6,
-										null,
-										[ [ 0, 4, 5, 6 ] ]
+										}
+									},
+									_eLocal6,
+									null,
+									[ [ 0, 4, 5, 6 ] ]
+								);
+							} ) ),
+							function ( ..._args ) {
+								var _tLocal4 = this;
+								var _nLocal5 = _args;
+								return new Promise( function (
+									_rLocal3,
+									_aLocal2
+								) {
+									var _oLocal2 = _eLocal5.apply(
+										_tLocal4,
+										_nLocal5
 									);
-								} ) ),
-								function ( ..._args ) {
-									var _tLocal4 = this,
-										_nLocal5 = _args;
-									return new Promise( function (
-										_rLocal3,
-										_aLocal2
-									) {
-										var _oLocal2 = _eLocal5.apply(
-											_tLocal4,
-											_nLocal5
+									function _iLocal2( _eLocal8 ) {
+										M4(
+											_oLocal2,
+											_rLocal3,
+											_aLocal2,
+											_iLocal2,
+											_lLocal2,
+											'next',
+											_eLocal8
 										);
-										function _iLocal2( _eLocal8 ) {
-											M4(
-												_oLocal2,
-												_rLocal3,
-												_aLocal2,
-												_iLocal2,
-												_lLocal2,
-												'next',
-												_eLocal8
-											);
-										}
-										function _lLocal2( _eLocal9 ) {
-											M4(
-												_oLocal2,
-												_rLocal3,
-												_aLocal2,
-												_iLocal2,
-												_lLocal2,
-												'throw',
-												_eLocal9
-											);
-										}
-										_iLocal2( void 0 );
-									} );
+									}
+									function _lLocal2( _eLocal9 ) {
+										M4(
+											_oLocal2,
+											_rLocal3,
+											_aLocal2,
+											_iLocal2,
+											_lLocal2,
+											'throw',
+											_eLocal9
+										);
+									}
+									_iLocal2( void 0 );
 								} );
+							} );
 						return function ( ..._args2 ) {
 							return _nLocal3.apply( this, _args2 );
 						};
@@ -279,22 +288,23 @@ export function createMigrationProgressModal( readRuntime ) {
 			},
 			[ r ]
 		);
-		var p = ( 0, ReactHooks.useCallback )(
-				function () {
-					if ( 'migrating' !== a ) {
-						{
-							t.setMigrationModalOpen( ! 1 );
-							t.setMigrationStatus( null );
-							t.setMigrationCourses( [] );
-							t.setMigratedCourse( [] );
-							d( ! 1 );
-							m.current = ! 1;
-						}
+		var p = useCallback(
+			function () {
+				if ( 'migrating' !== a ) {
+					{
+						t.setMigrationModalOpen( ! 1 );
+						t.setMigrationStatus( null );
+						t.setMigrationCourses( [] );
+						t.setMigratedCourse( [] );
+						d( ! 1 );
+						m.current = ! 1;
 					}
-				},
-				[ a ]
-			),
-			v = ( 0, ReactHooks.useCallback )( function () {
+				}
+			},
+			[ a, d, m, t ]
+		);
+		var v = useCallback(
+			function () {
 				t.setMigrationModalOpen( ! 1 );
 				t.setMigrationStatus( null );
 				t.setMigrationCourses( [] );
@@ -302,14 +312,16 @@ export function createMigrationProgressModal( readRuntime ) {
 				d( ! 1 );
 				m.current = ! 1;
 				n( '/courses' );
-			}, [] );
+			},
+			[ d, m, n, t ]
+		);
 		if ( ! r ) {
 			return null;
 		}
-		var h = o.length,
-			_ = l.length,
-			w = h > 0 ? Math.round( ( _ / h ) * 100 ) : 0,
-			E = _ < h ? _ : -1;
+		var h = o.length;
+		var _ = l.length;
+		var w = h > 0 ? Math.round( ( _ / h ) * 100 ) : 0;
+		var E = _ < h ? _ : -1;
 		return s ? (
 			<Controls.ModalWP
 				title={ '' }
@@ -551,22 +563,21 @@ export function createMigrationProgressModal( readRuntime ) {
 						<Controls.FlexWP direction={ 'column' } gap={ 3 }>
 							{ o.map( function ( e, _tLocal5 ) {
 								var _nLocal6 = i.find( function ( _tLocal6 ) {
-										return _tLocal6.value === e;
-									} ),
-									_rLocal4 =
-										( _nLocal6 === null ||
-										_nLocal6 === void 0
-											? void 0
-											: _nLocal6.label ) || String( e ),
-									_aLocal3 = ( () => {
-										if ( l.includes( e ) ) {
-											return 'complete';
-										}
-										if ( _tLocal5 === E ) {
-											return 'processing';
-										}
-										return 'pending';
-									} )();
+									return _tLocal6.value === e;
+								} );
+								var _rLocal4 =
+									( _nLocal6 === null || _nLocal6 === void 0
+										? void 0
+										: _nLocal6.label ) || String( e );
+								var _aLocal3 = ( () => {
+									if ( l.includes( e ) ) {
+										return 'complete';
+									}
+									if ( _tLocal5 === E ) {
+										return 'processing';
+									}
+									return 'pending';
+								} )();
 								return (
 									<N4
 										key={ e }

@@ -22,6 +22,11 @@ defined( 'ABSPATH' ) || exit;
  */
 class QuestionStore extends DataStore {
 
+	/**
+	 * Must exist meta keys.
+	 *
+	 * @var mixed
+	 */
 	protected $must_exist_meta_keys = array(
 		'_questions_settings',
 		'_thumbnail_id' => 'thumbnail_id',
@@ -31,7 +36,7 @@ class QuestionStore extends DataStore {
 	/**
 	 * Create a new question.
 	 *
-	 * @param Question $question
+	 * @param Question $question Question.
 	 * @since 1.0.0
 	 */
 	public function create( &$question ): void {
@@ -77,6 +82,11 @@ class QuestionStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Read for Question store.
+	 *
+	 * @param mixed $question Question.
+	 */
 	public function read( &$question ) {
 		$post_object = get_post( $question->get_id() );
 		if ( ! $question->get_id() || ! $post_object || OHMYLMS_QUESTION_CPT !== $post_object->post_type ) {
@@ -100,7 +110,7 @@ class QuestionStore extends DataStore {
 	/**
 	 * Update an existing question.
 	 *
-	 * @param Question $question
+	 * @param Question $question Question.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -146,8 +156,8 @@ class QuestionStore extends DataStore {
 	/**
 	 * Delete a question.
 	 *
-	 * @param Question $question
-	 * @param array    $args
+	 * @param Question $question Question.
+	 * @param array    $args Operation arguments.
 	 * @since 1.0.0
 	 */
 	public function delete( &$question, $args = array() ) {
@@ -176,6 +186,11 @@ class QuestionStore extends DataStore {
 		);
 	}
 
+	/**
+	 * Read question data for Question store.
+	 *
+	 * @param mixed $question Question.
+	 */
 	protected function read_question_data( &$question ) {
 		$id               = $question->get_id();
 		$post_meta_values = get_post_meta( $id );
@@ -189,6 +204,12 @@ class QuestionStore extends DataStore {
 		$question->set_props( $set_props );
 	}
 
+	/**
+	 * Update post meta for Question store.
+	 *
+	 * @param mixed $question Question.
+	 * @param bool  $force Force.
+	 */
 	protected function update_post_meta( &$question, $force = false ) {
 		$props_to_update = $this->question_meta_key();
 		foreach ( $props_to_update as $meta_key => $prop ) {
@@ -226,6 +247,11 @@ class QuestionStore extends DataStore {
 	}
 
 
+	/**
+	 * Get questions for Question store.
+	 *
+	 * @param mixed $question Question.
+	 */
 	public function get_questions( $question ) {
 		global $wpdb;
 
@@ -234,10 +260,7 @@ class QuestionStore extends DataStore {
 		$question_id   = $question->get_id();
 
 		$results = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM $answers_table WHERE question_id = %d ORDER BY order_number ASC",
-				$question_id
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE question_id = %d ORDER BY order_number ASC', $answers_table, $question_id ),
 			ARRAY_A
 		);
 
@@ -249,10 +272,7 @@ class QuestionStore extends DataStore {
 			);
 
 			$answer_meta = $wpdb->get_results(
-				$wpdb->prepare(
-					"SELECT meta_key, meta_value FROM $meta_table WHERE answer_id = %d",
-					$answer['id']
-				),
+				$wpdb->prepare( 'SELECT meta_key, meta_value FROM %i WHERE answer_id = %d', $meta_table, $answer['id'] ),
 				ARRAY_A
 			);
 
@@ -271,6 +291,13 @@ class QuestionStore extends DataStore {
 		return $results;
 	}
 
+	/**
+	 * Save attempt answer for Question store.
+	 *
+	 * @param mixed $question Question.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $data Input data.
+	 */
 	public function save_attempt_answer( $question, $student_id, $data ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_quiz_attempts_answers';
@@ -287,6 +314,9 @@ class QuestionStore extends DataStore {
 	 * answer ID from another question can never be rewritten through this question.
 	 *
 	 * @return true|\WP_Error
+	 * @param mixed $question Question.
+	 * @param mixed $questions Questions.
+	 * @param mixed $question_id Question identifier.
 	 */
 	public function save_quiz_answer( $question, $questions, $question_id ) {
 		$answers = ! empty( $questions['questions'] ) ? $questions['questions'] : array();

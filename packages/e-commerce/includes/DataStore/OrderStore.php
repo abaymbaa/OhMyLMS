@@ -11,6 +11,9 @@ use function OhMyLMS\Commerce\ecommerce;
 defined( 'ABSPATH' ) || exit;
 
 
+/**
+ * Plugin order store implementation.
+ */
 class OrderStore extends DataStore {
 
 	/**
@@ -66,7 +69,6 @@ class OrderStore extends DataStore {
 	 * This function retrieves the order data from the database and sets it to the order object.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read data into.
-	 * @throws \Exception If the order is invalid.
 	 * @since 1.0.0
 	 */
 	public function read( &$order ) {
@@ -76,7 +78,6 @@ class OrderStore extends DataStore {
 		$post_object = get_post( $order->get_id() );
 		if ( ! $order->get_id() || ! $post_object ) {
 			return;
-			throw new \Exception( __( 'Invalid order.', 'ohmylms' ) );
 		}
 		$order->set_props(
 			array(
@@ -96,7 +97,7 @@ class OrderStore extends DataStore {
 	 * Update an order in the database.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to update.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function update( &$order ) {
@@ -128,8 +129,10 @@ class OrderStore extends DataStore {
 	}
 
 	/**
-	 * @param &$data
-	 * @param array $args
+	 * Delete.
+	 *
+	 * @param mixed $data Input data.
+	 * @param array $args Operation arguments.
 	 * @inheritDoc
 	 */
 	public function delete( &$data, $args = array() ) {
@@ -147,6 +150,7 @@ class OrderStore extends DataStore {
 	 * Read additional order data from the database and set it to the order object.
 	 *
 	 * @param \OhMyLMS\Commerce\Data\Order $order The order object to read data into.
+	 * @param mixed                        $post_object Post object.
 	 * @since 1.0.0
 	 */
 	protected function read_order_data( &$order, $post_object ) {
@@ -356,10 +360,9 @@ class OrderStore extends DataStore {
 	/**
 	 * Compile order response and set caches as needed for order ids.
 	 *
-	 * @param array    $order_ids  List of order IDs to compile.
-	 * @param array    $query_vars Original query arguments.
+	 * @param array    $order_ids List of order IDs to compile.
 	 * @param WP_Query $query      Query object.
-	 *
+	 * .
 	 * @return array Orders.
 	 *
 	 * @since 1.0.0
@@ -389,7 +392,10 @@ class OrderStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	protected function get_post_title() {
-		return sprintf( __( 'Order &ndash; %s', 'ohmylms' ), ( new \DateTime( 'now' ) )->format( _x( 'M d, Y @ h:i A', 'Order date', 'ohmylms' ) ) );
+		return sprintf( /* translators: %s: text value. */
+			__( 'Order &ndash; %s', 'ohmylms' ),
+			( new \DateTime( 'now' ) )->format( _x( 'M d, Y @ h:i A', 'Order date', 'ohmylms' ) )
+		);
 	}
 
 

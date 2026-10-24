@@ -224,7 +224,7 @@ class ZoomWebhookController {
 			}
 		}
 
-		return $preferred ?: $fallback;
+		return $preferred ? $preferred : $fallback;
 	}
 
 	/**

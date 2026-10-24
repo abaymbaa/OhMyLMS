@@ -2,6 +2,8 @@
 
 The course overview now links each lesson to its own page. That page lists its published activities in order, offers **Continue lesson**, and shows the learner's skill progress. The focused activity player groups its sidebar by unit and lesson, highlights the current activity, and offers lesson overview and previous/next available activity links. Taking an active quiz retains the existing isolated quiz navigation and exit behavior.
 
+Lesson skill gaps and post-practice recommendations are described in [lesson practice guidance](LESSON-PRACTICE-GUIDANCE.md).
+
 Course **Continue learning** and **Up next** use the existing learning-path decision, including required activity ordering, skill targets and locks. A lesson's own continue action selects its first available unfinished activity, including optional work. Navigation does not mark work complete. Reading/video completion uses the existing nonce-protected completion endpoint; quiz and practice results continue through their assessment/evidence writers.
 
 ## Separate progress measures

@@ -7,10 +7,21 @@ use OhMyLMS\Commerce\Data\Order;
 use OhMyLMS\Commerce\Data\OrderRefund;
 use function OhMyLMS\Commerce\ecommerce;
 
+/**
+ * Plugin orders controller implementation.
+ */
 class OrdersController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'orders';
 
+	/**
+	 * Check order permission for Orders controller.
+	 */
 	public function check_order_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -406,6 +417,9 @@ class OrdersController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Get refund for Orders controller.
+	 */
 	public function get_refund() {
 	}
 
@@ -611,6 +625,7 @@ class OrdersController extends RestController {
 	 * Get order statistics: total orders, total revenue, average order value.
 	 *
 	 * @return \WP_REST_Response
+	 * @param mixed $request REST request.
 	 */
 	public function get_order_stats( $request ) {
 		$args          = array(

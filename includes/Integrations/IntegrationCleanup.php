@@ -37,8 +37,8 @@ class IntegrationCleanup {
 	/**
 	 * Delete all integrations when content is permanently deleted
 	 *
-	 * @param int     $post_id Post ID being deleted
-	 * @param WP_Post $post Post object being deleted
+	 * @param mixed   $post_id Post id.
+	 * @param WP_Post $post Post object being deleted.
 	 * @since 1.0.0
 	 */
 	public static function delete_content_integrations( $post_id, $post ) {
@@ -68,7 +68,7 @@ class IntegrationCleanup {
 	 * Maybe delete integrations when post is trashed
 	 * Only if permanent deletion is configured
 	 *
-	 * @param int $post_id Post ID being trashed
+	 * @param int $post_id Post ID being trashed.
 	 * @since 1.0.0
 	 */
 	public static function maybe_delete_integrations_on_trash( $post_id ) {
@@ -84,8 +84,8 @@ class IntegrationCleanup {
 	/**
 	 * Delete all integrations for a specific content
 	 *
-	 * @param string $content_type Content type (course, lesson, quiz, assignment)
-	 * @param int    $content_id Content ID
+	 * @param string $content_type Content type (course, lesson, quiz, assignment).
+	 * @param int    $content_id Content ID.
 	 * @return int Number of integrations deleted
 	 * @since 1.0.0
 	 */
@@ -97,9 +97,10 @@ class IntegrationCleanup {
 		// Get all integrations for this content.
 		$integrations = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT id FROM {$table_name} 
+				'SELECT id FROM %i
                  WHERE content_type = %s 
-                 AND content_id = %d",
+                 AND content_id = %d',
+				$table_name,
 				$content_type,
 				$content_id
 			),
@@ -113,9 +114,10 @@ class IntegrationCleanup {
 		// Delete all integrations.
 		$deleted = $wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$table_name} 
+				'DELETE FROM %i
                  WHERE content_type = %s 
-                 AND content_id = %d",
+                 AND content_id = %d',
+				$table_name,
 				$content_type,
 				$content_id
 			)
@@ -148,8 +150,8 @@ class IntegrationCleanup {
 	 * Get count of integrations for specific content
 	 * Useful for showing confirmation before deletion
 	 *
-	 * @param string $content_type Content type (course, lesson, quiz, assignment)
-	 * @param int    $content_id Content ID
+	 * @param string $content_type Content type (course, lesson, quiz, assignment).
+	 * @param int    $content_id Content ID.
 	 * @return int Number of integrations
 	 * @since 1.0.0
 	 */
@@ -160,9 +162,10 @@ class IntegrationCleanup {
 
 		$count = $wpdb->get_var(
 			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$table_name} 
+				'SELECT COUNT(*) FROM %i
                  WHERE content_type = %s 
-                 AND content_id = %d",
+                 AND content_id = %d',
+				$table_name,
 				$content_type,
 				$content_id
 			)
@@ -175,8 +178,8 @@ class IntegrationCleanup {
 	 * Restore integrations (if needed in future for undo functionality)
 	 * This would require storing deleted integrations temporarily
 	 *
-	 * @param string $content_type Content type
-	 * @param int    $content_id Content ID
+	 * @param string $content_type Content type.
+	 * @param int    $content_id Content ID.
 	 * @since 1.0.0
 	 */
 	public static function restore_integrations( $content_type, $content_id ) {

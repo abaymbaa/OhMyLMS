@@ -23,6 +23,9 @@ test('authors build, save and publish a unified outline without overwriting shar
   await page.getByLabel('Unit description', { exact: true }).fill('Build a solid foundation.');
   await page.getByRole('button', { name: 'Add lesson', exact: true }).click();
   await page.getByLabel('Lesson title', { exact: true }).fill('Introduction');
+  const readiness = page.getByRole('region', { name: 'Course readiness report', exact: true });
+  await expect(readiness.getByRole('status')).toContainText('Save outline draft');
+  await expect(readiness.getByText('Saved draft passes publishing checks', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Add activity', exact: true }).click();
   const picker = page.getByRole('dialog', { name: 'Add activity', exact: true });
   await picker.getByLabel('Find an activity').fill('Outline library activity');
@@ -36,6 +39,18 @@ test('authors build, save and publish a unified outline without overwriting shar
   await page.getByRole('button', { name: 'Move up', exact: true }).click();
   await page.getByRole('button', { name: 'Save outline draft', exact: true }).click();
   await expect(outline.getByText('Outline draft saved.', { exact: true })).toBeVisible();
+  await expect(readiness.getByRole('heading', { name: 'Saved draft passes publishing checks', exact: true })).toBeVisible();
+  await readiness.locator('summary').click();
+  await readiness.getByRole('button', { name: 'Introduction', exact: true }).click();
+  await expect(page.getByLabel('Lesson title', { exact: true })).toHaveValue('Introduction');
+  const readinessRoute = '**/content-hub/catalog/*';
+  await page.route(readinessRoute, route => route.fulfill({ status: 500, contentType: 'application/json', body: JSON.stringify({ message: 'Readiness unavailable.' }) }));
+  await readiness.getByRole('button', { name: 'Check readiness again', exact: true }).click();
+  await expect(readiness.getByRole('alert')).toHaveText('Readiness unavailable.');
+  await expect(readiness.getByText('Saved draft passes publishing checks', { exact: true })).toHaveCount(0);
+  await page.unroute(readinessRoute);
+  await readiness.getByRole('button', { name: 'Check readiness again', exact: true }).click();
+  await expect(readiness.getByRole('heading', { name: 'Saved draft passes publishing checks', exact: true })).toBeVisible();
   let snapshot = await page.evaluate(id => wp.apiFetch({ path: `/ohmylms/v1/courses/${id}/structure` }), state.course);
   const unit = snapshot.units.find(row => row.title === 'Foundations');
   expect(typeof unit.id).toBe('number');
@@ -80,4 +95,22 @@ test('authors build, save and publish a unified outline without overwriting shar
   await page.screenshot({ path: testInfo.outputPath('unified-outline-editor.png'), fullPage: true });
   expect(errors).toEqual([]);
   await other.close();
+});
+
+test('completion blockers lead to editable course rules', async ({ page }) => {
+  const url = state.base + '/wp-admin/admin.php?page=ohmylms#/course-edit/' + state.course + '/content';
+  await page.goto(url);
+  await expect(page.getByRole('heading', { name: 'Course outline', exact: true })).toBeVisible();
+  await page.evaluate(async id => {
+    const draft = await wp.apiFetch({ path: '/ohmylms/v1/courses/' + id + '/structure' });
+    const program = { ...draft.program, mode: 'traditional', items: draft.program.items.map(item => ({ ...item, required: false })), outcomes: [] };
+    await wp.apiFetch({ path: '/ohmylms/v1/courses/' + id + '/structure', method: 'PUT', data: { revision: draft.revision, units: draft.units, program } });
+  }, state.course);
+  await page.reload();
+  const report = page.getByRole('region', { name: 'Course readiness report', exact: true });
+  await expect(report.getByRole('heading', { name: 'Publishing blockers: 1', exact: true })).toBeVisible();
+  await report.getByRole('button', { name: 'Edit completion requirements', exact: true }).click();
+  await expect(page.getByLabel('Learning mode', { exact: true })).toHaveValue('traditional');
+  await page.getByLabel('Learning mode', { exact: true }).selectOption('blended');
+  await expect(report.getByRole('status')).toContainText('Save outline draft');
 });

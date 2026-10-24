@@ -14,12 +14,15 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code dashboard implementation.
+ */
 class ShortCodeDashboard {
 
 	/**
 	 * Render the dashboard
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	public static function output( $atts ) {
@@ -42,7 +45,7 @@ class ShortCodeDashboard {
 	/**
 	 * Display dashboard content
 	 *
-	 * @param array $atts Shortcode attributes
+	 * @param array $atts Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function dashboard( $atts ) {
@@ -141,7 +144,7 @@ class ShortCodeDashboard {
 	/**
 	 * Add JavaScript to handle navigation links
 	 *
-	 * @param array $args Shortcode attributes
+	 * @param array $args Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function add_navigation_handler( $args = array() ) {
@@ -188,7 +191,7 @@ class ShortCodeDashboard {
 	/**
 	 * Generate custom styles based on shortcode attributes
 	 *
-	 * @param array $args Shortcode attributes
+	 * @param array $args Shortcode attributes.
 	 * @since 1.0.0
 	 */
 	private static function generate_custom_styles( $args ) {

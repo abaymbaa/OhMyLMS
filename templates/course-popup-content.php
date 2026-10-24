@@ -11,7 +11,7 @@
 defined( 'ABSPATH' ) || exit();
 
 ?>
-<div data-item-id="course-<?php echo the_ID(); ?>" class="ohmylms-course-card-popup">
+<div data-item-id="course-<?php echo esc_attr( the_ID() ); ?>" class="ohmylms-course-card-popup">
 	<?php
 		/**
 		 * Hook: ohmylms_course_card_popup.

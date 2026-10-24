@@ -41,7 +41,7 @@ class SessionController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_session_read_permission( $request ) {
@@ -58,7 +58,7 @@ class SessionController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_session_edit_permission( $request ) {
@@ -71,7 +71,7 @@ class SessionController extends RestController {
 	 * @since 1.2.20
 	 *
 	 * @param \WP_REST_Request $request Full details about the request.
-	 *
+	 * .
 	 * @return true|\WP_Error
 	 */
 	public function check_session_delete_permission( $request ) {
@@ -135,7 +135,7 @@ class SessionController extends RestController {
 	/**
 	 * Get collection of sessions.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function get_items( $request ) {
@@ -196,7 +196,7 @@ class SessionController extends RestController {
 	/**
 	 * Get a single session.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function get_item( $request ) {
@@ -214,12 +214,13 @@ class SessionController extends RestController {
 	/**
 	 * Create a session.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function create_item( $request ) {
 		if ( ! empty( $request['id'] ) ) {
-			return new WP_Error( 'ohmylms_rest_session_exists', sprintf( __( 'Cannot create existing %s.', 'ohmylms' ), 'Session' ), array( 'status' => 400 ) );
+			return new WP_Error( 'ohmylms_rest_session_exists', sprintf( /* translators: %s: text value. */
+			__( 'Cannot create existing %s.', 'ohmylms' ), 'Session' ), array( 'status' => 400 ) );
 		}
 		$session_id = $this->save_session( $request );
 		update_post_meta( $session_id, '_content_type', $request['content_type'] );
@@ -277,7 +278,7 @@ class SessionController extends RestController {
 	/**
 	 * Update a session.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function update_item( $request ) {
@@ -335,7 +336,7 @@ class SessionController extends RestController {
 	/**
 	 * Delete a session.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|WP_HTTP_Response|WP_REST_Response
 	 */
 	public function delete_item( $request ) {
@@ -355,6 +356,11 @@ class SessionController extends RestController {
 	}
 
 
+	/**
+	 * Update session for Session controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function update_session( $request ) {
 		$session = $this->prepare_item_for_database( $request );
 		unset( $session['post_parent'] );
@@ -365,7 +371,7 @@ class SessionController extends RestController {
 	/**
 	 * Save session (create or update).
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return int|WP_Error
 	 */
 	public function save_session( $request ) {
@@ -376,7 +382,7 @@ class SessionController extends RestController {
 	/**
 	 * Prepare a session for database.
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return array
 	 */
 	protected function prepare_item_for_database( $request ) {
@@ -395,8 +401,8 @@ class SessionController extends RestController {
 	/**
 	 * Update post meta fields for a session.
 	 *
-	 * @param \WP_Post        $post
-	 * @param WP_REST_Request $request
+	 * @param \WP_Post        $post Post.
+	 * @param WP_REST_Request $request REST request.
 	 * @return void
 	 */
 	protected function update_post_meta_fields( $post, $request ) {
@@ -427,8 +433,8 @@ class SessionController extends RestController {
 	/**
 	 * Persist the Live Class custom fields (recording, cover media, attachments).
 	 *
-	 * @param int             $post_id
-	 * @param WP_REST_Request $request
+	 * @param int             $post_id Post identifier.
+	 * @param WP_REST_Request $request REST request.
 	 * @return void
 	 */
 	protected function update_custom_meta_fields( $post_id, $request ) {
@@ -482,8 +488,8 @@ class SessionController extends RestController {
 	/**
 	 * Prepare a single session for response.
 	 *
-	 * @param \WP_Post        $post
-	 * @param WP_REST_Request $request
+	 * @param \WP_Post        $post Post.
+	 * @param WP_REST_Request $request REST request.
 	 * @return array
 	 */
 	public function prepare_item_for_response( $post, $request ) {
@@ -608,8 +614,8 @@ class SessionController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $post
-	 * @param $request
+	 * @param mixed $post Post.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 */
 	protected function prepare_links( $post, $request ) {
@@ -627,8 +633,8 @@ class SessionController extends RestController {
 	/**
 	 * Prepares the query arguments for fetching items.
 	 *
-	 * @param array                $prepared_args
-	 * @param WP_REST_Request|null $request
+	 * @param array                $prepared_args Prepared args.
+	 * @param WP_REST_Request|null $request REST request.
 	 * @return array
 	 */
 	protected function prepare_items_query( $prepared_args = array(), $request = null ) {
@@ -676,8 +682,9 @@ class SessionController extends RestController {
 	/**
 	 * Calculate meeting status based on start date, duration, and current time.
 	 *
-	 * @param string $start_date The start date of the meeting (format: Y-m-d H:i:s)
-	 * @param int    $duration The duration of the meeting in minutes
+	 * @param string $start_date The start date of the meeting (format: Y-m-d H:i:s).
+	 * @param mixed  $timezone Timezone.
+	 * @param int    $duration The duration of the meeting in minutes.
 	 * @return string The meeting status: 'expired', 'upcoming', or 'running'
 	 */
 	private function calculate_meeting_status( $start_date, $timezone, $duration ) {

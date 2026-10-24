@@ -18,6 +18,13 @@ final class Editor {
 			99
 		);
 	}
+	/**
+	 * Select for Editor.
+	 *
+	 * @param mixed $name Name.
+	 * @param mixed $selected Selected.
+	 * @param mixed $context Context.
+	 */
 	private static function select( $name, $selected, $context ) {
 		echo '<select name="' . esc_attr( $name ) . '">';
 		$options = array(
@@ -34,6 +41,9 @@ final class Editor {
 		}
 		echo '</select>';
 	}
+	/**
+	 * Page for Editor.
+	 */
 	public static function page() {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_die( 'Access denied.' );
@@ -98,6 +108,12 @@ final class Editor {
 		submit_button( 'Save settings', 'primary', 'ohmylms_save' );
 		echo '</form></div>';
 	}
+	/**
+	 * Valid layout for Editor.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $context Context.
+	 */
 	private static function valid_layout( $id, $context ) {
 		$definition = Registry::get( 'layout', $id );
 		return in_array( $id, array( '', 'default' ), true ) || ( $definition && in_array( $context, $definition['contexts'], true ) );

@@ -7,7 +7,13 @@ use OhMyLMS\Skills\Taxonomy;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin frontend implementation.
+ */
 final class Frontend {
+	/**
+	 * Init for Frontend.
+	 */
 	public static function init() {
 		UnitSnapshots::init();
 		add_shortcode( 'ohmylms_learning', array( __CLASS__, 'shortcode' ) );
@@ -23,9 +29,17 @@ final class Frontend {
 		add_filter( 'ohmylms_course_tabs', array( __CLASS__, 'course_tab' ), 30 );
 	}
 
+	/**
+	 * Url for Frontend.
+	 *
+	 * @param mixed $course Course.
+	 */
 	public static function url( $course ) {
 		return add_query_arg( 'ohmylms_learning', (int) $course, home_url( '/' ) ); }
 
+	/**
+	 * Assets for Frontend.
+	 */
 	public static function assets() {
 		wp_enqueue_style( 'ohmylms-learning', plugins_url( 'assets/css/learning-program.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 		wp_enqueue_script( 'ohmylms-learning', plugins_url( 'assets/js/learning-program.js', OHMYLMS_FILE ), array(), OHMYLMS_VERSION, true );
@@ -41,6 +55,11 @@ final class Frontend {
 		);
 	}
 
+	/**
+	 * Course tab for Frontend.
+	 *
+	 * @param mixed $tabs Tabs.
+	 */
 	public static function course_tab( $tabs ) {
 		global $course;
 		if ( ! $course || ! CourseProgram::current( $course->get_id() ) ) {
@@ -55,11 +74,23 @@ final class Frontend {
 		return $tabs;
 	}
 
+	/**
+	 * Shortcode for Frontend.
+	 *
+	 * @param mixed $attributes Attributes.
+	 */
 	public static function shortcode( $attributes ) {
 		$attributes = shortcode_atts( array( 'course' => 0 ), (array) $attributes, 'ohmylms_learning' );
 		return self::render( (int) $attributes['course'] );
 	}
 
+	/**
+	 * Render for Frontend.
+	 *
+	 * @param mixed  $course_id Course identifier.
+	 * @param string $placement Placement.
+	 * @param bool   $focused Focused.
+	 */
 	public static function render( $course_id, $placement = '', $focused = false ) {
 		if ( get_post_type( $course_id ) !== OHMYLMS_COURSE_CPT || get_post_status( $course_id ) !== 'publish' ) {
 			return '<p>' . esc_html__( 'This course is not available.', 'ohmylms' ) . '</p>'; }
@@ -74,7 +105,7 @@ final class Frontend {
 		if ( is_wp_error( $state ) ) {
 			return '<p>' . esc_html( $state->get_error_message() ) . '</p><a href="' . esc_url( get_permalink( $course_id ) ) . '">' . esc_html__( 'Course overview', 'ohmylms' ) . '</a>'; }
 		self::assets();
-		$program = $state['program'];
+		$program    = $state['program'];
 		$unit_items = array();
 		foreach ( $program['items'] as $item ) {
 			$unit_items[ (int) $item['chapter_id'] ][] = $item;
@@ -84,7 +115,7 @@ final class Frontend {
 			$ordered_items = array_merge( $ordered_items, $items );
 		}
 		$program['items'] = $ordered_items;
-		$student = get_current_user_id();
+		$student          = get_current_user_id();
 		ob_start();
 		?>
 		<section class="ohmylms-learning-program" data-course="<?php echo esc_attr( $course_id ); ?>">
@@ -101,7 +132,8 @@ final class Frontend {
 					)[ $program['mode'] ]
 				);
 				?>
-				· <?php echo esc_html( sprintf( __( 'Program version %d', 'ohmylms' ), $program['version'] ) ); ?></p>
+				· <?php echo esc_html( sprintf( /* translators: %d: number. */
+				__( 'Program version %d', 'ohmylms' ), $program['version'] ) ); ?></p>
 			<?php endif; ?>
 			<?php
 			if ( $state['completed'] ) {
@@ -125,7 +157,8 @@ final class Frontend {
 				) as $key => $label ) {
 					$count = $state['dimensions'][ $key ];
 					?>
-					<div><dt><?php echo esc_html( $label ); ?></dt><dd><?php echo esc_html( sprintf( __( '%1$d of %2$d required', 'ohmylms' ), $count['met'], $count['total'] ) ); ?></dd></div>
+					<div><dt><?php echo esc_html( $label ); ?></dt><dd><?php echo esc_html( sprintf( /* translators: %1$d: number; %2$d: number. */
+					__( '%1$d of %2$d required', 'ohmylms' ), $count['met'], $count['total'] ) ); ?></dd></div>
 				<?php } ?>
 			</dl>
 			<?php endif; ?>
@@ -181,7 +214,8 @@ final class Frontend {
 				$next = LearningPath::next( $state );
 				if ( $next ) {
 					?>
-				<p><a class="ohmylms-button" href="<?php echo esc_url( $next['url'] ); ?>"><?php echo esc_html( sprintf( __( 'Continue with %s', 'ohmylms' ), $next['name'] ) ); ?></a></p>
+				<p><a class="ohmylms-button" href="<?php echo esc_url( $next['url'] ); ?>"><?php echo esc_html( sprintf( /* translators: %s: text value. */
+				__( 'Continue with %s', 'ohmylms' ), $next['name'] ) ); ?></a></p>
 					<?php
 				}
 				if ( 'skill-based' === $program['mode'] ) {
@@ -215,7 +249,8 @@ final class Frontend {
 						if ( 'quiz' === $item['type'] ) {
 							$assessment = $state['assessments'][ $item['content_id'] ];
 							?>
-							<small><?php echo esc_html( sprintf( __( 'Score %1$s · Pass %2$s%%', 'ohmylms' ), null === $assessment['score'] ? __( 'Not graded', 'ohmylms' ) : $assessment['score'] . '%', $assessment['pass_percent'] ) ); ?></small><?php } ?>
+							<small><?php echo esc_html( sprintf( /* translators: %1$s: text value; %2$s: text value. */
+							__( 'Score %1$s · Pass %2$s%%', 'ohmylms' ), null === $assessment['score'] ? __( 'Not graded', 'ohmylms' ) : $assessment['score'] . '%', $assessment['pass_percent'] ) ); ?></small><?php } ?>
 					</li>
 				<?php } ?>
 				</ol>
@@ -229,6 +264,12 @@ final class Frontend {
 		return ob_get_clean();
 	}
 
+	/**
+	 * Outcomes for Frontend.
+	 *
+	 * @param array $program Program.
+	 * @param mixed $blocked Blocked.
+	 */
 	private static function outcomes( array $program, $blocked ) {
 		if ( ! $program['outcomes'] ) {
 			return; }
@@ -267,6 +308,9 @@ final class Frontend {
 		<?php
 	}
 
+	/**
+	 * Page for Frontend.
+	 */
 	public static function page() {
 		$course = (int) get_query_var( 'ohmylms_learning' );
 		if ( ! $course ) {

@@ -5,6 +5,9 @@ namespace OhMyLMS\Commerce;
 defined( 'ABSPATH' ) || exit;
 
 
+/**
+ * Plugin cart session implementation.
+ */
 class CartSession {
 
 	/**
@@ -17,9 +20,10 @@ class CartSession {
 
 
 	/**
-	 * @param $cart
-	 * @throws \Exception
-	 */
+	 * Construct.
+	 *
+	 * @param mixed $cart Cart.
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function __construct( $cart ) {
 		if ( ! is_a( $cart, 'OhMyLMS\Commerce\Cart' ) ) {
 			throw new \Exception( 'A valid Cart object is required' );
@@ -32,7 +36,7 @@ class CartSession {
 	/**
 	 * Sets the cart object
 	 *
-	 * @param Cart $cart
+	 * @param Cart $cart Cart.
 	 * @return void
 	 */
 	public function set_cart( Cart $cart ) {
@@ -40,6 +44,9 @@ class CartSession {
 	}
 
 
+	/**
+	 * Init for Cart session.
+	 */
 	public function init() {
 
 		add_action( 'wp_loaded', array( $this, 'get_cart_from_session' ) );
@@ -62,7 +69,7 @@ class CartSession {
 	 * Get cart from session
 	 *
 	 * @return mixed
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_cart_from_session() {
@@ -84,10 +91,10 @@ class CartSession {
 
 		foreach ( $cart as $key => $values ) {
 			$post_type = get_post_type( $values['course_id'] );
-			if ( $post_type === OHMYLMS_COURSE_CPT ) {
+			if ( OHMYLMS_COURSE_CPT === $post_type ) {
 				$course = ohmylms_get_course( $values['course_id'] );
 
-			} elseif ( $post_type === OHMYLMS_MEMBERSHIP_CPT && ohmylms_is_pro() ) {
+			} elseif ( OHMYLMS_MEMBERSHIP_CPT === $post_type && ohmylms_is_pro() ) {
 				$course = ohmylms_get_membership( $values['course_id'] );
 			}
 
@@ -217,7 +224,7 @@ class CartSession {
 	/**
 	 * Set cart cookies data
 	 *
-	 * @param $set
+	 * @param bool $set Set.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -281,8 +288,8 @@ class CartSession {
 	/**
 	 * Find cookie by name
 	 *
-	 * @param $cookie_name
-	 * @param $cookies
+	 * @param mixed $cookie_name Cookie name.
+	 * @param mixed $cookies Cookies.
 	 * @return bool|int|string
 	 *
 	 * @since 1.0.0

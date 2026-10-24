@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCommunityCourses( readRuntime ) {
@@ -127,7 +128,7 @@ export function createCommunityCourses( readRuntime ) {
 										case 3:
 											_eLocal7.p = 3;
 											_oLocal2 = _eLocal7.v;
-											console.error( _oLocal2 );
+											showRequestError( _oLocal2 );
 										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
@@ -188,7 +189,7 @@ export function createCommunityCourses( readRuntime ) {
 										case 2:
 											_eLocal1.p = 2;
 											_aLocal2 = _eLocal1.v;
-											console.error(
+											showRequestError(
 												'Error fetching course by ID:',
 												_aLocal2
 											);

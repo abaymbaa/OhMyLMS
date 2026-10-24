@@ -17,6 +17,9 @@ use OhMyLMS\Data\Chapter;
  */
 class CourseHookHandler extends HookHandler {
 
+	/**
+	 * Register hooks for Course hook handler.
+	 */
 	public function register_hooks() {
 		add_action( 'ohmylms_after_creating_first_course', array( $this, 'save_first_course_creation_timestamp' ), 10, 2 );
 		add_action( 'ohmylms_after_creating_first_content', array( $this, 'save_first_content_creation_timestamp' ), 10, 2 );
@@ -26,11 +29,23 @@ class CourseHookHandler extends HookHandler {
 	}
 
 
+	/**
+	 * Save first course creation timestamp for Course hook handler.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $course Course.
+	 */
 	public function save_first_course_creation_timestamp( $id, $course ) {
 		$timestamp = current_time( 'timestamp' );
 		update_option( 'ohmylms_first_course_created', $timestamp );
 	}
 
+	/**
+	 * Save first content creation timestamp for Course hook handler.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $course Course.
+	 */
 	public function save_first_content_creation_timestamp( $id, $course ) {
 		$timestamp = current_time( 'timestamp' );
 		update_option( 'ohmylms_first_content_created', $timestamp );
@@ -72,6 +87,7 @@ class CourseHookHandler extends HookHandler {
 	 * @return void
 	 *
 	 * @since 1.0.0
+	 * @param int $order_number Order number.
 	 */
 	public function update_chapter_relationship( $course_id, $chapter_id, $order_number = 0 ) {
 		if ( ! $course_id || ! $chapter_id ) {
@@ -83,11 +99,7 @@ class CourseHookHandler extends HookHandler {
 
 		// Check if the relationship already exists.
 		$exists = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT ID FROM $table_name WHERE course_id = %d AND chapter_id = %d LIMIT 1",
-				$course_id,
-				$chapter_id
-			)
+			$wpdb->prepare( 'SELECT ID FROM %i WHERE course_id = %d AND chapter_id = %d LIMIT 1', $table_name, $course_id, $chapter_id )
 		);
 
 		// If exists, update the relationship, otherwise insert a new one.
@@ -147,10 +159,7 @@ class CourseHookHandler extends HookHandler {
 		$table_name = $wpdb->prefix . OHMYLMS_CHAPTER_RELATIONSHIP;
 		// Fetch all chapter IDs before deleting.
 		$chapter_ids = $wpdb->get_col(
-			$wpdb->prepare(
-				"SELECT chapter_id FROM $table_name WHERE course_id = %d",
-				$course_id
-			)
+			$wpdb->prepare( 'SELECT chapter_id FROM %i WHERE course_id = %d', $table_name, $course_id )
 		);
 
 		if ( ! empty( $chapter_ids ) ) {

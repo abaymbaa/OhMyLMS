@@ -4,6 +4,9 @@ namespace OhMyLMS\Admin;
 
 use OhMyLMS\Admin\Pages\AdminSettings;
 
+/**
+ * Plugin menu implementation.
+ */
 class Menu {
 
 	/**
@@ -145,6 +148,9 @@ class Menu {
 		);
 	}
 
+	/**
+	 * Open link with new page for Menu.
+	 */
 	public function open_link_with_new_page() {
 		?>
 		<script type="text/javascript">
@@ -156,6 +162,9 @@ class Menu {
 	}
 
 
+	/**
+	 * Menu highlight for Menu.
+	 */
 	public function menu_highlight() {
 		global $parent_file, $submenu_file, $post_type, $current_screen;
 
@@ -226,7 +235,7 @@ class Menu {
 	/**
 	 * Add folded menu class
 	 *
-	 * @param string $classes
+	 * @param string $classes Classes.
 	 *
 	 * @return string
 	 */
@@ -236,6 +245,8 @@ class Menu {
 
 	/**
 	 * Add custom menu option to the admin bar.
+	 *
+	 * @param mixed $wp_admin_bar Wp admin bar.
 	 */
 	public function lms_admin_menu_option( $wp_admin_bar ) {
 		$archive_page_id  = get_option( 'ohmylms_course_page_id', 0 );

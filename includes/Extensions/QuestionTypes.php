@@ -1,7 +1,13 @@
 <?php // phpcs:ignore WordPress.Files.FileName -- Preserve the established Composer class/file mapping; see docs/CODING-STANDARDS.md.
 namespace OhMyLMS\Extensions;
 
+/**
+ * Plugin question types implementation.
+ */
 final class QuestionTypes {
+	/**
+	 * Register defaults for Question types.
+	 */
 	public static function register_defaults() {
 		$templates = array(
 			'multiple-choice'   => 'multiple-question',
@@ -178,12 +184,25 @@ final class QuestionTypes {
 			);
 		}
 	}
+	/**
+	 * Render for Question types.
+	 *
+	 * @param array $question Question.
+	 * @param array $attempt Attempt.
+	 */
 	public static function render( array $question, array $attempt ) {
 		$definition = Registry::get( 'question', $question['settings']['type'] ?? '' );
 		if ( $definition ) {
 			call_user_func( $definition['render'], $question, $attempt );
 		}
 	}
+	/**
+	 * Grade builtin for Question types.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $answer Answer.
+	 * @param mixed $question Question.
+	 */
 	public static function grade_builtin( $type, array $answer, $question ) {
 		if ( 'fill-in-the-blank' === $type && method_exists( $question, 'get_name' ) ) {
 			$parsed = \OhMyLMS\Assessment\InlineBlanks::parse( $question->get_name() );

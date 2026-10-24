@@ -20,7 +20,7 @@ global $comment;
 	if ( $student_profile_photo ) {
 		echo '<img class="student-profile-photo" src="' . esc_url( $student_profile_photo ) . '" alt="Student Profile Photo" id="student-profile-photo">';
 	} else {
-		echo ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() );
+		echo esc_html( ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() ) );
 	}
 	?>
 </figure>

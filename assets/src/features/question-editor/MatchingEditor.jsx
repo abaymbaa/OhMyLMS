@@ -179,7 +179,10 @@ export function createMatchingEditor( readRuntime ) {
 										localStorage.getItem(
 											'draggedItemIndex'
 										);
-									if ( null !== _aLocal4 && _aLocal4 != r ) {
+									if (
+										null !== _aLocal4 &&
+										String( _aLocal4 ) !== String( r )
+									) {
 										var i = um( options ),
 											_lLocal2 = pm(
 												i.splice( _aLocal4, 1 ),

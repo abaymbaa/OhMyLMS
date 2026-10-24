@@ -17,6 +17,9 @@ use OhMyLMS\Data\Lesson;
  */
 class LessonHookHandler extends HookHandler {
 
+	/**
+	 * Register hooks for Lesson hook handler.
+	 */
 	public function register_hooks() {
 		add_action( 'ohmylms_rest_insert_lesson', array( $this, 'link_lesson_with_chapter' ), 10, 2 );
 		add_action( 'ohmylms_rest_delete_lesson', array( $this, 'unlink_chapter_from_lesson' ), 10 );
@@ -26,6 +29,9 @@ class LessonHookHandler extends HookHandler {
 	/**
 	 * Link lesson with chapter.
 	 * Update
+	 *
+	 * @param mixed $lesson Lesson.
+	 * @param mixed $request REST request.
 	 */
 	public function link_lesson_with_chapter( $lesson, $request ) {
 
@@ -51,7 +57,7 @@ class LessonHookHandler extends HookHandler {
 	 * @param int $chapter_id The ID of the chapter.
 	 * @param int $lesson_id The ID of the lesson.
 	 * @param int $order_number The order number of the lesson in the chapter.
-	 *
+	 * .
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -114,8 +120,7 @@ class LessonHookHandler extends HookHandler {
 	/**
 	 * Unlink a lesson from a chapter.
 	 *
-	 * @param \WP_Post $lesson The lesson post object.
-	 *
+	 * @param mixed $lesson_id Lesson identifier.
 	 * @return void
 	 *
 	 * @since 1.0.0

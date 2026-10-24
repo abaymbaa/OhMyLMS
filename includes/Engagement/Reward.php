@@ -11,8 +11,15 @@ namespace OhMyLMS\Engagement;
 
 use OhMyLMS\Engagement\Achievements;
 
+/**
+ * Plugin reward implementation.
+ */
 class Reward {
-	/** Point checkout cannot waive payment for cash items, memberships or disabled courses. */
+	/** Point checkout cannot waive payment for cash items, memberships or disabled courses.
+	 *
+	 * @param mixed $cart Cart.
+	 * @param int   $membership_id Membership identifier.
+	 */
 	public static function valid_point_cart( $cart, $membership_id = 0 ) {
 		if ( $membership_id || ! is_array( $cart ) || ! $cart || ! self::maybe_met_rules( 'purchase_course' ) ) {
 			return false; }
@@ -52,6 +59,8 @@ class Reward {
 	 *
 	 * @return bool
 	 * @since 1.0.0
+	 * @param mixed $event Event.
+	 * @param int   $threshold Threshold.
 	 */
 	public static function maybe_met_rules( $event, $threshold = 0 ) {
 		if ( ! self::maybe_enable() ) {
@@ -60,7 +69,7 @@ class Reward {
 		if ( ! empty( $settings['rules'] ) && is_array( $settings['rules'] ) ) {
 			foreach ( $settings['rules'] as $rule ) {
 				if ( isset( $rule['slug'], $rule['value'] ) && $rule['slug'] === $event && $rule['value'] ) {
-					if ( ! isset( $rule['threshold'] ) || ( isset( $rule['threshold'] ) && $rule['threshold'] == $threshold ) ) {
+					if ( ! isset( $rule['threshold'] ) || ( isset( $rule['threshold'] ) && Rules::compare( $rule['threshold'], '==', $threshold ) ) ) {
 						return true;
 					}
 				}

@@ -46,7 +46,7 @@ if ( $engagement_visible ) {
 	<div class="ohmylms-profile-cover-area">
 		<div class="ohmylms-profile-cover">
 			<figure>
-				<img src="<?php echo $student->get_cover_image(); ?>" alt="creator lms profile cover">
+				<img src="<?php echo esc_url( $student->get_cover_image() ); ?>" alt="creator lms profile cover">
 			</figure>
 
 			<div class="ohmylms-profile-avatar">
@@ -56,7 +56,7 @@ if ( $engagement_visible ) {
 					if ( $student_profile_photo ) {
 						echo '<img src="' . esc_url( $student_profile_photo ) . '" alt="profile photo" id="student-profile-photo">';
 					} else {
-						echo ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() );
+						echo esc_html( ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() ) );
 					}
 					?>
 				</figure>
@@ -74,10 +74,10 @@ if ( $engagement_visible ) {
 			
 			<div class="ohmylms-profile-name">
 				<div class="ohmylms-user-details">
-					<?php echo $student->get_first_name() . ' ' . $student->get_last_name(); ?>
+					<?php echo esc_html( $student->get_first_name() . ' ' . $student->get_last_name() ); ?>
 					<?php if ( $current_level ) : ?>
 						<span class="value learning-level" style="background: <?php echo esc_attr( $current_level_color ); ?>; color: <?php echo esc_attr( $current_level_text_color ); ?>;">
-							<?php echo $current_level; ?>
+							<?php echo esc_html( $current_level ); ?>
 						</span>
 					<?php endif; ?>
 				</div>
@@ -93,7 +93,7 @@ if ( $engagement_visible ) {
 		
 
 			<p class="profile-bio">
-				<?php echo $student->get_bio(); ?>
+				<?php echo wp_kses_post( $student->get_bio() ); ?>
 			</p>
 
 			<?php if ( ! empty( $student->get_address() ) ) : ?>
@@ -101,7 +101,7 @@ if ( $engagement_visible ) {
 					<address>
 						<?php include OHMYLMS_DIR . '/assets/images/icon/map-marker.php'; ?>
 						<span class="profile-address">
-							<?php echo $student->get_address(); ?>
+							<?php echo esc_html( $student->get_address() ); ?>
 						</span>
 					</address>
 				</div>
@@ -191,7 +191,8 @@ if ( $engagement_visible ) {
 		<?php if ( $next_level_name ) : ?>
 			<div class="ohmylms-progress-section">
 				<div class="ohmylms-progress-header">
-					<span class="ohmylms-progress-label"><?php echo esc_html( sprintf( __( 'Progress to %s', 'ohmylms' ), $next_level_name ) ); ?></span>
+					<span class="ohmylms-progress-label"><?php echo esc_html( sprintf( /* translators: %s: text value. */
+					__( 'Progress to %s', 'ohmylms' ), $next_level_name ) ); ?></span>
 				</div>
 				<ul class="ohmylms-level-conditions">
 					<?php
@@ -202,7 +203,8 @@ if ( $engagement_visible ) {
 							'completed_courses' => __( 'Completed courses', 'ohmylms' ),
 						);
 						?>
-						<li><?php echo esc_html( sprintf( __( '%1$s: %2$s · requirement %3$s %4$s', 'ohmylms' ), $labels[ $rule['type'] ] ?? '', $rule['current'], $rule['operator'], $rule['required'] ) ); ?></li>
+						<li><?php echo esc_html( sprintf( /* translators: %1$s: text value; %2$s: text value; %3$s: text value; %4$s: text value. */
+						__( '%1$s: %2$s · requirement %3$s %4$s', 'ohmylms' ), $labels[ $rule['type'] ] ?? '', $rule['current'], $rule['operator'], $rule['required'] ) ); ?></li>
 					<?php } ?>
 				</ul>
 				<div class="ohmylms-progress-bar">
@@ -243,11 +245,11 @@ if ( $engagement_visible ) {
 					$image_url    = esc_url( isset( $badge['image'] ) ? $badge['image'] : '' );
 					$status_class = $is_earned ? 'earned' : 'locked';
 					?>
-					<div class="ohmylms-badge <?php echo $status_class; ?>" style="--badge-color: <?php echo $color; ?>;" 
+					<div class="ohmylms-badge <?php echo esc_attr( $status_class ); ?>" style="--badge-color: <?php echo esc_attr( $color ); ?>;"
 					<?php
 					if ( $tooltip ) :
 						?>
-						data-tooltip="<?php echo $tooltip; ?>" <?php endif; ?>>
+						data-tooltip="<?php echo esc_attr( $tooltip ); ?>" <?php endif; ?>>
 						<?php if ( ! $is_earned ) : ?>
 							<div class="ohmylms-lock-overlay">
 								<svg class="ohmylms-lock-icon" viewBox="0 0 24 24" fill="currentColor">
@@ -255,8 +257,8 @@ if ( $engagement_visible ) {
 								</svg>
 							</div>
 						<?php endif; ?>
-						<img src="<?php echo $image_url; ?>" alt="<?php echo $name; ?>" class="ohmylms-badge-icon" />
-						<div class="ohmylms-badge-name"><?php echo $name; ?></div>
+						<img src="<?php echo esc_url( $image_url ); ?>" alt="<?php echo esc_attr( $name ); ?>" class="ohmylms-badge-icon" />
+						<div class="ohmylms-badge-name"><?php echo esc_html( $name ); ?></div>
 					</div>
 				<?php endforeach; ?>
 			</div>
@@ -265,7 +267,7 @@ if ( $engagement_visible ) {
 			<div class="ohmylms-badge-progress">
 				<div class="ohmylms-progress-text"><?php echo esc_html( "$total_earned of $total_badges badges earned" ); ?></div>
 				<div class="ohmylms-progress-bar">
-					<div class="ohmylms-progress-fill" style="--fill-width: <?php echo $progress_percent; ?>%"></div>
+					<div class="ohmylms-progress-fill" style="--fill-width: <?php echo esc_attr( $progress_percent ); ?>%"></div>
 				</div>
 			</div>
 		</div>

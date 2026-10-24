@@ -351,8 +351,8 @@ class ProfileGutenbergBlock {
 	/**
 	 * Render the block
 	 *
-	 * @param array  $attributes Block attributes
-	 * @param string $content Block content
+	 * @param array  $attributes Block attributes.
+	 * @param string $content Block content.
 	 * @return string
 	 */
 	public function render_block( $attributes, $content = '' ) {
@@ -558,7 +558,7 @@ class ProfileGutenbergBlock {
 	/**
 	 * Validate and sanitize block attributes
 	 *
-	 * @param array $attributes Raw attributes
+	 * @param array $attributes Raw attributes.
 	 * @return array Validated attributes
 	 */
 	private function validate_attributes( $attributes ) {

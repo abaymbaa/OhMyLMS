@@ -29,7 +29,10 @@ final class Selector {
 	/** Types where the learner builds or places the answer from given pieces. */
 	const GUIDED = array( 'fill-in-the-blank', 'reorder', 'build-expression', 'number-line', 'shade-model', 'count-blocks', 'set-clock', 'make-amount', 'fill-level', 'build-chart', 'grid-build' );
 
-	/** recognize, guided or produce: the order a lesson moves through (easiest first). */
+	/** recognize, guided or produce: the order a lesson moves through (easiest first).
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function stage( $type ) {
 		if ( in_array( $type, self::RECOGNIZE, true ) ) {
 			return 'recognize'; }
@@ -39,6 +42,9 @@ final class Selector {
 	/**
 	 * The stage the n-th planned question of a lesson belongs to: the first third recognises,
 	 * the middle third is guided, the last third produces.
+	 *
+	 * @param mixed $done Done.
+	 * @param mixed $planned Planned.
 	 */
 	public static function stage_for( $done, $planned ) {
 		$third = max( 1, (int) ceil( $planned / 3 ) );
@@ -46,6 +52,11 @@ final class Selector {
 	}
 
 	/**
+	 * Next.
+	 *
+	 * @param array  $session Session.
+	 * @param array  $issued Issued.
+	 * @param mixed  $band Band.
 	 * @param string $stage Optional lesson stage; used when the pool has a question of that stage.
 	 * @return array{question_id:int,version_id:int,difficulty:string,family_id:string}|null
 	 */
@@ -72,7 +83,7 @@ final class Selector {
 				}
 			)
 		);
-		$candidates = $fresh ?: $available;
+		$candidates = $fresh ? $fresh : $available;
 		// A template can come round again, but only once nothing new is left to ask.
 		$never = array_values(
 			array_filter(
@@ -126,7 +137,10 @@ final class Selector {
 		return $nearest[ random_int( 0, count( $nearest ) - 1 ) ];
 	}
 
-	/** Every eligible question for a skill and its sub-skills. */
+	/** Every eligible question for a skill and its sub-skills.
+	 *
+	 * @param mixed $term_id Term identifier.
+	 */
 	public static function pool( $term_id ) {
 		$terms = array_merge( array( (int) $term_id ), array_map( 'intval', get_term_children( (int) $term_id, Taxonomy::NAME ) ?: array() ) );
 		return self::eligible( $terms );
@@ -204,7 +218,11 @@ final class Selector {
 		);
 	}
 
-	/** Adjust the band from the most recent answers in the session. */
+	/** Adjust the band from the most recent answers in the session.
+	 *
+	 * @param mixed $band Band.
+	 * @param array $answered Answered.
+	 */
 	public static function band( $band, array $answered ) {
 		$index = array_search( $band, self::BANDS, true );
 		$index = false === $index ? 1 : $index;

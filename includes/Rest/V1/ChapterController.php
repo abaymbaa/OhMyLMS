@@ -38,11 +38,17 @@ class ChapterController extends RestController {
 	 */
 	protected $base = 'chapters';
 
+	/**
+	 * Check chapter permission for Chapter controller.
+	 */
 	public function check_chapter_permission() {
 		return current_user_can( 'edit_posts' );
 	}
 
 
+	/**
+	 * Check content delete permission for Chapter controller.
+	 */
 	public function check_content_delete_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -145,7 +151,7 @@ class ChapterController extends RestController {
 	/**
 	 * Check if a given request has access to read an item.
 	 *
-	 * @param  WP_REST_Request $request Full details about the request.
+	 * @param WP_REST_Request $request Full details about the request.
 	 * @return WP_Error|boolean
 	 *
 	 * @since 1.0.0
@@ -163,7 +169,7 @@ class ChapterController extends RestController {
 	/**
 	 * Create a single chapter
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -243,7 +249,7 @@ class ChapterController extends RestController {
 	/**
 	 * Delete chapter
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -470,7 +476,7 @@ class ChapterController extends RestController {
 	/**
 	 * Get search content
 	 *
-	 * @param WP_REST_Request $request
+	 * @param WP_REST_Request $request REST request.
 	 * @return WP_Error|\WP_HTTP_Response|\WP_REST_Response
 	 * @since 1.0.0
 	 */
@@ -509,9 +515,9 @@ class ChapterController extends RestController {
 	/**
 	 * Prepare a single chapter for create or update.
 	 *
-	 * @param $request
+	 * @param mixed $request REST request.
 	 * @return bool|Chapter|object|WP_Error
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	protected function prepare_item_for_database( $request ) {
@@ -543,7 +549,7 @@ class ChapterController extends RestController {
 	 * Prepare a single chapter for response.
 	 *
 	 * @param \WP_Post         $post The post object.
-	 * @param \WP_REST_Request $request
+	 * @param \WP_REST_Request $request REST request.
 	 * @return WP_REST_Response
 	 *
 	 * @since 1.0.0
@@ -572,8 +578,8 @@ class ChapterController extends RestController {
 	/**
 	 * Prepare links for the request.
 	 *
-	 * @param $product
-	 * @param $request
+	 * @param mixed $product Product.
+	 * @param mixed $request REST request.
 	 * @return array[]
 	 *
 	 * @since 1.0.0
@@ -595,7 +601,7 @@ class ChapterController extends RestController {
 	/**
 	 * Get chapter data.
 	 *
-	 * @param Chapter $chapter
+	 * @param Chapter $chapter Chapter.
 	 * @return array
 	 *
 	 * @since 1.0.0

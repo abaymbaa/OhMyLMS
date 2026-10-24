@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createStudentReport( readRuntime ) {
@@ -159,7 +160,7 @@ export function createStudentReport( readRuntime ) {
 									case 3:
 										_nLocal4.p = 3;
 										_rLocal = _nLocal4.v;
-										console.error(
+										showRequestError(
 											'Error fetching student data:',
 											_rLocal
 										);

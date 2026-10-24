@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createWebhookEditorModal( readRuntime ) {
@@ -51,7 +52,7 @@ export function createWebhookEditorModal( readRuntime ) {
 								try {
 									e = JSON.parse( t.data_mapping );
 								} catch ( _tLocal ) {
-									console.error(
+									showRequestError(
 										'Failed to parse data_mapping:',
 										_tLocal
 									);
@@ -270,7 +271,7 @@ export function createWebhookEditorModal( readRuntime ) {
 											case 8:
 												_eLocal4.p = 8;
 												_iLocal = _eLocal4.v;
-												console.error(
+												showRequestError(
 													'Error saving webhook:',
 													_iLocal
 												);

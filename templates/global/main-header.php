@@ -29,7 +29,7 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 				if ( get_custom_logo() ) {
 					echo get_custom_logo();
 				} else {
-					echo '<a href="' . home_url() . '" class="custom-logo-link">' . get_bloginfo( 'name' ) . '</a>';
+					echo '<a href="' . esc_url( home_url() ) . '" class="custom-logo-link">' . esc_html( get_bloginfo( 'name' ) ) . '</a>';
 				}
 				?>
 
@@ -57,13 +57,13 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 
 				<?php $student_profile_photo = $student->get_profile_image(); ?>
 				<div class="ohmylms-user">
-					<a href="#" class="ohmylms-user-avatar <?php echo $student_profile_photo ? 'has-profile-photo' : ''; ?>">
+					<a href="#" class="ohmylms-user-avatar <?php echo esc_attr( $student_profile_photo ? 'has-profile-photo' : '' ); ?>">
 						<?php
 
 						if ( $student_profile_photo ) {
 							echo '<img class="student-profile-photo" src="' . esc_url( $student_profile_photo ) . '" alt="Student Profile Photo" id="student-profile-photo">';
 						} else {
-							echo ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() );
+							echo esc_html( ohmylms_get_initials( $student->get_first_name(), $student->get_last_name() ) );
 						}
 						?>
 					</a>
@@ -77,14 +77,14 @@ $my_courses_url = ohmylms_get_nav_link_url( 'courses' );
 						</li>
 
 						<li>
-							<a href="<?php echo $my_profile_url; ?>" class="my-profile-link">
+							<a href="<?php echo esc_url( $my_profile_url ); ?>" class="my-profile-link">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/user-circle-outline-icon.php'; ?>
 								<?php echo esc_html__( 'My Profile', 'ohmylms' ); ?>
 							</a>
 						</li>
 
 						<li>
-							<a href="<?php echo $my_courses_url; ?>" class="my-course-link">
+							<a href="<?php echo esc_url( $my_courses_url ); ?>" class="my-course-link">
 								<?php require OHMYLMS_DIR . '/assets/images/icon/course-icon.php'; ?>
 								<?php echo esc_html__( 'My Courses', 'ohmylms' ); ?>
 							</a>

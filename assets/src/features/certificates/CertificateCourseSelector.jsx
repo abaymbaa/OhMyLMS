@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createCertificateCourseSelector( readRuntime ) {
@@ -74,7 +75,8 @@ export function createCertificateCourseSelector( readRuntime ) {
 											)
 										 );
 									case 1:
-										t(); // Falls through to the shared async state cleanup.
+										t();
+									// Falls through to the shared async state cleanup.
 									case 2:
 										return _eLocal2.a( 2 );
 								}
@@ -137,7 +139,7 @@ export function createCertificateCourseSelector( readRuntime ) {
 										case 2:
 											_eLocal5.p = 2;
 											_aLocal2 = _eLocal5.v;
-											console.error( _aLocal2 );
+											showRequestError( _aLocal2 );
 										// Falls through to the shared async state cleanup.
 										case 3:
 											return _eLocal5.a( 2 );

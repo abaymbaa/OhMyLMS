@@ -29,6 +29,9 @@ defined( 'ABSPATH' ) || exit;
  *  - Creating or restructuring curriculum items and bundles stays in the Curriculum and Course Bundles pages.
  */
 class CourseOrganizationController extends RestController {
+	/**
+	 * Register routes for Course organization controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -70,17 +73,30 @@ class CourseOrganizationController extends RestController {
 		);
 	}
 
+	/**
+	 * Author permission for Course organization controller.
+	 */
 	public function author_permission() {
 		if ( ! Schema::ready() ) {
 			return new \WP_Error( 'ohmylms_curriculum_unavailable', __( 'Curriculum storage is not installed yet.', 'ohmylms' ), array( 'status' => 503 ) ); }
 		return AccessPolicy::check( current_user_can( 'edit_posts' ) );
 	}
 
+	/**
+	 * Course permission for Course organization controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function course_permission( WP_REST_Request $request ) {
 		$ready = $this->author_permission();
 		return is_wp_error( $ready ) ? $ready : $this->check_object_permission( $request, 'edit', OHMYLMS_COURSE_CPT );
 	}
 
+	/**
+	 * Describe for Course organization controller.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	private function describe( $course_id ) {
 		return rest_ensure_response(
 			array(
@@ -91,11 +107,19 @@ class CourseOrganizationController extends RestController {
 		);
 	}
 
+	/**
+	 * Show for Course organization controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function show( WP_REST_Request $request ) {
 		return $this->describe( (int) $request['id'] );
 	}
 
-	/** Replace a course's curriculum links and, for administrators, its bundles. Send only what changes. */
+	/** Replace a course's curriculum links and, for administrators, its bundles. Send only what changes.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function update( WP_REST_Request $request ) {
 		$course_id  = (int) $request['id'];
 		$curriculum = $request->get_param( 'curriculum_ids' );
@@ -126,7 +150,10 @@ class CourseOrganizationController extends RestController {
 		return $this->describe( $course_id );
 	}
 
-	/** The whole structure, names only, for pickers. With `courses=1` each item also lists its published courses. */
+	/** The whole structure, names only, for pickers. With `courses=1` each item also lists its published courses.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function curriculum_outline( WP_REST_Request $request ) {
 		$courses = $request->get_param( 'courses' ) ? Placement::published_courses_by_item() : null;
 		return rest_ensure_response(
@@ -152,6 +179,9 @@ class CourseOrganizationController extends RestController {
 		);
 	}
 
+	/**
+	 * Bundles outline for Course organization controller.
+	 */
 	public function bundles_outline() {
 		return rest_ensure_response(
 			array(

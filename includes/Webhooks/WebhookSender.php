@@ -54,10 +54,7 @@ class WebhookSender {
 	/**
 	 * Trigger webhook for course purchase
 	 *
-	 * @param int $order_id   Order ID.
-	 * @param int $course_id  Course ID.
-	 * @param int $student_id Student ID.
-	 *
+	 * @param int $order _id   Order ID.
 	 * @since 1.0.0
 	 */
 	public function trigger_course_purchase( $order ) {
@@ -108,7 +105,7 @@ class WebhookSender {
 	 * Trigger webhook for course enrollment
 	 *
 	 * @param object|int $order Order object or ID.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function trigger_course_enrollment( $order ) {
@@ -137,11 +134,7 @@ class WebhookSender {
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enroll_data = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d LIMIT 1",
-				$student_id,
-				$order->get_id()
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d LIMIT 1', $table_name, $student_id, $order->get_id() ),
 			ARRAY_A
 		);
 
@@ -175,9 +168,7 @@ class WebhookSender {
 	 * Trigger webhook for course completion
 	 *
 	 * @param int $student_id Student ID.
-	 * @param int $course_id  Course ID.
-	 * @param int $order_id   Order ID.
-	 *
+	 * @param int $course_id Course ID.
 	 * @since 1.0.0
 	 */
 	public function trigger_course_completion( $student_id, $course_id ) {
@@ -216,10 +207,10 @@ class WebhookSender {
 	/**
 	 * Trigger webhook for lesson completion
 	 *
-	 * @param int $lesson_id  Lesson ID.
-	 * @param int $course_id  Course ID.
+	 * @param int $lesson_id Lesson ID.
+	 * @param int $course_id Course ID.
 	 * @param int $student_id Student ID.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function trigger_lesson_completion( $lesson_id, $course_id, $student_id ) {
@@ -256,11 +247,11 @@ class WebhookSender {
 	/**
 	 * Trigger webhook for quiz submission
 	 *
-	 * @param int   $quiz_id    Quiz ID.
-	 * @param int   $course_id  Course ID.
+	 * @param int   $quiz_id Quiz ID.
+	 * @param int   $course_id Course ID.
 	 * @param int   $student_id Student ID.
-	 * @param array $result     Quiz result data.
-	 *
+	 * @param array $result Quiz result data.
+	 * .
 	 * @since 1.0.0
 	 */
 	public function trigger_quiz_submission( $quiz_id, $course_id, $student_id, $result = array() ) {
@@ -302,11 +293,11 @@ class WebhookSender {
 	/**
 	 * Trigger webhook for quiz submission
 	 *
-	 * @param int   $quiz_id    Quiz ID.
-	 * @param int   $course_id  Course ID.
+	 * @param int   $quiz_id Quiz ID.
+	 * @param int   $course_id Course ID.
 	 * @param int   $student_id Student ID.
-	 * @param array $result     Quiz result data.
-	 *
+	 * @param array $result Quiz result data.
+	 * .
 	 * @since 1.0.0
 	 */
 	public function trigger_quiz_achievement( $quiz_id, $course_id, $student_id, $result = array() ) {
@@ -346,11 +337,9 @@ class WebhookSender {
 	/**
 	 * Trigger webhook for assignment submission
 	 *
-	 * @param int   $assignment_id Assignment ID.
-	 * @param int   $course_id     Course ID.
-	 * @param int   $student_id    Student ID.
-	 * @param array $submission    Submission data.
-	 *
+	 * @param int $assignment_id Assignment ID.
+	 * @param int $course_id Course ID.
+	 * @param int $student_id Student ID.
 	 * @since 1.0.0
 	 */
 	public function trigger_assignment_submission( $assignment_id, $course_id, $student_id ) {
@@ -393,9 +382,9 @@ class WebhookSender {
 	 * Trigger webhook for assignment achievement
 	 *
 	 * @param int   $assignment_id Assignment ID.
-	 * @param int   $course_id     Course ID.
-	 * @param int   $student_id    Student ID.
-	 * @param array $review       Review data.
+	 * @param int   $course_id Course ID.
+	 * @param int   $student_id Student ID.
+	 * @param mixed $marks Marks.
 	 * @since 1.0.0
 	 */
 	public function trigger_assignment_achievement( $assignment_id, $course_id, $student_id, $marks ) {
@@ -467,9 +456,9 @@ class WebhookSender {
 	/**
 	 * Send webhook with payload data
 	 *
-	 * @param Webhook $webhook      Webhook object.
+	 * @param Webhook $webhook Webhook object.
 	 * @param array   $payload_data Raw payload data.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	private function send_webhook( $webhook, $payload_data ) {
@@ -590,7 +579,7 @@ class WebhookSender {
 	/**
 	 * Format payload based on data type
 	 *
-	 * @param array  $payload   Payload array.
+	 * @param array  $payload Payload array.
 	 * @param string $data_type Data type (json, xml, form).
 	 * @return string Formatted payload.
 	 *
@@ -612,8 +601,8 @@ class WebhookSender {
 	/**
 	 * Convert array to XML
 	 *
-	 * @param array  $data    Data array.
-	 * @param string $root    Root element name.
+	 * @param array  $data Data array.
+	 * @param string $root Root element name.
 	 * @param object $xml_obj XML object.
 	 * @return string XML string.
 	 *
@@ -641,10 +630,10 @@ class WebhookSender {
 	/**
 	 * Log webhook request and response
 	 *
-	 * @param Webhook $webhook  Webhook object.
-	 * @param array   $payload  Payload sent.
+	 * @param Webhook $webhook Webhook object.
+	 * @param array   $payload Payload sent.
 	 * @param mixed   $response Response from wp_remote_request.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	private function log_webhook( $webhook, $payload, $response ) {

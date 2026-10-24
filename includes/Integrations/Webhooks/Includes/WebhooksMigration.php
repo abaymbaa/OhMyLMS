@@ -12,6 +12,9 @@ namespace OhMyLMS\Integrations\Webhooks\Includes;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin webhooks migration implementation.
+ */
 class WebhooksMigration {
 
 	/**
@@ -148,7 +151,7 @@ class WebhooksMigration {
 		global $wpdb;
 
 		$table_name = $wpdb->prefix . 'ohmylms_webhooks';
-		$wpdb->query( "DROP TABLE IF EXISTS {$table_name}" );
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $table_name ) );
 
 		// Remove the option.
 		delete_option( self::WEBHOOKS_TABLE_CREATED_OPTION );

@@ -44,15 +44,29 @@ final class Visual {
 		'grid-build'   => array( 'constraints' ),
 	);
 
+	/**
+	 * Handles for Visual.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function handles( $type ) {
 		return in_array( $type, self::TYPES, true );
 	}
 
+	/**
+	 * Private keys for Visual.
+	 *
+	 * @param mixed $type Type.
+	 */
 	public static function private_keys( $type ) {
 		return self::PRIVATE_KEYS[ $type ] ?? array();
 	}
 
-	/** Does the settings array still hold the key of this type? */
+	/** Does the settings array still hold the key of this type?
+	 *
+	 * @param mixed $type Type.
+	 * @param array $settings Configuration settings.
+	 */
 	public static function has_key( $type, array $settings ) {
 		foreach ( self::private_keys( $type ) as $key ) {
 			if ( array_key_exists( $key, $settings ) ) {
@@ -61,16 +75,30 @@ final class Visual {
 		return false;
 	}
 
+	/**
+	 * Num for Visual.
+	 *
+	 * @param mixed $value Value to process.
+	 * @param mixed $default Default.
+	 */
 	private static function num( $value, $default = 0.0 ) {
 		return is_numeric( $value ) && is_finite( (float) $value ) ? (float) $value : (float) $default;
 	}
 
-	/** An answer value as a finite number; fractions such as 3/4 are accepted. */
+	/** An answer value as a finite number; fractions such as 3/4 are accepted.
+	 *
+	 * @param array  $answer Answer.
+	 * @param string $key Lookup key.
+	 */
 	private static function value( array $answer, $key = 'value' ) {
 		return NumericAnswer::parse( $answer[ $key ] ?? '' );
 	}
 
-	/** Cell indices of a shade-model answer: keys c0, c3, ... within range. */
+	/** Cell indices of a shade-model answer: keys c0, c3, ... within range.
+	 *
+	 * @param array $answer Answer.
+	 * @param mixed $parts Parts.
+	 */
 	private static function cells( array $answer, $parts ) {
 		$cells = array();
 		foreach ( $answer as $key => $on ) {
@@ -80,7 +108,12 @@ final class Visual {
 		return array_keys( $cells );
 	}
 
-	/** Grid squares of a grid-build answer: keys r2c3 within the grid. */
+	/** Grid squares of a grid-build answer: keys r2c3 within the grid.
+	 *
+	 * @param array $answer Answer.
+	 * @param mixed $rows Rows.
+	 * @param mixed $cols Cols.
+	 */
 	private static function squares( array $answer, $rows, $cols ) {
 		$squares = array();
 		foreach ( $answer as $key => $on ) {
@@ -92,6 +125,12 @@ final class Visual {
 
 	/* ---------- Learner-safe settings ---------- */
 
+	/**
+	 * Public view for Visual.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $s S.
+	 */
 	public static function public_view( $type, array $s ) {
 		switch ( $type ) {
 			case 'number-line':
@@ -113,7 +152,7 @@ final class Visual {
 			case 'count-blocks':
 				$places = array_values( array_intersect( array_keys( self::PLACES ), (array) ( $s['places'] ?? array( 'hundreds', 'tens', 'ones' ) ) ) );
 				return array(
-					'places'        => $places ?: array( 'hundreds', 'tens', 'ones' ),
+					'places'        => $places ? $places : array( 'hundreds', 'tens', 'ones' ),
 					'max_per_place' => max( 1, min( 50, (int) ( $s['max_per_place'] ?? 20 ) ) ),
 				);
 			case 'set-clock':
@@ -128,7 +167,7 @@ final class Visual {
 						array_filter(
 							array_map( 'intval', (array) ( $s['denominations'] ?? array() ) ),
 							static function ( $d ) {
-								return $d > 0;
+								return 0 < $d;
 							}
 						)
 					)
@@ -182,7 +221,14 @@ final class Visual {
 
 	/* ---------- Grading ---------- */
 
-	/** @return array{correct:bool,fraction:float,manual:bool,items:bool[]} */
+	/**
+	 * Grade for Visual.
+	 *
+	 * @return array{correct:bool,fraction:float,manual:bool,items:bool[]}
+	 * @param mixed $type Type.
+	 * @param array $answer Answer.
+	 * @param array $s S.
+	 */
 	public static function grade( $type, array $answer, array $s ) {
 		$items = array( false );
 		switch ( $type ) {
@@ -207,7 +253,7 @@ final class Visual {
 						break; }
 					$total += (int) $count * self::PLACES[ $place ];
 				}
-				$items = array( $valid && $total === (int) ( $s['target'] ?? -1 ) );
+				$items = array( $valid && (int) ( $s['target'] ?? -1 ) === $total );
 				break;
 			case 'set-clock':
 				$hour      = $answer['h'] ?? '';
@@ -230,7 +276,7 @@ final class Visual {
 						break; }
 					$total += (int) $m[1] * (int) $count;
 				}
-				$items = array( $valid && $total === (int) ( $s['target'] ?? -1 ) );
+				$items = array( $valid && (int) ( $s['target'] ?? -1 ) === $total );
 				break;
 			case 'build-chart':
 				$items = array();
@@ -238,7 +284,7 @@ final class Visual {
 					$given                    = NumericAnswer::parse( $answer[ $category['id'] ] ?? '' );
 					$items[ $category['id'] ] = NumericAnswer::matches( $given, self::num( $s['values'][ $category['id'] ] ?? null, NAN ), 0.0 );
 				}
-				$items = $items ?: array( false );
+				$items = $items ? $items : array( false );
 				break;
 			case 'grid-build':
 				$view    = self::public_view( $type, $s );
@@ -255,7 +301,11 @@ final class Visual {
 		);
 	}
 
-	/** Area, perimeter, rectangle and connectedness of the chosen squares. */
+	/** Area, perimeter, rectangle and connectedness of the chosen squares.
+	 *
+	 * @param array $squares Squares.
+	 * @param array $c C.
+	 */
 	private static function grid_ok( array $squares, array $c ) {
 		if ( ! $squares ) {
 			return false; }
@@ -300,7 +350,11 @@ final class Visual {
 
 	/* ---------- Authoring validation ---------- */
 
-	/** True or a message. */
+	/** True or a message.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $s S.
+	 */
 	public static function validate_settings( $type, array $s ) {
 		switch ( $type ) {
 			case 'number-line':
@@ -310,7 +364,7 @@ final class Visual {
 				$step = self::num( $s['step'] ?? null, 0 );
 				if ( ! is_finite( $max ) || $max <= $min ) {
 					return __( 'The maximum must be greater than the minimum.', 'ohmylms' ); }
-				if ( $step <= 0 || ( $max - $min ) / $step > 200 ) {
+				if ( 0 >= $step || ( $max - $min ) / $step > 200 ) {
 					return __( 'The step must be positive and give at most 200 ticks.', 'ohmylms' ); }
 				if ( ! isset( $s['target'] ) || ! is_numeric( $s['target'] ) || (float) $s['target'] < $min || (float) $s['target'] > $max ) {
 					return __( 'The correct value must be between the minimum and maximum.', 'ohmylms' ); }
@@ -319,7 +373,7 @@ final class Visual {
 				return true;
 			case 'shade-model':
 				$parts = (int) ( $s['parts'] ?? 0 );
-				if ( $parts < 2 || $parts > 100 ) {
+				if ( 2 > $parts || 100 < $parts ) {
 					return __( 'A model needs between 2 and 100 parts.', 'ohmylms' ); }
 				if ( ! isset( $s['answer'] ) || ! is_numeric( $s['answer'] ) || (int) $s['answer'] < 0 || (int) $s['answer'] > $parts ) {
 					return __( 'The number of shaded parts must be between 0 and the number of parts.', 'ohmylms' ); }
@@ -339,7 +393,7 @@ final class Visual {
 						$places
 					)
 				);
-				if ( (int) $target % $smallest !== 0 ) {
+				if ( 0 !== (int) $target % $smallest ) {
 					return __( 'The number cannot be made from the chosen places.', 'ohmylms' ); }
 				return true;
 			case 'set-clock':
@@ -362,7 +416,7 @@ final class Visual {
 				if ( ! $categories || count( array_unique( $ids ) ) !== count( $ids ) || in_array( '', $ids, true ) || in_array( '', array_column( $categories, 'label' ), true ) ) {
 					return __( 'Each bar needs a unique ID and a label.', 'ohmylms' ); }
 				$max = self::num( $s['max'] ?? null, NAN );
-				if ( ! is_finite( $max ) || $max <= 0 || self::num( $s['step'] ?? 1, 1 ) <= 0 ) {
+				if ( ! is_finite( $max ) || 0 >= $max || self::num( $s['step'] ?? 1, 1 ) <= 0 ) {
 					return __( 'The chart needs a positive maximum and step.', 'ohmylms' ); }
 				foreach ( $ids as $id ) {
 					$v = $s['values'][ $id ] ?? null;
@@ -373,7 +427,7 @@ final class Visual {
 			case 'grid-build':
 				$rows = (int) ( $s['rows'] ?? 0 );
 				$cols = (int) ( $s['cols'] ?? 0 );
-				if ( $rows < 1 || $rows > 20 || $cols < 1 || $cols > 20 ) {
+				if ( 1 > $rows || 20 < $rows || 1 > $cols || 20 < $cols ) {
 					return __( 'The grid can be 1 to 20 squares in each direction.', 'ohmylms' ); }
 				$c = (array) ( $s['constraints'] ?? array() );
 				if ( ! isset( $c['area'] ) && ! isset( $c['perimeter'] ) && empty( $c['rectangle'] ) && empty( $c['connected'] ) ) {
@@ -389,7 +443,11 @@ final class Visual {
 		return true;
 	}
 
-	/** Readable correct answer, revealed after a response has been graded. */
+	/** Readable correct answer, revealed after a response has been graded.
+	 *
+	 * @param mixed $type Type.
+	 * @param array $s S.
+	 */
 	public static function expected( $type, array $s ) {
 		switch ( $type ) {
 			case 'number-line':

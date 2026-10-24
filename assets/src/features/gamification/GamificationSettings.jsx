@@ -36,15 +36,25 @@ export function createGamificationSettings( readRuntime ) {
 			}
 			return createElement( runtime[ binding ] );
 		};
+		const tabLabels = {
+			'point-settings': I18n.__( 'Bonus Point', 'ohmylms' ),
+			'badge-settings': I18n.__( 'Achievement Badges', 'ohmylms' ),
+			'level-settings': I18n.__( 'Learner Levels', 'ohmylms' ),
+			'reward-settings': I18n.__( 'Reward', 'ohmylms' ),
+			'leaderboard-settings': I18n.__( 'Leaderboard', 'ohmylms' ),
+			'streak-settings': I18n.__( 'Streaks', 'ohmylms' ),
+			'xp-settings': I18n.__( 'XP & mastery', 'ohmylms' ),
+			certificates: I18n.__( 'Certificates', 'ohmylms' ),
+		};
 		const items = [
 			...gamificationTabs.map( ( [ key, label, binding ] ) => ( {
 				key,
-				label: I18n.__( label, 'ohmylms' ),
+				label: tabLabels[ key ] || label,
 				children: tabContent( key, binding ),
 			} ) ),
 			...extraTabs.map( ( { key, label, Component } ) => ( {
 				key,
-				label: I18n.__( label, 'ohmylms' ),
+				label: tabLabels[ key ] || label,
 				children: createElement( Component ),
 			} ) ),
 		];

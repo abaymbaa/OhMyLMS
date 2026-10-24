@@ -24,13 +24,46 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class MyCoursesElement extends \Bricks\Element {
 
+	/**
+	 * Category.
+	 *
+	 * @var mixed
+	 */
 	public $category = 'ohmylms';
-	public $name     = 'ohmylms-my-courses';
-	public $icon     = 'ti-id-badge';
+	/**
+	 * Name.
+	 *
+	 * @var mixed
+	 */
+	public $name = 'ohmylms-my-courses';
+	/**
+	 * Icon.
+	 *
+	 * @var mixed
+	 */
+	public $icon = 'ti-id-badge';
+	/**
+	 * Keywords.
+	 *
+	 * @var mixed
+	 */
 	public $keywords = array( 'my-courses', 'student', 'dashboard', 'creator', 'lms' );
-	public $scripts  = array( 'ohmylms-frontend' );
-	public $styles   = array( 'ohmylms-frontend' );
+	/**
+	 * Scripts.
+	 *
+	 * @var mixed
+	 */
+	public $scripts = array( 'ohmylms-frontend' );
+	/**
+	 * Styles.
+	 *
+	 * @var mixed
+	 */
+	public $styles = array( 'ohmylms-frontend' );
 
+	/**
+	 * Get label for My courses element.
+	 */
 	public function get_label() {
 		return esc_html__( 'OhMyLMS My Courses', 'ohmylms' );
 	}
@@ -39,6 +72,9 @@ class MyCoursesElement extends \Bricks\Element {
 	// Controls
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Set controls for My courses element.
+	 */
 	public function set_controls() {
 		$this->controls       = array();
 		$this->control_groups = array();
@@ -46,6 +82,9 @@ class MyCoursesElement extends \Bricks\Element {
 		$this->set_style_controls();
 	}
 
+	/**
+	 * Set content controls for My courses element.
+	 */
 	private function set_content_controls() {
 		$this->controls['show_header'] = array(
 			'tab'     => 'content',
@@ -468,7 +507,7 @@ class MyCoursesElement extends \Bricks\Element {
 	 * Bricks stores colors as: array( 'hex' => '#rrggbb', 'rgb' => 'rgba(...)' )
 	 * Falls back gracefully to a plain string or empty string.
 	 *
-	 * @param mixed $color
+	 * @param mixed $color Color.
 	 * @return string
 	 */
 	private function extract_color( $color ) {
@@ -490,7 +529,7 @@ class MyCoursesElement extends \Bricks\Element {
 	 * Passes all content and style values to ShortCodeMyCourses::output() so
 	 * that output_custom_styles() can generate the correct scoped <style> block.
 	 *
-	 * @param array $settings
+	 * @param array $settings Configuration settings.
 	 * @return array
 	 */
 	private function build_shortcode_attrs( $settings ) {

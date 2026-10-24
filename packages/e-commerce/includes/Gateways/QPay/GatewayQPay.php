@@ -6,10 +6,26 @@ use function OhMyLMS\Commerce\ecommerce;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin gateway qpay implementation.
+ */
 class GatewayQPay extends PaymentGateway {
+	/**
+	 * Invoice code.
+	 *
+	 * @var mixed
+	 */
 	private $invoice_code;
+	/**
+	 * Hooks registered.
+	 *
+	 * @var mixed
+	 */
 	private static $hooks_registered = false;
 
+	/**
+	 * Initialize Gateway qpay.
+	 */
 	public function __construct() {
 		$this->id                = 'qpay';
 		$this->settings          = (array) get_option( 'ohmylms_qpay_settings', array() );
@@ -32,10 +48,18 @@ class GatewayQPay extends PaymentGateway {
 		}
 	}
 
+	/**
+	 * Normalize yesno for Gateway qpay.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	private function normalize_yesno( $value ) {
 		return in_array( strtolower( (string) $value ), array( 'yes', 'true', '1', 'on' ), true ) ? 'yes' : 'no';
 	}
 
+	/**
+	 * Get settings for Gateway qpay.
+	 */
 	public function get_settings() {
 			$fields = array(
 				array(
@@ -150,12 +174,22 @@ class GatewayQPay extends PaymentGateway {
 
 
 
+	/**
+	 * Credentials for Gateway qpay.
+	 *
+	 * @param mixed $mode Mode.
+	 */
 	private function credentials( $mode ) {
 		// Read fresh options: admin saves and tests can change settings within a request.
 		$settings = (array) get_option( 'ohmylms_qpay_settings', array() );
 		return array( $settings[ $mode . '_client_id' ] ?? '', $settings[ $mode . '_client_secret' ] ?? '' );
 	}
 
+	/**
+	 * Api for order for Gateway qpay.
+	 *
+	 * @param int $order_id Order identifier.
+	 */
 	public function api_for_order( $order_id = 0 ) {
 		$mode = $order_id ? get_post_meta( $order_id, '_qpay_mode', true ) : '';
 		// Legacy invoices did not record their environment; preserve their configured mode.
@@ -173,6 +207,9 @@ class GatewayQPay extends PaymentGateway {
 		return $api;
 	}
 
+	/**
+	 * Is available for Gateway qpay.
+	 */
 	public function is_available() {
 		if ( 'yes' !== $this->enabled || ! $this->invoice_code || 'MNT' !== get_ohmylms_currency() || is_wp_error( $this->api_for_order() ) ) {
 			return false; }
@@ -189,6 +226,12 @@ class GatewayQPay extends PaymentGateway {
 		return parent::is_available();
 	}
 
+	/**
+	 * Eligible order for Gateway qpay.
+	 *
+	 * @param mixed $order Order.
+	 * @param mixed $subscription Subscription.
+	 */
 	private function eligible_order( $order, $subscription ) {
 		if ( $subscription || 'yes' !== $this->enabled || ! $this->invoice_code || ! $order || 'qpay' !== $order->get_payment_method()
 			|| 'MNT' !== $order->get_currency() || 'pending' !== $order->get_status() ) {
@@ -207,6 +250,12 @@ class GatewayQPay extends PaymentGateway {
 		return null !== $amount && $amount > 0;
 	}
 
+	/**
+	 * Process payment for Gateway qpay.
+	 *
+	 * @param mixed $order_id Order identifier.
+	 * @param bool  $is_subscription Is subscription.
+	 */
 	public function process_payment( $order_id, $is_subscription = false ) {
 		return PaymentService::locked(
 			$order_id,
@@ -252,7 +301,8 @@ class GatewayQPay extends PaymentGateway {
 							'invoice_code'          => $this->invoice_code,
 							'sender_invoice_no'     => (string) $order_id,
 							'invoice_receiver_code' => 'terminal',
-							'invoice_description'   => sprintf( __( 'Order #%s', 'ohmylms' ), $order_id ),
+							'invoice_description'   => sprintf( /* translators: %s: text value. */
+							__( 'Order #%s', 'ohmylms' ), $order_id ),
 							'amount'                => (float) $order->get_total(),
 							'callback_url'          => add_query_arg(
 								array(
@@ -300,6 +350,12 @@ class GatewayQPay extends PaymentGateway {
 		);
 	}
 
+	/**
+	 * Can read order for Gateway qpay.
+	 *
+	 * @param mixed  $order Order.
+	 * @param string $token Token.
+	 */
 	public function can_read_order( $order, $token = '' ) {
 		if ( ! $order || 'qpay' !== $order->get_payment_method() ) {
 			return false; }
@@ -309,6 +365,9 @@ class GatewayQPay extends PaymentGateway {
 		return is_string( $token ) && $stored && hash_equals( $stored, $token );
 	}
 
+	/**
+	 * Ajax order for Gateway qpay.
+	 */
 	private function ajax_order() {
 		check_ajax_referer( 'ohmylms_qpay_check_payment_nonce', 'nonce' );
 		$id    = isset( $_POST['order_id'] ) ? absint( $_POST['order_id'] ) : 0;
@@ -320,6 +379,9 @@ class GatewayQPay extends PaymentGateway {
 		return $id;
 	}
 
+	/**
+	 * Ajax check payment for Gateway qpay.
+	 */
 	public function ajax_check_payment() {
 		// Verify directly as a fallback when callbacks cannot reach the site.
 		$id     = $this->ajax_order();
@@ -328,6 +390,9 @@ class GatewayQPay extends PaymentGateway {
 		$this->send_ajax_result( $result );
 	}
 
+	/**
+	 * Ajax resume for Gateway qpay.
+	 */
 	public function ajax_resume() {
 		$id = $this->ajax_order();
 		// Explicit customer recovery also works when the provider callback was delayed or unreachable.
@@ -339,6 +404,11 @@ class GatewayQPay extends PaymentGateway {
 		$this->send_ajax_result( $this->process_payment( $id ) );
 	}
 
+	/**
+	 * Send ajax result for Gateway qpay.
+	 *
+	 * @param mixed $result Result.
+	 */
 	private function send_ajax_result( $result ) {
 		if ( is_wp_error( $result ) ) {
 			wp_send_json_error(
@@ -352,6 +422,12 @@ class GatewayQPay extends PaymentGateway {
 		wp_send_json_success( $result );
 	}
 
+	/**
+	 * Clear paid cart for Gateway qpay.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $result Result.
+	 */
 	private function clear_paid_cart( $id, $result ) {
 		if ( ! is_wp_error( $result ) && 'paid' === ( $result['status'] ?? '' ) && ecommerce()->cart ) {
 			$order = ohmylms_ecommerce_get_order( $id );
@@ -361,6 +437,9 @@ class GatewayQPay extends PaymentGateway {
 		}
 	}
 
+	/**
+	 * Register callback route for Gateway qpay.
+	 */
 	public function register_callback_route() {
 		register_rest_route(
 			'ohmylms/v1',
@@ -373,6 +452,11 @@ class GatewayQPay extends PaymentGateway {
 		);
 	}
 
+	/**
+	 * Handle callback for Gateway qpay.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function handle_callback( $request ) {
 		$id       = absint( $request->get_param( 'order_id' ) );
 		$token    = get_post_meta( $id, '_qpay_callback_token', true );
@@ -388,6 +472,9 @@ class GatewayQPay extends PaymentGateway {
 		return new \WP_REST_Response( array( 'status' => $result['status'] ), 200 );
 	}
 
+	/**
+	 * Payment scripts for Gateway qpay.
+	 */
 	public function payment_scripts() {
 		if ( ! function_exists( 'is_ohmylms_checkout' ) || ! is_ohmylms_checkout() ) {
 			return; }

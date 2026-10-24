@@ -182,7 +182,7 @@ test( 'refund validation rejects malformed and excessive values before dispatch'
 		h.requests.filter( ( r ) => r.action === 'issueRefund' ).length,
 		0
 	);
-	assert.ok( h.requests.some( ( r ) => r.alert ) );
+	assert.ok( h.requests.some( ( r ) => r.notice ) );
 } );
 test( 'refund API failure leaves the modal open and allows retry', async () => {
 	const h = harness( [ true, false ] );

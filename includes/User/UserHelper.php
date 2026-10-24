@@ -17,8 +17,8 @@ class UserHelper {
 	/**
 	 * Is user enrolled im given course
 	 *
-	 * @param $course_id
-	 * @param $user_id
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $user_id User identifier.
 	 * @return bool
 	 * @since 1.0.0
 	 */

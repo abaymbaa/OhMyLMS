@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createMigrationImport( readRuntime ) {
@@ -99,7 +100,7 @@ export function createMigrationImport( readRuntime ) {
 											case 7:
 												_eLocal3.p = 7;
 												_oLocal = _eLocal3.v;
-												console.error(
+												showRequestError(
 													'Error importing course:',
 													_oLocal
 												);

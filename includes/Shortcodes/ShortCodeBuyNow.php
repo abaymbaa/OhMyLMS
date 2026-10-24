@@ -9,11 +9,14 @@ namespace OhMyLMS\Shortcodes;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin short code buy now implementation.
+ */
 class ShortCodeBuyNow {
 	/**
 	 * Output the Buy Now button shortcode
 	 *
-	 * @param array $atts
+	 * @param array $atts Atts.
 	 */
 	public static function output( $atts ) {
 		$atts = shortcode_atts(

@@ -29,6 +29,9 @@ defined( 'ABSPATH' ) || exit;
  * grade events or evidence. Unlike "view as", it never acts as another account.
  */
 class PreviewController extends RestController {
+	/**
+	 * Register routes for Preview controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -54,6 +57,11 @@ class PreviewController extends RestController {
 		);
 	}
 
+	/**
+	 * Permission for Preview controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function permission( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT ) {
@@ -61,6 +69,11 @@ class PreviewController extends RestController {
 		return AccessPolicy::check( AccessPolicy::can_edit_quiz( $id ) );
 	}
 
+	/**
+	 * Preview for Preview controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function preview( WP_REST_Request $request ) {
 		$quiz_id = (int) $request['id'];
 		try {
@@ -114,7 +127,10 @@ class PreviewController extends RestController {
 		);
 	}
 
-	/** Grade one previewed answer; nothing is stored. */
+	/** Grade one previewed answer; nothing is stored.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function grade( WP_REST_Request $request ) {
 		$claims = Inline::verify( (string) $request['token'] );
 		if ( ! $claims || $claims['lesson_id'] !== (int) $request['id'] ) {

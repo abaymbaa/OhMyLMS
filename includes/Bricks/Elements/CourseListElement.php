@@ -33,6 +33,11 @@ class CourseListElement extends \Bricks\Element {
 	 */
 	public $name = 'ohmylms-course-list';
 
+	/**
+	 * Css selector.
+	 *
+	 * @var mixed
+	 */
 	public $css_selector = ' .ohmylms-page .ohmylms-course-list-shortcode';
 	/**
 	 * Element icon
@@ -601,7 +606,7 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Convert Bricks settings to shortcode attributes
 	 *
-	 * @param array $settings Bricks settings
+	 * @param array $settings Bricks settings.
 	 * @return array Shortcode attributes
 	 */
 	private function convert_settings_to_shortcode_attrs( $settings ) {
@@ -715,8 +720,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract color value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return string Color value
 	 */
 	private function extract_color_value( $settings, $key ) {
@@ -732,8 +737,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract spacing value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return string Spacing value
 	 */
 	private function extract_spacing_value( $settings, $key ) {
@@ -761,8 +766,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract dimension value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return string Dimension value
 	 */
 	private function extract_dimension_value( $settings, $key ) {
@@ -798,8 +803,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract border value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return array Border attributes
 	 */
 	private function extract_border_value( $settings, $key ) {
@@ -871,8 +876,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract button border value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return array Border attributes
 	 */
 	private function extract_button_border_value( $settings, $key ) {
@@ -927,8 +932,8 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract box shadow value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
 	 * @return string Box shadow value
 	 */
 	private function extract_box_shadow_value( $settings, $key ) {
@@ -962,9 +967,9 @@ class CourseListElement extends \Bricks\Element {
 	/**
 	 * Extract typography value from Bricks settings
 	 *
-	 * @param array  $settings Settings array
-	 * @param string $key      Setting key
-	 * @param string $prefix   Attribute prefix
+	 * @param array  $settings Settings array.
+	 * @param string $key Setting key.
+	 * @param string $prefix Attribute prefix.
 	 * @return array Typography attributes
 	 */
 	private function extract_typography_value( $settings, $key, $prefix ) {
@@ -1063,6 +1068,9 @@ class CourseListElement extends \Bricks\Element {
 	}
 
 
+	/**
+	 * Enqueue scripts for Course list element.
+	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'ohmylms-frontend' );
 		wp_enqueue_script( 'ohmylms-add-to-cart' );

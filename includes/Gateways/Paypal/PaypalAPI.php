@@ -20,22 +20,57 @@ use WP_Error;
  * Handles direct PayPal API interactions for token generation, vaulting, products, plans, subscriptions, orders, captures, refunds, and webhooks.
  */
 class PaypalAPI {
+	/**
+	 * Client id.
+	 *
+	 * @var mixed
+	 */
 	private $client_id;
+	/**
+	 * Client secret.
+	 *
+	 * @var mixed
+	 */
 	private $client_secret;
+	/**
+	 * Access token.
+	 *
+	 * @var mixed
+	 */
 	private $access_token;
+	/**
+	 * Token expires at.
+	 *
+	 * @var mixed
+	 */
 	private $token_expires_at;
+	/**
+	 * Api url.
+	 *
+	 * @var mixed
+	 */
 	private $api_url;
+	/**
+	 * Currency.
+	 *
+	 * @var mixed
+	 */
 	private $currency;
+	/**
+	 * Min amount.
+	 *
+	 * @var mixed
+	 */
 	private $min_amount;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $client_id PayPal client ID
-	 * @param string $client_secret PayPal client secret
-	 * @param bool   $is_sandbox Whether to use sandbox environment
-	 * @param string $currency Currency code (default: USD)
-	 * @param string $min_amount Minimum transaction amount (default: 0.1)
+	 * @param string $client_id PayPal client ID.
+	 * @param string $client_secret PayPal client secret.
+	 * @param bool   $is_sandbox Whether to use sandbox environment.
+	 * @param string $currency Currency code (default: USD).
+	 * @param string $min_amount Minimum transaction amount (default: 0.1).
 	 */
 	public function __construct( $client_id, $client_secret, $is_sandbox = true, $currency = 'USD', $min_amount = '0.1' ) {
 		$this->client_id     = $client_id;
@@ -96,10 +131,10 @@ class PaypalAPI {
 	/**
 	 * Makes an API request to PayPal.
 	 *
-	 * @param string $method HTTP method (GET, POST, etc.)
-	 * @param string $endpoint API endpoint (relative to api_url)
-	 * @param array  $params Request body parameters
-	 * @param array  $headers Additional headers
+	 * @param string $method HTTP method (GET, POST, etc.).
+	 * @param string $endpoint API endpoint (relative to api_url).
+	 * @param array  $params Request body parameters.
+	 * @param array  $headers Additional headers.
 	 * @return array|WP_Error Response data or WP_Error on failure
 	 */
 	public function request( $method, $endpoint, $params = array(), $headers = array() ) {
@@ -144,8 +179,8 @@ class PaypalAPI {
 	/**
 	 * Creates a webhook for PayPal notifications.
 	 *
-	 * @param string $webhook_url Webhook URL
-	 * @param array  $event_types Array of event types to subscribe to
+	 * @param string $webhook_url Webhook URL.
+	 * @param array  $event_types Array of event types to subscribe to.
 	 * @return array|WP_Error Webhook data or WP_Error on failure
 	 */
 	public function create_webhook( $webhook_url, $event_types ) {
@@ -165,13 +200,13 @@ class PaypalAPI {
 	/**
 	 * Verifies the signature of a webhook event.
 	 *
-	 * @param string $webhook_id PayPal webhook ID
-	 * @param array  $payload Webhook payload
-	 * @param string $auth_algo Authorization algorithm
-	 * @param string $cert_url Certificate URL
-	 * @param string $transmission_id Transmission ID
-	 * @param string $transmission_sig Transmission signature
-	 * @param string $transmission_time Transmission time
+	 * @param string $webhook_id PayPal webhook ID.
+	 * @param array  $payload Webhook payload.
+	 * @param string $auth_algo Authorization algorithm.
+	 * @param string $cert_url Certificate URL.
+	 * @param string $transmission_id Transmission ID.
+	 * @param string $transmission_sig Transmission signature.
+	 * @param string $transmission_time Transmission time.
 	 * @return array|WP_Error Verification result or WP_Error on failure
 	 */
 	public function verify_webhook_signature( $webhook_id, $payload, $auth_algo, $cert_url, $transmission_id, $transmission_sig, $transmission_time ) {
@@ -191,7 +226,7 @@ class PaypalAPI {
 	/**
 	 * Creates a PayPal order.
 	 *
-	 * @param array $order_data Order data
+	 * @param array $order_data Order data.
 	 * @return array|WP_Error Order data or WP_Error on failure
 	 */
 	public function create_order( $order_data ) {
@@ -201,7 +236,7 @@ class PaypalAPI {
 	/**
 	 * Retrieves a PayPal product by its ID.
 	 *
-	 * @param $vault_id
+	 * @param mixed $vault_id Vault identifier.
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -227,7 +262,7 @@ class PaypalAPI {
 	/**
 	 * Retrieves the details of a PayPal order.
 	 *
-	 * @param $token
+	 * @param mixed $token Token.
 	 * @return array|WP_Error
 	 * @since 1.0.0
 	 */
@@ -238,10 +273,10 @@ class PaypalAPI {
 	/**
 	 * Refunds a captured payment.
 	 *
-	 * @param string      $capture_id Capture ID
-	 * @param float|null  $amount Refund amount
-	 * @param string|null $currency Currency code
-	 * @param string      $reason Refund reason
+	 * @param string      $capture_id Capture ID.
+	 * @param float|null  $amount Refund amount.
+	 * @param string|null $currency Currency code.
+	 * @param string      $reason Refund reason.
 	 * @return array|WP_Error Refund data or WP_Error on failure
 	 */
 	public function refund_capture( $capture_id, $amount = null, $currency = null, $reason = '' ) {

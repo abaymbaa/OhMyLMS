@@ -4,15 +4,17 @@ namespace OhMyLMS\Factory;
 
 use OhMyLMS\Data\Session;
 
+/**
+ * Plugin session factory implementation.
+ */
 class SessionFactory {
 
 	/**
 	 * Get session object
 	 *
-	 * @param bool $session_id
+	 * @param bool $session_id Session identifier.
 	 * @return bool|Session
-	 * @throws \Exception
-	 */
+	 * @throws \Exception When the operation cannot be completed.*/
 	public function get_session( $session_id = false ) {
 		$session_id = $this->get_session_id( $session_id );
 		if ( ! $session_id ) {
@@ -24,7 +26,7 @@ class SessionFactory {
 	/**
 	 * Get session id
 	 *
-	 * @param $session
+	 * @param mixed $session Session.
 	 * @return bool|int
 	 */
 	private function get_session_id( $session ) {

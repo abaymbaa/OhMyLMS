@@ -563,7 +563,7 @@ export function createTopCoursePerformance( readRuntime ) {
 															'ohmylms'
 														) }
 													</Controls.TextWP>
-													{ 0 == r && (
+													{ Number( r ) === 0 && (
 														<React.Fragment>
 															<Controls.SpacerWP
 																marginBottom={

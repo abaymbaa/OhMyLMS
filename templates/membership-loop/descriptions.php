@@ -23,12 +23,12 @@ if ( empty( $description ) ) {
 
 // Character limit for truncation.
 $char_limit         = 200;
-$description_length = mb_strlen( strip_tags( $description ) );
+$description_length = mb_strlen( wp_strip_all_tags( $description ) );
 $needs_truncation   = $description_length > $char_limit;
 $unique_id          = 'membership-desc-' . $membership->get_id();
 
 if ( $needs_truncation ) {
-	$short_description = mb_substr( strip_tags( $description ), 0, $char_limit );
+	$short_description = mb_substr( wp_strip_all_tags( $description ), 0, $char_limit );
 	?>
 	<div class="membership-description-wrapper" data-desc-id="<?php echo esc_attr( $unique_id ); ?>">
 		<p class="membership-description membership-description-short">

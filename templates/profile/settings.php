@@ -36,7 +36,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					</label>
 
 					<span class="ohmylms-input-wrapper">
-						<input type="text" name="first_name" placeholder="<?php echo esc_attr__( 'Enter your first name', 'ohmylms' ); ?>" value="<?php echo $student->get_first_name(); ?>">
+						<input type="text" name="first_name" placeholder="<?php echo esc_attr__( 'Enter your first name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_first_name() ); ?>">
 					</span>
 				</div>
 
@@ -47,7 +47,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					</label>
 
 					<span class="ohmylms-input-wrapper">
-						<input type="text" name="last_name" placeholder="<?php echo esc_attr__( 'Enter your last name', 'ohmylms' ); ?>" value="<?php echo $student->get_last_name(); ?>">
+						<input type="text" name="last_name" placeholder="<?php echo esc_attr__( 'Enter your last name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_last_name() ); ?>">
 					</span>
 				</div>
 
@@ -58,7 +58,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					</label>
 
 					<span class="ohmylms-input-wrapper">
-						<input type="text" name="display_name" placeholder="<?php echo esc_attr__( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo $student->get_display_name(); ?>">
+						<input type="text" name="display_name" placeholder="<?php echo esc_attr__( 'Enter your display name', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_display_name() ); ?>">
 					</span>
 				</div>
 
@@ -69,7 +69,7 @@ do_action( 'ohmylms_before_edit_account_form' );
 					</label>
 
 					<span class="ohmylms-input-wrapper">
-						<input type="email" name="email" placeholder="<?php echo esc_attr__( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo $student->get_email(); ?>">
+						<input type="email" name="email" placeholder="<?php echo esc_attr__( 'Enter your email address', 'ohmylms' ); ?>" value="<?php echo esc_attr( $student->get_email() ); ?>">
 					</span>
 				</div>
 			</div>

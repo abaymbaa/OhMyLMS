@@ -73,7 +73,7 @@ export function createEmailButtonPosition( readRuntime ) {
 														_eLocal6
 													) {
 														if (
-															'object' !=
+															'object' !==
 																p4(
 																	_eLocal6
 																) ||
@@ -95,7 +95,7 @@ export function createEmailButtonPosition( readRuntime ) {
 																	'string'
 																);
 															if (
-																'object' !=
+																'object' !==
 																p4( _nLocal2 )
 															) {
 																return _nLocal2;
@@ -108,7 +108,7 @@ export function createEmailButtonPosition( readRuntime ) {
 															_eLocal6
 														);
 													} )( _eLocal5 );
-													return 'symbol' ==
+													return 'symbol' ===
 														p4( _tLocal2 )
 														? _tLocal2
 														: _tLocal2 + '';

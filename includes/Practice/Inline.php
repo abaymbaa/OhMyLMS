@@ -25,6 +25,9 @@ defined( 'ABSPATH' ) || exit;
  * never affect lesson completion.
  */
 final class Inline {
+	/**
+	 * Register for Inline.
+	 */
 	public static function register() {
 		add_shortcode( 'ohmylms_question', array( __CLASS__, 'shortcode' ) );
 		ohmylms_register_activity(
@@ -38,6 +41,11 @@ final class Inline {
 		);
 	}
 
+	/**
+	 * Shortcode for Inline.
+	 *
+	 * @param mixed $attributes Attributes.
+	 */
 	public static function shortcode( $attributes ) {
 		// Rich editors may turn quotes into curly quotes or drop them, so find the UUID in any attribute.
 		$raw  = implode( ' ', array_map( 'strval', (array) $attributes ) );
@@ -53,7 +61,7 @@ final class Inline {
 	 * unknown questions are left as they are; the shortcode keeps working on the page either way.
 	 *
 	 * @param string        $content Block-editor content.
-	 * @param callable|null $lookup  UUID to question ID; defaults to the question bank.
+	 * @param callable|null $lookup UUID to question ID; defaults to the question bank.
 	 * @return string Content with standalone checks as blocks.
 	 */
 	public static function blocks_from_shortcodes( $content, $lookup = null ) {
@@ -81,13 +89,22 @@ final class Inline {
 		return preg_replace_callback( '#<!-- wp:paragraph -->\s*<p>\s*' . $check . '\s*</p>\s*<!-- /wp:paragraph -->#i', $convert, $content );
 	}
 
-	/** Version shown inline: the approved one; editors may preview an unapproved current version. */
+	/** Version shown inline: the approved one; editors may preview an unapproved current version.
+	 *
+	 * @param mixed $uuid Uuid.
+	 * @param mixed $preview Preview.
+	 */
 	private static function version_for( $uuid, &$preview ) {
 		$preview     = false;
 		$question_id = VersionPublisher::question_by_uuid( $uuid );
 		return $question_id ? DeliveryPolicy::snapshot( $question_id, DeliveryPolicy::INLINE, $preview ) : null;
 	}
 
+	/**
+	 * Render for Inline.
+	 *
+	 * @param mixed $uuid Uuid.
+	 */
 	public static function render( $uuid ) {
 		if ( ! Schema::ready() || ! \OhMyLMS\Assessment\Engine::practice() || ! preg_match( '/^[0-9a-f-]{36}$/', $uuid ) ) {
 			return ''; }
@@ -139,13 +156,22 @@ final class Inline {
 		return ob_get_clean();
 	}
 
-	/** Signed public token: version.lesson.nonce.signature (per render). */
+	/** Signed public token: version.lesson.nonce.signature (per render).
+	 *
+	 * @param mixed $version_id Version identifier.
+	 * @param mixed $lesson_id Lesson identifier.
+	 */
 	public static function sign( $version_id, $lesson_id ) {
 		$payload = (int) $version_id . '.' . (int) $lesson_id . '.' . wp_generate_password( 12, false, false );
 		return $payload . '.' . substr( hash_hmac( 'sha256', $payload, wp_salt( 'auth' ) ), 0, 32 );
 	}
 
-	/** @return array{version_id:int,lesson_id:int}|null */
+	/**
+	 * Verify for Inline.
+	 *
+	 * @return array{version_id:int,lesson_id:int}|null
+	 * @param mixed $token Token.
+	 */
 	public static function verify( $token ) {
 		if ( ! is_string( $token ) || ! preg_match( '/^(\d+)\.(\d+)\.([A-Za-z0-9]{12})\.([0-9a-f]{32})$/', $token, $match ) ) {
 			return null; }
@@ -159,12 +185,20 @@ final class Inline {
 		);
 	}
 
-	/** Numbers of a template question are fixed by the render's own token, so grading sees what was shown. */
+	/** Numbers of a template question are fixed by the render's own token, so grading sees what was shown.
+	 *
+	 * @param mixed $token Token.
+	 */
 	public static function seed( $token ) {
 		$claims = self::verify( $token );
 		return $claims ? \OhMyLMS\Assessment\Template::seed_from( $claims['nonce'] ) : 0;
 	}
 
+	/**
+	 * Scope for Inline.
+	 *
+	 * @param mixed $token Token.
+	 */
 	public static function scope( $token ) {
 		return 'i' . substr( hash( 'sha256', (string) $token ), 0, 16 );
 	}
@@ -172,6 +206,10 @@ final class Inline {
 	/**
 	 * Grade an inline answer for a learner or guest. Every answer is kept; only the first
 	 * answer to a question counts as first-try evidence.
+	 *
+	 * @param mixed $token Token.
+	 * @param mixed $response Response data.
+	 * @param array $owner Owner.
 	 */
 	public static function answer( $token, $response, array $owner ) {
 		global $wpdb;
@@ -206,7 +244,7 @@ final class Inline {
 		if ( ! $claims['lesson_id'] || get_post_status( $claims['lesson_id'] ) !== 'publish' ) {
 			return new \WP_Error( 'ohmylms_inline_unavailable', __( 'Question unavailable.', 'ohmylms' ), array( 'status' => 410 ) ); }
 		$session  = self::session( $owner, $claims['lesson_id'], (int) $version['id'] );
-		$position = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(position) FROM ' . Schema::table( 'practice_items' ) . ' WHERE session_id=%d', (int) $session['id'] ) );
+		$position = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(position) FROM %i WHERE session_id=%d', Schema::table( 'practice_items' ), (int) $session['id'] ) );
 		$item_id  = Sessions::add_item( (int) $session['id'], (int) $version['id'], $position, self::seed( $token ) );
 		$item     = null;
 		foreach ( Sessions::items( $session['id'] ) as $candidate ) {
@@ -216,7 +254,12 @@ final class Inline {
 		return Sessions::grade_item( $session, $item, $response, 'inline', self::scope( $token ) );
 	}
 
-	/** One inline session per owner and lesson. */
+	/** One inline session per owner and lesson.
+	 *
+	 * @param array $owner Owner.
+	 * @param mixed $lesson_id Lesson identifier.
+	 * @param mixed $version_id Version identifier.
+	 */
 	private static function session( array $owner, $lesson_id, $version_id ) {
 		global $wpdb;
 		$table  = Schema::table( 'practice_sessions' );
@@ -249,6 +292,9 @@ final class Inline {
 		return Sessions::get( $uuid );
 	}
 
+	/**
+	 * Enqueue for Inline.
+	 */
 	private static function enqueue() {
 		if ( wp_script_is( 'ohmylms-inline-check', 'enqueued' ) ) {
 			return; }
@@ -258,6 +304,9 @@ final class Inline {
 		wp_enqueue_style( 'ohmylms-practice', plugins_url( 'assets/css/practice.css', OHMYLMS_FILE ), array(), OHMYLMS_VERSION );
 	}
 
+	/**
+	 * Client config for Inline.
+	 */
 	public static function client_config() {
 		return array(
 			'root'        => esc_url_raw( rest_url( 'ohmylms/v1/' ) ),

@@ -8,6 +8,9 @@ namespace OhMyLMS\Extensions;
 
 /** Core modules always load, bundled modules use Add-ons switches; project modules use trusted configuration. */
 final class Modules {
+	/**
+	 * Load for Modules.
+	 */
 	public static function load() {
 		$enabled = defined( 'OHMYLMS_ENABLED_MODULES' ) ? OHMYLMS_ENABLED_MODULES : array();
 		$enabled = apply_filters( 'ohmylms_enabled_modules', $enabled );

@@ -13,6 +13,11 @@ namespace OhMyLMS\SetupWizard;
  */
 class CreateContact {
 
+	/**
+	 * WebHookUrl.
+	 *
+	 * @var mixed
+	 */
 	protected $webHookUrl = array(
 		'https://useraccount.getwpfunnels.com/?mailmint=1&route=webhook&topic=contact&hash=f9fcd11c-fde8-4c7f-9810-0ebb02d2740e',
 	);
@@ -92,9 +97,9 @@ class CreateContact {
 	/**
 	 * Constructor
 	 *
-	 * @param string $email
-	 * @param string $name
-	 * @param array  $setup_data
+	 * @param string $email Email.
+	 * @param string $name Name.
+	 * @param array  $setup_data Setup data.
 	 * @since 3.3.2
 	 */
 	public function __construct( $email, $name, $setup_data = array() ) {
@@ -182,7 +187,7 @@ class CreateContact {
 	/**
 	 * Modify contact data before sending to appsero
 	 *
-	 * @param array $data
+	 * @param array $data Input data.
 	 * @return array
 	 * @since 3.3.2
 	 */

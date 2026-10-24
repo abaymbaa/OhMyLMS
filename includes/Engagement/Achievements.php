@@ -9,8 +9,15 @@
  */
 namespace OhMyLMS\Engagement;
 
+/**
+ * Plugin achievements implementation.
+ */
 class Achievements {
-	/** Serialize an award or spend for a learner, including the balance check. */
+	/** Serialize an award or spend for a learner, including the balance check.
+	 *
+	 * @param mixed    $user_id User identifier.
+	 * @param callable $work Work.
+	 */
 	public static function locked( $user_id, callable $work ) {
 		global $wpdb;
 		$key = 'ohmylms-award-' . md5( $wpdb->prefix . ':' . (int) $user_id );
@@ -24,7 +31,7 @@ class Achievements {
 	/**
 	 * Insert a new achievement.
 	 *
-	 * @param array $data
+	 * @param array $data Input data.
 	 * @return int|false
 	 * @since 1.0.0
 	 */
@@ -39,6 +46,11 @@ class Achievements {
 		);
 	}
 
+	/**
+	 * Persist for Achievements.
+	 *
+	 * @param mixed $data Input data.
+	 */
 	private static function persist( $data ) {
 		global $wpdb;
 		$table_name = $wpdb->prefix . 'ohmylms_user_achievement';
@@ -71,14 +83,14 @@ class Achievements {
 	/**
 	 * Check if an achievement exists for a user.
 	 *
-	 * @param int      $user_id
-	 * @param string   $type
-	 * @param int|null $course_id
-	 * @param int|null $membership_id
-	 * @param int|null $content_id
-	 * @param string   $badge_id
-	 * @param string   $level_id
-	 * @param string   $reason
+	 * @param int      $user_id User identifier.
+	 * @param string   $type Type.
+	 * @param int|null $course_id Course identifier.
+	 * @param int|null $membership_id Membership identifier.
+	 * @param int|null $content_id Content identifier.
+	 * @param string   $badge_id Badge identifier.
+	 * @param string   $level_id Level identifier.
+	 * @param string   $reason Reason.
 	 * @return bool
 	 * @since 1.0.0
 	 */

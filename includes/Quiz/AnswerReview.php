@@ -493,11 +493,11 @@ final class AnswerReview {
 	private static function part_rows( array $settings, array $given, array $marks ) {
 		$parts = array();
 		foreach ( Structured::parts( $settings ) as $part ) {
-			$id      = $part['id'];
-			$text    = isset( $given[ $id ] ) && is_scalar( $given[ $id ] ) ? trim( (string) $given[ $id ] ) : '';
+			$id   = $part['id'];
+			$text = isset( $given[ $id ] ) && is_scalar( $given[ $id ] ) ? trim( (string) $given[ $id ] ) : '';
 			if ( 'question' === $part['kind'] ) {
 				$child = StructuredPart::snapshot( $part );
-				$text = implode( '; ', ReviewLines::given( $child->get_type(), (array) ( $given[ $id ] ?? array() ), $child->get_settings() ) ?? self::given_lines( $child->get_type(), self::options( $child ), (array) ( $given[ $id ] ?? array() ) ) );
+				$text  = implode( '; ', ReviewLines::given( $child->get_type(), (array) ( $given[ $id ] ?? array() ), $child->get_settings() ) ?? self::given_lines( $child->get_type(), self::options( $child ), (array) ( $given[ $id ] ?? array() ) ) );
 			}
 			$mark    = $marks[ $id ] ?? null;
 			$max     = $mark ? (float) $mark['max'] : (float) $part['marks'];
@@ -515,7 +515,7 @@ final class AnswerReview {
 			$expected = null;
 			if ( 'question' === $part['kind'] ) {
 				$expected_lines = ReviewLines::expected( $child->get_type(), $child->get_settings() ) ?: self::expected_lines( $child->get_type(), $child, self::options( $child ), $child->get_settings() );
-				$expected = $expected_lines ? implode( '; ', $expected_lines ) : null;
+				$expected       = $expected_lines ? implode( '; ', $expected_lines ) : null;
 			} elseif ( 'numerical' === $part['kind'] ) {
 				$numbers  = isset( $part['answers'] ) && is_array( $part['answers'] ) ? $part['answers'] : ( isset( $part['answer'] ) ? array( $part['answer'] ) : array() );
 				$expected = trim( implode( ' / ', array_map( 'strval', array_filter( $numbers, 'is_scalar' ) ) ) . ' ' . $unit );
@@ -640,7 +640,18 @@ final class AnswerReview {
 		}
 		$lines = array();
 		foreach ( $given as $key => $value ) {
-			$value = is_array( $value ) ? implode( ', ', array_filter( array_map( static function ( $item ) { return is_scalar( $item ) ? (string) $item : wp_json_encode( $item ); }, $value ), 'strlen' ) ) : trim( (string) $value );
+			$value = is_array( $value ) ? implode(
+				', ',
+				array_filter(
+					array_map(
+						static function ( $item ) {
+							return is_scalar( $item ) ? (string) $item : wp_json_encode( $item );
+						},
+						$value
+					),
+					'strlen'
+				)
+			) : trim( (string) $value );
 			if ( '' === $value ) {
 				continue;
 			}

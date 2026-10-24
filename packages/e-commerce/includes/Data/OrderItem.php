@@ -34,6 +34,8 @@ class OrderItem extends Data {
 	);
 
 	/**
+	 * The type of the object, in this case, 'order_item'.
+	 *
 	 * @var string The type of the object, in this case, 'order_item'.
 	 */
 	protected string $object_type = 'order_item';
@@ -44,7 +46,7 @@ class OrderItem extends Data {
 	 * Initializes the OrderItemCourse object. If an item is provided, it sets the ID and reads the data store.
 	 *
 	 * @param int|\WC_Order_Item $item The item to initialize. Default is 0.
-	 *
+	 * .
 	 * @since 1.0.0
 	 */
 	public function __construct( $item = 0 ) {
@@ -83,6 +85,11 @@ class OrderItem extends Data {
 		return '';
 	}
 
+	/**
+	 * Get order id for Order item.
+	 *
+	 * @param string $context Context.
+	 */
 	public function get_order_id( $context = 'view' ) {
 		return $this->get_prop( 'order_id', $context );
 	}
@@ -119,10 +126,20 @@ class OrderItem extends Data {
 		return $this->get_prop( 'course_id', $context );
 	}
 
+	/**
+	 * Set name for Order item.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public function set_name( $value ) {
 		$this->set_prop( 'name', $value );
 	}
 
+	/**
+	 * Set quantity for Order item.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public function set_quantity( $value ) {
 		$this->set_prop( 'quantity', absint( $value ) );
 	}

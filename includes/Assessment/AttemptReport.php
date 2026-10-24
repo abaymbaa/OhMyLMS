@@ -21,6 +21,9 @@ final class AttemptReport {
 	/**
 	 * Maximum marks and passing mark an attempt is judged against: the frozen revision
 	 * for versioned attempts, the current quiz settings for legacy attempts.
+	 *
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $quiz Quiz.
 	 */
 	public static function basis( $attempt_id, $quiz ) {
 		$context = Schema::ready() ? AttemptItems::context( $attempt_id ) : null;
@@ -40,11 +43,18 @@ final class AttemptReport {
 		);
 	}
 
+	/**
+	 * Parts for Attempt report.
+	 *
+	 * @param mixed            $attempt_id Attempt identifier.
+	 * @param array            $item Item.
+	 * @param QuestionSnapshot $snapshot Snapshot.
+	 */
 	public static function parts( $attempt_id, array $item, QuestionSnapshot $snapshot ) {
 		global $wpdb;
 		$weights = Structured::weights( $snapshot->get_settings() );
 		$awards  = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT part_id, awarded, grader FROM ' . Schema::table( 'grade_events' ) . " WHERE source_type='quiz' AND source_id=%d AND item_id=%d AND superseded_by=0 AND part_id<>''", (int) $attempt_id, (int) $item['id'] ), ARRAY_A ) as $event ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT part_id, awarded, grader FROM %i WHERE source_type=\'quiz\' AND source_id=%d AND item_id=%d AND superseded_by=0 AND part_id<>\'\'', Schema::table( 'grade_events' ), (int) $attempt_id, (int) $item['id'] ), ARRAY_A ) as $event ) {
 			$awards[ $event['part_id'] ] = array(
 				'awarded' => (float) $event['awarded'],
 				'grader'  => $event['grader'],
@@ -62,10 +72,16 @@ final class AttemptReport {
 		return $parts;
 	}
 
+	/**
+	 * Versioned for Attempt report.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public static function versioned( $quiz_id, $attempt_id ) {
 		global $wpdb;
 		$answers = array();
-		foreach ( $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id=%d", $attempt_id ), ARRAY_A ) as $row ) {
+		foreach ( $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE quiz_attempt_id=%d', $wpdb->prefix . 'ohmylms_quiz_attempts_answers', $attempt_id ), ARRAY_A ) as $row ) {
 			$answers[ (int) $row['question_id'] ] = $row;
 		}
 		$context   = AttemptItems::context( $attempt_id );
@@ -80,7 +96,7 @@ final class AttemptReport {
 			$by_id   = array();
 			foreach ( $snapshot->get_questions() as $option ) {
 				$by_id[ (int) $option['id'] ] = $option + array( 'question_id' => $snapshot->get_id() ); }
-			foreach ( $item['option_order'] ?: array_keys( $by_id ) as $option_id ) {
+			foreach ( $item['option_order'] ? $item['option_order'] : array_keys( $by_id ) as $option_id ) {
 				if ( isset( $by_id[ (int) $option_id ] ) ) {
 					$options[] = $by_id[ (int) $option_id ]; }
 			}
@@ -152,7 +168,7 @@ final class AttemptReport {
 		return array(
 			'questions'            => $questions,
 			'quiz_attempt_id'      => (int) $attempt_id,
-			'status'               => $wpdb->get_var( $wpdb->prepare( "SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id=%d AND quiz_id=%d", $attempt_id, $quiz_id ) ),
+			'status'               => $wpdb->get_var( $wpdb->prepare( 'SELECT status FROM %i WHERE id=%d AND quiz_id=%d', $wpdb->prefix . 'ohmylms_quiz_attempts', $attempt_id, $quiz_id ) ),
 			'total_achieved_marks' => round( $total, 4 ),
 			'engine'               => 'versioned',
 			'scoring'              => $context['scoring'],

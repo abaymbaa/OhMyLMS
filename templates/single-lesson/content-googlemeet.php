@@ -117,7 +117,7 @@ $details         = implode(
 	PHP_EOL,
 	array(
 		"Topic: {$topic}",
-		'Agenda: ' . wp_strip_all_tags( $post_content_raw ?: ( $event_data['description'] ?? '' ) ),
+		'Agenda: ' . wp_strip_all_tags( $post_content_raw ? $post_content_raw : ( $event_data['description'] ?? '' ) ),
 		"Join URL: {$meet_link}",
 		"Meeting ID: {$meeting_id}",
 		"Duration: {$duration_formatted}",
@@ -243,7 +243,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 
 				<span class="copy-btn" data-copy-target="meeting-id">
 					<strong><?php esc_html_e( 'Meeting ID:', 'ohmylms' ); ?></strong>
-					<span id="meeting-id"><?php echo esc_html( $meeting_id ?: '—' ); ?></span>
+					<span id="meeting-id"><?php echo esc_html( $meeting_id ? $meeting_id : '—' ); ?></span>
 					<?php echo $copy_icon; ?>
 					<span class="copied-message">Copied!</span>
 				</span>
@@ -284,7 +284,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 
 				<span class="copy-btn" data-copy-target="meeting-id">
 					<strong><?php esc_html_e( 'Meeting ID:', 'ohmylms' ); ?></strong>
-					<span id="meeting-id"><?php echo esc_html( $meeting_id ?: '—' ); ?></span>
+					<span id="meeting-id"><?php echo esc_html( $meeting_id ? $meeting_id : '—' ); ?></span>
 					<?php echo $copy_icon; ?>
 					<span class="copied-message">Copied!</span>
 				</span>
@@ -311,7 +311,7 @@ $copy_icon = '<svg width="20" height="20" fill="none" stroke="currentColor" stro
 
 				<span class="copy-btn" data-copy-target="meeting-id">
 					<strong><?php esc_html_e( 'Meeting ID:', 'ohmylms' ); ?></strong>
-					<span id="meeting-id"><?php echo esc_html( $meeting_id ?: '—' ); ?></span>
+					<span id="meeting-id"><?php echo esc_html( $meeting_id ? $meeting_id : '—' ); ?></span>
 					<?php echo $copy_icon; ?>
 					<span class="copied-message">Copied!</span>
 				</span>

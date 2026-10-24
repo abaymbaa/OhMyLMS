@@ -753,6 +753,7 @@ class MyCoursesWidget extends Widget_Base {
 	 * Render widget output on the frontend
 	 *
 	 * @return void
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	protected function render() {
 		// Enqueue assets directly here — the most reliable approach for Elementor

@@ -2,55 +2,61 @@ import { createElement, useEffect, useState, useId } from '@wordpress/element';
 import { Modal, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 const accountFields = [
-	[ 'first_name', 'First name', 'text', true ],
-	[ 'last_name', 'Last name', 'text', false ],
-	[ 'email', 'Email', 'email', true ],
-	[ 'username', 'Username (optional)', 'text', false ],
+	[ 'first_name', __( 'First name', 'ohmylms' ), 'text', true ],
+	[ 'last_name', __( 'Last name', 'ohmylms' ), 'text', false ],
+	[ 'email', __( 'Email', 'ohmylms' ), 'email', true ],
+	[ 'username', __( 'Username (optional)', 'ohmylms' ), 'text', false ],
 ];
 const kinds = {
 	students: {
-		title: 'Add student',
+		title: __( 'Add student', 'ohmylms' ),
 		path: 'users',
 		role: 'student',
 		account: true,
 	},
 	teachers: {
-		title: 'Add teacher',
+		title: __( 'Add teacher', 'ohmylms' ),
 		path: 'users',
 		role: 'teacher',
 		account: true,
 	},
 	parents: {
-		title: 'Add parent',
+		title: __( 'Add parent', 'ohmylms' ),
 		path: 'users',
 		role: 'parent',
 		account: true,
 	},
 	users: {
-		title: 'Add user',
+		title: __( 'Add user', 'ohmylms' ),
 		path: 'users',
 		account: true,
 	},
 	classes: {
-		title: 'Create independent class',
+		title: __( 'Create independent class', 'ohmylms' ),
 		path: 'classes',
 		fields: [
-			[ 'name', 'Class name', 'text', true ],
-			[ 'subject', 'Subject', 'text', false ],
-			[ 'grade', 'Grade', 'text', false ],
+			[ 'name', __( 'Class name', 'ohmylms' ), 'text', true ],
+			[ 'subject', __( 'Subject', 'ohmylms' ), 'text', false ],
+			[ 'grade', __( 'Grade', 'ohmylms' ), 'text', false ],
 		],
 	},
 	schools: {
-		title: 'Create school',
+		title: __( 'Create school', 'ohmylms' ),
 		path: 'schools',
 		fields: [
-			[ 'name', 'School name', 'text', true ],
-			[ 'timezone', 'Timezone', 'text', true, 'Asia/Ulaanbaatar' ],
+			[ 'name', __( 'School name', 'ohmylms' ), 'text', true ],
+			[
+				'timezone',
+				__( 'Timezone', 'ohmylms' ),
+				'text',
+				true,
+				'Asia/Ulaanbaatar',
+			],
 		],
 	},
 };
 export function addLabel( kind ) {
-	return kinds[ kind ]?.title || 'Add';
+	return kinds[ kind ]?.title || __( 'Add', 'ohmylms' );
 }
 export function AddModal( { kind, onClose, onSaved } ) {
 	const _controlId = useId();
@@ -63,7 +69,7 @@ export function AddModal( { kind, onClose, onSaved } ) {
 	const fields = config.account ? accountFields : config.fields;
 	return (
 		<Modal
-			title={ __( config.title, 'ohmylms' ) }
+			title={ config.title }
 			onRequestClose={ () => ! saving && onClose() }
 		>
 			<form
@@ -137,7 +143,7 @@ export function AddModal( { kind, onClose, onSaved } ) {
 										_controlId + '-field-2' + '-' + name
 									}
 								>
-									{ __( label, 'ohmylms' ) }
+									{ label }
 									{ required ? ' *' : '' }
 									<br />
 									<input
@@ -224,9 +230,9 @@ export function EditModal( { id, onClose, onSaved } ) {
 			.then( setUser, ( failure ) => setError( failure.message ) );
 	}, [ id ] );
 	const fields = [
-		[ 'first_name', 'First name', 'text', true ],
-		[ 'last_name', 'Last name', 'text', false ],
-		[ 'email', 'Email', 'email', true ],
+		[ 'first_name', __( 'First name', 'ohmylms' ), 'text', true ],
+		[ 'last_name', __( 'Last name', 'ohmylms' ), 'text', false ],
+		[ 'email', __( 'Email', 'ohmylms' ), 'email', true ],
 	];
 	return (
 		<Modal
@@ -283,7 +289,7 @@ export function EditModal( { id, onClose, onSaved } ) {
 										_controlId2 + '-field-4' + '-' + name
 									}
 								>
-									{ __( label, 'ohmylms' ) }
+									{ label }
 									{ required ? ' *' : '' }
 									<br />
 									<input

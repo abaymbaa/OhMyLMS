@@ -6,14 +6,28 @@ use OhMyLMS\Commerce\Abstracts\RestController;
 use OhMyLMS\Commerce\Data\Coupon;
 use OhMyLMS\Commerce\EcommerceDateTime;
 
+/**
+ * Plugin coupon controller implementation.
+ */
 class CouponController extends RestController {
 
+	/**
+	 * Base.
+	 *
+	 * @var mixed
+	 */
 	protected $base = 'coupons';
 
+	/**
+	 * Check coupon permission for Coupon controller.
+	 */
 	public function check_coupon_permission() {
 		return current_user_can( 'edit_posts' );
 	}
 
+	/**
+	 * Register routes for Coupon controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -85,6 +99,11 @@ class CouponController extends RestController {
 		);
 	}
 
+	/**
+	 * Get items for Coupon controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_items( $request ) {
 		$args = array(
 			'post_type'      => 'ohmylms_coupon',
@@ -152,6 +171,11 @@ class CouponController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Update item status for Coupon controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function update_item_status( $request ) {
 		$id     = isset( $request['id'] ) ? absint( $request['id'] ) : 0;
 		$status = isset( $request['status'] ) ? sanitize_key( $request['status'] ) : 'publish';

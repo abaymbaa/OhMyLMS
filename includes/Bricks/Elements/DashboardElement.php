@@ -22,13 +22,46 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class DashboardElement extends \Bricks\Element {
 
+	/**
+	 * Category.
+	 *
+	 * @var mixed
+	 */
 	public $category = 'ohmylms';
-	public $name     = 'ohmylms-dashboard';
-	public $icon     = 'ti-dashboard';
+	/**
+	 * Name.
+	 *
+	 * @var mixed
+	 */
+	public $name = 'ohmylms-dashboard';
+	/**
+	 * Icon.
+	 *
+	 * @var mixed
+	 */
+	public $icon = 'ti-dashboard';
+	/**
+	 * Keywords.
+	 *
+	 * @var mixed
+	 */
 	public $keywords = array( 'dashboard', 'student', 'creator', 'lms' );
-	public $scripts  = array( 'ohmylms-frontend' );
-	public $styles   = array( 'ohmylms-frontend' );
+	/**
+	 * Scripts.
+	 *
+	 * @var mixed
+	 */
+	public $scripts = array( 'ohmylms-frontend' );
+	/**
+	 * Styles.
+	 *
+	 * @var mixed
+	 */
+	public $styles = array( 'ohmylms-frontend' );
 
+	/**
+	 * Get label for Dashboard element.
+	 */
 	public function get_label() {
 		return esc_html__( 'OhMyLMS Dashboard', 'ohmylms' );
 	}
@@ -37,6 +70,9 @@ class DashboardElement extends \Bricks\Element {
 	// Controls
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Set controls for Dashboard element.
+	 */
 	public function set_controls() {
 		$this->controls       = array();
 		$this->control_groups = array();
@@ -44,6 +80,9 @@ class DashboardElement extends \Bricks\Element {
 		$this->set_style_controls();
 	}
 
+	/**
+	 * Set content controls for Dashboard element.
+	 */
 	private function set_content_controls() {
 		$this->controls['show_header'] = array(
 			'tab'     => 'content',
@@ -67,6 +106,9 @@ class DashboardElement extends \Bricks\Element {
 		);
 	}
 
+	/**
+	 * Set style controls for Dashboard element.
+	 */
 	private function set_style_controls() {
 
 		$this->control_groups['header_style']        = array(
@@ -317,6 +359,9 @@ class DashboardElement extends \Bricks\Element {
 	// Helpers
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Is bricks edit mode for Dashboard element.
+	 */
 	private function is_bricks_edit_mode() {
 		if ( function_exists( 'bricks_is_builder' ) && bricks_is_builder() ) {
 			return true;
@@ -330,6 +375,11 @@ class DashboardElement extends \Bricks\Element {
 		return false;
 	}
 
+	/**
+	 * Extract color for Dashboard element.
+	 *
+	 * @param mixed $color Color.
+	 */
 	private function extract_color( $color ) {
 		if ( is_array( $color ) ) {
 			if ( ! empty( $color['hex'] ) ) {
@@ -343,6 +393,11 @@ class DashboardElement extends \Bricks\Element {
 		return is_string( $color ) ? $color : '';
 	}
 
+	/**
+	 * Build shortcode attrs for Dashboard element.
+	 *
+	 * @param mixed $settings Configuration settings.
+	 */
 	private function build_shortcode_attrs( $settings ) {
 		$attrs = array(
 			'show_header'    => ( isset( $settings['show_header'] ) && true === $settings['show_header'] ) ? 'yes' : 'no',
@@ -405,6 +460,9 @@ class DashboardElement extends \Bricks\Element {
 	// Render
 	// -------------------------------------------------------------------------
 
+	/**
+	 * Render for Dashboard element.
+	 */
 	public function render() {
 		$settings        = $this->settings;
 		$is_edit_mode    = $this->is_bricks_edit_mode();

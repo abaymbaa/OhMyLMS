@@ -19,10 +19,21 @@ use WP_Error;
  * @since 1.0.0
  */
 class EngagementController extends RestController {
+	/**
+	 * Valid group for Engagement controller.
+	 *
+	 * @param mixed $group Group.
+	 */
 	private function valid_group( $group ) {
 		return in_array( $group, apply_filters( 'ohmylms_engagement_setting_groups', array( 'point', 'badge', 'level', 'reward', 'leaderboard', 'streak', 'xp', 'score', 'mastery' ) ), true );
 	}
 
+	/**
+	 * Validate settings for Engagement controller.
+	 *
+	 * @param mixed $group Group.
+	 * @param mixed $settings Configuration settings.
+	 */
 	private function validate_settings( $group, $settings ) {
 		if ( 'xp' === $group ) {
 			return \OhMyLMS\Engagement\XpSettings::validate( $settings ); }
@@ -310,6 +321,11 @@ class EngagementController extends RestController {
 		);
 	}
 
+	/**
+	 * Generate slug for Engagement controller.
+	 *
+	 * @param mixed $string String.
+	 */
 	public function generate_slug( $string ) {
 		// Convert to lowercase.
 		$slug = strtolower( $string );
@@ -483,40 +499,40 @@ class EngagementController extends RestController {
 			'rules'  => array(
 				array(
 					'label'     => __( 'Course completion rate', 'ohmylms' ),
-					'tooltip'   => __( '', 'ohmylms' ),
+					'tooltip'   => '',
 					'slug'      => 'course_completion_rate',
 					'value'     => true,
 					'threshold' => 100,
 				),
 				array(
 					'label'   => __( 'Complete lesson', 'ohmylms' ),
-					'tooltip' => __( '', 'ohmylms' ),
+					'tooltip' => '',
 					'slug'    => 'lesson_complete',
 					'value'   => true,
 				),
 				array(
 					'label'     => __( 'Quiz passing mark', 'ohmylms' ),
-					'tooltip'   => __( '', 'ohmylms' ),
+					'tooltip'   => '',
 					'slug'      => 'quiz_passing_mark',
 					'value'     => true,
 					'threshold' => 30,
 				),
 				array(
 					'label'     => __( 'Assignment passing mark', 'ohmylms' ),
-					'tooltip'   => __( '', 'ohmylms' ),
+					'tooltip'   => '',
 					'slug'      => 'assignment_passing_mark',
 					'value'     => true,
 					'threshold' => 30,
 				),
 				array(
 					'label'   => __( 'Submit quiz', 'ohmylms' ),
-					'tooltip' => __( '', 'ohmylms' ),
+					'tooltip' => '',
 					'slug'    => 'submit_quiz',
 					'value'   => true,
 				),
 				array(
 					'label'   => __( 'Submit assignment', 'ohmylms' ),
-					'tooltip' => __( '', 'ohmylms' ),
+					'tooltip' => '',
 					'slug'    => 'submit_assignment',
 					'value'   => true,
 				),

@@ -25,6 +25,7 @@ class ShortcodeCourseList {
 	 * Render the course list
 	 *
 	 * @since 1.0.0
+	 * @param mixed $atts Atts.
 	 */
 	public static function output( $atts ): void {
 		// Enqueue shortcode styles.
@@ -228,6 +229,7 @@ class ShortcodeCourseList {
 	 * Show the list.
 	 *
 	 * @since 1.0.0
+	 * @param mixed $atts Atts.
 	 */
 	private static function course_list( $atts ) {
 		// Parse attributes with defaults.
@@ -311,7 +313,7 @@ class ShortcodeCourseList {
 	 * Generate CSS from shortcode attributes
 	 *
 	 * @since 1.0.0
-	 * @param array $attrs Shortcode attributes
+	 * @param array $attrs Shortcode attributes.
 	 * @return string Generated CSS
 	 */
 	private static function generate_custom_css( $attrs ) {
@@ -628,8 +630,8 @@ class ShortcodeCourseList {
 	 * Build typography styles from attributes
 	 *
 	 * @since 1.0.0
-	 * @param array  $attrs Shortcode attributes
-	 * @param string $prefix Attribute prefix (e.g., 'title_typography_')
+	 * @param array  $attrs Shortcode attributes.
+	 * @param string $prefix Attribute prefix (e.g., 'title_typography_').
 	 * @return array Array of CSS style strings
 	 */
 	private static function build_typography_styles( $attrs, $prefix ) {
@@ -690,6 +692,8 @@ class ShortcodeCourseList {
 
 	/**
 	 * Block render callback for Gutenberg block
+	 *
+	 * @param mixed $atts Atts.
 	 */
 	public static function block_render( $atts ) {
 		// Map camelCase block attributes to snake_case shortcode attributes.

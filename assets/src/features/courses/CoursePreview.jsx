@@ -101,9 +101,9 @@ export function createCoursePreview( readRuntime ) {
 			quizzes = l.quizzes,
 			assignments = l.assignments,
 			sessions = l.sessions,
-			m = QH( ( 0, ReactHooks.useState )( ! 1 ), 2 ),
-			p = ( m[ 0 ], m[ 1 ], QH( ( 0, ReactHooks.useState )( ! 1 ), 2 ) ),
-			v = ( p[ 0 ], p[ 1 ], QH( ( 0, ReactHooks.useState )( ! 1 ), 2 ) );
+			m = QH( ( 0, ReactHooks.useState )( ! 1 ), 2 );
+		void ( m[ 0 ], m[ 1 ], QH( ( 0, ReactHooks.useState )( ! 1 ), 2 ) );
+		QH( ( 0, ReactHooks.useState )( ! 1 ), 2 );
 		function h( e ) {
 			if ( ! e || ( ! e.hour && ! e.min && ! e.sec ) ) {
 				return ( 0, I18n.__ )( 'Not Set', 'ohmylms' );

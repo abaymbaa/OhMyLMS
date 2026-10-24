@@ -5,6 +5,8 @@
  * Functions for account specific things.
  *
  * @version 2.6.0
+ *
+ * @package OhMyLMS
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -12,7 +14,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Returns the url to the lost password endpoint url.
  *
- * @param  string $default_url Default lost password URL.
+ * @param string $default_url Default lost password URL.
  * @return string
  */
 function ohmylms_lostpassword_url( $default_url = '' ) {
@@ -58,8 +60,8 @@ function ohmylms_customer_edit_account_url() {
 /**
  * Get the edit address slug translation.
  *
- * @param  string $id   Address ID.
- * @param  bool   $flip Flip the array to make it possible to retrieve the values ​​from both sides.
+ * @param string $id Address ID.
+ * @param bool   $flip Flip the array to make it possible to retrieve the values ​​from both sides.
  *
  * @return string       Address slug i18n.
  */
@@ -191,6 +193,7 @@ function ohmylms_get_account_menu_item_classes( $endpoint ) {
  * @since 2.6.0
  * @param string $endpoint Endpoint.
  * @return string
+ * @param array  $query_params Query params.
  */
 function ohmylms_get_account_endpoint_url( $endpoint, $query_params = array() ) {
 	$hub_url = \OhMyLMS\Student\Hub::endpoint_url( $endpoint, $query_params );
@@ -328,7 +331,7 @@ function ohmylms_get_initials( $firstName = '', $lastName = '' ) {
  * Get account orders actions.
  *
  * @since  3.2.0
- * @param  int|WC_Order $order Order instance or ID.
+ * @param int|WC_Order $order Order instance or ID.
  * @return array
  */
 function ohmylms_get_account_orders_actions( $order ) {

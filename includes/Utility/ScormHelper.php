@@ -20,7 +20,7 @@ class ScormHelper {
 	 * Log SCORM activity.
 	 *
 	 * @param string $message Log message.
-	 * @param string $level   Log level (info, warning, error, debug).
+	 * @param string $level Log level (info, warning, error, debug).
 	 * @param array  $context Additional context.
 	 */
 	public static function log( $message, $level = 'info', $context = array() ) {
@@ -35,14 +35,20 @@ class ScormHelper {
 		}
 	}
 
+	/**
+	 * Validate course for export for Scorm helper.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function validate_course_for_export( $course_id ) {
 		$course = get_post( $course_id );
 
 		// Check if course exists.
-		if ( ! $course || $course->post_type !== OHMYLMS_COURSE_CPT ) {
+		if ( ! $course || OHMYLMS_COURSE_CPT !== $course->post_type ) {
 			return array(
 				'valid'   => false,
-				'message' => sprintf( __( 'Course ID %d does not exist or is not a valid course.', 'ohmylms-pro' ), $course_id ),
+				'message' => sprintf( /* translators: %d: number. */
+				__( 'Course ID %d does not exist or is not a valid course.', 'ohmylms' ), $course_id ),
 			);
 		}
 
@@ -50,7 +56,8 @@ class ScormHelper {
 		if ( ! in_array( $course->post_status, array( 'publish', 'draft', 'pending' ) ) ) {
 			return array(
 				'valid'   => false,
-				'message' => sprintf( __( 'Course "%1$s" has invalid status: %2$s', 'ohmylms-pro' ), $course->post_title, $course->post_status ),
+				'message' => sprintf( /* translators: %1$s: text value; %2$s: text value. */
+				__( 'Course "%1$s" has invalid status: %2$s', 'ohmylms' ), $course->post_title, $course->post_status ),
 			);
 		}
 
@@ -66,16 +73,22 @@ class ScormHelper {
 		if ( 0 == $chapter_count ) {
 			return array(
 				'valid'   => false,
-				'message' => sprintf( __( 'Course "%s" has no chapters. Please add content before exporting.', 'ohmylms-pro' ), $course->post_title ),
+				'message' => sprintf( /* translators: %s: text value. */
+				__( 'Course "%s" has no chapters. Please add content before exporting.', 'ohmylms' ), $course->post_title ),
 			);
 		}
 
 		return array(
 			'valid'   => true,
-			'message' => __( 'Course is valid for export.', 'ohmylms-pro' ),
+			'message' => __( 'Course is valid for export.', 'ohmylms' ),
 		);
 	}
 
+	/**
+	 * Check system requirements for Scorm helper.
+	 *
+	 * @param bool $strict_mode Strict mode.
+	 */
 	public static function check_system_requirements( $strict_mode = false ) {
 		$results = array(
 			'all_passed' => true,
@@ -84,21 +97,21 @@ class ScormHelper {
 
 		// Check ZIP extension (CRITICAL - always required).
 		$results['checks']['zip'] = array(
-			'name'     => __( 'PHP ZIP Extension', 'ohmylms-pro' ),
+			'name'     => __( 'PHP ZIP Extension', 'ohmylms' ),
 			'passed'   => class_exists( 'ZipArchive' ),
 			'message'  => class_exists( 'ZipArchive' )
-				? __( 'Available', 'ohmylms-pro' )
-				: __( 'Not available. Please enable the ZIP extension.', 'ohmylms-pro' ),
+				? __( 'Available', 'ohmylms' )
+				: __( 'Not available. Please enable the ZIP extension.', 'ohmylms' ),
 			'critical' => true,
 		);
 
 		// Check DOM extension (CRITICAL - always required).
 		$results['checks']['dom'] = array(
-			'name'     => __( 'PHP DOM Extension', 'ohmylms-pro' ),
+			'name'     => __( 'PHP DOM Extension', 'ohmylms' ),
 			'passed'   => class_exists( 'DOMDocument' ),
 			'message'  => class_exists( 'DOMDocument' )
-				? __( 'Available', 'ohmylms-pro' )
-				: __( 'Not available. Please enable the DOM extension.', 'ohmylms-pro' ),
+				? __( 'Available', 'ohmylms' )
+				: __( 'Not available. Please enable the DOM extension.', 'ohmylms' ),
 			'critical' => true,
 		);
 
@@ -108,24 +121,28 @@ class ScormHelper {
 		$memory_ok          = $memory_limit_bytes >= 256 * 1024 * 1024 || '-1' == $memory_limit;
 
 		$results['checks']['memory'] = array(
-			'name'     => __( 'PHP Memory Limit', 'ohmylms-pro' ),
+			'name'     => __( 'PHP Memory Limit', 'ohmylms' ),
 			'passed'   => $memory_ok,
 			'message'  => $memory_ok
-				? sprintf( __( 'Sufficient: %s', 'ohmylms-pro' ), $memory_limit )
-				: sprintf( __( 'Low: %s (recommended: 256M or higher)', 'ohmylms-pro' ), $memory_limit ),
+				? sprintf( /* translators: %s: text value. */
+				__( 'Sufficient: %s', 'ohmylms' ), $memory_limit )
+				: sprintf( /* translators: %s: text value. */
+				__( 'Low: %s (recommended: 256M or higher)', 'ohmylms' ), $memory_limit ),
 			'critical' => false, // Can be increased at runtime.
 		);
 
 		// Check max execution time (WARNING - can be increased at runtime).
 		$max_execution = ini_get( 'max_execution_time' );
-		$time_ok       = $max_execution >= 300 || 0 == $max_execution;
+		$time_ok       = 300 <= $max_execution || 0 == $max_execution;
 
 		$results['checks']['execution_time'] = array(
-			'name'     => __( 'Max Execution Time', 'ohmylms-pro' ),
+			'name'     => __( 'Max Execution Time', 'ohmylms' ),
 			'passed'   => $time_ok,
 			'message'  => $time_ok
-				? sprintf( __( 'Sufficient: %s seconds', 'ohmylms-pro' ), 0 == $max_execution ? 'unlimited' : $max_execution )
-				: sprintf( __( 'Low: %s seconds (recommended: 300 or higher)', 'ohmylms-pro' ), $max_execution ),
+				? sprintf( /* translators: %s: text value. */
+				__( 'Sufficient: %s seconds', 'ohmylms' ), 0 == $max_execution ? 'unlimited' : $max_execution )
+				: sprintf( /* translators: %s: text value. */
+				__( 'Low: %s seconds (recommended: 300 or higher)', 'ohmylms' ), $max_execution ),
 			'critical' => false, // Can be increased at runtime.
 		);
 
@@ -134,11 +151,11 @@ class ScormHelper {
 		$writable   = wp_is_writable( $upload_dir['basedir'] );
 
 		$results['checks']['writable'] = array(
-			'name'     => __( 'Upload Directory Writable', 'ohmylms-pro' ),
+			'name'     => __( 'Upload Directory Writable', 'ohmylms' ),
 			'passed'   => $writable,
 			'message'  => $writable
-				? __( 'Writable', 'ohmylms-pro' )
-				: __( 'Not writable. Please check directory permissions.', 'ohmylms-pro' ),
+				? __( 'Writable', 'ohmylms' )
+				: __( 'Not writable. Please check directory permissions.', 'ohmylms' ),
 			'critical' => true,
 		);
 
@@ -148,19 +165,20 @@ class ScormHelper {
 		// Handle case where disk_free_space() returns false.
 		if ( false === $free_space ) {
 			$results['checks']['disk_space'] = array(
-				'name'     => __( 'Available Disk Space', 'ohmylms-pro' ),
+				'name'     => __( 'Available Disk Space', 'ohmylms' ),
 				'passed'   => true, // Don't block if we can't determine.
-				'message'  => __( 'Unable to determine disk space (this is common on some hosting environments)', 'ohmylms-pro' ),
+				'message'  => __( 'Unable to determine disk space (this is common on some hosting environments)', 'ohmylms' ),
 				'critical' => false,
 			);
 		} else {
 			$space_ok = $free_space > 100 * 1024 * 1024; // 100MB minimum
 
 			$results['checks']['disk_space'] = array(
-				'name'     => __( 'Available Disk Space', 'ohmylms-pro' ),
+				'name'     => __( 'Available Disk Space', 'ohmylms' ),
 				'passed'   => $space_ok,
-				'message'  => sprintf( __( 'Available: %s', 'ohmylms-pro' ), size_format( $free_space ) ) .
-					( $space_ok ? '' : ' ' . __( '(low - recommended: 100MB or higher)', 'ohmylms-pro' ) ),
+				'message'  => sprintf( /* translators: %s: text value. */
+				__( 'Available: %s', 'ohmylms' ), size_format( $free_space ) ) .
+					( $space_ok ? '' : ' ' . __( '(low - recommended: 100MB or higher)', 'ohmylms' ) ),
 				'critical' => false, // Warning only.
 			);
 		}
@@ -187,6 +205,11 @@ class ScormHelper {
 		return $results;
 	}
 
+	/**
+	 * Convert to bytes for Scorm helper.
+	 *
+	 * @param mixed $size Size.
+	 */
 	private static function convert_to_bytes( $size ) {
 		$size = trim( $size );
 		$last = strtolower( $size[ strlen( $size ) - 1 ] );
@@ -204,6 +227,11 @@ class ScormHelper {
 		return $size;
 	}
 
+	/**
+	 * Sanitize scorm filename for Scorm helper.
+	 *
+	 * @param mixed $filename Filename.
+	 */
 	public static function sanitize_scorm_filename( $filename ) {
 		// Remove special characters.
 		$filename = preg_replace( '/[^A-Za-z0-9\-_]/', '-', $filename );
@@ -222,6 +250,11 @@ class ScormHelper {
 		return $filename;
 	}
 
+	/**
+	 * Estimate export size for Scorm helper.
+	 *
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function estimate_export_size( $course_id ) {
 		global $wpdb;
 
@@ -297,6 +330,11 @@ class ScormHelper {
 		);
 	}
 
+	/**
+	 * Clean old temp files for Scorm helper.
+	 *
+	 * @param int $days Days.
+	 */
 	public static function clean_old_temp_files( $days = 1 ) {
 		$upload_dir = wp_upload_dir();
 		$base_dir   = $upload_dir['basedir'];
@@ -329,6 +367,11 @@ class ScormHelper {
 		return $deleted;
 	}
 
+	/**
+	 * Delete directory for Scorm helper.
+	 *
+	 * @param mixed $dir Dir.
+	 */
 	private static function delete_directory( $dir ) {
 		if ( ! is_dir( $dir ) ) {
 			return false;

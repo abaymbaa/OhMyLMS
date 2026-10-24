@@ -7,14 +7,22 @@
  */
 namespace OhMyLMS\Hooks;
 
+/**
+ * Plugin api hook implementation.
+ */
 class ApiHook {
 
+	/**
+	 * Register hooks for Api hook.
+	 */
 	public function register_hooks() {
 		add_filter( 'ohmylms_rest_v1_controllers', array( $this, 'add_pro_controllers' ), 10 );
 	}
 
 	/**
 	 * Add pro controller
+	 *
+	 * @param mixed $controllers Controllers.
 	 */
 	public function add_pro_controllers( $controllers ) {
 		$pro_controllers = array(

@@ -6,15 +6,22 @@ use OhMyLMS\Abstracts\PostType;
 
 defined( 'ABSPATH' ) || exit();
 
+/**
+ * Plugin course post type implementation.
+ */
 class CoursePostType extends PostType {
 
 	/**
+	 * Instance.
+	 *
 	 * @var null
 	 */
 	protected static $_instance = null;
 
 
 	/**
+	 * Instance.
+	 *
 	 * @return CoursePostType|null
 	 * @since 1.0.0
 	 */
@@ -28,6 +35,9 @@ class CoursePostType extends PostType {
 
 
 
+	/**
+	 * Initialize Course post type.
+	 */
 	public function __construct() {
 		$this->post_type = 'ohmylms-course';
 		parent::__construct();
@@ -200,7 +210,7 @@ class CoursePostType extends PostType {
 	/**
 	 * Course details contents
 	 *
-	 * @param $post
+	 * @param mixed $post Post.
 	 * @return void
 	 * @since 1.0.0
 	 */

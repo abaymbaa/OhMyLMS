@@ -116,7 +116,6 @@ export function createLearningContentForm( readRuntime ) {
 							onChange={ onInputChange }
 							placeholder={ titlePlaceholder }
 							name={ titleName }
-							autoFocus={ ! 0 }
 							style={ {
 								fontSize: 26,
 								fontWeight: '500',

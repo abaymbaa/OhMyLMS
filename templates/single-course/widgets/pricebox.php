@@ -28,7 +28,7 @@ if ( $maybe_enrolled ) {
 <!-- course price widget -->
 <div class="ohmylms-sidebar-widget with-gray-color ohmylms-widget-pricebox">
 	<div class="price-discount-area">
-		<?php echo $course->get_price_html(); ?>
+		<?php echo wp_kses_post( $course->get_price_html() ); ?>
 
 		<?php
 

@@ -4,6 +4,9 @@ namespace OhMyLMS\Abstracts;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin session implementation.
+ */
 abstract class Session {
 
 	/**

@@ -3,11 +3,14 @@ namespace OhMyLMS\Commerce\Factory;
 
 use OhMyLMS\Commerce\Data\Subscription;
 
+/**
+ * Plugin subscription factory implementation.
+ */
 class SubscriptionFactory {
 	/**
 	 * Get subscription
 	 *
-	 * @param bool|int|Subscription $subscription_id
+	 * @param bool|int|Subscription $subscription_id Subscription identifier.
 	 * @return Subscription|bool
 	 */
 	public function get_subscription( $subscription_id = false ) {
@@ -22,7 +25,7 @@ class SubscriptionFactory {
 	/**
 	 * Get subscription id
 	 *
-	 * @param $subscription
+	 * @param mixed $subscription Subscription.
 	 * @return bool|int
 	 */
 	private function get_subscription_id( $subscription ) {

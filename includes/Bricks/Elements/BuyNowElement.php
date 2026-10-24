@@ -7,17 +7,46 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin buy now element implementation.
+ */
 class BuyNowElement extends Element {
 
-	public $category     = 'ohmylms';
-	public $name         = 'ohmylms-buy-now';
-	public $icon         = 'ti-shopping-cart';
+	/**
+	 * Category.
+	 *
+	 * @var mixed
+	 */
+	public $category = 'ohmylms';
+	/**
+	 * Name.
+	 *
+	 * @var mixed
+	 */
+	public $name = 'ohmylms-buy-now';
+	/**
+	 * Icon.
+	 *
+	 * @var mixed
+	 */
+	public $icon = 'ti-shopping-cart';
+	/**
+	 * Css selector.
+	 *
+	 * @var mixed
+	 */
 	public $css_selector = '.ohmylms-buy-now';
 
+	/**
+	 * Get label for Buy now element.
+	 */
 	public function get_label() {
 		return __( 'Buy Now Button', 'ohmylms' );
 	}
 
+	/**
+	 * Set controls for Buy now element.
+	 */
 	public function set_controls() {
 		// Content controls.
 		$this->controls['course_id'] = array(
@@ -228,6 +257,9 @@ class BuyNowElement extends Element {
 		);
 	}
 
+	/**
+	 * Get courses dropdown for Buy now element.
+	 */
 	private function get_courses_dropdown() {
 		$courses = get_posts(
 			array(
@@ -247,11 +279,17 @@ class BuyNowElement extends Element {
 		return $options;
 	}
 
+	/**
+	 * Enqueue scripts for Buy now element.
+	 */
 	public function enqueue_scripts() {
 		wp_enqueue_script( 'ohmylms-frontend' );
 		wp_enqueue_script( 'ohmylms-add-to-cart' );
 	}
 
+	/**
+	 * Render for Buy now element.
+	 */
 	public function render() {
 		$defaults = array(
 			'btn_text'        => __( 'Buy Now', 'ohmylms' ),

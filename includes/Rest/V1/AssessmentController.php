@@ -24,6 +24,9 @@ defined( 'ABSPATH' ) || exit;
  * Learner attempt endpoints (autosave, resume) are registered by AttemptController.
  */
 class AssessmentController extends RestController {
+	/**
+	 * Register routes for Assessment controller.
+	 */
 	public function register_routes() {
 		register_rest_route(
 			$this->namespace,
@@ -114,20 +117,36 @@ class AssessmentController extends RestController {
 		);
 	}
 
+	/**
+	 * Admin permission for Assessment controller.
+	 */
 	public function admin_permission() {
 		return AccessPolicy::check( current_user_can( 'manage_options' ) );
 	}
 
+	/**
+	 * Author permission for Assessment controller.
+	 */
 	public function author_permission() {
 		return AccessPolicy::check( current_user_can( 'edit_posts' ) );
 	}
 
+	/**
+	 * Create course assessments for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create_course_assessments( WP_REST_Request $request ) {
 		$body   = (array) $request->get_json_params();
 		$result = \OhMyLMS\Assessment\SkillAssessment::create_for_course( absint( $body['course_id'] ?? 0 ), $body );
 		return is_wp_error( $result ) ? $result : rest_ensure_response( $result );
 	}
 
+	/**
+	 * Create skill assessment for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function create_skill_assessment( WP_REST_Request $request ) {
 		$result = \OhMyLMS\Assessment\SkillAssessment::create( (array) $request->get_json_params() );
 		if ( is_wp_error( $result ) ) {
@@ -137,6 +156,11 @@ class AssessmentController extends RestController {
 		return $response;
 	}
 
+	/**
+	 * Quiz permission for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function quiz_permission( WP_REST_Request $request ) {
 		$id = (int) $request['id'];
 		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT ) {
@@ -144,24 +168,47 @@ class AssessmentController extends RestController {
 		return AccessPolicy::check( AccessPolicy::can_edit_quiz( $id ) );
 	}
 
+	/**
+	 * Settings for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function settings( WP_REST_Request $request ) {
 		return rest_ensure_response( array( 'settings' => \OhMyLMS\Assessment\AssessmentSettings::get( (int) $request['id'] ) ) );
 	}
 
+	/**
+	 * Save settings for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save_settings( WP_REST_Request $request ) {
 		$saved = \OhMyLMS\Assessment\AssessmentSettings::save( (int) $request['id'], (array) $request->get_json_params() );
 		return is_wp_error( $saved ) ? $saved : rest_ensure_response( array( 'settings' => $saved ) );
 	}
 
+	/**
+	 * Pools for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function pools( WP_REST_Request $request ) {
 		return rest_ensure_response( array( 'pools' => \OhMyLMS\Assessment\Pools::rules( (int) $request['id'] ) ) );
 	}
 
+	/**
+	 * Save pools for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function save_pools( WP_REST_Request $request ) {
 		$saved = \OhMyLMS\Assessment\Pools::save( (int) $request['id'], (array) ( $request['pools'] ?? array() ) );
 		return is_wp_error( $saved ) ? $saved : rest_ensure_response( array( 'pools' => $saved ) );
 	}
 
+	/**
+	 * Migration status for Assessment controller.
+	 */
 	public function migration_status() {
 		return rest_ensure_response(
 			array(
@@ -172,6 +219,11 @@ class AssessmentController extends RestController {
 		);
 	}
 
+	/**
+	 * Migration run for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function migration_run( WP_REST_Request $request ) {
 		$state = $request['retry'] ? Migration::retry_failed() : Migration::run_all( (int) ( $request['batches'] ?: 20 ) );
 		return rest_ensure_response(
@@ -182,16 +234,24 @@ class AssessmentController extends RestController {
 		);
 	}
 
+	/**
+	 * Revisions for Assessment controller.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function revisions( WP_REST_Request $request ) {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT id, revision_no, kind, total_marks, status, created_by, created_at FROM ' . Schema::table( 'quiz_revisions' ) . ' WHERE quiz_id=%d ORDER BY revision_no DESC', (int) $request['id'] ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT id, revision_no, kind, total_marks, status, created_by, created_at FROM %i WHERE quiz_id=%d ORDER BY revision_no DESC', Schema::table( 'quiz_revisions' ), (int) $request['id'] ), ARRAY_A );
 		foreach ( $rows as &$row ) {
-			$row['attempts'] = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'attempt_context' ) . ' WHERE revision_id=%d', (int) $row['id'] ) );
+			$row['attempts'] = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE revision_id=%d', Schema::table( 'attempt_context' ), (int) $row['id'] ) );
 		}
 		return rest_ensure_response( array( 'revisions' => $rows ) );
 	}
 
-	/** Validate the quiz and publish its current content as a revision. */
+	/** Validate the quiz and publish its current content as a revision.
+	 *
+	 * @param WP_REST_Request $request REST request.
+	 */
 	public function publish( WP_REST_Request $request ) {
 		try {
 			$revision = Transaction::run(

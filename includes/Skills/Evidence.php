@@ -26,7 +26,12 @@ defined( 'ABSPATH' ) || exit;
 final class Evidence {
 	const LOCK = 'ohmylms-skill-evidence';
 
-	/** @return int events processed */
+	/**
+	 * Process for Evidence.
+	 *
+	 * @return int events processed
+	 * @param int $limit Limit.
+	 */
 	public static function process( $limit = 200 ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -37,7 +42,7 @@ final class Evidence {
 		$done = 0;
 		try {
 			$outbox = Schema::table( 'evidence_outbox' );
-			$rows   = $wpdb->get_results( $wpdb->prepare( "SELECT id, grade_event_id FROM $outbox WHERE status='pending' ORDER BY id LIMIT %d", max( 1, (int) $limit ) ), ARRAY_A );
+			$rows   = $wpdb->get_results( $wpdb->prepare( 'SELECT id, grade_event_id FROM %i WHERE status=\'pending\' ORDER BY id LIMIT %d', $outbox, max( 1, (int) $limit ) ), ARRAY_A );
 			foreach ( $rows as $row ) {
 				try {
 					$status = self::apply( (int) $row['grade_event_id'] );
@@ -52,7 +57,7 @@ final class Evidence {
 					);
 					++$done;
 				} catch ( \Throwable $error ) {
-					$wpdb->query( $wpdb->prepare( "UPDATE $outbox SET tries=tries+1, last_error=%s, status=IF(tries>=5,'failed','pending') WHERE id=%d", substr( $error->getMessage(), 0, 500 ), (int) $row['id'] ) );
+					$wpdb->query( $wpdb->prepare( 'UPDATE %i SET tries=tries+1, last_error=%s, status=IF(tries>=5,\'failed\',\'pending\') WHERE id=%d', $outbox, substr( $error->getMessage(), 0, 500 ), (int) $row['id'] ) );
 				}
 			}
 		} finally {
@@ -64,10 +69,12 @@ final class Evidence {
 	/**
 	 * Write contributions for one event. Returns the outbox status:
 	 * done, skipped (nothing to attribute) or waiting (guest event awaiting a claim).
+	 *
+	 * @param mixed $event_id Event identifier.
 	 */
 	private static function apply( $event_id ) {
 		global $wpdb;
-		$event = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'grade_events' ) . ' WHERE id=%d', $event_id ), ARRAY_A );
+		$event = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', Schema::table( 'grade_events' ), $event_id ), ARRAY_A );
 		if ( ! $event ) {
 			return 'skipped'; }
 		if ( ! (int) $event['student_id'] ) {
@@ -78,7 +85,7 @@ final class Evidence {
 		$evidence = Schema::table( 'skill_evidence' );
 		$terms    = array();
 		if ( (int) $event['supersedes'] ) {
-			foreach ( $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT term_id FROM $evidence WHERE grade_event_id=%d", (int) $event['supersedes'] ) ) as $term ) {
+			foreach ( $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT term_id FROM %i WHERE grade_event_id=%d', $evidence, (int) $event['supersedes'] ) ) as $term ) {
 				$terms[ (int) $term ] = true; }
 			$wpdb->update( $evidence, array( 'superseded' => 1 ), array( 'grade_event_id' => (int) $event['supersedes'] ) );
 		}
@@ -118,37 +125,18 @@ final class Evidence {
 				// Each issue of a template has its own numbers, so it is a first try of its own:
 				// only earlier answers to this very item count against it.
 				$prior = (int) $wpdb->get_var(
-					$wpdb->prepare(
-						'SELECT COUNT(*) FROM ' . $evidence . ' e JOIN ' . Schema::table( 'grade_events' ) . ' g ON g.id=e.grade_event_id WHERE e.student_id=%d AND g.source_type=%s AND g.source_id=%d AND g.item_id=%d AND e.term_id=%d AND e.part_id=%s AND e.grade_event_id<>%d AND e.grade_event_id NOT IN (%d) AND e.evidence_at<=%s',
-						(int) $event['student_id'],
-						(string) $event['source_type'],
-						(int) $event['source_id'],
-						(int) $event['item_id'],
-						(int) $mapping['term_id'],
-						$part,
-						$event_id,
-						(int) $event['supersedes'],
-						$event['created_at']
-					)
+					$wpdb->prepare( 'SELECT COUNT(*) FROM %i e JOIN %i g ON g.id=e.grade_event_id WHERE e.student_id=%d AND g.source_type=%s AND g.source_id=%d AND g.item_id=%d AND e.term_id=%d AND e.part_id=%s AND e.grade_event_id<>%d AND e.grade_event_id NOT IN (%d) AND e.evidence_at<=%s', $evidence, Schema::table( 'grade_events' ), (int) $event['student_id'], (string) $event['source_type'], (int) $event['source_id'], (int) $event['item_id'], (int) $mapping['term_id'], $part, $event_id, (int) $event['supersedes'], $event['created_at'] )
 				);
 			} else {
 				$prior = (int) $wpdb->get_var(
-					$wpdb->prepare(
-						"SELECT COUNT(*) FROM $evidence WHERE student_id=%d AND question_id=%d AND term_id=%d AND part_id=%s AND grade_event_id<>%d AND grade_event_id NOT IN (%d) AND evidence_at<=%s",
-						(int) $event['student_id'],
-						(int) $event['question_id'],
-						(int) $mapping['term_id'],
-						$part,
-						$event_id,
-						(int) $event['supersedes'],
-						$event['created_at']
-					)
+					$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE student_id=%d AND question_id=%d AND term_id=%d AND part_id=%s AND grade_event_id<>%d AND grade_event_id NOT IN (%d) AND evidence_at<=%s', $evidence, (int) $event['student_id'], (int) $event['question_id'], (int) $mapping['term_id'], $part, $event_id, (int) $event['supersedes'], $event['created_at'] )
 				);
 			}
 			$wpdb->query(
 				$wpdb->prepare(
-					"INSERT IGNORE INTO $evidence (grade_event_id, student_id, term_id, part_id, role, awarded, available, independent, first_try, difficulty, family_id, source_type, source_id, question_id, version_id, mapping_version, evidence_at, superseded)
-                 VALUES (%d, %d, %d, %s, %s, %f, %f, %d, %d, %s, %s, %s, %d, %d, %d, %d, %s, %d)",
+					'INSERT IGNORE INTO %i (grade_event_id, student_id, term_id, part_id, role, awarded, available, independent, first_try, difficulty, family_id, source_type, source_id, question_id, version_id, mapping_version, evidence_at, superseded)
+                 VALUES (%d, %d, %d, %s, %s, %f, %f, %d, %d, %s, %s, %s, %d, %d, %d, %d, %s, %d)',
+					$evidence,
 					$event_id,
 					(int) $event['student_id'],
 					(int) $mapping['term_id'],
@@ -175,23 +163,32 @@ final class Evidence {
 		return 'done';
 	}
 
-	/** Independence and first-try information from the response surface. */
+	/** Independence and first-try information from the response surface.
+	 *
+	 * @param array $event Event.
+	 */
 	private static function context( array $event ) {
 		global $wpdb;
 		if ( in_array( $event['source_type'], array( 'practice', 'inline', 'question-player', 'placement' ), true ) ) {
-			$item = $wpdb->get_row( $wpdb->prepare( 'SELECT assisted, tries FROM ' . Schema::table( 'practice_items' ) . ' WHERE id=%d', (int) $event['item_id'] ), ARRAY_A );
+			$item = $wpdb->get_row( $wpdb->prepare( 'SELECT assisted, tries FROM %i WHERE id=%d', Schema::table( 'practice_items' ), (int) $event['item_id'] ), ARRAY_A );
 			return array(
 				'independent' => $item && ! (int) $item['assisted'] ? 1 : 0,
 				'first_try'   => $item && (int) $item['tries'] <= 1 ? 1 : 0,
 			);
 		}
-		$assisted = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(assisted) FROM ' . Schema::table( 'response_events' ) . ' WHERE attempt_id=%d AND item_id=%d', (int) $event['source_id'], (int) $event['item_id'] ) );
+		$assisted = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(assisted) FROM %i WHERE attempt_id=%d AND item_id=%d', Schema::table( 'response_events' ), (int) $event['source_id'], (int) $event['item_id'] ) );
 		return array(
 			'independent' => $assisted ? 0 : 1,
 			'first_try'   => 1,
 		);
 	}
 
+	/**
+	 * Recompute for Evidence.
+	 *
+	 * @param mixed $student_id Student identifier.
+	 * @param array $terms Terms.
+	 */
 	private static function recompute( $student_id, array $terms ) {
 		foreach ( array_unique( array_map( 'intval', $terms ) ) as $term_id ) {
 			if ( $term_id ) {
@@ -199,7 +196,10 @@ final class Evidence {
 		}
 	}
 
-	/** Rebuild one learner's evidence from their grade events (e.g. after a mapping repair). */
+	/** Rebuild one learner's evidence from their grade events (e.g. after a mapping repair).
+	 *
+	 * @param mixed $student_id Student identifier.
+	 */
 	public static function rebuild( $student_id ) {
 		global $wpdb;
 		$student_id = (int) $student_id;
@@ -208,7 +208,7 @@ final class Evidence {
 		$wpdb->delete( Schema::table( 'skill_level_events' ), array( 'student_id' => $student_id ) );
 		$events = Schema::table( 'grade_events' );
 		$outbox = Schema::table( 'evidence_outbox' );
-		$wpdb->query( $wpdb->prepare( "UPDATE $outbox o JOIN $events e ON e.id=o.grade_event_id SET o.status='pending', o.tries=0 WHERE e.student_id=%d", $student_id ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i o JOIN %i e ON e.id=o.grade_event_id SET o.status=\'pending\', o.tries=0 WHERE e.student_id=%d', $outbox, $events, $student_id ) );
 		$total = 0;
 		do {
 			$batch  = self::process( 500 );
@@ -217,7 +217,10 @@ final class Evidence {
 		return $total;
 	}
 
-	/** Re-queue events that were waiting for a guest claim. */
+	/** Re-queue events that were waiting for a guest claim.
+	 *
+	 * @param array $event_ids Event ids.
+	 */
 	public static function release_waiting( array $event_ids ) {
 		global $wpdb;
 		if ( ! $event_ids ) {
@@ -226,6 +229,11 @@ final class Evidence {
 		$wpdb->query( 'UPDATE ' . Schema::table( 'evidence_outbox' ) . " SET status='pending' WHERE status='waiting' AND grade_event_id IN ($ids)" );
 	}
 
+	/**
+	 * Scheduled.
+	 *
+	 * @var mixed
+	 */
 	private static $scheduled = false;
 
 	/** Process soon: at the end of this request, with WP-Cron as the durable fallback. */
@@ -242,6 +250,11 @@ final class Evidence {
 		);
 	}
 
+	/**
+	 * Schedules for Evidence.
+	 *
+	 * @param mixed $schedules Schedules.
+	 */
 	public static function schedules( $schedules ) {
 		$schedules['ohmylms_every_minute'] = array(
 			'interval' => 60,
@@ -250,6 +263,9 @@ final class Evidence {
 		return $schedules;
 	}
 
+	/**
+	 * Schedule for Evidence.
+	 */
 	public static function schedule() {
 		if ( ! wp_next_scheduled( 'ohmylms_process_evidence' ) ) {
 			wp_schedule_event( time() + 60, 'ohmylms_every_minute', 'ohmylms_process_evidence' ); }

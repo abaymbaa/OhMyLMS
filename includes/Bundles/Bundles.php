@@ -29,21 +29,40 @@ final class Bundles {
 	const MAX_MEMBERS  = 100;
 	const MAX_BUNDLES  = 200;
 
+	/**
+	 * Table for Bundles.
+	 */
 	public static function table() {
 		return Schema::table( 'bundles' ); }
+	/**
+	 * Members table for Bundles.
+	 */
 	public static function members_table() {
 		return Schema::table( 'bundle_items' ); }
 
+	/**
+	 * Get for Bundles.
+	 *
+	 * @param mixed $id Id.
+	 */
 	public static function get( $id ) {
 		global $wpdb;
 		$id = (int) $id;
 		return $id > 0 ? ( $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE id=%d', $id ), ARRAY_A ) ?: null ) : null;
 	}
 
+	/**
+	 * Missing for Bundles.
+	 */
 	public static function missing() {
 		return Access::error( 'ohmylms_bundle_missing', __( 'Course bundle not found.', 'ohmylms' ), 404 ); }
 
-	/** @return array[] Bundles in display order, optionally only one status. */
+	/**
+	 * All for Bundles.
+	 *
+	 * @return array[] Bundles in display order, optionally only one status.
+	 * @param mixed $status Status.
+	 */
 	public static function all( $status = null ) {
 		global $wpdb;
 		if ( null !== $status && in_array( $status, self::STATUSES, true ) ) {
@@ -52,6 +71,12 @@ final class Bundles {
 		return $wpdb->get_results( 'SELECT * FROM ' . self::table() . ' ORDER BY position, id', ARRAY_A ) ?: array();
 	}
 
+	/**
+	 * Clean for Bundles.
+	 *
+	 * @param array $data Input data.
+	 * @param bool  $partial Partial.
+	 */
 	public static function clean( array $data, $partial = false ) {
 		$fields = array();
 		if ( ! $partial || array_key_exists( 'title', $data ) ) {
@@ -71,13 +96,19 @@ final class Bundles {
 		return $fields;
 	}
 
+	/**
+	 * Create for Bundles.
+	 *
+	 * @param array $data Input data.
+	 */
 	public static function create( array $data ) {
 		global $wpdb;
 		$fields = self::clean( $data );
 		if ( is_wp_error( $fields ) ) {
 			return $fields; }
 		if ( (int) $wpdb->get_var( 'SELECT COUNT(*) FROM ' . self::table() ) >= self::MAX_BUNDLES ) {
-			return Access::error( 'ohmylms_bundle_limit', sprintf( __( 'You can have at most %d course bundles.', 'ohmylms' ), self::MAX_BUNDLES ), 409 ); }
+			return Access::error( 'ohmylms_bundle_limit', sprintf( /* translators: %d: number. */
+			__( 'You can have at most %d course bundles.', 'ohmylms' ), self::MAX_BUNDLES ), 409 ); }
 		$now      = current_time( 'mysql', true );
 		$position = 1 + (int) $wpdb->get_var( 'SELECT MAX(position) FROM ' . self::table() );
 		$row      = $fields + array(
@@ -93,6 +124,13 @@ final class Bundles {
 		return self::get( (int) $wpdb->insert_id );
 	}
 
+	/**
+	 * Update for Bundles.
+	 *
+	 * @param mixed $id Id.
+	 * @param array $data Input data.
+	 * @param mixed $expected_updated_at Expected updated at.
+	 */
 	public static function update( $id, array $data, $expected_updated_at = null ) {
 		global $wpdb;
 		$bundle = self::get( $id );
@@ -111,11 +149,19 @@ final class Bundles {
 		return self::get( $id );
 	}
 
+	/**
+	 * Stale for Bundles.
+	 */
 	private static function stale() {
 		return Access::error( 'ohmylms_bundle_stale', __( 'Someone else changed this bundle. Reload and try again.', 'ohmylms' ), 409 );
 	}
 
-	/** @return array[] Ordered members: type, id, position. */
+	/**
+	 * Members for Bundles.
+	 *
+	 * @return array[] Ordered members: type, id, position.
+	 * @param mixed $bundle_id Bundle identifier.
+	 */
 	public static function members( $bundle_id ) {
 		global $wpdb;
 		return array_map(
@@ -129,7 +175,11 @@ final class Bundles {
 		);
 	}
 
-	/** Is this a valid member to add? Courses may be unpublished while a bundle is being prepared. */
+	/** Is this a valid member to add? Courses may be unpublished while a bundle is being prepared.
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $id Id.
+	 */
 	private static function valid_member( $type, $id ) {
 		if ( 'course' === $type ) {
 			return Links::target_exists( 'course', $id ); }
@@ -139,6 +189,10 @@ final class Bundles {
 	/**
 	 * Replace the ordered member list. Each entry is `['type' => 'course'|'curriculum', 'id' => n]`.
 	 * Duplicates are rejected rather than silently merged so the editor stays truthful.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 * @param array $members Members.
+	 * @param mixed $expected_updated_at Expected updated at.
 	 */
 	public static function set_members( $bundle_id, array $members, $expected_updated_at = null ) {
 		global $wpdb;
@@ -148,7 +202,8 @@ final class Bundles {
 		if ( null !== $expected_updated_at && '' !== $expected_updated_at && (string) $expected_updated_at !== $bundle['updated_at'] ) {
 			return self::stale(); }
 		if ( count( $members ) > self::MAX_MEMBERS ) {
-			return Access::error( 'ohmylms_bundle_limit', sprintf( __( 'A bundle can have at most %d members.', 'ohmylms' ), self::MAX_MEMBERS ), 409 ); }
+			return Access::error( 'ohmylms_bundle_limit', sprintf( /* translators: %d: number. */
+			__( 'A bundle can have at most %d members.', 'ohmylms' ), self::MAX_MEMBERS ), 409 ); }
 		$clean = array();
 		$seen  = array();
 		foreach ( $members as $member ) {
@@ -198,7 +253,11 @@ final class Bundles {
 		return self::get( $bundle_id );
 	}
 
-	/** Publish or unpublish. Followers keep following an unpublished bundle; it simply stops showing. */
+	/** Publish or unpublish. Followers keep following an unpublished bundle; it simply stops showing.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 * @param mixed $published Published.
+	 */
 	public static function set_status( $bundle_id, $published ) {
 		global $wpdb;
 		$bundle = self::get( $bundle_id );
@@ -221,17 +280,31 @@ final class Bundles {
 		return self::get( $bundle_id );
 	}
 
+	/**
+	 * Find by title for Bundles.
+	 *
+	 * @param mixed $title Title.
+	 */
 	public static function find_by_title( $title ) {
 		global $wpdb;
 		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . self::table() . ' WHERE title=%s ORDER BY id LIMIT 1', (string) $title ), ARRAY_A ) ?: null;
 	}
 
+	/**
+	 * Touch for Bundles.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 */
 	private static function touch( $bundle_id ) {
 		global $wpdb;
 		$wpdb->update( self::table(), array( 'updated_at' => current_time( 'mysql', true ) ), array( 'id' => (int) $bundle_id ) );
 	}
 
-	/** Append a course to a bundle. Repeating the call is harmless. @return true|\WP_Error */
+	/** Append a course to a bundle. Repeating the call is harmless. @return true|\WP_Error
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function add_course( $bundle_id, $course_id ) {
 		global $wpdb;
 		if ( ! self::get( $bundle_id ) ) {
@@ -243,7 +316,8 @@ final class Bundles {
 		if ( $exists ) {
 			return true; }
 		if ( $count >= self::MAX_MEMBERS ) {
-			return Access::error( 'ohmylms_bundle_limit', sprintf( __( 'A bundle can have at most %d members.', 'ohmylms' ), self::MAX_MEMBERS ), 409 ); }
+			return Access::error( 'ohmylms_bundle_limit', sprintf( /* translators: %d: number. */
+			__( 'A bundle can have at most %d members.', 'ohmylms' ), self::MAX_MEMBERS ), 409 ); }
 		$position = 1 + (int) $wpdb->get_var( $wpdb->prepare( 'SELECT MAX(position) FROM ' . self::members_table() . ' WHERE bundle_id=%d', (int) $bundle_id ) );
 		if ( $wpdb->query( $wpdb->prepare( 'INSERT IGNORE INTO ' . self::members_table() . " (bundle_id, item_type, item_id, position, created_at) VALUES (%d, 'course', %d, %d, %s)", (int) $bundle_id, (int) $course_id, $position, current_time( 'mysql', true ) ) ) === false ) {
 			return Access::error( 'ohmylms_bundle_failed', __( 'The course could not be added to the bundle.', 'ohmylms' ), 500 );
@@ -253,7 +327,11 @@ final class Bundles {
 		return true;
 	}
 
-	/** Remove a course from a bundle. A published bundle keeps at least one member. @return true|\WP_Error */
+	/** Remove a course from a bundle. A published bundle keeps at least one member. @return true|\WP_Error
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public static function remove_course( $bundle_id, $course_id ) {
 		global $wpdb;
 		$bundle = self::get( $bundle_id );
@@ -263,7 +341,8 @@ final class Bundles {
 		if ( ! $is_member ) {
 			return true; }
 		if ( 'published' === $bundle['status'] && count( self::members( $bundle_id ) ) <= 1 ) {
-			return Access::error( 'ohmylms_bundle_empty', sprintf( __( '“%s” is published and this is its only member. Unpublish the bundle or add another member first.', 'ohmylms' ), $bundle['title'] ), 409 );
+			return Access::error( 'ohmylms_bundle_empty', sprintf( /* translators: %s: text value. */
+			__( '“%s” is published and this is its only member. Unpublish the bundle or add another member first.', 'ohmylms' ), $bundle['title'] ), 409 );
 		}
 		$wpdb->delete(
 			self::members_table(),
@@ -278,12 +357,21 @@ final class Bundles {
 		return true;
 	}
 
+	/**
+	 * Follower count for Bundles.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 */
 	public static function follower_count( $bundle_id ) {
 		global $wpdb;
-		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . Schema::table( 'bundle_follows' ) . ' WHERE bundle_id=%d', (int) $bundle_id ) );
+		return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE bundle_id=%d', Schema::table( 'bundle_follows' ), (int) $bundle_id ) );
 	}
 
-	/** Delete a bundle. Followers lose it from their dashboards, so that needs `$force`. */
+	/** Delete a bundle. Followers lose it from their dashboards, so that needs `$force`.
+	 *
+	 * @param mixed $id Id.
+	 * @param bool  $force Force.
+	 */
 	public static function delete( $id, $force = false ) {
 		global $wpdb;
 		$bundle = self::get( $id );
@@ -291,7 +379,8 @@ final class Bundles {
 			return self::missing(); }
 		$followers = self::follower_count( $id );
 		if ( $followers && ! $force ) {
-			return Access::error( 'ohmylms_bundle_has_followers', sprintf( _n( '%d learner follows this bundle. Deleting it removes it from their dashboard.', '%d learners follow this bundle. Deleting it removes it from their dashboards.', $followers, 'ohmylms' ), $followers ), 409, array( 'followers' => $followers ) );
+			return Access::error( 'ohmylms_bundle_has_followers', sprintf( /* translators: %d: number. */
+			_n( '%d learner follows this bundle. Deleting it removes it from their dashboard.', '%d learners follow this bundle. Deleting it removes it from their dashboards.', $followers, 'ohmylms' ), $followers ), 409, array( 'followers' => $followers ) );
 		}
 		try {
 			Transaction::run(
@@ -311,7 +400,11 @@ final class Bundles {
 		);
 	}
 
-	/** Remove a deleted course or curriculum item from every bundle. */
+	/** Remove a deleted course or curriculum item from every bundle.
+	 *
+	 * @param mixed $type Type.
+	 * @param mixed $item_id Item identifier.
+	 */
 	public static function remove_member( $type, $item_id ) {
 		global $wpdb;
 		if ( ! Schema::ready() ) {
@@ -326,7 +419,10 @@ final class Bundles {
 		\OhMyLMS\Curriculum\Placement::changed();
 	}
 
-	/** Public, JSON-safe description of a bundle. */
+	/** Public, JSON-safe description of a bundle.
+	 *
+	 * @param array $row Row.
+	 */
 	public static function describe( array $row ) {
 		$members = self::members( (int) $row['id'] );
 		return array(
@@ -343,7 +439,10 @@ final class Bundles {
 		);
 	}
 
-	/** Members with titles for the administrator editor. */
+	/** Members with titles for the administrator editor.
+	 *
+	 * @param mixed $bundle_id Bundle identifier.
+	 */
 	public static function describe_members( $bundle_id ) {
 		$members = self::members( $bundle_id );
 		$courses = Links::labels(

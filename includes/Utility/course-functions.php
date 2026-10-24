@@ -1,11 +1,17 @@
 <?php
+/**
+ * Course functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 /**
  * Get course object
  *
- * @param $course_id
+ * @param mixed $course_id Course identifier.
  * @return bool|\OhMyLMS\Data\Course
- * @throws Exception
+ * @throws Exception When the operation cannot be completed.
  * @since 1.0.0
  */
 function ohmylms_get_course( $course_id ) {
@@ -18,6 +24,11 @@ function ohmylms_get_course( $course_id ) {
 	return null;
 }
 
+/**
+ * Ohmylms get course id by content id for Course-functions.
+ *
+ * @param mixed $content_id Content identifier.
+ */
 function ohmylms_get_course_id_by_content_id( $content_id ) {
 	global $wpdb;
 
@@ -25,11 +36,13 @@ function ohmylms_get_course_id_by_content_id( $content_id ) {
 	$table_chapter = $wpdb->prefix . 'ohmylms_chapter_relationship';
 
 	$query     = $wpdb->prepare(
-		"SELECT cr.course_id
-		FROM {$table_content} AS c
-		JOIN {$table_chapter} AS cr
+		'SELECT cr.course_id
+		FROM %i AS c
+		JOIN %i AS cr
 		ON c.chapter_id = cr.chapter_id
-		WHERE c.content_id = %d",
+		WHERE c.content_id = %d',
+		$table_content,
+		$table_chapter,
 		$content_id
 	);
 	$course_id = $wpdb->get_var( $query );
@@ -97,18 +110,22 @@ function ohmylms_get_course_first_lesson_url( $course_id ) {
 
 	global $wpdb;
 	$sql       = $wpdb->prepare(
-		"SELECT content_rel.content_id
-        FROM {$wpdb->posts} AS wp_posts
-        INNER JOIN {$wpdb->prefix}ohmylms_chapter_relationship AS chapter_rel
+		'SELECT content_rel.content_id
+        FROM %i AS wp_posts
+        INNER JOIN %i AS chapter_rel
             ON wp_posts.ID = chapter_rel.course_id
-        INNER JOIN {$wpdb->prefix}ohmylms_content_relationship AS content_rel
+        INNER JOIN %i AS content_rel
             ON chapter_rel.chapter_id = content_rel.chapter_id
-        INNER JOIN {$wpdb->posts} AS lesson_post
+        INNER JOIN %i AS lesson_post
             ON content_rel.content_id = lesson_post.ID
         WHERE wp_posts.ID = %d
-        AND lesson_post.post_status = 'publish'
+        AND lesson_post.post_status = \'publish\'
         ORDER BY content_rel.order_number ASC
-        LIMIT 1",
+        LIMIT 1',
+		$wpdb->posts,
+		$wpdb->prefix . 'ohmylms_chapter_relationship',
+		$wpdb->prefix . 'ohmylms_content_relationship',
+		$wpdb->posts,
 		$course_id
 	);
 	$lesson_id = $wpdb->get_var( $sql );
@@ -131,10 +148,7 @@ function ohmylms_get_course_id_by_chapter_id( $chapter_id ) {
 	}
 
 	global $wpdb;
-	$sql    = $wpdb->prepare(
-		"SELECT course_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE chapter_id = %d LIMIT 1",
-		$chapter_id
-	);
+	$sql    = $wpdb->prepare( 'SELECT course_id FROM %i WHERE chapter_id = %d LIMIT 1', $wpdb->prefix . 'ohmylms_chapter_relationship', $chapter_id );
 	$result = $wpdb->get_var( $sql );
 
 	if ( $result ) {
@@ -175,6 +189,7 @@ function ohmylms_course_ids_for_group( $slug ) {
  * This function fetches the courses that have the highest number of sales.
  *
  * @return array An array of best selling courses.
+ * @param mixed $category Category.
  */
 function ohmylms_get_best_selling_course_ids( $category = null ) {
 	global $wpdb;
@@ -221,6 +236,7 @@ function ohmylms_get_best_selling_course_ids( $category = null ) {
  * This function fetches the courses that have the highest ratings.
  *
  * @return array An array of top rated courses.
+ * @param mixed $category Category.
  */
 function ohmylms_get_top_rated_course_ids( $category = null ) {
 	global $wpdb;
@@ -266,6 +282,7 @@ function ohmylms_get_top_rated_course_ids( $category = null ) {
  * This function retrieves the courses that have received the highest number of reviews.
  *
  * @return array An array of top reviewed courses.
+ * @param mixed $category Category.
  */
 function ohmylms_get_top_reviewed_course_ids( $category = null ) {
 	global $wpdb;
@@ -309,6 +326,7 @@ function ohmylms_get_top_reviewed_course_ids( $category = null ) {
  * Retrieves the list of free courses.
  *
  * @return array The array of free courses.
+ * @param mixed $category Category.
  */
 function ohmylms_get_free_course_ids( $category = null ) {
 	global $wpdb;
@@ -348,6 +366,7 @@ function ohmylms_get_free_course_ids( $category = null ) {
  * Retrieves the list of paid courses.
  *
  * @return array The list of paid courses.
+ * @param mixed $category Category.
  */
 function ohmylms_get_paid_course_ids( $category = null ) {
 	global $wpdb;
@@ -388,6 +407,7 @@ function ohmylms_get_paid_course_ids( $category = null ) {
  * Retrieves the list of recent courses.
  *
  * @return array The list of recent course IDs.
+ * @param mixed $category Category.
  */
 function ohmylms_get_recent_course_ids( $category = null ) {
 	global $wpdb;

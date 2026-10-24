@@ -18,6 +18,9 @@ defined( 'ABSPATH' ) || exit;
 final class Usage {
 	const ARCHIVED = 'ohmylms_archived';
 
+	/**
+	 * Register status for Usage.
+	 */
 	public static function register_status() {
 		register_post_status(
 			self::ARCHIVED,
@@ -39,6 +42,8 @@ final class Usage {
 	 * A question post deleted outside these services (e.g. wp_delete_post): drop its bank
 	 * identity and versions only when no learner record references them; otherwise keep
 	 * the frozen history so old attempts still report what was seen.
+	 *
+	 * @param mixed $post_id Post identifier.
 	 */
 	public static function on_deleted_post( $post_id ) {
 		global $wpdb;
@@ -48,22 +53,30 @@ final class Usage {
 		if ( self::responses( $post_id ) > 0 ) {
 			return; }
 		$versions = \OhMyLMS\Assessment\Schema::table( 'qb_question_versions' );
-		$wpdb->query( $wpdb->prepare( 'DELETE s FROM ' . \OhMyLMS\Assessment\Schema::table( 'qb_version_skills' ) . " s JOIN $versions v ON v.id=s.version_id WHERE v.question_id=%d", (int) $post_id ) );
+		$wpdb->query( $wpdb->prepare( 'DELETE s FROM %i s JOIN %i v ON v.id=s.version_id WHERE v.question_id=%d', \OhMyLMS\Assessment\Schema::table( 'qb_version_skills' ), $versions, (int) $post_id ) );
 		$wpdb->delete( $versions, array( 'question_id' => (int) $post_id ) );
 		$wpdb->delete( \OhMyLMS\Assessment\Schema::table( 'qb_questions' ), array( 'question_id' => (int) $post_id ) );
 	}
 
-	/** @return int[] quiz IDs that currently contain the question. */
+	/**
+	 * Quizzes for Usage.
+	 *
+	 * @return int[] quiz IDs that currently contain the question.
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function quizzes( $question_id ) {
 		global $wpdb;
 		$table = $wpdb->prefix . OHMYLMS_QUIZ_QUESTION_RELATIONSHIP;
-		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT DISTINCT quiz_id FROM $table WHERE question_id=%d", $question_id ) ) );
+		return array_map( 'intval', $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT quiz_id FROM %i WHERE question_id=%d', $table, $question_id ) ) );
 	}
 
-	/** Learner records (any surface, including issued-but-unanswered items) that reference the question. */
+	/** Learner records (any surface, including issued-but-unanswered items) that reference the question.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function responses( $question_id ) {
 		global $wpdb;
-		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE question_id=%d", $question_id ) );
+		$count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE question_id=%d', $wpdb->prefix . 'ohmylms_quiz_attempts_answers', $question_id ) );
 		if ( \OhMyLMS\Assessment\Schema::ready() ) {
 			foreach ( array( 'attempt_items', 'practice_items' ) as $table ) {
 				$count += (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . \OhMyLMS\Assessment\Schema::table( $table ) . ' WHERE question_id=%d', $question_id ) );
@@ -72,6 +85,11 @@ final class Usage {
 		return (int) apply_filters( 'ohmylms_question_response_count', $count, (int) $question_id );
 	}
 
+	/**
+	 * Summary for Usage.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function summary( $question_id ) {
 		return array(
 			'quizzes'   => self::quizzes( $question_id ),
@@ -80,7 +98,11 @@ final class Usage {
 		);
 	}
 
-	/** Remove the question from one quiz only. The question itself is kept. */
+	/** Remove the question from one quiz only. The question itself is kept.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function remove_from_quiz( $quiz_id, $question_id ) {
 		$quiz_id     = (int) $quiz_id;
 		$question_id = (int) $question_id;
@@ -110,6 +132,11 @@ final class Usage {
 		);
 	}
 
+	/**
+	 * Archive for Usage.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function archive( $question_id ) {
 		$question_id = (int) $question_id;
 		if ( ! AccessPolicy::can_edit_question( $question_id ) || ! $question_id ) {
@@ -136,6 +163,11 @@ final class Usage {
 		);
 	}
 
+	/**
+	 * Restore for Usage.
+	 *
+	 * @param mixed $question_id Question identifier.
+	 */
 	public static function restore( $question_id ) {
 		$question_id = (int) $question_id;
 		if ( ! AccessPolicy::can_edit_question( $question_id ) || ! $question_id ) {
@@ -166,6 +198,8 @@ final class Usage {
 	 * Deletes only when nothing references the question. A question with learner history is
 	 * archived and detached from its single quiz; a question shared by several quizzes must be
 	 * removed from a specific quiz instead.
+	 *
+	 * @param mixed $question_id Question identifier.
 	 */
 	public static function delete_or_archive( $question_id ) {
 		$question_id = (int) $question_id;
@@ -206,14 +240,14 @@ final class Usage {
 					}
 					$question = ohmylms_get_question( $question_id );
 					$question->delete();
-					$answers = $wpdb->get_col( $wpdb->prepare( "SELECT id FROM {$wpdb->prefix}ohmylms_question_answers WHERE question_id=%d", $question_id ) );
+					$answers = $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE question_id=%d', $wpdb->prefix . 'ohmylms_question_answers', $question_id ) );
 					foreach ( $answers as $answer_id ) {
 						$wpdb->delete( $wpdb->prefix . 'ohmylms_question_answermeta', array( 'answer_id' => (int) $answer_id ), array( '%d' ) ); }
 					$wpdb->delete( $wpdb->prefix . 'ohmylms_question_answers', array( 'question_id' => $question_id ), array( '%d' ) );
 					if ( \OhMyLMS\Assessment\Schema::ready() ) {
 						// Nothing references these versions (no responses or issued items), so they can go too.
 						$versions = \OhMyLMS\Assessment\Schema::table( 'qb_question_versions' );
-						$wpdb->query( $wpdb->prepare( 'DELETE s FROM ' . \OhMyLMS\Assessment\Schema::table( 'qb_version_skills' ) . " s JOIN $versions v ON v.id=s.version_id WHERE v.question_id=%d", $question_id ) );
+						$wpdb->query( $wpdb->prepare( 'DELETE s FROM %i s JOIN %i v ON v.id=s.version_id WHERE v.question_id=%d', \OhMyLMS\Assessment\Schema::table( 'qb_version_skills' ), $versions, $question_id ) );
 						$wpdb->delete( $versions, array( 'question_id' => $question_id ) );
 						$wpdb->delete( \OhMyLMS\Assessment\Schema::table( 'qb_questions' ), array( 'question_id' => $question_id ) );
 					}

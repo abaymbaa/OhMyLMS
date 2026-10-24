@@ -21,9 +21,9 @@ class AssignmentFactory {
 	/**
 	 * Get assignment object
 	 *
-	 * @param bool $assignment_id
+	 * @param bool $assignment_id Assignment identifier.
 	 * @return bool|Assignment
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function get_assignment( $assignment_id = false ) {
@@ -38,7 +38,7 @@ class AssignmentFactory {
 	/**
 	 * Get assignment id
 	 *
-	 * @param $assignment
+	 * @param mixed $assignment Assignment.
 	 * @return bool|int
 	 * @since 1.0.0
 	 */

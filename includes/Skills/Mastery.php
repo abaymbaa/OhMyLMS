@@ -64,7 +64,7 @@ final class Mastery {
 	public static function refresh_reviews( $limit = 500 ) {
 		global $wpdb;
 		$table = Schema::table( 'student_skill_state' );
-		return (int) $wpdb->query( $wpdb->prepare( "UPDATE $table SET review_due=1 WHERE review_due=0 AND review_due_at IS NOT NULL AND review_due_at<=%s LIMIT %d", gmdate( 'Y-m-d H:i:s' ), $limit ) );
+		return (int) $wpdb->query( $wpdb->prepare( 'UPDATE %i SET review_due=1 WHERE review_due=0 AND review_due_at IS NOT NULL AND review_due_at<=%s LIMIT %d', $table, gmdate( 'Y-m-d H:i:s' ), $limit ) );
 	}
 
 	/**

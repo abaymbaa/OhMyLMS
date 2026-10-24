@@ -14,8 +14,14 @@ use OhMyLMS\Engagement\Leaderboard;
 use OhMyLMS\Engagement\Achievements;
 
 
+/**
+ * Plugin engagement hook implementation.
+ */
 class EngagementHook {
 
+	/**
+	 * Register hooks for Engagement hook.
+	 */
 	public function register_hooks() {
 
 		add_filter( 'ohmylms_show_gamification_menu', array( $this, 'add_gamification_menu' ) );
@@ -43,6 +49,8 @@ class EngagementHook {
 
 	/**
 	 * Add gamification menu
+	 *
+	 * @param mixed $should_show Should show.
 	 */
 	public function add_gamification_menu( $should_show ) {
 		$integrations = get_option( 'ohmylms_integrations', array() );
@@ -51,6 +59,8 @@ class EngagementHook {
 
 	/**
 	 * Add communities menu
+	 *
+	 * @param mixed $should_show Should show.
 	 */
 	public function add_communities_menu( $should_show ) {
 		$integrations = get_option( 'ohmylms_integrations', array() );
@@ -111,9 +121,10 @@ class EngagementHook {
 	/**
 	 * Function to handle quiz submission
 	 *
-	 * @param int $quiz_id Quiz ID.
-	 * @param int $course_id Course ID.
-	 * @param int $student_id Student ID.
+	 * @param int   $quiz_id Quiz ID.
+	 * @param int   $course_id Course ID.
+	 * @param int   $student_id Student ID.
+	 * @param mixed $argc Argc.
 	 */
 	public function quiz_submission( $quiz_id, $course_id, $student_id, $argc ) {
 		if ( $this->maybe_gamification_enable() && Point::maybe_met_rules( 'submit_quiz' ) ) {
@@ -134,6 +145,14 @@ class EngagementHook {
 		}
 	}
 
+	/**
+	 * Quiz achievement for Engagement hook.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $student_id Student identifier.
+	 * @param int   $total Total.
+	 */
 	public function quiz_achievement( $quiz_id, $course_id, $student_id, $total = 0 ) {
 		$marks = is_array( $total ) && isset( $total['total'] ) ? $total['total'] : $total;
 
@@ -157,7 +176,11 @@ class EngagementHook {
 
 
 	/**
+	 * After point added.
 	 *
+	 *
+	 * @param mixed $user_id User identifier.
+	 * @param mixed $points Points.
 	 */
 	public function after_point_added( $user_id, $points ) {
 		if ( $this->maybe_gamification_enable() && ! empty( Badge::maybe_met_rules( $user_id ) ) ) {
@@ -187,10 +210,10 @@ class EngagementHook {
 	 */
 	public function after_comment( $comment_id ) {
 		$comment = get_comment( $comment_id );
-		if ( ! isset( $_POST['comment_post_ID'] ) ) {
-			return; // No post ID in the comment data.
+		if ( ! $comment ) {
+			return;
 		}
-		$post_id = intval( $_POST['comment_post_ID'] );
+		$post_id = (int) $comment->comment_post_ID;
 		$post    = get_post( $post_id );
 		if ( ! $post || 'ohmylms-course' !== $post->post_type ) {
 			return; // Not a course post type.
@@ -221,6 +244,7 @@ class EngagementHook {
 	 * After community comment created.
 	 *
 	 * @param object $comment Comment.
+	 * @param mixed  $data Input data.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -248,7 +272,8 @@ class EngagementHook {
 	/**
 	 * After community reaction created.
 	 *
-	 * @param int $reaction_id Reaction ID.
+	 * @param int   $reaction _id Reaction ID.
+	 * @param mixed $data Input data.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -305,7 +330,7 @@ class EngagementHook {
 	/**
 	 * Function to handle after enrolled student
 	 *
-	 * @param int $student_id Student ID.
+	 * @param mixed $order Order.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -322,7 +347,7 @@ class EngagementHook {
 		$student_id = $order->get_student_id();
 		global $wpdb;
 		$table_name  = $wpdb->prefix . 'ohmylms_user_enrollment';
-		$enroll_data = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name WHERE user_id = %d AND order_id = %d AND status = %d", $student_id, $order->get_id(), 'enrolled' ), ARRAY_A );
+		$enroll_data = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d AND order_id = %d AND status = %d', $table_name, $student_id, $order->get_id(), 'enrolled' ), ARRAY_A );
 
 		if ( empty( $enroll_data['course_id'] ) ) {
 			return;
@@ -372,7 +397,7 @@ class EngagementHook {
 		$course_id = false;
 		foreach ( $order->get_items() as $item_id => $item ) {
 			$post_type = get_post_type( $item->get_course_id() );
-			if ( $post_type === OHMYLMS_COURSE_CPT ) {
+			if ( OHMYLMS_COURSE_CPT === $post_type ) {
 				$course = $item->get_course();
 				$type   = 'course';
 			} else {
@@ -404,8 +429,8 @@ class EngagementHook {
 	/**
 	 * After register as an user
 	 *
-	 * @param int $user_id
-	 *
+	 * @param int $user_id User identifier.
+	 * .
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -507,9 +532,10 @@ class EngagementHook {
 	/**
 	 * After assignment submitted
 	 *
-	 * @param int $assignment_id Assignment ID.
-	 * @param int $course_id Course ID.
-	 * @param int $student_id Student ID.
+	 * @param int   $assignment_id Assignment ID.
+	 * @param int   $course_id Course ID.
+	 * @param int   $student_id Student ID.
+	 * @param mixed $marks Marks.
 	 */
 	public function assignment_achievement( $assignment_id, $course_id, $student_id, $marks ) {
 		if ( $this->maybe_gamification_enable() && Point::maybe_met_rules( 'assignment_passing_mark', $marks ) ) {

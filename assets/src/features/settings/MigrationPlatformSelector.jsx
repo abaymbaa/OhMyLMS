@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createMigrationPlatformSelector( readRuntime ) {
@@ -111,7 +112,7 @@ export function createMigrationPlatformSelector( readRuntime ) {
 													case 3:
 														_eLocal6.p = 3;
 														_rLocal = _eLocal6.v;
-														console.error(
+														showRequestError(
 															'Failed to fetch migration courses',
 															_rLocal
 														);

@@ -10,6 +10,12 @@ defined( 'ABSPATH' ) || exit;
 
 /** One serialized verification/completion path for callbacks and browser status. */
 class PaymentService {
+	/**
+	 * Locked for Payment service.
+	 *
+	 * @param mixed $order_id Order identifier.
+	 * @param mixed $operation Operation.
+	 */
 	public static function locked( $order_id, $operation ) {
 		global $wpdb;
 		// Connection-owned MySQL lock: atomic across workers, automatically released on disconnect.
@@ -25,7 +31,10 @@ class PaymentService {
 		}
 	}
 
-	/** Integer minor units avoid floating-point comparisons and malformed amounts. */
+	/** Integer minor units avoid floating-point comparisons and malformed amounts.
+	 *
+	 * @param mixed $value Value to process.
+	 */
 	public static function minor_units( $value ) {
 		if ( ! is_scalar( $value ) || ! preg_match( '/^\d{1,12}(?:\.\d{1,2})?$/D', (string) $value ) ) {
 			return null;
@@ -34,6 +43,13 @@ class PaymentService {
 		return (int) $parts[0] * 100 + (int) str_pad( $parts[1] ?? '', 2, '0' );
 	}
 
+	/**
+	 * Payment details for Payment service.
+	 *
+	 * @param mixed $response Response data.
+	 * @param mixed $invoice Invoice.
+	 * @param mixed $total Total.
+	 */
 	public static function payment_details( $response, $invoice, $total ) {
 		if ( ! is_array( $response ) || ! isset( $response['rows'] ) || ! is_array( $response['rows'] ) ) {
 			return new \WP_Error( 'qpay_response', __( 'Payment verification returned an invalid response.', 'ohmylms' ) );
@@ -44,7 +60,7 @@ class PaymentService {
 			if ( ! is_array( $row ) || 'PAID' !== ( $row['payment_status'] ?? '' ) ) {
 				continue; }
 			$amount = self::minor_units( $row['payment_amount'] ?? '' );
-			if ( 'MNT' !== ( $row['payment_currency'] ?? '' ) || null === $amount || $amount <= 0
+			if ( 'MNT' !== ( $row['payment_currency'] ?? '' ) || null === $amount || 0 >= $amount
 				|| empty( $row['payment_id'] ) || ! is_string( $row['payment_id'] )
 				|| ( isset( $row['object_id'] ) && $invoice !== $row['object_id'] )
 				|| ( isset( $row['invoice_id'] ) && $invoice !== $row['invoice_id'] )
@@ -57,7 +73,7 @@ class PaymentService {
 			}
 		}
 		$expected = self::minor_units( $total );
-		if ( null === $expected || $expected <= 0 ) {
+		if ( null === $expected || 0 >= $expected ) {
 			return new \WP_Error( 'qpay_amount', __( 'Invalid order amount.', 'ohmylms' ) );
 		}
 		// Never trust count/paid_amount alone: sum only unique, PAID, MNT rows for this invoice.
@@ -68,6 +84,13 @@ class PaymentService {
 		) : false;
 	}
 
+	/**
+	 * Settle for Payment service.
+	 *
+	 * @param mixed $order_id Order identifier.
+	 * @param mixed $gateway Gateway.
+	 * @param bool  $verify Verify.
+	 */
 	public static function settle( $order_id, $gateway, $verify = false ) {
 		return self::locked(
 			$order_id,

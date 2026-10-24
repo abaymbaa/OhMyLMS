@@ -3,11 +3,24 @@ namespace OhMyLMS\Commerce\DataStore;
 
 use OhMyLMS\Commerce\Abstracts\DataStore;
 
+/**
+ * Plugin subscription store implementation.
+ */
 class SubscriptionStore extends DataStore {
+	/**
+	 * Create for Subscription store.
+	 *
+	 * @param mixed $subscription Subscription.
+	 */
 	public function create( &$subscription ) {
 		// Implement create logic.
 	}
 
+	/**
+	 * Read for Subscription store.
+	 *
+	 * @param mixed $subscription Subscription.
+	 */
 	public function read( &$subscription ) {
 		$subscription_id = $subscription->get_id();
 		$student_id      = get_post_meta( $subscription_id, '_student_id', true );
@@ -64,14 +77,17 @@ class SubscriptionStore extends DataStore {
 		return $post_status;
 	}
 
+	/**
+	 * Update for Subscription store.
+	 *
+	 * @param mixed $subscription Subscription.
+	 */
 	public function update( &$subscription ) {
 		if ( null === $subscription->get_start_date( 'edit' ) ) {
 			$subscription->set_start_date( time() );
 		}
 
 		$post_data = array(
-			'post_modified'     => current_time( 'mysql' ),
-			'post_modified_gmt' => current_time( 'mysql', 1 ),
 			'post_status'       => $this->get_post_status( $subscription ),
 			'post_parent'       => $subscription->get_original_order_id(),
 			'post_modified'     => current_time( 'mysql' ),
@@ -113,6 +129,12 @@ class SubscriptionStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Delete for Subscription store.
+	 *
+	 * @param mixed $subscription Subscription.
+	 * @param array $args Operation arguments.
+	 */
 	public function delete( &$subscription, $args = array() ) {
 		// Implement delete logic.
 	}
@@ -125,6 +147,8 @@ class SubscriptionStore extends DataStore {
 	 * * @param \OhMyLMS\Commerce\Data\Subscription|int $subscription The subscription object or ID to get related orders for.
 	 * * @return array An array of related orders, each containing 'id', 'status', 'total', 'relationship', and 'date'.
 	 * * @since 1.0.0
+	 *
+	 * @param mixed $subscription Subscription.
 	 */
 	public function get_related_orders( $subscription ) {
 		global $wpdb;

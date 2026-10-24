@@ -11,7 +11,7 @@ const request = ( options ) => window.wp.apiFetch( options );
 
 /**
  * Clean a typed label.
- * @param {*} raw Typed value.
+ * @param {unknown} raw Typed value.
  * @return {string|null} The label ('' when cleared) or null when it is not allowed.
  */
 export function normalizeUnitNumber( raw ) {
@@ -56,10 +56,10 @@ export function unitNumberChanges( chapters, edits ) {
 
 /**
  * Store one unit's label; an empty label returns the unit to automatic numbering.
- * @param {number}   courseId  Course.
- * @param {number}   chapterId Unit.
- * @param {string}   number    Label.
- * @param {Function} fetch     Request function.
+ * @param {number}                               courseId  Course.
+ * @param {number}                               chapterId Unit.
+ * @param {string}                               number    Label.
+ * @param {(request: Object) => Promise<Object>} fetch     Request function.
  * @return {Promise<Object>} Fresh catalog.
  */
 export const saveUnitNumber = (

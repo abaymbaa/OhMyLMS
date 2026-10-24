@@ -39,15 +39,15 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 				<tbody>
 					<?php foreach ( $order->get_items() as $item ) : ?>
 						<tr>
-							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
+							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo esc_attr( $email_text_color ); ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 								<?php echo esc_html( $item->get_name() ); ?>
 							</td>
 
-							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
+							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo esc_attr( $email_text_color ); ?>; font-size: 14px; font-weight: 400; line-height: 1.3;">
 								<?php echo esc_html( $item->get_quantity() ); ?>
 							</td>
 
-							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo $email_text_color; ?>; font-size: 14px; font-weight: 400; line-height: 1.3; width: 110px;">
+							<td style="background: transparent; padding: 14px 20px; border:none; border-bottom: 1px solid #EBECED; color: <?php echo esc_attr( $email_text_color ); ?>; font-size: 14px; font-weight: 400; line-height: 1.3; width: 110px;">
 								<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $item->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
 							</td>
 						</tr>
@@ -57,22 +57,22 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 				<tfoot>
 					
 					<tr>
-						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
+						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
 							<?php echo esc_html__( 'Subtotal:', 'ohmylms' ); ?>
 						</th>
 
-						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
+						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
 							<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_cart_subtotal(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
 						</td>
 					</tr>
 					<?php if ( $order->get_cart_discount() > 0 ) : ?>
 
 					<tr>
-						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
+						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
 							<?php echo esc_html__( 'Discount:', 'ohmylms' ); ?>
 						</th>
 
-						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
+						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
 							-<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_cart_discount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
 						</td>
 					</tr>
@@ -82,11 +82,11 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 					<?php if ( $order->get_tax_amount() ) : ?>
 
 					<tr>
-						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
-							<?php echo esc_html__( 'Tax', 'ohmylms' ); ?> <span class="tax-rate" style="color: <?php echo $email_text_color; ?>;">(<?php echo esc_html( wp_strip_all_tags( $order->get_tax_rate() ) ); ?>%):</span>
+						<th colspan="2" style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
+							<?php echo esc_html__( 'Tax', 'ohmylms' ); ?> <span class="tax-rate" style="color: <?php echo esc_attr( $email_text_color ); ?>;">(<?php echo esc_html( wp_strip_all_tags( $order->get_tax_rate() ) ); ?>%):</span>
 						</th>
 
-						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
+						<td style="background: transparent; padding: 14px 20px 7px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
 							<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_tax_amount(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
 						</td>
 					</tr>
@@ -94,21 +94,21 @@ $email_text_color    = $email_settings['ohmylms_email_body_text_color'] ?? '<?ph
 					<?php endif; ?>
 					
 					<tr>
-						<th colspan="2" style="background: transparent; padding: 7px 20px 14px; color: <?php echo $email_text_color; ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
+						<th colspan="2" style="background: transparent; padding: 7px 20px 14px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
 							<?php echo esc_html__( 'Payment method:', 'ohmylms' ); ?>
 						</th>
 
-						<td style="background: transparent; padding: 7px 20px 14px; color: <?php echo $email_text_color; ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
+						<td style="background: transparent; padding: 7px 20px 14px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
 							<?php echo esc_html( $order->get_payment_method_title() ); ?>
 						</td>
 					</tr>
 					
 					<tr>
-						<th colspan="2" style="background: transparent; padding: 14px 20px; color: <?php echo $email_text_color; ?>; border: none; border-top: 1px solid #EBECED; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
+						<th colspan="2" style="background: transparent; padding: 14px 20px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; border-top: 1px solid #EBECED; text-align: right; font-size: 14px; font-weight: 500; line-height: 1;">
 							<?php echo esc_html__( 'Total:', 'ohmylms' ); ?>
 						</th>
 
-						<td style="background: transparent; padding: 14px 20px; color: <?php echo $email_text_color; ?>; border: none; border-top: 1px solid #EBECED; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
+						<td style="background: transparent; padding: 14px 20px; color: <?php echo esc_attr( $email_text_color ); ?>; border: none; border-top: 1px solid #EBECED; font-size: 14px; font-weight: 400; line-height: 1; width: 110px;">
 							<?php echo esc_html( wp_strip_all_tags( ohmylms_price( $order->get_total(), array( 'currency' => $order->get_currency() ) ) ) ); ?>
 						</td>
 					</tr>

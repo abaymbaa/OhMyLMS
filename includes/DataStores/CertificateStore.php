@@ -24,7 +24,7 @@ class CertificateStore extends DataStore {
 	/**
 	 * Create certificate
 	 *
-	 * @param Certificate $certificate
+	 * @param Certificate $certificate Certificate.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -71,9 +71,9 @@ class CertificateStore extends DataStore {
 	/**
 	 * Read data
 	 *
-	 * @param Certificate $certificate
+	 * @param Certificate $certificate Certificate.
 	 * @return mixed|void
-	 * @throws \Exception
+	 * @throws \Exception When the operation cannot be completed.
 	 * @since 1.0.0
 	 */
 	public function read( &$certificate ) {
@@ -99,7 +99,7 @@ class CertificateStore extends DataStore {
 	/**
 	 * Helper function that reads certificate data
 	 *
-	 * @param Certificate $certificate
+	 * @param Certificate $certificate Certificate.
 	 * @return void
 	 *
 	 * @since 1.0.0
@@ -188,8 +188,8 @@ class CertificateStore extends DataStore {
 	/**
 	 * Delete the certificate
 	 *
-	 * @param $certificate
-	 * @param array $args
+	 * @param mixed $certificate Certificate.
+	 * @param array $args Operation arguments.
 	 * @return mixed|void
 	 * @since 1.0.0
 	 */
@@ -239,6 +239,12 @@ class CertificateStore extends DataStore {
 		return true;
 	}
 
+	/**
+	 * Set thumbnail image for Certificate store.
+	 *
+	 * @param mixed $certificate Certificate.
+	 * @param mixed $thumbnail_id Thumbnail identifier.
+	 */
 	public function set_thumbnail_image( $certificate, $thumbnail_id ) {
 		$result = set_post_thumbnail( $certificate->get_id(), $thumbnail_id );
 		if ( is_wp_error( $result ) ) {
@@ -252,7 +258,6 @@ class CertificateStore extends DataStore {
 	 * Get the contents of the certificate.
 	 *
 	 * @param Certificate $certificate The certificate object.
-	 * @param array       $content The content to set for the certificate.
 	 * @return bool True on success, false on failure.
 	 *
 	 * @since 1.0.0
@@ -265,7 +270,6 @@ class CertificateStore extends DataStore {
 	 * Get the contents of the certificate.
 	 *
 	 * @param Certificate $certificate The certificate object.
-	 * @param array       $content The content to set for the certificate.
 	 * @return bool True on success, false on failure.
 	 *
 	 * @since 1.0.0
@@ -277,6 +281,8 @@ class CertificateStore extends DataStore {
 
 	/**
 	 * Get courses
+	 *
+	 * @param mixed $certificate Certificate.
 	 */
 	public function get_courses( $certificate ) {
 		global $wpdb;
@@ -285,10 +291,7 @@ class CertificateStore extends DataStore {
 		$certificate_id = $certificate->get_id();
 
 		// Query to get all course IDs associated with the certificate.
-		$query = $wpdb->prepare(
-			"SELECT course_id FROM {$wpdb->prefix}ohmylms_certificate_relationship WHERE certificate_id = %d",
-			$certificate_id
-		);
+		$query = $wpdb->prepare( 'SELECT course_id FROM %i WHERE certificate_id = %d', $wpdb->prefix . 'ohmylms_certificate_relationship', $certificate_id );
 
 		// Execute the query and get the results.
 		$results = $wpdb->get_col( $query );
@@ -314,6 +317,12 @@ class CertificateStore extends DataStore {
 		return array();
 	}
 
+	/**
+	 * Set courses for Certificate store.
+	 *
+	 * @param mixed $certificate Certificate.
+	 * @param mixed $courses Courses.
+	 */
 	public function set_courses( $certificate, $courses ) {
 		global $wpdb;
 

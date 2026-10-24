@@ -14,24 +14,42 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin offer button widget implementation.
+ */
 class OfferButtonWidget extends Widget_Base {
 
+	/**
+	 * Get name for Offer button widget.
+	 */
 	public function get_name() {
 		return 'ohmylms-offer-button';
 	}
 
+	/**
+	 * Get title for Offer button widget.
+	 */
 	public function get_title() {
 		return __( 'Offer Button', 'ohmylms' );
 	}
 
+	/**
+	 * Get icon for Offer button widget.
+	 */
 	public function get_icon() {
 		return 'eicon-badge';
 	}
 
+	/**
+	 * Get categories for Offer button widget.
+	 */
 	public function get_categories() {
 		return array( 'ohmylms' );
 	}
 
+	/**
+	 * Register controls for Offer button widget.
+	 */
 	protected function _register_controls() {
 		$this->start_controls_section(
 			'section_content',
@@ -167,6 +185,9 @@ class OfferButtonWidget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render for Offer button widget.
+	 */
 	protected function render() {
 		$settings  = $this->get_settings_for_display();
 		$atts      = array(

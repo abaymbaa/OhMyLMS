@@ -248,9 +248,10 @@ class DashboardProController extends RestController {
 		global $wpdb;
 		// Start with the base query.
 		$enrollment_query = $wpdb->prepare(
-			"SELECT ue.user_id as student_id
-			 FROM {$wpdb->prefix}ohmylms_user_enrollment ue
-			 WHERE ue.course_id = %d AND ue.status = %s",
+			'SELECT ue.user_id as student_id
+			 FROM %i ue
+			 WHERE ue.course_id = %d AND ue.status = %s',
+			$wpdb->prefix . 'ohmylms_user_enrollment',
 			$course_id,
 			'enrolled'
 		);

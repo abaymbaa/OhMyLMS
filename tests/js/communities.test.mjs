@@ -87,6 +87,7 @@ function harness( states = [] ) {
 		h: () => React,
 		console: { error() {} },
 		validateCommunity,
+		showRequestError() {},
 		window: {},
 		I: controls,
 		b: { __: ( text ) => text },

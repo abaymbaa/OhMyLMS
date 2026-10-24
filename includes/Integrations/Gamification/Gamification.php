@@ -4,10 +4,21 @@ namespace OhMyLMS\Integrations\Gamification;
 
 use OhMyLMS\Integrations\Gamification\Includes\Hooks;
 
+/**
+ * Plugin gamification implementation.
+ */
 class Gamification {
 
+	/**
+	 * Integration name.
+	 *
+	 * @var mixed
+	 */
 	public $integration_name = 'Gamification';
 
+	/**
+	 * Initialize Gamification.
+	 */
 	public function __construct() {
 		$this->define_constants();
 		$this->init_classes();

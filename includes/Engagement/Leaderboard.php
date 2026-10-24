@@ -9,6 +9,9 @@
  */
 namespace OhMyLMS\Engagement;
 
+/**
+ * Plugin leaderboard implementation.
+ */
 class Leaderboard {
 
 	/**
@@ -37,6 +40,7 @@ class Leaderboard {
 	 *
 	 * @return bool
 	 * @since 1.0.0
+	 * @param mixed $course_id Course identifier.
 	 */
 	public static function maybe_enable_for_course( $course_id ) {
 		$leaderboard_disabled = get_post_meta( $course_id, '_leaderboard_disabled', true );
@@ -84,6 +88,7 @@ class Leaderboard {
 	 *
 	 * @return int
 	 * @since 1.0.0
+	 * @param mixed $number Number.
 	 */
 	public static function maybe_met_threshold( $number ) {
 		$threshold = self::get_threshold();
@@ -97,8 +102,8 @@ class Leaderboard {
 	/**
 	 * Get students for the leaderboard based on course completion rate.
 	 *
-	 * @param array $students
-	 *
+	 * @param array $students Students.
+	 * .
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -139,9 +144,9 @@ class Leaderboard {
 	/**
 	 * Get a student's average quiz marks based on all attempts for a specific quiz.
 	 *
-	 * @param int $student_id The student ID
+	 * @param int $student_id The student ID.
 	 * @param int $quiz_id The quiz ID
-	 *
+	 * .
 	 * @return float|int The average score, or 0 if no attempts found
 	 * @since 1.0.0
 	 */
@@ -155,11 +160,12 @@ class Leaderboard {
 		// Get all completed attempts for this student and quiz.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT total 
-                FROM {$wpdb->prefix}ohmylms_quiz_attempts 
+				'SELECT total
+                FROM %i
                 WHERE student_id = %d 
                 AND quiz_id = %d 
-                AND status = 'completed'",
+                AND status = \'completed\'',
+				$wpdb->prefix . 'ohmylms_quiz_attempts',
 				$student_id,
 				$quiz_id
 			)
@@ -183,9 +189,9 @@ class Leaderboard {
 	/**
 	 * Get a student's average assignment marks based on all attempts for a specific assignment.
 	 *
-	 * @param int $student_id The student ID
+	 * @param int $student_id The student ID.
 	 * @param int $assignment_id The assignment ID
-	 *
+	 * .
 	 * @return float|int The average score, or 0 if no attempts found
 	 * @since 1.0.0
 	 */
@@ -199,10 +205,11 @@ class Leaderboard {
 		// Get all submitted assignments for this student and assignment.
 		$results = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT score 
-                FROM {$wpdb->prefix}ohmylms_assignment_attempts 
+				'SELECT score
+                FROM %i
                 WHERE user_id = %d 
-                AND assignment_id = %d",
+                AND assignment_id = %d',
+				$wpdb->prefix . 'ohmylms_assignment_attempts',
 				$student_id,
 				$assignment_id
 			)
@@ -226,8 +233,9 @@ class Leaderboard {
 	/**
 	 * Get students for the leaderboard based on highest quiz score.
 	 *
-	 * @param array $students
-	 *
+	 * @param array $students Students.
+	 * .
+	 * @param mixed $course_id Course identifier.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -312,7 +320,7 @@ class Leaderboard {
 	/**
 	 * Get students for the leaderboard by fastest time.
 	 *
-	 * @param array $students
+	 * @param array $students Students.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -345,7 +353,7 @@ class Leaderboard {
 	/**
 	 * Set the position for each student in the leaderboard.
 	 *
-	 * @param array $students
+	 * @param array $students Students.
 	 * @return array
 	 * @since 1.0.0
 	 */
@@ -363,7 +371,7 @@ class Leaderboard {
 	/**
 	 * Convert a numeric position into ordinal text (e.g., 1 => "1st", 2 => "2nd").
 	 *
-	 * @param int $position
+	 * @param int $position Position.
 	 * @return string
 	 */
 	public static function get_position_in_text( $position ) {

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Formatting functions.
+ *
+ * @package OhMyLMS
+ */
+
 
 
 /**
@@ -126,6 +132,11 @@ function ohmylms_ecommerce_format_coupon_code( $code ) {
 }
 
 
+/**
+ * Ohmylms ecommerce string to datetime for Formatting-functions.
+ *
+ * @param mixed $time_string Time string.
+ */
 function ohmylms_ecommerce_string_to_datetime( $time_string ) {
 	// Strings are defined in local WP timezone. Convert to UTC.
 	if ( 1 === preg_match( '/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(Z|((-|\+)\d{2}:\d{2}))$/', $time_string, $date_bits ) ) {

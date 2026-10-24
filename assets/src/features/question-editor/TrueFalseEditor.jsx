@@ -52,11 +52,12 @@ export function createTrueFalseEditor( readRuntime ) {
 									<Controls.CardWP
 										isBorderless={ ! 0 }
 										className={ 'ohmylms-option-item '.concat(
-											1 ==
-												( _rLocal === null ||
-												_rLocal === void 0
+											Number(
+												_rLocal === null ||
+													_rLocal === void 0
 													? void 0
-													: _rLocal.is_correct )
+													: _rLocal.is_correct
+											) === 1
 												? 'ohmylms-option-item--correct'
 												: ''
 										) }
@@ -104,12 +105,14 @@ export function createTrueFalseEditor( readRuntime ) {
 													} }
 													selected={ ( () => {
 														if (
-															1 ==
-															( _rLocal ===
-																null ||
-															_rLocal === void 0
-																? void 0
-																: _rLocal.is_correct )
+															Number(
+																_rLocal ===
+																	null ||
+																	_rLocal ===
+																		void 0
+																	? void 0
+																	: _rLocal.is_correct
+															) === 1
 														) {
 															if (
 																_rLocal ===
@@ -183,7 +186,7 @@ export function createTrueFalseEditor( readRuntime ) {
 											) }
 										</div>
 									) }
-									{ 1 == _rLocal.is_correct &&
+									{ Number( _rLocal.is_correct ) === 1 &&
 										Boolean(
 											_rLocal === null ||
 												_rLocal === void 0 ||
@@ -209,7 +212,7 @@ export function createTrueFalseEditor( readRuntime ) {
 						} ) }
 						{ hasValidationErrors &&
 							! options.some( function ( e ) {
-								return 1 == e.is_correct;
+								return Number( e.is_correct ) === 1;
 							} ) && (
 								<p className={ 'ohmylms-option-error-msg' }>
 									{ ( 0, I18n.__ )(

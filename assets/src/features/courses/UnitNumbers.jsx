@@ -12,10 +12,10 @@ import {
 /**
  * Display number of each unit. Units are numbered by position unless an author types a label such
  * as 3 or 2A. Saved on its own, apart from the learning program.
- * @param {Object}   root0
- * @param {number}   root0.courseId Course being edited.
- * @param {Object[]} root0.chapters Units: [{id, name, number}].
- * @param {Function} root0.onSaved  Called with the saved changes [{id, number}].
+ * @param {Object}                    root0
+ * @param {number}                    root0.courseId Course being edited.
+ * @param {Object[]}                  root0.chapters Units: [{id, name, number}].
+ * @param {(units: Object[]) => void} root0.onSaved  Called with the saved changes [{id, number}].
  */
 export function UnitNumbers( { courseId, chapters, onSaved } ) {
 	const [ edits, setEdits ] = useState( {} );

@@ -58,15 +58,17 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 			const move =
 				node.kind === 'content'
 					? () => api.moveItem( node.id, targetParent.id, position )
-					: node.kind === 'group'
-						? () =>
-								api.moveGroup(
-									syllabusId,
-									node.id,
-									targetParent.id,
-									position
-								)
-						: async () => {
+					: ( () => {
+							if ( node.kind === 'group' ) {
+								return () =>
+									api.moveGroup(
+										syllabusId,
+										node.id,
+										targetParent.id,
+										position
+									);
+							}
+							return async () => {
 								const appearance = categoryAppearance(
 									node.skill,
 									ws.outline?.settings,
@@ -93,6 +95,7 @@ export function createActions( { ws, syllabusId, tree, items, select } ) {
 									position
 								);
 							};
+						} )();
 			const response = await run(
 				move,
 				__( 'Outline order saved.', 'ohmylms' ),

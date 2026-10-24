@@ -70,6 +70,11 @@ class StudentProController extends RestController {
 		);
 	}
 
+	/**
+	 * Get item for Student pro controller.
+	 *
+	 * @param mixed $request REST request.
+	 */
 	public function get_item( $request ) {
 		global $wpdb;
 
@@ -148,9 +153,10 @@ class StudentProController extends RestController {
 		$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 		$enrollment       = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT start_date 
-                FROM $enrollment_table 
-                WHERE user_id = %d",
+				'SELECT start_date
+                FROM %i
+                WHERE user_id = %d',
+				$enrollment_table,
 				$user_id
 			),
 			ARRAY_A
@@ -179,9 +185,10 @@ class StudentProController extends RestController {
 				$enrollment_table = $wpdb->prefix . 'ohmylms_user_enrollment';
 				$enrollment       = $wpdb->get_row(
 					$wpdb->prepare(
-						"SELECT * 
-                        FROM $enrollment_table 
-                        WHERE user_id = %d AND course_id = %d",
+						'SELECT *
+                        FROM %i
+                        WHERE user_id = %d AND course_id = %d',
+						$enrollment_table,
 						$user_id,
 						$course_id
 					),
@@ -204,10 +211,11 @@ class StudentProController extends RestController {
 				$progress_table  = $wpdb->prefix . 'ohmylms_user_progress';
 				$completed_items = $wpdb->get_results(
 					$wpdb->prepare(
-						"SELECT content_type, COUNT(*) as count
-                         FROM $progress_table
-                         WHERE enrollment_id = %d AND status = 'completed'
-                         GROUP BY content_type",
+						'SELECT content_type, COUNT(*) as count
+                         FROM %i
+                         WHERE enrollment_id = %d AND status = \'completed\'
+                         GROUP BY content_type',
+						$progress_table,
 						$enrollment['id']
 					),
 					ARRAY_A
@@ -288,9 +296,10 @@ class StudentProController extends RestController {
 		$membership_table = $wpdb->prefix . 'ohmylms_user_membership';
 		$membership_data  = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT membership_id as id 
-                 FROM $membership_table 
-                 WHERE user_id = %d",
+				'SELECT membership_id as id
+                 FROM %i
+                 WHERE user_id = %d',
+				$membership_table,
 				$user_id
 			),
 			ARRAY_A

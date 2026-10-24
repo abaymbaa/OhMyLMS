@@ -3,7 +3,17 @@ namespace OhMyLMS\Learning;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin learning path implementation.
+ */
 final class LearningPath {
+	/**
+	 * Available for Learning path.
+	 *
+	 * @param array $item Item.
+	 * @param mixed $student Student.
+	 * @param mixed $course Course.
+	 */
 	public static function available( array $item, $student, $course ) {
 		if ( empty( $item['available'] ) ) {
 			return false; }
@@ -13,6 +23,11 @@ final class LearningPath {
 			&& ! apply_filters( 'ohmylms_is_lesson_sequentially_locked', false, $item['content_id'], $course, $student );
 	}
 
+	/**
+	 * Next for Learning path.
+	 *
+	 * @param array $state State.
+	 */
 	public static function next( array $state ) {
 		if ( $state['blocked'] ) {
 			return null; }

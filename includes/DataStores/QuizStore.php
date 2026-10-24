@@ -23,13 +23,18 @@ defined( 'ABSPATH' ) || exit;
  */
 class QuizStore extends DataStore {
 
+	/**
+	 * Must exist meta keys.
+	 *
+	 * @var mixed
+	 */
 	protected $must_exist_meta_keys = array(
 		'_quiz_settings',
 	);
 	/**
 	 * Create a new quiz.
 	 *
-	 * @param Quiz $quiz
+	 * @param Quiz $quiz Quiz.
 	 * @since 1.0.0
 	 */
 	public function create( &$quiz ): void {
@@ -82,6 +87,11 @@ class QuizStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Read for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 */
 	public function read( &$quiz ) {
 		$post_object = get_post( $quiz->get_id() );
 		if ( ! $quiz->get_id() || ! $post_object || OHMYLMS_QUIZ_CPT !== $post_object->post_type ) {
@@ -105,7 +115,7 @@ class QuizStore extends DataStore {
 	/**
 	 * Update an existing quiz.
 	 *
-	 * @param Quiz $quiz
+	 * @param Quiz $quiz Quiz.
 	 * @return void
 	 * @since 1.0.0
 	 */
@@ -154,8 +164,8 @@ class QuizStore extends DataStore {
 	/**
 	 * Delete a quiz.
 	 *
-	 * @param Quiz  $quiz
-	 * @param array $args
+	 * @param Quiz  $quiz Quiz.
+	 * @param array $args Operation arguments.
 	 * @since 1.0.0
 	 */
 	public function delete( &$quiz, $args = array() ) {
@@ -184,6 +194,11 @@ class QuizStore extends DataStore {
 		);
 	}
 
+	/**
+	 * Read quiz data for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 */
 	protected function read_quiz_data( &$quiz ) {
 		$id               = $quiz->get_id();
 		$post_meta_values = get_post_meta( $id );
@@ -197,6 +212,12 @@ class QuizStore extends DataStore {
 		$quiz->set_props( $set_props );
 	}
 
+	/**
+	 * Update post meta for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param bool  $force Force.
+	 */
 	protected function update_post_meta( &$quiz, $force = false ) {
 		$props_to_update = $this->quiz_meta_key();
 		foreach ( $props_to_update as $meta_key => $prop ) {
@@ -234,7 +255,8 @@ class QuizStore extends DataStore {
 	/**
 	 * Get the quiz questions.
 	 *
-	 * @param Quiz $quiz The quiz object.
+	 * @param Quiz   $quiz The quiz object.
+	 * @param string $return_type Return type.
 	 * @return array The list of questions.
 	 *
 	 * @since 1.0.0
@@ -244,10 +266,7 @@ class QuizStore extends DataStore {
 		$table_name         = $wpdb->prefix . 'ohmylms_quiz_questions_relationship';
 		$quiz_id            = $quiz->get_id();
 		$questions          = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * FROM {$table_name} WHERE quiz_id = %d ORDER BY order_number ASC",
-				$quiz_id
-			)
+			$wpdb->prepare( 'SELECT * FROM %i WHERE quiz_id = %d ORDER BY order_number ASC', $table_name, $quiz_id )
 		);
 		$filtered_questions = array();
 		$pins               = get_post_meta( $quiz_id, '_ohmylms_version_pins', true );
@@ -298,8 +317,8 @@ class QuizStore extends DataStore {
 	/**
 	 * Set the contents of the chapter.
 	 *
-	 * @param Chapter $chapter The chapter object.
-	 * @param array   $lessons The lessons to set for the chapter.
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $questions Questions.
 	 * @return bool True on success, false on failure.
 	 *
 	 * @since 1.0.0
@@ -333,29 +352,34 @@ class QuizStore extends DataStore {
 		return true;
 	}
 
+	/**
+	 * Get quiz attempt for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 */
 	public function get_quiz_attempt( $quiz, $student_id ) {
 		global $wpdb;
 
 		$attempt = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
-				$quiz->get_id(),
-				$student_id
-			),
+			$wpdb->prepare( 'SELECT * FROM %i WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != \'0000-00-00 00:00:00\' AND status = \'in-progress\'', $wpdb->prefix . 'ohmylms_quiz_attempts', $quiz->get_id(), $student_id ),
 			ARRAY_A
 		);
 		return $attempt;
 	}
 
+	/**
+	 * Save attempt for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $arg Arg.
+	 */
 	public function save_attempt( $quiz, $student_id, $arg ) {
 		global $wpdb;
 
 		$existing_attempt = $wpdb->get_row(
-			$wpdb->prepare(
-				"SELECT * FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != '0000-00-00 00:00:00' AND status = 'in-progress'",
-				$quiz->get_id(),
-				$student_id
-			)
+			$wpdb->prepare( 'SELECT * FROM %i WHERE quiz_id = %d AND student_id = %d AND start_date IS NOT NULL AND start_date != \'0000-00-00 00:00:00\' AND status = \'in-progress\'', $wpdb->prefix . 'ohmylms_quiz_attempts', $quiz->get_id(), $student_id )
 		);
 
 		if ( $existing_attempt ) {
@@ -403,6 +427,14 @@ class QuizStore extends DataStore {
 		}
 	}
 
+	/**
+	 * Update attempt for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $arg Arg.
+	 */
 	public function update_attempt( $quiz, $student_id, $attempt_id, $arg ) {
 		global $wpdb;
 
@@ -436,12 +468,19 @@ class QuizStore extends DataStore {
 	}
 
 
+	/**
+	 * Get all quiz attempts for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 */
 	public function get_all_quiz_attempts( $quiz, $student_id, $course_id ) {
 		global $wpdb;
 
 		$attempts = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
             qa.id AS quiz_attempt_id,
             qa.course_id,
             qa.quiz_id,
@@ -450,14 +489,14 @@ class QuizStore extends DataStore {
             qa.status,
             qa.start_date,
             qa.end_date,
-            GROUP_CONCAT(qa_answers.given_answer SEPARATOR ', ') AS answers,
+            GROUP_CONCAT(qa_answers.given_answer SEPARATOR \', \') AS answers,
             COUNT(qa_answers.given_answer) AS total_answers_count, -- Count of given answers
             SUM(qa_answers.achive_mark) AS total_achieved_marks,
             SUM(qa_answers.minus_mark) AS total_minus_marks
          FROM
-            {$wpdb->prefix}ohmylms_quiz_attempts qa
+            %i qa
          LEFT JOIN
-            {$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
+            %i qa_answers
          ON
             qa.id = qa_answers.quiz_attempt_id
          WHERE
@@ -465,7 +504,9 @@ class QuizStore extends DataStore {
             AND qa.student_id = %d
             AND qa.course_id = %d
          GROUP BY
-            qa.id",
+            qa.id',
+				$wpdb->prefix . 'ohmylms_quiz_attempts',
+				$wpdb->prefix . 'ohmylms_quiz_attempts_answers',
 				$quiz->get_id(),
 				$student_id,
 				$course_id
@@ -491,12 +532,20 @@ class QuizStore extends DataStore {
 		return $row;
 	}
 
+	/**
+	 * Get all quiz attempts by attempt id for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 */
 	public function get_all_quiz_attempts_by_attempt_id( $quiz, $student_id, $course_id, $attempt_id ) {
 		global $wpdb;
 
 		$attempts = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
             qa.id AS quiz_attempt_id,
             qa.course_id,
             qa.quiz_id,
@@ -505,14 +554,14 @@ class QuizStore extends DataStore {
             qa.status,
             qa.start_date,
             qa.end_date,
-            GROUP_CONCAT(qa_answers.given_answer SEPARATOR ', ') AS answers,
+            GROUP_CONCAT(qa_answers.given_answer SEPARATOR \', \') AS answers,
             COUNT(qa_answers.given_answer) AS total_answers_count, -- Count of given answers
             SUM(qa_answers.achive_mark) AS total_achieved_marks,
             SUM(qa_answers.minus_mark) AS total_minus_marks
          FROM
-            {$wpdb->prefix}ohmylms_quiz_attempts qa
+            %i qa
          LEFT JOIN
-            {$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
+            %i qa_answers
          ON
             qa.id = qa_answers.quiz_attempt_id
          WHERE
@@ -521,7 +570,9 @@ class QuizStore extends DataStore {
             AND qa.course_id = %d
             AND qa.id = %d
          GROUP BY
-            qa.id",
+            qa.id',
+				$wpdb->prefix . 'ohmylms_quiz_attempts',
+				$wpdb->prefix . 'ohmylms_quiz_attempts_answers',
 				$quiz->get_id(),
 				$student_id,
 				$course_id,
@@ -534,12 +585,17 @@ class QuizStore extends DataStore {
 	}
 
 
+	/**
+	 * Get report for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 */
 	public function get_report( $quiz ) {
 		global $wpdb;
 
 		$report = $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT
+				'SELECT
 		qa.id AS quiz_attempt_id,
 		qa.course_id,
 		qa.quiz_id,
@@ -548,26 +604,29 @@ class QuizStore extends DataStore {
 		qa.status,
 		qa.start_date,
 		qa.end_date,
-		GROUP_CONCAT(qa_answers.given_answer SEPARATOR ', ') AS answers,
+		GROUP_CONCAT(qa_answers.given_answer SEPARATOR \', \') AS answers,
 		COUNT(qa_answers.given_answer) AS total_answers_count, -- Count of given answers
 		SUM(qa_answers.achive_mark) AS total_achieved_marks,
 		SUM(qa_answers.minus_mark) AS total_minus_marks,
 		u.user_email AS student_email,
 		u.display_name AS student_name
 	 FROM
-		{$wpdb->prefix}ohmylms_quiz_attempts qa
+		%i qa
 	 LEFT JOIN
-		{$wpdb->prefix}ohmylms_quiz_attempts_answers qa_answers
+		%i qa_answers
 	 ON
 		qa.id = qa_answers.quiz_attempt_id
 	 LEFT JOIN
-		{$wpdb->prefix}users u
+		%i u
 	 ON
 		qa.student_id = u.ID
 	 WHERE
 		qa.quiz_id = %d
 	 GROUP BY
-		qa.id",
+		qa.id',
+				$wpdb->prefix . 'ohmylms_quiz_attempts',
+				$wpdb->prefix . 'ohmylms_quiz_attempts_answers',
+				$wpdb->prefix . 'users',
 				$quiz->get_id()
 			),
 			ARRAY_A
@@ -592,10 +651,7 @@ class QuizStore extends DataStore {
 		$report      = array();
 		$quiz_result = array();
 		$result      = $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT * from {$wpdb->prefix}ohmylms_quiz_attempts_answers WHERE quiz_attempt_id = %d",
-				$attempt_id
-			)
+			$wpdb->prepare( 'SELECT * from %i WHERE quiz_attempt_id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts_answers', $attempt_id )
 		);
 		foreach ( $result as $key => $value ) {
 			$quiz_result[ $value->question_id ] = (array) $value;
@@ -640,11 +696,7 @@ class QuizStore extends DataStore {
 		$report['questions']            = $questions;
 		$report['quiz_attempt_id']      = $attempt_id;
 		$report['status']               = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT status FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE id = %d AND quiz_id = %d",
-				$attempt_id,
-				$quiz->get_id()
-			)
+			$wpdb->prepare( 'SELECT status FROM %i WHERE id = %d AND quiz_id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts', $attempt_id, $quiz->get_id() )
 		);
 		$report['total_achieved_marks'] = $total_marks;
 		// Recorded before versioning: question content shown is the current content, which may differ from what was seen.
@@ -655,21 +707,28 @@ class QuizStore extends DataStore {
 	/**
 	 * Attempts are shared by every course that places the quiz: a learner has one attempt allowance and
 	 * one history per quiz. `$course_id` stays in the signature for compatibility.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $student_id Student identifier.
+	 * @param mixed $course_id Course identifier.
 	 */
 	public function count_total_attempt( $quiz, $student_id, $course_id ) {
 		global $wpdb;
 
 		$count = $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT COUNT(*) FROM {$wpdb->prefix}ohmylms_quiz_attempts WHERE quiz_id = %d AND student_id = %d",
-				$quiz->get_id(),
-				$student_id
-			)
+			$wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE quiz_id = %d AND student_id = %d', $wpdb->prefix . 'ohmylms_quiz_attempts', $quiz->get_id(), $student_id )
 		);
 
 		return $count;
 	}
 
+	/**
+	 * Update attempt report manually for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $quiz_attempt_answer_id Quiz attempt answer identifier.
+	 * @param mixed $request REST request.
+	 */
 	public function update_attempt_report_manually( $quiz, $quiz_attempt_answer_id, $request ) {
 		global $wpdb;
 		$attempt_id             = isset( $request['attempt_id'] ) ? (int) $request['attempt_id'] : '';
@@ -711,6 +770,14 @@ class QuizStore extends DataStore {
 		);
 	}
 
+	/**
+	 * Review question for Quiz store.
+	 *
+	 * @param mixed $quiz Quiz.
+	 * @param mixed $question_id Question identifier.
+	 * @param mixed $attempt_id Attempt identifier.
+	 * @param mixed $data Input data.
+	 */
 	public function review_question( &$quiz, $question_id, $attempt_id, $data ) {
 		if ( isset( $data['achive_mark'] ) ) {
 			$achieve_mark = $data['achive_mark'];

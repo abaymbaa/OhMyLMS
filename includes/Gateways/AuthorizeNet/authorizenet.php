@@ -6,6 +6,8 @@
  * This file registers the Authorize.Net payment gateway with OhMyLMS.
  *
  * @version 1.0.0
+ *
+ * @package OhMyLMS
  */
 
 define( 'OHMYLMS_AUTHORIZENET_VERSION', '1.0.0' );

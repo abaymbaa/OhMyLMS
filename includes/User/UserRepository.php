@@ -17,8 +17,8 @@ class UserRepository {
 	/**
 	 * Find is user enrolled
 	 *
-	 * @param $course_id
-	 * @param $user_id
+	 * @param mixed $course_id Course identifier.
+	 * @param mixed $user_id User identifier.
 	 * @return string|null
 	 * @since 1.0.0
 	 */
@@ -39,7 +39,7 @@ class UserRepository {
 	/**
 	 * Insert new enrollment
 	 *
-	 * @param $data
+	 * @param mixed $data Input data.
 	 * @return array
 	 * @since 1.0.0
 	 */

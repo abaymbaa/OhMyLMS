@@ -22,23 +22,31 @@ defined( 'ABSPATH' ) || exit;
 final class Ecommerce {
 
 	/**
+	 * Post types.
+	 *
 	 * @var PostTypes
 	 */
 	public $post_types;
 
 
 	/**
+	 * Session.
+	 *
 	 * @var SessionHandler
 	 */
 	public $session;
 
 
 	/**
+	 * Cart.
+	 *
 	 * @var $cart Cart
 	 */
 	public $cart;
 
 	/**
+	 * Cart.
+	 *
 	 * @var $payment Cart
 	 */
 	public $payment;
@@ -51,32 +59,52 @@ final class Ecommerce {
 	private static $instance;
 
 	/**
+	 * Order factory.
+	 *
 	 * @var OrderFactory
 	 */
 	public $order_factory;
 
 
+	/**
+	 * Subscription factory.
+	 *
+	 * @var mixed
+	 */
 	public $subscription_factory;
 
 	/**
+	 * Query.
+	 *
 	 * @var CustomEndpoints
 	 */
 	public $query;
 
 	/**
+	 * Subscription manager.
+	 *
 	 * @var SubscriptionManager
 	 */
 	public $subscription_manager;
 
 
+	/**
+	 * Prefix.
+	 *
+	 * @var mixed
+	 */
 	public $prefix = 'ohmylms';
 
 	/**
+	 * Instance.
+	 *
 	 * @var Api
 	 */
 	public $rest_api;
 
 	/**
+	 * Instance.
+	 *
 	 * @var Gateways
 	 */
 	public $gateways;
@@ -102,6 +130,9 @@ final class Ecommerce {
 	}
 
 
+	/**
+	 * Init for Ecommerce.
+	 */
 	public function init() {
 		$this->register_services();
 		$this->init_post_types();
@@ -174,7 +205,7 @@ final class Ecommerce {
 	/**
 	 * Order object
 	 *
-	 * @param $order_id
+	 * @param mixed $order_id Order identifier.
 	 * @return Order
 	 * @sincee 1.0.0
 	 */
@@ -186,6 +217,9 @@ final class Ecommerce {
 	}
 }
 
+/**
+ * Ecommerce for Ecommerce.
+ */
 function ecommerce() {
 	return Ecommerce::instance();
 }

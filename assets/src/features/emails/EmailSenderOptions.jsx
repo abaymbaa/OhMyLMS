@@ -26,7 +26,7 @@ export function createEmailSenderOptions( readRuntime ) {
 							( _tLocal = ( function ( _eLocal4 ) {
 								var _tLocal2 = ( function ( _eLocal5 ) {
 									if (
-										'object' != g4( _eLocal5 ) ||
+										'object' !== g4( _eLocal5 ) ||
 										! _eLocal5
 									) {
 										return _eLocal5;
@@ -38,7 +38,7 @@ export function createEmailSenderOptions( readRuntime ) {
 											_eLocal5,
 											'string'
 										);
-										if ( 'object' != g4( _nLocal3 ) ) {
+										if ( 'object' !== g4( _nLocal3 ) ) {
 											return _nLocal3;
 										}
 										throw new TypeError(
@@ -47,7 +47,7 @@ export function createEmailSenderOptions( readRuntime ) {
 									}
 									return String( _eLocal5 );
 								} )( _eLocal4 );
-								return 'symbol' == g4( _tLocal2 )
+								return 'symbol' === g4( _tLocal2 )
 									? _tLocal2
 									: _tLocal2 + '';
 							} )( _tLocal ) ) in _eLocal3

@@ -10,8 +10,18 @@ defined( 'ABSPATH' ) || exit;
 
 /** Resolves live membership rules and keeps membership-owned enrollments in sync. */
 final class CourseSelection {
+	/**
+	 * Queued.
+	 *
+	 * @var mixed
+	 */
 	private static $queued = false;
 
+	/**
+	 * Ids for Course selection.
+	 *
+	 * @param mixed $values Values.
+	 */
 	public static function ids( $values ) {
 		return array_values( array_unique( array_filter( array_map( 'absint', (array) $values ) ) ) );
 	}
@@ -21,6 +31,13 @@ final class CourseSelection {
 	 * Course Bundles are the rules to choose from. Legacy category and tag rules, saved before they
 	 * were replaced, still resolve so existing members keep the access they were granted until an
 	 * administrator removes those rules.
+	 *
+	 * @param mixed $products Products.
+	 * @param mixed $categories Categories.
+	 * @param mixed $tags Tags.
+	 * @param mixed $excluded Excluded.
+	 * @param array $curriculum Curriculum.
+	 * @param array $bundles Bundles.
 	 */
 	public static function resolve( $products, $categories, $tags, $excluded, $curriculum = array(), $bundles = array() ) {
 		$ids = self::ids( array_column( (array) $products, 'id' ) );
@@ -77,6 +94,9 @@ final class CourseSelection {
 		return $result;
 	}
 
+	/**
+	 * Init for Course selection.
+	 */
 	public static function init() {
 		add_action( 'save_post', array( __CLASS__, 'post_changed' ), 20, 2 );
 		add_action( 'before_delete_post', array( __CLASS__, 'post_changed' ), 20, 2 );
@@ -86,18 +106,38 @@ final class CourseSelection {
 		}
 		add_action( 'shutdown', array( __CLASS__, 'flush' ) );
 	}
+	/**
+	 * Queue for Course selection.
+	 */
 	public static function queue() {
 		self::$queued = true; }
+	/**
+	 * Post changed for Course selection.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $post Post.
+	 */
 	public static function post_changed( $id, $post ) {
 		if ( in_array( $post->post_type, array( 'ohmylms-course', 'ohmylms-membership' ), true ) ) {
 			self::queue();
 		}
 	}
+	/**
+	 * Terms changed for Course selection.
+	 *
+	 * @param mixed $id Id.
+	 * @param mixed $terms Terms.
+	 * @param mixed $tt_ids Tt ids.
+	 * @param mixed $taxonomy Taxonomy.
+	 */
 	public static function terms_changed( $id, $terms, $tt_ids, $taxonomy ) {
 		if ( in_array( $taxonomy, array( 'course_category', 'course_tag' ), true ) ) {
 			self::queue();
 		}
 	}
+	/**
+	 * Flush for Course selection.
+	 */
 	public static function flush() {
 		if ( ! self::$queued ) {
 			return;
@@ -115,6 +155,11 @@ final class CourseSelection {
 		}
 	}
 
+	/**
+	 * Sync for Course selection.
+	 *
+	 * @param mixed $membership_id Membership identifier.
+	 */
 	public static function sync( $membership_id ) {
 		global $wpdb;
 		$plan = ohmylms_get_membership( $membership_id );
@@ -122,15 +167,15 @@ final class CourseSelection {
 			return;
 		}
 		$courses = $plan->get_status() === 'publish' ? array_column( $plan->get_products(), 'id' ) : array();
-		$members = $wpdb->get_results( $wpdb->prepare( "SELECT user_id, order_id, status FROM {$wpdb->prefix}ohmylms_user_membership WHERE membership_id=%d AND status IN ('enrolled','pending')", $membership_id ), ARRAY_A );
+		$members = $wpdb->get_results( $wpdb->prepare( 'SELECT user_id, order_id, status FROM %i WHERE membership_id=%d AND status IN (\'enrolled\',\'pending\')', $wpdb->prefix . 'ohmylms_user_membership', $membership_id ), ARRAY_A );
 		$table   = $wpdb->prefix . 'ohmylms_user_enrollment';
 		// Adopt old checkout rows only when their order identifies this membership.
 		foreach ( $members as $member ) {
 			if ( (int) $member['order_id'] > 0 ) {
-				$wpdb->query( $wpdb->prepare( "UPDATE $table SET membership_id=%d WHERE user_id=%d AND order_id=%d AND (membership_id IS NULL OR membership_id=0)", $membership_id, $member['user_id'], $member['order_id'] ) );
+				$wpdb->query( $wpdb->prepare( 'UPDATE %i SET membership_id=%d WHERE user_id=%d AND order_id=%d AND (membership_id IS NULL OR membership_id=0)', $table, $membership_id, $member['user_id'], $member['order_id'] ) );
 			}
 		}
-		$rows    = $wpdb->get_results( $wpdb->prepare( "SELECT id,user_id,order_id,course_id,status FROM $table WHERE membership_id=%d", $membership_id ), ARRAY_A );
+		$rows    = $wpdb->get_results( $wpdb->prepare( 'SELECT id,user_id,order_id,course_id,status FROM %i WHERE membership_id=%d', $table, $membership_id ), ARRAY_A );
 		$desired = array();
 		foreach ( $members as $member ) {
 			foreach ( $courses as $course ) {

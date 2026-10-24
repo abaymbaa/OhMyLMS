@@ -1,11 +1,27 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 
 use OhMyLMS\Commerce\Abstracts\PaymentGateway;
 
+/**
+ * Plugin oh my lms_gateway_offline implementation.
+ */
 class OhMyLMS_Gateway_Offline extends PaymentGateway {
 
+	/**
+	 * Testmode.
+	 *
+	 * @var mixed
+	 */
 	public $testmode;
+	/**
+	 * Subscription support.
+	 *
+	 * @var mixed
+	 */
 	public $subscription_support;
+	/**
+	 * Initialize Gateway offline.
+	 */
 	public function __construct() {
 		$this->id                   = 'offline';
 		$gateway_settings_key       = 'ohmylms_' . $this->id . '_settings';
@@ -87,9 +103,10 @@ class OhMyLMS_Gateway_Offline extends PaymentGateway {
 	/**
 	 * Process payment
 	 *
-	 * @param int $order_id
+	 * @param int  $order_id Order identifier.
 	 * @return array
 	 * @since 1.0.0
+	 * @param bool $is_subscription Is subscription.
 	 */
 	public function process_payment( $order_id, $is_subscription = false ) {
 		$order = ohmylms_ecommerce_get_order( $order_id );

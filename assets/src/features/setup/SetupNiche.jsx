@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createSetupNiche( readRuntime ) {
@@ -249,7 +250,7 @@ export function createSetupNiche( readRuntime ) {
 											return (
 												( _eLocal5.p = 4 ),
 												( _rLocal2 = _eLocal5.v ),
-												console.error(
+												showRequestError(
 													'Error creating certificate:',
 													_rLocal2
 												),
@@ -496,7 +497,7 @@ export function createSetupNiche( readRuntime ) {
 										case 4:
 											_eLocal8.p = 4;
 											_wLocal = _eLocal8.v;
-											console.error(
+											showRequestError(
 												'Error saving setup wizard data:',
 												_wLocal
 											);
@@ -604,7 +605,7 @@ export function createSetupNiche( readRuntime ) {
 										case 3:
 											_eLocal0.p = 3;
 											_oLocal3 = _eLocal0.v;
-											console.error(
+											showRequestError(
 												'Error importing sample course:',
 												_oLocal3
 											);
@@ -660,9 +661,11 @@ export function createSetupNiche( readRuntime ) {
 											w()
 										 );
 									case 2:
-										f( ! 1 ); // Falls through to the shared async state cleanup.
+										f( ! 1 );
+									// Falls through to the shared async state cleanup.
 									case 3:
-										E(); // Falls through to the shared async state cleanup.
+										E();
+									// Falls through to the shared async state cleanup.
 									case 4:
 										return _eLocal10.a( 2 );
 								}
@@ -890,7 +893,7 @@ export function createSetupNiche( readRuntime ) {
 										case 3:
 											_eLocal12.p = 3;
 											_wLocal2 = _eLocal12.v;
-											console.error(
+											showRequestError(
 												'Error saving setup wizard data:',
 												_wLocal2
 											);
@@ -948,9 +951,9 @@ export function createSetupNiche( readRuntime ) {
 				<Gte
 					level={ c === null || c === void 0 ? void 0 : c.level }
 					currentStep={
-						'experienced' ==
+						'experienced' ===
 							( c === null || c === void 0 ? void 0 : c.level ) ||
-						'intermediate' ==
+						'intermediate' ===
 							( c === null || c === void 0 ? void 0 : c.level )
 							? 1
 							: 0
@@ -1058,7 +1061,7 @@ export function createSetupNiche( readRuntime ) {
 										</Controls.FlexWP>
 									</Controls.SpacerWP>
 								</Controls.CardWP>
-								{ 'experienced' ==
+								{ 'experienced' ===
 									( c === null || c === void 0
 										? void 0
 										: c.level ) &&

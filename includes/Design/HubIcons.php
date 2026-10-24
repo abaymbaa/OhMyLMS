@@ -1,4 +1,4 @@
-<?php
+<?php // phpcs:ignore WordPress.Files.FileName -- Retains the established public include path and Composer class mapping.
 /**
  * Administrator-chosen icons for the learner hub's activity kinds and the rail logo.
  *

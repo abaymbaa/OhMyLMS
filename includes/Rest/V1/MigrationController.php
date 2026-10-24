@@ -26,6 +26,9 @@ class MigrationController extends RestController {
 	protected $base = 'migrations/(?P<source>[\w-]+)';
 
 
+	/**
+	 * Check migration permission for Migration controller.
+	 */
 	public function check_migration_permission() {
 		return current_user_can( 'edit_posts' );
 	}
@@ -106,7 +109,11 @@ class MigrationController extends RestController {
 				if ( ! $is_init ) {
 					return new \WP_Error(
 						'ohmylms_not_found',
-						__( `{$source} is not installed.`, 'ohmylms' ),
+						sprintf(
+							/* translators: %s: source LMS name. */
+							__( '%s is not installed.', 'ohmylms' ),
+							$source
+						),
 						array( 'status' => 400 )
 					);
 				}
@@ -192,8 +199,10 @@ class MigrationController extends RestController {
 		try {
 			// Prepare the SQL query to fetch courses using $wpdb->prepare for security.
 			$query = $wpdb->prepare(
-				"SELECT ID, post_title FROM {$wpdb->prefix}posts WHERE post_type = %s AND post_status != %s",
-				$post_type, // Specify the post type for courses.
+				'SELECT ID, post_title FROM %i WHERE post_type = %s AND post_status != %s',
+				$wpdb->prefix . 'posts',
+				$post_type,
+				// Specify the post type for courses.
 				'trash' // Exclude trashed courses.
 			);
 

@@ -3,7 +3,13 @@ namespace OhMyLMS\Schools;
 
 defined( 'ABSPATH' ) || exit;
 
+/**
+ * Plugin bootstrap implementation.
+ */
 final class Bootstrap {
+	/**
+	 * Init for Bootstrap.
+	 */
 	public static function init() {
 		// Internal rollback switch; all features ship in the same OhMyLMS product.
 		if ( defined( 'OHMYLMS_SCHOOLS_ENABLED' ) && ! OHMYLMS_SCHOOLS_ENABLED ) {

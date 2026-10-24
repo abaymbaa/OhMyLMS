@@ -27,6 +27,8 @@ final class RevisionPublisher {
 	 * Build the revision that represents the quiz now, storing it if it changed.
 	 *
 	 * @return array|\WP_Error Revision row with decoded settings and slots.
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @throws \RuntimeException When the operation cannot be completed.
 	 */
 	public static function publish( $quiz_id ) {
 		global $wpdb;
@@ -46,10 +48,24 @@ final class RevisionPublisher {
 		foreach ( array_values( $quiz->get_questions() ) as $index => $link ) {
 			$type = (string) ( $link['settings']['type'] ?? '' );
 			if ( ! Registry::get( 'question', $type ) ) {
-				return new \WP_Error( 'quiz_type_missing', sprintf( __( 'Question "%s" uses an unavailable question type.', 'ohmylms' ), wp_strip_all_tags( (string) $link['name'] ) ), array( 'status' => 409 ) );
+				return new \WP_Error(
+					'quiz_type_missing',
+					sprintf( /* translators: %s: text value. */
+						__( 'Question "%s" uses an unavailable question type.', 'ohmylms' ),
+						wp_strip_all_tags( (string) $link['name'] )
+					),
+					array( 'status' => 409 )
+				);
 			}
 			if ( ! VersionPublisher::supports_snapshots( $type ) ) {
-				return new \WP_Error( 'quiz_type_unversioned', sprintf( __( 'The "%s" question type cannot grade frozen question versions yet, so this quiz cannot be published.', 'ohmylms' ), $type ), array( 'status' => 409 ) );
+				return new \WP_Error(
+					'quiz_type_unversioned',
+					sprintf( /* translators: %s: text value. */
+						__( 'The "%s" question type cannot grade frozen question versions yet, so this quiz cannot be published.', 'ohmylms' ),
+						$type
+					),
+					array( 'status' => 409 )
+				);
 			}
 			$version = self::slot_version( $quiz_id, (int) $link['id'] );
 			if ( is_wp_error( $version ) ) {
@@ -129,7 +145,7 @@ final class RevisionPublisher {
 			)
 		);
 		$revisions = Schema::table( 'quiz_revisions' );
-		$latest    = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $revisions WHERE quiz_id=%d ORDER BY revision_no DESC LIMIT 1", $quiz_id ), ARRAY_A );
+		$latest    = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE quiz_id=%d ORDER BY revision_no DESC LIMIT 1', $revisions, $quiz_id ), ARRAY_A );
 		if ( $latest && $latest['content_hash'] === $hash ) {
 			return self::revision( (int) $latest['id'] ); }
 		$revision_no = $latest ? (int) $latest['revision_no'] + 1 : 1;
@@ -148,7 +164,7 @@ final class RevisionPublisher {
 			)
 		);
 		if ( ! $saved ) {
-			$existing = $wpdb->get_row( $wpdb->prepare( "SELECT id FROM $revisions WHERE quiz_id=%d AND content_hash=%s ORDER BY revision_no DESC LIMIT 1", $quiz_id, $hash ) );
+			$existing = $wpdb->get_row( $wpdb->prepare( 'SELECT id FROM %i WHERE quiz_id=%d AND content_hash=%s ORDER BY revision_no DESC LIMIT 1', $revisions, $quiz_id, $hash ) );
 			if ( $existing ) {
 				return self::revision( (int) $existing->id ); }
 			throw new \RuntimeException( 'Revision write failed' );
@@ -180,6 +196,9 @@ final class RevisionPublisher {
 	 *  2. the current version when the quiz owner may edit the question,
 	 *  3. otherwise (shared, use-only) the bank's approved version.
 	 * Evaluated for the quiz owner, never for the learner starting the attempt.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 * @param mixed $question_id Question identifier.
 	 */
 	public static function slot_version( $quiz_id, $question_id ) {
 		$pins   = get_post_meta( (int) $quiz_id, '_ohmylms_version_pins', true );
@@ -194,14 +213,17 @@ final class RevisionPublisher {
 		$editable = user_can( $owner, 'edit_post', $question_id ) || ( $bank && \OhMyLMS\QuestionBank\Banks::can( $bank, 'edit', $owner ) );
 		if ( $editable ) {
 			$version = VersionPublisher::capture( $question_id );
-			return $version ?: new \WP_Error( 'quiz_version_failed', __( 'A question version could not be captured.', 'ohmylms' ), array( 'status' => 500 ) );
+			return $version ? $version : new \WP_Error( 'quiz_version_failed', __( 'A question version could not be captured.', 'ohmylms' ), array( 'status' => 500 ) );
 		}
 		$identity = VersionPublisher::identity( $question_id );
 		$approved = $identity ? VersionPublisher::version( (int) $identity['approved_version_id'] ) : null;
 		if ( ! $approved ) {
 			return new \WP_Error(
 				'quiz_question_unapproved',
-				sprintf( __( 'The shared question "%s" has no approved version yet.', 'ohmylms' ), wp_strip_all_tags( get_the_title( $question_id ) ) ),
+				sprintf( /* translators: %s: text value. */
+					__( 'The shared question "%s" has no approved version yet.', 'ohmylms' ),
+					wp_strip_all_tags( get_the_title( $question_id ) )
+				),
 				array(
 					'status'      => 409,
 					'question_id' => (int) $question_id,
@@ -211,7 +233,10 @@ final class RevisionPublisher {
 		return $approved;
 	}
 
-	/** Optional sectioning: settings.sections = [['title'=>..,'questions'=>[ids],'marks'=>[id=>marks]]]. */
+	/** Optional sectioning: settings.sections = [['title'=>..,'questions'=>[ids],'marks'=>[id=>marks]]].
+	 *
+	 * @param array $settings Configuration settings.
+	 */
 	private static function sections( array $settings ) {
 		$by_question = array();
 		$marks       = array();
@@ -235,9 +260,14 @@ final class RevisionPublisher {
 		);
 	}
 
+	/**
+	 * Revision for Revision publisher.
+	 *
+	 * @param mixed $revision_id Revision identifier.
+	 */
 	public static function revision( $revision_id ) {
 		global $wpdb;
-		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'quiz_revisions' ) . ' WHERE id=%d', (int) $revision_id ), ARRAY_A );
+		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id=%d', Schema::table( 'quiz_revisions' ), (int) $revision_id ), ARRAY_A );
 		if ( ! $row ) {
 			return null; }
 		$row['settings'] = json_decode( $row['settings'], true ) ?: array();
@@ -245,17 +275,27 @@ final class RevisionPublisher {
 		return $row;
 	}
 
+	/**
+	 * Slots for Revision publisher.
+	 *
+	 * @param mixed $revision_id Revision identifier.
+	 */
 	public static function slots( $revision_id ) {
 		global $wpdb;
-		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'quiz_revision_slots' ) . ' WHERE revision_id=%d ORDER BY slot_no', (int) $revision_id ), ARRAY_A );
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE revision_id=%d ORDER BY slot_no', Schema::table( 'quiz_revision_slots' ), (int) $revision_id ), ARRAY_A );
 		foreach ( $rows as &$row ) {
 			$row['pool'] = $row['pool'] ? json_decode( $row['pool'], true ) : null; }
 		return $rows;
 	}
 
+	/**
+	 * Latest for Revision publisher.
+	 *
+	 * @param mixed $quiz_id Quiz identifier.
+	 */
 	public static function latest( $quiz_id ) {
 		global $wpdb;
-		$id = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . Schema::table( 'quiz_revisions' ) . ' WHERE quiz_id=%d ORDER BY revision_no DESC LIMIT 1', (int) $quiz_id ) );
+		$id = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE quiz_id=%d ORDER BY revision_no DESC LIMIT 1', Schema::table( 'quiz_revisions' ), (int) $quiz_id ) );
 		return $id ? self::revision( (int) $id ) : null;
 	}
 }

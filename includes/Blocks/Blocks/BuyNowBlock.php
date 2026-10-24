@@ -11,7 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Plugin buy now block implementation.
+ */
 class BuyNowBlock {
+	/**
+	 * Register for Buy now block.
+	 */
 	public static function register() {
 		register_block_type(
 			'ohmylms/buy-now',
@@ -79,6 +85,11 @@ class BuyNowBlock {
 		);
 	}
 
+	/**
+	 * Render for Buy now block.
+	 *
+	 * @param mixed $attributes Attributes.
+	 */
 	public static function render( $attributes ) {
 		$atts      = array(
 			'course_id'       => isset( $attributes['courseId'] ) ? $attributes['courseId'] : '',

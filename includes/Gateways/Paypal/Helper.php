@@ -70,7 +70,7 @@ class Helper {
 	/**
 	 * Format amount for PayPal (string, 2 decimals, no thousands separator).
 	 *
-	 * @param float $amount
+	 * @param float $amount Amount.
 	 * @return string
 	 */
 	public static function format_amount( $amount ) {

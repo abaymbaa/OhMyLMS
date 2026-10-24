@@ -31,9 +31,9 @@ export function createScormImport( readRuntime ) {
 				<Gte
 					level={ a === null || a === void 0 ? void 0 : a.level }
 					currentStep={
-						'experienced' ==
+						'experienced' ===
 							( a === null || a === void 0 ? void 0 : a.level ) ||
-						'intermediate' ==
+						'intermediate' ===
 							( a === null || a === void 0 ? void 0 : a.level )
 							? 2
 							: 0

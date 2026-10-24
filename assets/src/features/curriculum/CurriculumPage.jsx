@@ -77,7 +77,7 @@ export function CurriculumPage() {
 	const busy = useRef( false );
 	const focusAfter = useRef( null );
 	const hub = useContext( HubContext );
-	const items = data?.items || [];
+	const items = useMemo( () => data?.items || [], [ data?.items ] );
 	const visibleItems = useMemo( () => withoutTopics( items ), [ items ] );
 	const search = useMemo(
 		() => searchItems( visibleItems, query ),
@@ -242,7 +242,7 @@ export function CurriculumPage() {
 					} ),
 				( result ) =>
 					sprintf(
-						/* translators: %s: curriculum item name. */ __(
+						/* translators: %s: item label. */ __(
 							'Added “%s”.',
 							'ohmylms'
 						),
@@ -263,7 +263,7 @@ export function CurriculumPage() {
 					} ),
 				( result ) =>
 					sprintf(
-						/* translators: %s: curriculum item name. */ __(
+						/* translators: %s: item label. */ __(
 							'Saved “%s”.',
 							'ohmylms'
 						),
@@ -277,7 +277,7 @@ export function CurriculumPage() {
 				() => api.moveItem( item.id, parentId, position ),
 				() =>
 					sprintf(
-						/* translators: %s: curriculum item name. */ __(
+						/* translators: %s: item label. */ __(
 							'Moved “%s”.',
 							'ohmylms'
 						),
@@ -304,15 +304,17 @@ export function CurriculumPage() {
 				() =>
 					direction < 0
 						? sprintf(
-								/* translators: %s: curriculum item name. */
-								/* translators: %s: curriculum item name. */
-								__( 'Moved “%s” up.', 'ohmylms' ),
+								/* translators: %s: item label. */ __(
+									'Moved “%s” up.',
+									'ohmylms'
+								),
 								item.name
 							)
 						: sprintf(
-								/* translators: %s: curriculum item name. */
-								/* translators: %s: curriculum item name. */
-								__( 'Moved “%s” down.', 'ohmylms' ),
+								/* translators: %s: item label. */ __(
+									'Moved “%s” down.',
+									'ohmylms'
+								),
 								item.name
 							)
 			);
@@ -327,7 +329,7 @@ export function CurriculumPage() {
 				( result ) => {
 					const parts = [
 						sprintf(
-							/* translators: %1$s: deleted curriculum item name; %2$d: number of deleted descendants. */ _n(
+							/* translators: %1$s: item label; %2$d: item count. */ _n(
 								'Deleted “%1$s” and %2$d item under it.',
 								'Deleted “%1$s” and %2$d items under it.',
 								Math.max(
@@ -343,7 +345,7 @@ export function CurriculumPage() {
 					if ( result.promoted ) {
 						parts.push(
 							sprintf(
-								/* translators: %d: number of child curriculum items. */ _n(
+								/* translators: %d: item count. */ _n(
 									'%d child moved up.',
 									'%d children moved up.',
 									result.promoted,
@@ -356,7 +358,7 @@ export function CurriculumPage() {
 					if ( result.links_removed ) {
 						parts.push(
 							sprintf(
-								/* translators: %d: number of content links. */ _n(
+								/* translators: %d: item count. */ _n(
 									'%d link removed.',
 									'%d links removed.',
 									result.links_removed,
@@ -369,7 +371,7 @@ export function CurriculumPage() {
 					if ( result.bundles_updated ) {
 						parts.push(
 							sprintf(
-								/* translators: %d: number of course bundles. */ _n(
+								/* translators: %d: item count. */ _n(
 									'Removed from %d course bundle.',
 									'Removed from %d course bundles.',
 									result.bundles_updated,
@@ -467,8 +469,10 @@ export function CurriculumPage() {
 					/>
 					<p>
 						{ sprintf(
-							/* translators: %d: selected syllabus count. */
-							__( '%d syllabuses selected', 'ohmylms' ),
+							/* translators: %d: item count. */ __(
+								'%d syllabuses selected',
+								'ohmylms'
+							),
 							roadmapSources.length
 						) }
 					</p>
@@ -567,7 +571,7 @@ export function CurriculumPage() {
 								if ( search.active ) {
 									if ( search.matches.size ) {
 										return sprintf(
-											/* translators: %d: number of curriculum items. */ _n(
+											/* translators: %d: item count. */ _n(
 												'%d matching item, shown inside its branch.',
 												'%d matching items, shown inside their branches.',
 												search.matches.size,

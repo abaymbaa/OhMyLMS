@@ -6,6 +6,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
 
+/**
+ * Plugin rewrite rules implementation.
+ */
 class RewriteRules {
 
 	/**
@@ -51,7 +54,7 @@ class RewriteRules {
 	/**
 	 * Change the permalink structure for lessons, quizzes, and assignments
 	 *
-	 * @param string   $post_link The original post link.
+	 * @param mixed    $post_link Post link.
 	 * @param \WP_Post $post The post object.
 	 * @return string Modified post link.
 	 * @since 1.0.0

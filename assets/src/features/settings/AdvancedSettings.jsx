@@ -1,3 +1,4 @@
+import { showRequestError } from '../requestFeedback.mjs';
 /** Reconstructed React source. Runtime dependencies are explicit in components.json. */
 import { createElement } from '@wordpress/element';
 export function createAdvancedSettings( readRuntime ) {
@@ -58,7 +59,8 @@ export function createAdvancedSettings( readRuntime ) {
 										case 3:
 											_eLocal3.p = 3;
 											_nLocal = _eLocal3.v;
-											console.error( _nLocal ); // Falls through to the shared async state cleanup.
+											showRequestError( _nLocal );
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
 												( _eLocal3.p = 4 ),
@@ -170,14 +172,15 @@ export function createAdvancedSettings( readRuntime ) {
 										case 4:
 											_eLocal4.p = 4;
 											_lLocal = _eLocal4.v;
-											console.error( _lLocal );
+											showRequestError( _lLocal );
 											u(
 												'error',
 												( 0, I18n.__ )(
 													'An error occurred. Please try again.',
 													'ohmylms'
 												)
-											); // Falls through to the shared async state cleanup.
+											);
+										// Falls through to the shared async state cleanup.
 										case 5:
 											return (
 												( _eLocal4.p = 5 ),
@@ -223,14 +226,15 @@ export function createAdvancedSettings( readRuntime ) {
 										case 3:
 											_eLocal5.p = 3;
 											_nLocal3 = _eLocal5.v;
-											console.error( _nLocal3 );
+											showRequestError( _nLocal3 );
 											u(
 												'error',
 												( 0, I18n.__ )(
 													'Failed to restore pages. Please try again.',
 													'ohmylms'
 												)
-											); // Falls through to the shared async state cleanup.
+											);
+										// Falls through to the shared async state cleanup.
 										case 4:
 											return (
 												( _eLocal5.p = 4 ),

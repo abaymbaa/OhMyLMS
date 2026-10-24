@@ -14,6 +14,9 @@ defined( 'ABSPATH' ) || exit;
  * Handles the theme support for Woostify theme.
  */
 class Woostify {
+	/**
+	 * Init for Woostify.
+	 */
 	public function init() {
 		add_filter( 'ohmylms_enqueue_styles', array( $this, 'enqueue_styles' ) );
 		// Hook very early to intercept the AJAX call before Woostify processes it.
@@ -21,6 +24,11 @@ class Woostify {
 		add_action( 'wp_ajax_nopriv_get_curr_percent_shipping_threshold_product', array( $this, 'prevent_woostify_ajax_error' ), 1 );
 	}
 
+	/**
+	 * Enqueue styles for Woostify.
+	 *
+	 * @param mixed $styles Styles.
+	 */
 	public function enqueue_styles( $styles ) {
 		$styles['ohmylms-general'] = array(
 			'src'     => OHMYLMS_ASSETS_URL . ( '/theme-support/theme-woostify.css' ),

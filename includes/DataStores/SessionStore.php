@@ -22,7 +22,7 @@ class SessionStore extends DataStore {
 	/**
 	 * Create Session
 	 *
-	 * @param Session $session
+	 * @param Session $session Session.
 	 * @return void
 	 */
 	public function create( &$session ) {
@@ -56,7 +56,7 @@ class SessionStore extends DataStore {
 	/**
 	 * Read data
 	 *
-	 * @param Session $session
+	 * @param Session $session Session.
 	 * @return void
 	 */
 	public function read( &$session ) {
@@ -79,7 +79,7 @@ class SessionStore extends DataStore {
 	/**
 	 * Update Session data
 	 *
-	 * @param Session $session
+	 * @param Session $session Session.
 	 * @return void
 	 */
 	public function update( &$session ) {
@@ -102,8 +102,8 @@ class SessionStore extends DataStore {
 	/**
 	 * Delete a Session.
 	 *
-	 * @param Session $session
-	 * @param array   $args
+	 * @param Session $session Session.
+	 * @param array   $args Operation arguments.
 	 * @return void
 	 */
 	public function delete( &$session, $args = array() ) {
@@ -118,7 +118,7 @@ class SessionStore extends DataStore {
 	/**
 	 * Helper function that reads Session data
 	 *
-	 * @param Session $session
+	 * @param Session $session Session.
 	 * @return void
 	 */
 	protected function read_session_data( &$session ) {
@@ -128,7 +128,7 @@ class SessionStore extends DataStore {
 	/**
 	 * Helper function that updates Session meta
 	 *
-	 * @param Session $session
+	 * @param Session $session Session.
 	 * @return void
 	 */
 	protected function update_session_meta( &$session ) {

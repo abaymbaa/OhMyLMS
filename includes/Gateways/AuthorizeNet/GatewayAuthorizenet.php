@@ -19,16 +19,46 @@ use OhMyLMS\Gateways\AuthorizeNet\AuthorizeNetAPI;
  */
 class GatewayAuthorizenet extends PaymentGateway {
 
+	/**
+	 * Publishable key.
+	 *
+	 * @var mixed
+	 */
 	public $publishable_key;
 
+	/**
+	 * Api login id.
+	 *
+	 * @var mixed
+	 */
 	public $api_login_id;
 
+	/**
+	 * Transaction key.
+	 *
+	 * @var mixed
+	 */
 	public $transaction_key;
 
+	/**
+	 * Signature key.
+	 *
+	 * @var mixed
+	 */
 	public $signature_key;
 
+	/**
+	 * Client key.
+	 *
+	 * @var mixed
+	 */
 	public $client_key;
 
+	/**
+	 * Private key.
+	 *
+	 * @var mixed
+	 */
 	public $private_key;
 
 	/**
@@ -67,6 +97,9 @@ class GatewayAuthorizenet extends PaymentGateway {
 	}
 
 
+	/**
+	 * Get settings for Gateway authorizenet.
+	 */
 	public function get_settings() {
 		$fields = array(
 			array(
@@ -249,15 +282,15 @@ class GatewayAuthorizenet extends PaymentGateway {
 		<div id="authorize-net-payment-form">
 			<fieldset>
 				<div class="form-row">
-					<label for="anet-card-number"><?php _e( 'Card Number', 'ohmylms' ); ?></label>
+					<label for="anet-card-number"><?php esc_html_e( 'Card Number', 'ohmylms' ); ?></label>
 					<input type="text" id="anet-card-number" class="authorize-net-field" autocomplete="cc-number" placeholder="1234 5678 9012 3456" />
 				</div>
 				<div class="form-row">
-					<label for="anet-expiration-date"><?php _e( 'Expiration Date (MM/YY)', 'ohmylms' ); ?></label>
+					<label for="anet-expiration-date"><?php esc_html_e( 'Expiration Date (MM/YY)', 'ohmylms' ); ?></label>
 					<input type="text" id="anet-expiration-date" class="authorize-net-field" autocomplete="cc-exp" placeholder="MM/YY" />
 				</div>
 				<div class="form-row">
-					<label for="anet-cvv"><?php _e( 'CVV', 'ohmylms' ); ?></label>
+					<label for="anet-cvv"><?php esc_html_e( 'CVV', 'ohmylms' ); ?></label>
 					<input type="text" id="anet-cvv" class="authorize-net-field" autocomplete="cc-csc" placeholder="123" />
 				</div>
 			</fieldset>
@@ -317,8 +350,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 	/**
 	 * Process the payment and return the result.
 	 *
-	 * @param int   $order_id
-	 * @param false $is_subscription
+	 * @param int   $order_id Order identifier.
+	 * @param false $is_subscription Is subscription.
 	 * @return array Result of payment processing.
 	 */
 	public function process_payment( $order_id, $is_subscription = false ) {
@@ -335,8 +368,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 		}
 
 		// Get opaque data from POST.
-		$opaque_data_descriptor = isset( $_POST['authorize_net_opaque_data_descriptor'] ) ? sanitize_text_field( $_POST['authorize_net_opaque_data_descriptor'] ) : '';
-		$opaque_data_value      = isset( $_POST['authorize_net_opaque_data_value'] ) ? sanitize_text_field( $_POST['authorize_net_opaque_data_value'] ) : '';
+		$opaque_data_descriptor = isset( $_POST['authorize_net_opaque_data_descriptor'] ) ? sanitize_text_field( wp_unslash( $_POST['authorize_net_opaque_data_descriptor'] )) : '';
+		$opaque_data_value      = isset( $_POST['authorize_net_opaque_data_value'] ) ? sanitize_text_field( wp_unslash( $_POST['authorize_net_opaque_data_value'] )) : '';
 
 		// Validate that opaque data exists.
 		if ( empty( $opaque_data_descriptor ) || empty( $opaque_data_value ) ) {
@@ -455,7 +488,11 @@ class GatewayAuthorizenet extends PaymentGateway {
 		// Add order info after payment/profile.
 		$transaction_payload['order'] = array(
 			'invoiceNumber' => $order->get_order_number() ? $order->get_order_number() : $order_id,
-			'description'   => sprintf( __( 'Order %1$s from %2$s', 'ohmylms' ), $order_id, get_bloginfo( 'name' ) ),
+			'description'   => sprintf( /* translators: %1$s: text value; %2$s: text value. */
+				__( 'Order %1$s from %2$s', 'ohmylms' ),
+				$order_id,
+				get_bloginfo( 'name' )
+			),
 		);
 
 		// Add billTo only when using opaque data (not with profile).
@@ -516,7 +553,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 					$order->payment_complete( $transaction_id );
 				}
 				if ( method_exists( $order, 'add_order_note' ) ) {
-					$order->add_order_note( sprintf( __( 'Authorize.Net payment successful. Transaction ID: %s', 'ohmylms' ), $transaction_id ) );
+					$order->add_order_note(
+						sprintf( /* translators: %s: text value. */
+							__( 'Authorize.Net payment successful. Transaction ID: %s', 'ohmylms' ),
+							$transaction_id
+						)
+					);
 				}
 
 				// Reduce stock levels.
@@ -538,7 +580,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 					$error_message = $response['transactionResponse']['messages'][0]['description'];
 				}
 				if ( method_exists( $order, 'add_order_note' ) ) {
-					$order->add_order_note( sprintf( __( 'Authorize.Net payment failed: %s', 'ohmylms' ), $error_message ) );
+					$order->add_order_note(
+						sprintf( /* translators: %s: text value. */
+							__( 'Authorize.Net payment failed: %s', 'ohmylms' ),
+							$error_message
+						)
+					);
 				}
 				return array(
 					'result'  => 'failure',
@@ -595,7 +642,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 			);
 		}
 
-		$nonce = isset( $_POST['security'] ) ? sanitize_text_field( $_POST['security'] ) : '';
+		$nonce = isset( $_POST['security'] ) ? sanitize_text_field( wp_unslash( $_POST['security'] )) : '';
 		if ( ! wp_verify_nonce( $nonce, 'ohmylms_authorize_checkout_nonce' ) ) {
 			return array(
 				'result'  => 'failure',
@@ -603,8 +650,8 @@ class GatewayAuthorizenet extends PaymentGateway {
 			);
 		}
 
-		$opaque_data_descriptor = isset( $_POST['authorize_net_opaque_data_descriptor'] ) ? sanitize_text_field( $_POST['authorize_net_opaque_data_descriptor'] ) : '';
-		$opaque_data_value      = isset( $_POST['authorize_net_opaque_data_value'] ) ? sanitize_text_field( $_POST['authorize_net_opaque_data_value'] ) : '';
+		$opaque_data_descriptor = isset( $_POST['authorize_net_opaque_data_descriptor'] ) ? sanitize_text_field( wp_unslash( $_POST['authorize_net_opaque_data_descriptor'] )) : '';
+		$opaque_data_value      = isset( $_POST['authorize_net_opaque_data_value'] ) ? sanitize_text_field( wp_unslash( $_POST['authorize_net_opaque_data_value'] )) : '';
 
 		if ( empty( $opaque_data_descriptor ) || empty( $opaque_data_value ) ) {
 			return array(
@@ -644,7 +691,10 @@ class GatewayAuthorizenet extends PaymentGateway {
 				'profile'        => array(
 					'merchantCustomerId' => 'CRTLMS_USER_' . $user_id . '_' . time(), // Ensure uniqueness.
 					'email'              => $order->get_billing_email(),
-					'description'        => sprintf( __( 'OhMyLMS Customer Profile for User ID: %s', 'ohmylms' ), $user_id ),
+					'description'        => sprintf( /* translators: %s: text value. */
+						__( 'OhMyLMS Customer Profile for User ID: %s', 'ohmylms' ),
+						$user_id
+					),
 					'paymentProfiles'    => array(
 						array(
 							'customerType' => 'individual',
@@ -683,7 +733,10 @@ class GatewayAuthorizenet extends PaymentGateway {
 					$error_msg = $profile_response['messages']['message'][0]['text'] ?? 'Failed to retrieve profile IDs from response.';
 					return array(
 						'result'  => 'failure',
-						'message' => sprintf( __( 'Failed to create customer payment profile: %s', 'ohmylms' ), $error_msg ),
+						'message' => sprintf( /* translators: %s: text value. */
+							__( 'Failed to create customer payment profile: %s', 'ohmylms' ),
+							$error_msg
+						),
 					);
 				}
 			} else {
@@ -715,7 +768,10 @@ class GatewayAuthorizenet extends PaymentGateway {
 		// must be dynamically fetched based on the selected membership/subscription plan.
 		// Using placeholders for now.
 		$subscription_payload = array(
-			'name'            => sprintf( __( 'Subscription for Order %s', 'ohmylms' ), $order_id ), // TODO: Get item name.
+			'name'            => sprintf( /* translators: %s: text value. */
+				__( 'Subscription for Order %s', 'ohmylms' ),
+				$order_id
+			), // TODO: Get item name.
 			'paymentSchedule' => array(
 				'interval'         => array(
 					'length' => '1', // e.g., 1.
@@ -736,7 +792,11 @@ class GatewayAuthorizenet extends PaymentGateway {
 		// Optional: Add order details to subscription for reference.
 		$subscription_payload['order'] = array(
 			'invoiceNumber' => $order->get_order_number() ? $order->get_order_number() : $order_id,
-			'description'   => sprintf( __( 'Subscription for Order %1$s from %2$s', 'ohmylms' ), $order_id, get_bloginfo( 'name' ) ),
+			'description'   => sprintf( /* translators: %1$s: text value; %2$s: text value. */
+				__( 'Subscription for Order %1$s from %2$s', 'ohmylms' ),
+				$order_id,
+				get_bloginfo( 'name' )
+			),
 		);
 
 		$response = $api->createSubscription( $subscription_payload );
@@ -773,7 +833,13 @@ class GatewayAuthorizenet extends PaymentGateway {
 					$order->payment_complete( $subscription_id ); // Pass subscription_id as reference.
 				}
 				if ( method_exists( $order, 'add_order_note' ) ) {
-					$order->add_order_note( sprintf( __( 'Authorize.Net subscription started. Subscription ID: %1$s. Customer Profile ID: %2$s.', 'ohmylms' ), $subscription_id, $customer_profile_id ) );
+					$order->add_order_note(
+						sprintf( /* translators: %1$s: text value; %2$s: text value. */
+							__( 'Authorize.Net subscription started. Subscription ID: %1$s. Customer Profile ID: %2$s.', 'ohmylms' ),
+							$subscription_id,
+							$customer_profile_id
+						)
+					);
 				}
 
 				// Reduce stock levels if applicable for the initial order of a subscription product.
@@ -874,7 +940,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $note_prefix . sprintf( __( 'API Error: %s', 'ohmylms' ), $error_message ) );
+				$order->add_order_note(
+					$note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'API Error: %s', 'ohmylms' ),
+						$error_message
+					)
+				);
 			}
 			return false;
 		}
@@ -883,6 +954,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 				// Refund successful.
 				$refund_trans_id = $response['transactionResponse']['transId'];
 				$success_message = sprintf(
+					/* translators: %1$s: text value; %2$s: text value; %3$s: text value. */
 					__( 'Refund successful. Amount: %1$s. Transaction ID: %2$s. Reason: %3$s', 'ohmylms' ),
 					number_format( $amount, 2 ),
 					$refund_trans_id,
@@ -906,7 +978,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 					$error_text = $response['transactionResponse']['messages'][0]['description'];
 				}
 				if ( method_exists( $order, 'add_order_note' ) ) {
-					$order->add_order_note( $note_prefix . sprintf( __( 'Failed: %s', 'ohmylms' ), $error_text ) );
+					$order->add_order_note(
+						$note_prefix . sprintf( /* translators: %s: text value. */
+							__( 'Failed: %s', 'ohmylms' ),
+							$error_text
+						)
+					);
 				}
 				return false;
 			}
@@ -917,7 +994,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 				$main_error_message = $response['messages']['message'][0]['text'];
 			}
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $note_prefix . sprintf( __( 'API Error: %s', 'ohmylms' ), $main_error_message ) );
+				$order->add_order_note(
+					$note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'API Error: %s', 'ohmylms' ),
+						$main_error_message
+					)
+				);
 			}
 			return false;
 		}
@@ -950,7 +1032,11 @@ class GatewayAuthorizenet extends PaymentGateway {
 		$authnet_subscription_id = get_post_meta( $order_id, '_authorize_net_subscription_id', true );
 
 		if ( empty( $authnet_subscription_id ) ) {
-			$message = sprintf( __( 'Authorize.Net Subscription ID not found for order %1$d (LMS Sub ID: %2$s). Cannot cancel.', 'ohmylms' ), $order_id, $lms_subscription_id );
+			$message = sprintf( /* translators: %1$d: number; %2$s: text value. */
+				__( 'Authorize.Net Subscription ID not found for order %1$d (LMS Sub ID: %2$s). Cannot cancel.', 'ohmylms' ),
+				$order_id,
+				$lms_subscription_id
+			);
 			if ( method_exists( $order, 'add_order_note' ) ) {
 				$order->add_order_note( $message );
 			}
@@ -968,7 +1054,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 		if ( is_wp_error( $cancel_response ) ) {
 			$error_message = $cancel_response->get_error_message();
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $cancel_note_prefix . sprintf( __( 'API Error: %s', 'ohmylms' ), $error_message ) );
+				$order->add_order_note(
+					$cancel_note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'API Error: %s', 'ohmylms' ),
+						$error_message
+					)
+				);
 			}
 			// Do not return yet, attempt refund if $amount > 0 or refund is intended.
 			// However, if cancellation is the primary goal and it fails, maybe return false.
@@ -977,7 +1068,10 @@ class GatewayAuthorizenet extends PaymentGateway {
 			return false;
 
 		} elseif ( isset( $cancel_response['messages']['resultCode'] ) && 'Ok' === $cancel_response['messages']['resultCode'] ) {
-			$success_message = sprintf( __( 'Subscription ID %s successfully cancelled.', 'ohmylms' ), $authnet_subscription_id );
+			$success_message = sprintf( /* translators: %s: text value. */
+				__( 'Subscription ID %s successfully cancelled.', 'ohmylms' ),
+				$authnet_subscription_id
+			);
 			if ( method_exists( $order, 'add_order_note' ) ) {
 				$order->add_order_note( $cancel_note_prefix . $success_message );
 			}
@@ -986,7 +1080,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 			// Cancellation failed at API level.
 			$error_text = $cancel_response['messages']['message'][0]['text'] ?? __( 'Unknown error during subscription cancellation.', 'ohmylms' );
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $cancel_note_prefix . sprintf( __( 'Failed: %s', 'ohmylms' ), $error_text ) );
+				$order->add_order_note(
+					$cancel_note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'Failed: %s', 'ohmylms' ),
+						$error_text
+					)
+				);
 			}
 			return false; // If cancellation fails, stop here.
 		}
@@ -1036,7 +1135,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 		if ( is_wp_error( $refund_response ) ) {
 			$error_message = $refund_response->get_error_message();
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $refund_note_prefix . sprintf( __( 'Subscription cancelled, but refund API Error: %s', 'ohmylms' ), $error_message ) );
+				$order->add_order_note(
+					$refund_note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'Subscription cancelled, but refund API Error: %s', 'ohmylms' ),
+						$error_message
+					)
+				);
 			}
 			return false; // Cancellation was successful, but refund failed.
 		}
@@ -1046,6 +1150,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 				// Refund successful.
 				$refund_trans_id = $refund_response['transactionResponse']['transId'];
 				$success_message = sprintf(
+					/* translators: %1$s: text value; %2$s: text value; %3$s: text value. */
 					__( 'Subscription cancelled. Refund successful. Amount: %1$s. Refund Transaction ID: %2$s. Reason: %3$s', 'ohmylms' ),
 					number_format( $amount_to_refund, 2 ),
 					$refund_trans_id,
@@ -1059,7 +1164,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 				// Transaction declined or error during refund.
 				$error_text = $refund_response['transactionResponse']['errors'][0]['errorText'] ?? __( 'Refund processing failed.', 'ohmylms' );
 				if ( method_exists( $order, 'add_order_note' ) ) {
-					$order->add_order_note( $refund_note_prefix . sprintf( __( 'Subscription cancelled, but refund failed: %s', 'ohmylms' ), $error_text ) );
+					$order->add_order_note(
+						$refund_note_prefix . sprintf( /* translators: %s: text value. */
+							__( 'Subscription cancelled, but refund failed: %s', 'ohmylms' ),
+							$error_text
+						)
+					);
 				}
 				return false; // Cancellation was successful, but refund failed.
 			}
@@ -1067,7 +1177,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 			// Main API error for refund.
 			$main_error_message = $refund_response['messages']['message'][0]['text'] ?? __( 'Refund API call failed.', 'ohmylms' );
 			if ( method_exists( $order, 'add_order_note' ) ) {
-				$order->add_order_note( $refund_note_prefix . sprintf( __( 'Subscription cancelled, but refund API Error: %s', 'ohmylms' ), $main_error_message ) );
+				$order->add_order_note(
+					$refund_note_prefix . sprintf( /* translators: %s: text value. */
+						__( 'Subscription cancelled, but refund API Error: %s', 'ohmylms' ),
+						$main_error_message
+					)
+				);
 			}
 			return false; // Cancellation was successful, but refund failed.
 		}
@@ -1157,6 +1272,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 			'order'           => array(
 				'invoiceNumber' => $renewal_order->get_order_number() ? $renewal_order->get_order_number() : $renewal_order_id,
 				'description'   => sprintf(
+					/* translators: %1$s: text value; %2$s: text value. */
 					__( 'Renewal for Subscription #%1$s - Order #%2$s', 'ohmylms' ),
 					$subscription_id,
 					$renewal_order_id
@@ -1170,7 +1286,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			if ( method_exists( $renewal_order, 'add_order_note' ) ) {
-				$renewal_order->add_order_note( sprintf( __( 'Authorize.Net recurring payment failed. API Error: %s', 'ohmylms' ), esc_html( $error_message ) ) );
+				$renewal_order->add_order_note(
+					sprintf( /* translators: %s: text value. */
+						__( 'Authorize.Net recurring payment failed. API Error: %s', 'ohmylms' ),
+						esc_html( $error_message )
+					)
+				);
 			}
 			return array(
 				'result'  => 'failure',
@@ -1210,6 +1331,7 @@ class GatewayAuthorizenet extends PaymentGateway {
 				if ( method_exists( $renewal_order, 'add_order_note' ) ) {
 					$renewal_order->add_order_note(
 						sprintf(
+							/* translators: %1$s: text value; %2$s: text value. */
 							__( 'Authorize.Net recurring payment successful. Transaction ID: %1$s, Amount: %2$s', 'ohmylms' ),
 							$transaction_id,
 							number_format( $amount, 2 )
@@ -1232,7 +1354,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 				}
 
 				if ( method_exists( $renewal_order, 'add_order_note' ) ) {
-					$renewal_order->add_order_note( sprintf( __( 'Authorize.Net recurring payment failed: %s', 'ohmylms' ), $error_message ) );
+					$renewal_order->add_order_note(
+						sprintf( /* translators: %s: text value. */
+							__( 'Authorize.Net recurring payment failed: %s', 'ohmylms' ),
+							$error_message
+						)
+					);
 				}
 
 				return array(
@@ -1248,7 +1375,12 @@ class GatewayAuthorizenet extends PaymentGateway {
 			}
 
 			if ( method_exists( $renewal_order, 'add_order_note' ) ) {
-				$renewal_order->add_order_note( sprintf( __( 'Authorize.Net recurring payment API error: %s', 'ohmylms' ), $main_error_message ) );
+				$renewal_order->add_order_note(
+					sprintf( /* translators: %s: text value. */
+						__( 'Authorize.Net recurring payment API error: %s', 'ohmylms' ),
+						$main_error_message
+					)
+				);
 			}
 
 			return array(

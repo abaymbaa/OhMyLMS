@@ -8,8 +8,25 @@ namespace OhMyLMS\Extensions;
 
 /** Additional checkout input; never changes prices or payment authorization. */
 final class CheckoutFields {
-	private static $fields  = array();
+	/**
+	 * Fields.
+	 *
+	 * @var mixed
+	 */
+	private static $fields = array();
+	/**
+	 * Pending.
+	 *
+	 * @var mixed
+	 */
 	private static $pending = array();
+	/**
+	 * Register for Checkout fields.
+	 *
+	 * @param mixed $id Id.
+	 * @param array $field Field.
+	 * @throws \InvalidArgumentException When the operation cannot be completed.
+	 */
 	public static function register( $id, array $field ) {
 		if ( ! preg_match( '/^[a-z][a-z0-9_-]*$/D', $id ) || isset( self::$fields[ $id ] ) || empty( $field['label'] ) || ! in_array( $field['type'] ?? 'text', array( 'text', 'textarea', 'email', 'number', 'select' ), true ) ) {
 			throw new \InvalidArgumentException( 'Invalid or duplicate checkout extension field.' );
@@ -19,6 +36,9 @@ final class CheckoutFields {
 		}
 		self::$fields[ $id ] = $field;
 	}
+	/**
+	 * Init for Checkout fields.
+	 */
 	public static function init() {
 		add_filter(
 			'ohmylms_checkout_fields',
@@ -52,6 +72,12 @@ final class CheckoutFields {
 			}
 		);
 	}
+	/**
+	 * Validate for Checkout fields.
+	 *
+	 * @param mixed $data Input data.
+	 * @param mixed $errors Errors.
+	 */
 	public static function validate( $data, $errors ) {
 		foreach ( self::$fields as $id => $field ) {
 			$value = $data[ 'ohmylms_extension_' . $id ] ?? '';
@@ -59,10 +85,17 @@ final class CheckoutFields {
 				continue; }
 			$valid = rest_validate_value_from_schema( $value, $field['schema'], $id );
 			if ( ( '' === $value && ! empty( $field['required'] ) ) || is_wp_error( $valid ) ) {
-				$errors->add( 'ohmylms_extension_' . $id, sprintf( __( 'Please check %s.', 'ohmylms' ), $field['label'] ) );
+				$errors->add( 'ohmylms_extension_' . $id, sprintf( /* translators: %s: text value. */
+				__( 'Please check %s.', 'ohmylms' ), $field['label'] ) );
 			}
 		}
 	}
+	/**
+	 * Save for Checkout fields.
+	 *
+	 * @param mixed $order Order.
+	 * @param mixed $data Input data.
+	 */
 	public static function save( $order, $data ) {
 		$values = array();
 		foreach ( self::$fields as $id => $field ) {
