@@ -1,7 +1,30 @@
 # Printable exams: design
 
-Status: **phases 1 and 2 built** (A4 canvas, core renderers, paper settings, print page); phases 3 to 5 not built.
-Written October 24, 2026.
+Status: **phases 1 to 3 built** (A4 canvas, core renderers, paper settings, print page, paper blocks); phases 4
+and 5 not built. Written October 24, 2026.
+
+## Phase 3 as built
+
+- `OhMyLMS\Exams\PaperBlocks` registers the seven blocks server-side (so the exam inserter offers them) with render
+  callbacks that print nothing online, except a columns section, whose contents stay in place. The editor side
+  (`assets/src/features/paper/paperBlocks.jsx`) registers only on exam screens, where the print links are localized.
+- `PaperBlockViews.jsx` holds one view per block, used by the editor (with RichText fields) and the print page (with
+  saved values), so both lay out the same markup and CSS. Text defaults live in `paperTextDefaults()`, because
+  documents do not store unchanged defaults.
+- Header: school and subtitle are editable; the title is the exam title, time comes from Quiz settings and total
+  marks add up live. Candidate fields: name, class, candidate number (boxes) and date.
+- Instructions and formula sheet hold core blocks (a list by default); the formula sheet starts a new page unless
+  switched off. Sections total the marks of the questions after them, up to the next section.
+- Columns section: 1 to 3 columns, **Flow** (CSS multi-column) or **Side by side** (grid), an optional line between
+  flowing columns, and **Span all columns** on any block directly inside a flowing section (`ohmylmsPaperSpan`;
+  kept on question blocks by `NativeQuizEditor::normalize()`).
+- The canvas treats page breaks and new-page formula sheets as sheet breaks. Numbering and totals walk blocks in
+  document order with nested blocks in place (core's `getClientIdsWithDescendants()` lists nested blocks last).
+- The print page receives paper blocks as nested items; their attributes are filtered on the server
+  (`PrintPaper::paper_attributes()`: bold, italic and line breaks only), since block comment attributes are not
+  filtered when a document is saved.
+- Known limit: a columns section taller than one page is balanced over its whole height in the editor, while the
+  printed columns fill each page in turn.
 
 ## Phase 2 as built
 

@@ -12,9 +12,12 @@ import { __, sprintf } from '@wordpress/i18n';
 import { PAPER_STORE } from './store';
 import { saveQuizForPreview } from '../learning/quizPreview.mjs';
 import {
+	limitMinutes,
 	paginate,
 	paperSettings,
 	questionLabel,
+	questionMarks,
+	sectionTotals,
 	sheetMetrics,
 } from './paperModel.mjs';
 
@@ -56,6 +59,20 @@ export function usePaperView() {
 }
 
 /**
+ * Every block in document order, nested blocks in place. Core's getClientIdsWithDescendants()
+ * lists top-level blocks before nested ones, which would misnumber questions in a section.
+ *
+ * @param {Object} editor Block editor selectors.
+ * @param {string} root   Parent block, empty for the document.
+ * @return {string[]} Block IDs.
+ */
+function documentOrder( editor, root = '' ) {
+	return editor
+		.getBlockOrder( root )
+		.flatMap( ( id ) => [ id, ...documentOrder( editor, id ) ] );
+}
+
+/**
  * The printed number of a question block: its position among numbered questions in
  * document order, nested blocks included.
  *
@@ -68,7 +85,7 @@ export function usePaperIndex( clientId ) {
 			const editor = getStore( 'core/block-editor' );
 			const paper = getStore( PAPER_STORE );
 			let index = 0;
-			for ( const id of editor.getClientIdsWithDescendants() ) {
+			for ( const id of documentOrder( editor ) ) {
 				if ( ! QUESTION_BLOCKS.includes( editor.getBlockName( id ) ) ) {
 					continue;
 				}
@@ -86,13 +103,15 @@ export function usePaperIndex( clientId ) {
 
 /**
  * Everything a question block needs to show its printed form, and registration of its type
- * so numbering skips statements.
+ * and marks so numbering skips statements and headers and sections can total the marks.
  *
  * @param {string} clientId Question block.
- * @param {string} type     Question type.
+ * @param {Object} question Editor question, or null while loading.
  * @return {{view: boolean, label: string, settings: Object, answers: boolean}} Paper state.
  */
-export function usePaperQuestion( clientId, type ) {
+export function usePaperQuestion( clientId, question ) {
+	const type = question?.settings?.type || '';
+	const marks = question ? questionMarks( question ) : 0;
 	const view = usePaperView();
 	const settings = usePaperSettings();
 	const index = usePaperIndex( clientId );
@@ -100,10 +119,10 @@ export function usePaperQuestion( clientId, type ) {
 		( getStore ) => getStore( PAPER_STORE ).showsAnswers(),
 		[]
 	);
-	const { setQuestionType } = useDispatch( PAPER_STORE );
+	const { setQuestion } = useDispatch( PAPER_STORE );
 	useEffect( () => {
-		setQuestionType( clientId, type );
-	}, [ clientId, type, setQuestionType ] );
+		setQuestion( clientId, type, marks );
+	}, [ clientId, type, marks, setQuestion ] );
 	return {
 		view,
 		settings,
@@ -139,6 +158,55 @@ function useSetPaperView() {
 			// The view still works for this session without storage.
 		}
 	};
+}
+
+/**
+ * Totals for paper blocks: the exam's total marks and each section's marks, in document order.
+ *
+ * @return {{total: number, sections: Object<string, number>}} Marks.
+ */
+export function usePaperTotals() {
+	return useSelect( ( getStore ) => {
+		const editor = getStore( 'core/block-editor' );
+		const paper = getStore( PAPER_STORE );
+		const entries = [];
+		for ( const id of documentOrder( editor ) ) {
+			const name = editor.getBlockName( id );
+			if ( QUESTION_BLOCKS.includes( name ) ) {
+				entries.push( {
+					kind: 'question',
+					marks: paper.getQuestionMarks( id ),
+				} );
+			} else if ( name === 'ohmylms/paper-section' ) {
+				entries.push( { kind: 'section', key: id } );
+			}
+		}
+		return {
+			total: entries.reduce(
+				( sum, entry ) => sum + ( entry.marks || 0 ),
+				0
+			),
+			sections: sectionTotals( entries ),
+		};
+	}, [] );
+}
+
+/**
+ * The exam title and minutes allowed, including unsaved edits.
+ *
+ * @return {{title: string, minutes: number}} Exam details.
+ */
+export function useExamDetails() {
+	return useSelect( ( getStore ) => {
+		const editor = getStore( 'core/editor' );
+		return {
+			title: editor.getEditedPostAttribute( 'title' ) || '',
+			minutes: limitMinutes(
+				editor.getEditedPostAttribute( 'ohmylms_quiz' )?.settings
+					?.time_limit
+			),
+		};
+	}, [] );
 }
 
 /**
@@ -227,7 +295,18 @@ function layoutSheets( canvas, settings, answers ) {
 		const heights = blocks.map(
 			( block, index ) => block.offsetHeight + afters[ index ]
 		);
-		const layout = paginate( heights, sheet );
+		// A page break ends its sheet; a formula sheet set to start a new page ends the one before.
+		const breaks = blocks.map(
+			( block, index ) =>
+				block.getAttribute( 'data-type' ) ===
+					'ohmylms/paper-page-break' ||
+				Boolean(
+					blocks[ index + 1 ]?.querySelector(
+						':scope > .ohmylms-paper-formula-sheet.is-new-page'
+					)
+				)
+		);
+		const layout = paginate( heights, sheet, breaks );
 		const rules = blocks.map( ( block, index ) => {
 			const id = block.getAttribute( 'data-block' );
 			const spacer = layout.spacers[ index ];

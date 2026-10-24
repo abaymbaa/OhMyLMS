@@ -3,6 +3,200 @@
  * Canvas rules are scoped to .is-ohmylms-paper; question rules are shared with the print page.
  */
 
+/* Paper blocks, shared by the editor sheet and the print page */
+
+.ohmylms-paper-header {
+	display: flex;
+	justify-content: space-between;
+	gap: 1.5em;
+	padding-bottom: 0.6em;
+	border-bottom: 2px solid currentcolor;
+}
+
+.ohmylms-paper-header-main {
+	flex: 1;
+	min-width: 0;
+}
+
+.ohmylms-paper-header-main p {
+	margin: 0;
+}
+
+.ohmylms-paper-header-school {
+	font-size: 0.9em;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.ohmylms-paper-header-main .ohmylms-paper-header-title {
+	margin: 0.15em 0;
+	font-size: 1.6em;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.ohmylms-paper-header-main .ohmylms-paper-header-details {
+	margin-top: 0.4em;
+	font-weight: 700;
+}
+
+.ohmylms-paper-header-fields {
+	display: grid;
+	align-content: start;
+	gap: 0.7em;
+	min-width: 40%;
+}
+
+.ohmylms-paper-header-field {
+	display: flex;
+	align-items: flex-end;
+	gap: 0.5em;
+	font-size: 0.9em;
+	white-space: nowrap;
+}
+
+.ohmylms-paper-field-line {
+	flex: 1;
+	min-width: 6em;
+	height: 1.2em;
+	border-bottom: 1px solid currentcolor;
+}
+
+.ohmylms-paper-boxes {
+	display: flex;
+}
+
+.ohmylms-paper-boxes > span {
+	box-sizing: border-box;
+	width: 1.6em;
+	height: 1.8em;
+	margin-left: -1px;
+	border: 1px solid currentcolor;
+}
+
+.ohmylms-paper-instructions,
+.ohmylms-paper-formula-sheet {
+	padding: 0.6em 0.9em;
+	border: 1px solid currentcolor;
+}
+
+.ohmylms-paper-instructions-heading,
+.ohmylms-paper-formula-heading {
+	margin: 0 0 0.3em;
+	font-size: 0.9em;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.ohmylms-paper-formula-heading {
+	text-align: center;
+}
+
+.ohmylms-paper-instructions ul {
+	margin: 0;
+	padding-left: 1.2em;
+}
+
+.ohmylms-paper-formula-sheet.is-new-page {
+	break-before: page;
+}
+
+.ohmylms-paper-section {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 1em;
+	padding-bottom: 0.25em;
+	border-bottom: 1px solid currentcolor;
+}
+
+.ohmylms-paper-section .ohmylms-paper-section-title {
+	margin: 0;
+	font-size: 1.2em;
+	font-weight: 700;
+}
+
+.ohmylms-paper-section-total {
+	font-weight: 700;
+	white-space: nowrap;
+}
+
+.ohmylms-paper-columns.is-flow .ohmylms-paper-columns-body {
+	column-count: var(--ohmylms-paper-columns, 2);
+	column-gap: 8mm;
+}
+
+.ohmylms-paper-columns.is-grid .ohmylms-paper-columns-body {
+	display: grid;
+	grid-template-columns: repeat(var(--ohmylms-paper-columns, 2), minmax(0, 1fr));
+	column-gap: 8mm;
+}
+
+.ohmylms-paper-columns.is-flow.has-rule .ohmylms-paper-columns-body {
+	column-rule: 1px solid #8c8f94;
+}
+
+.ohmylms-paper-columns .ohmylms-paper-columns-body > * {
+	margin: 0 0 1.25em;
+	break-inside: avoid;
+}
+
+.ohmylms-paper-columns .ohmylms-paper-columns-body > .is-ohmylms-paper-span {
+	column-span: all;
+}
+
+.ohmylms-paper-page-break {
+	position: relative;
+	height: 0;
+	margin: 0.8em 0;
+	border-top: 2px dashed #8c8f94;
+	break-after: page;
+}
+
+.ohmylms-paper-page-break span {
+	position: absolute;
+	top: 0;
+	left: 50%;
+	padding: 0 0.6em;
+	transform: translate(-50%, -50%);
+	background: #fff;
+	color: #50575e;
+	font: 11px/1.4 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.ohmylms-paper-answer-space {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+	height: calc(var(--ohmylms-paper-lines, 6) * 8mm);
+}
+
+.ohmylms-paper-answer-space.is-lines {
+	background:
+		repeating-linear-gradient(
+			to bottom,
+			transparent 0,
+			transparent calc(8mm - 1px),
+			#8c8f94 calc(8mm - 1px),
+			#8c8f94 8mm
+		);
+}
+
+.ohmylms-paper-answer-space.is-grid {
+	border: 1px solid #a7aaad;
+	background-image:
+		linear-gradient(#c3c4c7 1px, transparent 1px),
+		linear-gradient(90deg, #c3c4c7 1px, transparent 1px);
+	background-size: 5mm 5mm;
+}
+
+.ohmylms-paper-answer-space.is-blank {
+	box-sizing: border-box;
+	border: 1px solid currentcolor;
+}
+
 /* Paper canvas in the block editor */
 
 .editor-styles-wrapper.is-ohmylms-paper {
@@ -81,6 +275,12 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	flex-wrap: wrap;
 	gap: 8px;
 	margin-bottom: 16px;
+}
+
+/* In the editor, blocks inside a columns section use the section's own spacing. */
+.editor-styles-wrapper.is-ohmylms-paper .ohmylms-paper-columns-body > * {
+	margin-top: 0 !important;
+	margin-bottom: 1.25em !important;
 }
 
 /* Printed questions */
@@ -304,7 +504,7 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	font-family: Georgia, "Times New Roman", serif;
 }
 
-.ohmylms-print-block + .ohmylms-print-block {
+.ohmylms-print-sheet > .ohmylms-print-block + .ohmylms-print-block {
 	margin-top: 1.25em;
 }
 
@@ -320,8 +520,14 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 @media print {
 
 	.ohmylms-print-note,
-	.ohmylms-print-toolbar {
+	.ohmylms-print-toolbar,
+	.ohmylms-paper-page-break span {
 		display: none;
+	}
+
+	.ohmylms-paper-page-break {
+		margin: 0;
+		border: 0;
 	}
 
 	.ohmylms-print-page {

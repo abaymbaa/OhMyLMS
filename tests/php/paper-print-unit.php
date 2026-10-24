@@ -9,6 +9,7 @@ function __($text, $domain) { return 'Page %1$s of %2$s' === $text ? $GLOBALS['t
 function wp_create_nonce($action) { return 'nonce-' . $action; }
 function home_url($path) { return 'https://example.test' . $path; }
 function add_query_arg(array $args, $url) { return $url . '?' . http_build_query($args); }
+function wp_kses($value, $allowed) { return strip_tags($value, array_map(fn($tag) => "<$tag>", array_keys($allowed))); }
 function check($condition, $message) { if (!$condition) { throw new RuntimeException($message); } }
 use OhMyLMS\Exams\PaperSettings;
 use OhMyLMS\Exams\PrintPaper;
@@ -34,4 +35,10 @@ check(str_contains($css, 'content:counter(pages) " pages; \"now\" " counter(page
 $url = PrintPaper::url(42, 'key');
 check(str_contains($url, 'ohmylms_print=42') && str_contains($url, 'variant=key') && str_contains($url, '_wpnonce=nonce-ohmylms_print_42'), 'Print links carry the exam, variant and an exam-specific nonce');
 check(str_contains(PrintPaper::url(42, 'anything'), 'variant=paper'), 'Unknown variants print the student paper');
+// Paper block attributes come from block comments, which saving does not filter.
+$attrs = PrintPaper::paper_attributes(['school' => '<b>West</b> <script>x()</script><img src=x onerror=y>', 'showTime' => false, 'lines' => 6, 'fields' => ['name', '<i>class</i>'], 'bad-key"' => 'v', 'object' => new stdClass()]);
+check('<b>West</b> x()' === $attrs['school'], 'Text keeps only bold, italic and line breaks: ' . $attrs['school']);
+check(false === $attrs['showTime'] && 6 === $attrs['lines'], 'Booleans and numbers are kept');
+check(['name', '<i>class</i>'] === $attrs['fields'], 'Lists are filtered item by item');
+check('v' === $attrs['badkey'] && null === $attrs['object'], 'Keys are reduced to safe characters and objects are dropped');
 echo "paper-print-unit: ok\n";

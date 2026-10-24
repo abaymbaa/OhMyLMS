@@ -1,7 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
+	answerSpace,
+	columnsLayout,
+	limitMinutes,
 	paginate,
+	sectionTotals,
 	paperQuestion,
 	paperSettings,
 	questionLabel,
@@ -338,4 +342,51 @@ test( 'pagination keeps an oversized block in place and counts the sheets it cov
 	assert.deepEqual( after.spacers, [ 0, 40 ] );
 	assert.equal( after.pages, 2 );
 	assert.equal( paginate( [], sheet ).pages, 1 );
+} );
+
+test( 'a page break sends the next block to a new sheet', () => {
+	const sheet = { height: 100, margin: 10, gap: 20 };
+	const result = paginate( [ 10, 5, 10 ], sheet, [ false, true, false ] );
+	// The break stays after the first block; the third block starts on sheet 2 at 130.
+	assert.deepEqual( result.spacers, [ 0, 0, 105 ] );
+	assert.equal( result.pages, 2 );
+	// As in print, a break at the top of a sheet still starts the next block on a new sheet.
+	const top = paginate( [ 5, 10 ], sheet, [ true, false ] );
+	assert.deepEqual( top.spacers, [ 0, 115 ] );
+	assert.equal(
+		paginate( [ 80, 5, 10 ], sheet, [ false, false, false ] ).pages,
+		2
+	);
+} );
+
+test( 'section totals add the marks up to the next section', () => {
+	assert.deepEqual(
+		sectionTotals( [
+			{ kind: 'question', marks: 9 },
+			{ kind: 'section', key: 'a' },
+			{ kind: 'question', marks: 2 },
+			{ kind: 'question', marks: '3' },
+			{ kind: 'section', key: 'b' },
+			{ kind: 'section', key: 'c' },
+			{ kind: 'question', marks: 4 },
+		] ),
+		{ a: 5, b: 0, c: 4 }
+	);
+} );
+
+test( 'paper block attributes are normalized', () => {
+	assert.equal( limitMinutes( { value: 1.5, type: 'hours' } ), 90 );
+	assert.equal( limitMinutes( { value: 45 } ), 45 );
+	assert.equal( limitMinutes( null ), 0 );
+	assert.deepEqual( answerSpace(), { style: 'lines', lines: 6 } );
+	assert.deepEqual( answerSpace( { style: 'grid', lines: 99 } ), {
+		style: 'grid',
+		lines: 30,
+	} );
+	assert.deepEqual( columnsLayout( { columns: 7, flow: 'x', rule: 1 } ), {
+		columns: 3,
+		flow: 'flow',
+		rule: true,
+	} );
+	assert.equal( columnsLayout().columns, 2 );
 } );

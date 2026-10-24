@@ -106,10 +106,7 @@ function LessonChoiceEdit( {
 	latestQuestion.current = question;
 	const { insertBlock, removeBlock } = useDispatch( 'core/block-editor' );
 	const { lockPostSaving, unlockPostSaving } = useDispatch( 'core/editor' );
-	const printed = usePaperQuestion(
-		clientId,
-		question?.settings?.type || ''
-	);
+	const printed = usePaperQuestion( clientId, question );
 	const paper = printed.view && ! standalone;
 	useEffect( () => {
 		if ( context.postType ) {

@@ -260,16 +260,18 @@ export function paperQuestion(
  * whole page stays where it starts and overflows.
  *
  * Positions are measured from the top of the first sheet. Sheets are separated by `gap`.
+ * A page break block keeps its place and sends the next block to a new sheet.
  *
- * @param {number[]} heights      Block heights including the space after each block.
- * @param {Object}   sheet        Sheet metrics in pixels.
- * @param {number}   sheet.height Sheet height.
- * @param {number}   sheet.margin Top and bottom margin.
- * @param {number}   sheet.gap    Space between sheets on screen.
+ * @param {number[]}  heights      Block heights including the space after each block.
+ * @param {Object}    sheet        Sheet metrics in pixels.
+ * @param {number}    sheet.height Sheet height.
+ * @param {number}    sheet.margin Top and bottom margin.
+ * @param {number}    sheet.gap    Space between sheets on screen.
+ * @param {boolean[]} breaks       Which blocks are page breaks.
  * @return {{spacers: number[], pages: number, overflow: boolean[]}} Extra space to add before
  * each block, the sheet count and which blocks are taller than a page.
  */
-export function paginate( heights, { height, margin, gap } ) {
+export function paginate( heights, { height, margin, gap }, breaks = [] ) {
 	const pitch = height + gap;
 	const usable = height - margin * 2;
 	const top = ( page ) => page * pitch + margin;
@@ -278,11 +280,13 @@ export function paginate( heights, { height, margin, gap } ) {
 	let last = 0;
 	const spacers = [];
 	const overflow = [];
-	for ( const raw of heights ) {
+	heights.forEach( ( raw, index ) => {
 		const size = Math.max( 0, Number( raw ) || 0 );
 		const page = Math.floor( y / pitch );
 		let start = y;
-		if ( y >= bottom( page ) ) {
+		if ( breaks[ index - 1 ] && y > top( page ) ) {
+			start = top( page + 1 );
+		} else if ( y >= bottom( page ) ) {
 			// The previous block ended in this sheet's bottom margin or in the gap.
 			start = top( page + 1 );
 		} else if ( y + size > bottom( page ) && size <= usable ) {
@@ -293,6 +297,75 @@ export function paginate( heights, { height, margin, gap } ) {
 		y = start + size;
 		// A block taller than the space left runs on, across the next sheet edge.
 		last = Math.max( last, Math.floor( Math.max( start, y - 1 ) / pitch ) );
-	}
+	} );
 	return { spacers, pages: last + 1, overflow };
+}
+
+/**
+ * Marks under each section heading: the questions after it, up to the next section.
+ *
+ * @param {Array<{kind: string, key: string, marks: number}>} entries Sections and questions in
+ *                                                                    document order.
+ * @return {Object<string, number>} Total marks by section key.
+ */
+export function sectionTotals( entries ) {
+	const totals = {};
+	let current = null;
+	for ( const entry of entries ) {
+		if ( entry.kind === 'section' ) {
+			current = entry.key;
+			totals[ current ] = 0;
+		} else if ( current !== null ) {
+			totals[ current ] += Number( entry.marks ) || 0;
+		}
+	}
+	return totals;
+}
+
+/**
+ * Minutes allowed for an exam, from the quiz time limit.
+ *
+ * @param {Object} limit Time limit: value and type (minutes, hours or days).
+ * @return {number} Minutes, 0 for no limit.
+ */
+export function limitMinutes( limit ) {
+	const value = Math.max( 0, Number( limit?.value ) || 0 );
+	const factor = { hours: 60, days: 1440 }[ limit?.type ] || 1;
+	return Math.round( value * factor );
+}
+
+/** Answer space heights, in lines of 8 mm, and the space styles. */
+export const ANSWER_SPACE_STYLES = [ 'lines', 'grid', 'blank' ];
+
+/**
+ * Normalize answer space attributes.
+ *
+ * @param {Object} attributes Block attributes.
+ * @return {{style: string, lines: number}} Answer space.
+ */
+export function answerSpace( attributes = {} ) {
+	return {
+		style: ANSWER_SPACE_STYLES.includes( attributes.style )
+			? attributes.style
+			: 'lines',
+		lines: Math.round(
+			Math.min( 30, Math.max( 1, Number( attributes.lines ) || 6 ) )
+		),
+	};
+}
+
+/**
+ * Normalize columns section attributes.
+ *
+ * @param {Object} attributes Block attributes.
+ * @return {{columns: number, flow: string, rule: boolean}} Columns section.
+ */
+export function columnsLayout( attributes = {} ) {
+	return {
+		columns: Math.round(
+			Math.min( 3, Math.max( 1, Number( attributes.columns ) || 2 ) )
+		),
+		flow: attributes.flow === 'grid' ? 'grid' : 'flow',
+		rule: Boolean( attributes.rule ),
+	};
 }

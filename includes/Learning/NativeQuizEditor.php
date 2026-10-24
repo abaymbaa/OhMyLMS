@@ -44,7 +44,7 @@ final class NativeQuizEditor {
 			return $allowed;
 		}
 		// Question blocks always; the question player (practice runs) only when the kind allows that delivery.
-		$keep = array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK );
+		$keep = array_merge( array( self::QUESTION_BLOCK, self::REFERENCE_BLOCK ), \OhMyLMS\Exams\PaperBlocks::names() );
 		if ( \OhMyLMS\Assessment\Profiles::allows( $post->ID, \OhMyLMS\Assessment\DeliveryPolicy::PRACTICE ) ) {
 			$keep[] = 'ohmylms/question-player';
 		}
@@ -280,12 +280,17 @@ final class NativeQuizEditor {
 				if ( ! AccessPolicy::can_edit_question( $id ) && empty( $identity['approved_version_id'] ) ) {
 					ErrorException::raise( new \WP_Error( 'quiz_question_unapproved', __( 'Shared questions must be approved before they can be used in a quiz.', 'ohmylms' ), array( 'status' => 409 ) ) );
 				}
-				$authoring_revision    = absint( $block['attrs']['authoringRevision'] ?? 0 );
-				$ids[]                 = $id;
-				$block['attrs']        = array(
+				$authoring_revision = absint( $block['attrs']['authoringRevision'] ?? 0 );
+				$ids[]              = $id;
+				$span               = ! empty( $block['attrs'][ \OhMyLMS\Exams\PaperBlocks::SPAN ] );
+				$block['attrs']     = array(
 					'questionId' => $id,
 					'uuid'       => (string) ( $identity['uuid'] ?? '' ),
 				);
+				if ( $span ) {
+					// Printable paper layout: this question spans every column of its section.
+					$block['attrs'][ \OhMyLMS\Exams\PaperBlocks::SPAN ] = true;
+				}
 				$block['innerBlocks']  = array();
 				$block['innerHTML']    = '';
 				$block['innerContent'] = array();

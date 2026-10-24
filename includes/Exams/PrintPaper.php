@@ -56,46 +56,95 @@ final class PrintPaper {
 	 * @return array[] Items for the print bundle.
 	 */
 	public static function items( $id, $answers ) {
-		$quiz      = ohmylms_get_quiz( $id );
 		$questions = array();
-		foreach ( $quiz->get_questions() as $placement ) {
+		foreach ( ohmylms_get_quiz( $id )->get_questions() as $placement ) {
 			$questions[ (int) $placement['id'] ] = $placement;
 		}
+		$blocks = parse_blocks( NativeQuizEditor::editor_content( get_post( $id ) ) );
+		return self::walk( $blocks, $id, $answers, $questions );
+	}
+
+	/**
+	 * Printed items of a list of blocks. Paper blocks keep their children; other containers
+	 * holding questions print their contents in order.
+	 *
+	 * @param array $blocks    Parsed blocks.
+	 * @param int   $id        Quiz ID.
+	 * @param bool  $answers   Whether to include answer keys.
+	 * @param array $questions Quiz placements by question ID.
+	 * @return array[] Items.
+	 */
+	private static function walk( array $blocks, $id, $answers, array $questions ) {
 		$items = array();
-		$walk  = static function ( array $blocks ) use ( &$walk, &$items, $questions, $id, $answers ) {
-			foreach ( $blocks as $block ) {
-				if ( NativeQuizEditor::is_question( $block ) ) {
-					$question_id = (int) ( $block['attrs']['questionId'] ?? 0 );
-					if ( isset( $questions[ $question_id ] ) ) {
-						$question = self::question( $id, $questions[ $question_id ], $answers );
-						if ( $question ) {
-							$items[] = array(
-								'kind'     => 'question',
-								'question' => $question,
-							);
-						}
-					}
-					continue;
+		foreach ( $blocks as $block ) {
+			$name = $block['blockName'] ?? '';
+			$span = ! empty( $block['attrs'][ PaperBlocks::SPAN ] );
+			$item = null;
+			if ( NativeQuizEditor::is_question( $block ) ) {
+				$question_id = (int) ( $block['attrs']['questionId'] ?? 0 );
+				$question    = isset( $questions[ $question_id ] ) ? self::question( $id, $questions[ $question_id ], $answers ) : null;
+				if ( $question ) {
+					$item = array(
+						'kind'     => 'question',
+						'question' => $question,
+					);
 				}
-				if ( empty( $block['blockName'] ) ) {
-					continue;
-				}
-				if ( self::has_question( $block['innerBlocks'] ?? array() ) ) {
-					// Layout containers print their contents in order until multi-column sections exist.
-					$walk( $block['innerBlocks'] );
-					continue;
-				}
+			} elseif ( in_array( $name, PaperBlocks::names(), true ) ) {
+				$item = array(
+					'kind'  => 'paper',
+					'name'  => $name,
+					'attrs' => self::paper_attributes( $block['attrs'] ?? array() ),
+					'items' => self::walk( $block['innerBlocks'] ?? array(), $id, $answers, $questions ),
+				);
+			} elseif ( '' !== $name && self::has_question( $block['innerBlocks'] ?? array() ) ) {
+				$items = array_merge( $items, self::walk( $block['innerBlocks'], $id, $answers, $questions ) );
+			} elseif ( '' !== $name ) {
 				$html = trim( wp_kses_post( render_block( $block ) ) );
 				if ( '' !== $html ) {
-					$items[] = array(
+					$item = array(
 						'kind' => 'html',
 						'html' => $html,
 					);
 				}
 			}
-		};
-		$walk( parse_blocks( NativeQuizEditor::editor_content( get_post( $id ) ) ) );
+			if ( $item ) {
+				$items[] = $item + array( 'span' => $span );
+			}
+		}
 		return $items;
+	}
+
+	/**
+	 * Paper block attributes for the page: text keeps bold, italic and line breaks only.
+	 * Block comment attributes are not filtered when a document is saved, so they are here.
+	 *
+	 * @param mixed $value Attribute value.
+	 * @return mixed Safe value; null for unsupported types.
+	 */
+	public static function paper_attributes( $value ) {
+		if ( is_array( $value ) ) {
+			$result = array();
+			foreach ( $value as $key => $item ) {
+				$key = is_int( $key ) ? $key : preg_replace( '/[^A-Za-z0-9_]/', '', (string) $key );
+				if ( '' !== $key ) {
+					$result[ $key ] = self::paper_attributes( $item );
+				}
+			}
+			return $result;
+		}
+		if ( is_string( $value ) ) {
+			return wp_kses(
+				$value,
+				array(
+					'strong' => array(),
+					'em'     => array(),
+					'b'      => array(),
+					'i'      => array(),
+					'br'     => array(),
+				)
+			);
+		}
+		return is_bool( $value ) || is_int( $value ) || is_float( $value ) ? $value : null;
 	}
 
 	/**
@@ -223,6 +272,10 @@ final class PrintPaper {
 			'variant'   => $key ? 'key' : 'paper',
 			'settings'  => $paper,
 			'items'     => self::items( $id, $key ),
+			'timeLimit' => array(
+				'value' => (float) ( $quiz->get_settings()['time_limit']['value'] ?? 0 ),
+				'type'  => sanitize_key( (string) ( $quiz->get_settings()['time_limit']['type'] ?? 'minutes' ) ),
+			),
 			'autoPrint' => isset( $_GET['print'] ), // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified above.
 		);
 		nocache_headers();
