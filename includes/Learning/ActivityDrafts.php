@@ -15,7 +15,7 @@ final class ActivityDrafts {
 	 * Create through the established content writers; placements are saved separately.
 	 *
 	 * @param int   $course_id Course ID.
-	 * @param array $data Resource input and request UUID.
+	 * @param array $data Resource input, optional quiz `style` and request UUID.
 	 * @return array|\WP_Error
 	 */
 	public static function create( $course_id, array $data ) {
@@ -24,6 +24,11 @@ final class ActivityDrafts {
 		$content    = $data['content'] ?? '';
 		$url        = $data['url'] ?? '';
 		$request_id = $data['request_id'] ?? '';
+		$style      = $data['style'] ?? 'quiz';
+		// A unit test or course challenge slot creates its quiz with the matching assessment style.
+		if ( ! is_string( $style ) || ! in_array( $style, \OhMyLMS\Assessment\AssessmentSettings::STYLES, true ) || ( 'quiz' !== $style && ( 'quiz' !== $kind || ! \OhMyLMS\Assessment\Schema::ready() ) ) ) {
+			return Catalog::error( __( 'Choose a quiz, unit test or course challenge style for a new quiz.', 'ohmylms' ) );
+		}
 		if ( ! in_array( $kind, array( 'reading', 'video', 'quiz' ), true ) || ! is_string( $title ) || '' === trim( wp_strip_all_tags( $title ) ) || mb_strlen( $title ) > 200 || ! is_string( $content ) || strlen( $content ) > 100000 || ! is_string( $url ) || ! is_string( $request_id ) || ! wp_is_uuid( $request_id ) ) {
 			return Catalog::error( __( 'Choose a reading, video or quiz, a title within 200 characters, and a valid creation identifier.', 'ohmylms' ) );
 		}
@@ -31,7 +36,7 @@ final class ActivityDrafts {
 			return Catalog::error( __( 'Enter a valid HTTP or HTTPS video URL.', 'ohmylms' ) );
 		}
 		$title    = sanitize_text_field( $title );
-		$hash     = hash( 'sha256', wp_json_encode( array( $kind, $title, $content, $url ) ) );
+		$hash     = hash( 'sha256', wp_json_encode( 'quiz' === $style ? array( $kind, $title, $content, $url ) : array( $kind, $title, $content, $url, $style ) ) );
 		$identity = $course_id . ':' . $request_id;
 		$matches  = get_posts(
 			array(
@@ -81,6 +86,9 @@ final class ActivityDrafts {
 		}
 		if ( ! add_post_meta( $id, '_ohmylms_outline_draft_request', $identity, true ) || ! add_post_meta( $id, '_ohmylms_outline_draft_input', $hash, true ) ) {
 			return Catalog::error( __( 'The creation identifier could not be saved.', 'ohmylms' ), 500 );
+		}
+		if ( 'quiz' !== $style && is_wp_error( \OhMyLMS\Assessment\AssessmentSettings::save( $id, array( 'style' => $style ) ) ) ) {
+			return Catalog::error( __( 'The assessment style could not be saved.', 'ohmylms' ), 500 );
 		}
 		return self::describe( $id, $kind );
 	}

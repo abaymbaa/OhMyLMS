@@ -19,6 +19,7 @@ import apiFetch from '@wordpress/api-fetch';
  * @param {string}                     root0.initialKind Initial reading, video or quiz choice.
  * @param {(resource: Object) => void} root0.onCreated   Place the draft locally.
  * @param {(busy: boolean) => void}    root0.onBusy      Disable dialog dismissal during creation.
+ * @param {string}                     [root0.style]     Assessment style for a unit test or course challenge slot.
  */
 export function ActivityCreateForm( {
 	courseId,
@@ -27,8 +28,11 @@ export function ActivityCreateForm( {
 	initialKind,
 	onCreated,
 	onBusy,
+	style = '',
 } ) {
-	const [ kind, setKind ] = useState( initialKind || 'reading' );
+	const [ kind, setKind ] = useState(
+		style ? 'quiz' : initialKind || 'reading'
+	);
 	const [ title, setTitle ] = useState( '' );
 	const [ content, setContent ] = useState( '' );
 	const [ url, setUrl ] = useState( '' );
@@ -49,6 +53,7 @@ export function ActivityCreateForm( {
 					title,
 					content,
 					url,
+					...( style ? { style } : {} ),
 				},
 			} );
 			onCreated( resource );
@@ -72,17 +77,19 @@ export function ActivityCreateForm( {
 					{ error }
 				</Notice>
 			) }
-			<SelectControl
-				label={ __( 'New activity type', 'ohmylms' ) }
-				value={ kind }
-				disabled={ busy }
-				options={ [
-					{ value: 'reading', label: __( 'Reading', 'ohmylms' ) },
-					{ value: 'video', label: __( 'Video', 'ohmylms' ) },
-					{ value: 'quiz', label: __( 'Quiz', 'ohmylms' ) },
-				] }
-				onChange={ setKind }
-			/>
+			{ ! style && (
+				<SelectControl
+					label={ __( 'New activity type', 'ohmylms' ) }
+					value={ kind }
+					disabled={ busy }
+					options={ [
+						{ value: 'reading', label: __( 'Reading', 'ohmylms' ) },
+						{ value: 'video', label: __( 'Video', 'ohmylms' ) },
+						{ value: 'quiz', label: __( 'Quiz', 'ohmylms' ) },
+					] }
+					onChange={ setKind }
+				/>
+			) }
 			<TextControl
 				label={ __( 'New activity title', 'ohmylms' ) }
 				value={ title }

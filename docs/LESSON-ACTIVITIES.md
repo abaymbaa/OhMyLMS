@@ -22,7 +22,7 @@ This describes intended coverage. It does not verify content quality, question a
 
 ## API
 
-`POST /ohmylms/v1/courses/{id}/structure/resources` creates a reusable resource draft. Send the saved course `revision`, a fresh UUID `request_id`, `kind` (`reading`, `video` or `quiz`), `title` (up to 200 characters), optional `content` (up to 100 KB), and a valid video `url` when applicable. URLs are stored without fetching them. The response follows the picker resource contract, adding `status`, `format` and the current `revision`.
+`POST /ohmylms/v1/courses/{id}/structure/resources` creates a reusable resource draft. Send the saved course `revision`, a fresh UUID `request_id`, `kind` (`reading`, `video` or `quiz`), an optional quiz `style` (`quiz`, `unit-test` or `course-challenge`; stored in the quiz's assessment settings), `title` (up to 200 characters), optional `content` (up to 100 KB), and a valid video `url` when applicable. URLs are stored without fetching them. The response follows the picker resource contract, adding `status`, `format` and the current `revision`.
 
 Course authorization, the shared course lock and transaction wrap creation; the native resource writer additionally checks its own permissions. Stale revisions return 409. A retry with the same request UUID and input returns the same resource. Reusing that UUID with different input returns 409. An error after insertion rolls back the resource and its request metadata. Resource content and structure publication are separate actions.
 

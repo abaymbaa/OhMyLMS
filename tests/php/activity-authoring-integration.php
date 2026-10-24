@@ -186,6 +186,36 @@ try {
 			activity_check( 'video' === get_post_meta( $activity_resource['id'], '_type', true ) && 'https://example.com/lesson.mp4' === get_post_meta( $activity_resource['id'], '_external_url', true ), 'Video settings use the native lesson contract.' );
 		}
 	}
+	foreach ( array( 'unit-test', 'course-challenge' ) as $activity_style ) {
+		$activity_response = activity_api(
+			'POST',
+			'/resources',
+			array_replace(
+				$activity_request,
+				array(
+					'request_id' => wp_generate_uuid4(),
+					'kind'       => 'quiz',
+					'style'      => $activity_style,
+					'title'      => 'Draft ' . $activity_style . ' fixture',
+				)
+			)
+		);
+		activity_check( 200 === $activity_response->get_status() && $activity_style === $activity_response->get_data()['style'], 'A slot creates a quiz with the ' . $activity_style . ' style: ' . wp_json_encode( $activity_response->get_data() ) );
+		$activity_posts[] = $activity_response->get_data()['id'];
+		activity_check( OhMyLMS\Assessment\AssessmentSettings::get( $activity_response->get_data()['id'] )['style'] === $activity_style, 'The style is stored in the assessment settings.' );
+	}
+	foreach ( array(
+		array(
+			'kind'  => 'reading',
+			'style' => 'unit-test',
+		),
+		array(
+			'kind'  => 'quiz',
+			'style' => 'exam',
+		),
+	) as $activity_invalid_style ) {
+		activity_check( 400 === activity_api( 'POST', '/resources', array_replace( $activity_request, $activity_invalid_style, array( 'request_id' => wp_generate_uuid4() ) ) )->get_status(), 'Styles apply only to quizzes and must be known.' );
+	}
 	$activity_snapshot                     = activity_api( 'GET' )->get_data();
 	$activity_item                         = array(
 		'id'         => wp_generate_uuid4(),

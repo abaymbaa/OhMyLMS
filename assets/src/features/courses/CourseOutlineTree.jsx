@@ -56,14 +56,15 @@ function icon( item ) {
  * Khan Academy-shaped outline: unit cards holding lessons, their activities and skills,
  * a unit test slot at the end of every unit and a course challenge slot after the units.
  *
- * @param {Object}                                                  props             Component properties.
- * @param {Object}                                                  props.draft       Current outline.
- * @param {?Object}                                                 props.selected    Selected row.
- * @param {boolean}                                                 props.busy        A save is running.
- * @param {(type: string, id: string|number) => void}               props.onSelect    Select a row for the inspector.
- * @param {() => void}                                              props.onAddUnit   Add a unit.
- * @param {(unitId: number) => void}                                props.onAddLesson Add a lesson to a unit.
- * @param {(unitId: number, groupId: string, kind: string) => void} props.onAdd       Open the activity picker.
+ * @param {Object}                                                    props             Component properties.
+ * @param {Object}                                                    props.draft       Current outline.
+ * @param {?Object}                                                   props.selected    Selected row.
+ * @param {boolean}                                                   props.busy        A save is running.
+ * @param {(type: string, id: string|number) => void}                 props.onSelect    Select a row for the inspector.
+ * @param {() => void}                                                props.onAddUnit   Add a unit.
+ * @param {(unitId: number) => void}                                  props.onAddLesson Add a lesson to a unit.
+ * @param {(unitId: number, groupId: string, kind: string) => void}   props.onAdd       Open the activity picker.
+ * @param {(type: string, id: string|number, target: Object) => void} props.onMove      Move a dragged unit, lesson or activity.
  */
 export function CourseOutlineTree( {
 	draft,
@@ -73,8 +74,65 @@ export function CourseOutlineTree( {
 	onAddUnit,
 	onAddLesson,
 	onAdd,
+	onMove,
 } ) {
 	const [ collapsed, setCollapsed ] = useState( [] );
+	const [ drag, setDrag ] = useState( null );
+	const [ over, setOver ] = useState( '' );
+	const codes = draft.skill_codes;
+	const code = ( termId ) =>
+		codes?.[ termId ] ? (
+			<span className="ohmylms-outline-code">{ codes[ termId ] }</span>
+		) : null;
+	// Native drag and drop for pointer users; the inspector's Move buttons remain the keyboard path.
+	const dragProps = ( type, id ) =>
+		busy
+			? {}
+			: {
+					draggable: true,
+					onDragStart: ( event ) => {
+						event.stopPropagation();
+						event.dataTransfer.effectAllowed = 'move';
+						event.dataTransfer.setData(
+							'text/plain',
+							String( id )
+						);
+						setDrag( { type, id } );
+					},
+					onDragEnd: () => {
+						setDrag( null );
+						setOver( '' );
+					},
+				};
+	const dropProps = ( key, targetFor ) => {
+		const target = drag ? targetFor( drag.type ) : null;
+		if ( ! target ) {
+			return {};
+		}
+		return {
+			onDragOver: ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				event.dataTransfer.dropEffect = 'move';
+				setOver( key );
+			},
+			onDragLeave: ( event ) => {
+				if ( ! event.currentTarget.contains( event.relatedTarget ) ) {
+					setOver( ( current ) =>
+						current === key ? '' : current
+					);
+				}
+			},
+			onDrop: ( event ) => {
+				event.preventDefault();
+				event.stopPropagation();
+				onMove( drag.type, drag.id, target );
+				setDrag( null );
+				setOver( '' );
+			},
+		};
+	};
+	const dropClass = ( key ) => ( over === key ? ' is-drop-target' : '' );
 	const groups = draft.program.groups || [];
 	const names = draft.skill_names;
 	const items = draft.program.items;
@@ -89,7 +147,8 @@ export function CourseOutlineTree( {
 			( item ) => 'practice' === item.type && item.content_id === termId
 		);
 	const isSelected = ( id ) => selected?.id === id;
-	const itemRow = ( item ) => {
+	const itemRow = ( item, unitId, groupId = '' ) => {
+		const fixed = terminal( item );
 		const label =
 			item.title ||
 			item.name ||
@@ -109,12 +168,21 @@ export function CourseOutlineTree( {
 				key={ item.id }
 				className={ `ohmylms-outline-row${
 					isSelected( item.id ) ? ' is-selected' : ''
-				}` }
+				}${ dropClass( `item-${ item.id }` ) }` }
+				{ ...( fixed ? {} : dragProps( 'activity', item.id ) ) }
+				{ ...( fixed
+					? {}
+					: dropProps( `item-${ item.id }`, ( type ) =>
+							'activity' === type
+								? { unitId, groupId, beforeId: item.id }
+								: null
+						) ) }
 			>
 				<span
 					className={ `dashicons dashicons-${ icon( item ) }` }
 					aria-hidden="true"
 				/>
+				{ 'practice' === item.type && code( item.content_id ) }
 				<Button
 					className="ohmylms-outline-row-button"
 					aria-current={ isSelected( item.id ) ? 'true' : undefined }
@@ -141,6 +209,7 @@ export function CourseOutlineTree( {
 				className="dashicons dashicons-lightbulb"
 				aria-hidden="true"
 			/>
+			{ code( outcome.term_id ) }
 			<Button
 				className="ohmylms-outline-row-button"
 				aria-current={
@@ -250,8 +319,28 @@ export function CourseOutlineTree( {
 							className={ `ohmylms-outline-unit${
 								isSelected( unit.id ) ? ' is-selected' : ''
 							}` }
+							{ ...dragProps( 'unit', unit.id ) }
 						>
-							<div className="ohmylms-outline-unit-header">
+							<div
+								className={ `ohmylms-outline-unit-header${ dropClass(
+									`unit-${ unit.id }`
+								) }` }
+								{ ...dropProps(
+									`unit-${ unit.id }`,
+									( type ) => {
+										if ( 'unit' === type ) {
+											return { beforeId: unit.id };
+										}
+										return 'lesson' === type
+											? { unitId: unit.id, beforeId: '' }
+											: {
+													unitId: unit.id,
+													groupId: '',
+													beforeId: '',
+												};
+									}
+								) }
+							>
 								<Button
 									className="ohmylms-outline-toggle"
 									icon={
@@ -357,7 +446,34 @@ export function CourseOutlineTree( {
 													isSelected( lesson.id )
 														? ' is-selected'
 														: ''
-												}` }
+												}${ dropClass(
+													`lesson-${ lesson.id }`
+												) }` }
+												{ ...dragProps(
+													'lesson',
+													lesson.id
+												) }
+												{ ...dropProps(
+													`lesson-${ lesson.id }`,
+													( type ) => {
+														if ( 'unit' === type ) {
+															return null;
+														}
+														return 'lesson' === type
+															? {
+																	unitId: unit.id,
+																	beforeId:
+																		lesson.id,
+																}
+															: {
+																	unitId: unit.id,
+																	groupId:
+																		lesson.id,
+																	beforeId:
+																		'',
+																};
+													}
+												) }
 											>
 												<Button
 													className="ohmylms-outline-row-button ohmylms-outline-lesson-title"
@@ -379,7 +495,12 @@ export function CourseOutlineTree( {
 												lessonSkills.length > 0 ? (
 													<ul className="ohmylms-outline-rows">
 														{ lessonItems.map(
-															itemRow
+															( item ) =>
+																itemRow(
+																	item,
+																	unit.id,
+																	lesson.id
+																)
 														) }
 														{ lessonSkills.map(
 															skillRow
@@ -418,7 +539,22 @@ export function CourseOutlineTree( {
 								</ol>
 								{ ( ungrouped.length > 0 ||
 									loose.length > 0 ) && (
-									<div className="ohmylms-outline-loose">
+									<div
+										className={ `ohmylms-outline-loose${ dropClass(
+											`loose-${ unit.id }`
+										) }` }
+										{ ...dropProps(
+											`loose-${ unit.id }`,
+											( type ) =>
+												'activity' === type
+													? {
+															unitId: unit.id,
+															groupId: '',
+															beforeId: '',
+														}
+													: null
+										) }
+									>
 										<h3>
 											{ __(
 												'Not in a lesson',
@@ -426,7 +562,9 @@ export function CourseOutlineTree( {
 											) }
 										</h3>
 										<ul className="ohmylms-outline-rows">
-											{ ungrouped.map( itemRow ) }
+											{ ungrouped.map( ( item ) =>
+												itemRow( item, unit.id )
+											) }
 											{ loose.map( skillRow ) }
 										</ul>
 									</div>
@@ -447,7 +585,9 @@ export function CourseOutlineTree( {
 								<div className="ohmylms-outline-slot">
 									{ tests.length > 0 ? (
 										<ul className="ohmylms-outline-rows">
-											{ tests.map( itemRow ) }
+											{ tests.map( ( item ) =>
+												itemRow( item, unit.id )
+											) }
 										</ul>
 									) : (
 										<Button
@@ -482,21 +622,32 @@ export function CourseOutlineTree( {
 				} ) }
 			</ol>
 			{ draft.units.length > 0 && (
-				<div className="ohmylms-outline-course-end">
+				<div
+					className={ `ohmylms-outline-course-end${ dropClass(
+						'course-end'
+					) }` }
+					{ ...dropProps( 'course-end', ( type ) =>
+						'unit' === type ? { beforeId: '' } : null
+					) }
+				>
 					{ courseLevel.length > 0 && (
 						<div className="ohmylms-outline-loose">
 							<h3>
 								{ __( 'Course-level activities', 'ohmylms' ) }
 							</h3>
 							<ul className="ohmylms-outline-rows">
-								{ courseLevel.map( itemRow ) }
+								{ courseLevel.map( ( item ) =>
+									itemRow( item, 0 )
+								) }
 							</ul>
 						</div>
 					) }
 					<div className="ohmylms-outline-slot">
 						{ challenge.length > 0 ? (
 							<ul className="ohmylms-outline-rows">
-								{ challenge.map( itemRow ) }
+								{ challenge.map( ( item ) =>
+									itemRow( item, 0 )
+								) }
 							</ul>
 						) : (
 							<Button

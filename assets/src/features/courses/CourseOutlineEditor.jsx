@@ -23,6 +23,10 @@ import { CourseReadiness } from './CourseReadiness';
 import { CourseOutlineTree, outlineSkillName } from './CourseOutlineTree';
 import {
 	addOutlinePractice,
+	dropOutlineActivity,
+	dropOutlineLesson,
+	dropOutlineUnit,
+	lessonsFromSkills,
 	missingOutlineSkills,
 	moveOutlineRow,
 	orderedOutlineItems,
@@ -344,6 +348,10 @@ export function CourseOutlineEditor( {
 				...draft.skill_names,
 				[ resource.id ]: resource.title,
 			},
+			skill_codes: {
+				...draft.skill_codes,
+				...( resource.code ? { [ resource.id ]: resource.code } : {} ),
+			},
 			program: {
 				...next,
 				items: next.items.map( ( item ) =>
@@ -353,6 +361,17 @@ export function CourseOutlineEditor( {
 		} );
 		setPicker( null );
 		select( 'activity', id );
+	}
+	function move( type, id, target ) {
+		if ( 'unit' === type ) {
+			change( {
+				units: dropOutlineUnit( draft.units, id, target.beforeId ),
+			} );
+		} else if ( 'lesson' === type ) {
+			program( dropOutlineLesson( draft.program, id, target ) );
+		} else {
+			program( dropOutlineActivity( draft.program, id, target ) );
+		}
 	}
 	function removeSkills( ids ) {
 		program( removeOutlineSkills( draft.program, ids ) );
@@ -404,6 +423,10 @@ export function CourseOutlineEditor( {
 			skill_names: {
 				...draft.skill_names,
 				[ resource.id ]: resource.title,
+			},
+			skill_codes: {
+				...draft.skill_codes,
+				...( resource.code ? { [ resource.id ]: resource.code } : {} ),
 			},
 			program: {
 				...draft.program,
@@ -501,6 +524,14 @@ export function CourseOutlineEditor( {
 					item.content_id === skill.term_id
 			)
 		: null;
+	const looseSkills = unit
+		? draft.program.outcomes.filter(
+				( row ) =>
+					same( row.chapter_id, unit.id ) &&
+					! row.group_id &&
+					draft.skill_names?.[ row.term_id ]
+			).length
+		: 0;
 	const rowsIn = ( unitId, groupId = '' ) =>
 		draft.program.items.filter(
 			( item ) =>
@@ -818,6 +849,7 @@ export function CourseOutlineEditor( {
 						onAddUnit={ addUnit }
 						onAddLesson={ addLesson }
 						onAdd={ openPicker }
+						onMove={ move }
 					/>
 					<div className="ohmylms-outline-inspector" tabIndex={ -1 }>
 						{ ! unit && ! lesson && ! activity && ! skill && (
@@ -1114,6 +1146,70 @@ export function CourseOutlineEditor( {
 										} )
 									}
 								/>
+								{ looseSkills > 0 && (
+									<div className="ohmylms-outline-group-skills">
+										<h3>
+											{ __(
+												'Skills not in a lesson',
+												'ohmylms'
+											) }
+										</h3>
+										<p>
+											{ sprintf(
+												/* translators: %d: number of skills. */ _n(
+													'%d skill in this unit is not in a lesson yet. Each lesson holds its skills as practice, so learners can work through them in order.',
+													'%d skills in this unit are not in a lesson yet. Each lesson holds its skills as practice, so learners can work through them in order.',
+													looseSkills,
+													'ohmylms'
+												),
+												looseSkills
+											) }
+										</p>
+										<Button
+											variant="secondary"
+											disabled={ busy }
+											onClick={ () =>
+												program(
+													lessonsFromSkills(
+														draft.program,
+														{
+															unitId: unit.id,
+															names: draft.skill_names,
+															title: '',
+															newId: uuid,
+														}
+													)
+												)
+											}
+										>
+											{ __(
+												'Make a lesson for each skill',
+												'ohmylms'
+											) }
+										</Button>
+										<Button
+											disabled={ busy }
+											onClick={ () =>
+												program(
+													lessonsFromSkills(
+														draft.program,
+														{
+															unitId: unit.id,
+															names: draft.skill_names,
+															title: unit.title,
+															newId: uuid,
+														}
+													)
+												)
+											}
+										>
+											{ __(
+												'Put them in one lesson',
+												'ohmylms'
+											) }
+										</Button>
+									</div>
+								) }
 								{ moveButtons( draft.units, unit, ( units ) =>
 									change( { units } )
 								) }
@@ -1683,7 +1779,7 @@ export function CourseOutlineEditor( {
 						pickerBusy ? () => {} : () => setPicker( null )
 					}
 				>
-					{ ! picker.skills && ! picker.style && (
+					{ ! picker.skills && (
 						<div className="ohmylms-outline-activity-actions">
 							<Button
 								variant={
@@ -1723,6 +1819,7 @@ export function CourseOutlineEditor( {
 							}
 							onBusy={ setPickerBusy }
 							onCreated={ addActivity }
+							style={ picker.style }
 						/>
 					) : (
 						<>
@@ -1738,7 +1835,7 @@ export function CourseOutlineEditor( {
 												'ohmylms'
 											) }{ ' ' }
 									{ __(
-										'Set the style in the quiz settings.',
+										'Or choose Create new activity to make a draft with this style.',
 										'ohmylms'
 									) }
 								</p>
@@ -1833,6 +1930,11 @@ export function CourseOutlineEditor( {
 									return (
 										<li key={ resource.id }>
 											<span>
+												{ resource.code && (
+													<span className="ohmylms-outline-code">
+														{ resource.code }
+													</span>
+												) }
 												{ resource.title }
 												{ elsewhere && (
 													<small>

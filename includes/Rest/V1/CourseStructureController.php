@@ -95,10 +95,16 @@ class CourseStructureController extends RestController {
 		}
 		unset( $item );
 		$data['skill_names'] = array();
+		$data['skill_codes'] = array();
 		foreach ( $data['program']['outcomes'] as $outcome ) {
 			$term = get_term( $outcome['term_id'], \OhMyLMS\Skills\Taxonomy::NAME );
 			if ( $term && ! is_wp_error( $term ) ) {
 				$data['skill_names'][ $outcome['term_id'] ] = \OhMyLMS\Curriculum\Syllabus::text( $term->name );
+
+				$code = (string) get_term_meta( $term->term_id, '_ohmylms_skill_code', true );
+				if ( '' !== $code ) {
+					$data['skill_codes'][ $outcome['term_id'] ] = $code;
+				}
 			}
 		}
 		$data['create_urls'] = array(

@@ -11,6 +11,10 @@ import {
 	practicePlacement,
 	addOutlinePractice,
 	outlineUnitSummary,
+	dropOutlineUnit,
+	dropOutlineLesson,
+	dropOutlineActivity,
+	lessonsFromSkills,
 } from '../../assets/src/features/courses/outline.mjs';
 
 test( 'lesson checklist isolates teaching and assessment coverage by lesson and unit', () => {
@@ -281,5 +285,136 @@ test( 'unit summary counts lessons, skills and activities in that unit', () => {
 			5
 		),
 		{ lessons: 1, skills: 2, activities: 1 }
+	);
+} );
+
+test( 'dragging reorders units and moves lessons with their activities and skills', () => {
+	assert.deepEqual(
+		dropOutlineUnit( [ { id: 1 }, { id: 2 }, { id: 3 } ], 3, 1 ).map(
+			( row ) => row.id
+		),
+		[ 3, 1, 2 ]
+	);
+	assert.deepEqual(
+		dropOutlineUnit( [ { id: 1 }, { id: 2 } ], 1, '' ).map(
+			( row ) => row.id
+		),
+		[ 2, 1 ]
+	);
+	const program = {
+		groups: [
+			{ id: 'a', chapter_id: 1 },
+			{ id: 'b', chapter_id: 2 },
+			{ id: 'c', chapter_id: 2 },
+		],
+		items: [ { id: 'x', chapter_id: 1, group_id: 'a' } ],
+		outcomes: [ { term_id: 5, chapter_id: 1, group_id: 'a' } ],
+	};
+	const moved = dropOutlineLesson( program, 'a', {
+		unitId: 2,
+		beforeId: 'c',
+	} );
+	assert.deepEqual(
+		moved.groups.map( ( row ) => row.id ),
+		[ 'b', 'a', 'c' ]
+	);
+	assert.equal( moved.groups[ 1 ].chapter_id, 2 );
+	assert.equal( moved.items[ 0 ].chapter_id, 2 );
+	assert.equal( moved.outcomes[ 0 ].chapter_id, 2 );
+	const appended = dropOutlineLesson( program, 'a', {
+		unitId: 2,
+		beforeId: '',
+	} );
+	assert.deepEqual(
+		appended.groups.map( ( row ) => row.id ),
+		[ 'b', 'c', 'a' ]
+	);
+} );
+
+test( 'dragging an activity places it in the target lesson or unit and keeps checkpoints fixed', () => {
+	const program = {
+		groups: [ { id: 'a', chapter_id: 1 } ],
+		outcomes: [],
+		items: [
+			{ id: 'x', chapter_id: 1, group_id: 'a', skill_ids: [ 4 ] },
+			{ id: 'y', chapter_id: 1, group_id: 'a' },
+			{ id: 'z', chapter_id: 1 },
+			{ id: 't', chapter_id: 1, style: 'unit-test' },
+		],
+	};
+	const before = dropOutlineActivity( program, 'y', {
+		unitId: 1,
+		groupId: 'a',
+		beforeId: 'x',
+	} );
+	assert.deepEqual(
+		before.items.map( ( row ) => row.id ),
+		[ 'y', 'x', 'z', 't' ]
+	);
+	const out = dropOutlineActivity( program, 'x', {
+		unitId: 1,
+		groupId: '',
+		beforeId: '',
+	} );
+	assert.deepEqual(
+		out.items.map( ( row ) => row.id ),
+		[ 'y', 'z', 'x', 't' ]
+	);
+	assert.equal( 'group_id' in out.items[ 2 ], false );
+	assert.deepEqual( out.items[ 2 ].skill_ids, [ 4 ] );
+	assert.equal(
+		dropOutlineActivity( program, 't', {
+			unitId: 1,
+			groupId: 'a',
+			beforeId: '',
+		} ),
+		program
+	);
+} );
+
+test( 'loose unit skills become lessons with their practice', () => {
+	const program = {
+		groups: [],
+		outcomes: [
+			{ term_id: 1, chapter_id: 5 },
+			{ term_id: 2, chapter_id: 5 },
+			{ term_id: 3, chapter_id: 5 },
+			{ term_id: 4, chapter_id: 6 },
+		],
+		items: [ { id: 'p', type: 'practice', content_id: 2, chapter_id: 5 } ],
+	};
+	const names = { 1: 'One', 2: 'Two', 4: 'Four' };
+	let next = 0;
+	const newId = () => `id-${ ++next }`;
+	const each = lessonsFromSkills( program, {
+		unitId: 5,
+		names,
+		title: '',
+		newId,
+	} );
+	assert.deepEqual(
+		each.groups.map( ( row ) => row.title ),
+		[ 'One', 'Two' ]
+	);
+	assert.equal( each.outcomes[ 0 ].group_id, each.groups[ 0 ].id );
+	assert.equal( each.outcomes[ 2 ].group_id, undefined );
+	assert.equal( each.outcomes[ 3 ].group_id, undefined );
+	assert.equal( each.items[ 0 ].group_id, each.groups[ 1 ].id );
+	assert.equal( each.items.length, 2 );
+	assert.equal( each.items[ 1 ].content_id, 1 );
+	next = 0;
+	const one = lessonsFromSkills( program, {
+		unitId: 5,
+		names,
+		title: 'Basics',
+		newId,
+	} );
+	assert.deepEqual( one.groups, [
+		{ id: 'id-1', chapter_id: 5, title: 'Basics' },
+	] );
+	assert.equal( one.outcomes[ 1 ].group_id, 'id-1' );
+	assert.equal(
+		lessonsFromSkills( program, { unitId: 7, names, title: '', newId } ),
+		program
 	);
 } );

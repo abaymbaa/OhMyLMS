@@ -404,6 +404,50 @@
 	color: var(--oml-muted, #50575e);
 }
 
+/* Drag and drop: rows insert before the target; containers append. */
+.ohmylms-outline-tree [draggable="true"] {
+	cursor: grab;
+}
+
+.ohmylms-outline-row.is-drop-target,
+.ohmylms-outline-lesson.is-drop-target {
+	box-shadow: inset 0 2px 0 var(--oml-primary, #3858e9);
+}
+
+.ohmylms-outline-unit-header.is-drop-target,
+.ohmylms-outline-loose.is-drop-target,
+.ohmylms-outline-course-end.is-drop-target {
+	outline: 2px dashed var(--oml-primary, #3858e9);
+	outline-offset: -2px;
+}
+
+.ohmylms-outline-code {
+	flex: none;
+	padding: 0 6px;
+	border-radius: 4px;
+	background: #f0f0f1;
+	color: #50575e;
+	font-family: Consolas, Monaco, monospace;
+	font-size: 11px;
+	line-height: 18px;
+}
+
+.ohmylms-outline-resources .ohmylms-outline-code {
+	margin-right: 6px;
+}
+
+.ohmylms-outline-group-skills {
+	margin: 16px 0;
+	padding: 12px 16px;
+	border-left: 4px solid var(--oml-primary, #3858e9);
+	background: #f6f7f7;
+}
+
+.ohmylms-outline-group-skills h3 {
+	margin: 0 0 4px;
+	font-size: 14px;
+}
+
 @media (max-width: 960px) {
 
 	.ohmylms-outline-columns {
