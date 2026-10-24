@@ -1,8 +1,23 @@
 # Printable exams: design
 
-Status: **phases 1 to 4 built** (A4 canvas, renderers for most types, paper settings, print page, paper blocks).
-Not built: static figures for the visual types (number line, clock, chart and the like) and phase 5. Written
-October 24, 2026.
+Status: **phases 1 to 5 built** (A4 canvas, renderers for most types, paper settings, print page, paper blocks,
+versions and answer sheets). Not built: static figures for the visual types (number line, clock, chart and the
+like). Written October 24, 2026.
+
+## Phase 5 as built
+
+- **Versions** (Printable paper setting, 1 to 4). Version A is the paper as laid out in the editor. Versions B to D
+  (`versionItems()`) shuffle each run of consecutive questions in place: headers, sections, statements, page
+  breaks, wide items in columns and other blocks stay, and questions never leave their section or column.
+  Choice options are reordered too (true or false keeps its order), and jumbled lists use a per-version seed
+  (`questionSeed()` / `PrintPaper::seed()`), so each version has its own reorder, matching and sorting order.
+- Print links take `version=B` and so on; `PrintPaper` accepts only versions the paper offers. Numbering, section
+  totals and keys follow the printed order of the version.
+- **Answer sheet** (`variant=sheet`): name and candidate number, then a row of lettered circles per choice question
+  in the version's numbering (squares for select-all questions), and a note naming the questions answered on the
+  paper. **Marking sheet** (`variant=sheet-key`) fills the correct circles, for marking by overlay.
+- The editor's Printable paper panel has a version picker and Print paper, answer key, answer sheet and marking
+  sheet buttons. The editor shows version A; the header shows the version when there is more than one.
 
 ## Phase 4 as built
 

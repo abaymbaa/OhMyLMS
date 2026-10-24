@@ -25,6 +25,7 @@ test( 'paper settings fall back to defaults and clamp unsafe values', () => {
 		lines_per_mark: 2,
 		page_numbers: true,
 		default_view: false,
+		versions: 1,
 	} );
 	const odd = paperSettings( {
 		size: 'a0',

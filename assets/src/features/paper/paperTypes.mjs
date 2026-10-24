@@ -188,11 +188,16 @@ function blankAnswer( spec = {} ) {
  * @param {Object}  question    Question: settings, options and public flag.
  * @param {Object}  model       Base paper model (type, prompt, marks).
  * @param {boolean} showAnswers Whether to include the answer key.
+ * @param {string}  seed        Jumble seed of the question in this paper version.
  * @return {Object|null} Paper model, or null for other types.
  */
-export function typedPaper( question, model, showAnswers ) {
+export function typedPaper(
+	question,
+	model,
+	showAnswers,
+	seed = String( question.id ?? '' )
+) {
 	const { type } = model;
-	const seed = String( question.id ?? '' );
 	const isPublic = Boolean( question.public );
 	const settings = learnerSettings( type, question.settings || {}, isPublic );
 	const rows = [ ...( question.questions || question.options || [] ) ].sort(

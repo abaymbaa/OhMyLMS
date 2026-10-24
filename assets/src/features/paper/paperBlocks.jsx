@@ -32,7 +32,11 @@ import {
 	columnsProps,
 } from './PaperBlockViews';
 import { answerSpace, columnsLayout } from './paperModel.mjs';
-import { useExamDetails, usePaperTotals } from './PaperCanvas';
+import {
+	useExamDetails,
+	usePaperSettings,
+	usePaperTotals,
+} from './PaperCanvas';
 
 /** Attribute a block inside a columns section carries to span every column (PaperBlocks::SPAN). */
 export const SPAN = 'ohmylmsPaperSpan';
@@ -84,6 +88,8 @@ const definitions = {
 		edit: function Edit( { attributes, setAttributes } ) {
 			const { total } = usePaperTotals();
 			const { title, minutes } = useExamDetails();
+			// The editor shows version A; other versions differ only in printed order.
+			const versions = usePaperSettings().versions;
 			const fields = attributes.fields || [];
 			return (
 				<div { ...useBlockProps() }>
@@ -92,6 +98,7 @@ const definitions = {
 						title={ title }
 						minutes={ minutes }
 						total={ total }
+						version={ versions > 1 ? 'A' : '' }
 						text={ editableText( attributes, setAttributes ) }
 					/>
 					<InspectorControls>

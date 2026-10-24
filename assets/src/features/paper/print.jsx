@@ -1,9 +1,10 @@
 /** @jsx createElement */
 import { createElement, createRoot, RawHTML } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { loadMath, mathEnabled } from '../math/loader.mjs';
 import { questionPrompt } from '../question-editor/questionPrompt.mjs';
 import { PaperQuestion } from './PaperQuestion';
+import { AnswerSheet } from './AnswerSheet';
 import {
 	PaperAnswerSpaceView,
 	PaperFormulaSheetView,
@@ -17,9 +18,11 @@ import {
 import {
 	limitMinutes,
 	paperSettings,
+	paperVersion,
 	questionLabels,
 	questionMarks,
 	sectionTotals,
+	versionItems,
 } from './paperModel.mjs';
 
 /**
@@ -27,7 +30,8 @@ import {
  *
  * @param {Array}  items    Print items.
  * @param {Object} settings Normalized paper settings.
- * @return {{labels: Map, sections: Map, total: number}} Derived values by item.
+ * @return {{labels: Map, sections: Map, total: number, questions: Array}} Derived values by
+ * item, and the questions in printed order.
  */
 function annotate( items, settings ) {
 	const questions = [];
@@ -69,6 +73,7 @@ function annotate( items, settings ) {
 			( sum, entry ) => sum + ( entry.marks || 0 ),
 			0
 		),
+		questions,
 	};
 }
 
@@ -132,6 +137,7 @@ function Item( { item, context } ) {
 				label={ context.derived.labels.get( item ) }
 				settings={ context.settings }
 				showAnswers={ context.showAnswers }
+				version={ context.version }
 			/>
 		);
 	}
@@ -145,6 +151,9 @@ function Item( { item, context } ) {
 					attributes={ attrs }
 					title={ context.data.title }
 					minutes={ limitMinutes( context.data.timeLimit ) }
+					version={
+						context.settings.versions > 1 ? context.version : ''
+					}
 					total={ context.derived.total }
 					text={ text }
 				/>
@@ -198,23 +207,43 @@ function Item( { item, context } ) {
  */
 function PrintedPaper( { data } ) {
 	const settings = paperSettings( data.settings );
+	const version = paperVersion( data.version, settings );
+	// Versions B to D shuffle questions before numbering, so numbers follow the printed order.
+	const items = versionItems( data.items, version );
+	const sheet = [ 'sheet', 'sheet-key' ].includes( data.variant );
 	const context = {
 		data,
 		settings,
-		showAnswers: data.variant === 'key',
-		derived: annotate( data.items, settings ),
+		version,
+		showAnswers: [ 'key', 'sheet-key' ].includes( data.variant ),
+		derived: annotate( items, settings ),
 	};
+	const banner = {
+		key: __( 'Answer key', 'ohmylms' ),
+		'sheet-key': __( 'Marking sheet', 'ohmylms' ),
+	}[ data.variant ];
 	return (
 		<>
-			{ context.showAnswers && (
+			{ banner && (
 				<p className="ohmylms-print-key-banner">
-					{ __( 'Answer key', 'ohmylms' ) }
+					{ settings.versions > 1
+						? sprintf(
+								/* translators: 1: answer key or marking sheet, 2: version letter. */
+								__( '%1$s: version %2$s', 'ohmylms' ),
+								banner,
+								version
+							)
+						: banner }
 				</p>
 			) }
 			{ ! data.items.length && (
 				<p>{ __( 'This exam has no questions yet.', 'ohmylms' ) }</p>
 			) }
-			<Items items={ data.items } context={ context } />
+			{ sheet ? (
+				<AnswerSheet context={ context } />
+			) : (
+				<Items items={ items } context={ context } />
+			) }
 		</>
 	);
 }

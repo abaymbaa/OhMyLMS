@@ -124,6 +124,7 @@ function AnswerSpace( { item } ) {
  * @param {Object}  props.settings    Normalized paper settings.
  * @param {boolean} props.showAnswers Whether to show the answer key.
  * @param {boolean} props.editor      Whether editor-only notes may show.
+ * @param {string}  props.version     Paper version letter.
  * @return {Element} Printed question.
  */
 export function PaperQuestion( {
@@ -133,8 +134,14 @@ export function PaperQuestion( {
 	settings,
 	showAnswers = false,
 	editor = false,
+	version = 'A',
 } ) {
-	const paper = paperQuestion( question, { settings, showAnswers, prompt } );
+	const paper = paperQuestion( question, {
+		settings,
+		showAnswers,
+		prompt,
+		version,
+	} );
 	const host = useMath( JSON.stringify( paper ) );
 	const marks = settings.show_marks;
 	return (

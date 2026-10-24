@@ -21,6 +21,7 @@ final class PaperSettings {
 		'lines_per_mark' => 2,
 		'page_numbers'   => true,
 		'default_view'   => false,
+		'versions'       => 1,
 	);
 
 	/**
@@ -57,6 +58,7 @@ final class PaperSettings {
 			'lines_per_mark' => $number( 'lines_per_mark', 1, 4 ),
 			'page_numbers'   => $flag( 'page_numbers' ),
 			'default_view'   => $flag( 'default_view' ),
+			'versions'       => $number( 'versions', 1, 4 ),
 		);
 	}
 }

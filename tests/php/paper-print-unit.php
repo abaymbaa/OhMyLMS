@@ -50,4 +50,10 @@ check([1, 0, 2, 3] === PrintPaper::jumble(['Égalité', 'ß', '日本', 'a'], '7
 for ($seed = 0; $seed < 200; $seed++) {
 	check([1, 0] === PrintPaper::jumble(['a', 'b'], (string) $seed, true), 'A list is never printed in answer order');
 }
+// Versions and answer sheets.
+check(1 === PaperSettings::sanitize([])['versions'] && 4 === PaperSettings::sanitize(['versions' => 9])['versions'], 'Versions default to one and stop at four');
+check(str_contains(PrintPaper::url(42, 'sheet', 'B'), 'variant=sheet&version=B'), 'Links carry the sheet variant and version');
+check(!str_contains(PrintPaper::url(42, 'paper', 'A'), 'version='), 'Version A needs no parameter');
+check(str_contains(PrintPaper::url(42, 'sheet-key'), 'variant=sheet-key') && !str_contains(PrintPaper::url(42, 'paper', 'Z'), 'version='), 'Unknown versions are dropped');
+check('12' === PrintPaper::seed(12, 'A') && '12:C' === PrintPaper::seed(12, 'C'), 'Seeds match questionSeed() in paperModel.mjs');
 echo "paper-print-unit: ok\n";

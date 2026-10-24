@@ -1,6 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { paperQuestion } from '../../assets/src/features/paper/paperModel.mjs';
+import {
+	paperQuestion,
+	paperSettings,
+	paperVersion,
+	questionSeed,
+	versionItems,
+} from '../../assets/src/features/paper/paperModel.mjs';
 import {
 	fnv1a,
 	jumble,
@@ -383,4 +389,109 @@ test( 'wordsearches print the letter grid and word list; the key marks the words
 	const key = paperQuestion( question, { showAnswers: true } );
 	assert.ok( key.marked.has( 'r0c1' ) && key.marked.has( 'r2c2' ) );
 	assert.equal( key.marked.size, 6 );
+} );
+
+const item = ( id, type = 'single-choice' ) => ( {
+	kind: 'question',
+	question: { id, settings: { type } },
+} );
+const ids = ( items ) =>
+	items.flatMap( ( entry ) =>
+		entry.kind === 'question'
+			? [ entry.question.id ]
+			: [ `[${ entry.name || entry.kind }]`, ...ids( entry.items || [] ) ]
+	);
+
+test( 'versions shuffle each run of questions in place', () => {
+	const items = [
+		{ kind: 'paper', name: 'header', items: [] },
+		item( 1 ),
+		item( 2 ),
+		item( 3 ),
+		{ kind: 'paper', name: 'section', items: [] },
+		item( 4 ),
+		item( 5, 'statement' ),
+		item( 6 ),
+		item( 7 ),
+		{
+			kind: 'paper',
+			name: 'columns',
+			items: [ item( 8 ), item( 9 ), { ...item( 10 ), span: true } ],
+		},
+	];
+	assert.equal( versionItems( items, 'A' ), items );
+	const b = ids( versionItems( items, 'B' ) );
+	// Anchors stay; each run keeps its questions.
+	assert.equal( b[ 0 ], '[header]' );
+	assert.deepEqual( [ ...b.slice( 1, 4 ) ].sort(), [ 1, 2, 3 ] );
+	assert.notDeepEqual( b.slice( 1, 4 ), [ 1, 2, 3 ] );
+	assert.deepEqual( b.slice( 4, 7 ), [ '[section]', 4, 5 ] );
+	assert.deepEqual( [ ...b.slice( 7, 9 ) ].sort(), [ 6, 7 ] );
+	assert.deepEqual( b.slice( 7, 9 ), [ 7, 6 ] );
+	assert.equal( b[ 9 ], '[columns]' );
+	assert.deepEqual( b.slice( 10 ), [ 9, 8, 10 ] );
+	assert.deepEqual( ids( versionItems( items, 'B' ) ), b, 'Repeatable' );
+	assert.notDeepEqual( ids( versionItems( items, 'C' ) ), b );
+} );
+
+test( 'version letters and seeds', () => {
+	const two = paperSettings( { versions: 2 } );
+	assert.equal( paperVersion( 'b', two ), 'B' );
+	assert.equal(
+		paperVersion( 'C', two ),
+		'A',
+		'Only versions the paper offers'
+	);
+	assert.equal( paperVersion( 'x', two ), 'A' );
+	assert.equal( questionSeed( 12, 'A' ), '12' );
+	assert.equal( questionSeed( 12, 'C' ), '12:C' );
+} );
+
+test( 'other versions reorder choice options and keep the key right', () => {
+	const choice = {
+		id: 31,
+		settings: { type: 'single-choice', score: marks },
+		questions: [ 'Venus', 'Mars', 'Jupiter', 'Mercury' ].map(
+			( answer, index ) => ( {
+				answer,
+				is_correct: answer === 'Mars',
+				order_number: index + 1,
+			} )
+		),
+	};
+	const a = paperQuestion( choice, { showAnswers: true } );
+	const b = paperQuestion( choice, { showAnswers: true, version: 'B' } );
+	assert.deepEqual(
+		a.options.map( ( option ) => option.text ),
+		[ 'Venus', 'Mars', 'Jupiter', 'Mercury' ]
+	);
+	assert.notDeepEqual(
+		b.options.map( ( option ) => option.text ),
+		a.options.map( ( option ) => option.text )
+	);
+	assert.equal( b.options.find( ( option ) => option.correct ).text, 'Mars' );
+	assert.deepEqual(
+		b.options.map( ( option ) => option.letter ),
+		[ 'A', 'B', 'C', 'D' ]
+	);
+	const trueFalse = paperQuestion(
+		{
+			id: 32,
+			settings: { type: 'true-false', score: marks },
+			questions: [
+				{ answer: 'True', order_number: 1 },
+				{ answer: 'False', order_number: 2 },
+			],
+		},
+		{ version: 'C' }
+	);
+	assert.deepEqual(
+		trueFalse.options.map( ( option ) => option.text ),
+		[ 'True', 'False' ]
+	);
+	// Matching and other jumbled lists differ between versions too.
+	assert.notDeepEqual(
+		paperQuestion( reorder, { version: 'B' } ).items,
+		paperQuestion( reorder ).items
+	);
 } );

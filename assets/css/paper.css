@@ -443,6 +443,51 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 	font-size: 12px;
 }
 
+/* Answer sheet */
+
+.ohmylms-answer-sheet-rows {
+	columns: 2;
+	column-gap: 10mm;
+	margin: 1em 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-answer-sheet-rows li {
+	display: flex;
+	align-items: center;
+	gap: 0.45em;
+	margin: 0 0 0.55em;
+	break-inside: avoid;
+}
+
+.ohmylms-answer-sheet-rows .ohmylms-print-number {
+	min-width: 2.2em;
+}
+
+.ohmylms-answer-sheet-bubble {
+	-webkit-print-color-adjust: exact;
+	print-color-adjust: exact;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	width: 1.7em;
+	height: 1.7em;
+	border: 1px solid currentcolor;
+	border-radius: 50%;
+	font-size: 0.8em;
+}
+
+.ohmylms-answer-sheet-rows li.is-multiple .ohmylms-answer-sheet-bubble {
+	border-radius: 3px;
+}
+
+.ohmylms-answer-sheet-bubble.is-filled {
+	background: #1e1e1e;
+	color: #fff;
+}
+
 /* Printed matching, ordering, blank, sorting, tile and word puzzle questions */
 
 .ohmylms-print-blank {
@@ -648,6 +693,11 @@ html body.editor-styles-wrapper.is-ohmylms-paper {
 
 .ohmylms-print-options.is-ordering li {
 	align-items: center;
+}
+
+/* On the answer sheet, notes line up with the sheet rather than with question text. */
+.ohmylms-answer-sheet .ohmylms-print-instruction {
+	margin-left: 0;
 }
 
 /* Print page */

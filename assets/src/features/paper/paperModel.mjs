@@ -1,4 +1,4 @@
-import { typedPaper } from './paperTypes.mjs';
+import { jumble, typedPaper } from './paperTypes.mjs';
 
 /**
  * Printable paper layout: settings, the printed form of each question and page breaks.
@@ -20,6 +20,7 @@ export const PAPER_DEFAULTS = {
 	lines_per_mark: 2,
 	page_numbers: true,
 	default_view: false,
+	versions: 1,
 };
 
 /** Question types with a printed form in this release. */
@@ -79,6 +80,7 @@ export function paperSettings( raw = {} ) {
 		lines_per_mark: Math.round( clamp( value.lines_per_mark, 1, 4, 2 ) ),
 		page_numbers: flag( 'page_numbers' ),
 		default_view: flag( 'default_view' ),
+		versions: Math.round( clamp( value.versions, 1, 4, 1 ) ),
 	};
 }
 
@@ -193,11 +195,17 @@ function paperPart( part, settings, showAnswers ) {
  * @param {Object}  options.settings    Normalized paper settings.
  * @param {boolean} options.showAnswers Whether to include the answer key.
  * @param {string}  options.prompt      Statement HTML.
+ * @param {string}  options.version     Paper version letter; B to D shuffle choice options.
  * @return {Object} Paper question model.
  */
 export function paperQuestion(
 	question,
-	{ settings = paperSettings(), showAnswers = false, prompt = '' } = {}
+	{
+		settings = paperSettings(),
+		showAnswers = false,
+		prompt = '',
+		version = 'A',
+	} = {}
 ) {
 	const type = question?.settings?.type || '';
 	const marks = questionMarks( question );
@@ -214,16 +222,25 @@ export function paperQuestion(
 	if ( ! PAPER_TYPES.includes( type ) ) {
 		return model;
 	}
-	const typed = typedPaper( question, model, showAnswers );
+	const seed = questionSeed( question.id, version );
+	const typed = typedPaper( question, model, showAnswers, seed );
 	if ( typed ) {
 		return typed;
 	}
-	const rows = [ ...( question.questions || question.options || [] ) ].sort(
+	let rows = [ ...( question.questions || question.options || [] ) ].sort(
 		( a, b ) => ( a.order_number || 0 ) - ( b.order_number || 0 )
 	);
 	if (
 		[ 'single-choice', 'multiple-choice', 'true-false' ].includes( type )
 	) {
+		if ( version !== 'A' && type !== 'true-false' ) {
+			// Other versions reorder the options; true or false keeps its order.
+			rows = jumble(
+				rows.map( ( row ) => String( row.answer ?? '' ) ),
+				seed,
+				{ avoidIdentity: true }
+			).map( ( index ) => rows[ index ] );
+		}
 		model.layout = 'choice';
 		model.multiple = type === 'multiple-choice';
 		model.options = rows.map( ( row, index ) => ( {
@@ -386,4 +403,84 @@ export function columnsLayout( attributes = {} ) {
 		flow: attributes.flow === 'grid' ? 'grid' : 'flow',
 		rule: Boolean( attributes.rule ),
 	};
+}
+
+/** Paper version letters; version A is the paper as laid out in the editor. */
+export const PAPER_VERSIONS = [ 'A', 'B', 'C', 'D' ];
+
+/**
+ * A version letter the paper offers, else A.
+ *
+ * @param {string} value    Requested version.
+ * @param {Object} settings Normalized paper settings.
+ * @return {string} Version letter.
+ */
+export function paperVersion( value, settings ) {
+	const index = PAPER_VERSIONS.indexOf( String( value || '' ).toUpperCase() );
+	return index > 0 && index < settings.versions
+		? PAPER_VERSIONS[ index ]
+		: 'A';
+}
+
+/**
+ * Jumble seed of a question in a paper version. OhMyLMS\Exams\PrintPaper::seed() is identical.
+ *
+ * @param {number|string} id      Question ID.
+ * @param {string}        version Version letter.
+ * @return {string} Seed.
+ */
+export function questionSeed( id, version = 'A' ) {
+	return version === 'A' ? String( id ?? '' ) : `${ id ?? '' }:${ version }`;
+}
+
+/**
+ * Print items in a paper version. Versions B to D shuffle each run of consecutive questions in
+ * place: headers, sections, statements, page breaks, wide items in columns and other blocks stay
+ * where the author put them, and questions never move into another section or column.
+ *
+ * @param {Array}  items   Print items.
+ * @param {string} version Version letter.
+ * @return {Array} Items in printed order.
+ */
+export function versionItems( items, version ) {
+	if ( version === 'A' ) {
+		return items;
+	}
+	let run = 0;
+	const movable = ( item ) =>
+		item.kind === 'question' &&
+		item.question?.settings?.type !== 'statement' &&
+		! item.span;
+	const visit = ( list ) => {
+		const out = [];
+		let group = [];
+		const flush = () => {
+			if ( group.length > 1 ) {
+				const order = jumble(
+					group.map( ( item ) => String( item.question.id ?? '' ) ),
+					`${ version }:${ run++ }`,
+					{ avoidIdentity: true }
+				);
+				out.push( ...order.map( ( index ) => group[ index ] ) );
+			} else {
+				out.push( ...group );
+			}
+			group = [];
+		};
+		for ( const item of list ) {
+			if ( movable( item ) ) {
+				group.push( item );
+				continue;
+			}
+			flush();
+			out.push(
+				item.kind === 'paper' && item.items?.length
+					? { ...item, items: visit( item.items ) }
+					: item
+			);
+		}
+		flush();
+		return out;
+	};
+	return visit( items );
 }

@@ -12,6 +12,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { PAPER_STORE } from './store';
 import { saveQuizForPreview } from '../learning/quizPreview.mjs';
 import {
+	PAPER_VERSIONS,
 	limitMinutes,
 	paginate,
 	paperSettings,
@@ -466,15 +467,33 @@ export function PaperCanvas() {
  * Print the saved paper or its answer key. Unsaved changes are saved first, because the print
  * page reads the saved exam; the tab opens at once so the browser does not block it.
  *
+ * @param  root0
+ * @param  root0.versions
  * @return {Element} Print buttons.
  */
-function PrintButtons() {
+function PrintButtons( { versions } ) {
 	const urls = window.ohmylmsNativeLesson?.printUrls;
 	const { savePost } = useDispatch( 'core/editor' );
 	const [ error, setError ] = useState( '' );
+	const [ chosen, setVersion ] = useState( 'A' );
 	if ( ! urls ) {
 		return null;
 	}
+	const version = PAPER_VERSIONS.indexOf( chosen ) < versions ? chosen : 'A';
+	/**
+	 * Print link for a variant of the chosen version; the nonce covers every variant of the exam.
+	 *
+	 * @param {string} variant Print variant.
+	 * @return {string} Print URL.
+	 */
+	const link = ( variant ) => {
+		const url = new URL( urls.paper );
+		url.searchParams.set( 'variant', variant );
+		if ( version !== 'A' ) {
+			url.searchParams.set( 'version', version );
+		}
+		return url.href;
+	};
 	const open = async ( url ) => {
 		const tab = window.open( 'about:blank', '_blank' );
 		if ( tab ) {
@@ -507,11 +526,40 @@ function PrintButtons() {
 	};
 	return (
 		<div className="ohmylms-paper-print-actions">
-			<Button variant="primary" onClick={ () => open( urls.paper ) }>
+			{ versions > 1 && (
+				<SelectControl
+					label={ __( 'Version to print', 'ohmylms' ) }
+					value={ version }
+					options={ PAPER_VERSIONS.slice( 0, versions ).map(
+						( letter ) => ( {
+							value: letter,
+							label: sprintf(
+								/* translators: %s: version letter. */
+								__( 'Version %s', 'ohmylms' ),
+								letter
+							),
+						} )
+					) }
+					onChange={ setVersion }
+				/>
+			) }
+			<Button variant="primary" onClick={ () => open( link( 'paper' ) ) }>
 				{ __( 'Print paper', 'ohmylms' ) }
 			</Button>
-			<Button variant="secondary" onClick={ () => open( urls.key ) }>
+			<Button variant="secondary" onClick={ () => open( link( 'key' ) ) }>
 				{ __( 'Print answer key', 'ohmylms' ) }
+			</Button>
+			<Button
+				variant="secondary"
+				onClick={ () => open( link( 'sheet' ) ) }
+			>
+				{ __( 'Print answer sheet', 'ohmylms' ) }
+			</Button>
+			<Button
+				variant="secondary"
+				onClick={ () => open( link( 'sheet-key' ) ) }
+			>
+				{ __( 'Print marking sheet', 'ohmylms' ) }
 			</Button>
 			{ error && (
 				<Notice status="error" onRemove={ () => setError( '' ) }>
@@ -556,7 +604,7 @@ export function PaperSettingsPanel() {
 		} );
 	return (
 		<>
-			<PrintButtons />
+			<PrintButtons versions={ paper.versions } />
 			<ToggleControl
 				label={ __( 'Paper view', 'ohmylms' ) }
 				help={ __(
@@ -629,6 +677,17 @@ export function PaperSettingsPanel() {
 				max={ 4 }
 				value={ paper.lines_per_mark }
 				onChange={ ( next ) => set( 'lines_per_mark', next ) }
+			/>
+			<RangeControl
+				label={ __( 'Versions', 'ohmylms' ) }
+				help={ __(
+					'Version A is the paper as shown here. Versions B to D shuffle the questions within each section and the options of choice questions, each with its own answer key.',
+					'ohmylms'
+				) }
+				min={ 1 }
+				max={ 4 }
+				value={ paper.versions }
+				onChange={ ( next ) => set( 'versions', next ) }
 			/>
 			<ToggleControl
 				label={ __( 'Page numbers', 'ohmylms' ) }

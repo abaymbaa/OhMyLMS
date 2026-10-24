@@ -63,13 +63,27 @@ export function candidateLabel( field ) {
  * @param {number}    props.minutes    Time allowed, 0 for none.
  * @param {number}    props.total      Total marks.
  * @param {TextField} props.text       Text field renderer.
+ * @param {string}    props.version    Version letter, empty when the paper has one version.
  * @return {Element} Header.
  */
-export function PaperHeaderView( { attributes, title, minutes, total, text } ) {
+export function PaperHeaderView( {
+	attributes,
+	title,
+	minutes,
+	total,
+	text,
+	version = '',
+} ) {
 	const fields = (
 		attributes.fields || [ 'name', 'class', 'number' ]
 	).filter( ( field ) => CANDIDATE_FIELDS.includes( field ) );
 	const details = [
+		version &&
+			sprintf(
+				/* translators: %s: paper version letter. */
+				__( 'Version %s', 'ohmylms' ),
+				version
+			),
 		attributes.showTime !== false &&
 			minutes > 0 &&
 			sprintf(

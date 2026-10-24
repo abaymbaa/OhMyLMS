@@ -30,51 +30,72 @@ final class PrintPaper {
 		add_action( 'template_redirect', array( __CLASS__, 'render' ), 1 );
 	}
 
+	/** What the print page can print: the paper, its key, an answer sheet and a marked sheet. */
+	const VARIANTS = array( 'paper', 'key', 'sheet', 'sheet-key' );
+
+	/** Paper versions; version A is the paper as laid out in the editor. */
+	const VERSIONS = array( 'A', 'B', 'C', 'D' );
+
 	/**
 	 * Link to the print page of an exam.
 	 *
 	 * @param int    $id      Quiz ID.
-	 * @param string $variant 'paper' for the student paper, 'key' for the answer key.
+	 * @param string $variant One of VARIANTS; anything else prints the student paper.
+	 * @param string $version Paper version letter.
 	 * @return string Print URL.
 	 */
-	public static function url( $id, $variant = 'paper' ) {
-		return add_query_arg(
-			array(
-				self::QUERY => (int) $id,
-				'variant'   => 'key' === $variant ? 'key' : 'paper',
-				'_wpnonce'  => wp_create_nonce( self::QUERY . '_' . (int) $id ),
-			),
-			home_url( '/' )
+	public static function url( $id, $variant = 'paper', $version = 'A' ) {
+		$args = array(
+			self::QUERY => (int) $id,
+			'variant'   => in_array( $variant, self::VARIANTS, true ) ? $variant : 'paper',
 		);
+		if ( in_array( $version, self::VERSIONS, true ) && 'A' !== $version ) {
+			$args['version'] = $version;
+		}
+		$args['_wpnonce'] = wp_create_nonce( self::QUERY . '_' . (int) $id );
+		return add_query_arg( $args, home_url( '/' ) );
+	}
+
+	/**
+	 * Jumble seed of a question in a paper version; questionSeed() in paperModel.mjs is identical.
+	 *
+	 * @param int    $question_id Question ID.
+	 * @param string $version     Version letter.
+	 * @return string Seed.
+	 */
+	public static function seed( $question_id, $version = 'A' ) {
+		return 'A' === $version ? (string) $question_id : $question_id . ':' . $version;
 	}
 
 	/**
 	 * Printed items in document order: core blocks as rendered HTML and questions as data.
 	 *
-	 * @param int  $id      Quiz ID.
-	 * @param bool $answers Whether to include answer keys the current user may see.
+	 * @param int    $id      Quiz ID.
+	 * @param bool   $answers Whether to include answer keys the current user may see.
+	 * @param string $version Paper version letter.
 	 * @return array[] Items for the print bundle.
 	 */
-	public static function items( $id, $answers ) {
+	public static function items( $id, $answers, $version = 'A' ) {
 		$questions = array();
 		foreach ( ohmylms_get_quiz( $id )->get_questions() as $placement ) {
 			$questions[ (int) $placement['id'] ] = $placement;
 		}
 		$blocks = parse_blocks( NativeQuizEditor::editor_content( get_post( $id ) ) );
-		return self::walk( $blocks, $id, $answers, $questions );
+		return self::walk( $blocks, $id, $answers, $questions, $version );
 	}
 
 	/**
 	 * Printed items of a list of blocks. Paper blocks keep their children; other containers
 	 * holding questions print their contents in order.
 	 *
-	 * @param array $blocks    Parsed blocks.
-	 * @param int   $id        Quiz ID.
-	 * @param bool  $answers   Whether to include answer keys.
-	 * @param array $questions Quiz placements by question ID.
+	 * @param array  $blocks    Parsed blocks.
+	 * @param int    $id        Quiz ID.
+	 * @param bool   $answers   Whether to include answer keys.
+	 * @param array  $questions Quiz placements by question ID.
+	 * @param string $version   Paper version letter.
 	 * @return array[] Items.
 	 */
-	private static function walk( array $blocks, $id, $answers, array $questions ) {
+	private static function walk( array $blocks, $id, $answers, array $questions, $version ) {
 		$items = array();
 		foreach ( $blocks as $block ) {
 			$name = $block['blockName'] ?? '';
@@ -82,7 +103,7 @@ final class PrintPaper {
 			$item = null;
 			if ( NativeQuizEditor::is_question( $block ) ) {
 				$question_id = (int) ( $block['attrs']['questionId'] ?? 0 );
-				$question    = isset( $questions[ $question_id ] ) ? self::question( $id, $questions[ $question_id ], $answers ) : null;
+				$question    = isset( $questions[ $question_id ] ) ? self::question( $id, $questions[ $question_id ], $answers, $version ) : null;
 				if ( $question ) {
 					$item = array(
 						'kind'     => 'question',
@@ -94,10 +115,10 @@ final class PrintPaper {
 					'kind'  => 'paper',
 					'name'  => $name,
 					'attrs' => self::paper_attributes( $block['attrs'] ?? array() ),
-					'items' => self::walk( $block['innerBlocks'] ?? array(), $id, $answers, $questions ),
+					'items' => self::walk( $block['innerBlocks'] ?? array(), $id, $answers, $questions, $version ),
 				);
 			} elseif ( '' !== $name && self::has_question( $block['innerBlocks'] ?? array() ) ) {
-				$items = array_merge( $items, self::walk( $block['innerBlocks'], $id, $answers, $questions ) );
+				$items = array_merge( $items, self::walk( $block['innerBlocks'], $id, $answers, $questions, $version ) );
 			} elseif ( '' !== $name ) {
 				$html = trim( wp_kses_post( render_block( $block ) ) );
 				if ( '' !== $html ) {
@@ -167,12 +188,13 @@ final class PrintPaper {
 	 * Both variants use the same seed, so a randomized question has the same numbers in the
 	 * paper and its key.
 	 *
-	 * @param int   $quiz_id   Quiz ID.
-	 * @param array $placement Quiz placement.
-	 * @param bool  $answers   Whether to include the answer key.
+	 * @param int    $quiz_id   Quiz ID.
+	 * @param array  $placement Quiz placement.
+	 * @param bool   $answers   Whether to include the answer key.
+	 * @param string $version   Paper version letter.
 	 * @return array|null Question data in the editor's shape, or null when unavailable.
 	 */
-	private static function question( $quiz_id, array $placement, $answers ) {
+	private static function question( $quiz_id, array $placement, $answers, $version = 'A' ) {
 		$question_id = (int) $placement['id'];
 		$content     = ! empty( $placement['pinned_version_id'] ) && Schema::ready() ? VersionPublisher::version( $placement['pinned_version_id'] ) : null;
 		if ( $content && (int) $content['question_id'] !== $question_id ) {
@@ -222,7 +244,7 @@ final class PrintPaper {
 		if ( 'reorder' === $type ) {
 			$texts = array_map( 'strval', array_column( $options, 'answer' ) );
 			$rows  = array();
-			foreach ( self::jumble( $texts, (string) $question_id, true ) as $index ) {
+			foreach ( self::jumble( $texts, self::seed( $question_id, $version ), true ) as $index ) {
 				$rows[] = $printed( $options[ $index ] );
 			}
 		} elseif ( 'matching' === $type ) {
@@ -231,7 +253,7 @@ final class PrintPaper {
 				$labels[] = (string) ( $option['matching_data']['label'] ?? '' );
 			}
 			$settings['match_right'] = array();
-			foreach ( self::jumble( $labels, (string) $question_id, true ) as $index ) {
+			foreach ( self::jumble( $labels, self::seed( $question_id, $version ), true ) as $index ) {
 				$settings['match_right'][] = $labels[ $index ];
 			}
 			$rows = array_map( $printed, $options );
@@ -337,14 +359,20 @@ final class PrintPaper {
 		if ( get_post_type( $id ) !== OHMYLMS_QUIZ_CPT || ! AccessPolicy::can_edit_quiz( $id ) || ! wp_verify_nonce( $nonce, self::QUERY . '_' . $id ) ) {
 			wp_die( esc_html__( 'You cannot print this exam.', 'ohmylms' ), '', array( 'response' => 403 ) );
 		}
-		$key   = isset( $_GET['variant'] ) && 'key' === sanitize_key( wp_unslash( $_GET['variant'] ) );
-		$quiz  = ohmylms_get_quiz( $id );
-		$paper = PaperSettings::sanitize( $quiz->get_settings()['paper'] ?? array() );
-		$data  = array(
+		$variant = isset( $_GET['variant'] ) ? sanitize_key( wp_unslash( $_GET['variant'] ) ) : 'paper';
+		$variant = in_array( $variant, self::VARIANTS, true ) ? $variant : 'paper';
+		$key     = in_array( $variant, array( 'key', 'sheet-key' ), true );
+		$quiz    = ohmylms_get_quiz( $id );
+		$paper   = PaperSettings::sanitize( $quiz->get_settings()['paper'] ?? array() );
+		$version = isset( $_GET['version'] ) ? strtoupper( sanitize_key( wp_unslash( $_GET['version'] ) ) ) : 'A';
+		$index   = array_search( $version, self::VERSIONS, true );
+		$version = false !== $index && $index < $paper['versions'] ? $version : 'A';
+		$data    = array(
 			'title'     => $quiz->get_name(),
-			'variant'   => $key ? 'key' : 'paper',
+			'variant'   => $variant,
+			'version'   => $version,
 			'settings'  => $paper,
-			'items'     => self::items( $id, $key ),
+			'items'     => self::items( $id, $key, $version ),
 			'timeLimit' => array(
 				'value' => (float) ( $quiz->get_settings()['time_limit']['value'] ?? 0 ),
 				'type'  => sanitize_key( (string) ( $quiz->get_settings()['time_limit']['type'] ?? 'minutes' ) ),
@@ -367,10 +395,20 @@ final class PrintPaper {
 		}
 		wp_register_script( self::SCRIPT, plugins_url( 'assets/dist/admin/paper-print.js', OHMYLMS_FILE ), $dependencies, $asset['version'], true );
 		wp_set_script_translations( self::SCRIPT, 'ohmylms' );
-		$title = $key
+		$labels = array(
+			'paper'     => '%s',
 			/* translators: %s: exam title. */
-			? sprintf( __( 'Answer key: %s', 'ohmylms' ), $quiz->get_name() )
-			: $quiz->get_name();
+			'key'       => __( 'Answer key: %s', 'ohmylms' ),
+			/* translators: %s: exam title. */
+			'sheet'     => __( 'Answer sheet: %s', 'ohmylms' ),
+			/* translators: %s: exam title. */
+			'sheet-key' => __( 'Marking sheet: %s', 'ohmylms' ),
+		);
+		$title  = sprintf( $labels[ $variant ], $quiz->get_name() );
+		if ( $paper['versions'] > 1 ) {
+			/* translators: 1: page title, 2: version letter. */
+			$title = sprintf( __( '%1$s (version %2$s)', 'ohmylms' ), $title, $version );
+		}
 		?>
 <!doctype html>
 <html <?php language_attributes(); ?>>
