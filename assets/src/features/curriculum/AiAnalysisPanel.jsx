@@ -61,12 +61,12 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 		[]
 	);
 	useEffect( () => {
-		readComparison( 'skill-placement' )
+		readComparison( 'skill-placement', { subject } )
 			.then( setOptions )
 			.catch( ( cause ) =>
 				setNotice( { status: 'error', message: cause.message } )
 			);
-	}, [] );
+	}, [ subject ] );
 	useEffect( () => {
 		readComparison( 'ai/runs', { syllabus_id: syllabusId || 0, subject } )
 			.then( ( rows ) => {
@@ -528,7 +528,8 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 															row.objective
 																.grade_from,
 															row.objective
-																.grade_to
+																.grade_to,
+															options.grades
 														),
 													]
 														.filter( Boolean )
@@ -543,7 +544,8 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 												</strong>
 												<div className="ohmylms-ai-meta">
 													{ skillSummary(
-														row.skill || row.shared
+														row.skill || row.shared,
+														options?.grades
 													) }
 												</div>
 											</Fragment>
@@ -609,7 +611,12 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 											</Fragment>
 										) : (
 											row.kind !== 'link' && (
-												<div>{ proposes( row ) }</div>
+												<div>
+													{ proposes(
+														row,
+														options?.grades
+													) }
+												</div>
 											)
 										) }
 										{ row.kind === 'mapping' && (
@@ -651,7 +658,8 @@ export function AiAnalysisPanel( { sources, subject, onChanged } ) {
 													</strong>
 													<div className="ohmylms-ai-meta">
 														{ skillSummary(
-															row.shared
+															row.shared,
+															options?.grades
 														) }
 													</div>
 												</div>

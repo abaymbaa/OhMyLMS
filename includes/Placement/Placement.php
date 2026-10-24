@@ -55,7 +55,7 @@ final class Placement {
 		if ( ! Schema::ready() || ! Engine::practice() ) {
 			return new \WP_Error( 'ohmylms_practice_disabled', __( 'Practice is not available.', 'ohmylms' ), array( 'status' => 404 ) );
 		}
-		if ( $grade < 0 || $grade > Comparison::MAX_GRADE ) {
+		if ( $grade < 0 || $grade > Comparison::max_level( $subject ) ) {
 			return new \WP_Error( 'ohmylms_placement_grade', __( 'Choose a grade from the list.', 'ohmylms' ), array( 'status' => 400 ) );
 		}
 		$graph   = self::graph( $subject );
@@ -259,12 +259,12 @@ final class Placement {
 	 */
 	private static function describe( array $state, array $session ) {
 		$result  = $state['result'];
-		$labels  = Comparison::domains();
+		$labels  = Comparison::domains( $state['subject'] ?? '' );
 		$domains = array();
 		foreach ( $result['domains'] as $domain ) {
 			$domains[] = $domain + array(
 				'label'       => $labels[ $domain['domain'] ] ?? ucfirst( $domain['domain'] ),
-				'grade_label' => $domain['grade'] ? Comparison::grade_label( $domain['grade'] ) : '',
+				'grade_label' => $domain['grade'] ? Comparison::grade_label( $domain['grade'], $state['subject'] ?? '' ) : '',
 			);
 		}
 		$start = array();

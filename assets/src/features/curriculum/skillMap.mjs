@@ -154,18 +154,22 @@ export function chipClass( map, id, selected ) {
 }
 
 /**
- * Grade band text, such as "7" or "7–9".
+ * A skill's level band in its subject's level names, such as "Grade 7–Grade 9" or "A2".
  *
- * @param {Object} skill Skill.
- * @return {string} Band.
+ * @param {Object}   skill    Skill with grade_from and grade_to.
+ * @param {Object[]} [levels] The map's levels (value, label); without them the bare numbers.
+ * @return {string} Band, or empty when not placed.
  */
-export function band( skill ) {
+export function band( skill, levels ) {
 	if ( ! skill?.grade_from ) {
 		return '';
 	}
+	const label = ( value ) =>
+		levels?.find( ( level ) => level.value === value )?.label ||
+		String( value );
 	return skill.grade_to > skill.grade_from
-		? `${ skill.grade_from }–${ skill.grade_to }`
-		: String( skill.grade_from );
+		? `${ label( skill.grade_from ) }–${ label( skill.grade_to ) }`
+		: label( skill.grade_from );
 }
 
 /**

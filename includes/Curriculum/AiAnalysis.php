@@ -428,7 +428,7 @@ final class AiAnalysis {
 			'syllabus' => implode( ' › ', Items::path_names( (int) $run['syllabus_id'] ) ) . ( ! empty( $profile['grade'] ) ? ' (' . $profile['grade'] . ')' : '' ),
 			'subject'  => $run['subject'],
 		);
-		$domains = Comparison::domains();
+		$domains = Comparison::domains( $run['subject'] );
 		// 1. Place each objective and restate it in English.
 		$reply = self::ask( AiAnalysisModel::classify_prompt( $context, array_values( $by_id ), $domains ), 2500 );
 		if ( is_wp_error( $reply ) ) {
@@ -526,7 +526,7 @@ final class AiAnalysis {
 		if ( ! $items ) {
 			return 0;
 		}
-		$domains = Comparison::domains();
+		$domains = Comparison::domains( $run['subject'] );
 		$reply   = self::ask(
 			AiAnalysisModel::classify_prompt(
 				array(
@@ -709,12 +709,13 @@ final class AiAnalysis {
 		$payload = json_decode( (string) $row['payload'], true );
 		$payload = is_array( $payload ) ? $payload : array();
 		if ( 'placement' === $row['kind'] ) {
-			$placement = Comparison::placement( $overrides['domain'] ?? ( $payload['domain'] ?? '' ), $overrides['grade_from'] ?? ( $payload['grade_from'] ?? 0 ), $overrides['grade_to'] ?? ( $payload['grade_to'] ?? 0 ) );
+			$shared = Comparison::shared_skill( (int) $row['shared_term_id'] );
+			if ( ! $shared ) {
+				return Access::error( 'ohmylms_shared_missing', __( 'Shared skill not found.', 'ohmylms' ), 404 );
+			}
+			$placement = Comparison::placement( $overrides['domain'] ?? ( $payload['domain'] ?? '' ), $overrides['grade_from'] ?? ( $payload['grade_from'] ?? 0 ), $overrides['grade_to'] ?? ( $payload['grade_to'] ?? 0 ), $shared['subject'] );
 			if ( is_wp_error( $placement ) ) {
 				return $placement;
-			}
-			if ( ! Comparison::shared_skill( (int) $row['shared_term_id'] ) ) {
-				return Access::error( 'ohmylms_shared_missing', __( 'Shared skill not found.', 'ohmylms' ), 404 );
 			}
 			Comparison::store_placement( (int) $row['shared_term_id'], $placement );
 			self::close( (int) $row['id'], 'accepted', (int) $row['shared_term_id'] );

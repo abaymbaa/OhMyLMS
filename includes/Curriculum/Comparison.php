@@ -7,6 +7,8 @@
 
 namespace OhMyLMS\Curriculum;
 
+use OhMyLMS\Skills\SubjectProfileModel;
+use OhMyLMS\Skills\SubjectProfiles;
 use OhMyLMS\Skills\Taxonomy;
 
 defined( 'ABSPATH' ) || exit;
@@ -22,30 +24,20 @@ final class Comparison {
 	const DOMAIN_META     = '_ohmylms_shared_domain';
 	const GRADE_FROM_META = '_ohmylms_shared_grade_from';
 	const GRADE_TO_META   = '_ohmylms_shared_grade_to';
-	// Grades 1 to 12, then 13 for work beyond grade 12 (the second year of A level and similar).
+	// Highest level of the built-in Mathematics scale (grades 1 to 12, then 13 for beyond grade 12).
+	// Other subjects' scales come from their profiles: use max_level().
 	const MAX_GRADE = 13;
 
 	/**
-	 * Domains a shared skill can belong to, keyed by id. Extend with `ohmylms_skill_domains`.
+	 * Domains a skill of a subject can belong to, keyed by id, from the subject's profile.
+	 * Extend with `ohmylms_skill_domains`, which also receives the subject.
 	 *
+	 * @param string $subject Subject, or empty for the default profile.
 	 * @return array<string,string>
 	 */
-	public static function domains() {
-		$domains  = array(
-			'number'       => __( 'Number', 'ohmylms' ),
-			'algebra'      => __( 'Algebra', 'ohmylms' ),
-			'functions'    => __( 'Functions and graphs', 'ohmylms' ),
-			'geometry'     => __( 'Geometry', 'ohmylms' ),
-			'measurement'  => __( 'Measurement', 'ohmylms' ),
-			'trigonometry' => __( 'Trigonometry', 'ohmylms' ),
-			'vectors'      => __( 'Vectors and matrices', 'ohmylms' ),
-			'statistics'   => __( 'Statistics', 'ohmylms' ),
-			'probability'  => __( 'Probability', 'ohmylms' ),
-			'calculus'     => __( 'Calculus', 'ohmylms' ),
-			'mechanics'    => __( 'Mechanics', 'ohmylms' ),
-			'discrete'     => __( 'Discrete mathematics', 'ohmylms' ),
-		);
-		$filtered = apply_filters( 'ohmylms_skill_domains', $domains );
+	public static function domains( $subject = '' ) {
+		$domains  = SubjectProfileModel::domain_map( SubjectProfiles::get( $subject ) );
+		$filtered = apply_filters( 'ohmylms_skill_domains', $domains, (string) $subject );
 		$result   = array();
 		foreach ( is_array( $filtered ) ? $filtered : $domains as $id => $label ) {
 			if ( is_string( $id ) && preg_match( '/^[a-z][a-z0-9-]{0,39}$/', $id ) ) {
@@ -56,40 +48,82 @@ final class Comparison {
 	}
 
 	/**
-	 * Name of a grade on the band scale.
+	 * Levels a skill of a subject can be placed at, as ordinals with labels.
 	 *
-	 * @param int $grade 1 to 13.
-	 * @return string
+	 * @param string $subject Subject, or empty for the default profile.
+	 * @return array[] value, label.
 	 */
-	public static function grade_label( $grade ) {
-		$grade = (int) $grade;
-		if ( $grade >= self::MAX_GRADE ) {
-			return __( 'Beyond grade 12', 'ohmylms' );
-		}
-		/* translators: %d: school grade. */
-		return $grade > 0 ? sprintf( __( 'Grade %d', 'ohmylms' ), $grade ) : '';
+	public static function levels( $subject = '' ) {
+		return SubjectProfileModel::levels( SubjectProfiles::get( $subject ) );
 	}
 
 	/**
-	 * Check a domain and grade band. Empty values mean "not set yet".
+	 * Highest level ordinal of a subject's scale.
 	 *
-	 * @param mixed $domain     Domain id or empty.
-	 * @param mixed $grade_from First grade or 0.
-	 * @param mixed $grade_to   Last grade or 0.
+	 * @param string $subject Subject, or empty for the default profile.
+	 * @return int
+	 */
+	public static function max_level( $subject = '' ) {
+		return count( SubjectProfiles::get( $subject )['levels'] );
+	}
+
+	/**
+	 * Subject a syllabus is configured under for comparisons, or empty.
+	 *
+	 * @param int $syllabus_id Syllabus ID.
+	 * @return string
+	 */
+	public static function subject_of_syllabus( $syllabus_id ) {
+		$configured = get_option( self::OPTION, array() );
+		foreach ( is_array( $configured ) ? $configured : array() as $subject => $ids ) {
+			if ( in_array( (int) $syllabus_id, array_map( 'intval', (array) $ids ), true ) ) {
+				return (string) $subject;
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Name of a level on a subject's scale.
+	 *
+	 * @param int    $grade   Level ordinal.
+	 * @param string $subject Subject, or empty for the default profile.
+	 * @return string
+	 */
+	public static function grade_label( $grade, $subject = '' ) {
+		return SubjectProfileModel::level_label( SubjectProfiles::get( $subject ), $grade );
+	}
+
+	/**
+	 * Check a domain and level band against a subject's profile. Empty values mean "not set yet".
+	 *
+	 * @param mixed  $domain     Domain id or empty.
+	 * @param mixed  $grade_from First level or 0.
+	 * @param mixed  $grade_to   Last level or 0.
+	 * @param string $subject    Subject, or empty for the default profile.
 	 * @return array|\WP_Error domain, grade_from, grade_to.
 	 */
-	public static function placement( $domain, $grade_from, $grade_to ) {
+	public static function placement( $domain, $grade_from, $grade_to, $subject = '' ) {
 		$domain = sanitize_key( (string) $domain );
 		$from   = (int) $grade_from;
 		$to     = (int) $grade_to;
-		if ( '' !== $domain && ! isset( self::domains()[ $domain ] ) ) {
+		$max    = self::max_level( $subject );
+		if ( '' !== $domain && ! isset( self::domains( $subject )[ $domain ] ) ) {
 			return Access::error( 'ohmylms_shared_invalid', __( 'Choose one of the listed domains.', 'ohmylms' ) );
 		}
 		if ( $from && ! $to ) {
 			$to = $from;
 		}
-		if ( $from < 0 || $to < 0 || $from > self::MAX_GRADE || $to > self::MAX_GRADE || ( $from && $to < $from ) || ( ! $from && $to ) ) {
-			return Access::error( 'ohmylms_shared_invalid', __( 'Grades run from 1 to 12, or 13 for beyond grade 12, and the last grade cannot come before the first.', 'ohmylms' ) );
+		if ( $from < 0 || $to < 0 || $from > $max || $to > $max || ( $from && $to < $from ) || ( ! $from && $to ) ) {
+			return Access::error(
+				'ohmylms_shared_invalid',
+				sprintf(
+					/* translators: 1: first level name, 2: last level name. */
+					__( 'Choose levels from %1$s to %2$s, and the last level cannot come before the first.', 'ohmylms' ),
+					self::grade_label( 1, $subject ),
+					self::grade_label( $max, $subject )
+				)
+			);
 		}
 		return array(
 			'domain'     => $domain,
@@ -304,7 +338,8 @@ final class Comparison {
 		$placement   = self::placement(
 			array_key_exists( 'domain', $data ) ? $data['domain'] : ( $current['domain'] ?? '' ),
 			array_key_exists( 'grade_from', $data ) ? $data['grade_from'] : ( $current['grade_from'] ?? 0 ),
-			array_key_exists( 'grade_to', $data ) ? $data['grade_to'] : ( $current['grade_to'] ?? 0 )
+			array_key_exists( 'grade_to', $data ) ? $data['grade_to'] : ( $current['grade_to'] ?? 0 ),
+			'' !== $subject ? $subject : ( $current['subject'] ?? '' )
 		);
 		if ( is_wp_error( $placement ) ) {
 			return $placement;

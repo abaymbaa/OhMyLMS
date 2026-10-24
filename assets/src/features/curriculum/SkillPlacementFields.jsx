@@ -6,14 +6,14 @@ import { readComparison, writeComparison } from './comparison.mjs';
 import { usePlacementOptions } from './usePlacementOptions';
 
 /**
- * Domain and grade band of a shared skill. Shown only for shared skills; other skills render nothing.
+ * Domain and level band of a shared skill, on its subject's profile. Shown only for shared skills; other skills render nothing.
  *
  * @param {Object} props         Field props.
  * @param {number} props.skillId Skill term ID.
  */
 export function SkillPlacementFields( { skillId } ) {
-	const options = usePlacementOptions();
 	const [ skill, setSkill ] = useState( null );
+	const options = usePlacementOptions( skill?.subject || '' );
 	const [ values, setValues ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ message, setMessage ] = useState( '' );
@@ -74,7 +74,7 @@ export function SkillPlacementFields( { skillId } ) {
 	}
 	return (
 		<fieldset className="ohmylms-skill-placement">
-			<legend>{ __( 'Domain and grades', 'ohmylms' ) }</legend>
+			<legend>{ __( 'Domain and levels', 'ohmylms' ) }</legend>
 			<SelectControl
 				label={ __( 'Domain', 'ohmylms' ) }
 				value={ values.domain }
@@ -116,7 +116,7 @@ export function SkillPlacementFields( { skillId } ) {
 				isBusy={ busy }
 				onClick={ save }
 			>
-				{ __( 'Save domain and grades', 'ohmylms' ) }
+				{ __( 'Save domain and levels', 'ohmylms' ) }
 			</Button>
 			{ message && <span role="status">{ message }</span> }
 		</fieldset>

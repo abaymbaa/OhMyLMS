@@ -250,6 +250,15 @@ const publicApi = {
 				),
 			},
 			{
+				path: '/content-hub/curriculum/subjects',
+				element: withContentHubMenu(
+					extensionPage( {
+						id: 'subject-profiles',
+						render: curriculumComponents.SubjectProfilesPage,
+					} )
+				),
+			},
+			{
 				path: SYLLABUS_ROUTE,
 				element: withContentHubMenu(
 					extensionPage( {

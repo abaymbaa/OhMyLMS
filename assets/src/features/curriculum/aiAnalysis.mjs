@@ -27,17 +27,29 @@ export function progress( run ) {
 }
 
 /**
- * A grade band as text: "Grade 7", "Grades 7–8", "Beyond grade 12" or "".
- * @param {number} from First grade.
- * @param {number} to   Last grade.
- * @return {string} Label.
+ * A level band as words. With the subject's levels (value, label) it uses their names, so "A1–B2" or
+ * "Grade 7"; without them it reads the built-in Mathematics grades.
+ * @param {number}   from     First level, or 0.
+ * @param {number}   to       Last level, or 0.
+ * @param {Object[]} [levels] The subject profile's levels.
+ * @return {string} Text such as "Grades 7–9", or empty when not set.
  */
-export function gradeBand( from, to ) {
+export function gradeBand( from, to, levels ) {
 	const first = Number( from ) || 0;
 	if ( ! first ) {
 		return '';
 	}
 	const last = Math.max( first, Number( to ) || 0 );
+	if ( Array.isArray( levels ) && levels.length ) {
+		const label = ( value ) =>
+			(
+				levels.find( ( level ) => level.value === value ) ||
+				levels.at( -1 )
+			).label;
+		return first === last
+			? label( first )
+			: `${ label( first ) }–${ label( last ) }`;
+	}
 	const name = ( grade ) =>
 		grade >= 13 ? 'beyond grade 12' : String( grade );
 	if ( first === last ) {
@@ -56,10 +68,11 @@ export const percent = ( value ) =>
 
 /**
  * What a suggestion proposes, in a few words.
- * @param {Object} suggestion Suggestion from the server.
+ * @param {Object}   suggestion Suggestion from the server.
+ * @param {Object[]} [levels]   The subject profile's levels.
  * @return {string} Summary.
  */
-export function proposes( suggestion ) {
+export function proposes( suggestion, levels ) {
 	if ( suggestion.kind === 'new_skill' ) {
 		return suggestion.proposal?.name || '';
 	}
@@ -68,7 +81,8 @@ export function proposes( suggestion ) {
 			suggestion.placement?.domain || '',
 			gradeBand(
 				suggestion.placement?.grade_from,
-				suggestion.placement?.grade_to
+				suggestion.placement?.grade_to,
+				levels
 			),
 		]
 			.filter( Boolean )
@@ -87,11 +101,12 @@ export const weightPercent = ( weight ) =>
 
 /**
  * A skill's grade band and domain on one line, for lists of linked skills.
- * @param {Object} skill Skill with domain, grade_from and grade_to.
+ * @param {Object}   skill    Skill with domain, grade_from and grade_to.
+ * @param {Object[]} [levels] The subject profile's levels.
  * @return {string} Text such as "algebra · Grades 7–8".
  */
-export const skillSummary = ( skill ) =>
-	[ skill?.domain, gradeBand( skill?.grade_from, skill?.grade_to ) ]
+export const skillSummary = ( skill, levels ) =>
+	[ skill?.domain, gradeBand( skill?.grade_from, skill?.grade_to, levels ) ]
 		.filter( Boolean )
 		.join( ' · ' );
 

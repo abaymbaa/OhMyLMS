@@ -145,12 +145,12 @@ final class Guidance {
 			$result['exam'] = self::describe_exam( $exam );
 		}
 
-		$domains = Comparison::domains();
+		$domains = Comparison::domains( $subject );
 		foreach ( $areas as $area ) {
 			$result['areas'][] = $area + array(
 				'label'       => $domains[ $area['domain'] ] ?? ucfirst( $area['domain'] ),
 				'band'        => GuidanceModel::strength_band( $area['strength'] ),
-				'grade_label' => $area['grade'] ? Comparison::grade_label( $area['grade'] ) : '',
+				'grade_label' => $area['grade'] ? Comparison::grade_label( $area['grade'], $subject ) : '',
 			);
 		}
 		foreach ( $steps as $step ) {

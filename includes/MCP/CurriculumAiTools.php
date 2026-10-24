@@ -26,9 +26,118 @@ final class CurriculumAiTools {
 			'get_skill_placement_options' => array(
 				'GET',
 				'/syllabus-comparison/skill-placement',
-				'The domains (number, algebra, functions, geometry, …) and grades (1 to 12, and 13 for beyond grade 12) a shared skill can be placed in, and whether AI analysis can run on this site.',
+				'The domains and levels a shared skill of a subject can be placed in, from that subject\'s profile (the default profile when subject is empty or has no profile of its own), the profile key, and whether AI analysis can run on this site. Levels are ordinals 1 … n with labels; grades repeats them for older clients.',
+				array(
+					'subject' => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+				),
+				array(),
+				false,
+			),
+			'list_subject_profiles'       => array(
+				'GET',
+				'/syllabus-comparison/subject-profiles',
+				'Subject profiles: for each subject its domains, ordered levels (school grades, CEFR levels, exam bands …) and the AI context used to analyse its skills. Also the default profile used for subjects without their own, the subjects shared skills use with their counts and resolved profile, the limits, and the revision needed to save.',
 				array(),
 				array(),
+				false,
+			),
+			'save_subject_profile'        => array(
+				'POST',
+				'/syllabus-comparison/subject-profiles/save',
+				'Create or replace one subject profile. A new profile\'s key comes from its label (for example "Mathematics" is "mathematics"), and shared skills whose subject has that key use it. Send the whole profile: label, optional language code, domains (id and label; ids are lower-case letters, digits and hyphens), levels in order (labels; stored skill bands are their positions 1 … n) and ai (role, context, level_hints). Editing a built-in profile stores a copy. Requires expected_revision from list_subject_profiles.',
+				array(
+					'key'               => array(
+						'type'      => 'string',
+						'maxLength' => 40,
+					),
+					'label'             => array(
+						'type'      => 'string',
+						'maxLength' => 100,
+					),
+					'language'          => array(
+						'type'      => 'string',
+						'maxLength' => 12,
+					),
+					'domains'           => array(
+						'type'     => 'array',
+						'maxItems' => 60,
+						'items'    => array(
+							'type'                 => 'object',
+							'additionalProperties' => false,
+							'required'             => array( 'id', 'label' ),
+							'properties'           => array(
+								'id'    => array(
+									'type'    => 'string',
+									'pattern' => '^[a-z][a-z0-9-]{0,39}$',
+								),
+								'label' => array(
+									'type'      => 'string',
+									'maxLength' => 100,
+								),
+							),
+						),
+					),
+					'levels'            => array(
+						'type'     => 'array',
+						'minItems' => 1,
+						'maxItems' => 30,
+						'items'    => array(
+							'type'      => 'string',
+							'maxLength' => 60,
+						),
+					),
+					'ai'                => array(
+						'type'                 => 'object',
+						'additionalProperties' => false,
+						'properties'           => array(
+							'role'        => array(
+								'type'      => 'string',
+								'maxLength' => 2000,
+							),
+							'context'     => array(
+								'type'      => 'string',
+								'maxLength' => 2000,
+							),
+							'level_hints' => array(
+								'type'      => 'string',
+								'maxLength' => 2000,
+							),
+						),
+					),
+					'expected_revision' => array( 'type' => 'string' ),
+				),
+				array( 'label', 'levels', 'expected_revision' ),
+				false,
+			),
+			'remove_subject_profile'      => array(
+				'POST',
+				'/syllabus-comparison/subject-profiles/remove',
+				'Remove a saved subject profile. A customised built-in profile (generic, mathematics) returns to its built-in values. Skills keep their stored domain and level positions. Requires expected_revision.',
+				array(
+					'key'               => array(
+						'type'      => 'string',
+						'maxLength' => 40,
+					),
+					'expected_revision' => array( 'type' => 'string' ),
+				),
+				array( 'key', 'expected_revision' ),
+				false,
+			),
+			'set_default_subject_profile' => array(
+				'POST',
+				'/syllabus-comparison/subject-profiles/default',
+				'Choose the profile used for subjects without their own profile. Requires expected_revision.',
+				array(
+					'key'               => array(
+						'type'      => 'string',
+						'maxLength' => 40,
+					),
+					'expected_revision' => array( 'type' => 'string' ),
+				),
+				array( 'key', 'expected_revision' ),
 				false,
 			),
 			'start_syllabus_analysis'     => array(

@@ -82,7 +82,7 @@ final class SkillMap {
 			return Access::error( 'ohmylms_skill_map_subject', __( 'Choose a subject.', 'ohmylms' ) );
 		}
 		$skills  = self::library( $subject );
-		$labels  = Comparison::domains();
+		$labels  = Comparison::domains( $subject );
 		$grid    = SkillMapModel::grid( $skills, array_keys( $labels ) );
 		$domains = array();
 		foreach ( $grid['domains'] as $domain ) {
@@ -95,7 +95,7 @@ final class SkillMap {
 		foreach ( $grid['grades'] as $grade ) {
 			$grades[] = array(
 				'value' => $grade,
-				'label' => Comparison::grade_label( $grade ),
+				'label' => Comparison::grade_label( $grade, $subject ),
 			);
 		}
 		$result = array(
@@ -116,7 +116,7 @@ final class SkillMap {
 			$result['syllabus'] = $overlay;
 		}
 		if ( $student_id ) {
-			$result['student'] = self::student( (int) $student_id, $skills );
+			$result['student'] = self::student( (int) $student_id, $skills, $subject );
 		}
 		return $result;
 	}
@@ -181,7 +181,7 @@ final class SkillMap {
 			$mappings[ $objective ] = array_intersect_key( $targets, $skills );
 		}
 		$comparison = SkillMapModel::compare( array_keys( $sides['a']['objectives'] ), array_keys( $sides['b']['objectives'] ), $mappings, $skills );
-		$labels     = Comparison::domains();
+		$labels     = Comparison::domains( Comparison::subject_of_syllabus( (int) $a ) );
 		foreach ( $comparison['domains'] as &$domain ) {
 			$domain['label'] = '' === $domain['domain'] ? __( 'No domain yet', 'ohmylms' ) : ( $labels[ $domain['domain'] ] ?? ucfirst( $domain['domain'] ) );
 		}
@@ -354,9 +354,10 @@ final class SkillMap {
 	 *
 	 * @param int     $student_id Learner.
 	 * @param array[] $skills     Skills on the map, keyed by ID.
+	 * @param string  $subject    Subject whose domain names to use.
 	 * @return array id, levels (skill => level, started skills only), areas, counts (per level, over the map).
 	 */
-	private static function student( $student_id, array $skills ) {
+	private static function student( $student_id, array $skills, $subject = '' ) {
 		$levels = array_intersect_key( Guidance::levels( $student_id ), $skills );
 		$pooled = array();
 		$counts = array_fill_keys( Levels::SCALE, 0 );
@@ -372,7 +373,7 @@ final class SkillMap {
 				);
 			}
 		}
-		$labels = Comparison::domains();
+		$labels = Comparison::domains( $subject );
 		$areas  = array();
 		foreach ( GuidanceModel::areas( $pooled, $skills ) as $area ) {
 			$areas[] = $area + array(

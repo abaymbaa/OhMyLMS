@@ -28,6 +28,19 @@ test( 'grade bands and confidence read naturally', () => {
 	assert.equal( gradeBand( 12, 13 ), 'Grades 12–beyond grade 12' );
 	assert.equal( gradeBand( 13, 13 ), 'Beyond grade 12' );
 	assert.equal( gradeBand( 0, 5 ), '' );
+	const cefr = [ 'A1', 'A2', 'B1', 'B2', 'C1', 'C2' ].map(
+		( label, index ) => ( {
+			value: index + 1,
+			label,
+		} )
+	);
+	assert.equal( gradeBand( 2, 2, cefr ), 'A2' );
+	assert.equal( gradeBand( 2, 4, cefr ), 'A2–B2' );
+	assert.equal( gradeBand( 5, 9, cefr ), 'C1–C2' );
+	assert.equal(
+		skillSummary( { domain: 'reading', grade_from: 1, grade_to: 3 }, cefr ),
+		'reading · A1–B1'
+	);
 	assert.equal( percent( 0.856 ), 86 );
 	assert.equal( percent( 4 ), 100 );
 } );

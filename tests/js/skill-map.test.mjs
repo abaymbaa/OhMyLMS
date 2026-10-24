@@ -14,8 +14,20 @@ import {
 
 const map = {
 	skills: [
-		{ id: 1, domain: 'algebra', grade_from: 7, grade_to: 7, prerequisites: [] },
-		{ id: 2, domain: 'algebra', grade_from: 8, grade_to: 9, prerequisites: [ 1 ] },
+		{
+			id: 1,
+			domain: 'algebra',
+			grade_from: 7,
+			grade_to: 7,
+			prerequisites: [],
+		},
+		{
+			id: 2,
+			domain: 'algebra',
+			grade_from: 8,
+			grade_to: 9,
+			prerequisites: [ 1 ],
+		},
 		{
 			id: 3,
 			domain: 'algebra',
@@ -24,7 +36,13 @@ const map = {
 			prerequisites: [ 2 ],
 			includes: [ { id: 1, weight: 0.5 } ],
 		},
-		{ id: 4, domain: 'geometry', grade_from: 7, grade_to: 7, prerequisites: [] },
+		{
+			id: 4,
+			domain: 'geometry',
+			grade_from: 7,
+			grade_to: 7,
+			prerequisites: [],
+		},
 		{ id: 5, domain: '', grade_from: 0, grade_to: 0, prerequisites: [] },
 	],
 	student: { levels: { 1: 'mastered', 2: 'familiar', 9: 'bogus' } },
@@ -82,6 +100,12 @@ test( 'grade bands read as one grade or a range', () => {
 	assert.equal( band( { grade_from: 7, grade_to: 7 } ), '7' );
 	assert.equal( band( { grade_from: 8, grade_to: 9 } ), '8–9' );
 	assert.equal( band( { grade_from: 0 } ), '' );
+	const levels = [
+		{ value: 1, label: 'A1' },
+		{ value: 2, label: 'A2' },
+	];
+	assert.equal( band( { grade_from: 1, grade_to: 2 }, levels ), 'A1–A2' );
+	assert.equal( band( { grade_from: 2, grade_to: 2 }, levels ), 'A2' );
 } );
 
 test( 'comparison rows split into both, only A and only B with objective names', () => {

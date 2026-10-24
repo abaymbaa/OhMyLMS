@@ -73,11 +73,11 @@ final class PlacementPage {
 					<?php esc_html_e( 'There is no help and no feedback until the end. If you have not learned something yet, say so: that is useful too.', 'ohmylms' ); ?>
 				</p>
 				<p>
-					<label for="ohmylms-placement-grade"><?php esc_html_e( 'Which grade are you in?', 'ohmylms' ); ?></label>
+					<label for="ohmylms-placement-grade"><?php esc_html_e( 'Which level are you at?', 'ohmylms' ); ?></label>
 					<select id="ohmylms-placement-grade" class="ohmylms-placement-grade">
 						<option value="0"><?php esc_html_e( 'I am not sure', 'ohmylms' ); ?></option>
-						<?php for ( $grade = 1; $grade <= Comparison::MAX_GRADE; $grade++ ) { ?>
-							<option value="<?php echo esc_attr( (string) $grade ); ?>"><?php echo esc_html( Comparison::grade_label( $grade ) ); ?></option>
+						<?php foreach ( Comparison::levels( $subject ) as $level ) { ?>
+							<option value="<?php echo esc_attr( (string) $level['value'] ); ?>"><?php echo esc_html( $level['label'] ); ?></option>
 						<?php } ?>
 					</select>
 				</p>

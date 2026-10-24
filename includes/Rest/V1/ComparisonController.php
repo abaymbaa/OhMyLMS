@@ -11,6 +11,7 @@ use OhMyLMS\Abstracts\RestController;
 use OhMyLMS\Curriculum\Access;
 use OhMyLMS\Curriculum\Comparison;
 use OhMyLMS\Curriculum\SkillMappings;
+use OhMyLMS\Skills\SubjectProfiles;
 use WP_REST_Request;
 
 defined( 'ABSPATH' ) || exit;
@@ -134,6 +135,10 @@ class ComparisonController extends RestController {
 			'/syllabus-comparison/mapping'                 => array( 'PUT', 'save_mapping' ),
 			'/syllabus-comparison/mapping/remove'          => array( 'POST', 'remove_mapping' ),
 			'/syllabus-comparison/skill-placement'         => array( 'GET', 'skill_placement' ),
+			'/syllabus-comparison/subject-profiles'        => array( 'GET', 'subject_profiles' ),
+			'/syllabus-comparison/subject-profiles/save'   => array( 'POST', 'save_subject_profile' ),
+			'/syllabus-comparison/subject-profiles/remove' => array( 'POST', 'remove_subject_profile' ),
+			'/syllabus-comparison/subject-profiles/default' => array( 'POST', 'default_subject_profile' ),
 			'/syllabus-comparison/skill-links/(?P<id>\d+)' => array( 'GET', 'skill_links' ),
 			'/syllabus-comparison/skill-links'             => array( 'POST', 'save_skill_link' ),
 			'/syllabus-comparison/skill-links/remove'      => array( 'POST', 'remove_skill_link' ),
@@ -170,25 +175,63 @@ class ComparisonController extends RestController {
 	}
 
 	/**
-	 * Domains and grades a shared skill can be placed in, and whether AI analysis can run.
+	 * Domains and levels a shared skill of a subject can be placed in, and whether AI analysis can run.
+	 * `grades` keeps its name for existing clients; it holds the subject profile's levels.
 	 *
+	 * @param WP_REST_Request $request Optional subject.
 	 * @return mixed
 	 */
-	public function skill_placement() {
-		$grades = array();
-		for ( $grade = 1; $grade <= Comparison::MAX_GRADE; $grade++ ) {
-			$grades[] = array(
-				'value' => $grade,
-				'label' => Comparison::grade_label( $grade ),
-			);
-		}
+	public function skill_placement( WP_REST_Request $request ) {
+		$subject = sanitize_text_field( (string) ( $request['subject'] ?? '' ) );
+		$levels  = Comparison::levels( $subject );
 		return rest_ensure_response(
 			array(
-				'domains'      => Comparison::domains(),
-				'grades'       => $grades,
+				'domains'      => Comparison::domains( $subject ),
+				'grades'       => $levels,
+				'levels'       => $levels,
+				'profile'      => SubjectProfiles::get( $subject )['key'],
 				'ai_available' => \OhMyLMS\Curriculum\AiAnalysis::available(),
 			)
 		);
+	}
+
+	/**
+	 * Subject profiles, the default profile and the subjects in use.
+	 *
+	 * @return mixed
+	 */
+	public function subject_profiles() {
+		return rest_ensure_response( SubjectProfiles::payload() );
+	}
+
+	/**
+	 * Save one subject profile against the revision it was edited from.
+	 *
+	 * @param WP_REST_Request $request Profile fields and expected_revision.
+	 * @return mixed
+	 */
+	public function save_subject_profile( WP_REST_Request $request ) {
+		return rest_ensure_response( SubjectProfiles::save( $request->get_params(), (string) $request['expected_revision'] ) );
+	}
+
+	/**
+	 * Remove a stored subject profile, restoring a built-in one.
+	 *
+	 * @param WP_REST_Request $request key and expected_revision.
+	 * @return mixed
+	 */
+	public function remove_subject_profile( WP_REST_Request $request ) {
+		return rest_ensure_response( SubjectProfiles::remove( (string) $request['key'], (string) $request['expected_revision'] ) );
+	}
+
+	/**
+	 * Choose the profile for subjects without their own.
+	 *
+	 * @param WP_REST_Request $request key and expected_revision.
+	 * @return mixed
+	 */
+	public function default_subject_profile( WP_REST_Request $request ) {
+		return rest_ensure_response( SubjectProfiles::set_default( (string) $request['key'], (string) $request['expected_revision'] ) );
 	}
 
 	/**

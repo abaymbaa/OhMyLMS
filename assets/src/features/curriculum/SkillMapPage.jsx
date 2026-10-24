@@ -332,10 +332,7 @@ function CoherenceMap( { subjects } ) {
  * @return {string} Title.
  */
 function chipTitle( map, skill ) {
-	const parts = [
-		/* translators: %s: grade band such as 7 or 7–9. */
-		sprintf( __( 'Grade %s', 'ohmylms' ), band( skill ) ),
-	];
+	const parts = [ band( skill, map.grades ) ];
 	if ( map.student ) {
 		parts.push( LEVEL_LABELS[ levelOf( map, skill.id ) ] );
 	}
@@ -521,8 +518,7 @@ function SkillDetails( { map, skills, skill, onSelect } ) {
 				{ [
 					map.domains.find( ( item ) => item.id === skill.domain )
 						?.label,
-					/* translators: %s: grade band such as 7 or 7–9. */
-					sprintf( __( 'grade %s', 'ohmylms' ), band( skill ) ),
+					band( skill, map.grades ),
 					sprintf(
 						/* translators: %d: number of syllabus objectives. */
 						_n(
@@ -1062,8 +1058,8 @@ function CompareGroup( { title, rows, nameA, nameB } ) {
 									{ row.skill.grade_from > 0 && (
 										<span className="ohmylms-map-band">
 											{ sprintf(
-												/* translators: %s: grade band. */
-												__( 'grade %s', 'ohmylms' ),
+												/* translators: %s: level band such as 7 or 7–9. */
+												__( 'level %s', 'ohmylms' ),
 												band( row.skill )
 											) }
 										</span>

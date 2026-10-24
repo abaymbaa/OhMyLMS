@@ -440,6 +440,12 @@ export function CurriculumPage() {
 				</Button>{ ' ' }
 				<Button
 					variant="secondary"
+					href="#/content-hub/curriculum/subjects"
+				>
+					{ __( 'Subject profiles', 'ohmylms' ) }
+				</Button>{ ' ' }
+				<Button
+					variant="secondary"
 					disabled={ savingRoadmap }
 					onClick={ () => {
 						setCreatingRoadmap( ! creatingRoadmap );

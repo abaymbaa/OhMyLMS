@@ -44,7 +44,7 @@ class PlacementController extends RestController {
 						'grade'      => array(
 							'type'    => 'integer',
 							'minimum' => 0,
-							'maximum' => \OhMyLMS\Curriculum\Comparison::MAX_GRADE,
+							'maximum' => \OhMyLMS\Skills\SubjectProfileModel::MAX_LEVELS,
 							'default' => 0,
 						),
 						'item_limit' => array(
