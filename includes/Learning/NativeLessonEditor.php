@@ -90,6 +90,10 @@ final class NativeLessonEditor {
 			return;
 		}
 		wp_enqueue_style( 'ohmylms-question-editor', plugins_url( 'assets/css/question-editor.css', OHMYLMS_FILE ), array( 'wp-components', 'dashicons' ), OHMYLMS_VERSION );
+		if ( 'ohmylms-quiz' === $screen->post_type ) {
+			// The printable paper canvas; inert until Paper view is switched on.
+			wp_enqueue_style( 'ohmylms-paper', plugins_url( 'assets/css/paper.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/paper.css' ) );
+		}
 		if ( \OhMyLMS\Assessment\MathLive::enabled() ) {
 			wp_enqueue_style( 'ohmylms-mathlive', plugins_url( 'assets/css/mathlive.css', OHMYLMS_FILE ), array(), '0.111.1' );
 		}
@@ -371,6 +375,10 @@ final class NativeLessonEditor {
 				'bankUrl'        => admin_url( 'admin.php?page=ohmylms' ) . '#/question-bank',
 				'chapterId'      => ohmylms_get_chapter_id_by_content_id( get_the_ID() ),
 				'profile'        => 'ohmylms-quiz' === $screen->post_type ? \OhMyLMS\Assessment\Profiles::editor( get_the_ID() ) : null,
+				'printUrls'      => 'ohmylms-quiz' === $screen->post_type ? array(
+					'paper' => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'paper' ),
+					'key'   => \OhMyLMS\Exams\PrintPaper::url( get_the_ID(), 'key' ),
+				) : null,
 			)
 		);
 	}

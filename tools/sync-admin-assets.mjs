@@ -94,6 +94,12 @@ for ( const [ source, target ] of [
 		'build/sdk/native-lesson-editor.asset.php',
 		'assets/dist/admin/native-lesson-editor.asset.php',
 	],
+	[ 'build/sdk/paper-print.js', 'assets/dist/admin/paper-print.js' ],
+	[ 'build/sdk/paper-print.js.map', 'assets/dist/admin/paper-print.js.map' ],
+	[
+		'build/sdk/paper-print.asset.php',
+		'assets/dist/admin/paper-print.asset.php',
+	],
 	[ 'build/sdk/math-runtime.js', 'assets/dist/admin/math-runtime.js' ],
 	[
 		'build/sdk/math-runtime.js.map',

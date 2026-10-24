@@ -22,6 +22,11 @@ import { Button, Notice } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { saveQuizForPreview } from './quizPreview.mjs';
 import { useBlankPlaceholderTitle } from './useBlankPlaceholderTitle';
+import {
+	PaperCanvas,
+	PaperSettingsPanel,
+	PaperViewToggle,
+} from '../paper/PaperCanvas';
 
 /**
  * Open a fresh player session after the native document and bank edits are saved.
@@ -149,7 +154,15 @@ function QuizPreviewAction() {
 			host.remove();
 		};
 	}, [] );
-	return container ? createPortal( <QuizPreviewButton />, container ) : null;
+	return container
+		? createPortal(
+				<>
+					<PaperViewToggle />
+					<QuizPreviewButton />
+				</>,
+				container
+			)
+		: null;
 }
 
 /**
@@ -175,6 +188,7 @@ function NativeQuizSettings() {
 	return (
 		<>
 			<QuizPreviewAction />
+			<PaperCanvas />
 			<ProfilePanel />
 			<PluginDocumentSettingPanel
 				name="ohmylms-native-quiz"
@@ -268,6 +282,13 @@ function NativeQuizSettings() {
 				initialOpen={ false }
 			>
 				<NativeQuizConfiguration />
+			</PluginDocumentSettingPanel>
+			<PluginDocumentSettingPanel
+				name="ohmylms-native-paper"
+				title={ __( 'Printable paper', 'ohmylms' ) }
+				initialOpen={ false }
+			>
+				<PaperSettingsPanel />
 			</PluginDocumentSettingPanel>
 			<PluginDocumentSettingPanel
 				name="ohmylms-native-assessment"

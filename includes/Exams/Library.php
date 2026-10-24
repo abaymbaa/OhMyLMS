@@ -126,6 +126,11 @@ final class Library {
 			'composed'         => ! empty( $data['composed'] ),
 			'editor_url'       => ! empty( $data['composed'] ) ? (string) get_edit_post_link( (int) $data['quiz_id'], 'raw' ) : '',
 			'instructions'     => (string) ( $data['instructions'] ?? '' ),
+			// The printable paper and its answer key, for people who may edit the exam.
+			'print_urls'       => \OhMyLMS\QuestionBank\AccessPolicy::can_edit_quiz( (int) $data['quiz_id'] ) ? array(
+				'paper' => PrintPaper::url( (int) $data['quiz_id'], 'paper' ),
+				'key'   => PrintPaper::url( (int) $data['quiz_id'], 'key' ),
+			) : null,
 			// What still blocks publication, for a draft written in OhMyLMS.
 			'problems'         => $live ? Composer::problems( $id ) : array(),
 			// Practice sets and inline checks that publishing would break; publishing asks for confirmation.

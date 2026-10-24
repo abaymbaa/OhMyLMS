@@ -1312,6 +1312,26 @@ export function ExamsPage( {
 										{ __( 'Review paper', 'ohmylms' ) }
 									</Button>
 								) }
+								{ exam.print_urls && (
+									<>
+										<Button
+											variant="tertiary"
+											href={ exam.print_urls.paper }
+											target="_blank"
+											rel="noreferrer"
+										>
+											{ __( 'Print paper', 'ohmylms' ) }
+										</Button>
+										<Button
+											variant="tertiary"
+											href={ exam.print_urls.key }
+											target="_blank"
+											rel="noreferrer"
+										>
+											{ __( 'Answer key', 'ohmylms' ) }
+										</Button>
+									</>
+								) }
 								{ exam.status === 'draft' ? (
 									<Button
 										variant="primary"
