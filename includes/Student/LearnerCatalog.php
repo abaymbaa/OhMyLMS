@@ -140,6 +140,7 @@ final class LearnerCatalog {
 
 	/** Register the front-end guard that keeps roadmap courses out of every course list. */
 	public static function init() {
+		Subjects::init();
 		add_action( 'pre_get_posts', array( __CLASS__, 'hide_roadmaps' ) );
 	}
 

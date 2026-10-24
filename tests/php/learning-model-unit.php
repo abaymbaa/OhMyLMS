@@ -8,6 +8,8 @@ define('OHMYLMS_LESSON_CPT', 'ohmylms-lesson');
 define('OHMYLMS_QUIZ_CPT', 'ohmylms-quiz');
 define('OHMYLMS_COURSE_CPT', 'ohmylms-course');
 function __($text) { return $text; }
+// Assessment storage is unavailable in this database-free model fixture; placement rules have integration coverage.
+function get_option($name, $default = false) { return $default; }
 function is_wp_error($value) { return $value instanceof WP_Error; }
 class WP_Error { public function __construct(public $code = '', public $message = '', public $data = []) {} }
 $GLOBALS['skills'] = [11 => true, 12 => true, 13 => true];
@@ -77,10 +79,11 @@ $withItems = $base(['items' => [
 ]]);
 $items = $normalize($withItems);
 check(!is_wp_error($items), 'chapter and skill-scoped attachments normalize: ' . (is_wp_error($items) ? $items->message : ''));
-check(!isset($items['items'][0]['skill_ids']) && $items['items'][0]['chapter_id'] === 7001, 'a chapter attachment has no skill scope');
-check($items['items'][1]['skill_ids'] === [11, 12], 'a skill scope is de-duplicated and cast to integers');
-check($items['items'][3]['skill_ids'] === [13], 'assignments can be scoped to skills');
-check($items['items'][2]['pass_percent'] === 70.0, 'quiz checkpoints keep their pass percentage');
+$items_by_content = array_column($items['items'], null, 'content_id');
+check(!isset($items_by_content[101]['skill_ids']) && $items_by_content[101]['chapter_id'] === 7001, 'a chapter attachment has no skill scope');
+check($items_by_content[102]['skill_ids'] === [11, 12], 'a skill scope is de-duplicated and cast to integers');
+check($items_by_content[301]['skill_ids'] === [13], 'assignments can be scoped to skills');
+check($items_by_content[201]['pass_percent'] === 70.0, 'quiz checkpoints keep their pass percentage');
 
 $outside = $base(['items' => [['type' => 'lesson', 'content_id' => 101, 'skill_ids' => [99]]]]);
 check(is_wp_error($normalize($outside)), 'content cannot be attached to a skill that is not in the program');

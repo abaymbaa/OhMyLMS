@@ -32,7 +32,8 @@ export function createCourseToolbar( readRuntime ) {
 		var courseId = props.courseId;
 		var courseName = props.courseName;
 		var onSave = props.onSave;
-		var d = ( 0, Router.Zp )();
+		const nativeNavigate = ( 0, Router.Zp )();
+		var d = props.onNavigate || nativeNavigate;
 		var subStep = ( 0, Router.g )().subStep;
 		var p = ( 0, WordPressData.useDispatch )( StoreModule.default );
 		var v = false;

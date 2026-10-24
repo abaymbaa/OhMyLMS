@@ -8,11 +8,12 @@ namespace OhMyLMS\Extensions;
 
 /** Small native authoring surface; existing course builder remains compatible. */
 final class Editor {
+	/** Keep the legacy editor reachable through existing links without a submenu entry. */
 	public static function init() {
 		add_action(
 			'admin_menu',
 			static function () {
-				add_submenu_page( 'ohmylms', 'Layouts & extensions', 'Layouts & extensions', 'edit_posts', 'ohmylms-extensions', array( __CLASS__, 'page' ) );
+				add_submenu_page( 'options.php', __( 'Layouts & extensions', 'ohmylms' ), __( 'Layouts & extensions', 'ohmylms' ), 'edit_posts', 'ohmylms-extensions', array( __CLASS__, 'page' ) );
 			},
 			99
 		);

@@ -1,0 +1,147 @@
+.ohmylms-outline-frame {
+	max-width: 1440px;
+	margin: 72px auto 0;
+	padding: 24px;
+}
+
+.ohmylms-outline-editor {
+	padding: 24px;
+	border: 1px solid #dcdcde;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.ohmylms-outline-heading,
+.ohmylms-outline-resources li {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.ohmylms-outline-heading h1 {
+	margin: 0;
+	font-size: 28px;
+}
+
+.ohmylms-outline-columns {
+	display: grid;
+	grid-template-columns: minmax(260px, 36%) minmax(0, 1fr);
+	gap: 24px;
+	margin-top: 24px;
+}
+
+.ohmylms-outline-tree {
+	max-height: 70vh;
+	overflow: auto;
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #f6f7f7;
+}
+
+.ohmylms-outline-tree ol,
+.ohmylms-outline-tree ul {
+	margin: 8px 0;
+	padding-left: 16px;
+	list-style: none;
+}
+
+.ohmylms-outline-tree .components-button {
+	width: 100%;
+	height: auto;
+	min-height: 36px;
+	justify-content: flex-start;
+	text-align: left;
+	white-space: normal;
+}
+
+.ohmylms-outline-inspector {
+	min-width: 0;
+	padding: 24px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+}
+
+.ohmylms-outline-inspector .components-button {
+	margin: 4px;
+}
+
+.ohmylms-outline-move {
+	display: block;
+	margin: 12px 0;
+}
+
+.ohmylms-outline-course-info {
+	margin-bottom: 20px;
+	padding: 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.ohmylms-outline-resources {
+	max-height: 400px;
+	overflow: auto;
+}
+
+@media (max-width: 782px) {
+
+	.ohmylms-outline-frame {
+		padding: 12px;
+	}
+
+	.ohmylms-outline-columns {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.ohmylms-outline-heading {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+}
+
+.ohmylms-syllabus-course-dialog fieldset {
+	margin: 16px 0;
+	border: 1px solid #ddd;
+	padding: 16px;
+}
+
+.ohmylms-outline-activity-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-bottom: 16px;
+}
+
+.ohmylms-outline-readiness {
+	margin: 16px 0;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 16px;
+}
+
+.ohmylms-outline-readiness summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.ohmylms-outline-readiness > ul {
+	padding-left: 24px;
+	list-style: disc;
+}
+
+.ohmylms-syllabus-course-dialog ul {
+	margin: 12px 0;
+	padding-left: 24px;
+	list-style: disc;
+}
+
+.ohmylms-syllabus-course-dialog li {
+	margin-bottom: 8px;
+}
+
+.ohmylms-syllabus-course-dialog .components-button + .components-button {
+	margin-left: 8px;
+}
+

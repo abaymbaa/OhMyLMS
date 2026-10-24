@@ -39,6 +39,7 @@ class Api {
 		$controllers_v1  = array(
 			\OhMyLMS\Rest\V1\PluginController::class,
 			\OhMyLMS\Rest\V1\CourseController::class,
+			\OhMyLMS\Rest\V1\CourseStructureController::class,
 			\OhMyLMS\Rest\V1\LearningController::class,
 			\OhMyLMS\Rest\V1\ContentHubController::class,
 			\OhMyLMS\Rest\V1\AuthoringController::class,
@@ -61,6 +62,7 @@ class Api {
 			\OhMyLMS\Rest\V1\PlacementController::class,
 			\OhMyLMS\Rest\V1\SkillReportController::class,
 			\OhMyLMS\Rest\V1\CurriculumController::class,
+			\OhMyLMS\Rest\V1\SubjectController::class,
 			\OhMyLMS\Rest\V1\SyllabusController::class,
 			\OhMyLMS\Rest\V1\CourseOrganizationController::class,
 			\OhMyLMS\Rest\V1\SkillMappingController::class,

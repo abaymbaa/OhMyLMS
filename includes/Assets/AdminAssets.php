@@ -18,37 +18,44 @@ class AdminAssets extends Assets {
 		$suffix = '';
 
 		$scripts = array(
-			'ohmylms-vendor'  => array(
+			'ohmylms-structure-client' => array(
+				'src'       => self::get_asset_url( 'assets/dist/admin/course-structure.js' ),
+				'version'   => OHMYLMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/dist/admin/course-structure.js' ),
+				'deps'      => array( 'wp-api-fetch' ),
+				'in_footer' => true,
+				'screens'   => array( 'toplevel_page_ohmylms' ),
+			),
+			'ohmylms-vendor'           => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/vendors' . $suffix . '.js' ),
 				'version'   => OHMYLMS_VERSION,
 				'deps'      => array( 'react', 'react-dom' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-chartjs' => array(
+			'ohmylms-chartjs'          => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/chartjs' . $suffix . '.js' ),
 				'version'   => OHMYLMS_VERSION,
 				'deps'      => array( 'ohmylms-vendor' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-editor'  => array(
+			'ohmylms-editor'           => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/editor' . $suffix . '.js' ),
 				'version'   => OHMYLMS_VERSION,
 				'deps'      => array( 'ohmylms-vendor' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms-emotion' => array(
+			'ohmylms-emotion'          => array(
 				'src'       => self::get_asset_url( 'assets/dist/vendors/emotion' . $suffix . '.js' ),
 				'version'   => OHMYLMS_VERSION,
 				'deps'      => array( 'ohmylms-vendor' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_ohmylms' ),
 			),
-			'ohmylms'         => array(
+			'ohmylms'                  => array(
 				'src'       => self::get_asset_url( 'assets/dist/admin/ohmylms' . $suffix . '.js' ),
-				'deps'      => array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-api-fetch', 'ohmylms-vendor', 'ohmylms-chartjs', 'ohmylms-editor', 'ohmylms-emotion' ),
+				'deps'      => array( 'wp-element', 'wp-i18n', 'wp-components', 'wp-api-fetch', 'ohmylms-structure-client', 'ohmylms-vendor', 'ohmylms-chartjs', 'ohmylms-editor', 'ohmylms-emotion' ),
 				'version'   => OHMYLMS_VERSION . '.' . filemtime( OHMYLMS_DIR . '/assets/dist/admin/ohmylms' . $suffix . '.js' ),
 				'in_footer' => true,
 				'screens'   => array( 'toplevel_page_ohmylms' ),

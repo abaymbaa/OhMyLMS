@@ -153,6 +153,7 @@ final class CompletionPolicy {
 		$award   = $wpdb->get_row( $wpdb->prepare( 'SELECT program_id,awarded_at FROM ' . Schema::table( 'awards' ) . ' WHERE enrollment_id=%d', $enrollment['id'] ), ARRAY_A );
 		foreach ( $program['items'] as &$item ) {
 			$item['name']      = 'practice' === $item['type'] ? ( get_term( $item['content_id'], Taxonomy::NAME )->name ?? __( 'Unavailable skill', 'ohmylms' ) ) : get_the_title( $item['content_id'] );
+			$item['name']      = $item['title'] ?? $item['name'];
 			$item['complete']  = 'practice' === $item['type'] ? false : ( 'quiz' === $item['type'] ? ! empty( $assessments[ $item['content_id'] ]['passed'] ) : ! empty( $activities[ $item['content_id'] ] ) );
 			$item['available'] = 'practice' === $item['type'] ? ! $blocked : get_post_status( $item['content_id'] ) === 'publish';
 			$item['url']       = 'quiz' === $item['type'] || 'assignment' === $item['type'] ? ohmylms_get_pretty_content_permalink( $item['content_id'] ) : add_query_arg( 'learning_item', $item['id'], Frontend::url( $course_id ) );

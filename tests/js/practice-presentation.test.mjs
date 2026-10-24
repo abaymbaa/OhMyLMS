@@ -61,9 +61,11 @@ function fixture(
 		}
 	}
 	const stage = new Element( 'div' );
+	const events = [];
 	const root = {
 		dataset: { course: '7', skill: '9', items: '3' },
 		querySelector: () => stage,
+		dispatchEvent: ( event ) => events.push( event ),
 	};
 	const requests = [];
 	const state = {
@@ -77,6 +79,12 @@ function fixture(
 	};
 	let stored = remembered;
 	const context = {
+		CustomEvent: class {
+			constructor( type, options ) {
+				this.type = type;
+				Object.assign( this, options );
+			}
+		},
 		document: {
 			querySelector: () => root,
 			createElement: ( tag ) => new Element( tag ),
@@ -175,6 +183,7 @@ function fixture(
 	];
 	return {
 		stage,
+		events,
 		requests,
 		all,
 		focus: () => focus,
@@ -398,6 +407,13 @@ test( 'a finished practice lists how each skill level changed', async () => {
 		.all()
 		.find( ( node ) => node.attributes.class === 'ohmylms-level-changes' );
 	assert.equal( list.children.length, 2 );
+	assert.equal( f.events[ 0 ].type, 'ohmylms:practice-complete' );
+	assert.equal( f.events[ 0 ].detail.courseId, 7 );
+	assert.equal( f.events[ 0 ].detail.skillId, 9 );
+	assert.deepEqual( Object.keys( f.events[ 0 ].detail ).sort(), [
+		'courseId',
+		'skillId',
+	] );
 	assert.deepEqual(
 		list.children.map( ( item ) => item.attributes.class ),
 		[ 'is-up', 'is-same' ]

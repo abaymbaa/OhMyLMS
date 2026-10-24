@@ -42,6 +42,9 @@ final class Catalog {
 	}
 
 	private static function title( $id ) {
+		if ( OHMYLMS_CHAPTER_CPT === get_post_type( $id ) ) {
+			return html_entity_decode( (string) get_post_field( 'post_title', $id ), ENT_QUOTES, 'UTF-8' );
+		}
 		return html_entity_decode( (string) get_the_title( (int) $id ), ENT_QUOTES, 'UTF-8' );
 	}
 
@@ -63,7 +66,7 @@ final class Catalog {
 				$chapters[] = array(
 					'id'     => (int) $id,
 					'name'   => self::title( $id ),
-					'number' => UnitNumber::get( $id ),
+					'number' => (string) get_post_meta( $id, UnitNumber::META, true ),
 				); }
 		}
 		return $chapters;
@@ -159,10 +162,11 @@ final class Catalog {
 		global $wpdb;
 		$ids     = array_values( array_map( 'intval', $ids ) );
 		$current = array_column( self::chapters( $course_id ), 'id' );
-		if ( count( $ids ) !== count( $current ) || array_diff( $ids, $current ) || array_diff( $current, $ids ) ) {
+		if ( count( $ids ) !== count( array_unique( $ids ) ) || count( $ids ) !== count( $current ) || array_diff( $ids, $current ) || array_diff( $current, $ids ) ) {
 			return self::error( __( 'List every chapter of this course exactly once.', 'ohmylms' ) ); }
 		foreach ( $ids as $position => $id ) {
-			$wpdb->update(
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Native ordering; the shared structure boundary manages transactions and cache invalidation.
+			$changed = $wpdb->update(
 				$wpdb->prefix . 'ohmylms_chapter_relationship',
 				array( 'order_number' => $position + 1 ),
 				array(
@@ -170,6 +174,9 @@ final class Catalog {
 					'chapter_id' => $id,
 				)
 			);
+			if ( false === $changed ) {
+				return self::error( __( 'The unit order could not be saved.', 'ohmylms' ), 500 );
+			}
 		}
 		return true;
 	}
@@ -233,7 +240,7 @@ final class Catalog {
 	private static function fingerprint( $program ) {
 		if ( ! is_array( $program ) ) {
 			return ''; }
-		$keep = array( 'mode', 'recognize_prior', 'evidence_days', 'bank_ids', 'outcomes', 'items', 'groups' );
+		$keep = array( 'mode', 'recognize_prior', 'evidence_days', 'bank_ids', 'outcomes', 'items', 'groups', 'units' );
 		return md5( wp_json_encode( array_intersect_key( $program, array_flip( $keep ) ) ) );
 	}
 
@@ -305,7 +312,7 @@ final class Catalog {
 				'type'              => $item['type'],
 				'content_id'        => (int) $item['content_id'],
 				'native_editor_url' => $valid && 'lesson' === $item['type'] ? NativeLessonEditor::edit_url( $post->ID ) : '',
-				'title'             => $valid ? self::title( $post->ID ) : __( 'Unavailable content', 'ohmylms' ),
+				'title'             => $item['title'] ?? ( $valid ? self::title( $post->ID ) : __( 'Unavailable content', 'ohmylms' ) ),
 				'status'            => $valid ? $post->post_status : 'missing',
 				'required'          => ! empty( $item['required'] ),
 				'pass_percent'      => isset( $item['pass_percent'] ) ? (float) $item['pass_percent'] : null,
@@ -439,7 +446,7 @@ final class Catalog {
 	public static function revision( $course_id ) {
 		$stored = get_post_meta( (int) $course_id, CourseProgram::DRAFT, true );
 		$source = is_array( $stored ) ? $stored : CourseProgram::current( (int) $course_id );
-		return is_array( $source ) ? self::fingerprint( $source ) : md5( 'empty' );
+		return md5( wp_json_encode( array( is_array( $source ) ? self::fingerprint( $source ) : 'empty', CourseStructure::native_version( $course_id ) ) ) );
 	}
 
 	/**
@@ -489,6 +496,7 @@ final class Catalog {
 			return self::error( __( 'Another author is saving this course. Try again.', 'ohmylms' ), 409, 'ohmylms_program_busy' ); }
 		try {
 			wp_cache_delete( (int) $course_id, 'post_meta' );
+			CourseStructure::flush( $course_id );
 			if ( ! is_string( $revision ) || ! hash_equals( self::revision( $course_id ), $revision ) ) {
 				return self::error( __( 'The course structure changed since you read it. Read it again and reapply your change.', 'ohmylms' ), 409, 'ohmylms_program_stale' ); }
 			return $change();

@@ -13,6 +13,14 @@
 	padding-bottom: 96px;
 }
 
+.ohmylms-course-structure-publish {
+	margin: 16px 20px;
+	padding: 12px 16px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
 .ohmylms-course-content-tools {
 	margin: 16px 0;
 	padding: 12px 16px;

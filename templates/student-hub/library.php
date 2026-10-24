@@ -11,9 +11,15 @@ use OhMyLMS\Student\LearnerCatalog;
 
 defined( 'ABSPATH' ) || exit;
 
+$hub_subject = absint( get_query_var( 'hub_subject', 0 ) );
+if ( $hub_subject ) {
+	echo \OhMyLMS\Student\Subjects::render( $hub_subject, true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Subject template escapes its output by context.
+	return;
+}
+
 $hub_query = get_query_var( 'hub_q', '' );
 $hub_query = is_string( $hub_query ) ? sanitize_text_field( $hub_query ) : '';
-$subjects  = LearnerCatalog::subjects( $hub_query, $config['library_types'] );
+$subjects  = LearnerCatalog::subjects( $hub_query, $config['library_types'] ? $config['library_types'] : array( 'subject' ) );
 $bundles   = $config['library_bundles'] ? LearnerCatalog::bundles( $hub_query ) : array();
 
 /**
@@ -70,6 +76,7 @@ $hub_render_group = static function ( array $node, $depth ) use ( &$hub_render_g
 					<span class="oml-hub-subject-count"><?php /* translators: %d: number of courses. */ echo esc_html( sprintf( _n( '%d course', '%d courses', $subject['total'], 'ohmylms' ), $subject['total'] ) ); ?></span>
 				</summary>
 				<div class="oml-hub-subject-body">
+					<p><a class="oml-hub-button" href="<?php echo esc_url( \OhMyLMS\Student\Subjects::url( $subject['id'], true ) ); ?>"><?php esc_html_e( 'View subject', 'ohmylms' ); ?></a></p>
 					<?php $hub_render_group( $subject, 0 ); ?>
 				</div>
 			</details>

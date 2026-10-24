@@ -658,6 +658,8 @@ final class Frontend {
 		$term       = get_term( (int) $attributes['skill'], \OhMyLMS\Skills\Taxonomy::NAME );
 		if ( ! $term || is_wp_error( $term ) ) {
 			return ''; }
+		$guidance      = (int) $attributes['course'] ? \OhMyLMS\Student\PracticeGuidance::get( (int) $attributes['course'], '', (int) $term->term_id ) : null;
+		$guidance_html = is_array( $guidance ) ? \OhMyLMS\Student\PracticeGuidance::render( $guidance ) : '';
 		self::runner_assets();
 		$practice_available = Presentation::available( $term->term_id, (int) $attributes['course'], (int) $attributes['items'] );
 		ob_start();
@@ -677,6 +679,7 @@ final class Frontend {
 				<p class="ohmylms-practice-guest"><?php esc_html_e( 'You are practising as a guest. Your answers are kept on this device until you log in.', 'ohmylms' ); ?></p><?php } ?>
 			<div class="ohmylms-practice-stage" aria-live="polite"></div>
 		</section>
+		<?php echo $guidance_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Context-escaped, owned guidance template. ?>
 		<?php
 		return ob_get_clean();
 	}

@@ -72,6 +72,15 @@ class ContentHubController extends RestController {
 		);
 		register_rest_route(
 			$this->namespace,
+			'/courses/from-syllabus/(?P<id>\d+)',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'permission_callback' => array( $this, 'author' ),
+				'callback'            => array( $this, 'syllabus_preview' ),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			'/courses/(?P<id>\d+)/discard-if-blank',
 			array(
 				array(
@@ -239,6 +248,16 @@ class ContentHubController extends RestController {
 	}
 
 	/**
+	 * Preview the source topics, lessons and skills for an independent course.
+	 *
+	 * @param WP_REST_Request $request Source request.
+	 * @return array|\WP_Error
+	 */
+	public function syllabus_preview( WP_REST_Request $request ) {
+		return CurriculumSchema::ready() ? \OhMyLMS\Curriculum\CourseFromSyllabus::preview( (int) $request['id'] ) : Catalog::error( __( 'Curriculum storage is unavailable.', 'ohmylms' ), 503 );
+	}
+
+	/**
 	 * Make a draft course from a syllabus: a unit for each domain, with its skills linked.
 	 *
 	 * @param WP_REST_Request $request Request with the syllabus and an optional title.
@@ -248,7 +267,12 @@ class ContentHubController extends RestController {
 		if ( ! CurriculumSchema::ready() ) {
 			return Catalog::error( __( 'Curriculum storage is unavailable.', 'ohmylms' ), 503 );
 		}
-		$course = \OhMyLMS\Curriculum\CourseFromSyllabus::create( (int) $request['syllabus_id'], (string) $request['title'] );
+		$data = (array) $request->get_json_params();
+		if ( $request->has_param( 'skill_ids' ) ) {
+			$data['skill_ids'] = $request->get_param( 'skill_ids' );
+			$data['revision']  = $request->get_param( 'revision' );
+		}
+		$course = \OhMyLMS\Curriculum\CourseFromSyllabus::create( (int) $request['syllabus_id'], (string) $request['title'], $data );
 		return is_wp_error( $course ) ? $course : new \WP_REST_Response( $course, 201 );
 	}
 

@@ -1135,6 +1135,10 @@
 		again.addEventListener( 'click', start );
 		stage.appendChild( again );
 		summary.focus();
+		root.dispatchEvent( new CustomEvent( 'ohmylms:practice-complete', {
+			bubbles: true,
+			detail: { courseId: Number( root.dataset.course ), skillId: Number( root.dataset.skill ) },
+		} ) );
 	}
 
 	function show( state ) {

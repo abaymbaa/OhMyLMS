@@ -9,6 +9,7 @@ defined( 'ABSPATH' ) || exit;
 
 final class Frontend {
 	public static function init() {
+		UnitSnapshots::init();
 		add_shortcode( 'ohmylms_learning', array( __CLASS__, 'shortcode' ) );
 		add_filter(
 			'query_vars',
@@ -74,6 +75,15 @@ final class Frontend {
 			return '<p>' . esc_html( $state->get_error_message() ) . '</p><a href="' . esc_url( get_permalink( $course_id ) ) . '">' . esc_html__( 'Course overview', 'ohmylms' ) . '</a>'; }
 		self::assets();
 		$program = $state['program'];
+		$unit_items = array();
+		foreach ( $program['items'] as $item ) {
+			$unit_items[ (int) $item['chapter_id'] ][] = $item;
+		}
+		$ordered_items = array();
+		foreach ( StructurePlan::order_units( $unit_items, $program['units'] ) as $items ) {
+			$ordered_items = array_merge( $ordered_items, $items );
+		}
+		$program['items'] = $ordered_items;
 		$student = get_current_user_id();
 		ob_start();
 		?>
@@ -158,10 +168,10 @@ final class Frontend {
 						echo '</article>';
 						if ( ! $item['complete'] ) {
 							?>
-						<button type="button" class="ohmylms-button" data-complete-placement="<?php echo esc_attr( $item['id'] ); ?>"><?php esc_html_e( 'Mark lesson complete', 'ohmylms' ); ?></button><p class="ohmylms-learning-message" role="status"></p>
+						<button type="button" class="ohmylms-button" data-complete-placement="<?php echo esc_attr( $item['id'] ); ?>"><?php esc_html_e( 'Mark activity complete', 'ohmylms' ); ?></button><p class="ohmylms-learning-message" role="status"></p>
 							<?php
 						} else {
-							echo '<p>' . esc_html__( 'Lesson completed in this course', 'ohmylms' ) . '</p>'; }
+							echo '<p>' . esc_html__( 'Activity completed in this course', 'ohmylms' ) . '</p>'; }
 					}
 					break;
 				}

@@ -19,6 +19,19 @@ defined( 'ABSPATH' ) || exit;
  * @since 1.0.0
  */
 class CourseStore extends DataStore {
+	/**
+	 * Invalidate request-local unit projections after an atomic structure change.
+	 *
+	 * @param int $course_id Course ID.
+	 */
+	public static function clear_structure_cache( $course_id ) {
+		unset( self::$raw_chapters_cache[ $course_id ] );
+		foreach ( array_keys( self::$chapters_cache ) as $key ) {
+			if ( 0 === strpos( (string) $key, $course_id . '_' ) ) {
+				unset( self::$chapters_cache[ $key ] );
+			}
+		}
+	}
 
 	/**
 	 * Cache for enrollment counts to prevent duplicate queries.
@@ -394,6 +407,16 @@ class CourseStore extends DataStore {
 	 */
 	public function get_chapters( $course, $return = 'array' ) {
 		$course_id = $course->get_id();
+		if ( ! \OhMyLMS\Learning\UnitSnapshots::is_authoring() ) {
+			$published = array();
+			foreach ( \OhMyLMS\Learning\UnitSnapshots::public_units( $course_id ) as $position => $unit ) {
+				$chapter = ohmylms_get_chapter( $unit['id'] );
+				if ( $chapter ) {
+					$published[] = 'objects' === $return ? $chapter : $unit + array( 'order_number' => $position + 1 );
+				}
+			}
+			return $published;
+		}
 		$cache_key = $course_id . '_' . $return;
 
 		// Check if result is already cached.

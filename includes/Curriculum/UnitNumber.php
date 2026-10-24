@@ -58,6 +58,10 @@ final class UnitNumber {
 	 * @return string
 	 */
 	public static function get( $chapter_id ) {
+		$unit = \OhMyLMS\Learning\UnitSnapshots::public_unit( $chapter_id );
+		if ( $unit ) {
+			return $unit['number'];
+		}
 		$stored = self::normalize( get_post_meta( (int) $chapter_id, self::META, true ) );
 		return null === $stored ? '' : $stored;
 	}

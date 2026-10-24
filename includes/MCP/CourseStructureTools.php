@@ -310,6 +310,11 @@ final class CourseStructureTools {
 
 		$result = array();
 		foreach ( $tools as $tool => $definition ) {
+			if ( 'GET' !== $definition[0] && 0 === strpos( $definition[1], self::PREFIX . '/' ) ) {
+				$definition[3]['revision'] = $revision;
+				$definition[4]            = array_values( array_unique( array_merge( $definition[4], array( 'revision' ) ) ) );
+				$definition[2]           .= ' Read get_course_program first and send its current revision; unit metadata and ordering changes also invalidate this token.';
+			}
 			$result[ $tool ] = array(
 				'method'      => $definition[0],
 				'route'       => $definition[1],

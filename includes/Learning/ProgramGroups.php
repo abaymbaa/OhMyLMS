@@ -223,6 +223,7 @@ final class ProgramGroups {
 	 * Carry lesson-group membership over from the stored draft for rows whose payload omits `group_id`
 	 * (editors that do not know about groups). A row that moved to another unit is left ungrouped, and a
 	 * row that sends `group_id` itself (even empty) is never overridden.
+	 * A course-specific activity title is also retained when an older client omits it.
 	 *
 	 * @param array  $rows     Submitted rows.
 	 * @param array  $stored   Rows of the stored draft.
@@ -232,15 +233,21 @@ final class ProgramGroups {
 	public static function carry( array $rows, array $stored, $key ) {
 		$by_key = array();
 		foreach ( $stored as $row ) {
-			if ( ! empty( $row['group_id'] ) && isset( $row[ $key ] ) ) {
+			if ( isset( $row[ $key ] ) ) {
 				$by_key[ (string) $row[ $key ] ] = $row;
 			}
 		}
 		foreach ( $rows as &$row ) {
-			if ( array_key_exists( 'group_id', $row ) || ! isset( $row[ $key ] ) || ! isset( $by_key[ (string) $row[ $key ] ] ) ) {
+			if ( ! isset( $row[ $key ] ) || ! isset( $by_key[ (string) $row[ $key ] ] ) ) {
 				continue;
 			}
 			$old = $by_key[ (string) $row[ $key ] ];
+			if ( ! array_key_exists( 'title', $row ) && isset( $old['title'] ) ) {
+				$row['title'] = $old['title'];
+			}
+			if ( array_key_exists( 'group_id', $row ) || empty( $old['group_id'] ) ) {
+				continue;
+			}
 			if ( (int) ( $old['chapter_id'] ?? 0 ) === (int) ( $row['chapter_id'] ?? 0 ) ) {
 				$row['group_id'] = $old['group_id'];
 			}

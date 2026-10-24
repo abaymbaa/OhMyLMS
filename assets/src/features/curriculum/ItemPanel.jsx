@@ -11,6 +11,7 @@ import {
 import { useCurriculum } from './context';
 import { DeleteItem } from './DeleteItem';
 import { LinkedContent } from './LinkedContent';
+import { SubjectCourseOrder } from './SubjectCourseOrder';
 import { SkillMappings } from './SkillMappings';
 import { SyllabusSummary } from './SyllabusSummary';
 import * as api from './api.mjs';
@@ -270,6 +271,9 @@ export function ItemPanel( { id, item } ) {
 			</div>
 
 			{ item.is_syllabus && <SyllabusSummary item={ item } /> }
+			{ item.item_type === 'subject' && (
+				<SubjectCourseOrder item={ item } />
+			) }
 
 			{ ! detail && ! detailError && <Spinner /> }
 			{ detailError && <p role="alert">{ detailError }</p> }

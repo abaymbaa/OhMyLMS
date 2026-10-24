@@ -40,6 +40,7 @@ import { useCourseCatalog } from './useCourseCatalog';
 import { useSyllabusWorkspace } from './useSyllabusWorkspace';
 import { hashQuery } from '../content-hub/hubRoutes.mjs';
 import { SyllabusSpreadsheet } from './SyllabusSpreadsheet';
+import { SyllabusCourseDialog } from '../courses/SyllabusCourseDialog';
 
 function countsLine( totals ) {
 	const { contents, skills } = totalsParts( totals );
@@ -73,6 +74,7 @@ export function SyllabusWorkspace( { syllabusId } ) {
 	const [ collapsed, setCollapsed ] = useState( false );
 	const [ importing, setImporting ] = useState( false );
 	const [ sheetOpen, setSheetOpen ] = useState( false );
+	const [ creatingCourse, setCreatingCourse ] = useState( false );
 	const [ sheetState, setSheetState ] = useState( {
 		dirty: false,
 		busy: false,
@@ -290,6 +292,13 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						<Button
 							variant="secondary"
 							disabled={ viewLocked }
+							onClick={ () => setCreatingCourse( true ) }
+						>
+							{ __( 'Create course from syllabus', 'ohmylms' ) }
+						</Button>
+						<Button
+							variant="secondary"
+							disabled={ viewLocked }
 							onClick={ () => setSheetOpen( true ) }
 						>
 							{ __( 'Bulk edit', 'ohmylms' ) }
@@ -451,6 +460,15 @@ export function SyllabusWorkspace( { syllabusId } ) {
 						) }
 					</main>
 				</div>
+				{ creatingCourse && (
+					<SyllabusCourseDialog
+						syllabusId={ Number( syllabusId ) }
+						onClose={ () => setCreatingCourse( false ) }
+						onCreated={ ( made ) => {
+							window.location.hash = `/course-edit/${ made.id }`;
+						} }
+					/>
+				) }
 				{ importing && (
 					<ImportDialog
 						syllabus={ outline.syllabus }

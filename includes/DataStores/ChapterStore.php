@@ -294,6 +294,15 @@ class ChapterStore extends DataStore {
 	 * @since 1.0.0
 	 */
 	private function invalidate_chapter_cache( $chapter_id ) {
+		self::clear_structure_cache( $chapter_id );
+	}
+
+	/**
+	 * Invalidate request-local activity projections after commit or rollback.
+	 *
+	 * @param int $chapter_id Unit ID.
+	 */
+	public static function clear_structure_cache( $chapter_id ) {
 		unset( self::$raw_contents_cache[ $chapter_id ] );
 
 		// Cache keys for a chapter are formatted as "{chapter_id}_{type}", e.g. "123_array", "123_objects", "123_all_contents".

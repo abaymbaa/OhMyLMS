@@ -17,6 +17,29 @@ $hub_standalone = ! empty( $hub_standalone );
 $hub_outline    = CourseOutline::get( $hub_course_id, get_current_user_id() );
 $hub_back       = $hub_standalone ? Hub::catalog_url() : Hub::url( 'library' );
 
+$hub_requested_lesson = get_query_var( 'hub_lesson', '' );
+if ( ! is_wp_error( $hub_outline ) && $hub_requested_lesson ) {
+	$hub_lesson = \OhMyLMS\Student\LessonJourney::find( $hub_outline, $hub_requested_lesson );
+	ohmylms_get_template(
+		'student-hub/lesson.php',
+		array(
+			'hub_outline' => $hub_outline,
+			'hub_lesson'  => $hub_lesson,
+		)
+	);
+	return;
+}
+
+$hub_back_label      = __( 'Browse subjects', 'ohmylms' );
+$hub_subject_context = absint( get_query_var( 'hub_subject', 0 ) );
+if ( $hub_subject_context ) {
+	$hub_subject_node = \OhMyLMS\Student\Subjects::get( $hub_subject_context );
+	if ( ! is_wp_error( $hub_subject_node ) && in_array( $hub_course_id, $hub_subject_node['course_ids'], true ) ) {
+		$hub_back       = \OhMyLMS\Student\Subjects::url( $hub_subject_context, ! $hub_standalone );
+		$hub_back_label = $hub_subject_node['name'];
+	}
+}
+
 $hub_kind_paths = array(
 	'lesson'     => 'M6 3h9l4 4v14H6zM9 12h7M9 16h7',
 	'practice'   => 'M4 20l4-1 11-11-3-3L5 16z',
@@ -63,7 +86,7 @@ $hub_rows = static function ( array $rows ) use ( $hub_kind_icon, $hub_kind_name
 	<?php
 };
 ?>
-<p class="oml-hub-crumb"><a class="oml-hub-crumb-link" href="<?php echo esc_url( $hub_back ); ?>">&larr; <?php esc_html_e( 'Browse subjects', 'ohmylms' ); ?></a></p>
+<p class="oml-hub-crumb"><a class="oml-hub-crumb-link" href="<?php echo esc_url( $hub_back ); ?>">&larr; <?php echo esc_html( $hub_back_label ); ?></a></p>
 <?php if ( is_wp_error( $hub_outline ) ) : ?>
 	<div class="oml-hub-empty">
 		<h2><?php esc_html_e( 'This course is not available', 'ohmylms' ); ?></h2>
@@ -88,13 +111,20 @@ $hub_next_unit = 0;
 if ( $hub_outline['enrolled'] ) {
 	foreach ( $hub_units as $hub_index => $hub_unit ) {
 		foreach ( $hub_unit['items'] as $hub_row ) {
-			if ( empty( $hub_row['complete'] ) ) {
+			if ( $hub_row['url'] === $hub_outline['continue']['url'] ) {
 				$hub_next      = $hub_row;
 				$hub_next_unit = $hub_index;
 				break 2;
 			}
 		}
 	}
+}
+if ( ! $hub_next && ! empty( $hub_outline['continue']['name'] ) ) {
+	$hub_next      = array(
+		'name' => $hub_outline['continue']['name'],
+		'url'  => $hub_outline['continue']['url'],
+	);
+	$hub_next_unit = null;
 }
 $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_course_id );
 ?>
@@ -138,16 +168,25 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 			<?php endif; ?>
 			<?php if ( $hub_outline['enrolled'] ) : ?>
 				<a class="oml-hub-button" href="<?php echo esc_url( $hub_outline['continue']['url'] ); ?>"><?php echo esc_html( $hub_outline['continue']['label'] ); ?></a>
+				<?php
+				if ( ! empty( $hub_summary['completed'] ) ) :
+					?>
+					<p><?php esc_html_e( 'Course completed', 'ohmylms' ); ?></p><?php endif; ?>
 			<?php endif; ?>
 		</section>
 		<?php $hub_links = $hub_outline['links'] ?? array(); ?>
 		<?php if ( ! empty( $hub_links['get_ready'] ) || ! empty( $hub_links['subcourses'] ) ) : ?>
 			<aside class="oml-course-links" aria-label="<?php esc_attr_e( 'Related courses', 'ohmylms' ); ?>">
-				<?php foreach ( array( 'get_ready' => __( 'Get ready for this course', 'ohmylms' ), 'subcourses' => __( 'Sub-courses', 'ohmylms' ) ) as $hub_link_key => $hub_link_label ) : ?>
-					<?php if ( ! empty( $hub_links[ $hub_link_key ] ) ) : ?>
+				<?php
+				foreach ( array(
+					'get_ready'  => __( 'Get ready for this course', 'ohmylms' ),
+					'subcourses' => __( 'Sub-courses', 'ohmylms' ),
+				) as $hub_link_key => $hub_link_label ) :
+					?>
+															<?php if ( ! empty( $hub_links[ $hub_link_key ] ) ) : ?>
 						<p class="oml-course-links-group">
 							<span class="oml-course-links-label"><?php echo esc_html( $hub_link_label ); ?></span>
-							<?php foreach ( $hub_links[ $hub_link_key ] as $hub_link ) : ?>
+																<?php foreach ( $hub_links[ $hub_link_key ] as $hub_link ) : ?>
 								<a class="oml-hub-chip" href="<?php echo esc_url( $hub_link['url'] ); ?>"><?php echo esc_html( $hub_link['title'] ); ?></a>
 							<?php endforeach; ?>
 						</p>
@@ -175,23 +214,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 			<?php endif; ?>
 		<?php else : ?>
 			<?php if ( $hub_summary['tracked'] ) : ?>
-				<p class="oml-course-progress">
-					<span class="oml-hub-chip"><?php echo esc_html( $hub_summary['percent'] . '%' ); ?></span>
-					<?php
-					if ( $hub_summary['skills'] ) {
-						/* translators: 1: skills at Proficient or better, 2: total skills. */
-						echo esc_html( sprintf( __( '%1$d of %2$d skills to Proficient', 'ohmylms' ), $hub_summary['proficient'], $hub_summary['skills'] ) );
-						if ( ! empty( $hub_summary['credited'] ) ) {
-							/* translators: %d: skills counted from work under other syllabuses. */
-							echo ' ' . esc_html( sprintf( _n( '(%d from other syllabuses)', '(%d from other syllabuses)', (int) $hub_summary['credited'], 'ohmylms' ), (int) $hub_summary['credited'] ) );
-						}
-					} else {
-						/* translators: 1: completed activities, 2: total activities. */
-						echo esc_html( sprintf( __( '%1$d of %2$d activities complete', 'ohmylms' ), $hub_summary['done'], $hub_summary['total'] ) );
-					}
-					?>
-					<progress max="100" value="<?php echo esc_attr( $hub_summary['percent'] ); ?>" aria-label="<?php esc_attr_e( 'Course progress', 'ohmylms' ); ?>"></progress>
-				</p>
+				<?php ohmylms_get_template( 'student-hub/course-progress.php', array( 'hub_summary' => $hub_summary ) ); ?>
 			<?php elseif ( ! $hub_outline['enrolled'] ) : ?>
 				<p class="oml-course-progress"><?php esc_html_e( 'Enroll to track your progress', 'ohmylms' ); ?></p>
 			<?php endif; ?>
@@ -200,7 +223,10 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 				<aside class="oml-course-upnext" aria-label="<?php esc_attr_e( 'Up next', 'ohmylms' ); ?>">
 					<span class="oml-course-upnext-label"><?php esc_html_e( 'Up next', 'ohmylms' ); ?></span>
 					<a href="<?php echo esc_url( $hub_next['url'] ); ?>"><?php echo esc_html( $hub_next['name'] ); ?></a>
-					<span class="oml-course-upnext-unit"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'Unit %s', 'ohmylms' ), $hub_units[ $hub_next_unit ]['number'] ?? $hub_next_unit + 1 ) ); ?></span>
+					<?php
+					if ( null !== $hub_next_unit ) :
+						?>
+						<span class="oml-course-upnext-unit"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'Unit %s', 'ohmylms' ), $hub_units[ $hub_next_unit ]['number'] ?? $hub_next_unit + 1 ) ); ?></span><?php endif; ?>
 				</aside>
 			<?php endif; ?>
 
@@ -215,7 +241,16 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 			</ul>
 
 			<?php foreach ( $hub_units as $hub_index => $hub_unit ) : ?>
-				<?php $hub_unit_skills = count( array_filter( $hub_unit['items'], static function ( $item ) { return 'practice' === $item['kind']; } ) ); ?>
+				<?php
+				$hub_unit_skills = count(
+					array_filter(
+						$hub_unit['items'],
+						static function ( $item ) {
+							return 'practice' === $item['kind'];
+						}
+					)
+				);
+				?>
 				<section class="oml-course-unit" id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>" aria-labelledby="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-title">
 					<p class="oml-course-unit-label"><?php /* translators: %s: unit number or label, such as 3 or 2A. */ echo esc_html( sprintf( __( 'UNIT %s', 'ohmylms' ), $hub_unit['number'] ) ); ?></p>
 					<h2 id="hub-unit-<?php echo esc_attr( $hub_index + 1 ); ?>-title"><?php echo esc_html( $hub_unit['title'] ); ?></h2>
@@ -223,7 +258,7 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 						<?php if ( $hub_unit_skills ) : ?>
 							<?php /* translators: %d: number of skills. */ echo esc_html( sprintf( _n( '%d skill', '%d skills', $hub_unit_skills, 'ohmylms' ), $hub_unit_skills ) ); ?> <span aria-hidden="true">&bull;</span>
 						<?php endif; ?>
-						<?php /* translators: 1: completed, 2: total. */ echo esc_html( sprintf( __( '%1$d/%2$d', 'ohmylms' ), $hub_unit['done'], $hub_unit['total'] ) ); ?>
+						<?php /* translators: 1: completed, 2: total. */ echo esc_html( sprintf( __( '%1$d/%2$d', 'ohmylms' ), $hub_unit['activity_done'], $hub_unit['activity_total'] ) ); ?>
 					</p>
 					<div class="oml-course-grid">
 						<?php foreach ( $hub_unit['items'] as $hub_row ) : ?>
@@ -231,16 +266,18 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 							$hub_state = $hub_row['level'] ? $hub_row['level'] : ( $hub_row['complete'] ? 'complete' : 'none' );
 							$hub_tip   = ( ! empty( $hub_row['kind_label'] ) ? $hub_row['kind_label'] : $hub_kind_name[ $hub_row['kind'] ] ) . ': ' . $hub_row['name'] . ( $hub_row['label'] ? ' (' . $hub_row['label'] . ')' : ( $hub_row['complete'] ? ' (' . __( 'Complete', 'ohmylms' ) . ')' : '' ) );
 							?>
-							<a class="oml-course-cell is-<?php echo esc_attr( $hub_state ); ?>" href="<?php echo esc_url( $hub_row['url'] ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><span aria-hidden="true"><?php
+							<a class="oml-course-cell is-<?php echo esc_attr( $hub_state ); ?>" href="<?php echo esc_url( $hub_row['url'] ); ?>" title="<?php echo esc_attr( $hub_tip ); ?>"><span aria-hidden="true">
+							<?php
 								$hub_glyph = $hub_marker( $hub_row );
 								// Unit tests keep their star; every other cell shows the kind icon (custom image or allowlisted SVG).
 								$hub_custom = '★' === $hub_glyph ? '' : \OhMyLMS\Design\HubIcons::markup( $hub_row['kind'] );
-								if ( '' !== $hub_custom ) {
-									echo $hub_custom; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in HubIcons::markup().
-								} else {
-									echo '' !== $hub_glyph ? esc_html( $hub_glyph ) : $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist.
-								}
-								?></span><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></a>
+							if ( '' !== $hub_custom ) {
+								echo $hub_custom; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in HubIcons::markup().
+							} else {
+								echo '' !== $hub_glyph ? esc_html( $hub_glyph ) : $hub_kind_icon( $hub_row['kind'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Static SVG built from an allowlist.
+							}
+							?>
+								</span><span class="screen-reader-text"><?php echo esc_html( $hub_tip ); ?></span></a>
 						<?php endforeach; ?>
 					</div>
 					<?php if ( ! empty( $hub_unit['test'] ) ) : ?>
@@ -251,7 +288,8 @@ $hub_course_object = $hub_outline['locked'] ? null : ohmylms_get_course( $hub_co
 					<?php endif; ?>
 					<?php foreach ( $hub_unit['groups'] ?? array() as $hub_custom_group ) : ?>
 						<section class="oml-hub-unit-group oml-hub-lesson-group" aria-labelledby="hub-group-<?php echo esc_attr( $hub_custom_group['id'] ); ?>">
-							<h3 id="hub-group-<?php echo esc_attr( $hub_custom_group['id'] ); ?>"><?php echo esc_html( $hub_custom_group['title'] ); ?></h3>
+							<h3 id="hub-group-<?php echo esc_attr( $hub_custom_group['id'] ); ?>"><a href="<?php echo esc_url( \OhMyLMS\Student\LessonJourney::url( $hub_course_id, $hub_custom_group['id'] ) ); ?>"><?php echo esc_html( $hub_custom_group['title'] ); ?></a></h3>
+							<p><?php /* translators: 1: complete activities, 2: total activities. */ echo esc_html( sprintf( __( '%1$d of %2$d activities complete', 'ohmylms' ), $hub_custom_group['activity_done'], $hub_custom_group['activity_total'] ) ); ?></p>
 							<?php $hub_rows( $hub_custom_group['items'] ); ?>
 						</section>
 					<?php endforeach; ?>

@@ -2,8 +2,8 @@
 /**
  * Context bar for the activity player: where the learner is and a clear way back to the course.
  *
- * Shown above lessons, quizzes and assignments for signed-in learners. It only links back; it changes
- * no progress, access or content.
+ * Groups the assigned outline by lesson and links available adjacent activities for signed-in
+ * learners. It changes no progress, access rules or content.
  *
  * @package OhMyLMS
  */
@@ -22,6 +22,13 @@ final class PlayerContext {
 	 */
 	private static $active = false;
 
+	/**
+	 * Current navigation; omitted during an active quiz.
+	 *
+	 * @var array
+	 */
+	private static $navigation = array();
+
 	/** Content types that play inside a course. */
 	const TYPES = array( 'ohmylms-lesson', 'ohmylms-quiz', 'ohmylms-assignment', 'ohmylms-session' );
 
@@ -35,6 +42,7 @@ final class PlayerContext {
 	public static function enqueue() {
 		if ( is_singular( self::TYPES ) && is_user_logged_in() ) {
 			wp_enqueue_style( 'ohmylms-player-context', plugins_url( 'assets/css/player-context.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/player-context.css' ) );
+			wp_enqueue_style( 'ohmylms-learner-journey', plugins_url( 'assets/css/learner-journey.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/learner-journey.css' ) );
 			wp_enqueue_script( 'ohmylms-player-context', plugins_url( 'assets/js/player-context.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/player-context.js' ), true );
 		}
 	}
@@ -90,15 +98,18 @@ final class PlayerContext {
 			return false;
 		}
 		wp_enqueue_style( 'ohmylms-player-context', plugins_url( 'assets/css/player-context.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/player-context.css' ) );
+		wp_enqueue_style( 'ohmylms-learner-journey', plugins_url( 'assets/css/learner-journey.css', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/css/learner-journey.css' ) );
 		wp_enqueue_script( 'ohmylms-player-context', plugins_url( 'assets/js/player-context.js', OHMYLMS_FILE ), array(), (string) filemtime( OHMYLMS_DIR . '/assets/js/player-context.js' ), true );
-		self::$active = true;
+		self::$active     = true;
+		self::$navigation = LessonJourney::activity( $outline, $current, $kind );
 		ohmylms_get_template(
 			'student-hub/player.php',
 			array(
-				'player_outline' => $outline,
-				'player_quiz'    => false,
-				'player_current' => $current,
-				'player_kind'    => $kind,
+				'player_outline'    => $outline,
+				'player_quiz'       => false,
+				'player_current'    => $current,
+				'player_kind'       => $kind,
+				'player_navigation' => self::$navigation,
 			)
 		);
 		return true;
@@ -122,13 +133,15 @@ final class PlayerContext {
 		if ( is_wp_error( $outline ) || $outline['locked'] ) {
 			return false;
 		}
-		self::$active = true;
+		self::$active     = true;
+		self::$navigation = $taking_quiz ? array() : LessonJourney::activity( $outline, get_the_ID(), 'content' );
 		ohmylms_get_template(
 			'student-hub/player.php',
 			array(
-				'player_outline' => $outline,
-				'player_quiz'    => (bool) $taking_quiz,
-				'player_current' => get_the_ID(),
+				'player_outline'    => $outline,
+				'player_quiz'       => (bool) $taking_quiz,
+				'player_current'    => get_the_ID(),
+				'player_navigation' => self::$navigation,
 			)
 		);
 		return true;
@@ -137,8 +150,12 @@ final class PlayerContext {
 	/** Close a shell opened by open(). */
 	public static function close() {
 		if ( self::$active ) {
+			if ( self::$navigation ) {
+				ohmylms_get_template( 'student-hub/player-footer.php', array( 'player_navigation' => self::$navigation ) );
+			}
 			echo '</main></div></div>';
-			self::$active = false;
+			self::$active     = false;
+			self::$navigation = array();
 		}
 	}
 

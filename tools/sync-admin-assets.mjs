@@ -21,6 +21,18 @@ for ( const retired of manifest.retiredAssets || [] ) {
 }
 for ( const [ source, target ] of [
 	[
+		'build/sdk/course-structure.js',
+		'assets/dist/admin/course-structure.js',
+	],
+	[
+		'build/sdk/course-structure.js.map',
+		'assets/dist/admin/course-structure.js.map',
+	],
+	[
+		'build/sdk/course-structure.asset.php',
+		'assets/dist/admin/course-structure.asset.php',
+	],
+	[
 		'build/sdk/question-player-block.js',
 		'assets/dist/admin/question-player-block.js',
 	],

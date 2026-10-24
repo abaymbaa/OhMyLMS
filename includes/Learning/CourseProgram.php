@@ -24,11 +24,15 @@ final class CourseProgram {
 		if ( ! $id || ! Schema::ready() ) {
 			return null; }
 		$row = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM ' . Schema::table( 'programs' ) . ' WHERE id=%d', $id ), ARRAY_A );
-		return $row ? array(
+		$program = $row ? array(
 			'id'        => (int) $row['id'],
 			'version'   => (int) $row['version'],
 			'course_id' => (int) $row['course_id'],
 		) + ( json_decode( $row['program'], true ) ?: array() ) : null;
+		if ( $program && ! isset( $program['units'] ) ) {
+			$program['units'] = UnitSnapshots::legacy_units( $program['course_id'] );
+		}
+		return $program;
 	}
 
 	public static function current( $course_id ) {
@@ -45,9 +49,12 @@ final class CourseProgram {
 		);
 		$items = array();
 		foreach ( $rows as $row ) {
-			$type    = 'quiz' === $row['content_type'] ? 'quiz' : ( 'assignment' === $row['content_type'] ? 'assignment' : 'lesson' );
+			$type = 'quiz' === $row['content_type'] ? 'quiz' : ( 'assignment' === $row['content_type'] ? 'assignment' : 'lesson' );
+			// Native placements have stable read identities before a program has been saved.
+			$hash    = hash( 'sha256', $course_id . ':' . $row['chapter_id'] . ':' . $type . ':' . $row['content_id'] );
+			$uuid    = substr( $hash, 0, 8 ) . '-' . substr( $hash, 8, 4 ) . '-4' . substr( $hash, 13, 3 ) . '-8' . substr( $hash, 17, 3 ) . '-' . substr( $hash, 20, 12 );
 			$items[] = array(
-				'id'         => wp_generate_uuid4(),
+				'id'         => $uuid,
 				'type'       => $type,
 				'content_id' => (int) $row['content_id'],
 				'chapter_id' => (int) $row['chapter_id'],
@@ -67,8 +74,12 @@ final class CourseProgram {
 	public static function editor( $course_id ) {
 		$current = self::current( $course_id );
 		$draft   = get_post_meta( $course_id, self::DRAFT, true );
+		if ( ! is_array( $draft ) ) {
+			$draft = $current ? $current : self::defaults( $course_id );
+		}
+		$draft['units'] = UnitSnapshots::native( $course_id );
 		return array(
-			'draft'     => is_array( $draft ) ? $draft : ( $current ?: self::defaults( $course_id ) ),
+			'draft'     => $draft,
 			'published' => $current,
 			'url'       => Frontend::url( $course_id ),
 		);
@@ -168,7 +179,7 @@ final class CourseProgram {
 		}
 		$program['bank_ids'] = array_values( array_unique( $program['bank_ids'] ) );
 		$skills              = array();
-		$chapters            = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d", $course_id ) ) );
+		$chapters            = array_map( 'intval', $wpdb->get_col( $wpdb->prepare( "SELECT chapter_id FROM {$wpdb->prefix}ohmylms_chapter_relationship WHERE course_id=%d ORDER BY order_number,id", $course_id ) ) );
 		$chapter_set         = array_flip( $chapters );
 		$known               = self::known_skills( $data['outcomes'] );
 		$groups              = ProgramGroups::normalize( $data['groups'] ?? null, $chapters );
@@ -220,6 +231,15 @@ final class CourseProgram {
 				'required'   => ! empty( $item['required'] ),
 			);
 			$member = ProgramGroups::check_member( $groups, $item['group_id'] ?? null, $chapter );
+			if ( array_key_exists( 'title', $item ) ) {
+				if ( ! is_string( $item['title'] ) || mb_strlen( $item['title'] ) > 200 ) {
+					return self::error( __( 'Use an activity name of up to 200 characters.', 'ohmylms' ) );
+				}
+				$title = trim( wp_strip_all_tags( $item['title'] ) );
+				if ( '' !== $title ) {
+					$entry['title'] = $title;
+				}
+			}
 			if ( $member ) {
 				return self::group_error( $member ); }
 			if ( ! empty( $item['group_id'] ) ) {
@@ -256,6 +276,11 @@ final class CourseProgram {
 			$program['items'][] = $entry;
 		}
 		// Only stored when used, so a course without groups keeps the exact program it had before.
+		$placement_error = AssessmentPlacement::validate( $program['items'] );
+		if ( $placement_error ) {
+			return self::error( $placement_error );
+		}
+		$program['items'] = StructurePlan::order_activities( $program['items'], $groups, $chapters );
 		if ( $groups ) {
 			$program['groups'] = $groups; }
 		return $program;
@@ -292,6 +317,16 @@ final class CourseProgram {
 	 */
 	public static function remap( array $program, array $chapters, array $contents ) {
 		unset( $program['id'], $program['version'], $program['course_id'] );
+		if ( isset( $program['units'] ) ) {
+			$copied_units = array();
+			foreach ( $program['units'] as $unit ) {
+				if ( isset( $chapters[ $unit['id'] ] ) ) {
+					$unit['id']     = (int) $chapters[ $unit['id'] ];
+					$copied_units[] = $unit;
+				}
+			}
+			$program['units'] = $copied_units;
+		}
 		$groups = array();
 		foreach ( (array) ( $program['groups'] ?? array() ) as $group ) {
 			$old = (int) ( $group['chapter_id'] ?? 0 );
@@ -507,6 +542,7 @@ final class CourseProgram {
 		$program = self::normalize( $course_id, $data );
 		if ( is_wp_error( $program ) ) {
 			return $program; }
+		$program['units']     = UnitSnapshots::native( $course_id );
 		$program['author_id'] = get_current_user_id();
 		$errors               = self::readiness( $program, $course_id );
 		if ( $publish && $errors ) {
@@ -532,6 +568,7 @@ final class CourseProgram {
 				return self::error( __( 'Another teacher published a newer program. Reload this page before publishing.', 'ohmylms' ), 409 ); }
 			$id = Transaction::run(
 				static function () use ( $wpdb, $course_id, $program, $old, $apply_existing ) {
+					UnitSnapshots::capture( $course_id );
 					$bindings = Schema::table( 'enrollments' );
 					$programs = Schema::table( 'programs' );
 					// Pin every existing enrollment before moving the published pointer.
@@ -575,6 +612,7 @@ final class CourseProgram {
 			);
 			update_post_meta( $course_id, self::DRAFT, $program );
 			Placements::flush();
+			UnitSnapshots::flush();
 			return self::editor( $course_id ) + array(
 				'readiness'    => array(),
 				'published_id' => $id,

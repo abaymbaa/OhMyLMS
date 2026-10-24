@@ -6,6 +6,7 @@ import { importQuiz } from '../content-hub/api.mjs';
 import { problemLines } from '../content-hub/quizExchange.mjs';
 import { syllabusLabel } from './objectives.mjs';
 import { createCourse, loadCourse } from './api.mjs';
+import { SyllabusCourseDialog } from './SyllabusCourseDialog';
 
 const request = ( options ) => window.wp.apiFetch( options );
 
@@ -24,6 +25,7 @@ export function CourseBuildChoices( { onScratch, onCreated, loading } ) {
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
 	const [ file, setFile ] = useState( null );
+	const [ selecting, setSelecting ] = useState( false );
 	const fileId = useId();
 
 	useEffect( () => {
@@ -40,25 +42,6 @@ export function CourseBuildChoices( { onScratch, onCreated, loading } ) {
 			active = false;
 		};
 	}, [] );
-
-	async function fromSyllabus() {
-		setBusy( true );
-		setError( '' );
-		try {
-			const made = await request( {
-				path: '/ohmylms/v1/courses/from-syllabus',
-				method: 'POST',
-				data: { syllabus_id: Number( syllabusId ) },
-			} );
-			onCreated( made );
-		} catch ( cause ) {
-			setError(
-				cause.message ||
-					__( 'The course could not be made.', 'ohmylms' )
-			);
-			setBusy( false );
-		}
-	}
 
 	async function fromFile() {
 		setBusy( true );
@@ -108,6 +91,13 @@ export function CourseBuildChoices( { onScratch, onCreated, loading } ) {
 
 	return (
 		<div className="ohmylms-build-choices">
+			{ selecting && (
+				<SyllabusCourseDialog
+					syllabusId={ Number( syllabusId ) }
+					onClose={ () => setSelecting( false ) }
+					onCreated={ onCreated }
+				/>
+			) }
 			<h3>{ __( 'How would you like to start?', 'ohmylms' ) }</h3>
 			{ error && (
 				<Notice status="error" isDismissible={ false }>
@@ -134,7 +124,7 @@ export function CourseBuildChoices( { onScratch, onCreated, loading } ) {
 				<h4>{ __( 'From a syllabus', 'ohmylms' ) }</h4>
 				<p>
 					{ __(
-						'Each domain becomes a unit and every skill is linked to its unit. You add the content.',
+						'Choose topics and skills, review the units and lessons, then add activities in your independent course.',
 						'ohmylms'
 					) }
 				</p>
@@ -164,7 +154,7 @@ export function CourseBuildChoices( { onScratch, onCreated, loading } ) {
 							variant="primary"
 							isBusy={ busy }
 							disabled={ busy || loading || ! syllabusId }
-							onClick={ fromSyllabus }
+							onClick={ () => setSelecting( true ) }
 						>
 							{ __( 'Create course from syllabus', 'ohmylms' ) }
 						</Button>

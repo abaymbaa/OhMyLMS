@@ -1,12 +1,19 @@
 /** @jsx createElement */
-import { createElement, Fragment, useEffect } from '@wordpress/element';
+import {
+	createElement,
+	Fragment,
+	useCallback,
+	useEffect,
+	useState,
+} from '@wordpress/element';
+import { Button, Modal } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useCourseEditor } from './useCourseEditor';
 import { useCourseIntegrations } from './useCourseIntegrations';
-import { courseEditPath, orderedChapters } from './model.mjs';
+import { courseEditPath } from './model.mjs';
 import { CourseObjectives } from './CourseObjectives';
 import { CourseSaveStatus } from './CourseSaveStatus';
-import { CourseContentTools } from './CourseContentTools';
-import { CourseReadiness } from './CourseReadiness';
+import { CourseOutlineEditor } from './CourseOutlineEditor';
 
 /**
  * Course orchestration with the existing controls, routes and data store.
@@ -17,8 +24,9 @@ export function createCourseEditor( readRuntime ) {
 		const r = readRuntime();
 		const {
 			I: Controls,
+			Zp: InfoHeader,
 			oz: Toolbar,
-			Sf: Curriculum,
+
 			MH: Settings,
 			JH: Preview,
 			GH: Funnel,
@@ -29,11 +37,50 @@ export function createCourseEditor( readRuntime ) {
 		} = r;
 		const { step = 'content' } = r.f.g();
 		const navigate = r.f.Zp();
+		const [ outlineDirty, setOutlineDirty ] = useState( false );
+		const [ outlineRevision, setOutlineRevision ] = useState( '' );
+		const [ pendingNavigation, setPendingNavigation ] = useState( null );
+		const requestNavigation = useCallback(
+			( target ) => {
+				if ( outlineDirty ) {
+					setPendingNavigation( target );
+				} else {
+					navigate( target );
+				}
+			},
+			[ navigate, outlineDirty ]
+		);
+		useEffect( () => {
+			const guard = ( event ) => {
+				if ( ! outlineDirty ) {
+					return;
+				}
+				const anchor = event.target.closest?.( 'a[href]' );
+				if ( ! anchor || anchor.target === '_blank' ) {
+					return;
+				}
+				const target = new URL( anchor.href, window.location.href );
+				if (
+					target.origin === window.location.origin &&
+					target.pathname === window.location.pathname &&
+					target.search === window.location.search &&
+					target.hash.startsWith( '#/' ) &&
+					target.hash !== window.location.hash
+				) {
+					event.preventDefault();
+					event.stopPropagation();
+					requestNavigation( target.hash.slice( 1 ) );
+				}
+			};
+			document.addEventListener( 'click', guard, true );
+			return () => document.removeEventListener( 'click', guard, true );
+		}, [ outlineDirty, requestNavigation ] );
 		const { totalSteps } = r.JW();
 		const editor = useCourseEditor( {
 			store: r.T.default,
 			courseId,
 			enableSpin,
+			manageStructure: true,
 		} );
 		const dialogs = useCourseIntegrations( {
 			actions: editor.actions,
@@ -72,7 +119,6 @@ export function createCourseEditor( readRuntime ) {
 		}, [ editor.notice ] );
 		const setActiveStep = ( next ) =>
 			navigate( `/course-edit/${ courseId }/${ next }` );
-		const noop = () => {};
 		async function uploadMedia( media, type ) {
 			if ( type === 'video' ) {
 				editor.actions.setCourse( {
@@ -93,6 +139,36 @@ export function createCourseEditor( readRuntime ) {
 		}
 		return (
 			<Fragment>
+				{ pendingNavigation && (
+					<Modal
+						title={ __( 'Unsaved outline changes', 'ohmylms' ) }
+						onRequestClose={ () => setPendingNavigation( null ) }
+					>
+						<p>
+							{ __(
+								'Save your outline draft before leaving, or discard these changes.',
+								'ohmylms'
+							) }
+						</p>
+						<Button
+							variant="secondary"
+							onClick={ () => setPendingNavigation( null ) }
+						>
+							{ __( 'Keep editing', 'ohmylms' ) }
+						</Button>
+						<Button
+							isDestructive
+							onClick={ () => {
+								const target = pendingNavigation;
+								setPendingNavigation( null );
+								setOutlineDirty( false );
+								navigate( target );
+							} }
+						>
+							{ __( 'Discard and leave', 'ohmylms' ) }
+						</Button>
+					</Modal>
+				) }
 				{ contextHolder }
 				<div
 					className={ `ohmylms-course-builder-wrapper ohmylms-steps-${ totalSteps }` }
@@ -134,6 +210,7 @@ export function createCourseEditor( readRuntime ) {
 					} }
 				>
 					<Toolbar
+						onNavigate={ requestNavigation }
 						activeStep={ step }
 						setActiveStep={ setActiveStep }
 						courseId={ courseId }
@@ -185,99 +262,57 @@ export function createCourseEditor( readRuntime ) {
 											if ( step === 'content' ) {
 												return (
 													<Fragment>
-														<Curriculum
-															objectivesPanel={
-																<Fragment>
-																	<CourseObjectives
-																		key={
-																			courseId
-																		}
-																		courseId={
-																			courseId
-																		}
-																	/>
-																	<CourseReadiness
-																		courseId={
-																			courseId
-																		}
-																	/>
-																	<CourseContentTools
-																		courseId={
-																			courseId
-																		}
-																		units={ orderedChapters(
-																			editor.chapters
-																		).map(
-																			(
-																				chapter
-																			) => ( {
-																				id: chapter.id,
-																				name:
-																					chapter.name ||
-																					chapter.title,
-																			} )
-																		) }
-																		actions={
-																			editor.actions
-																		}
-																	/>
-																</Fragment>
-															}
-															handleAutomation={
-																dialogs.openAutomation
-															}
-															handleIntegration={
-																dialogs.openIntegration
-															}
-															courseId={
-																courseId
-															}
-															setIsSaved={ noop }
-															setAutoSave={
-																editor.setAutoSave
-															}
-															setActiveStep={
-																setActiveStep
-															}
-															activeStep={ step }
-															completedSteps={
-																editor.completedSteps
-															}
-															setCompletedSteps={
-																noop
-															}
-															onSave={
-																editor.save
-															}
-															courseDescription={
-																course.description ||
-																''
-															}
-															handleInputChange={
-																editor.updateTitle
-															}
-															onContentChange={
-																editor.updateDescription
-															}
-															handleRemoveMedia={ (
-																type
-															) =>
-																editor.actions.removeFeaturedImage(
-																	courseId,
-																	type
-																)
-															}
-															handleUploadComplete={
-																uploadMedia
-															}
-															hasMedia={ Boolean(
-																course.image_src ||
-																course.video_src
-															) }
-															loading={
-																editor.loading
-															}
-														/>
+														<div className="ohmylms-outline-frame">
+															<details className="ohmylms-outline-course-info">
+																<summary>
+																	{ __(
+																		'Course information and media',
+																		'ohmylms'
+																	) }
+																</summary>
+																<InfoHeader
+																	handleInputChange={
+																		editor.updateTitle
+																	}
+																	onContentChange={
+																		editor.updateDescription
+																	}
+																	handleRemoveMedia={ (
+																		type
+																	) =>
+																		editor.actions.removeFeaturedImage(
+																			courseId,
+																			type
+																		)
+																	}
+																	handleUploadComplete={
+																		uploadMedia
+																	}
+																/>
+															</details>
+															<CourseOutlineEditor
+																onSaved={
+																	setOutlineRevision
+																}
+																onDirtyChange={
+																	setOutlineDirty
+																}
+																courseId={
+																	courseId
+																}
+																editor={
+																	editor
+																}
+															/>
+															<CourseObjectives
+																outlineRevision={
+																	outlineRevision
+																}
+																courseId={
+																	courseId
+																}
+															/>
+														</div>
 													</Fragment>
 												);
 											}

@@ -19,6 +19,26 @@ class LearningController extends RestController {
 		$base = '/courses/(?P<id>\d+)/learning';
 		register_rest_route(
 			$this->namespace,
+			$base . '/practice-guidance',
+			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'permission_callback' => array( $this, 'learner' ),
+				'callback'            => array( $this, 'practice_guidance' ),
+				'args'                => array(
+					'lesson' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
+					'skill'  => array(
+						'type'    => 'integer',
+						'default' => 0,
+						'minimum' => 0,
+					),
+				),
+			)
+		);
+		register_rest_route(
+			$this->namespace,
 			$base,
 			array(
 				array(
@@ -90,6 +110,7 @@ class LearningController extends RestController {
 		foreach ( $data['draft']['items'] as &$item ) {
 			$term         = 'practice' === $item['type'] ? get_term( $item['content_id'], Taxonomy::NAME ) : null;
 			$item['name'] = $term && ! is_wp_error( $term ) ? $term->name : get_the_title( $item['content_id'] );
+			$item['name'] = $item['title'] ?? $item['name'];
 		}
 		unset( $item );
 		$data['chapters']  = array_map(
@@ -175,6 +196,22 @@ class LearningController extends RestController {
 		if ( ! $state ) {
 			$state = CompletionPolicy::status( get_current_user_id(), (int) $request['id'] ); }
 		return is_wp_error( $state ) ? $state : rest_ensure_response( $state + array( 'next_action' => LearningPath::next( $state ) ) );
+	}
+
+	/**
+	 * Current learner's lesson practice gaps; no question payloads are returned.
+	 *
+	 * @param \WP_REST_Request $request Guidance request.
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function practice_guidance( $request ) {
+		$data = \OhMyLMS\Student\PracticeGuidance::get( (int) $request['id'], $request['lesson'], (int) $request['skill'] );
+		if ( is_wp_error( $data ) ) {
+			return $data;
+		}
+		$response = rest_ensure_response( $data + array( 'html' => \OhMyLMS\Student\PracticeGuidance::render( $data ) ) );
+		$response->header( 'Cache-Control', 'private, no-store' );
+		return $response;
 	}
 
 	public function complete( $request ) {

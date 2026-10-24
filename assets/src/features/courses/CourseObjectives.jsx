@@ -14,8 +14,9 @@ import { ObjectivePicker } from './ObjectivePicker';
  * Course targets reuse official syllabus records without changing completion requirements.
  * @param root0
  * @param root0.courseId
+ * @param root0.outlineRevision Refresh coverage after outline changes.
  */
-export function CourseObjectives( { courseId } ) {
+export function CourseObjectives( { courseId, outlineRevision } ) {
 	const [ data, setData ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ notice, setNotice ] = useState( '' );
@@ -47,7 +48,7 @@ export function CourseObjectives( { courseId } ) {
 		return () => {
 			active = false;
 		};
-	}, [ courseId, attempt ] );
+	}, [ courseId, attempt, outlineRevision ] );
 
 	async function save( rows ) {
 		if ( busy ) {

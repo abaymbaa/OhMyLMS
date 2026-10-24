@@ -331,6 +331,23 @@ final class SyllabusCourse {
 		$course_id = self::course_id( $syllabus_id );
 		if ( ! $course_id ) {
 			return true; }
+		return \OhMyLMS\Learning\CourseStructure::atomic(
+			$course_id,
+			Catalog::revision( $course_id ),
+			static function () use ( $syllabus_id, $course_id ) {
+				return self::sync_course( $syllabus_id, $course_id );
+			}
+		);
+	}
+
+	/**
+	 * Mirror one syllabus while holding the common course lock and transaction.
+	 *
+	 * @param int $syllabus_id Syllabus ID.
+	 * @param int $course_id Existing mirrored course ID.
+	 * @return true|\WP_Error
+	 */
+	private static function sync_course( $syllabus_id, $course_id ) {
 		$outline = Syllabus::outline( $syllabus_id );
 		if ( is_wp_error( $outline ) ) {
 			return $outline; }

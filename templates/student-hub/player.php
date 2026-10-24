@@ -48,19 +48,51 @@ foreach ( $player_outline['units'] as $player_index => $player_candidate ) {
 					<?php $player_selected = $player_index === $player_unit_index; ?>
 					<details class="oml-player-unit" <?php echo $player_selected ? 'open' : ''; ?>>
 						<summary><?php echo esc_html( $player_unit['title'] ); ?></summary>
-						<ul class="oml-player-activities">
-							<?php foreach ( $player_unit['items'] as $player_item ) : ?>
-									<?php $player_is_current = $player_selected && ( 'practice' === $player_kind ? 'practice' === $player_item['kind'] && (int) ( $player_item['term_id'] ?? 0 ) === (int) $player_current : 'practice' !== $player_item['kind'] && (int) ( $player_item['content_id'] ?? 0 ) === (int) $player_current ); ?>
-								<li>
-									<a class="oml-player-activity" href="<?php echo esc_url( $player_item['url'] ); ?>" <?php echo $player_is_current ? 'aria-current="page"' : ''; ?>>
-										<span class="oml-player-activity-kind"><?php echo esc_html( $player_kinds[ $player_item['kind'] ] ?? __( 'Activity', 'ohmylms' ) ); ?><?php echo $player_item['complete'] ? ' · ' . esc_html__( 'Completed', 'ohmylms' ) : ''; ?></span>
-										<span><?php echo esc_html( $player_item['name'] ); ?></span>
-									</a>
-								</li>
-							<?php endforeach; ?>
-						</ul>
+						<?php foreach ( $player_unit['groups'] ?? array() as $player_lesson ) : ?>
+							<section class="oml-player-lesson">
+								<h3><a href="<?php echo esc_url( \OhMyLMS\Student\LessonJourney::url( $player_outline['id'], $player_lesson['id'] ) ); ?>"><?php echo esc_html( $player_lesson['title'] ); ?></a></h3>
+								<p><?php /* translators: 1: complete, 2: total activities. */ echo esc_html( sprintf( __( '%1$d of %2$d activities complete', 'ohmylms' ), $player_lesson['activity_done'], $player_lesson['activity_total'] ) ); ?></p>
+								<?php
+								ohmylms_get_template(
+									'student-hub/player-rows.php',
+									array(
+										'player_course_id' => $player_outline['id'],
+										'player_rows'      => $player_lesson['items'],
+										'player_kind'      => $player_kind,
+										'player_current'   => $player_current,
+										'player_kinds'     => $player_kinds,
+									)
+								);
+								?>
+							</section>
+						<?php endforeach; ?>
+						<?php
+						ohmylms_get_template(
+							'student-hub/player-rows.php',
+							array(
+								'player_course_id' => $player_outline['id'],
+								'player_rows'      => $player_unit['ungrouped'] ?? $player_unit['items'],
+								'player_kind'      => $player_kind,
+								'player_current'   => $player_current,
+								'player_kinds'     => $player_kinds,
+							)
+						);
+						?>
 					</details>
 				<?php endforeach; ?>
+				<?php
+				if ( ! empty( $player_outline['challenge'] ) ) {
+					ohmylms_get_template(
+						'student-hub/player-rows.php',
+						array(
+							'player_course_id' => $player_outline['id'],
+							'player_rows'      => array( $player_outline['challenge'] ),
+							'player_kind'      => $player_kind,
+							'player_current'   => $player_current,
+							'player_kinds'     => $player_kinds,
+						)
+					); }
+				?>
 			</nav>
 		<?php endif; ?>
 		<main class="oml-player-main" id="oml-player-main" tabindex="-1">

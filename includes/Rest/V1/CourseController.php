@@ -1356,7 +1356,7 @@ class CourseController extends RestController {
 		}
 
 		$duplicate_course_obj = new \OhMyLMS\Duplicate\Course( $course_id );
-		$new_course_id        = $duplicate_course_obj->duplicate();
+		$new_course_id        = \OhMyLMS\Learning\UnitSnapshots::authoring( array( $duplicate_course_obj, 'duplicate' ) );
 		$response             = array(
 			'status'  => 'success',
 			'message' => __( 'Course duplicated successfully', 'ohmylms' ),

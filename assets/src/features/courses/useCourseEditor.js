@@ -8,7 +8,12 @@ import {
 	completedCourseSteps,
 	mergeSavedCourse,
 } from './model.mjs';
-export function useCourseEditor( { store, courseId, enableSpin } ) {
+export function useCourseEditor( {
+	store,
+	courseId,
+	enableSpin,
+	manageStructure = false,
+} ) {
 	const state = useSelect(
 		( select ) => {
 			const data = select( store );
@@ -39,9 +44,14 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 			JSON.stringify( [
 				state.course?.name,
 				state.course?.description,
-				orderedChapters( state.chapters ),
+				manageStructure ? null : orderedChapters( state.chapters ),
 			] ),
-		[ state.course?.name, state.course?.description, state.chapters ]
+		[
+			state.course?.name,
+			state.course?.description,
+			state.chapters,
+			manageStructure,
+		]
 	);
 	const dirty = ! loading && savedKey !== null && savedKey !== currentKey;
 	const latestKey = useRef( currentKey );
@@ -105,14 +115,19 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 		setSaving( true );
 		setError( null );
 		try {
-			const saved = await saveCourseWithChapters(
-				courseId,
-				prepareCoursePayload( state.course, {
-					status,
-					date,
-				} ),
-				orderedChapters( state.chapters )
-			);
+			const saved = manageStructure
+				? await updateCourse(
+						courseId,
+						prepareCoursePayload( state.course, { status, date } )
+					)
+				: await saveCourseWithChapters(
+						courseId,
+						prepareCoursePayload( state.course, {
+							status,
+							date,
+						} ),
+						orderedChapters( state.chapters )
+					);
 			if ( current !== generation.current ) {
 				return false;
 			}
@@ -249,6 +264,24 @@ export function useCourseEditor( { store, courseId, enableSpin } ) {
 		savedAt,
 		error,
 		save,
+		refreshStructure: async () => {
+			const fresh = await loadCourse( courseId );
+			for ( const chapter of orderedChapters( state.chapters ) ) {
+				actions.removeChapterFromCourse( chapter.id );
+			}
+			for ( const chapter of fresh.chapters || [] ) {
+				actions.addChapterToCourse( courseId, chapter );
+				actions.setContentsToChapter(
+					chapter.id,
+					chapter.contents || []
+				);
+			}
+			actions.setCourse( {
+				...fresh,
+				...latestCourse.current,
+				chapters: fresh.chapters,
+			} );
+		},
 		setAutoSave,
 		toggleCommunity,
 		completedSteps: completedCourseSteps(
