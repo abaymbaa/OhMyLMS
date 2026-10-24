@@ -132,14 +132,54 @@ class CourseStructureController extends RestController {
 					$data['skill_codes'][ $outcome['term_id'] ] = $code;
 				}
 				$origin                                    = \OhMyLMS\Skills\Provenance::read( $term->term_id );
-				$data['skill_meta'][ $outcome['term_id'] ] = array_intersect_key( $origin, array_flip( array( 'source', 'review', 'status', 'model', 'confidence' ) ) );
+				$data['skill_meta'][ $outcome['term_id'] ] = array_intersect_key( $origin, array_flip( array( 'source', 'review', 'status', 'model', 'confidence', 'prompt', 'ref' ) ) );
 			}
 		}
-		$data['create_urls'] = array(
+		$data['subject']           = self::course_subject( array_keys( $data['skill_names'] ) );
+		$data['can_review_skills'] = current_user_can( 'manage_options' );
+		$data['create_urls']       = array(
 			'lesson' => admin_url( 'post-new.php?post_type=' . OHMYLMS_LESSON_CPT ),
 			'quiz'   => admin_url( 'post-new.php?post_type=' . OHMYLMS_QUIZ_CPT ),
 		);
 		return $data;
+	}
+
+	/**
+	 * The subject most of a course's skills belong to, or empty.
+	 *
+	 * @param int[] $term_ids Skills the outline uses.
+	 * @return string
+	 */
+	private static function course_subject( array $term_ids ) {
+		$counts = array();
+		foreach ( $term_ids as $term_id ) {
+			$subject = (string) get_term_meta( (int) $term_id, \OhMyLMS\Curriculum\Comparison::SUBJECT_META, true );
+			if ( '' !== $subject ) {
+				$counts[ $subject ] = ( $counts[ $subject ] ?? 0 ) + 1;
+			}
+		}
+		arsort( $counts );
+		return (string) ( array_key_first( $counts ) ?? '' );
+	}
+
+	/**
+	 * Subjects an author can choose for skill suggestions: those with a profile or with shared skills.
+	 *
+	 * @return string[]
+	 */
+	private static function subjects() {
+		$subjects = array_keys( \OhMyLMS\Skills\SubjectProfiles::subjects_in_use() );
+		foreach ( \OhMyLMS\Skills\SubjectProfiles::all() as $key => $profile ) {
+			if ( \OhMyLMS\Skills\SubjectProfiles::GENERIC !== $key ) {
+				$subjects[] = $profile['label'];
+			}
+		}
+		$unique = array();
+		foreach ( $subjects as $subject ) {
+			$unique[ \OhMyLMS\Skills\SubjectProfileModel::key( $subject ) ] = $unique[ \OhMyLMS\Skills\SubjectProfileModel::key( $subject ) ] ?? $subject;
+		}
+		sort( $unique );
+		return array_values( $unique );
 	}
 
 	/**
@@ -156,7 +196,10 @@ class CourseStructureController extends RestController {
 				'status'    => $request['status'] ?? 'pending',
 				'page'      => $request['page'] ?? 1,
 			)
-		) + array( 'sources' => \OhMyLMS\Skills\SkillSources::describe() );
+		) + array(
+			'sources'  => \OhMyLMS\Skills\SkillSources::describe(),
+			'subjects' => self::subjects(),
+		);
 	}
 
 	/**

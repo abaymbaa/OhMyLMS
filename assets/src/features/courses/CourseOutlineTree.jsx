@@ -3,6 +3,8 @@ import { createElement, useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { outlineUnitSummary } from './outline.mjs';
+import { provenanceBadge } from './provenance.mjs';
+import { badgeLabel } from './SkillProvenance';
 
 const same = ( left, right ) => String( left || 0 ) === String( right || 0 );
 const terminal = ( item ) =>
@@ -162,6 +164,11 @@ export function CourseOutlineTree( {
 			badge = __( 'Draft', 'ohmylms' );
 		} else if ( 'practice' === item.type && ! names?.[ item.content_id ] ) {
 			badge = __( 'Missing skill', 'ohmylms' );
+		} else if ( 'practice' === item.type ) {
+			const origin = provenanceBadge(
+				draft.skill_meta?.[ item.content_id ]
+			);
+			badge = origin ? badgeLabel( origin.kind ) : '';
 		}
 		return (
 			<li
@@ -219,6 +226,14 @@ export function CourseOutlineTree( {
 			>
 				{ outlineSkillName( names, outcome.term_id ) }
 			</Button>
+			{ provenanceBadge( draft.skill_meta?.[ outcome.term_id ] ) && (
+				<span className="ohmylms-outline-badge is-warning">
+					{ badgeLabel(
+						provenanceBadge( draft.skill_meta?.[ outcome.term_id ] )
+							.kind
+					) }
+				</span>
+			) }
 			<span
 				className={ `ohmylms-outline-badge${
 					names?.[ outcome.term_id ] ? '' : ' is-warning'

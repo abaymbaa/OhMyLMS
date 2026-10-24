@@ -80,6 +80,20 @@ Runs record the prompt version and profile like other analyses. `ai_suggestions`
 
 The MCP tools are `list_skill_sources`, `suggest_course_skills`, `list_course_skill_suggestions`, `review_course_skill_suggestions`, `review_skill`, `archive_skill` and `restore_skill`.
 
+## In the course editor
+
+- **Suggest skills with AI:** a selected lesson shows this panel.
+  - **Subject:** choose one. The panel defaults to the subject most of the course's skills use.
+  - **Saving first:** a lesson the outline hasn't saved yet asks you to save first, because the source reads the saved lesson.
+  - **Suggestions:** each shows whether it is a library skill or a new skill, its confidence, its reason and, for a new skill, an editable name.
+  - **Add to lesson:** accepts the suggestion and links the skill to the lesson with its practice, in the unsaved outline. **Dismiss** rejects it. **Add all** accepts every suggestion shown.
+  - **Pending suggestions** stay with their lesson until reviewed.
+- **Badges:** practice and skill rows show "AI · pending review", "Pending review", "Rejected" or "Archived".
+- **Origin and review:** the skill panel, and the panel of a practice activity, shows where the skill came from (source, model and confidence) and its review state. Administrators see **Approve skill**, **Reject skill** and **Archive / Restore skill**. These change the skill library at once and do not mark the outline as edited.
+- **Readiness:** the Readiness tab lists pending and rejected skills as publishing blockers.
+
+The structure response adds `subject` (the most common subject of the outline's skills) and `can_review_skills`. The suggestions list adds `subjects` for the panel's subject choice.
+
 ## Verification
 
 - `php tests/php/course-skill-unit.php`: 12 checks of the course prompt and its reply parsing.
@@ -89,3 +103,10 @@ The MCP tools are `list_skill_sources`, `suggest_course_skills`, `list_course_sk
   - pending and rejected readiness, administrator review, and deleting an unused skill;
   - the course suggestion run, listing, accepting reuse and new skills, and course isolation;
   - backfill, MCP definitions and anonymous denial.
+- `node --test tests/js/skill-provenance.test.mjs`: badges, suggestions per lesson, accepted skills and saved-lesson checks.
+- Live check on 800.local:
+  - A course-content run on a fractions lesson proposed three new skills.
+  - Adding one linked it with an "AI · pending review" badge.
+  - Saving kept it, and Readiness listed it as a blocker.
+  - Archive and restore round-tripped without editing the outline.
+  - The panel fits phone width.

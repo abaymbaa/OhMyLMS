@@ -21,6 +21,9 @@ import { CourseStructurePublish } from './CourseStructurePublish';
 import { ActivityCreateForm } from './ActivityCreateForm';
 import { CourseReadiness } from './CourseReadiness';
 import { CourseOutlineTree, outlineSkillName } from './CourseOutlineTree';
+import { CourseSkillSuggestions } from './CourseSkillSuggestions';
+import { SkillProvenance } from './SkillProvenance';
+import { placeSaved } from './provenance.mjs';
 import {
 	addOutlinePractice,
 	dropOutlineActivity,
@@ -372,6 +375,59 @@ export function CourseOutlineEditor( {
 		} else {
 			program( dropOutlineActivity( draft.program, id, target ) );
 		}
+	}
+	function addSuggestedSkills( place, skills ) {
+		const linked = [];
+		setDraft( ( current ) => {
+			let next = current;
+			for ( const skill of skills ) {
+				const placed = addOutlinePractice( next.program, {
+					termId: skill.termId,
+					unitId: place.unitId,
+					groupId: place.groupId,
+					id: uuid(),
+				} );
+				next = {
+					...next,
+					skill_names: {
+						...next.skill_names,
+						[ skill.termId ]: skill.name,
+					},
+					skill_meta: {
+						...next.skill_meta,
+						[ skill.termId ]:
+							next.skill_meta?.[ skill.termId ] || skill.meta,
+					},
+					program: placed || next.program,
+				};
+				if ( placed ) {
+					linked.push( skill.termId );
+				}
+			}
+			return next;
+		} );
+		setNotice(
+			sprintf(
+				/* translators: %d: number of skills. */
+				_n(
+					'%d skill added. Save the outline draft to keep it.',
+					'%d skills added. Save the outline draft to keep them.',
+					skills.length,
+					'ohmylms'
+				),
+				skills.length
+			)
+		);
+		return linked;
+	}
+	function updateSkillMeta( termId, patch ) {
+		setDraft( ( current ) => ( {
+			...current,
+			skill_meta: {
+				...current.skill_meta,
+				[ termId ]: { ...current.skill_meta?.[ termId ], ...patch },
+			},
+		} ) );
 	}
 	function removeSkills( ids ) {
 		program( removeOutlineSkills( draft.program, ids ) );
@@ -974,6 +1030,21 @@ export function CourseOutlineEditor( {
 										) }
 									</Notice>
 								) }
+								{ draft.skill_names?.[ skill.term_id ] && (
+									<SkillProvenance
+										termId={ skill.term_id }
+										meta={
+											draft.skill_meta?.[ skill.term_id ]
+										}
+										canReview={ !! draft.can_review_skills }
+										onChange={ ( patch ) =>
+											updateSkillMeta(
+												skill.term_id,
+												patch
+											)
+										}
+									/>
+								) }
 								<CheckboxControl
 									label={ __(
 										'Required for completion',
@@ -1299,6 +1370,28 @@ export function CourseOutlineEditor( {
 										</Button>
 									) ) }
 								</div>
+								<CourseSkillSuggestions
+									courseId={ courseId }
+									place={ {
+										unitId: lesson.chapter_id,
+										groupId: lesson.id,
+									} }
+									saved={ placeSaved( baseline, {
+										unitId: lesson.chapter_id,
+										groupId: lesson.id,
+									} ) }
+									subject={ draft.subject || '' }
+									busy={ busy }
+									onAdd={ ( skills ) =>
+										addSuggestedSkills(
+											{
+												unitId: lesson.chapter_id,
+												groupId: lesson.id,
+											},
+											skills
+										)
+									}
+								/>
 								{ draft.program.outcomes.some(
 									( row ) => row.group_id === lesson.id
 								) && (
@@ -1458,17 +1551,40 @@ export function CourseOutlineEditor( {
 										</Notice>
 									) }
 								{ activity.type === 'practice' ? (
-									<p>
-										{ sprintf(
-											/* translators: %s: practice skill name. */ __(
-												'Practices skill: %s',
-												'ohmylms'
-											),
-											draft.skill_names?.[
-												activity.content_id
-											] || activity.name
+									<>
+										<p>
+											{ sprintf(
+												/* translators: %s: practice skill name. */ __(
+													'Practices skill: %s',
+													'ohmylms'
+												),
+												draft.skill_names?.[
+													activity.content_id
+												] || activity.name
+											) }
+										</p>
+										{ draft.skill_names?.[
+											activity.content_id
+										] && (
+											<SkillProvenance
+												termId={ activity.content_id }
+												meta={
+													draft.skill_meta?.[
+														activity.content_id
+													]
+												}
+												canReview={
+													!! draft.can_review_skills
+												}
+												onChange={ ( patch ) =>
+													updateSkillMeta(
+														activity.content_id,
+														patch
+													)
+												}
+											/>
 										) }
-									</p>
+									</>
 								) : (
 									<fieldset>
 										<legend>

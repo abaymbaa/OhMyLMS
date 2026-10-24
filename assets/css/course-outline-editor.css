@@ -448,6 +448,63 @@
 	font-size: 14px;
 }
 
+/* AI skill suggestions and skill origin. */
+.ohmylms-skill-suggestions,
+.ohmylms-skill-provenance {
+	margin: 16px 0;
+	padding: 12px 16px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: var(--oml-radius-card, 8px);
+	background: #f6f7f7;
+}
+
+.ohmylms-skill-suggestions h3,
+.ohmylms-skill-provenance h3 {
+	margin: 0 0 4px;
+	font-size: 14px;
+}
+
+.ohmylms-skill-suggestions-start {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: flex-end;
+}
+
+.ohmylms-skill-suggestion-list {
+	margin: 12px 0;
+	padding: 0;
+	list-style: none;
+}
+
+.ohmylms-skill-suggestion-list li {
+	margin-bottom: 8px;
+	padding: 10px 12px;
+	border: 1px solid var(--oml-border, #dcdcde);
+	border-radius: 6px;
+	background: #fff;
+}
+
+.ohmylms-skill-suggestion-head {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	margin-bottom: 4px;
+}
+
+.ohmylms-outline-badge.is-new {
+	background: var(--oml-primary-soft, #e8eaff);
+	color: var(--oml-primary, #3858e9);
+}
+
+.ohmylms-skill-suggestion-actions,
+.ohmylms-skill-provenance-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: center;
+}
+
 @media (max-width: 960px) {
 
 	.ohmylms-outline-columns {
