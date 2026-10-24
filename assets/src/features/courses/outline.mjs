@@ -139,3 +139,170 @@ export function outlineLessonReadiness( program ) {
 		};
 	} );
 }
+
+/**
+ * One label for where the outline stands, for the editor header.
+ *
+ * @param {Object}  state             Editor state.
+ * @param {boolean} state.saving      A save or publication is running.
+ * @param {boolean} state.dirty       There are local edits that are not saved.
+ * @param {boolean} state.unpublished The saved draft differs from the published version.
+ * @return {string} One of saving, unsaved, unpublished or published.
+ */
+export function outlineStatus( { saving, dirty, unpublished } ) {
+	if ( saving ) {
+		return 'saving';
+	}
+	if ( dirty ) {
+		return 'unsaved';
+	}
+	return unpublished ? 'unpublished' : 'published';
+}
+
+/**
+ * Course skill outcomes whose shared skill no longer exists in the library.
+ *
+ * @param {Object} program Draft program.
+ * @param {Object} names   Skill labels keyed by term ID; missing skills have none.
+ * @return {number[]} Term IDs.
+ */
+export function missingOutlineSkills( program, names ) {
+	return program.outcomes
+		.filter( ( row ) => ! names?.[ row.term_id ] )
+		.map( ( row ) => row.term_id );
+}
+
+/**
+ * Remove skill outcomes with their practice placements and activity coverage links.
+ *
+ * @param {Object}   program Draft program.
+ * @param {number[]} ids     Term IDs to remove.
+ * @return {Object} Updated program.
+ */
+export function removeOutlineSkills( program, ids ) {
+	const removed = ( id ) => ids.includes( id );
+	return {
+		...program,
+		outcomes: program.outcomes.filter(
+			( row ) => ! removed( row.term_id )
+		),
+		items: program.items
+			.filter(
+				( item ) =>
+					item.type !== 'practice' || ! removed( item.content_id )
+			)
+			.map( ( item ) =>
+				item.skill_ids?.some( removed )
+					? {
+							...item,
+							skill_ids: item.skill_ids.filter(
+								( id ) => ! removed( id )
+							),
+						}
+					: item
+			),
+	};
+}
+
+/**
+ * Where a skill can be practised from: a lesson's practice is the skill itself, as on Khan Academy.
+ * A skill already linked to another lesson stays there, because a course places each skill once.
+ *
+ * @param {Object}        program       Draft program.
+ * @param {number}        termId        Skill term ID.
+ * @param {Object}        place         Destination.
+ * @param {number|string} place.unitId  Unit ID.
+ * @param {string}        place.groupId Lesson UUID, or empty for the unit.
+ * @return {string} One of new, move, linked, elsewhere or placed.
+ */
+export function practicePlacement( program, termId, { unitId, groupId } ) {
+	if (
+		program.items.some(
+			( item ) => item.type === 'practice' && item.content_id === termId
+		)
+	) {
+		return 'placed';
+	}
+	const outcome = program.outcomes.find( ( row ) => row.term_id === termId );
+	if ( ! outcome ) {
+		return 'new';
+	}
+	const sameUnit = String( outcome.chapter_id || 0 ) === String( unitId );
+	if ( sameUnit && ( outcome.group_id || '' ) === ( groupId || '' ) ) {
+		return 'linked';
+	}
+	return outcome.group_id ? 'elsewhere' : 'move';
+}
+
+/**
+ * Link a skill to a lesson (or unit) and place its practice in one step.
+ *
+ * @param {Object}        program       Draft program.
+ * @param {Object}        skill         Skill choice.
+ * @param {number}        skill.termId  Skill term ID.
+ * @param {number|string} skill.unitId  Unit ID.
+ * @param {string}        skill.groupId Lesson UUID, or empty for the unit.
+ * @param {string}        skill.id      New placement UUID.
+ * @return {Object|null} Updated program, or null when the skill is placed elsewhere.
+ */
+export function addOutlinePractice( program, { termId, unitId, groupId, id } ) {
+	const placement = practicePlacement( program, termId, { unitId, groupId } );
+	if ( 'elsewhere' === placement || 'placed' === placement ) {
+		return null;
+	}
+	const scope = {
+		chapter_id: unitId,
+		...( groupId ? { group_id: groupId } : {} ),
+	};
+	let outcomes = program.outcomes;
+	if ( 'new' === placement ) {
+		outcomes = [
+			...outcomes,
+			{
+				term_id: termId,
+				required: false,
+				target: 'proficient',
+				chapter_id: unitId,
+				group_id: groupId || '',
+			},
+		];
+	} else if ( 'move' === placement ) {
+		outcomes = outcomes.map( ( row ) =>
+			row.term_id === termId
+				? { ...row, chapter_id: unitId, group_id: groupId || '' }
+				: row
+		);
+	}
+	return {
+		...program,
+		outcomes,
+		items: [
+			...program.items,
+			{
+				id,
+				content_id: termId,
+				type: 'practice',
+				style: 'practice',
+				required: false,
+				...scope,
+			},
+		],
+	};
+}
+
+/**
+ * Counts shown on a unit card.
+ *
+ * @param {Object}        program Draft program.
+ * @param {number|string} unitId  Unit ID.
+ * @return {{lessons: number, skills: number, activities: number}} Counts.
+ */
+export function outlineUnitSummary( program, unitId ) {
+	const inUnit = ( row ) =>
+		String( row.chapter_id || 0 ) === String( unitId );
+	return {
+		lessons: ( program.groups || [] ).filter( inUnit ).length,
+		skills: program.outcomes.filter( inUnit ).length,
+		activities: program.items.filter( inUnit ).length,
+	};
+}

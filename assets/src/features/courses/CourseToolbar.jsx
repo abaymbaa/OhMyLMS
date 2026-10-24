@@ -129,7 +129,6 @@ export function createCourseToolbar( readRuntime ) {
 						) }
 					>
 						<Controls.FlexItemWP
-							flex={ 1 }
 							className={ 'ohmylms-back-button-wrapper' }
 						>
 							<Controls.TooltipWP
@@ -146,7 +145,6 @@ export function createCourseToolbar( readRuntime ) {
 							</Controls.TooltipWP>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP
-							flex={ 2 }
 							className={ 'ohmylms-course-single-steps-item' }
 						>
 							<Controls.FlexWP
@@ -271,7 +269,6 @@ export function createCourseToolbar( readRuntime ) {
 							</Controls.FlexWP>
 						</Controls.FlexItemWP>
 						<Controls.FlexItemWP
-							flex={ 1 }
 							className={ 'ohmylms-course-actions-wrapper' }
 						>
 							<Controls.FlexWP

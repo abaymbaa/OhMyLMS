@@ -44,3 +44,15 @@ The browser test covers adding a unit/lesson/resource, course-specific naming, r
 Local verification on October 24, 2026: browser workflow passed; unified outline integration 22 checks, shared structure integration 61 checks, subjects integration 33 checks, learning model 37 checks and structure tools 295 checks passed. JavaScript: 588 passed, one skipped. Source contracts, PHP syntax, new editor ESLint/CSS checks and targeted new PHP standards checks passed. The build succeeded with two existing webpack size warnings. Temporary browser records and the authentication session were removed.
 
 Repository-wide standards still contain pre-existing findings: PHP violations, 316 JavaScript errors and 37 warnings, 125 CSS errors, and formatting findings in five unrelated files. Modified legacy course orchestration/hooks also retain six React dependency warnings. No blanket baseline or disabled rule was added.
+
+## Editor layout (October 24, 2026)
+
+The Content step follows the Khan Academy course shape:
+
+- **Header**: one status line (unsaved changes, draft not yet published, or published), a link to any publishing blockers, and **Discard changes**/**Reload saved outline**, **Save outline draft** and **Preview draft outline**. On the Content step the header replaces the separate course save-status bar; course information still saves through its existing metadata save.
+- **Tabs**: Outline, Readiness (with the blocker count), Syllabus alignment (the course objective mappings) and Course info. Readiness links switch back to the Outline tab and select the item to repair.
+- **Outline**: each unit is a card that can be collapsed, with its lesson, skill and activity counts. Lessons list their activities with type icons and draft or missing badges, plus linked skills that have no practice yet. Skills and activities outside a lesson appear under "Not in a lesson". Every unit ends with an **Add unit test** slot and the course ends with an **Add course challenge** slot; these pickers list only quizzes whose assessment style matches.
+- **Practice is the skill**: Add practice lists the skills already linked to the lesson and, when you search, the whole skill library. Choosing a library skill links it to the lesson and places its practice in one step. A skill already linked to another lesson stays there and cannot be chosen.
+- **Skills**: selecting a skill opens a panel to change whether it is required, move it to a lesson in its unit, add its practice or remove it from the course. Skills whose shared term no longer exists show as "Missing skill #ID". The server rejects saves while they remain, so the editor offers **Remove missing skills**, which also removes their practice placements and activity coverage links.
+
+At 960px and below the toolbar wraps the steps under Back and the actions. At 782px and below it scrolls with the page and stays pinned to the top. No REST contract, stored field or assessment contract changed.

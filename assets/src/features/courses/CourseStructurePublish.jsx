@@ -1,5 +1,5 @@
 /** @jsx createElement */
-import { createElement, useState } from '@wordpress/element';
+import { createElement, Fragment, useState } from '@wordpress/element';
 import { Button, CheckboxControl, Modal, Notice } from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 import { __ } from '@wordpress/i18n';
@@ -11,17 +11,27 @@ import { __ } from '@wordpress/i18n';
  * @param {number}                     root0.courseId      Course ID.
  * @param {Object}                     root0.editor        Existing editor state and save action.
  * @param {(revision: string) => void} [root0.onPublished] Advance the outline's reviewed revision after publication.
+ * @param {(message: string) => void}  root0.onNotice      Show a success message beside the outline.
+ * @param {(message: string) => void}  root0.onError       Show an error beside the outline.
+ * @param {boolean}                    [root0.primary]     Whether publishing is the next step.
  */
-export function CourseStructurePublish( { courseId, editor, onPublished } ) {
+export function CourseStructurePublish( {
+	courseId,
+	editor,
+	onPublished,
+	onNotice,
+	onError,
+	primary = false,
+} ) {
 	const [ preview, setPreview ] = useState( null );
 	const [ busy, setBusy ] = useState( false );
 	const [ error, setError ] = useState( '' );
-	const [ notice, setNotice ] = useState( '' );
 	const [ applyExisting, setApplyExisting ] = useState( false );
 	async function openPreview() {
 		setBusy( true );
 		setError( '' );
-		setNotice( '' );
+		onNotice( '' );
+		onError( '' );
 		try {
 			if (
 				editor.dirty &&
@@ -43,7 +53,7 @@ export function CourseStructurePublish( { courseId, editor, onPublished } ) {
 			);
 			setApplyExisting( false );
 		} catch ( cause ) {
-			setError(
+			onError(
 				cause.message ||
 					__( 'Could not load the draft preview.', 'ohmylms' )
 			);
@@ -67,7 +77,7 @@ export function CourseStructurePublish( { courseId, editor, onPublished } ) {
 			if ( published.structure_revision ) {
 				onPublished?.( published.structure_revision );
 			}
-			setNotice(
+			onNotice(
 				__(
 					'Course outline published. Learners will see the published version assigned to them.',
 					'ohmylms'
@@ -84,34 +94,15 @@ export function CourseStructurePublish( { courseId, editor, onPublished } ) {
 		}
 	}
 	return (
-		<section
-			className="ohmylms-course-structure-publish"
-			aria-label={ __( 'Course outline publishing', 'ohmylms' ) }
-		>
-			<p>
-				{ __(
-					'Unit edits are saved as drafts. Preview and publish when the outline is ready for learners.',
-					'ohmylms'
-				) }
-			</p>
+		<Fragment>
 			<Button
-				variant="secondary"
+				variant={ primary ? 'primary' : 'secondary' }
 				onClick={ openPreview }
 				disabled={ busy || editor.saving }
-				isBusy={ busy }
+				isBusy={ busy && ! preview }
 			>
 				{ __( 'Preview draft outline', 'ohmylms' ) }
 			</Button>
-			{ notice && (
-				<Notice status="success" onRemove={ () => setNotice( '' ) }>
-					{ notice }
-				</Notice>
-			) }
-			{ error && ! preview && (
-				<Notice status="error" onRemove={ () => setError( '' ) }>
-					{ error }
-				</Notice>
-			) }
 			{ preview && (
 				<Modal
 					title={ __( 'Draft course outline', 'ohmylms' ) }
@@ -192,6 +183,6 @@ export function CourseStructurePublish( { courseId, editor, onPublished } ) {
 					</Button>
 				</Modal>
 			) }
-		</section>
+		</Fragment>
 	);
 }

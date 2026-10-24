@@ -34,8 +34,10 @@ test('selects syllabus skills, reviews lessons and opens an independent draft', 
   await page.screenshot({ path: testInfo.outputPath('syllabus-generated-course.png'), fullPage: true });
 
   const checklist = page.locator('.ohmylms-outline-readiness');
+  await page.getByRole('tab', { name: /^Readiness/ }).click();
   await checklist.locator('summary').click();
   await expect(checklist.getByText('Needs activities.', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Outline', exact: true }).click();
   const rememberResource = async responsePromise => {
     const response = await responsePromise;
     expect(response.ok()).toBe(true);
@@ -89,8 +91,10 @@ test('selects syllabus skills, reviews lessons and opens an independent draft', 
   expect(saved.program.items.find(item => item.name === 'Read numbers').skill_ids).toHaveLength(2);
   expect(saved.program.items.find(item => item.type === 'quiz').skill_ids).toHaveLength(2);
   expect(saved.program.items.find(item => item.type === 'practice').group_id).toBe(saved.program.groups[0].id);
+  await page.getByRole('tab', { name: /^Readiness/ }).click();
   await checklist.locator('summary').click();
   await expect(checklist.getByText('Publish the draft resources before publishing the outline.', { exact: true })).toBeVisible();
+  await page.getByRole('tab', { name: 'Outline', exact: true }).click();
   await tree.getByRole('button', { name: 'Number', exact: true }).click();
   await page.getByRole('button', { name: 'Add lesson', exact: true }).click();
   await page.getByLabel('Lesson title', { exact: true }).fill('Extra skills lesson');

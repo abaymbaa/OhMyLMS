@@ -5,16 +5,26 @@ import { Button, Spinner } from '@wordpress/components';
 import { loadCatalog } from '../content-hub/api.mjs';
 import { ImportButton } from '../content-hub/ImportButton';
 import { LessonReadiness } from './LessonReadiness';
+import { missingOutlineSkills } from './outline.mjs';
 
 /**
  * Saved publication checks alongside current local lesson guidance.
- * @param {Object}                                    props          Component properties.
- * @param {number}                                    props.courseId Course ID.
- * @param {Object}                                    props.draft    Current outline.
- * @param {boolean}                                   props.dirty    Whether the outline has unsaved edits.
- * @param {(type: string, id: string|number) => void} props.onSelect Select the repair destination.
+ * @param {Object}                                    props                 Component properties.
+ * @param {number}                                    props.courseId        Course ID.
+ * @param {Object}                                    props.draft           Current outline.
+ * @param {boolean}                                   props.dirty           Whether the outline has unsaved edits.
+ * @param {(type: string, id: string|number) => void} props.onSelect        Select the repair destination.
+ * @param {() => void}                                props.onRemoveMissing Remove skills that no longer exist.
+ * @param {(summary: Object|null) => void}            props.onSummary       Report the blocker count to the editor header.
  */
-export function CourseReadiness( { courseId, draft, dirty, onSelect } ) {
+export function CourseReadiness( {
+	courseId,
+	draft,
+	dirty,
+	onSelect,
+	onRemoveMissing,
+	onSummary,
+} ) {
 	const [ report, setReport ] = useState( null );
 	const [ error, setError ] = useState( '' );
 	const [ attempt, setAttempt ] = useState( 0 );
@@ -44,13 +54,18 @@ export function CourseReadiness( { courseId, draft, dirty, onSelect } ) {
 			active = false;
 		};
 	}, [ courseId, revision, attempt ] );
+	const missing = missingOutlineSkills( draft.program, draft.skill_names );
 	const skills = ( report?.practice_skills || report?.skills || [] ).filter(
-		( skill ) => ! skill.ready
+		( skill ) => ! skill.ready && ! missing.includes( skill.term_id )
 	);
 	const blocked =
 		( report?.completion.length || 0 ) +
 		( report?.resources.length || 0 ) +
 		( report?.skills.filter( ( skill ) => ! skill.ready ).length || 0 );
+	const ready = !! report?.ready;
+	useEffect( () => {
+		onSummary( dirty || ! report ? null : { ready, blocked } );
+	}, [ dirty, report, ready, blocked, onSummary ] );
 	function selectSkill( skill ) {
 		const outcome = draft.program.outcomes.find(
 			( row ) => row.term_id === skill.term_id
@@ -93,6 +108,28 @@ export function CourseReadiness( { courseId, draft, dirty, onSelect } ) {
 											blocked
 										) }
 							</h3>
+							{ missing.length > 0 && (
+								<div className="ohmylms-outline-missing">
+									<p>
+										{ sprintf(
+											/* translators: %d: number of missing skills. */ __(
+												'%d linked skills no longer exist in the skill library. Remove them before saving the outline.',
+												'ohmylms'
+											),
+											missing.length
+										) }
+									</p>
+									<Button
+										variant="secondary"
+										onClick={ onRemoveMissing }
+									>
+										{ __(
+											'Remove missing skills',
+											'ohmylms'
+										) }
+									</Button>
+								</div>
+							) }
 							{ report.completion.length > 0 && (
 								<div>
 									<ul>
@@ -280,10 +317,15 @@ export function CourseReadiness( { courseId, draft, dirty, onSelect } ) {
 			</p>
 			{ ! ( draft.program.groups || [] ).length && (
 				<p>
-					{ __(
-						'No lessons yet. Add a unit and a lesson to organize activities and skills.',
-						'ohmylms'
-					) }
+					{ draft.units.length
+						? __(
+								'Your units have no lessons yet. Select a unit in the outline and choose Add lesson.',
+								'ohmylms'
+							)
+						: __(
+								'Add a unit to the outline, then add lessons to it.',
+								'ohmylms'
+							) }
 				</p>
 			) }
 			<LessonReadiness

@@ -5,6 +5,12 @@ import {
 	orderedOutlineItems,
 	removeOutlineLesson,
 	outlineLessonReadiness,
+	outlineStatus,
+	missingOutlineSkills,
+	removeOutlineSkills,
+	practicePlacement,
+	addOutlinePractice,
+	outlineUnitSummary,
 } from '../../assets/src/features/courses/outline.mjs';
 
 test( 'lesson checklist isolates teaching and assessment coverage by lesson and unit', () => {
@@ -175,4 +181,105 @@ test( 'removing a lesson keeps its activities, skill outcomes and extension fiel
 	] );
 	assert.deepEqual( next.outcomes, [ { term_id: 7, required: true } ] );
 	assert.equal( source.items[ 0 ].group_id, 'old' );
+} );
+
+test( 'outline status prefers saving, then unsaved edits, then publication state', () => {
+	assert.equal( outlineStatus( { saving: true, dirty: true } ), 'saving' );
+	assert.equal(
+		outlineStatus( { dirty: true, unpublished: false } ),
+		'unsaved'
+	);
+	assert.equal( outlineStatus( { unpublished: true } ), 'unpublished' );
+	assert.equal( outlineStatus( { unpublished: false } ), 'published' );
+} );
+
+test( 'missing skills are removed with their practice and coverage links', () => {
+	const program = {
+		outcomes: [
+			{ term_id: 1, chapter_id: 5 },
+			{ term_id: 2, chapter_id: 5 },
+		],
+		items: [
+			{ id: 'p', type: 'practice', content_id: 2 },
+			{ id: 'r', type: 'lesson', content_id: 9, skill_ids: [ 1, 2 ] },
+		],
+	};
+	assert.deepEqual( missingOutlineSkills( program, { 1: 'Known' } ), [ 2 ] );
+	const next = removeOutlineSkills( program, [ 2 ] );
+	assert.deepEqual(
+		next.outcomes.map( ( row ) => row.term_id ),
+		[ 1 ]
+	);
+	assert.deepEqual(
+		next.items.map( ( row ) => row.id ),
+		[ 'r' ]
+	);
+	assert.deepEqual( next.items[ 0 ].skill_ids, [ 1 ] );
+	assert.equal( program.outcomes.length, 2 );
+} );
+
+test( 'adding practice links the skill to the lesson in the same step', () => {
+	const program = {
+		groups: [
+			{ id: 'a', chapter_id: 5 },
+			{ id: 'b', chapter_id: 5 },
+		],
+		outcomes: [
+			{ term_id: 1, chapter_id: 5, group_id: 'b' },
+			{ term_id: 2, chapter_id: 5 },
+			{ term_id: 3, chapter_id: 5, group_id: 'a' },
+		],
+		items: [],
+	};
+	const place = { unitId: 5, groupId: 'a' };
+	assert.equal( practicePlacement( program, 1, place ), 'elsewhere' );
+	assert.equal( practicePlacement( program, 2, place ), 'move' );
+	assert.equal( practicePlacement( program, 3, place ), 'linked' );
+	assert.equal( practicePlacement( program, 4, place ), 'new' );
+	assert.equal(
+		addOutlinePractice( program, { termId: 1, ...place, id: 'x' } ),
+		null
+	);
+	const fresh = addOutlinePractice( program, {
+		termId: 4,
+		...place,
+		id: 'x',
+	} );
+	assert.deepEqual( fresh.outcomes.at( -1 ), {
+		term_id: 4,
+		required: false,
+		target: 'proficient',
+		chapter_id: 5,
+		group_id: 'a',
+	} );
+	assert.deepEqual( fresh.items[ 0 ], {
+		id: 'x',
+		content_id: 4,
+		type: 'practice',
+		style: 'practice',
+		required: false,
+		chapter_id: 5,
+		group_id: 'a',
+	} );
+	const moved = addOutlinePractice( program, {
+		termId: 2,
+		...place,
+		id: 'y',
+	} );
+	assert.equal( moved.outcomes[ 1 ].group_id, 'a' );
+	assert.equal( practicePlacement( moved, 2, place ), 'placed' );
+} );
+
+test( 'unit summary counts lessons, skills and activities in that unit', () => {
+	assert.deepEqual(
+		outlineUnitSummary(
+			{
+				groups: [ { chapter_id: 5 }, { chapter_id: 6 } ],
+				outcomes: [ { chapter_id: 5 }, { chapter_id: 5 } ],
+				items: [ { chapter_id: 5 }, { chapter_id: 0 } ],
+			},
+			5
+		),
+		{ lessons: 1, skills: 2, activities: 1 }
+	);
 } );

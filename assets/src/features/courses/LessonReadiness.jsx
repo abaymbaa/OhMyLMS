@@ -3,6 +3,7 @@ import { createElement } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { outlineLessonReadiness } from './outline.mjs';
+import { outlineSkillName } from './CourseOutlineTree';
 
 /**
  * Current-draft checklist; publication checks remain separate.
@@ -17,7 +18,7 @@ export function LessonReadiness( { program, names, onSelect } ) {
 		return null;
 	}
 	const labels = ( ids ) =>
-		ids.map( ( id ) => names?.[ id ] || String( id ) ).join( ', ' );
+		ids.map( ( id ) => outlineSkillName( names, id ) ).join( ', ' );
 	return (
 		<details className="ohmylms-outline-readiness">
 			<summary>

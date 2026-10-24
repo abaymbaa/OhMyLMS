@@ -243,7 +243,7 @@ export function createCourseEditor( readRuntime ) {
 							{ editor.error }
 						</p>
 					) }
-					{ ! editor.loading && course && (
+					{ ! editor.loading && course && step !== 'content' && (
 						<CourseSaveStatus
 							dirty={ editor.dirty }
 							saving={ editor.saving }
@@ -270,33 +270,6 @@ export function createCourseEditor( readRuntime ) {
 												return (
 													<Fragment>
 														<div className="ohmylms-outline-frame">
-															<details className="ohmylms-outline-course-info">
-																<summary>
-																	{ __(
-																		'Course information and media',
-																		'ohmylms'
-																	) }
-																</summary>
-																<InfoHeader
-																	handleInputChange={
-																		editor.updateTitle
-																	}
-																	onContentChange={
-																		editor.updateDescription
-																	}
-																	handleRemoveMedia={ (
-																		type
-																	) =>
-																		editor.actions.removeFeaturedImage(
-																			courseId,
-																			type
-																		)
-																	}
-																	handleUploadComplete={
-																		uploadMedia
-																	}
-																/>
-															</details>
 															<CourseOutlineEditor
 																onSaved={
 																	setOutlineRevision
@@ -310,13 +283,36 @@ export function createCourseEditor( readRuntime ) {
 																editor={
 																	editor
 																}
-															/>
-															<CourseObjectives
-																outlineRevision={
-																	outlineRevision
+																courseInfo={
+																	<InfoHeader
+																		handleInputChange={
+																			editor.updateTitle
+																		}
+																		onContentChange={
+																			editor.updateDescription
+																		}
+																		handleRemoveMedia={ (
+																			type
+																		) =>
+																			editor.actions.removeFeaturedImage(
+																				courseId,
+																				type
+																			)
+																		}
+																		handleUploadComplete={
+																			uploadMedia
+																		}
+																	/>
 																}
-																courseId={
-																	courseId
+																alignment={
+																	<CourseObjectives
+																		outlineRevision={
+																			outlineRevision
+																		}
+																		courseId={
+																			courseId
+																		}
+																	/>
 																}
 															/>
 														</div>
